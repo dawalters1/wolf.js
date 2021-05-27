@@ -1,7 +1,6 @@
 const Helper = require('../Helper');
 
-const validator = require('../../utilities/validator');
-const batchArray = require('../../utilities/batchArray');
+const validator = require('../../utils/validator');
 
 const requests = {
   SUBSCRIBER_PROFILE: 'subscriber profile',
@@ -41,7 +40,7 @@ module.exports = class Tip extends Helper {
     }
 
     if (subscribers.length !== subscriberIds.length) {
-      for (const batchSubscriberIdList of batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+      for (const batchSubscriberIdList of this._bot.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
         const result = await this._websocket.emit(requests.SUBSCRIBER_PROFILE, {
           headers: {
             version: 4

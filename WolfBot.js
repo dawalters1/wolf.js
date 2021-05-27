@@ -20,8 +20,9 @@ const Tip = require('./helper/Tip/Tip');
 const yaml = require('yaml');
 
 const constants = require('./constants');
-const validator = require('./utilities/validator');
+const validator = require('./utils/validator');
 const crypto = require('crypto');
+const Utilities = require('./utility');
 
 const requests = {
   SECURITY_LOGOUT: 'security logout',
@@ -138,6 +139,8 @@ module.exports = class WolfBot {
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
     this.currentSubscriber = null;
+
+    this._utilities = Utilities(this);
   }
 
   get on () {
@@ -186,6 +189,10 @@ module.exports = class WolfBot {
 
   tip () {
     return this._tip;
+  }
+
+  utility () {
+    return this._utilities;
   }
 
   login () {
