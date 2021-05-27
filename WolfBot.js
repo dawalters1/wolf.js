@@ -89,22 +89,25 @@ const validateConfig = (bot, config) => {
   config.options = {
   };
 
-  if (app.ignoreOfficialBots) {
-    if (!validator.isValidBoolean(app.ignoreOfficialBots)) {
-      throw new Error('ignoreOfficialBots is not a valid boolean');
-    }
-    config.options.ignoreOfficialBots = app.ignoreOfficialBots;
+  if (!app.commandSettings) {
+    throw new Error('app must contain commandSettings');
   }
+
+  const commandSettings = app.commandSettings;
+
+  if (!commandSettings.ignoreOfficialBots) {
+    throw new Error('commandSettings must contain ignoreOfficialBots');
+  } else if (!validator.isValidBoolean(commandSettings.ignoreOfficialBots)) {
+    throw new Error('ignoreOfficialBots is not a valid boolean');
+  }
+
+  config.options.ignoreOfficialBots = commandSettings.ignoreOfficialBots;
 
   if (app.defaultLanguage) {
-    config.options.defaultLanguage = app.defaultLanguage;
+    config.options.defaultLanguage = app.defaultLanguage || 'en';
   };
 
-  if (loginSettings.token) {
-    config.options.token = loginSettings.token;
-  } else {
-    config.options.token = crypto.randomBytes(32).toString('hex');
-  }
+  config.options.token = loginSettings.token || crypto.randomBytes(32).toString('hex');
 
   bot.config = config;
 };

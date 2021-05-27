@@ -10,7 +10,8 @@ const requests = {
   GROUP_MEMBER_DELETE: 'group member delete',
   GROUP_MEMBER_LIST: 'group member list',
   GROUP_STATS: 'group stats',
-  MESSAGE_GROUP_HISTORY_LIST: 'message group history list'
+  MESSAGE_GROUP_HISTORY_LIST: 'message group history list',
+  SUBSCRIBER_GROUP_LIST: 'subscriber group list'
 };
 
 module.exports = class Group extends Helper {
@@ -39,7 +40,7 @@ module.exports = class Group extends Helper {
     if (!requestNew) {
       const cached = this._cache.filter((group) => groupIds.includes(group.id));
       if (cached.length > 0) {
-        groups.push(cached);
+        groups.concat(cached);
       }
     }
 
@@ -292,7 +293,21 @@ module.exports = class Group extends Helper {
   }
 
   async _getJoinedGroups () {
-    // TODO: Required to handled 'inGroup' and 'Capabilites'
+    const result = await this._websocket.emit(requests.SUBSCRIBER_GROUP_LIST, {
+      subscribe: true
+    });
+
+    if (result.success) {
+      const groups = await this.getByIds(result.body.map((group) => group.id));
+
+      for (const group of groups) {
+        group.inGroup = true;
+        group.myCapabilities = result.body.find((grp) => group.id === grp.id).capabilities;
+      }
+
+      return groups;
+    }
+    return [];
   }
 
   _process (group) {

@@ -1,7 +1,7 @@
 const BaseEvent = require('../BaseEvent');
 
 const { adminAction, messageType, capability } = require('../../../constants');
-const toGroupMemberCapability = require('../../../utilities/toGroupMemberCapability');
+const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
 
 const { version } = require('../../../package.json');
 
@@ -128,16 +128,12 @@ module.exports = class MessageSend extends BaseEvent {
       }
     }
 
-    if (message.sourceSubscriberId === this._bot.currentSubscriber.id || this._bot.banned().isBanned(message.sourceSubscriberId)) {
-      return Promise.resolve();
-    }
-
     const reveal = Object.entries(secrets).find((secret) => secret[0].toLowerCase().trim() === message.body.toLowerCase().trim());
 
     if (reveal) {
-      const body = /* this._bot.utility().replaceInString( */ reveal[1][Math.floor(Math.random() * reveal[1].length)];//, {
-      //    version
-      //  });
+      const body = this._bot.utility().replaceInString(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
+        version
+      });
 
       if (message.isGroup) {
         return await this._bot.messaging().sendGroupMessage(message.targetGroupId, body);

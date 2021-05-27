@@ -8,8 +8,6 @@ module.exports = (bot) => {
 
     const utility = new Utility(bot);
 
-    console.log(utility);
-
     result[utility.utilityName] = (...args) => utility._function(...args);
 
     return result;
