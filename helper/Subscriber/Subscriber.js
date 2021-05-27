@@ -35,7 +35,7 @@ module.exports = class Tip extends Helper {
     if (!requestNew) {
       const cached = this._cache.filter((subscriber) => subscriberIds.includes(subscriber.id));
       if (cached.length > 0) {
-        subscribers.push(cached);
+        subscribers.concat(cached);
       }
     }
 
@@ -80,6 +80,7 @@ module.exports = class Tip extends Helper {
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
     return (await this.getByIds([subscriberId], requestNew))[0];
   }
 

@@ -47,8 +47,6 @@ module.exports = class GroupMemberCapability extends BaseUtility {
 
     const group = await this._bot.group().getById(groupId);
 
-    console.log(requiredCapability);
-
     if (requiredCapability === capability.OWNER) {
       return group.owner.id === sourceSubscriberId;
     }
@@ -58,8 +56,6 @@ module.exports = class GroupMemberCapability extends BaseUtility {
     await this._bot.group()._process(group);
 
     const groupSubscriberList = await this._bot.group().getSubscriberList(groupId);
-
-    console.log(groupSubscriberList);
 
     if (groupSubscriberList.length === 0) {
       return false;

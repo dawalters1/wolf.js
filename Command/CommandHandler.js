@@ -1,5 +1,6 @@
 
 'use strict';
+const { privilege } = require('../constants');
 const Command = require('./Command');
 
 /**
@@ -86,7 +87,11 @@ class CommandHandler {
       return result;
     }, false);
 
-    if (!baseCommand) {
+    if (!baseCommand || message.sourceSubscriberId === this._bot.currentSubscriber.id || this._bot.banned().isBanned(message.sourceSubscriberId)) {
+      return Promise.resolve();
+    }
+
+    if ((this._bot.config.options.ignoreOfficialBots && await this._bot.utility().hasPrivilege(message.sourceSubscriberId, privilege.BOT))) {
       return Promise.resolve();
     }
 
