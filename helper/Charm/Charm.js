@@ -1,7 +1,7 @@
 const Helper = require('../Helper');
 
 const constants = require('../../constants');
-const validator = require('../../utilities/validator');
+const validator = require('../../utils/validator');
 const { ENGLISH } = require('../../constants/language');
 
 const requests = {

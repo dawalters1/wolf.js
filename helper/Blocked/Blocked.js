@@ -1,6 +1,6 @@
 const Helper = require('../Helper');
 
-const validator = require('../../utilities/validator');
+const validator = require('../../utils/validator');
 
 const requests = {
   SUBSCRIBER_BLOCK_LIST: 'subscriber block list',

@@ -1,8 +1,7 @@
 const Helper = require('../Helper');
-
-const validator = require('../../utilities/validator');
+const Response = require('../../networking/Response');
+const validator = require('../../utils/validator');
 const constants = require('../../constants');
-const batchArray = require('../../utilities/batchArray');
 
 const requests = {
   GROUP_PROFILE: 'group profile',
@@ -38,11 +37,14 @@ module.exports = class Group extends Helper {
     const groups = [];
 
     if (!requestNew) {
-      groups.push(this._cache.filter((group) => groupIds.includes(group.id)));
+      const cached = this._cache.filter((group) => groupIds.includes(group.id));
+      if (cached.length > 0) {
+        groups.push(cached);
+      }
     }
 
     if (groups.length !== groupIds.length) {
-      for (const batchGroupIdList of batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
+      for (const batchGroupIdList of this._bot.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
         const result = await this._websocket.emit(requests.GROUP_PROFILE, {
           headers: {
             version: 4
@@ -53,7 +55,6 @@ module.exports = class Group extends Helper {
             entities: ['base', 'extended', 'audioCounts', 'audioConfig']
           }
         });
-
         if (result.success) {
           for (const group of Object.keys(result.body).map((groupId) => {
             const value = new Response(result.body[groupId.toString()]);
@@ -228,30 +229,29 @@ module.exports = class Group extends Helper {
       throw new Error('groupId cannot be less than or equal to 0');
     }
 
-    return new Promise((resolve, reject) => {
-      const group = this.getById(groupId);
+    const group = await this.getById(groupId);
 
-      if (group.inGroup) {
-        if (!requestNew && group.subscribers.length === group.members) {
-          return group.subscribers;
-        }
-
-        this._websocket.emit(requests.GROUP_MEMBER_LIST, {
-          headers: {
-            version: 3
-          },
-          body: {
-            id: groupId,
-            subscribe: true
-          }
-        }).then((result) => {
-          if (result.sucess) {
-            group.subscribers = result.body;
-          }
-        });
-        resolve(group.subscribers || []);
+    if (group.inGroup) {
+      if (!requestNew && group.subscribers && group.subscribers.length === group.members) {
+        return group.subscribers;
       }
-    });
+
+      const result = await this._websocket.emit(requests.GROUP_MEMBER_LIST, {
+        headers: {
+          version: 3
+        },
+        body: {
+          id: groupId,
+          subscribe: true
+        }
+      });
+
+      if (result.success) {
+        group.subscribers = result.body;
+      }
+    }
+
+    return group.subscribers || [];
   }
 
   async getStats (groupId) {
@@ -292,10 +292,10 @@ module.exports = class Group extends Helper {
   }
 
   async _getJoinedGroups () {
-    // TODO:
+    // TODO: Required to handled 'inGroup' and 'Capabilites'
   }
 
-  async _process (group) {
+  _process (group) {
     if (group.exists) {
       const existing = this._cache.find((grp) => grp.id === group.id);
 

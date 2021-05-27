@@ -7,7 +7,7 @@ const requests = {
   NOTIFICATION_LIST_CLEAR: 'notification list clear'
 };
 
-const validator = require('../../utilities/validator');
+const validator = require('../../utils/validator');
 
 module.exports = class Notification extends Helper {
   // eslint-disable-next-line no-useless-constructor

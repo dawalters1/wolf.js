@@ -3,7 +3,7 @@ const Helper = require('../Helper');
 const path = require('path');
 const fs = require('fs');
 
-const validator = require('../../utilities/validator');
+const validator = require('../../utils/validator');
 
 module.exports = class Phrase extends Helper {
   constructor (bot) {
