@@ -11,7 +11,7 @@ module.exports = class BatchArray extends BaseUtility {
     super(bot, 'batchArray');
   }
 
-  _function (...args) {
+  _func (...args) {
     const arg = args[0];
 
     const length = args[1];

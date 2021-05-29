@@ -25,7 +25,7 @@ module.exports = class Messaging extends Helper {
   async _messageGroupSubscribe () {
     return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
       headers: {
-        version: 3
+        version: 4
       }
     });
   }
@@ -33,7 +33,7 @@ module.exports = class Messaging extends Helper {
   async _messageGroupUnsubscribe (id) {
     return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
       headers: {
-        version: 3
+        version: 4
       },
       body: {
         id

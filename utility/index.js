@@ -8,7 +8,7 @@ module.exports = (bot) => {
 
     const utility = new Utility(bot);
 
-    result[utility.utilityName] = (...args) => utility._function(...args);
+    result[utility.utilityName] = (...args) => utility._func(...args);
 
     return result;
   }, {});

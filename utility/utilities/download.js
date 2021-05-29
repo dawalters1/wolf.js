@@ -17,7 +17,7 @@ module.exports = class Download extends BaseUtility {
     super(bot, 'download');
   }
 
-  _function () {
+  _func () {
     return {
       file: (...args) => this.file(...args)
     };

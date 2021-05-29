@@ -30,7 +30,7 @@ module.exports = class Tip extends Helper {
     if (!requestNew) {
       const cached = this._cache.filter((subscriber) => subscriberIds.includes(subscriber.id));
       if (cached.length > 0) {
-        subscribers.concat(cached);
+        subscribers.push(...cached);
       }
     }
 

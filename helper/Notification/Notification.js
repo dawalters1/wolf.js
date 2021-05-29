@@ -10,21 +10,43 @@ module.exports = class Notification extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (bot) {
     super(bot);
+
+    this._cache = {};
   }
 
-  async list (language = constants.language.ENGLISH) {
+  async list (language = constants.language.ENGLISH, requestNew = false) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
     } else if (!Object.values(constants.language).includes(language)) {
       throw new Error('language is not valid');
     }
 
-    return await this._websocket.emit(request.NOTIFICATION_LIST, {
+    if (!requestNew && this._cache[language]) {
+      return this._cache[language];
+    }
+
+    const result = await this._websocket.emit(request.NOTIFICATION_LIST, {
       language
     });
+
+    if (result.success) {
+      this._cache[language] = result.body;
+    }
+
+    return this._cache[language] || [];
   }
 
   async clear () {
-    return await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
+    const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
+
+    if (result.success) {
+      this._cleanUp();
+    }
+
+    return result;
+  }
+
+  _cleanUp () {
+    this.cache = {};
   }
 };

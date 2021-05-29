@@ -204,6 +204,8 @@ module.exports = class WolfBot {
 
     this._eventManager._unregister();
 
+    this._stage._cache = {};
+
     this._cleanUp();
   }
 
@@ -329,8 +331,10 @@ module.exports = class WolfBot {
   _cleanUp () {
     this._blocked._cleanUp();
     this._contact._cleanUp();
+    this._charm._cleanUp();
     this._group._cleanUp();
     this._subscriber._cleanUp();
+    this._notification._cleanUp();
     this.currentSubscriber = null;
   }
 };
