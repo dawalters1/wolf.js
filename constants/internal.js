@@ -1,11 +1,13 @@
 
 module.exports = {
+
   CONNECTING: 'connecting',
-  CONNECTED: 'connected',
-  DISCONNECTED: 'disconnected',
+  CONNECTED: 'connect',
+  DISCONNECTED: 'disconnect',
   RECONNECTING: 'reconnecting',
   RECONNECTED: 'reconnected',
-  CONNECTION_ERROR: 'connection error',
+  CONNECTION_ERROR: 'connect_error',
+  CONNECTION_TIMEOUT: 'connect_timeout',
   PING: 'ping',
   PONG: 'pong',
   PACKET_SENT: 'packet sent',
