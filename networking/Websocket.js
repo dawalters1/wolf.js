@@ -63,10 +63,6 @@ module.exports = class WolfClient {
       };
     }
 
-    if (command === 'group audio broadcast') {
-      console.log(data);
-    }
-
     return new Promise((resolve, reject) => {
       this._bot.on._emit(internal.PACKET_SENT, command, data);
 

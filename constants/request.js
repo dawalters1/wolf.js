@@ -1,5 +1,5 @@
 module.exports = {
-  ACHIEVEMENT_LIST: 'achievement list',
+  ACHIEVEMENT: 'achievement',
   ACHIEVEMENT_SUBSCRIBER_LIST: 'achievement subscriber list',
   ACHIEVEMENT_GROUP_LIST: 'achievement group list',
   ACHIEVEMENT_CATEGORY_LIST: 'achievement category list',

@@ -5,6 +5,7 @@ const Websocket = require('./networking/Websocket');
 const CommandHandler = require('./Command/CommandHandler');
 
 const EventManager = require('./networking/events/EventManager');
+const Achievement = require('./helper/Achievement/Achievement');
 const Authorization = require('./helper/Authorization/Authorization');
 const Banned = require('./helper/Banned/Banned');
 const Blocked = require('./helper/Blocked/Blocked');
@@ -124,6 +125,7 @@ module.exports = class WolfBot {
     this.websocket = new Websocket(this);
     this.commandHandler = new CommandHandler(this);
 
+    this._achievement = new Achievement(this);
     this._authorization = new Authorization(this);
     this._banned = new Banned(this);
     this._blocked = new Blocked(this);
@@ -142,6 +144,10 @@ module.exports = class WolfBot {
 
   get on () {
     return this._eventManager;
+  }
+
+  achievement () {
+    return this._achievement;
   }
 
   authorization () {
