@@ -1,6 +1,6 @@
 
 'use strict';
-const { privilege } = require('../constants');
+const { privilege } = require('@dawalters1/constants');
 const Command = require('./Command');
 
 /**
