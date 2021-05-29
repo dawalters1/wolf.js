@@ -1,6 +1,7 @@
 
 'use strict';
 const { privilege } = require('@dawalters1/constants');
+const internal = require('../constants/internal');
 const Command = require('./Command');
 
 /**
@@ -14,7 +15,7 @@ class CommandHandler {
       try {
         await this.processMessage(message);
       } catch (error) {
-        console.log(error);
+        this._bot.on.emit(internal.ERROR, 'Command Handler error', message, error);
       }
     });
   }
@@ -56,7 +57,6 @@ class CommandHandler {
   }
 
   async processMessage (message) {
-    console.log('got emssage');
     if (!message.body) {
       return Promise.resolve();
     }
