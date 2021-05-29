@@ -14,7 +14,9 @@ module.exports = class ReplaceInString extends BaseUtility {
 
     const replacements = args[1];
 
-    if (validator.isNullOrWhitespace(string)) {
+    if (typeof (arg) !== 'string') {
+      throw new Error('argument must be a string');
+    } else if (validator.isNullOrWhitespace(string)) {
       throw new Error('string cannot be null or empty');
     }
 

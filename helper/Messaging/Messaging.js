@@ -67,14 +67,14 @@ module.exports = class Messaging extends Helper {
 
     if (messageType === constants.messageType.TEXT_PLAIN) {
       const ads = [...content.matchAll(/\[(.*?)\]/g)];
-
-      const links = [...content.matchAll(/^((?:(ftp|wss|http|https|(.*?)):\/\/)?)(?:(www.)?)(.+?)(\.|:)(.{2,63}?(?=\/|$))(?:(.*?)?)(.*)$/g)];
+      // ((?:ftp|wss|http|https|.*?)(?:\/\/?))?(www\.)?([^.].+?)(\.[^0-9]{2,63}?|:\d+)(?=\/|$)(.+)?
+      const links = content.split(/[ ,\n\r\t]+/).filter((arg) => arg.match(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/g));
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {
           formatting: {}
         };
-        if (ads.length > 0) {
+        if (ads && ads.length > 0) {
           body.metadata.formatting.groupLinks = await Promise.all(ads.reduce(async (result, value) => {
             const ad = {
               start: value.index,
@@ -93,7 +93,7 @@ module.exports = class Messaging extends Helper {
           }, Promise.resolve([])));
         }
 
-        if (links.length > 0) {
+        if (links && links.length > 0) {
           body.metadata.formatting.links = await Promise.all(links.reduce(async (result, value) => {
             const link = {
               start: value.index,
@@ -118,7 +118,7 @@ module.exports = class Messaging extends Helper {
                   {
                     type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
                     url: item.url,
-                    image: metadata.body.imageSize === 0 || validator.isNullOrWhitespace(metadata.body.imageUrl) ? null : '', // TODO: Download Image
+                    image: metadata.body.imageSize === 0 || validator.isNullOrWhitespace(metadata.body.imageUrl) ? null : this._bot.utility().download().file(metadata.body.imageUrl),
                     title: metadata.body.title,
                     body: metadata.body.description
                   });
