@@ -1,7 +1,6 @@
 const Helper = require('../Helper');
 
 const validator = require('../../utils/validator');
-
 module.exports = class Banned extends Helper {
   constructor (bot) {
     super(bot);

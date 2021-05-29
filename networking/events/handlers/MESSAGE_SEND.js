@@ -1,7 +1,10 @@
 const BaseEvent = require('../BaseEvent');
 
-const { adminAction, messageType, capability } = require('../../../constants');
+const { adminAction, messageType, capability } = require('@dawalters1/constants');
 const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
+
+const internal = require('../../../constants/internal');
+const event = require('../../../constants/event');
 
 const { version } = require('../../../package.json');
 
@@ -66,9 +69,9 @@ module.exports = class MessageSend extends BaseEvent {
                 group.capabilities = group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR;
                 group.inGroup = true;
 
-                this._bot.on._emit(this._internalEvents.JOINED_GROUP, group);
+                this._bot.on._emit(internal.JOINED_GROUP, group);
               } else {
-                this._bot.on._emit(this._socketEvents.GROUP_MEMBER_ADD, group, subscriber);
+                this._bot.on._emit(event.GROUP_MEMBER_ADD, group, subscriber);
               }
             }
             // eslint-disable-next-line no-fallthrough
@@ -104,9 +107,9 @@ module.exports = class MessageSend extends BaseEvent {
                   }
                 }
                 if (action.type === adminAction.LEAVE) {
-                  this._bot.on._emit(subscriber.id === this._bot.currentSubscriber.id ? this._internalEvents.LEFT_GROUP : this._serverEvents.GROUP_MEMBER_DELETE, group, subscriber);
+                  this._bot.on._emit(subscriber.id === this._bot.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE, group, subscriber);
                 } else {
-                  this._bot.on._emit(this._serverEvents.GROUP_MEMBER_UPDATE,
+                  this._bot.on._emit(event.GROUP_MEMBER_UPDATE,
                     {
                       group,
                       action: {
@@ -124,7 +127,7 @@ module.exports = class MessageSend extends BaseEvent {
         break;
 
       case messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: {
-        this._bot.on._emit(this._internalEvents.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await this._bot.subscriber().getById(message.sourceSubscriberId));
+        this._bot.on._emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await this._bot.subscriber().getById(message.sourceSubscriberId));
       }
     }
 

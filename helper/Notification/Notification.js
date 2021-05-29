@@ -1,11 +1,8 @@
 const Helper = require('../Helper');
 
-const constants = require('../../constants');
+const request = require('../../constants/request');
 
-const requests = {
-  NOTIFICATION_LIST: 'notification list',
-  NOTIFICATION_LIST_CLEAR: 'notification list clear'
-};
+const constants = require('@dawalters1/constants');
 
 const validator = require('../../utils/validator');
 
@@ -22,12 +19,12 @@ module.exports = class Notification extends Helper {
       throw new Error('language is not valid');
     }
 
-    return await this._websocket.emit(requests.NOTIFICATION_LIST, {
+    return await this._websocket.emit(request.NOTIFICATION_LIST, {
       language
     });
   }
 
   async clear () {
-    return await this._websocket.emit(requests.NOTIFICATION_LIST_CLEAR);
+    return await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
   }
 };

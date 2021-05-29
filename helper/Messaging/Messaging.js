@@ -1,6 +1,5 @@
 const Helper = require('../Helper');
 
-const constants = require('../../constants');
 const validator = require('../../utils/validator');
 
 const targetTypes = {
@@ -13,16 +12,9 @@ const supportedMessageTypes = [
   'image/jpeg'
 ];
 
-const requests = {
-  MESSAGE_SEND: 'message send',
-  MESSAGE_GROUP_SUBSCRIBE: 'message group subscribe',
-  MESSAGE_PRIVATE_SUBSCRIBE: 'message private subscribe',
-  MESSAGE_GROUP_UNSUBSCRIBE: 'message group unsubscribe',
-  MESSAGE_UPDATE: 'message update',
-  METADATA_URL: 'metadata url',
-  MESSAGE_GROUP_HISTORY_LIST: 'message group history list',
-  MESSAGE_PRIVATE_HISTORY_LIST: 'message private history list'
-};
+const request = require('../../constants/request');
+
+const constants = require('@dawalters1/constants');
 
 module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -31,7 +23,7 @@ module.exports = class Messaging extends Helper {
   }
 
   async _messageGroupSubscribe () {
-    return await this._websocket.emit(requests.MESSAGE_GROUP_SUBSCRIBE, {
+    return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
       headers: {
         version: 3
       }
@@ -39,7 +31,7 @@ module.exports = class Messaging extends Helper {
   }
 
   async _messageGroupUnsubscribe (id) {
-    return await this._websocket.emit(requests.MESSAGE_GROUP_UNSUBSCRIBE, {
+    return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
       headers: {
         version: 3
       },
@@ -50,7 +42,7 @@ module.exports = class Messaging extends Helper {
   }
 
   async _messagePrivateSubscribe () {
-    return await this._websocket.emit(requests.MESSAGE_PRIVATE_SUBSCRIBE, {
+    return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE, {
       headers: {
         version: 2
       }
@@ -140,7 +132,7 @@ module.exports = class Messaging extends Helper {
       }
     }
 
-    return await this._websocket.emit(requests.MESSAGE_SEND, body);
+    return await this._websocket.emit(request.MESSAGE_SEND, body);
   }
 
   async sendGroupMessage (targetGroupId, content, messageType = constants.messageType.TEXT_PLAIN, includeEmbeds = false) {
@@ -203,7 +195,7 @@ module.exports = class Messaging extends Helper {
       throw new Error('timestamp cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.MESSAGE_UPDATE, {
+    return await this._websocket.emit(request.MESSAGE_UPDATE, {
       isGroup: true,
       metadata: {
         isDeleted: true
@@ -225,7 +217,7 @@ module.exports = class Messaging extends Helper {
       throw new Error('timestamp cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.MESSAGE_UPDATE, {
+    return await this._websocket.emit(request.MESSAGE_UPDATE, {
       isGroup: true,
       metadata: {
         isDeleted: false
@@ -240,6 +232,6 @@ module.exports = class Messaging extends Helper {
       throw new Error('link cannot be null or empty');
     }
 
-    return await this._websocket.emit(requests.METADATA_URL, { url: link });
+    return await this._websocket.emit(request.METADATA_URL, { url: link });
   }
 };

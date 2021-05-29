@@ -1,13 +1,8 @@
 const Helper = require('../Helper');
-
 const validator = require('../../utils/validator');
-
-const requests = {
-  SUBSCRIBER_PROFILE: 'subscriber profile',
-  MESSAGE_PRIVATE_HISTORY_LIST: 'message private history list'
-};
-
 const Response = require('../../networking/Response');
+
+const request = require('../../constants/request');
 
 module.exports = class Tip extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -41,7 +36,7 @@ module.exports = class Tip extends Helper {
 
     if (subscribers.length !== subscriberIds.length) {
       for (const batchSubscriberIdList of this._bot.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
-        const result = await this._websocket.emit(requests.SUBSCRIBER_PROFILE, {
+        const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
           headers: {
             version: 4
           },
@@ -97,7 +92,7 @@ module.exports = class Tip extends Helper {
       throw new Error('timestamp cannot be less than 0');
     }
 
-    const result = await this._websocket.emit(requests.MESSAGE_PRIVATE_HISTORY_LIST,
+    const result = await this._websocket.emit(request.MESSAGE_PRIVATE_HISTORY_LIST,
       {
         headers: {
           version: 2

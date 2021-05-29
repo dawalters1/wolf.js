@@ -19,19 +19,13 @@ const Tip = require('./helper/Tip/Tip');
 
 const yaml = require('yaml');
 
-const constants = require('./constants');
 const validator = require('./utils/validator');
 const crypto = require('crypto');
 const Utilities = require('./utility');
 
-const requests = {
-  SECURITY_LOGOUT: 'security logout',
-  SUBSCRIBER_SETTINGS_UPDATE: 'subscriber settings update',
-  CHARM_SUBSCRIBER_SET_SELECTED: 'charm subscriber set selected',
-  CHARM_SUBSCRIBER_DELETE: 'charm subscriber delete',
-  MESSAGE_SETTING: 'message setting',
-  MESSAGE_SETTING_UPDATE: 'message setting update'
-};
+const request = require('../../constants/request');
+
+const constants = require('@dawalters1/constants');
 
 const validateConfig = (bot, config) => {
   if (!config) {
@@ -204,7 +198,7 @@ module.exports = class WolfBot {
   }
 
   logout () {
-    this.websocket.emit(requests.SECURITY_LOGOUT);
+    this.websocket.emit(request.SECURITY_LOGOUT);
 
     this.websocket.socket.disconnect();
 
@@ -220,7 +214,7 @@ module.exports = class WolfBot {
       throw new Error('onlineState is not valid');
     }
 
-    return await this.websocket.emit(requests.SUBSCRIBER_SETTINGS_UPDATE, {
+    return await this.websocket.emit(request.SUBSCRIBER_SETTINGS_UPDATE, {
       state: {
         state: onlineState
       }
@@ -280,7 +274,7 @@ module.exports = class WolfBot {
       }
     }
 
-    return await this.websocket.emit(requests.CHARM_SUBSCRIBER_SET_SELECTED, {
+    return await this.websocket.emit(request.CHARM_SUBSCRIBER_SET_SELECTED, {
       selectedList: validator.isValidArray(charms) ? charms : [charms]
     });
   }
@@ -308,13 +302,13 @@ module.exports = class WolfBot {
       }
     }
 
-    return await this.websocket.emit(requests.CHARM_SUBSCRIBER_DELETE, {
+    return await this.websocket.emit(request.CHARM_SUBSCRIBER_DELETE, {
       idList: validator.isValidArray(charmIds) ? charmIds : [charmIds]
     });
   }
 
   async getMessageSettings () {
-    return await this.websocket.emit(requests.MESSAGE_SETTING);
+    return await this.websocket.emit(request.MESSAGE_SETTING);
   }
 
   async setMessageSettings (messageFilterTier) {
@@ -324,7 +318,7 @@ module.exports = class WolfBot {
       throw new Error('messageFilterTier is not valid');
     }
 
-    return await this.websocket.emit(requests.MESSAGE_SETTING_UPDATE, {
+    return await this.websocket.emit(request.MESSAGE_SETTING_UPDATE, {
       spamFilter: {
         enabled: messageFilterTier !== constants.messageFilter.OFF,
         tier: messageFilterTier

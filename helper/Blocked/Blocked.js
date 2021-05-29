@@ -1,12 +1,7 @@
 const Helper = require('../Helper');
 
 const validator = require('../../utils/validator');
-
-const requests = {
-  SUBSCRIBER_BLOCK_LIST: 'subscriber block list',
-  SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
-  SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete'
-};
+const request = require('../../constants/request');
 
 module.exports = class Blocked extends Helper {
   constructor (bot) {
@@ -21,7 +16,7 @@ module.exports = class Blocked extends Helper {
         resolve(this._cache);
       };
 
-      this._websocket.emit(requests.SUBSCRIBER_BLOCK_LIST).then((result) => {
+      this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST).then((result) => {
         if (result.success) {
           this._cache = result.body;
         }
@@ -48,7 +43,7 @@ module.exports = class Blocked extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.SUBSCRIBER_BLOCK_ADD, {
+    return await this._websocket.emit(request.SUBSCRIBER_BLOCK_ADD, {
       id: subscriberId
     });
   }
@@ -60,7 +55,7 @@ module.exports = class Blocked extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.SUBSCRIBER_BLOCK_DELETE, {
+    return await this._websocket.emit(request.SUBSCRIBER_BLOCK_DELETE, {
       id: subscriberId
     });
   }

@@ -2,19 +2,9 @@ const Helper = require('../Helper');
 
 const validator = require('../../utils/validator');
 
-const constants = require('../../constants');
+const request = require('../../constants/request');
 
-const requests = {
-  GROUP_SUBSCRIBE: 'tip group subscribe',
-  PRIVATE_SUBSCRIBE: 'tip private subscribe',
-  TIP_ADD: 'tip add',
-  TIP_DETAIL: 'tip detail',
-  TIP_SUMMARY: 'tip summary',
-  TIP_LEADERBOARD_GROUP_SUMMARY: 'tip leaderboard group summary',
-  TIP_LEADERBOARD_GROUP: 'tip leaderboard group',
-  TIP_LEADERBOARD_GLOBAL_SUMMARY: 'tip leaderboard group summary',
-  TIP_LEADERBOARD_GLOBAL: 'tip leaderboard group'
-};
+const constants = require('@dawalters1/constants');
 
 module.exports = class Tip extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -23,11 +13,11 @@ module.exports = class Tip extends Helper {
   }
 
   async _groupSubscribe () {
-    return await this._websocket.emit(requests.GROUP_SUBSCRIBE);
+    return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE);
   }
 
   async _privateSubscribe () {
-    return await this._websocket.emit(requests.PRIVATE_SUBSCRIBE);
+    return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE);
   }
 
   async tip (subscriberId, groupId, context, charms) {
@@ -124,7 +114,7 @@ module.exports = class Tip extends Helper {
     }
     /// #endregion
 
-    return await this._websocket.emit(requests.TIP_ADD, {
+    return await this._websocket.emit(request.TIP_ADD, {
       subscriberId,
       groupId,
       charmsList: validator.isValidArray(charms) ? charms : [charms],
@@ -155,7 +145,7 @@ module.exports = class Tip extends Helper {
       throw new Error('offset cannot be less than 0');
     }
 
-    return await this._websocket.emit(requests.TIP_DETAIL, {
+    return await this._websocket.emit(request.TIP_DETAIL, {
       groupId,
       id: timestamp,
       contextType: constants.contextType.MESSAGE,
@@ -187,7 +177,7 @@ module.exports = class Tip extends Helper {
       throw new Error('offset cannot be less than 0');
     }
 
-    return await this._websocket.emit(requests.TIP_SUMMARY, {
+    return await this._websocket.emit(request.TIP_SUMMARY, {
       groupId,
       id: timestamp,
       contextType: constants.contextType.MESSAGE,
@@ -223,7 +213,7 @@ module.exports = class Tip extends Helper {
       }
     }
 
-    return await this._websocket.emit(requests.TIP_LEADERBOARD_GROUP, {
+    return await this._websocket.emit(request.TIP_LEADERBOARD_GROUP, {
       id: groupId,
       period: tipPeriod,
       type: tipType,
@@ -258,7 +248,7 @@ module.exports = class Tip extends Helper {
       }
     }
 
-    return await this._websocket.emit(requests.TIP_LEADERBOARD_GROUP_SUMMARY, {
+    return await this._websocket.emit(request.TIP_LEADERBOARD_GROUP_SUMMARY, {
       id: groupId,
       period: tipPeriod,
       type: tipType,
@@ -287,7 +277,7 @@ module.exports = class Tip extends Helper {
       }
     }
 
-    return await this._websocket.emit(requests.TIP_LEADERBOARD_GLOBAL, {
+    return await this._websocket.emit(request.TIP_LEADERBOARD_GLOBAL, {
       period: tipPeriod,
       type: tipType,
       tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
@@ -315,7 +305,7 @@ module.exports = class Tip extends Helper {
       }
     }
 
-    return await this._websocket.emit(requests.TIP_LEADERBOARD_GLOBAL_SUMMARY, {
+    return await this._websocket.emit(request.TIP_LEADERBOARD_GLOBAL_SUMMARY, {
       period: tipPeriod,
       type: tipType,
       tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
