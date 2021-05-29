@@ -10,7 +10,13 @@ class CommandHandler {
   constructor (bot) {
     this._bot = bot;
     this._commands = [];
-    bot.on.messageReceived(async message => await this.processMessage(message));
+    bot.on.messageReceived(async message => {
+      try {
+        await this.processMessage(message);
+      } catch (error) {
+        console.log(error);
+      }
+    });
   }
 
   isCommand (input) {
@@ -50,6 +56,7 @@ class CommandHandler {
   }
 
   async processMessage (message) {
+    console.log('got emssage');
     if (!message.body) {
       return Promise.resolve();
     }
@@ -93,7 +100,7 @@ class CommandHandler {
       return Promise.resolve();
     }
 
-    if ((this._bot.config.options.ignoreOfficialBots && await this._bot.utility().hasPrivilege(message.sourceSubscriberId, privilege.BOT))) {
+    if ((this._bot.config.options.ignoreOfficialBots && await this._bot.utility().privilege().has(message.sourceSubscriberId, privilege.BOT))) {
       return Promise.resolve();
     }
 

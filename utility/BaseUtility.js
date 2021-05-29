@@ -9,5 +9,5 @@ module.exports = class BaseUtility {
     return this._utilityName;
   }
 
-  _function () { throw new Error(`${this._utilityName} Not implemented`); }
+  _func () { throw new Error(`${this._utilityName} Not implemented`); }
 };

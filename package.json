@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "WOLF.js",
   "main": "index.js",
   "repository": {
@@ -20,8 +20,11 @@
     "eslint": "^7.27.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
+    "rtcpeerconnection": "^8.4.0",
+    "simple-peer": "^9.11.0",
     "socket.io-client": "^2.3.1",
     "socketio-wildcard": "^2.0.0",
+    "wrtc": "^0.4.7",
     "yaml": "^1.10.2"
   }
 }

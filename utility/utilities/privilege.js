@@ -1,18 +1,20 @@
 const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
 
-const { privilege } = require('@dawalters1/constants');
+const constants = require('@dawalters1/constants');
 
-module.exports = class TestUtil extends BaseUtility {
+module.exports = class privilege extends BaseUtility {
   constructor (bot) {
-    super(bot, 'hasPrivilege');
+    super(bot, 'privilege');
   }
 
-  async _function (...args) {
-    const sourceSubscriberId = args[0];
+  _func () {
+    return {
+      has: (...args) => this.has(...args)
+    };
+  }
 
-    const priv = args[1];
-
+  async has (sourceSubscriberId, priv) {
     if (!validator.isValidNumber(sourceSubscriberId)) {
       throw new Error('subscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
@@ -21,12 +23,10 @@ module.exports = class TestUtil extends BaseUtility {
 
     if (!validator.isValidNumber(priv)) {
       throw new Error('privilege must be a valid number');
-    } else if (!Object.values(privilege).includes(priv)) {
+    } else if (!Object.values(constants.privilege).includes(priv)) {
       throw new Error('privilege is not valid');
     }
 
-    const subscriber = await this._bot.subscriber().getById(sourceSubscriberId);
-
-    return ((subscriber.privileges & priv) === priv);
+    return (((await this._bot.subscriber().getById(sourceSubscriberId)).privileges & priv) === priv);
   }
 };

@@ -41,6 +41,7 @@ module.exports = class WolfClient {
 
     this.socket.on('*', packet => {
       const eventString = packet.data[0];
+
       const data = packet.data[1];
 
       const handler = this._bot._eventManager._handlers[eventString];
@@ -60,6 +61,10 @@ module.exports = class WolfClient {
       data = {
         body: data
       };
+    }
+
+    if (command === 'group audio broadcast') {
+      console.log(data);
     }
 
     return new Promise((resolve, reject) => {

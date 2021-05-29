@@ -9,6 +9,7 @@ module.exports = class Group extends Helper {
   constructor (bot) {
     super(bot);
     this._cache = [];
+    this._joinedGroupsRequested = false;
   }
 
   async getByIds (groupIds, requestNew = false) {
@@ -31,7 +32,7 @@ module.exports = class Group extends Helper {
     if (!requestNew) {
       const cached = this._cache.filter((group) => groupIds.includes(group.id));
       if (cached.length > 0) {
-        groups.concat(cached);
+        groups.push(...cached);
       }
     }
 
@@ -43,7 +44,7 @@ module.exports = class Group extends Helper {
           },
           body: {
             idList: batchGroupIdList,
-            subuscribe: true,
+            subscribe: true,
             entities: ['base', 'extended', 'audioCounts', 'audioConfig']
           }
         });
@@ -104,7 +105,7 @@ module.exports = class Group extends Helper {
           },
           body: {
             name: targetGroupName,
-            subuscribe: true,
+            subscribe: true,
             entities: ['base', 'extended', 'audioCounts', 'audioConfig']
           }
         }).then((result) => {
@@ -285,11 +286,16 @@ module.exports = class Group extends Helper {
   }
 
   async _getJoinedGroups () {
+    if (this._joinedGroupsRequested) {
+      return this._cache.filter((group) => group.inGroup);
+    }
+
     const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_LIST, {
       subscribe: true
     });
 
     if (result.success) {
+      this._joinedGroupsRequested = true;
       const groups = await this.getByIds(result.body.map((group) => group.id));
 
       for (const group of groups) {
@@ -315,5 +321,10 @@ module.exports = class Group extends Helper {
       }
     }
     return group;
+  }
+
+  _cleanUp () {
+    this._cache = [];
+    this._joinedGroupsRequested = false;
   }
 };

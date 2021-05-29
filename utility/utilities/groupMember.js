@@ -1,20 +1,49 @@
 const BaseUtility = require('../BaseUtility');
 
-const { capability, privilege } = require('@dawalters1/constants');
+const { capability, privilege, adminAction } = require('@dawalters1/constants');
 const validator = require('../../utils/validator');
 
-module.exports = class GroupMemberCapability extends BaseUtility {
+module.exports = class GroupMember extends BaseUtility {
   constructor (bot) {
-    super(bot, 'groupMemberCapability');
+    super(bot, 'groupMember');
   }
 
-  _function () {
+  _func () {
     return {
+      get: (...args) => this.get(...args),
+      admin: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.ADMIN),
+      mod: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.MOD),
+      reset: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.REGULAR),
+      kick: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
+      ban: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
+
       checkPermissions: (...args) => this.check(...args)
     };
   }
 
-  async check (groupId, sourceSubscriberId, requiredCapability, checkStaff = true) {
+  async get (groupId, sourceSubscriberId) {
+    if (!validator.isValidNumber(groupId)) {
+      throw new Error('groupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(groupId)) {
+      throw new Error('groupId cannot be less than or equal to 0');
+    }
+
+    if (!validator.isValidNumber(sourceSubscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
+
+    const groupSubscriberList = await this._bot.group().getSubscriberList(groupId);
+
+    if (groupSubscriberList.length === 0) {
+      return null;
+    }
+
+    return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
+  }
+
+  async checkPermissions (groupId, sourceSubscriberId, requiredCapability, checkStaff = true) {
     if (!validator.isValidNumber(groupId)) {
       throw new Error('groupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(groupId)) {
@@ -50,10 +79,6 @@ module.exports = class GroupMemberCapability extends BaseUtility {
     if (requiredCapability === capability.OWNER) {
       return group.owner.id === sourceSubscriberId;
     }
-
-    group.inGroup = true;
-
-    await this._bot.group()._process(group);
 
     const groupSubscriberList = await this._bot.group().getSubscriberList(groupId);
 

@@ -9,28 +9,24 @@ const constants = require('@dawalters1/constants');
 module.exports = class Charm extends Helper {
   constructor (bot) {
     super(bot);
-    this._cachedLanguage = null;
-    this._cache = [];
+    this._cache = {};
   }
 
   async _getCharmList (language, requestNew = false) {
-    return new Promise((resolve, reject) => {
-      if (!requestNew && this._cache.length > 0) {
-        resolve(this._cache);
-      }
+    if (!requestNew && this._cache[language]) {
+      return this._cache[language];
+    }
 
-      this._websocket.emit(request.CHARM_LIST,
-        {
-          language
-        }).then((result) => {
-        if (result.success) {
-          this._cachedLanguage = language;
-          this._cache = result.body;
-        }
-
-        resolve(this._cache);
+    const result = await this._websocket.emit(request.CHARM_LIST,
+      {
+        language
       });
-    });
+
+    if (result.success) {
+      this._cache[language] = result.body;
+    }
+
+    return this._cache[language] || [];
   }
 
   async list (language = constants.language.ENGLISH, requestNew = false) {
@@ -151,5 +147,9 @@ module.exports = class Charm extends Helper {
     return await this._websocket.emit(request.CHARM_SUBSCRIBER_SUMMARY_LIST, {
       id: subscriberId
     });
+  }
+
+  _cleanUp () {
+    this._cache = {};
   }
 };

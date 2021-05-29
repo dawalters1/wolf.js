@@ -11,22 +11,20 @@ module.exports = class Blocked extends Helper {
   }
 
   async list () {
-    return await new Promise((resolve, reject) => {
-      if (this._cache.length > 0) {
-        resolve(this._cache);
-      };
+    if (this._cache.length > 0) {
+      return this._cache;
+    }
 
-      this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST,
-        {
-          subscribe: true
-        }).then((result) => {
-        if (result.success) {
-          this._cache = result.body;
-        }
-
-        resolve(this._cache);
+    const result = await this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST,
+      {
+        subscribe: true
       });
-    });
+
+    if (result.success) {
+      this._cache = result.body;
+    }
+
+    return this._cache || [];
   }
 
   async isBlocked (subscriberId) {
@@ -87,5 +85,17 @@ module.exports = class Blocked extends Helper {
 
       return blocked;
     }
+  }
+
+  async _patch (subscriber) {
+    const existing = this._cache.find((contact) => contact.id === subscriber.id);
+
+    if (existing) {
+      for (const key in subscriber) {
+        existing[key] = subscriber[key];
+      }
+    }
+
+    return existing;
   }
 };

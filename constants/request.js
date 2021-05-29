@@ -12,6 +12,9 @@ module.exports = {
   CHARM_SUBSCRIBER_DELETE: 'charm subscriber delete',
   CHARM_SUBSCRIBER_SUMMARY_LIST: 'charm subscriber summary list',
 
+  GROUP_AUDIO_BROADCAST: 'group audio broadcast',
+  GROUP_AUDIO_BROADCAST_DISCONNECT: 'group audio broadcast disconnect',
+
   GROUP_CREATE: 'group create',
   GROUP_DISCOVERY_LIST: 'group discovery list',
   GROUP_PROFILE_UPDATE: 'group profile update',

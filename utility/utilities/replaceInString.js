@@ -2,14 +2,12 @@ const BaseUtility = require('../BaseUtility');
 
 const validator = require('../../utils/validator');
 
-const replaceAll = (string, fromReplace, toReplace) => string.replace(new RegExp(fromReplace, 'ig'), toReplace);
-
 module.exports = class ReplaceInString extends BaseUtility {
   constructor (bot) {
     super(bot, 'replaceInString');
   }
 
-  _function (...args) {
+  _func (...args) {
     const string = args[0];
 
     const replacements = args[1];
@@ -26,6 +24,6 @@ module.exports = class ReplaceInString extends BaseUtility {
       throw new Error('replacements object is invalid');
     }
 
-    return Object.entries(mapped).reduce((result, value) => replaceAll(result, `{${value[0]}}`, value[1]), string);
+    return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(result, 'ig'), value[1]), string);
   }
 };

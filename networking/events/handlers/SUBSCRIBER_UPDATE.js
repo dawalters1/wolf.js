@@ -3,10 +3,10 @@ const BaseEvent = require('../BaseEvent');
 
 module.exports = class SubscriberUpdate extends BaseEvent {
   async process (data) {
-    const subscriber = await this._bot.subscriber().getById(data.id);
+    const existing = await this._bot.subscriber()._cache.find((subscriber) => subscriber.id === data.id);
 
-    if (subscriber && subscriber.hash !== data.hash) {
-      await this._bot.subscriber().getById(data.id, true);
+    if (existing && existing.hash !== data.hash) {
+      const subscriber = await this._bot.subscriber().getById(data.id, true);
 
       const groups = await this._bot.group()._getJoinedGroups();
 
