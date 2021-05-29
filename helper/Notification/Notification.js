@@ -12,7 +12,7 @@ module.exports = class Notification extends Helper {
     super(bot);
   }
 
-  async list (language) {
+  async list (language = constants.language.ENGLISH) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
     } else if (!Object.values(constants.language).includes(language)) {

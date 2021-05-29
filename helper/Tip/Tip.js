@@ -13,11 +13,11 @@ module.exports = class Tip extends Helper {
   }
 
   async _groupSubscribe () {
-    return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE);
+    return await this._websocket.emit(request.TIP_GROUP_SUBSCRIBE);
   }
 
   async _privateSubscribe () {
-    return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE);
+    return await this._websocket.emit(request.TIP_PRIVATE_SUBSCRIBE);
   }
 
   async tip (subscriberId, groupId, context, charms) {
@@ -64,24 +64,24 @@ module.exports = class Tip extends Helper {
     if (validator.isValidArray(charms)) {
       for (const charm of charms) {
         if (charm) {
-          if (charm.position) {
-            if (validator.isValidNumber(charm.position)) {
-              throw new Error('position must be a valid number');
-            } else if (validator.isLessThanZero(charm.position)) {
-              throw new Error('position must be larger than or equal to 0');
+          if (charm.quantity) {
+            if (!validator.isValidNumber(charm.quantity)) {
+              throw new Error('quantity must be a valid number');
+            } else if (validator.isLessThanZero(charm.quantity)) {
+              throw new Error('quantity must be larger than or equal to 0');
             }
           } else {
-            throw new Error('charm must contain a position');
+            throw new Error('charm must contain a quantity');
           }
 
-          if (charm.charmId) {
-            if (validator.isValidNumber(charm.charmId)) {
-              throw new Error('charmId must be a valid number');
-            } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
-              throw new Error('charmId cannot be less than or equal to 0');
+          if (charm.id) {
+            if (!validator.isValidNumber(charm.id)) {
+              throw new Error('id must be a valid number');
+            } else if (validator.isLessThanOrEqualZero(charm.id)) {
+              throw new Error('id cannot be less than or equal to 0');
             }
           } else {
-            throw new Error('charm must contain a charmId');
+            throw new Error('charm must contain a id');
           }
         } else {
           throw new Error('charm cannot be null or empty');
@@ -89,24 +89,24 @@ module.exports = class Tip extends Helper {
       }
     } else {
       if (charms) {
-        if (charms.position) {
-          if (validator.isValidNumber(charms.position)) {
-            throw new Error('position must be a valid number');
-          } else if (validator.isLessThanZero(charms.position)) {
-            throw new Error('position must be larger than or equal to 0');
+        if (charms.quantity) {
+          if (!validator.isValidNumber(charms.quantity)) {
+            throw new Error('quantity must be a valid number');
+          } else if (validator.isLessThanZero(charms.quantity)) {
+            throw new Error('quantity must be larger than or equal to 0');
           }
         } else {
-          throw new Error('charm must contain a position');
+          throw new Error('charm must contain a quantity');
         }
 
-        if (charms.charmId) {
-          if (validator.isValidNumber(charms.charmId)) {
-            throw new Error('charmId must be a valid number');
-          } else if (validator.isLessThanOrEqualZero(charms.charmId)) {
-            throw new Error('charmId cannot be less than or equal to 0');
+        if (charms.id) {
+          if (!validator.isValidNumber(charms.id)) {
+            throw new Error('id must be a valid number');
+          } else if (validator.isLessThanOrEqualZero(charms.id)) {
+            throw new Error('id cannot be less than or equal to 0');
           }
         } else {
-          throw new Error('charm must contain a charmId');
+          throw new Error('charm must contain a id');
         }
       } else {
         throw new Error('charm cannot be null or empty');
@@ -117,7 +117,7 @@ module.exports = class Tip extends Helper {
     return await this._websocket.emit(request.TIP_ADD, {
       subscriberId,
       groupId,
-      charmsList: validator.isValidArray(charms) ? charms : [charms],
+      charmList: validator.isValidArray(charms) ? charms : [charms],
       context
     });
   }
@@ -214,10 +214,10 @@ module.exports = class Tip extends Helper {
     }
 
     return await this._websocket.emit(request.TIP_LEADERBOARD_GROUP, {
-      id: groupId,
+      groupId,
       period: tipPeriod,
       type: tipType,
-      tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
+      tipDirection: tipType === constants.tipType.CHARM ? undefined : tipDirection
     });
   }
 
@@ -256,7 +256,7 @@ module.exports = class Tip extends Helper {
     });
   }
 
-  async getGlobalLeaderboard (tipPeriod, tipType, tipDirection) {
+  async getGlobalLeaderboard (tipPeriod, tipType, tipDirection = undefined) {
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new Error('tipPeriod cannot be null or empty');
     } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
@@ -269,46 +269,26 @@ module.exports = class Tip extends Helper {
       throw new Error('tipType is not valid');
     }
 
-    if (tipType !== constants.tipType.CHARM) {
-      if (validator.isNullOrWhitespace(tipDirection)) {
-        throw new Error('tipDirection cannot be null or empty');
-      } else if (!Object.values(constants.tipDirection).includes(tipDirection)) {
-        throw new Error('tipDirection is not valid');
-      }
+    if (tipType === constants.tipType.CHARM) {
+      throw new Error('tipType is not valid');
     }
 
     return await this._websocket.emit(request.TIP_LEADERBOARD_GLOBAL, {
       period: tipPeriod,
       type: tipType,
-      tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
+      tipDirection: tipType === constants.tipType.GROUP ? undefined : tipDirection
     });
   }
 
-  async getGlobalLeaderboardSummary (tipPeriod, tipType, tipDirection) {
+  async getGlobalLeaderboardSummary (tipPeriod) {
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new Error('tipPeriod cannot be null or empty');
     } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
       throw new Error('tipPeriod is not valid');
     }
 
-    if (validator.isNullOrWhitespace(tipType)) {
-      throw new Error('tipType cannot be null or empty');
-    } else if (!Object.values(constants.tipType).includes(tipType)) {
-      throw new Error('tipType is not valid');
-    }
-
-    if (tipType !== constants.tipType.CHARM) {
-      if (validator.isNullOrWhitespace(tipDirection)) {
-        throw new Error('tipDirection cannot be null or empty');
-      } else if (!Object.values(constants.tipDirection).includes(tipDirection)) {
-        throw new Error('tipDirection is not valid');
-      }
-    }
-
     return await this._websocket.emit(request.TIP_LEADERBOARD_GLOBAL_SUMMARY, {
-      period: tipPeriod,
-      type: tipType,
-      tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
+      period: tipPeriod
     });
   }
 };

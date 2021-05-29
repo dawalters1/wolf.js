@@ -34,13 +34,14 @@ module.exports = class MessageSend extends BaseEvent {
     const message = {
       id: data.id,
       body: data.data.toString(),
-      sourceSubscriberId: data.originator.id,
-      targetGroupId: data.isGroup ? data.recipient.id : null,
-      embeds: data.embmeds,
+      sourceSubscriberId: data.originator.id ? data.originator.id : data.originator,
+      targetGroupId: data.isGroup ? data.recipient.id ? data.recipient.id : data.recipient : null,
+      embeds: data.embeds,
       metadata: data.metadata,
       isGroup: data.isGroup,
       timestamp: data.timestamp,
-      edited: data.edited
+      edited: data.edited,
+      type: data.mimeType
     };
 
     switch (message.messageType) {

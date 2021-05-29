@@ -92,7 +92,7 @@ module.exports = class Group extends Helper {
 
     return new Promise((resolve, reject) => {
       if (!requestNew) {
-        const group = this._cache.find((grp) => grp.name.toLowerCase() === name.toLowerCase().trim());
+        const group = this._cache.find((grp) => grp.name.toLowerCase() === targetGroupName.toLowerCase().trim());
 
         if (group) {
           return resolve(group);
@@ -129,7 +129,7 @@ module.exports = class Group extends Helper {
     });
   }
 
-  async joinById (groupId, password = null) {
+  async joinById (groupId, password) {
     if (!validator.isValidNumber(groupId)) {
       throw new Error('groupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(groupId)) {
@@ -142,12 +142,12 @@ module.exports = class Group extends Helper {
     });
   }
 
-  async joinByName (targetGroupName, password = null) {
+  async joinByName (targetGroupName, password) {
     if (validator.isNullOrWhitespace(targetGroupName)) {
       throw new Error('targetGroupName cannot be null or empty');
     }
     return await this._websocket.emit(request.GROUP_MEMBER_ADD, {
-      name: targetGroupName,
+      name: targetGroupName.toLowerCase(),
       password
     });
   }
@@ -191,8 +191,8 @@ module.exports = class Group extends Helper {
         body: {
           id: groupId,
           chronological: false,
-          timestampBegin: timestamp !== 0,
-          timestampEnd: timestamp === 0 ? null : timestamp
+          timestampBegin: timestamp === 0,
+          timestampEnd: timestamp === 0 ? undefined : timestamp
         }
       });
 
@@ -204,11 +204,12 @@ module.exports = class Group extends Helper {
           body: message.data.toString(),
           sourceSubscriberId: message.originator.id,
           groupId: message.isGroup ? message.recipient.id : null,
-          embeds: message.embmeds,
+          embeds: message.embeds,
           metadata: message.metadata,
           isGroup: message.isGroup,
           timestamp: message.timestamp,
-          edited: message.edited
+          edited: message.edited,
+          type: message.mimeType
         }))
         : []
     };

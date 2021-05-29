@@ -94,7 +94,7 @@ module.exports = class EventManager {
           this._bot.on._emit(internal.LOG, `Registered Server Event: ${evt[0].toLowerCase().replace('_', ' ')}`);
         }
       } catch (error) {
-        console.log(`Unable to register event: ${evt[0]}`, error);
+        this._bot.on.emit(internal.ERROR, `Unable to register event: ${evt[0]}`, error);
       }
     }
   }

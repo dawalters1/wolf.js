@@ -111,11 +111,12 @@ module.exports = class Tip extends Helper {
           body: message.data.toString(),
           sourceSubscriberId: message.originator.id,
           groupId: message.isGroup ? message.recipient.id : null,
-          embeds: message.embmeds,
+          embeds: message.embeds,
           metadata: message.metadata,
           isGroup: message.isGroup,
           timestamp: message.timestamp,
-          edited: message.edited
+          edited: message.edited,
+          type: message.mimeType
         }))
         : []
     };
