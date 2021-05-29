@@ -23,7 +23,7 @@ const validator = require('./utils/validator');
 const crypto = require('crypto');
 const Utilities = require('./utility');
 
-const request = require('../../constants/request');
+const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
 
@@ -226,7 +226,7 @@ module.exports = class WolfBot {
       for (const charm of charms) {
         if (charm) {
           if (charm.position) {
-            if (validator.isValidNumber(charm.position)) {
+            if (!validator.isValidNumber(charm.position)) {
               throw new Error('position must be a valid number');
             } else if (validator.isLessThanZero(charm.position)) {
               throw new Error('position must be larger than or equal to 0');
@@ -236,7 +236,7 @@ module.exports = class WolfBot {
           }
 
           if (charm.charmId) {
-            if (validator.isValidNumber(charm.charmId)) {
+            if (!validator.isValidNumber(charm.charmId)) {
               throw new Error('charmId must be a valid number');
             } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
               throw new Error('charmId cannot be less than or equal to 0');
@@ -251,7 +251,7 @@ module.exports = class WolfBot {
     } else {
       if (charms) {
         if (charms.position) {
-          if (validator.isValidNumber(charms.position)) {
+          if (!validator.isValidNumber(charms.position)) {
             throw new Error('position must be a valid number');
           } else if (validator.isLessThanZero(charms.position)) {
             throw new Error('position must be larger than or equal to 0');
@@ -261,7 +261,7 @@ module.exports = class WolfBot {
         }
 
         if (charms.charmId) {
-          if (validator.isValidNumber(charms.charmId)) {
+          if (!validator.isValidNumber(charms.charmId)) {
             throw new Error('charmId must be a valid number');
           } else if (validator.isLessThanOrEqualZero(charms.charmId)) {
             throw new Error('charmId cannot be less than or equal to 0');

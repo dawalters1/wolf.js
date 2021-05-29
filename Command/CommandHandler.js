@@ -60,7 +60,9 @@ class CommandHandler {
       argument: message.body,
       message: message,
       targetGroupId: message.targetGroupId,
-      sourceSubscriberId: message.sourceSubscriberId
+      sourceSubscriberId: message.sourceSubscriberId,
+      timestamp: message.timestamp,
+      type: message.type
     };
 
     const baseCommand = this._commands.reduce((result, command) => {

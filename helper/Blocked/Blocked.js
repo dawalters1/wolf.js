@@ -11,12 +11,15 @@ module.exports = class Blocked extends Helper {
   }
 
   async list () {
-    return await Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       if (this._cache.length > 0) {
         resolve(this._cache);
       };
 
-      this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST).then((result) => {
+      this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST,
+        {
+          subscribe: true
+        }).then((result) => {
         if (result.success) {
           this._cache = result.body;
         }
@@ -48,7 +51,7 @@ module.exports = class Blocked extends Helper {
     });
   }
 
-  async delete (subscriberId) {
+  async unblock (subscriberId) {
     if (!validator.isValidNumber(subscriberId)) {
       throw new Error('subscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
@@ -64,7 +67,7 @@ module.exports = class Blocked extends Helper {
     const existing = this._cache.find((blocked) => blocked.id === id);
 
     if (existing) {
-      this._cache.slice(this._cache.findIndex((blocked) => blocked.id === id));
+      this._cache = this._cache.filter((blocked) => blocked.id !== id);
 
       return existing;
     } else {
@@ -84,17 +87,5 @@ module.exports = class Blocked extends Helper {
 
       return blocked;
     }
-  }
-
-  async patch (subscriber) {
-    const existing = this._cache.find((blocked) => blocked.id === subscriber.id);
-
-    if (existing) {
-      for (const key in subscriber) {
-        existing[key] = subscriber[key];
-      }
-    }
-
-    return existing;
   }
 };

@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "WOLF.js",
   "main": "index.js",
   "repository": {
@@ -18,6 +18,7 @@
     "@dawalters1/constants": "^1.0.0",
     "config": "^3.3.6",
     "eslint": "^7.27.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "socket.io-client": "^2.3.1",
     "socketio-wildcard": "^2.0.0",

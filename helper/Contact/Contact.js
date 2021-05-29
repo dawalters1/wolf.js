@@ -11,12 +11,15 @@ module.exports = class Contact extends Helper {
   }
 
   async list () {
-    return await Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       if (this._cache.length > 0) {
         resolve(this._cache);
       };
 
-      this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST).then((result) => {
+      this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
+        {
+          subscribe: true
+        }).then((result) => {
         if (result.success) {
           this._cache = result.body;
         }
@@ -62,8 +65,9 @@ module.exports = class Contact extends Helper {
 
   async _process (id) {
     const existing = this._cache.find((contact) => contact.id === id);
-    if (this.isContact(id)) {
-      this._cache.slice(this._cache.findIndex((contact) => contact.id === id));
+
+    if (existing) {
+      this._cache = this._cache.filter((contact) => contact.id !== id);
 
       return existing;
     } else {

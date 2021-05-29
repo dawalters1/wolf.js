@@ -26,7 +26,7 @@ class Command {
       }
 
         Object.keys(command.commandCallbacks).forEach(callback => {
-            if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callbacks !== callbacks.PRIVATE) {
+            if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callback !== callbacks.PRIVATE) {
           throw new Error(`Contains an invalid command callback`);
         }
       });
@@ -47,7 +47,7 @@ class Command {
     }
 
     Object.keys(commandCallbacks).forEach(callback => {
-      if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callbacks !== callbacks.PRIVATE) {
+      if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callback !== callbacks.PRIVATE) {
         throw new Error(`Command ${trigger} contains an invalid callback`);
       }
     });

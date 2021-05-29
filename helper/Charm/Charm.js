@@ -1,7 +1,6 @@
 const Helper = require('../Helper');
 
 const validator = require('../../utils/validator');
-const { ENGLISH } = require('../../constants/language');
 
 const request = require('../../constants/request');
 
@@ -34,7 +33,11 @@ module.exports = class Charm extends Helper {
     });
   }
 
-  async getById (charmId, language = ENGLISH, requestNew = false) {
+  async list (language = constants.language.ENGLISH, requestNew = false) {
+    return await this._getCharmList(language, requestNew);
+  }
+
+  async getById (charmId, language = constants.language.ENGLISH, requestNew = false) {
     if (!validator.isValidNumber(charmId)) {
       throw new Error('charmId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(charmId)) {
@@ -50,7 +53,7 @@ module.exports = class Charm extends Helper {
     return (await this._getCharmList(language, requestNew)).find((charm) => charm.id === charmId);
   }
 
-  async getByIds (charmIds, language = ENGLISH, requestNew = false) {
+  async getByIds (charmIds, language = constants.language.ENGLISH, requestNew = false) {
     if (!validator.isValidArray(charmIds)) {
       throw new Error('charmIds must be an array');
     } else if (charmIds.length === 0) {

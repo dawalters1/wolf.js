@@ -54,26 +54,26 @@ module.exports = class Messaging extends Helper {
       recipient: targetId,
       isGroup: targetType === targetTypes.GROUP,
       mimeType: messageType,
-      data: Buffer.from(content, 'utf8')
+      data: messageType === constants.messageType.TEXT_PLAIN ? Buffer.from(content, 'utf8') : Buffer.from(content)
     };
 
     if (messageType === constants.messageType.TEXT_PLAIN) {
-      const ads = [...content.matchAll(/\[(.*?)\]/g)];
+      const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
       // ((?:ftp|wss|http|https|.*?)(?:\/\/?))?(www\.)?([^.].+?)(\.[^0-9]{2,63}?|:\d+)(?=\/|$)(.+)?
-      const links = content.split(/[ ,\n\r\t]+/).filter((arg) => arg.match(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/g));
+      const links = [...content.matchAll(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/g)] || [];
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {
           formatting: {}
         };
         if (ads && ads.length > 0) {
-          body.metadata.formatting.groupLinks = await Promise.all(ads.reduce(async (result, value) => {
+          body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
             const ad = {
               start: value.index,
               end: value.index + value[0].length
             };
 
-            const group = await this._bot.group().getByName(ad);
+            const group = await this._bot.group().getByName(value[1]);
 
             if (group.exists) {
               ad.groupId = group.id;
@@ -82,31 +82,30 @@ module.exports = class Messaging extends Helper {
             (await result).push(ad);
 
             return result;
-          }, Promise.resolve([])));
+          }, Promise.resolve([]));
         }
 
         if (links && links.length > 0) {
-          body.metadata.formatting.links = await Promise.all(links.reduce(async (result, value) => {
+          body.metadata.formatting.links = await links.reduce(async (result, value) => {
             const link = {
               start: value.index,
               end: value.index + value[0].length,
               url: value[0]
-
             };
 
             (await result).push(link);
 
             return result;
-          }, Promise.resolve([])));
+          }, Promise.resolve([]));
         }
 
         if (includeEmbeds) {
-          const embeds = body.formatting.ads.concat(body.formatting.links).sort((a, b) => b.start - a.start).reduce((result, item) => {
+          const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => b.start - a.start).reduce(async (result, item) => {
             if (Reflect.has(item, 'url')) {
-              const metadata = this.getLinkMetadata(item.url);
+              const metadata = await this.getLinkMetadata(item.url);
 
               if (metadata.success && !metadata.body.isBlacklisted) {
-                (result).push(
+                (await result).push(
                   {
                     type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
                     url: item.url,
@@ -116,7 +115,7 @@ module.exports = class Messaging extends Helper {
                   });
               }
             } else if (Reflect.has(item, 'groupId')) {
-              (result).push({
+              (await result).push({
                 type: constants.embedType.GROUP_PREVIEW,
                 groupId: item.groupId
               });
@@ -135,7 +134,7 @@ module.exports = class Messaging extends Helper {
     return await this._websocket.emit(request.MESSAGE_SEND, body);
   }
 
-  async sendGroupMessage (targetGroupId, content, messageType = constants.messageType.TEXT_PLAIN, includeEmbeds = false) {
+  async sendGroupMessage (targetGroupId, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
@@ -159,7 +158,7 @@ module.exports = class Messaging extends Helper {
     return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, messageType, includeEmbeds);
   }
 
-  async sendPrivateMessage (targetSubscriberId, content, messageType = constants.messageType.TEXT_HTML, includeEmbeds = false) {
+  async sendPrivateMessage (targetSubscriberId, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
     if (!validator.isValidNumber(targetSubscriberId)) {
       throw new Error('targetSubscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
