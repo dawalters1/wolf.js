@@ -1,12 +1,21 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "WOLF.js",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dawalters1/wolf.js.git"
+  },
   "author": {
     "name": "David Walters"
   },
+  "bugs": {
+    "url": "https://github.com/dawalters1/wolf.js/issues"
+  },
+  "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
+    "@dawalters1/constants": "^1.0.0",
     "config": "^3.3.6",
     "eslint": "^7.27.0",
     "request-promise": "^4.2.6",

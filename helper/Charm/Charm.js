@@ -1,16 +1,11 @@
 const Helper = require('../Helper');
 
-const constants = require('../../constants');
 const validator = require('../../utils/validator');
 const { ENGLISH } = require('../../constants/language');
 
-const requests = {
-  CHARM_LIST: 'charm list',
-  CHARM_SUBSCRIBER_STATISTICS: 'charm subscriber statistics',
-  CHARM_SUBSCRIBER_ACTIVE_LIST: 'charm subscriber active list',
-  CHARM_SUBSCRIBER_EXPIRED_LIST: 'charm subscriber expired list',
-  CHARM_SUBSCRIBER_SUMMARY_LIST: 'charm subscriber summary list'
-};
+const request = require('../../constants/request');
+
+const constants = require('@dawalters1/constants');
 
 module.exports = class Charm extends Helper {
   constructor (bot) {
@@ -25,7 +20,7 @@ module.exports = class Charm extends Helper {
         resolve(this._cache);
       }
 
-      this._websocket.emit(requests.CHARM_LIST,
+      this._websocket.emit(request.CHARM_LIST,
         {
           language
         }).then((result) => {
@@ -86,7 +81,7 @@ module.exports = class Charm extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.CHARM_SUBSCRIBER_STATISTICS, {
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_STATISTICS, {
       id: subscriberId
     });
   }
@@ -110,7 +105,7 @@ module.exports = class Charm extends Helper {
       throw new Error('offset cannot be less than 0');
     }
 
-    return await this._websocket.emit(requests.CHARM_SUBSCRIBER_ACTIVE_LIST, {
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_ACTIVE_LIST, {
       id: subscriberId,
       limit,
       offset
@@ -136,7 +131,7 @@ module.exports = class Charm extends Helper {
       throw new Error('offset cannot be less than 0');
     }
 
-    return await this._websocket.emit(requests.CHARM_SUBSCRIBER_EXPIRED_LIST, {
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_EXPIRED_LIST, {
       id: subscriberId,
       limit,
       offset
@@ -150,7 +145,7 @@ module.exports = class Charm extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.CHARM_SUBSCRIBER_SUMMARY_LIST, {
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_SUMMARY_LIST, {
       id: subscriberId
     });
   }

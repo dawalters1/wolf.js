@@ -2,16 +2,15 @@ const BaseEvent = require('../BaseEvent');
 
 const crypto = require('crypto');
 
-const constants = require('../../../constants');
+const { deviceType } = require('@dawalters1/constants');
 
-const requests = {
-  SECURITY_LOGIN: 'security login'
-};
+const internal = require('../../../constants/internal');
+const request = require('../../../constants/request');
 
-const toDeviceTypeId = (deviceType) => {
-  const devices = Object.entries(constants.deviceType);
+const toDeviceTypeId = (dev) => {
+  const devices = Object.entries(deviceType);
 
-  return devices.find((device) => device[0].toLowerCase() === deviceType.toLowerCase())[1];
+  return devices.find((device) => device[0].toLowerCase() === dev.toLowerCase())[1];
 };
 
 module.exports = class Welcome extends BaseEvent {
@@ -19,7 +18,7 @@ module.exports = class Welcome extends BaseEvent {
     this._bot.on._emit(this._command, data);
 
     if (!data.loggedInUser) {
-      const result = await this._websocket.emit(requests.SECURITY_LOGIN,
+      const result = await this._websocket.emit(request.SECURITY_LOGIN,
         {
           headers:
                     {
@@ -37,12 +36,12 @@ module.exports = class Welcome extends BaseEvent {
         });
 
       if (!result.success) {
-        this._bot.on._emit(this._internalEvents.LOGIN_FAILED, result);
+        this._bot.on._emit(internal.LOGIN_FAILED, result);
 
         return;
       }
 
-      this._bot.on._emit(this._internalEvents.LOGIN_SUCCESS, result.body.subscriber);
+      this._bot.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
       this._bot._cognito = result.body.cognito;
       this._bot.currentSubscriber = result.body.subscriber;
     } else {
@@ -62,6 +61,6 @@ module.exports = class Welcome extends BaseEvent {
 
     this._bot.currentSubscriber = await this._bot.subscriber().getById(this._bot.currentSubscriber.id);
 
-    this._bot.on._emit(reconnect ? this._socketEvents.RECONNECTED : this._internalEvents.READY);
+    this._bot.on._emit(reconnect ? internal.RECONNECTED : internal.READY);
   }
 };

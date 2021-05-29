@@ -1,12 +1,7 @@
 const Helper = require('../Helper');
 
 const validator = require('../../utils/validator');
-
-const requests = {
-  SUBSCRIBER_CONTACT_LIST: 'subscriber contact list',
-  SUBSCRIBER_CONTACT_ADD: 'subscriber contact add',
-  SUBSCRIBER_CONTACT_DELETE: 'subscriber contact delete'
-};
+const request = require('../../constants/request');
 
 module.exports = class Contact extends Helper {
   constructor (bot) {
@@ -21,7 +16,7 @@ module.exports = class Contact extends Helper {
         resolve(this._cache);
       };
 
-      this._websocket.emit(requests.SUBSCRIBER_CONTACT_LIST).then((result) => {
+      this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST).then((result) => {
         if (result.success) {
           this._cache = result.body;
         }
@@ -48,7 +43,7 @@ module.exports = class Contact extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.SUBSCRIBER_CONTACT_ADD, {
+    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
       id: subscriberId
     });
   }
@@ -60,7 +55,7 @@ module.exports = class Contact extends Helper {
       throw new Error('subscriberId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.SUBSCRIBER_CONTACT_DELETE, {
+    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
       id: subscriberId
     });
   }

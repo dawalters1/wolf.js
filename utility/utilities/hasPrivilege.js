@@ -1,7 +1,7 @@
 const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
 
-const { privilege } = require('../../constants');
+const { privilege } = require('@dawalters1/constants');
 
 module.exports = class TestUtil extends BaseUtility {
   constructor (bot) {

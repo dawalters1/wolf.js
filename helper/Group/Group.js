@@ -1,18 +1,9 @@
 const Helper = require('../Helper');
 const Response = require('../../networking/Response');
 const validator = require('../../utils/validator');
-const constants = require('../../constants');
+const request = require('../../constants/request');
 
-const requests = {
-  GROUP_PROFILE: 'group profile',
-  GROUP_MEMBER_ADD: 'group member add',
-  GROUP_MEMBER_UPDATE: 'group member update',
-  GROUP_MEMBER_DELETE: 'group member delete',
-  GROUP_MEMBER_LIST: 'group member list',
-  GROUP_STATS: 'group stats',
-  MESSAGE_GROUP_HISTORY_LIST: 'message group history list',
-  SUBSCRIBER_GROUP_LIST: 'subscriber group list'
-};
+const constants = require('@dawalters1/constants');
 
 module.exports = class Group extends Helper {
   constructor (bot) {
@@ -46,7 +37,7 @@ module.exports = class Group extends Helper {
 
     if (groups.length !== groupIds.length) {
       for (const batchGroupIdList of this._bot.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
-        const result = await this._websocket.emit(requests.GROUP_PROFILE, {
+        const result = await this._websocket.emit(request.GROUP_PROFILE, {
           headers: {
             version: 4
           },
@@ -107,7 +98,7 @@ module.exports = class Group extends Helper {
           return resolve(group);
         }
 
-        this._websocket.emit(requests.GROUP_PROFILE, {
+        this._websocket.emit(request.GROUP_PROFILE, {
           headers: {
             version: 4
           },
@@ -145,7 +136,7 @@ module.exports = class Group extends Helper {
       throw new Error('groupId cannot be less than or equal to 0');
     }
 
-    return await this._websocket.emit(requests.GROUP_MEMBER_ADD, {
+    return await this._websocket.emit(request.GROUP_MEMBER_ADD, {
       groupId: groupId,
       password
     });
@@ -155,7 +146,7 @@ module.exports = class Group extends Helper {
     if (validator.isNullOrWhitespace(targetGroupName)) {
       throw new Error('targetGroupName cannot be null or empty');
     }
-    return await this._websocket.emit(requests.GROUP_MEMBER_ADD, {
+    return await this._websocket.emit(request.GROUP_MEMBER_ADD, {
       name: targetGroupName,
       password
     });
@@ -167,7 +158,7 @@ module.exports = class Group extends Helper {
     } else if (validator.isLessThanOrEqualZero(groupId)) {
       throw new Error('groupId cannot be less than or equal to 0');
     }
-    return await this._websocket.emit(requests.GROUP_MEMBER_DELETE, {
+    return await this._websocket.emit(request.GROUP_MEMBER_DELETE, {
       groupId: groupId
     });
   }
@@ -192,7 +183,7 @@ module.exports = class Group extends Helper {
       throw new Error('timestamp cannot be less than 0');
     }
 
-    const result = await this._websocket.emit(requests.MESSAGE_GROUP_HISTORY_LIST,
+    const result = await this._websocket.emit(request.MESSAGE_GROUP_HISTORY_LIST,
       {
         headers: {
           version: 3
@@ -237,7 +228,7 @@ module.exports = class Group extends Helper {
         return group.subscribers;
       }
 
-      const result = await this._websocket.emit(requests.GROUP_MEMBER_LIST, {
+      const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
         headers: {
           version: 3
         },
@@ -261,7 +252,7 @@ module.exports = class Group extends Helper {
     } else if (validator.isLessThanOrEqualZero(groupId)) {
       throw new Error('groupId cannot be less than or equal to 0');
     }
-    return await this._websocket.emit(requests.GROUP_STATS, {
+    return await this._websocket.emit(request.GROUP_STATS, {
       id: groupId
     });
   }
@@ -285,7 +276,7 @@ module.exports = class Group extends Helper {
       throw new Error('capability is not valid');
     }
 
-    return await this._websocket.emit(requests.GROUP_MEMBER_UPDATE, {
+    return await this._websocket.emit(request.GROUP_MEMBER_UPDATE, {
       groupId,
       id: subscriberId,
       capabilities: capability
@@ -293,7 +284,7 @@ module.exports = class Group extends Helper {
   }
 
   async _getJoinedGroups () {
-    const result = await this._websocket.emit(requests.SUBSCRIBER_GROUP_LIST, {
+    const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_LIST, {
       subscribe: true
     });
 

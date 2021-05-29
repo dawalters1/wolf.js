@@ -1,4 +1,4 @@
-const { capability, adminAction } = require('../constants');
+const { capability, adminAction } = require('@dawalters1/constants');
 
 const toCapabilityFromAction = (type) => {
   switch (type) {
