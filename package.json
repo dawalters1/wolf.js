@@ -1,7 +1,7 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.7",
-  "description": "WOLF.js",
+  "version": "0.0.8",
+  "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -13,6 +13,15 @@
   "bugs": {
     "url": "https://github.com/dawalters1/wolf.js/issues"
   },
+  "keywords": [
+    "palringo",
+    "pal",
+    "wolf",
+    "palbot",
+    "palringobot",
+    "wolfbot",
+    "wolfringo"
+  ],
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
     "@dawalters1/constants": "^1.0.0",
