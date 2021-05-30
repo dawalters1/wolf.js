@@ -1,6 +1,6 @@
 const request = require('../../constants/request');
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor

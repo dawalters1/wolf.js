@@ -3,20 +3,30 @@ const Helper = require('../Helper');
 const path = require('path');
 const fs = require('fs');
 
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 module.exports = class Phrase extends Helper {
   constructor (bot) {
     super(bot);
 
     this._cache = [];
+    this._local = [];
 
     const phrasePath = path.join(path.dirname(require.main.filename), '/phrases/');
 
     if (fs.existsSync(phrasePath)) {
       for (const phrase of fs.readdirSync('./phrases').filter(file => file.endsWith('.json'))) {
         for (const item of JSON.parse(fs.readFileSync(`${phrasePath}/${phrase}`, 'utf-8'))) {
-          this._cache.push(item);
+          if (validator.isNullOrWhitespace(item.name)) {
+            throw new Error('name cannot be null or empty');
+          }
+          if (validator.isNullOrWhitespace(item.value)) {
+            throw new Error('value cannot be null or empty');
+          }
+          if (validator.isNullOrWhitespace(item.language)) {
+            throw new Error('language cannot be null or empty');
+          }
+          this._local.push(item);
         }
       }
     } else {
@@ -25,23 +35,24 @@ module.exports = class Phrase extends Helper {
   }
 
   list () {
-    return this._cache;
+    return this._cache.concat(this._local).filter(Boolean);
   }
 
   count () {
-    const result = [...new Set(this._cache.map((phrase) => phrase.language.toLowerCase()))].reduce((result, value) => {
-      result[value] = this._cache.filter((phrase) => phrase.language.toLowerCase()).length;
+    const result = [...new Set(this.list().map((phrase) => phrase.language.toLowerCase()))].reduce((result, value) => {
+      result[value] = this.list().filter((phrase) => phrase.language.toLowerCase()).length;
 
       return result;
     }, {});
 
     return {
       countByLanguage: result,
-      total: this._cache.length
+      total: this.list().length
     };
   }
 
   clear () {
+    this._local = [];
     this._cache = [];
   }
 
@@ -68,14 +79,14 @@ module.exports = class Phrase extends Helper {
   }
 
   getLangaugeList () {
-    return [...new Set(this._cache.map((phrase) => phrase.language))];
+    return [...new Set(this.list().map((phrase) => phrase.language))];
   }
 
   getAllByName (name) {
     if (validator.isNullOrWhitespace(name)) {
       throw new Error('name cannot be null or empty');
     }
-    return this._cache.filter((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim());
+    return this.list().filter((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim());
   }
 
   getByLanguageAndName (language, name) {
@@ -87,7 +98,7 @@ module.exports = class Phrase extends Helper {
       throw new Error('name cannot be null or empty');
     }
 
-    const phrase = this._cache.find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.language.toLowerCase().trim() === language.toLowerCase().trim());
+    const phrase = this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.language.toLowerCase().trim() === language.toLowerCase().trim());
 
     if (phrase) {
       return phrase.value;
@@ -113,6 +124,6 @@ module.exports = class Phrase extends Helper {
   }
 
   isRequestedPhrase (name, value) {
-    this._cache.find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.value.toLowerCase().trim() === value.toLowerCase().trim());
+    this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.value.toLowerCase().trim() === value.toLowerCase().trim());
   }
 };

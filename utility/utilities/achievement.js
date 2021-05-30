@@ -1,6 +1,6 @@
 
 const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 const constants = require('@dawalters1/constants');
 
 module.exports = class Achievement extends BaseUtility {

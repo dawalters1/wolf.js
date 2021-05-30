@@ -4,7 +4,7 @@ const request = require('../../constants/request');
 
 const constants = require('@dawalters1/constants');
 
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 module.exports = class Notification extends Helper {
   // eslint-disable-next-line no-useless-constructor

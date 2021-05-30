@@ -36,8 +36,8 @@ module.exports = class Number extends BaseUtility {
   }
 
   addCommas (arg) {
-    const args = arg.split('.');
+    const args = arg.toString().split('.');
 
-    return args[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + args[1] ? `.${args[1]}` : '';
+    return `${args[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}${args[1] ? args[1] : ''}`;
   }
 };
