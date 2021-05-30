@@ -10,21 +10,21 @@ const { version } = require('../../../package.json');
 
 const secrets = {
 
-  '>test': [
-    "I'd love to stay and chat, but I'm lying.\nWOLF.js: {version}",
-    'Hey, I found your nose... It was in my Business\nWOLF.js: {version}',
-    'In my defense, I was left unsupervised\nWOLF.js: {version}',
-    'I am a bot using\nWOLF.js: {version}',
-    'Maybe you should get your own life and stop interfering in mine\nWOLF.js: {version}',
-    'Nothing will bring you greater peace than minding your own business.\nWOLF.js: {version}',
-    'I am who I am, your approval isnt needed\nWOLF.js: {version}'
+  '>reveal your secrets': [
+    "I'd love to stay and chat, but I'm lying.\nWOLF.js {version}",
+    'Hey, I found your nose... It was in my Business\nWOLF.js {version}',
+    'In my defense, I was left unsupervised\nWOLF.js {version}',
+    'I am a bot using\nWOLF.js {version}',
+    'Maybe you should get your own life and stop interfering in mine\nWOLF.js {version}',
+    'Nothing will bring you greater peace than minding your own business.\nWOLF.js {version}',
+    'I am who I am, your approval isnt needed\nWOLF.js {version}'
   ],
-  '>s?rlar?n? if?ala': [
-    'Kal?p sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWOLF.js: {version}',
-    'Ayy burnunu buldum� Benim i?lerimin aras?ndan �?kt?.\nWOLF.js: {version}',
-    'Kendimi savunmak i�in diyorum, g�zetimsiz b?rak?lm??t?m\nWOLF.js: {version}',
-    'G�zel selfi �ekmek i�in 10 resim �ekiyorsan, �irkinsin; bunun �tesi berisi yok.\nWOLF.js: {version}',
-    'Gidince arkas?ndan �z�lece?im tek ?ey, internet.\nWOLF.js: {version}'
+  '>sırlarını ifşala': [
+    'Kalıp sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWOLF.js {version}',
+    'Ayy burnunu buldum… Benim işlerimin arasından çıktı.\nWOLF.js {version}',
+    'Kendimi savunmak için diyorum, gözetimsiz bırakılmıştım\nWOLF.js {version}',
+    'Güzel selfi çekmek için 10 resim çekiyorsan, çirkinsin; bunun ötesi berisi yok.\nWOLF.js {version}',
+    'Gidince arkasından üzüleceğim tek şey, internet.\nWOLF.js {version}'
   ]
 
 };
