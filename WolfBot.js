@@ -30,70 +30,77 @@ const constants = require('@dawalters1/constants');
 
 const validateConfig = (bot, config) => {
   if (!config) {
-    throw new Error('config cannot be null or empty');
+    throw new Error('config cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!config.keyword) {
-    throw new Error('app must contain keyword');
+    throw new Error('app must contain keyword\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (validator.isNullOrWhitespace(config.keyword)) {
-    throw new Error('keyword cannot be null or empty');
+    throw new Error('keyword cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!config.app) {
-    throw new Error('config must contain app');
+    throw new Error('config must contain app\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   const app = config.app;
+  if (!app.defaultLanguage) {
+    throw new Error('config must contain a defaultLanguage\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
+  }
+
+  if (validator.isNullOrWhitespace(app.defaultLanguage)) {
+    throw new Error('defaultLanguage must be a string\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
+  }
 
   if (!app.loginSettings) {
-    throw new Error('config must contain loginSettings');
+    throw new Error('config must contain loginSettings\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   const loginSettings = app.loginSettings;
 
   if (!loginSettings.email) {
-    throw new Error('loginSettings must contain email');
+    throw new Error('loginSettings must contain email\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (validator.isNullOrWhitespace(loginSettings.email)) {
-    throw new Error('email cannot be null or empty');
+    throw new Error('email cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!loginSettings.password) {
-    throw new Error('loginSettings must contain password');
+    throw new Error('loginSettings must contain password\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (validator.isNullOrWhitespace(loginSettings.password)) {
-    throw new Error('password cannot be null or empty');
+    throw new Error('password cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!loginSettings.loginDevice) {
-    throw new Error('loginSettings must contain loginDevice');
+    throw new Error('loginSettings must contain loginDevice\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (!Object.values(constants.loginDevice).includes(loginSettings.loginDevice)) {
-    throw new Error('loginDevice is invalid');
+    throw new Error('loginDevice is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!loginSettings.onlineState) {
-    throw new Error('loginSettings must contain onlineState');
+    throw new Error('loginSettings must contain onlineState\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (!Object.values(constants.onlineState).includes(loginSettings.onlineState)) {
-    throw new Error('onlineState is invalid');
+    throw new Error('onlineState is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   if (!loginSettings.loginType) {
-    throw new Error('loginSettings must contain loginType');
+    throw new Error('loginSettings must contain loginType\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (!Object.values(constants.loginType).includes(loginSettings.loginType)) {
-    throw new Error('loginType is invalid');
+    throw new Error('loginType is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   config.options = {
   };
 
   if (!app.commandSettings) {
-    throw new Error('app must contain commandSettings');
+    throw new Error('app must contain commandSettings\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   const commandSettings = app.commandSettings;
 
   if (!commandSettings.ignoreOfficialBots) {
-    throw new Error('commandSettings must contain ignoreOfficialBots');
+    throw new Error('commandSettings must contain ignoreOfficialBots\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   } else if (!validator.isValidBoolean(commandSettings.ignoreOfficialBots)) {
-    throw new Error('ignoreOfficialBots is not a valid boolean');
+    throw new Error('ignoreOfficialBots is not a valid boolean\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
   config.options.ignoreOfficialBots = commandSettings.ignoreOfficialBots;
@@ -115,10 +122,10 @@ module.exports = class WolfBot {
       if (fs.existsSync(`${configPath}/default.yaml`)) {
         validateConfig(this, yaml.parse(fs.readFileSync(`${configPath}/default.yaml`, 'utf-8')));
       } else {
-        throw new Error('Default yaml config missing');
+        throw new Error('File default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
       }
     } else {
-      throw new Error("Folder 'config' missing");
+      throw new Error('Folder config missing\nSee https://github.com/dawalters1/Bot-Template/tree/main/config');
     }
 
     this._eventManager = new EventManager(this);
@@ -341,6 +348,9 @@ module.exports = class WolfBot {
     this._group._cleanUp();
     this._subscriber._cleanUp();
     this._notification._cleanUp();
+    this._achievement._cleanUp();
+    this._achievement.group()._cleanUp();
+    this._achievement.subscriber()._cleanUp();
     this.currentSubscriber = null;
   }
 };
