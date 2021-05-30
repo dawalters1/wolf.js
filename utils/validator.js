@@ -1,5 +1,11 @@
 const isNull = (arg) => arg === null;
-const isNullOrWhitespace = (arg) => typeof (arg) === 'string' && (arg === null || arg === undefined || arg.trim().length === 0);
+const isNullOrWhitespace = (arg) => {
+  if (typeof (arg) === 'string') {
+    return arg === null || arg === undefined || arg.trim().length === 0;
+  }
+
+  return false;
+};
 
 const isLessThanOrEqualZero = (arg) => !(parseInt(arg) > 0);
 const isLessThanZero = (arg) => !(parseInt(arg) >= 0);
