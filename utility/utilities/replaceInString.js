@@ -1,6 +1,9 @@
 const BaseUtility = require('../BaseUtility');
 
 const validator = require('../../utils/validator');
+function escapeRegExp (string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 module.exports = class ReplaceInString extends BaseUtility {
   constructor (bot) {
@@ -23,7 +26,6 @@ module.exports = class ReplaceInString extends BaseUtility {
     if (mapped.length === 0 || Object.entries(mapped).some((value) => value.length !== 2)) {
       throw new Error('replacements object is invalid');
     }
-
-    return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(result, 'ig'), value[1]), string);
+    return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), value[1].toString()), string);
   }
 };

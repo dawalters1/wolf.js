@@ -15,7 +15,7 @@ class CommandHandler {
       try {
         await this.processMessage(message);
       } catch (error) {
-        this._bot.on._emit(internal.ERROR, `Command Handler error\n\n${message}\n\n${error}`);
+        this._bot.on._emit(internal.ERROR, `Command Handler error\n\n${JSON.stringify(message, null, '\t')}\n\n${JSON.stringify(error, null, '\t')}`);
       }
     });
   }
