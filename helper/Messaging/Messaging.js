@@ -182,6 +182,17 @@ module.exports = class Messaging extends Helper {
     return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, messageType, includeEmbeds);
   }
 
+  async sendMessage (commandOrMessage, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
+    if (typeof (commandOrMessage) !== 'object') {
+      throw new Error('command must be an object');
+    }
+
+    if (commandOrMessage.isGroup) {
+      return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds, messageType);
+    }
+    return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds, messageType);
+  }
+
   async deleteGroupMessage (targetGroupId, timestamp) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
