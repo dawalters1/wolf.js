@@ -15,22 +15,27 @@ module.exports = class Phrase extends Helper {
     const phrasePath = path.join(path.dirname(require.main.filename), '/phrases/');
 
     if (fs.existsSync(phrasePath)) {
-      for (const phrase of fs.readdirSync('./phrases').filter(file => file.endsWith('.json'))) {
-        for (const item of JSON.parse(fs.readFileSync(`${phrasePath}/${phrase}`, 'utf-8'))) {
-          if (validator.isNullOrWhitespace(item.name)) {
-            throw new Error('name cannot be null or empty');
+      const files = fs.readdirSync('./phrases').filter(file => file.endsWith('.json'));
+      if (files.length > 0) {
+        for (const phrase of files) {
+          for (const item of JSON.parse(fs.readFileSync(`${phrasePath}/${phrase}`, 'utf-8'))) {
+            if (validator.isNullOrWhitespace(item.name)) {
+              throw new Error('name cannot be null or empty');
+            }
+            if (validator.isNullOrWhitespace(item.value)) {
+              throw new Error('value cannot be null or empty');
+            }
+            if (validator.isNullOrWhitespace(item.language)) {
+              throw new Error('language cannot be null or empty');
+            }
+            this._local.push(item);
           }
-          if (validator.isNullOrWhitespace(item.value)) {
-            throw new Error('value cannot be null or empty');
-          }
-          if (validator.isNullOrWhitespace(item.language)) {
-            throw new Error('language cannot be null or empty');
-          }
-          this._local.push(item);
         }
+      } else {
+        throw new Error('This api relies on phrases to be present\nSee https://github.com/dawalters1/Bot-Template/blob/main/phrases/en.json');
       }
     } else {
-      throw new Error("Folder 'phrases' missing");
+      throw new Error('Folder phrases missing\nSee https://github.com/dawalters1/Bot-Template/tree/main/phrases');
     }
   }
 
