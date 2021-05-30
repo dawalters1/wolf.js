@@ -1,6 +1,6 @@
 const Helper = require('../Helper');
 
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 const targetTypes = {
   GROUP: 'group',

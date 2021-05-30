@@ -1,6 +1,6 @@
 const request = require('request-promise');
 const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 const download = async (url, type) => {
   return await request({

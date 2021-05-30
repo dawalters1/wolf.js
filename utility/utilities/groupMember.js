@@ -1,7 +1,7 @@
 const BaseUtility = require('../BaseUtility');
 
 const { capability, privilege, adminAction } = require('@dawalters1/constants');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 
 module.exports = class GroupMember extends BaseUtility {
   constructor (bot) {

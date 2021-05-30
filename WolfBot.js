@@ -20,7 +20,7 @@ const Tip = require('./helper/Tip/Tip');
 
 const yaml = require('yaml');
 
-const validator = require('./utils/validator');
+const validator = require('@dawalters1/validator');
 const crypto = require('crypto');
 const Utilities = require('./utility');
 

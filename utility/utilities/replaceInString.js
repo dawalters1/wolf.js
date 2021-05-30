@@ -1,6 +1,6 @@
 const BaseUtility = require('../BaseUtility');
 
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 function escapeRegExp (string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

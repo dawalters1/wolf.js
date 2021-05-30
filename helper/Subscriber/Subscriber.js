@@ -1,5 +1,5 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');

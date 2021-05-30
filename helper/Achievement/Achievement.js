@@ -1,7 +1,7 @@
 const Helper = require('../Helper');
 
 const constants = require('@dawalters1/constants');
-const validator = require('../../utils/validator');
+const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 const Response = require('../../networking/Response');
 const Group = require('./Group');
