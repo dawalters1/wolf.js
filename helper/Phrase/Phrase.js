@@ -45,7 +45,7 @@ module.exports = class Phrase extends Helper {
 
   count () {
     const result = [...new Set(this.list().map((phrase) => phrase.language.toLowerCase()))].reduce((result, value) => {
-      result[value] = this.list().filter((phrase) => phrase.language.toLowerCase()).length;
+      result[value] = this.list().filter((phrase) => phrase.language.toLowerCase() === value.toLowerCase().trim()).length;
 
       return result;
     }, {});
@@ -109,11 +109,11 @@ module.exports = class Phrase extends Helper {
       return phrase.value;
     }
 
-    if (language === this._config.defaultLanguage) {
+    if (language === this._config.app.defaultLanguage) {
       return `missing_${language}_phrase_for_${name}`;
     }
 
-    return this.getByLanguageAndName(this._config.defaultLanguage, name);
+    return this.getByLanguageAndName(this._config.app.defaultLanguage, name);
   }
 
   getByCommandAndName (command, name) {
@@ -129,6 +129,6 @@ module.exports = class Phrase extends Helper {
   }
 
   isRequestedPhrase (name, value) {
-    this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.value.toLowerCase().trim() === value.toLowerCase().trim());
+    return this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.value.toLowerCase().trim() === value.toLowerCase().trim()) !== null;
   }
 };
