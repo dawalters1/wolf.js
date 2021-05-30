@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "repository": {
