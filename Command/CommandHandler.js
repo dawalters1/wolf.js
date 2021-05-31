@@ -1,7 +1,6 @@
 
 'use strict';
 const { privilege } = require('@dawalters1/constants');
-const internal = require('../constants/internal');
 const Command = require('./Command');
 
 /**
@@ -15,7 +14,7 @@ class CommandHandler {
       try {
         await this.processMessage(message);
       } catch (error) {
-        this._bot.on._emit(internal.ERROR, `Command Handler error\n\n${JSON.stringify(message, null, '\t')}\n\n${JSON.stringify(error, null, '\t')}`);
+        throw new Error(`CommandHandler error:\nMessage: ${JSON.stringify(message, null, 4)}\nError: ${error}`);
       }
     });
   }

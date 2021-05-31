@@ -44,6 +44,7 @@ module.exports = class Welcome extends BaseEvent {
       this._bot.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
       this._bot._cognito = result.body.cognito;
       this._bot.currentSubscriber = result.body.subscriber;
+      this._bot._endpointConfig = data.endpointConfig;
     } else {
       this._bot.currentSubscriber = data.loggedInUser;
     }
