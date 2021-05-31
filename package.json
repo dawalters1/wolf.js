@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.0.16",
+  "version": "0.1.0",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "repository": {
@@ -25,13 +25,14 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
     "@dawalters1/constants": "^1.0.0",
-    "@dawalters1/validator": "^1.0.2",
+    "@dawalters1/validator": "^1.0.3",
     "config": "^3.3.6",
     "eslint": "^7.27.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "socket.io-client": "^2.3.1",
     "socketio-wildcard": "^2.0.0",
+    "underscore": "^1.13.1",
     "yaml": "^1.10.2"
   },
   "license": "MIT"

@@ -43,7 +43,7 @@ module.exports = class GroupMember extends BaseUtility {
     return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
   }
 
-  async checkPermissions (groupId, sourceSubscriberId, requiredCapability, checkStaff = true) {
+  async checkPermissions (groupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     if (!validator.isValidNumber(groupId)) {
       throw new Error('groupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(groupId)) {
@@ -72,6 +72,10 @@ module.exports = class GroupMember extends BaseUtility {
       if ((subscriber.privileges & privilege.STAFF) === privilege.STAFF) {
         return true;
       }
+    }
+
+    if (includeAuthorizedSubscribers && this._bot.authorization().isAuthorized(sourceSubscriberId)) {
+      return true;
     }
 
     const group = await this._bot.group().getById(groupId);
