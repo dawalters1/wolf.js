@@ -83,7 +83,7 @@ module.exports = class Phrase extends Helper {
     this._cache = phrases;
   }
 
-  getLangaugeList () {
+  getLanguageList () {
     return [...new Set(this.list().map((phrase) => phrase.language))];
   }
 
@@ -129,6 +129,6 @@ module.exports = class Phrase extends Helper {
   }
 
   isRequestedPhrase (name, value) {
-    return this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.value.toLowerCase().trim() === value.toLowerCase().trim()) !== null;
+    return this.list().find((phrase) => this._bot.utility().string().isEqual(phrase.name, name) && this._bot.utility().string().isEqual(phrase.value, value));
   }
 };

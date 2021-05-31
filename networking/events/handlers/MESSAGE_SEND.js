@@ -11,20 +11,28 @@ const { version } = require('../../../package.json');
 const secrets = {
 
   '>reveal your secrets': [
-    "I'd love to stay and chat, but I'm lying.\nWDN: {0}",
-    'Hey, I found your nose... It was in my Business\nWDN: {0}',
-    'In my defense, I was left unsupervised\nWDN: {0}',
-    'I am a bot using\nWDN: {0}',
-    'Maybe you should get your own life and stop interfering in mine\nWDN: {0}',
-    'Nothing will bring you greater peace than minding your own business.\nWDN: {0}',
-    'I am who I am, your approval isnt needed\nWDN: {0}'
+    "I'd love to stay and chat, but I'm lying.\nWOLF.js: {version}",
+    'Hey, I found your nose... It was in my Business\nWOLF.js: {version}',
+    'In my defense, I was left unsupervised\nWOLF.js: {version}',
+    'I am a bot using\nWOLF.js: {version}',
+    'Maybe you should get your own life and stop interfering in mine\nWOLF.js: {version}',
+    'Nothing will bring you greater peace than minding your own business.\nWOLF.js: {version}',
+    'I am who I am, your approval isnt needed\nWOLF.js: {version}'
   ],
   '>sırlarını ifşala': [
-    'Kalıp sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWDN: {0}',
-    'Ayy burnunu buldum… Benim işlerimin arasından çıktı.\nWDN: {0}',
-    'Kendimi savunmak için diyorum, gözetimsiz bırakılmıştım\nWDN: {0}',
-    'Güzel selfi çekmek için 10 resim çekiyorsan, çirkinsin; bunun ötesi berisi yok.\nWDN: {0}',
-    'Gidince arkasından üzüleceğim tek şey, internet.\nWDN: {0}'
+    'Kalıp sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWOLF.js: {version}',
+    'Ayy burnunu buldum… Benim işlerimin arasından çıktı.\nWOLF.js: {version}',
+    'Kendimi savunmak için diyorum, gözetimsiz bırakılmıştım\nWOLF.js: {version}',
+    'Güzel selfi çekmek için 10 resim çekiyorsan, çirkinsin; bunun ötesi berisi yok.\nWOLF.js: {version}',
+    'Gidince arkasından üzüleceğim tek şey, internet.\nWOLF.js: {version}'
+  ],
+  '>اكشف اسرارك': [
+    'اود ان ارغب في الاستمرار بالمحادثه ولكن في الحقيقه لا ارغب بذلك\nWOLF.js: {version}',
+    'خذ انفك، وجدته في مكان لا يخصه\nWOLF.js: {version}',
+    'لنكن منصفين مصممي تركني من غير مراقبة\nWOLF.js: {version}',
+    'انا بوت استخدم\nWOLF.js: {version}',
+    'مارأيك بالاهتمام بحياتك بدلا من الاهتمام بحياة الغير\nWOLF.js: {version}',
+    'لا يوجد شيء يجلب لك السلام إلا الاهتمام باشغالك\nWOLF.js: {version}'
   ]
 
 };
@@ -135,7 +143,7 @@ module.exports = class MessageSend extends BaseEvent {
     const reveal = Object.entries(secrets).find((secret) => secret[0].toLowerCase().trim() === message.body.toLowerCase().trim());
 
     if (reveal) {
-      const body = this._bot.utility().replaceInString(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
+      const body = this._bot.utility().string().replace(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
         version
       });
 

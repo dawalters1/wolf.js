@@ -4,7 +4,7 @@
     <a href="https://wolf.live"><img src="https://i.imgur.com/LUPN1a0.png" width="546" alt="@dawalters/wolf.js" /></a>
   </p>
 <p>
-    <a href=https://www.npmjs.com/package/@dawalters1/wolf.js"><img src="https://img.shields.io/npm/v/@dawalters1/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://www.npmjs.com/package/@dawalters1/wolf.js"><img src="https://img.shields.io/npm/v/@dawalters1/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
     <a href="https://www.npmjs.com/package/@dawalters1/wolf.js"><img src="https://img.shields.io/npm/dt/@dawalters1/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
   </p>
 
