@@ -25,11 +25,9 @@ module.exports = class Authorized extends Helper {
 
   clear () {
     this._cache = [];
-
-    return Promise.resolve();
   }
 
-  authorized (subscriberIds) {
+  authorize (subscriberIds) {
     if (validator.isValidArray(subscriberIds)) {
       for (const subscriberId of subscriberIds) {
         if (!validator.isValidNumber(subscriberId)) {
