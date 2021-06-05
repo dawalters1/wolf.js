@@ -24,7 +24,7 @@ class CommandHandler {
       if (!result) {
         const phrases = this._bot.phrase().getAllByName(command.trigger);
 
-        const match = phrases.find(phrase => phrase.value.toLowerCase() === input.toLowerCase());
+        const match = phrases.find(phrase => phrase.value.toLowerCase() === input.split(/[\s]+/)[0].toLowerCase());
 
         if (match) {
           result = true;

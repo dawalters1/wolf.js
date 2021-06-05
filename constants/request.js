@@ -12,8 +12,12 @@ module.exports = {
   CHARM_SUBSCRIBER_DELETE: 'charm subscriber delete',
   CHARM_SUBSCRIBER_SUMMARY_LIST: 'charm subscriber summary list',
 
+  GROUP_AUDIO_SLOT_LIST: 'group audio slot list',
+  GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_BROADCAST: 'group audio broadcast',
   GROUP_AUDIO_BROADCAST_DISCONNECT: 'group audio broadcast disconnect',
+  GROUP_AUDIO_CONSUME: 'group audio consume',
+  GROUP_AUDIO_BROADCAST_UPDATE: 'group audio broadcast update',
 
   GROUP_CREATE: 'group create',
   GROUP_DISCOVERY_LIST: 'group discovery list',
@@ -43,6 +47,9 @@ module.exports = {
 
   SECURITY_LOGIN: 'security login',
   SECURITY_LOGOUT: 'security logout',
+
+  STAGE_LIST: 'stage list',
+  STAGE_GROUP_ACTIVE_LIST: 'stage group active list',
 
   SUBSCRIBER_PROFILE: 'subscriber profile',
   SUBSCRIBER_GROUP_LIST: 'subscriber group list',

@@ -23,225 +23,275 @@ module.exports = class Messaging extends Helper {
   }
 
   async _messageGroupSubscribe () {
-    return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
-      headers: {
-        version: 4
-      }
-    });
+    try {
+      return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
+        headers: {
+          version: 4
+        }
+      });
+    } catch (error) {
+      error.method = 'Helper/Messaging/_messageGroupSubscribe()';
+      throw error;
+    }
   }
 
   async _messageGroupUnsubscribe (id) {
-    return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
-      headers: {
-        version: 4
-      },
-      body: {
-        id
-      }
-    });
+    try {
+      return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
+        headers: {
+          version: 4
+        },
+        body: {
+          id
+        }
+      });
+    } catch (error) {
+      error.method = 'Helper/Messaging/_messageGroupUnsubscribe()';
+      throw error;
+    }
   }
 
   async _messagePrivateSubscribe () {
-    return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE, {
-      headers: {
-        version: 2
-      }
-    });
+    try {
+      return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE, {
+        headers: {
+          version: 2
+        }
+      });
+    } catch (error) {
+      error.method = 'Helper/Messaging/_messagePrivatesubscribe()';
+      throw error;
+    }
   }
 
   async _sendMessage (targetType, targetId, content, messageType, includeEmbeds = false) {
-    const body = {
-      recipient: targetId,
-      isGroup: targetType === targetTypes.GROUP,
-      mimeType: messageType,
-      data: messageType === constants.messageType.TEXT_PLAIN ? Buffer.from(content, 'utf8') : Buffer.from(content)
-    };
+    try {
+      const body = {
+        recipient: targetId,
+        isGroup: targetType === targetTypes.GROUP,
+        mimeType: messageType,
+        data: messageType === constants.messageType.TEXT_PLAIN ? Buffer.from(content, 'utf8') : Buffer.from(content)
+      };
 
-    if (messageType === constants.messageType.TEXT_PLAIN) {
-      const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
-      // ((?:ftp|wss|http|https|.*?)(?:\/\/?))?(www\.)?([^.].+?)(\.[^0-9]{2,63}?|:\d+)(?=\/|$)(.+)?
-      const links = [...content.matchAll(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/g)] || [];
+      if (messageType === constants.messageType.TEXT_PLAIN) {
+        const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
 
-      if (links.length > 0 || ads.length > 0) {
-        body.metadata = {
-          formatting: {}
-        };
-        if (ads && ads.length > 0) {
-          body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
-            const ad = {
-              start: value.index,
-              end: value.index + value[0].length
-            };
+        const links = [...content.matchAll(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/gi)] || [];
 
-            const group = await this._bot.group().getByName(value[1]);
+        if (links.length > 0 || ads.length > 0) {
+          body.metadata = {
+            formatting: {}
+          };
+          if (ads && ads.length > 0) {
+            body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
+              const ad = {
+                start: value.index,
+                end: value.index + value[0].length
+              };
 
-            if (group.exists) {
-              ad.groupId = group.id;
-            }
+              const group = await this._bot.group().getByName(value[1]);
 
-            (await result).push(ad);
-
-            return result;
-          }, Promise.resolve([]));
-        }
-
-        if (links && links.length > 0) {
-          body.metadata.formatting.links = await links.reduce(async (result, value) => {
-            const link = {
-              start: value.index,
-              end: value.index + value[0].length,
-              url: value[0]
-            };
-
-            (await result).push(link);
-
-            return result;
-          }, Promise.resolve([]));
-        }
-
-        if (includeEmbeds) {
-          const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => b.start - a.start).reduce(async (result, item) => {
-            if (Reflect.has(item, 'url')) {
-              const metadata = await this.getLinkMetadata(item.url);
-
-              if (metadata.success && !metadata.body.isBlacklisted) {
-                (await result).push(
-                  {
-                    type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
-                    url: item.url,
-                    image: metadata.body.imageSize === 0 || validator.isNullOrWhitespace(metadata.body.imageUrl) ? null : this._bot.utility().download().file(metadata.body.imageUrl),
-                    title: metadata.body.title,
-                    body: metadata.body.description
-                  });
+              if (group.exists) {
+                ad.groupId = group.id;
               }
-            } else if (Reflect.has(item, 'groupId')) {
-              (await result).push({
-                type: constants.embedType.GROUP_PREVIEW,
-                groupId: item.groupId
-              });
+
+              (await result).push(ad);
+
+              return result;
+            }, Promise.resolve([]));
+          }
+
+          if (links && links.length > 0) {
+            body.metadata.formatting.links = await links.reduce(async (result, value) => {
+              const link = {
+                start: value.index,
+                end: value.index + value[0].length,
+                url: value[0]
+              };
+
+              (await result).push(link);
+
+              return result;
+            }, Promise.resolve([]));
+          }
+
+          if (includeEmbeds) {
+            const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => b.start - a.start).reduce(async (result, item) => {
+              if (Reflect.has(item, 'url')) {
+                const metadata = await this.getLinkMetadata(item.url);
+
+                if (metadata.success && !metadata.body.isBlacklisted) {
+                  (await result).push(
+                    {
+                      type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
+                      url: item.url,
+                      image: metadata.body.imageSize === 0 || validator.isNullOrWhitespace(metadata.body.imageUrl) ? null : this._bot.utility().download().file(metadata.body.imageUrl),
+                      title: metadata.body.title,
+                      body: metadata.body.description
+                    });
+                }
+              } else if (Reflect.has(item, 'groupId')) {
+                (await result).push({
+                  type: constants.embedType.GROUP_PREVIEW,
+                  groupId: item.groupId
+                });
+              }
+
+              return result;
+            }, Promise.resolve([]));
+
+            if (embeds.length > 0) {
+              body.embeds = embeds;
             }
-
-            return result;
-          }, Promise.resolve([]));
-
-          if (embeds.length > 0) {
-            body.embeds = embeds;
           }
         }
       }
-    }
 
-    return await this._websocket.emit(request.MESSAGE_SEND, body);
+      return await this._websocket.emit(request.MESSAGE_SEND, body);
+    } catch (error) {
+      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)}, messageType = ${JSON.stringify(messageType)})`;
+      throw error;
+    }
   }
 
   async sendGroupMessage (targetGroupId, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
 
-    if (validator.isNullOrWhitespace(content)) {
-      throw new Error('content cannot null or empty');
-    }
+      if (validator.isNullOrWhitespace(content)) {
+        throw new Error('content cannot null or empty');
+      }
 
-    if (validator.isNullOrWhitespace(messageType)) {
-      throw new Error('messageType cannot be null or empty');
-    } else if (!supportedMessageTypes.includes(messageType)) {
-      throw new Error('messageType is not supported');
-    }
+      if (validator.isNullOrWhitespace(messageType)) {
+        throw new Error('messageType cannot be null or empty');
+      } else if (!supportedMessageTypes.includes(messageType)) {
+        throw new Error('messageType is not supported');
+      }
 
-    if (!validator.isValidBoolean(includeEmbeds)) {
-      throw new Error('includeEmbeds must be a boolean');
-    }
+      if (!validator.isValidBoolean(includeEmbeds)) {
+        throw new Error('includeEmbeds must be a boolean');
+      }
 
-    return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, messageType, includeEmbeds);
+      return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, messageType, includeEmbeds);
+    } catch (error) {
+      error.method = `Helper/Messaging/sendGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)}, messageType = ${JSON.stringify(messageType)})`;
+      throw error;
+    }
   }
 
   async sendPrivateMessage (targetSubscriberId, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
-    if (!validator.isValidNumber(targetSubscriberId)) {
-      throw new Error('targetSubscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
-      throw new Error('targetSubscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
+      }
 
-    if (validator.isNullOrWhitespace(content)) {
-      throw new Error('content cannot null or empty');
-    }
+      if (validator.isNullOrWhitespace(content)) {
+        throw new Error('content cannot null or empty');
+      }
 
-    if (validator.isNullOrWhitespace(messageType)) {
-      throw new Error('messageType cannot be null or empty');
-    } else if (!supportedMessageTypes.includes(messageType)) {
-      throw new Error('messageType is not supported');
-    }
+      if (validator.isNullOrWhitespace(messageType)) {
+        throw new Error('messageType cannot be null or empty');
+      } else if (!supportedMessageTypes.includes(messageType)) {
+        throw new Error('messageType is not supported');
+      }
 
-    if (!validator.isValidBoolean(includeEmbeds)) {
-      throw new Error('includeEmbeds must be a boolean');
-    }
+      if (!validator.isValidBoolean(includeEmbeds)) {
+        throw new Error('includeEmbeds must be a boolean');
+      }
 
-    return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, messageType, includeEmbeds);
+      return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, messageType, includeEmbeds);
+    } catch (error) {
+      error.method = `Helper/Messaging/sendPrivateMessage(targetSubscriberId = ${JSON.stringify(targetSubscriberId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)}, messageType = ${JSON.stringify(messageType)})`;
+      throw error;
+    }
   }
 
   async sendMessage (commandOrMessage, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
-    if (typeof (commandOrMessage) !== 'object') {
-      throw new Error('command must be an object');
-    }
+    try {
+      if (typeof (commandOrMessage) !== 'object') {
+        throw new Error('command must be an object');
+      }
 
-    if (commandOrMessage.isGroup) {
-      return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds, messageType);
+      if (commandOrMessage.isGroup) {
+        return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds, messageType);
+      }
+      return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds, messageType);
+    } catch (error) {
+      error.method = `Helper/Messaging/sendGroupMessage(commandOrMessage = ${JSON.stringify(commandOrMessage)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)}, messageType = ${JSON.stringify(messageType)})`;
+      throw error;
     }
-    return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds, messageType);
   }
 
   async deleteGroupMessage (targetGroupId, timestamp) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-    if (!validator.isValidNumber(timestamp)) {
-      throw new Error('timestamp must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new Error('timestamp cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(timestamp)) {
+        throw new Error('timestamp cannot be less than or equal to 0');
+      }
 
-    return await this._websocket.emit(request.MESSAGE_UPDATE, {
-      isGroup: true,
-      metadata: {
-        isDeleted: true
-      },
-      recipientId: targetGroupId,
-      timestamp
-    });
+      return await this._websocket.emit(request.MESSAGE_UPDATE, {
+        isGroup: true,
+        metadata: {
+          isDeleted: true
+        },
+        recipientId: targetGroupId,
+        timestamp
+      });
+    } catch (error) {
+      error.method = `Helper/Messaging/deleteGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
+      throw error;
+    }
   }
 
   async restoreGroupMessage (targetGroupId, timestamp) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-    if (!validator.isValidNumber(timestamp)) {
-      throw new Error('timestamp must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new Error('timestamp cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(timestamp)) {
+        throw new Error('timestamp cannot be less than or equal to 0');
+      }
 
-    return await this._websocket.emit(request.MESSAGE_UPDATE, {
-      isGroup: true,
-      metadata: {
-        isDeleted: false
-      },
-      recipientId: targetGroupId,
-      timestamp
-    });
+      return await this._websocket.emit(request.MESSAGE_UPDATE, {
+        isGroup: true,
+        metadata: {
+          isDeleted: false
+        },
+        recipientId: targetGroupId,
+        timestamp
+      });
+    } catch (error) {
+      error.method = `Helper/Messaging/restoreGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
+      throw error;
+    }
   }
 
   async getLinkMetadata (link) {
-    if (validator.isNullOrWhitespace(link)) {
-      throw new Error('link cannot be null or empty');
-    }
+    try {
+      if (validator.isNullOrWhitespace(link)) {
+        throw new Error('link cannot be null or empty');
+      }
 
-    return await this._websocket.emit(request.METADATA_URL, { url: link });
+      return await this._websocket.emit(request.METADATA_URL, { url: link });
+    } catch (error) {
+      error.method = `Helper/Messaging/getLinkMetadata(link = ${JSON.stringify(link)})`;
+      throw error;
+    }
   }
 };
