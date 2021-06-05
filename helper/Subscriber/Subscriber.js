@@ -4,7 +4,7 @@ const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');
 
-module.exports = class Tip extends Helper {
+module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (bot) {
     super(bot);
