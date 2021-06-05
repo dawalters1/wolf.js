@@ -1,6 +1,7 @@
+const toErrorMessage = require('../utils/toErrorMessage');
 
 module.exports = class Response {
-  constructor (arg1, arg2, arg3) {
+  constructor (arg1, arg2, arg3, command = undefined) {
     if (typeof (arg1) === 'object') {
       this.code = arg1.code;
 
@@ -17,6 +18,12 @@ module.exports = class Response {
       }
 
       this.headers = arg3;
+    }
+
+    if (command) {
+      if (this.headers && this.headers.subCode) {
+        this.headers.message = toErrorMessage(command, this.code, this.headers.subCode, this.headers.message);
+      }
     }
   }
 

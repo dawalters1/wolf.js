@@ -15,6 +15,7 @@ const Group = require('./helper/Group/Group');
 const Messaging = require('./helper/Messaging/Messaging');
 const Notification = require('./helper/Notification/Notification');
 const Phrase = require('./helper/Phrase/Phrase');
+const Stage = require('./helper/Stage/Stage');
 const Subscriber = require('./helper/Subscriber/Subscriber');
 const Tip = require('./helper/Tip/Tip');
 
@@ -142,6 +143,7 @@ module.exports = class WolfBot {
     this._messaging = new Messaging(this);
     this._notification = new Notification(this);
     this._phrase = new Phrase(this);
+    this._stage = new Stage(this);
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
     this.currentSubscriber = null;
@@ -191,6 +193,10 @@ module.exports = class WolfBot {
 
   phrase () {
     return this._phrase;
+  }
+
+  stage () {
+    return this._stage;
   }
 
   subscriber () {
@@ -352,5 +358,6 @@ module.exports = class WolfBot {
     this._achievement.group()._cleanUp();
     this._achievement.subscriber()._cleanUp();
     this.currentSubscriber = null;
+    this._stage._cleanUp();
   }
 };

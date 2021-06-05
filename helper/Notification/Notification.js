@@ -15,35 +15,45 @@ module.exports = class Notification extends Helper {
   }
 
   async list (language = constants.language.ENGLISH, requestNew = false) {
-    if (validator.isNullOrWhitespace(language)) {
-      throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
-      throw new Error('language is not valid');
+    try {
+      if (validator.isNullOrWhitespace(language)) {
+        throw new Error('language cannot be null or empty');
+      } else if (!Object.values(constants.language).includes(language)) {
+        throw new Error('language is not valid');
+      }
+
+      if (!requestNew && this._cache[language]) {
+        return this._cache[language];
+      }
+
+      const result = await this._websocket.emit(request.NOTIFICATION_LIST, {
+        language
+      });
+
+      if (result.success) {
+        this._cache[language] = result.body;
+      }
+
+      return this._cache[language] || [];
+    } catch (error) {
+      error.method = `Helper/Notification/list(language = ${JSON.stringify(language)}, requestNew = ${JSON.stringify(requestNew)})`;
+      throw error;
     }
-
-    if (!requestNew && this._cache[language]) {
-      return this._cache[language];
-    }
-
-    const result = await this._websocket.emit(request.NOTIFICATION_LIST, {
-      language
-    });
-
-    if (result.success) {
-      this._cache[language] = result.body;
-    }
-
-    return this._cache[language] || [];
   }
 
   async clear () {
-    const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
+    try {
+      const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
 
-    if (result.success) {
-      this._cleanUp();
+      if (result.success) {
+        this._cleanUp();
+      }
+
+      return result;
+    } catch (error) {
+      error.method = 'Helper/Notification/clear()';
+      throw error;
     }
-
-    return result;
   }
 
   _cleanUp () {
