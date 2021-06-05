@@ -15,18 +15,23 @@ module.exports = class privilege extends BaseUtility {
   }
 
   async has (sourceSubscriberId, priv) {
-    if (!validator.isValidNumber(sourceSubscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(sourceSubscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
 
-    if (!validator.isValidNumber(priv)) {
-      throw new Error('privilege must be a valid number');
-    } else if (!Object.values(constants.privilege).includes(priv)) {
-      throw new Error('privilege is not valid');
-    }
+      if (!validator.isValidNumber(priv)) {
+        throw new Error('privilege must be a valid number');
+      } else if (!Object.values(constants.privilege).includes(priv)) {
+        throw new Error('privilege is not valid');
+      }
 
-    return (((await this._bot.subscriber().getById(sourceSubscriberId)).privileges & priv) === priv);
+      return (((await this._bot.subscriber().getById(sourceSubscriberId)).privileges & priv) === priv);
+    } catch (error) {
+      error.method = `Utility/utilties/privilege/has(sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)}, privilege = ${JSON.stringify(priv)})`;
+      throw error;
+    }
   }
 };
