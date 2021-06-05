@@ -39,9 +39,11 @@ module.exports = class EventManager {
 
   pong (fn) { this._eventEmitter.on(internal.PONG, fn); }
 
-  groupAudioConfurationUpdated (fn) { this._eventEmitter.on(event.GROUP_AUDIO_CONFIGURATION_UPDATE, fn); }
+  groupAudioUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_UPDATE, fn); }
 
-  groupAudioCountUpdated (fn) { this._eventEmitter.on(event.GROUP_AUDIO_COUNT_UPDATE, fn); }
+  groupAudioCountUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_COUNT_UPDATE, fn); }
+
+  groupAudioSlotUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_SLOT_UPDATE, fn); }
 
   joinedGroup (fn) { this._eventEmitter.on(internal.JOINED_GROUP, fn); }
 
@@ -53,7 +55,7 @@ module.exports = class EventManager {
 
   subscriberLeft (fn) { this._eventEmitter.on(event.GROUP_MEMBER_DELETE, fn); }
 
-  groupSubscriberUpdated (fn) { this._eventEmitter.on(event.GROUP_MEMBER_UPDATE, fn); }
+  groupSubscriberUpdate (fn) { this._eventEmitter.on(event.GROUP_MEMBER_UPDATE, fn); }
 
   error (fn) { this._eventEmitter.on(internal.ERROR, fn); }
 
@@ -63,7 +65,7 @@ module.exports = class EventManager {
 
   packetSent (fn) { this._eventEmitter.on(internal.PACKET_SENT, fn); }
 
-  subscriberUpdated (fn) { this._eventEmitter.on(event.SUBSCRIBER_UPDATE, fn); }
+  subscriberUpdate (fn) { this._eventEmitter.on(event.SUBSCRIBER_UPDATE, fn); }
 
   presenceUpdate (fn) { this._eventEmitter.on(event.PRESENCE_UPDATE, fn); }
 
@@ -90,8 +92,8 @@ module.exports = class EventManager {
       try {
         if (fs.existsSync(path.join(__dirname, `/handlers/${evt[0]}.js`))) {
           const Event = require(`./handlers/${evt[0]}`);
-          this._handlers[evt[1]] = new Event(this, evt[0].toLowerCase().replace('_', ' '));
-          this._bot.on._emit(internal.LOG, `Registered Server Event: ${evt[0].toLowerCase().replace('_', ' ')}`);
+          this._handlers[evt[1]] = new Event(this, evt[0].toLowerCase().replace(/_/g, ' '));
+          this._bot.on._emit(internal.LOG, `Registered Server Event: ${evt[0].toLowerCase().replace(/_/g, ' ')}`);
         }
       } catch (error) {
         this._bot.on.emit(internal.ERROR, `Unable to register event: ${evt[0]}`, error);

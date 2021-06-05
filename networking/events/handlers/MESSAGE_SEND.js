@@ -49,7 +49,8 @@ module.exports = class MessageSend extends BaseEvent {
       isGroup: data.isGroup,
       timestamp: data.timestamp,
       edited: data.edited,
-      type: data.mimeType
+      type: data.mimeType,
+      isCommand: this._bot.commandHandler.isCommand(data.data.toString())
     };
 
     switch (message.messageType) {
