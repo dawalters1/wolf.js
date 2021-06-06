@@ -7,9 +7,17 @@ const targetTypes = {
   PRIVATE: 'private'
 };
 
+const typesToUseMMS = [
+  'image/jpeg',
+  'image/gif',
+  'audio/aac'
+];
+
 const supportedMessageTypes = [
   'text/plain',
-  'image/jpeg'
+  'image/jpeg',
+  'image/gif',
+  'audio/aac'
 ];
 
 const request = require('../../constants/request');
@@ -66,6 +74,14 @@ module.exports = class Messaging extends Helper {
 
   async _sendMessage (targetType, targetId, content, messageType, includeEmbeds = false) {
     try {
+      if (typesToUseMMS.includes(messageType)) {
+        if (!Buffer.isBuffer(content)) {
+          throw new Error('MMS content must be a buffer');
+        }
+
+        return await this._bot._mms._sendMessage(targetType, targetId, content, messageType);
+      }
+
       const body = {
         recipient: targetId,
         isGroup: targetType === targetTypes.GROUP,
