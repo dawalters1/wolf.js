@@ -2,6 +2,7 @@ const Helper = require('../Helper');
 const Response = require('../../networking/Response');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
+const imageSize = require('image-size');
 
 const constants = require('@dawalters1/constants');
 
@@ -19,9 +20,9 @@ module.exports = class Group extends Helper {
       } else {
         for (const groupId of groupIds) {
           if (!validator.isValidNumber(groupId)) {
-            throw new Error('subscriberId must be a valid number');
+            throw new Error('groupId must be a valid number');
           } else if (validator.isLessThanOrEqualZero(groupId)) {
-            throw new Error('subscriberId cannot be less than or equal to 0');
+            throw new Error('groupId cannot be less than or equal to 0');
           }
         }
       }
@@ -303,6 +304,30 @@ module.exports = class Group extends Helper {
       });
     } catch (error) {
       error.method = `Helper/Group/getStats(groupId = ${JSON.stringify(groupId)})`;
+      throw error;
+    }
+  }
+
+  async updateAvatar (groupId, avatar) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+      if (!Buffer.isBuffer(avatar)) {
+        throw new Error('avatar must be a buffer');
+      }
+
+      const size = imageSize(avatar);
+
+      if (size.width !== size.height) {
+        throw new Error('avatar must be square');
+      }
+
+      return this._mms._uploadSubscriberAvatar(avatar);
+    } catch (error) {
+      error.method = `Helper/Group/updateAvatar(groupId = ${JSON.stringify(groupId)}, avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
     }
   }
