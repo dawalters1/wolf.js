@@ -6,11 +6,11 @@ module.exports = class Authorized extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = [];
+    this._authorized = [];
   }
 
   list () {
-    return this._cache;
+    return this._authorized;
   }
 
   isAuthorized (subscriberId) {
@@ -29,7 +29,7 @@ module.exports = class Authorized extends Helper {
   }
 
   clear () {
-    this._cache = [];
+    this._authorized = [];
   }
 
   authorize (subscriberIds) {
@@ -50,7 +50,7 @@ module.exports = class Authorized extends Helper {
         }
       }
 
-      this._cache.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
+      this._authorized.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
     } catch (error) {
       error.method = `Helper/Authroization/authorize(subscriberIds = ${JSON.stringify(subscriberIds)})`;
       throw error;
@@ -75,7 +75,7 @@ module.exports = class Authorized extends Helper {
         }
       }
 
-      this._cache = this._cache.filter((authorized) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(authorized) : authorized === subscriberIds);
+      this._authorized = this._authorized.filter((authorized) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(authorized) : authorized === subscriberIds);
     } catch (error) {
       error.method = `Helper/Authroization/unauthorize(subscriberIds = ${JSON.stringify(subscriberIds)})`;
       throw error;
