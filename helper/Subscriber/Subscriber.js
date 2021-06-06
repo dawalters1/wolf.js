@@ -8,6 +8,8 @@ module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (bot) {
     super(bot);
+
+    this._subscribers = [];
   }
 
   async getByIds (subscriberIds, requestNew = false) {
@@ -29,7 +31,7 @@ module.exports = class Subscriber extends Helper {
       const subscribers = [];
 
       if (!requestNew) {
-        const cached = this._cache.filter((subscriber) => subscriberIds.includes(subscriber.id));
+        const cached = this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id));
         if (cached.length > 0) {
           subscribers.push(...cached);
         }
@@ -139,16 +141,20 @@ module.exports = class Subscriber extends Helper {
 
   _process (subscriber) {
     if (subscriber.exists) {
-      const existing = this._cache.find((sub) => sub.id === subscriber.id);
+      const existing = this._subscribers.find((sub) => sub.id === subscriber.id);
 
       if (existing) {
         for (const key in subscriber) {
           existing[key] = subscriber[key];
         }
       } else {
-        this._cache.push(subscriber);
+        this._subscribers.push(subscriber);
       }
     }
     return subscriber;
+  }
+
+  _cleanUp () {
+    this._subscribers = [];
   }
 };

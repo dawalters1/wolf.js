@@ -1,5 +1,5 @@
 
-const BaseEvent = require('../BaseEvent');
+const BaseEvent = require('../../BaseEvent');
 
 module.exports = class SubscriberBlockDelete extends BaseEvent {
   async process (data) {

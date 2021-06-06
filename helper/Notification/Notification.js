@@ -11,7 +11,7 @@ module.exports = class Notification extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = {};
+    this._notifications = {};
   }
 
   async list (language = constants.language.ENGLISH, requestNew = false) {
@@ -22,8 +22,8 @@ module.exports = class Notification extends Helper {
         throw new Error('language is not valid');
       }
 
-      if (!requestNew && this._cache[language]) {
-        return this._cache[language];
+      if (!requestNew && this._notifications[language]) {
+        return this._notifications[language];
       }
 
       const result = await this._websocket.emit(request.NOTIFICATION_LIST, {
@@ -31,10 +31,10 @@ module.exports = class Notification extends Helper {
       });
 
       if (result.success) {
-        this._cache[language] = result.body;
+        this._notifications[language] = result.body;
       }
 
-      return this._cache[language] || [];
+      return this._notifications[language] || [];
     } catch (error) {
       error.method = `Helper/Notification/list(language = ${JSON.stringify(language)}, requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
@@ -57,6 +57,6 @@ module.exports = class Notification extends Helper {
   }
 
   _cleanUp () {
-    this.cache = {};
+    this._notifications = {};
   }
 };

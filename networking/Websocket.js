@@ -14,7 +14,8 @@ module.exports = class WolfClient {
 
   create () {
     this.socket = io(`${this.host}:${this.port}/?token=${this._bot.config.options.token}&device=${this._bot.config.app.loginSettings.loginDevice}`, {
-      transports: ['websocket']
+      transports: ['websocket'],
+      reconnection: true
     });
 
     this.socket.on('connect', () => this._bot.on._emit('connect'));
