@@ -67,7 +67,7 @@ module.exports = class WolfClient {
       this._bot.on._emit(internal.PACKET_SENT, command, data);
 
       this.socket.emit(command, data, resp => {
-        resolve(new Response(resp.code, resp.body, resp.headers));
+        resolve(new Response(resp.code, resp.body, resp.headers, command));
       });
     });
   }

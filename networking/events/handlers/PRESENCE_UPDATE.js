@@ -18,7 +18,7 @@ module.exports = class PresenceUpdate extends BaseEvent {
     const subscriber = await this._bot.subscriber()._cache.find((subscriber) => subscriber.id === data.id);
 
     if (subscriber) {
-      this._bot.subscriber()._patch(data);
+      this._bot.subscriber()._process(data);
     }
 
     if (this._bot.contact().isContact(data.id)) {
