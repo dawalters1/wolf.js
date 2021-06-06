@@ -5,11 +5,11 @@ module.exports = class Banned extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = [];
+    this._banned = [];
   }
 
   list () {
-    return this._cache;
+    return this._banned;
   }
 
   isBanned (subscriberId) {
@@ -20,7 +20,7 @@ module.exports = class Banned extends Helper {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
-      return this._cache.includes(subscriberId);
+      return this._banned.includes(subscriberId);
     } catch (error) {
       error.method = `Helper/Banned/isBanned(subscriberId = ${JSON.stringify(subscriberId)})`;
       throw error;
@@ -28,7 +28,7 @@ module.exports = class Banned extends Helper {
   }
 
   clear () {
-    this._cache = [];
+    this._banned = [];
   }
 
   ban (subscriberIds) {
@@ -49,7 +49,7 @@ module.exports = class Banned extends Helper {
         }
       }
 
-      this._cache.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
+      this._banned.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
     } catch (error) {
       error.method = `Helper/Banned/ban(subscriberIds = ${JSON.stringify(subscriberIds)})`;
       throw error;
@@ -74,7 +74,7 @@ module.exports = class Banned extends Helper {
         }
       }
 
-      this._cache = this._cache.filter((banned) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(banned) : banned === subscriberIds);
+      this._banned = this._banned.filter((banned) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(banned) : banned === subscriberIds);
     } catch (error) {
       error.method = `Helper/Banned/unban(subscriberId = ${JSON.stringify(subscriberIds)})`;
       throw error;

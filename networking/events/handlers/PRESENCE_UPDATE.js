@@ -1,5 +1,5 @@
 
-const BaseEvent = require('../BaseEvent');
+const BaseEvent = require('../../BaseEvent');
 
 module.exports = class PresenceUpdate extends BaseEvent {
   async process (data) {

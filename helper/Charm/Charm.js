@@ -9,12 +9,12 @@ const constants = require('@dawalters1/constants');
 module.exports = class Charm extends Helper {
   constructor (bot) {
     super(bot);
-    this._cache = {};
+    this._charms = {};
   }
 
   async _getCharmList (language, requestNew = false) {
-    if (!requestNew && this._cache[language]) {
-      return this._cache[language];
+    if (!requestNew && this._charms[language]) {
+      return this._charms[language];
     }
 
     const result = await this._websocket.emit(request.CHARM_LIST,
@@ -23,10 +23,10 @@ module.exports = class Charm extends Helper {
       });
 
     if (result.success) {
-      this._cache[language] = result.body;
+      this._charms[language] = result.body;
     }
 
-    return this._cache[language] || [];
+    return this._charms[language] || [];
   }
 
   async list (language = constants.language.ENGLISH, requestNew = false) {
@@ -185,6 +185,6 @@ module.exports = class Charm extends Helper {
   }
 
   _cleanUp () {
-    this._cache = {};
+    this._charms = {};
   }
 };

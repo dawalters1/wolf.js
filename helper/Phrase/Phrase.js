@@ -9,7 +9,7 @@ module.exports = class Phrase extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = [];
+    this._phrases = [];
     this._local = [];
     try {
       const phrasePath = path.join(path.dirname(require.main.filename), '/phrases/');
@@ -45,7 +45,7 @@ module.exports = class Phrase extends Helper {
 
   list () {
     try {
-      return this._cache.concat(this._local).filter(Boolean);
+      return this._phrases.concat(this._local).filter(Boolean);
     } catch (error) {
       error.method = 'Helper/Phrase/list()';
       throw error;
@@ -73,7 +73,7 @@ module.exports = class Phrase extends Helper {
   clear () {
     try {
       this._local = [];
-      this._cache = [];
+      this._phrases = [];
     } catch (error) {
       error.method = 'Helper/Phrase/clear()';
       throw error;
@@ -100,7 +100,7 @@ module.exports = class Phrase extends Helper {
         }
       }
 
-      this._cache = phrases;
+      this._phrases = phrases;
     } catch (error) {
       error.method = `Helper/Phrase/load(phrases = ${JSON.stringify(phrases)})`;
       throw error;
@@ -179,5 +179,10 @@ module.exports = class Phrase extends Helper {
       error.method = `Helper/Phrase/isRequestedPhrase(name = ${JSON.stringify(name)}, value = ${JSON.stringify(value)})`;
       throw error;
     }
+  }
+
+  _cleanUp () {
+    this._local = [];
+    this._phrases = [];
   }
 };

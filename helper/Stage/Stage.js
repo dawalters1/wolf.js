@@ -8,24 +8,24 @@ module.exports = class Stage extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = {};
+    this._stages = [];
 
     this._slots = {};
   }
 
   async getStages (requestNew = false) {
     try {
-      if (!requestNew && this._cache.stageCache) {
-        return this._cache.stageCache;
+      if (!requestNew && this._stages.stageCache) {
+        return this._stages.stageCache;
       }
 
       const result = await this._websocket.emit(request.STAGE_LIST);
 
       if (result.success) {
-        this._cache.stageCache = result.body;
+        this._stages.stageCache = result.body;
       }
 
-      return this._cache.stageCache || [];
+      return this._stages.stageCache || [];
     } catch (error) {
       error.method = `Helper/Stage/getStages(requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
@@ -240,7 +240,7 @@ module.exports = class Stage extends Helper {
   }
 
   _cleanUp () {
+    this._stages = [];
     this._slots = {};
-    this._cache = {};
   }
 };
