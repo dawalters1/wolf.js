@@ -19,6 +19,7 @@ module.exports = {
   GROUP_AUDIO_CONSUME: 'group audio consume',
   GROUP_AUDIO_BROADCAST_UPDATE: 'group audio broadcast update',
 
+  GROUP_EVENT: 'group event',
   GROUP_CREATE: 'group create',
   GROUP_DISCOVERY_LIST: 'group discovery list',
   GROUP_PROFILE_UPDATE: 'group profile update',
@@ -29,6 +30,10 @@ module.exports = {
   GROUP_AUDIO_UPDATE: 'group audio update',
   GROUP_STATS: 'group stats',
   GROUP_MEMBER_LIST: 'group member list',
+  GROUP_EVENT_UPDATE: 'group event update',
+  GROUP_EVENT_CREATE: 'group event create',
+  GROUP_EVENT_DELETE: 'group event delete',
+  GROUP_EVENT_LIST: 'group event list',
 
   MESSAGE_CONVERSATION_LIST: 'message conversation list',
   MESSAGE_PRIVATE_SUBSCRIBE: 'message private subscribe',
@@ -50,6 +55,10 @@ module.exports = {
 
   STAGE_LIST: 'stage list',
   STAGE_GROUP_ACTIVE_LIST: 'stage group active list',
+
+  SUBSCRIBER_GROUP_EVENT_ADD: 'subscriber group event add',
+  SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriber group event delete',
+  SUBSCRIBER_GROUP_EVENT_LIST: 'subscriber group event list',
 
   SUBSCRIBER_PROFILE: 'subscriber profile',
   SUBSCRIBER_GROUP_LIST: 'subscriber group list',

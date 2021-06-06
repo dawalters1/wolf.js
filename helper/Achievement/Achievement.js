@@ -12,7 +12,8 @@ module.exports = class Achievement extends Helper {
   constructor (bot) {
     super(bot);
 
-    this._cache = {};
+    this._categories = {};
+    this._achievements = {};
 
     this._group = new Group(bot);
     this._subscriber = new Subscriber(bot);
@@ -34,8 +35,8 @@ module.exports = class Achievement extends Helper {
         throw new Error('language is invalid');
       }
 
-      if (!requestNew && this._cache[`categoryList-${language}`]) {
-        return this._cache[`categoryList-${language}`];
+      if (!requestNew && this._categories[language]) {
+        return this._categories[language];
       }
 
       const result = await this._websocket.emit(request.ACHIEVEMENT_CATEGORY_LIST, {
@@ -43,10 +44,10 @@ module.exports = class Achievement extends Helper {
       });
 
       if (result.success) {
-        this._cache[`categoryList-${language}`] = result.body;
+        this._categories[language] = result.body;
       }
 
-      return this._cache[`categoryList-${language}`] || [];
+      return this._categories[language] || [];
     } catch (error) {
       error.method = `Helper/Achievement/getCategoryList(language = ${JSON.stringify(language)}, requestNew =  ${JSON.stringify(requestNew)})`;
       throw error;
@@ -77,8 +78,8 @@ module.exports = class Achievement extends Helper {
 
       const achievements = [];
 
-      if (!requestNew && this._cache[`achievementsList-${language}`]) {
-        const cached = this._cache[`achievementsList-${language}`].filter((achievement) => achievementIds.includes(achievement.id));
+      if (!requestNew && this._achievements[language]) {
+        const cached = this._achievements[language].filter((achievement) => achievementIds.includes(achievement.id));
 
         if (cached.length > 0) {
           achievements.push(...cached);
@@ -120,16 +121,17 @@ module.exports = class Achievement extends Helper {
   _process (achievement, language) {
     achievement.exists = true;
 
-    if (this._cache[`achievementsList-${language}`]) {
-      this._cache[`achievementsList-${language}`].push(achievement);
+    if (this._achievements[language]) {
+      this._achievements[language].push(achievement);
     } else {
-      this._cache[`achivementsList-${language}`] = [achievement];
+      this._achievements[language] = [achievement];
     }
 
     return achievement;
   }
 
   _cleanUp () {
-    this._cache = {};
+    this._categories = {};
+    this._achievements = {};
   }
 };

@@ -2,13 +2,14 @@ const Helper = require('../Helper');
 const Response = require('../../networking/Response');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
+const uploadToMediaService = require('../../utils/uploadToMediaService');
+const routes = require('@dawalters1/wolf.js.mms/constants/routes');
 
 module.exports = class Group extends Helper {
   constructor (bot) {
     super(bot);
-    this._cache = [];
+    this._groups = [];
     this._joinedGroupsRequested = false;
   }
 
@@ -19,9 +20,9 @@ module.exports = class Group extends Helper {
       } else {
         for (const groupId of groupIds) {
           if (!validator.isValidNumber(groupId)) {
-            throw new Error('subscriberId must be a valid number');
+            throw new Error('groupId must be a valid number');
           } else if (validator.isLessThanOrEqualZero(groupId)) {
-            throw new Error('subscriberId cannot be less than or equal to 0');
+            throw new Error('groupId cannot be less than or equal to 0');
           }
         }
       }
@@ -31,7 +32,7 @@ module.exports = class Group extends Helper {
       const groups = [];
 
       if (!requestNew) {
-        const cached = this._cache.filter((group) => groupIds.includes(group.id));
+        const cached = this._groups.filter((group) => groupIds.includes(group.id));
         if (cached.length > 0) {
           groups.push(...cached);
         }
@@ -103,7 +104,7 @@ module.exports = class Group extends Helper {
       }
 
       if (!requestNew) {
-        const group = this._cache.find((grp) => grp.name.toLowerCase() === targetGroupName.toLowerCase().trim());
+        const group = this._groups.find((grp) => grp.name.toLowerCase() === targetGroupName.toLowerCase().trim());
 
         if (group) {
           return group;
@@ -307,6 +308,15 @@ module.exports = class Group extends Helper {
     }
   }
 
+  async updateAvatar (groupId, avatar) {
+    try {
+      return await uploadToMediaService(this._bot, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
+    } catch (error) {
+      error.method = `Helper/Group/updateAvatar(groupId = ${JSON.stringify(groupId)}, avatar = ${JSON.stringify('Too big, not displaying this')})`;
+      throw error;
+    }
+  }
+
   async updateGroupSubscriber (groupId, subscriberId, capability) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -341,7 +351,7 @@ module.exports = class Group extends Helper {
   async _getJoinedGroups () {
     try {
       if (this._joinedGroupsRequested) {
-        return this._cache.filter((group) => group.inGroup);
+        return this._groups.filter((group) => group.inGroup);
       }
 
       const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_LIST, {
@@ -368,21 +378,21 @@ module.exports = class Group extends Helper {
 
   _process (group) {
     if (group.exists) {
-      const existing = this._cache.find((grp) => grp.id === group.id);
+      const existing = this._groups.find((grp) => grp.id === group.id);
 
       if (existing) {
         for (const key in group) {
           existing[key] = group[key];
         }
       } else {
-        this._cache.push(group);
+        this._groups.push(group);
       }
     }
     return group;
   }
 
   _cleanUp () {
-    this._cache = [];
+    this._groups = [];
     this._joinedGroupsRequested = false;
   }
 };
