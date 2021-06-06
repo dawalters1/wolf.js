@@ -1,8 +1,6 @@
 const path = require('path');
 const fs = require('fs');
 
-const imageSize = require('image-size');
-
 const Websocket = require('./networking/Websocket');
 const CommandHandler = require('./Command/CommandHandler');
 
@@ -20,7 +18,6 @@ const Phrase = require('./helper/Phrase/Phrase');
 const Stage = require('./helper/Stage/Stage');
 const Subscriber = require('./helper/Subscriber/Subscriber');
 const Tip = require('./helper/Tip/Tip');
-const MMS = require('./mms');
 
 const yaml = require('yaml');
 
@@ -31,6 +28,8 @@ const Utilities = require('./utility');
 const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
+const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+const uploadToMediaService = require('./utils/uploadToMediaService');
 
 const validateConfig = (bot, config) => {
   if (!config) {
@@ -150,8 +149,6 @@ module.exports = class WolfBot {
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
     this.currentSubscriber = null;
-
-    this._mms = new MMS(this);
 
     this._utilities = Utilities(this);
   }
@@ -374,17 +371,7 @@ module.exports = class WolfBot {
 
   async updateAvatar (avatar) {
     try {
-      if (!Buffer.isBuffer(avatar)) {
-        throw new Error('avatar must be a buffer');
-      }
-
-      const size = imageSize(avatar);
-
-      if (size.width !== size.height) {
-        throw new Error('avatar must be square');
-      }
-
-      return this._mms._uploadSubscriberAvatar(avatar);
+      return await uploadToMediaService(this, routes.SUBSCRIBER_AVATAR_UPLOAD, avatar);
     } catch (error) {
       error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
