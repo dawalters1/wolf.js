@@ -11,54 +11,74 @@ module.exports = class Contact extends Helper {
   }
 
   async list () {
-    if (this._cache.length > 0) {
-      return this._cache;
+    try {
+      if (this._cache.length > 0) {
+        return this._cache;
+      }
+
+      const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
+        {
+          subscribe: true
+        });
+
+      if (result.success) {
+        this._cache = result.body;
+      }
+
+      return this._cache || [];
+    } catch (error) {
+      error.method = 'Helper/Contact/list()';
+      throw error;
     }
-
-    const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
-      {
-        subscribe: true
-      });
-
-    if (result.success) {
-      this._cache = result.body;
-    }
-
-    return this._cache || [];
   }
 
   async isContact (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
 
-    return (await this.list()).find((contact) => contact.id === subscriberId) !== null;
+      return (await this.list()).find((contact) => contact.id === subscriberId) !== null;
+    } catch (error) {
+      error.method = `Helper/Contact/isContact(subscriberId = ${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
 
   async add (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
 
-    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
-      id: subscriberId
-    });
+      return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
+        id: subscriberId
+      });
+    } catch (error) {
+      error.method = `Helper/Contact/add(subscriberId = ${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
 
   async delete (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
 
-    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
-      id: subscriberId
-    });
+      return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
+        id: subscriberId
+      });
+    } catch (error) {
+      error.method = `Helper/Contact/delete(subscriberId = ${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
 
   async _process (id) {
