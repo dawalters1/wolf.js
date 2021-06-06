@@ -32,12 +32,13 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
     throw new Error(`content mimeType must be ${Object.values(allowedMimeTypes).join(', ')}`);
   }
 
-  const size = imageSize(content);
+  if (route !== routes.MESSAGE_SEND) {
+    const size = imageSize(content);
 
-  if (size.width !== size.height) {
-    throw new Error('image must be square');
+    if (size.width !== size.height) {
+      throw new Error('image must be square');
+    }
   }
-
   const body = {
     data: Buffer.from(content).toString('base64'),
     mimeType
