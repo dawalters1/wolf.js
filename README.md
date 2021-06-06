@@ -27,9 +27,9 @@ An unofficial Node.js API for [WOLF](https://wolf.live/) (AKA Palringo).
 
 Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/bot+approval?r=80280172) or [bot approval.ar](http://wolflive.com/bot+approval.ar?r=80280172)
  
-# Known Issues
-- Cannot join Stages
-- Cannot update avatars
+# Known Issues - Version fixed/implemented
+- Cannot join Stages - V0.2.0
+- Cannot update avatars - V0.3.0
 - Cannot receive new notifications
-- Cannot send Voice Messages or GIFS
-- Cannot fetch, create or update group events
+- Cannot send Voice Messages or GIFS - V0.3.0
+- Cannot fetch, create or update group events - V0.3.0
