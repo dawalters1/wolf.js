@@ -77,7 +77,7 @@ module.exports = class Messaging extends Helper {
 
   async _sendMessage (targetType, targetId, content, includeEmbeds = false) {
     try {
-      const mimeType = (await fileType.fromBuffer(content)).mime;
+      const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
       if (typesToUseMMS.includes(mimeType)) {
         return await uploadToMediaService(this._bot, routes.MESSAGE_SEND, content, mimeType, targetId, targetType === targetTypes.GROUP);

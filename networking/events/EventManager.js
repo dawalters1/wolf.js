@@ -29,6 +29,10 @@ module.exports = class EventManager {
   groupAudioUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_UPDATE, fn); }
   groupAudioCountUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_COUNT_UPDATE, fn); }
   groupAudioSlotUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_SLOT_UPDATE, fn); }
+  groupEventCreated (fn) { this._eventEmitter.on(event.GROUP_EVENT_CREATE, fn); }
+  groupEventUpdated (fn) { this._eventEmitter.on(event.GROUP_EVENT_UPDATE, fn); }
+  subscriberGroupEventAdded (fn) { this._eventEmitter.on(event.SUBSCRIBER_GROUP_EVENT_ADD, fn); }
+  subscriberGroupEventDeleted (fn) { this._eventEmitter.on(event.SUBSCRIBER_GROUP_EVENT_DELETE, fn); }
   joinedGroup (fn) { this._eventEmitter.on(internal.JOINED_GROUP, fn); }
   leftGroup (fn) { this._eventEmitter.on(internal.LEFT_GROUP, fn); }
   groupUpdated (fn) { this._eventEmitter.on(event.GROUP_UPDATE, fn); }
@@ -55,11 +59,11 @@ module.exports = class EventManager {
     for (const handler of fs.readdirSync(path.join(__dirname, './handlers')).filter(file => file.endsWith('.js'))) {
       const name = path.parse(handler).name.toLowerCase().replace(/_/gi, ' ');
       try {
-        const Event = require(`./handlers/${handler}`);
+        const Event = require(path.join(__dirname, `./handlers/${handler}`));
         this._handlers[name] = new Event(this, name);
         this._bot.on._emit(internal.LOG, `Registered Server Event: ${name}`);
       } catch (error) {
-        this._bot.on.emit(internal.ERROR, `Unable to register Server Event: ${name}`, error);
+        this._bot.on._emit(internal.ERROR, `Unable to register Server Event: ${name}\nError: ${JSON.stringify(error, null, 4)}`);
       }
     }
   }

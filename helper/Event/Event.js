@@ -8,6 +8,7 @@ module.exports = class Event extends Helper {
     super(bot);
     this._events = [];
     this._eventList = {};
+    this._subscriptions = [];
   }
 
   async getGroupEvents (groupId, requestNew = false) {
@@ -27,7 +28,7 @@ module.exports = class Event extends Helper {
       });
 
       if (result.success) {
-        this._eventList[groupId] = result.body;
+        this._eventList[groupId] = await this.getByIds(result.body.map((evt) => evt.id));
       }
 
       return this._eventList[groupId] || [];
@@ -56,7 +57,7 @@ module.exports = class Event extends Helper {
       const events = [];
 
       if (!requestNew) {
-        const cached = this._events.filter((group) => eventIds.includes(group.id));
+        const cached = this._events.filter((evt) => eventIds.includes(evt.id));
         if (cached.length > 0) {
           events.push(...cached);
         }
@@ -72,6 +73,7 @@ module.exports = class Event extends Helper {
               idList: batchEventIdList
             }
           });
+
           if (result.success) {
             for (const [index, event] of result.body.map((resp) => new Response(resp)).entries()) {
               if (event.success) {
@@ -133,11 +135,11 @@ module.exports = class Event extends Helper {
       }
 
       return await this._websocket.emit(request.GROUP_EVENT_CREATE, {
-        endsAt,
+        endsAt: new Date(endsAt),
         groupId,
         longDescription,
         shortDescription,
-        startsAt,
+        startsAt: new Date(startsAt),
         title
       });
     } catch (error) {
@@ -178,13 +180,14 @@ module.exports = class Event extends Helper {
 
       return await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
         id: eventId,
-        endsAt,
+        endsAt: new Date(endsAt),
         groupId,
         longDescription,
         shortDescription,
-        startsAt,
+        startsAt: new Date(startsAt),
         title,
-        imageUrl
+        imageUrl,
+        isRemoved: false
       });
     } catch (error) {
       error.method = `Helper/Event/updateEvent(groupId = ${JSON.stringify(groupId)}, eventId = ${JSON.stringify(eventId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)}, imageUrl = ${JSON.stringify(imageUrl)}, isRemoved = ${JSON.stringify(false)})`;
@@ -217,8 +220,107 @@ module.exports = class Event extends Helper {
     }
   }
 
+  async subscribeToEvent (eventId) {
+    try {
+      if (!validator.isValidNumber(eventId)) {
+        throw new Error('eventId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new Error('eventId cannot be less than or equal to 0');
+      }
+
+      return await this._websocket.emit(request.SUBSCRIBER_GROUP_EVENT_ADD, {
+        id: eventId
+      });
+    } catch (error) {
+      error.method = `Helper/Event/subscribeToEvent(eventId = ${JSON.stringify(eventId)})`;
+      throw error;
+    }
+  }
+
+  async unsubscribeFromEvent (eventId) {
+    try {
+      if (!validator.isValidNumber(eventId)) {
+        throw new Error('eventId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new Error('eventId cannot be less than or equal to 0');
+      }
+
+      return await this._websocket.emit(request.SUBSCRIBER_GROUP_EVENT_DELETE, {
+        id: eventId
+      });
+    } catch (error) {
+      error.method = `Helper/Event/unsubscribeFromEvent(eventId = ${JSON.stringify(eventId)})`;
+      throw error;
+    }
+  }
+
+  async getEventSubscriptions (requestNew = false) {
+    if (!requestNew && this._subscriptions.length > 0) {
+      return this._subscriptions;
+    }
+
+    const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_EVENT_LIST,
+      {
+        subscribe: true
+      });
+
+    if (result.success) {
+      this._subscriptions = result.body;
+    }
+
+    return this._subscriptions || [];
+  }
+
+  _process (event) {
+    if (event.isRemoved) {
+      this._events = this._events.filter((evt) => evt.id !== event.id);
+
+      if (this._eventList[event.groupId]) {
+        this._eventList[event.groupId] = this._eventList[event.groupId].filter((evt) => evt.id !== event.id);
+      }
+    } else {
+      const existing = this._events.find((evt) => evt.id === event.id);
+
+      if (existing) {
+        for (const key in event) {
+          existing[key] = event[key];
+        }
+
+        if (this._eventList[event.groupId]) {
+          const groupEvent = this._eventList[event.groupId].find((evt) => evt.id === event.id);
+          for (const key in event) {
+            groupEvent[key] = event[key];
+          }
+        }
+      } else {
+        this._events.push(event);
+
+        if (this._eventList[event.groupId]) {
+          this._eventList[event.groupId].push(event);
+        } else {
+          this._eventList[event.groupId] = [event];
+        }
+      }
+    }
+
+    return event;
+  }
+
+  _subscription (subscription) {
+    const existing = this._subscriptions.find((sub) => sub.id === subscription.id);
+
+    if (existing) {
+      this._subscriptions = this._subscriptions.filter((sub) => sub.id !== subscription.id);
+    } else {
+      this._subscriptions.push(subscription);
+    }
+
+    return subscription;
+  }
+
   _cleanUp () {
     this._eventList = {};
     this._events = [];
+    this._subscriptions = [];
   }
 };

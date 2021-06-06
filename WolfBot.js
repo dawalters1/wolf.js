@@ -11,6 +11,7 @@ const Banned = require('./helper/Banned/Banned');
 const Blocked = require('./helper/Blocked/Blocked');
 const Charm = require('./helper/Charm/Charm');
 const Contact = require('./helper/Contact/Contact');
+const Event = require('./helper/Event/Event');
 const Group = require('./helper/Group/Group');
 const Messaging = require('./helper/Messaging/Messaging');
 const Notification = require('./helper/Notification/Notification');
@@ -141,6 +142,7 @@ module.exports = class WolfBot {
     this._blocked = new Blocked(this);
     this._charm = new Charm(this);
     this._contact = new Contact(this);
+    this._event = new Event(this);
     this._group = new Group(this);
     this._messaging = new Messaging(this);
     this._notification = new Notification(this);
@@ -179,6 +181,10 @@ module.exports = class WolfBot {
 
   contact () {
     return this._contact;
+  }
+
+  event () {
+    return this._event;
   }
 
   group () {
@@ -382,6 +388,7 @@ module.exports = class WolfBot {
     this._blocked._cleanUp();
     this._contact._cleanUp();
     this._charm._cleanUp();
+    this._event._cleanUp();
     this._group._cleanUp();
     this._subscriber._cleanUp();
     this._notification._cleanUp();

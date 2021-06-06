@@ -15,7 +15,10 @@ module.exports = class WolfClient {
   create () {
     this.socket = io(`${this.host}:${this.port}/?token=${this._bot.config.options.token}&device=${this._bot.config.app.loginSettings.loginDevice}`, {
       transports: ['websocket'],
-      reconnection: true
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: Infinity
     });
 
     this.socket.on('connect', () => this._bot.on._emit('connect'));
@@ -27,6 +30,9 @@ module.exports = class WolfClient {
     this.socket.on('disconnect', reason => {
       this._bot._cleanUp();
       this._bot.on._emit('disconnect', reason);
+      if (reason === 'io server disconnect') {
+        this.socket.connect();
+      }
     });
 
     this.socket.on('error', error => this._bot.on._emit('error', error));
