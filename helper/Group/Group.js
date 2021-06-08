@@ -360,7 +360,6 @@ module.exports = class Group extends Helper {
         subscribe: true
       });
 
-      console.log('requesting joined groups');
       if (result.success) {
         this._joinedGroupsRequested = true;
         const groups = await this.getByIds(result.body.map((group) => group.id));
