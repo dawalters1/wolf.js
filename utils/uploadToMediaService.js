@@ -9,11 +9,13 @@ const {
 } = require('uuid');
 
 const allowedMimeTypes = {
+  TEXT_PLAIN: 'text/plain',
   IMAGE_JPEG: 'image/jpeg',
   IMAGE_GIF: 'image/gif'
 };
 
 module.exports = async (bot, route, content, mimeType, targetId = undefined, isGroup = false) => {
+  try{
   if (route === routes.GROUP_AVATAR_UPLOAD || route === routes.EVENT_IMAGE) {
     if (!validator.isValidNumber(targetId)) {
       throw new Error('targetId must be a valid number');
@@ -40,7 +42,7 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
     }
   }
   const body = {
-    data: Buffer.from(content).toString('base64'),
+    data: content.toString('base64'),
     mimeType
   };
 
@@ -54,4 +56,8 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
   }
 
   return await new MultiMediaService(bot).request('POST', route, body);
+} catch (error) {
+  error.method = `Utils/uploadToMediaService(route = ${JSON.stringify(route)}, content =${JSON.stringify('not displaying')}, mimeType = ${JSON.stringify(mimeType)}, targetId = ${JSON.stringify(targetId)}, isGroup = ${JSON.stringify(isGroup)})`;
+  throw error;
+}
 };

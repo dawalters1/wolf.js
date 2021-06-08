@@ -36,11 +36,11 @@ module.exports = class ToReadableTime extends BaseUtility {
       seconds = seconds % 60;
 
       if (hours > 0) {
-        return `${hours}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_hour`)} ${minutes}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
+        return `${hours.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_hour`)} ${minutes.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
       } else if (minutes > 0) {
-        return `${minutes}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
+        return `${minutes.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
       }
-      return `${seconds}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
+      return `${seconds.toFixed(2)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
     } catch (error) {
       error.method = `Utility/utilties/toReadableTime(language = ${JSON.stringify(language)}, milliseconds = ${JSON.stringify(milliseconds)})`;
       throw error;

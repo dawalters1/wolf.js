@@ -231,8 +231,6 @@ module.exports = class WolfBot {
 
     this._eventManager._unregister();
 
-    this._stage._cache = {};
-
     this._cleanUp();
   }
 

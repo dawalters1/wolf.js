@@ -1,6 +1,9 @@
 const Helper = require('../Helper');
 const validator = require('@dawalters1/validator');
 const fileType = require('file-type');
+const {
+  v4: uuidv4
+} = require('uuid');
 
 const targetTypes = {
   GROUP: 'group',
@@ -10,9 +13,6 @@ const targetTypes = {
 const typesToUseMMS = [
   'image/jpeg',
   'image/gif',
-  'audio/aac',
-
-  'audio/mpeg'
 ];
 
 const supportedMessageTypes = [
@@ -93,7 +93,8 @@ module.exports = class Messaging extends Helper {
         recipient: targetId,
         isGroup: targetType === targetTypes.GROUP,
         mimeType,
-        data: Buffer.from(content, 'utf8')
+        data: Buffer.from(content, 'utf8'),
+        flightId: uuidv4()
       };
 
       const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];

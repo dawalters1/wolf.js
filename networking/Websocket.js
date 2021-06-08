@@ -30,6 +30,7 @@ module.exports = class WolfClient {
     this.socket.on('disconnect', reason => {
       this._bot._cleanUp();
       this._bot.on._emit('disconnect', reason);
+      //Socket doesnt reconnect on io server disconnect, manually reconnect
       if (reason === 'io server disconnect') {
         this.socket.connect();
       }
