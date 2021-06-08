@@ -266,7 +266,7 @@ module.exports = class Group extends Helper {
       const group = await this.getById(groupId);
 
       if (group.inGroup) {
-        if (!requestNew && group.subscribers && group.subscribers.length === group.members) {
+        if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
           return group.subscribers;
         }
 
@@ -284,6 +284,8 @@ module.exports = class Group extends Helper {
           group.subscribers = result.body;
         }
       }
+
+      this._process(group);
 
       return group.subscribers || [];
     } catch (error) {

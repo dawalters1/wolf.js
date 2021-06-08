@@ -21,11 +21,11 @@ module.exports = class PresenceUpdate extends BaseEvent {
       this._bot.subscriber()._process(data);
     }
 
-    if (this._bot.contact().isContact(data.id)) {
+    if (this._bot.contact()._contacts.length > 0 && this._bot.contact().isContact(data.id)) {
       this._bot.contact()._patch(data);
     }
 
-    if (this._bot.blocked().isBlocked(data.id)) {
+    if (this._bot.blocked()._blocked.length > 0 && this._bot.blocked().isBlocked(data.id)) {
       this._bot.blocked()._patch(data);
     }
 
