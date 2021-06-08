@@ -3,6 +3,11 @@ const Response = require('../../networking/Response');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
+const uploadToMediaService = require('../../utils/uploadToMediaService');
+const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+
+const fileType = require('file-type');
+
 module.exports = class Event extends Helper {
   constructor (bot) {
     super(bot);
@@ -110,7 +115,7 @@ module.exports = class Event extends Helper {
     }
   }
 
-  async createEvent (groupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined) {
+  async createEvent (groupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, image = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -134,7 +139,12 @@ module.exports = class Event extends Helper {
         throw new Error('endsAt must be after startsAt');
       }
 
-      return await this._websocket.emit(request.GROUP_EVENT_CREATE, {
+      if (image !== undefined && !Buffer.isBuffer(image)) {
+        throw new Error('image must be a buffer');
+      }
+    
+
+      const result = await this._websocket.emit(request.GROUP_EVENT_CREATE, {
         endsAt: new Date(endsAt),
         groupId,
         longDescription,
@@ -142,13 +152,19 @@ module.exports = class Event extends Helper {
         startsAt: new Date(startsAt),
         title
       });
+
+      if(result.success && image !== undefined){
+        result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, result.body.id);
+      }
+
+      return result;
     } catch (error) {
       error.method = `Helper/Event/createEvent(groupId = ${JSON.stringify(groupId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)})`;
       throw error;
     }
   }
 
-  async updateEvent (groupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined) {
+  async updateEvent (groupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, image = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -178,7 +194,11 @@ module.exports = class Event extends Helper {
         throw new Error('endsAt must be after startsAt');
       }
 
-      return await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
+      if (image !== undefined && !Buffer.isBuffer(image)) {
+        throw new Error('image must be a buffer');
+      }
+    
+      const result =  await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
         id: eventId,
         endsAt: new Date(endsAt),
         groupId,
@@ -189,8 +209,33 @@ module.exports = class Event extends Helper {
         imageUrl,
         isRemoved: false
       });
+
+      if(result.success && image !== undefined){
+        result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+      }
+
+      return result;
     } catch (error) {
       error.method = `Helper/Event/updateEvent(groupId = ${JSON.stringify(groupId)}, eventId = ${JSON.stringify(eventId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)}, imageUrl = ${JSON.stringify(imageUrl)}, isRemoved = ${JSON.stringify(false)})`;
+      throw error;
+    }
+  }
+
+  async updateEventImage(eventId, image){
+    try {
+      if (!validator.isValidNumber(eventId)) {
+        throw new Error('eventId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new Error('eventId cannot be less than or equal to 0');
+      }
+
+      if (image !== undefined && !Buffer.isBuffer(image)) {
+        throw new Error('image must be a buffer');
+      }
+    
+      return await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+    } catch (error) {
+      error.method = `Helper/Event/updateEvent(eventId = ${JSON.stringify(groupId)}, image = ${JSON.stringify('too large to display')})`;
       throw error;
     }
   }
