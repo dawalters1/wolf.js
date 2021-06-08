@@ -52,7 +52,9 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
     body.isGroup = isGroup;
     body.flightId = uuidv4();
   } else if (route === routes.GROUP_AVATAR_UPLOAD) {
-    body.groupId = targetId;
+    body.id = targetId;
+  } else if(route === routes.EVENT_IMAGE){
+    body.id = targetId;
   }
 
   return await new MultiMediaService(bot).request('POST', route, body);
