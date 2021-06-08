@@ -235,7 +235,7 @@ module.exports = class Event extends Helper {
     
       return await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
     } catch (error) {
-      error.method = `Helper/Event/updateEvent(eventId = ${JSON.stringify(groupId)}, image = ${JSON.stringify('too large to display')})`;
+      error.method = `Helper/Event/updateEventImage(eventId = ${JSON.stringify(groupId)}, image = ${JSON.stringify('too large to display')})`;
       throw error;
     }
   }
