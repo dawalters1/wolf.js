@@ -15,7 +15,8 @@ module.exports = class CommandHandler {
             try {
                 await this.processMessage(message);
             } catch (error) {
-                throw new Error(`CommandHandler error:\nMessage: ${JSON.stringify(message, null, 4)}\nError: ${error}`);
+                error.message = `Error handling ${message.isGroup?'Group':'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+                throw error;
             }
         });
     }
@@ -40,10 +41,6 @@ module.exports = class CommandHandler {
         const validateCommands = cmds => {
             cmds.forEach(command => {
                 const phrase = this._bot.phrase().getAllByName(command.trigger);
-
-                if (!phrase) {
-                    throw Error(`missing phrase ${command.trigger}`);
-                }
 
                 if (command.children.length > 0) {
                     validateCommands(command.children);
