@@ -57,7 +57,7 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
     body.id = targetId;
   }
 
-  return await new MultiMediaService(bot).request('POST', route, body);
+  return await bot._mediaService.request('POST', route, body);
 } catch (error) {
   error.method = `Utils/uploadToMediaService(route = ${JSON.stringify(route)}, content =${JSON.stringify('not displaying')}, mimeType = ${JSON.stringify(mimeType)}, targetId = ${JSON.stringify(targetId)}, isGroup = ${JSON.stringify(isGroup)})`;
   throw error;
