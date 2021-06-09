@@ -31,6 +31,7 @@ const request = require('./constants/request');
 const constants = require('@dawalters1/constants');
 const routes = require('@dawalters1/wolf.js.mms/constants/routes');
 const uploadToMediaService = require('./utils/uploadToMediaService');
+const MultiMediaService = require('@dawalters1/wolf.js.mms');
 
 const validateConfig = (bot, config) => {
   if (!config) {
@@ -151,6 +152,8 @@ module.exports = class WolfBot {
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
     this.currentSubscriber = null;
+
+    this._mediaService = new MultiMediaService(this);
 
     this._utilities = Utilities(this);
   }
