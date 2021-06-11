@@ -26,17 +26,16 @@
   "dependencies": {
     "@dawalters1/constants": "^1.0.1",
     "@dawalters1/validator": "^1.0.5",
-    "@dawalters1/wolf.js.mms": "1.1.0",
     "config": "^3.3.6",
     "file-type": "^16.5.0",
     "http-status-codes": "^2.1.4",
     "image-size": "^1.0.0",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
+    "superagent": "6.1.0",
     "socket.io-client": "^2.3.1",
     "socketio-wildcard": "^2.0.0",
     "uuid": "^8.3.2",
-    "yaml": "^1.10.2"
+    "yaml": "^1.10.2",
+    "aws-sdk": "^2.922.0"
   },
   "license": "MIT",
   "devDependencies": {

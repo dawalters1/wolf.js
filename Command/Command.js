@@ -1,4 +1,4 @@
-const Command = require('./Command');
+
 const validator = require('@dawalters1/validator')
 
 const callbacks = {

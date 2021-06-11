@@ -1,16 +1,10 @@
-const request = require('request-promise');
 const BaseUtility = require('../BaseUtility');
 const validator = require('@dawalters1/validator');
+const superagent = require('superagent');
 
-const download = async (url, type) => {
-  return await request({
-    method: 'GET',
-    url,
-    encoding: null,
-    resolveWithFullResponse: true,
-    timeout: 3000
-  });
-};
+const download = async (url) =>  request.get(url)
+    .buffer(true).parse(superagent.parse.image)
+    .then(res => res.body);
 
 module.exports = class Download extends BaseUtility {
   constructor (bot) {
@@ -24,8 +18,8 @@ module.exports = class Download extends BaseUtility {
   }
 
   async file (url) {
-    try {
-      if (typeof (arg) !== 'string') {
+      try {
+        if (typeof (arg) !== 'string') {
         throw new Error('argument must be a string');
       } else if (validator.isNullOrWhitespace(url)) {
         throw new Error('url cannot be null or empty');

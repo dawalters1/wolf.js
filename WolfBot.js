@@ -29,9 +29,9 @@ const Utilities = require('./utility');
 const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
-const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+const routes = require('./MultiMediaService/routes');
 const uploadToMediaService = require('./utils/uploadToMediaService');
-const MultiMediaService = require('@dawalters1/wolf.js.mms');
+const MultiMediaService = require('./MultiMediaService/MultiMediaService');
 
 const validateConfig = (bot, config) => {
   if (!config) {
