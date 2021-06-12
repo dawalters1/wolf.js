@@ -32,12 +32,8 @@ module.exports = class MultiMediaService {
     }
 
     async _getCredentialsIfNeeded(){
-      if(this._creds && !this._creds.expired){
+      if(this._creds && !this._client.expired){
         return this._creds;
-      }
-
-      if(this._creds  && this._creds.expired) {
-        this._bot._cognito = (await this._bot.websocket.emit('security token refresh')).body;      
       }
 
       this._creds = await _getCredentials(this._bot);
