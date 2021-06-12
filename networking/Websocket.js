@@ -56,6 +56,8 @@ module.exports = class WolfClient {
 
       if (handler) {
         handler.process(data.body ? data.body : data);
+      } else {
+        this._bot.on.emit(internal.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
       }
 
       this._bot.on._emit(internal.PACKET_RECEIVED, eventString, data);
