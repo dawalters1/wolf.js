@@ -25,7 +25,7 @@ const request = require('../../constants/request');
 
 const constants = require('@dawalters1/constants');
 const uploadToMediaService = require('../../utils/uploadToMediaService');
-const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -105,6 +105,7 @@ module.exports = class Messaging extends Helper {
         body.metadata = {
           formatting: {}
         };
+
         if (ads && ads.length > 0) {
           body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
             const ad = {
@@ -139,7 +140,12 @@ module.exports = class Messaging extends Helper {
         }
 
         if (includeEmbeds) {
-          const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => b.start - a.start).reduce(async (result, item) => {
+          const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+            //Only 1 embed per message, else the server will throw an error.
+            if((await result).length > 0){
+              return result;
+            }
+
             if (Reflect.has(item, 'url')) {
               const metadata = await this.getLinkMetadata(item.url);
 

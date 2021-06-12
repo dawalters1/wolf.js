@@ -38,18 +38,6 @@ module.exports = class CommandHandler {
     }
 
     register(commands) {
-        const validateCommands = cmds => {
-            cmds.forEach(command => {
-                const phrase = this._bot.phrase().getAllByName(command.trigger);
-
-                if (command.children.length > 0) {
-                    validateCommands(command.children);
-                }
-            });
-        };
-
-        validateCommands(commands);
-
         this._commands = commands;
     }
 
