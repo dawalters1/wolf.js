@@ -1,6 +1,4 @@
-
-const MultiMediaService = require('@dawalters1/wolf.js.mms');
-const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+const routes = require('../MultiMediaService/routes');
 const validator = require('@dawalters1/validator');
 const imageSize = require('image-size');
 const { messageType } = require('@dawalters1/constants');

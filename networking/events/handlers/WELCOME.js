@@ -53,6 +53,11 @@ module.exports = class Welcome extends BaseEvent {
   }
 
   async onSuccess (reconnect = false) {
+    if(reconnect) {
+	    this._bot._cognito = (await this._bot.websocket.emit('security token refresh')).body;     
+		  this._bot._mediaService._creds = null;
+    }
+
     await Promise.all([
       this._bot.group()._getJoinedGroups(),
       this._bot.messaging()._messageGroupSubscribe(),

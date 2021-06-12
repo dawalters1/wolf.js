@@ -4,7 +4,7 @@ const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 const uploadToMediaService = require('../../utils/uploadToMediaService');
-const routes = require('@dawalters1/wolf.js.mms/constants/routes');
+const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Group extends Helper {
   constructor (bot) {
