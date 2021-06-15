@@ -3,6 +3,12 @@ const io = require('socket.io-client');
 const internal = require('../constants/internal');
 const Response = require('./Response');
 
+const ignoreEvents = [
+  'group member add',
+  'group member delete',
+  'group member update'
+]
+
 module.exports = class WolfClient {
   constructor (bot) {
     this._bot = bot;
@@ -54,14 +60,15 @@ module.exports = class WolfClient {
 
       const handler = this._bot._eventManager._handlers[eventString];
 
-      if (handler) {
-        handler.process(data.body ? data.body : data);
-      } else {
-        this._bot.on._emit(internal.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
+      if(!ignoreEvents.includes(eventString)){
+        if (handler) {
+          handler.process(data.body ? data.body : data);
+        } else {
+          this._bot.on._emit(internal.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
+        }
+
+          this._bot.on._emit(internal.PACKET_RECEIVED, eventString, data);
       }
-
-      this._bot.on._emit(internal.PACKET_RECEIVED, eventString, data);
-
       return Promise.resolve();
     });
   }
