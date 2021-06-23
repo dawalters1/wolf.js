@@ -103,11 +103,14 @@ module.exports = class CommandHandler {
             return commandContext;
         }
 
-        const foundCommand = command.children.reduce((result, child) => {
+       const foundCommand = command.children.reduce((result, child) => {
             if (!result) {
-                const phrase = this._bot.phrase().getByLanguageAndName(commandContext.language, child.trigger);
+                const phrases = this._bot.phrase().getAllByName(child.trigger);
 
-                if (phrase) {
+                // eslint-disable-next-line max-len
+                const match = phrases.find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+
+                if (match) {
                     if (phrase.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase()) {
                         if (
                             child.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
