@@ -111,7 +111,6 @@ module.exports = class CommandHandler {
                 const match = phrases.find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
                 if (match) {
-                    if (phrase.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase()) {
                         if (
                             child.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
                             (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
@@ -121,7 +120,6 @@ module.exports = class CommandHandler {
                             commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
                             return child;
                         }
-                    }
                 }
             }
             return result;
