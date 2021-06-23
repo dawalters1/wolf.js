@@ -116,7 +116,7 @@ module.exports = class CommandHandler {
                             (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
                             (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))
                         ) {
-                            commandContext.argument = commandContext.argument.substr(phrase.length).trim();
+                            commandContext.argument = commandContext.argument.substr(match.value.length).trim();
                             commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
                             return child;
                         }
