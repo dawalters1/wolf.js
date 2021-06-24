@@ -1,4 +1,3 @@
-
 module.exports = {
   GROUP_AUDIO_UPDATE: 'group audio update',
   GROUP_AUDIO_COUNT_UPDATE: 'group audio count update',

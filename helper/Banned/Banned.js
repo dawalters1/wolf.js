@@ -8,10 +8,17 @@ module.exports = class Banned extends Helper {
     this._banned = [];
   }
 
+  /**
+  * List of subscribers banned from using the bot
+  */
   list () {
     return this._banned;
   }
 
+  /**
+   * Check to see if a subscriber is banned from the bot
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   isBanned (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -27,10 +34,17 @@ module.exports = class Banned extends Helper {
     }
   }
 
+  /**
+   * Clear the banned subscriber list
+   */
   clear () {
     this._banned = [];
   }
 
+  /**
+   * Ban a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers
+   */
   ban (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {
@@ -56,6 +70,10 @@ module.exports = class Banned extends Helper {
     }
   }
 
+  /**
+   * Unban a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers
+   */
   unban (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {

@@ -14,10 +14,7 @@ module.exports = class Achievement extends BaseUtility {
     };
   }
 
-  async mapToCategories (...args) {
-    const achievements = args[0];
-
-    const language = args[1];
+  async mapToCategories (achievements, language) {
     try {
       if (!validator.isValidArray(achievements)) {
         throw new Error('achievements must be an array');
@@ -71,7 +68,7 @@ module.exports = class Achievement extends BaseUtility {
         return result;
       }, []);
     } catch (error) {
-      error.method = `Utility/utilties/achievement/mapToCategories(achievements = ${JSON.stringify(args[0])}, language = ${JSON.stringify(language)})`;
+      error.method = `Utility/utilties/achievement/mapToCategories(achievements = ${JSON.stringify(achievements)}, language = ${JSON.stringify(language)})`;
       throw error;
     }
   }

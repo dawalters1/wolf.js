@@ -8,6 +8,10 @@ module.exports = class Group extends Helper {
     super(bot);
   }
 
+  /**
+   * Get achievements for a group
+   * @param {Number} groupId - The id of the group
+   */
   async getById (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {

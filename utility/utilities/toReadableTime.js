@@ -1,5 +1,6 @@
 const BaseUtility = require('../BaseUtility');
 const validator = require('@dawalters1/validator');
+const moment = require('moment');
 
 module.exports = class ToReadableTime extends BaseUtility {
   constructor (bot) {
@@ -23,24 +24,37 @@ module.exports = class ToReadableTime extends BaseUtility {
         throw new Error('milliseconds cannot be less than 0');
       }
 
-      let seconds = milliseconds / 1000;
+      const info = moment.duration(milliseconds, 'milliseconds')._data;
 
-      // 2- Extract hours:
-      const hours = parseInt(seconds / 3600); // 3,600 seconds in 1 hour
-      seconds = seconds % 3600; // seconds remaining after extracting hours
+      let str = '';
 
-      // 3- Extract minutes:
-      const minutes = parseInt(seconds / 60); // 60 seconds in 1 minute
-
-      // 4- Keep only seconds not extracted to minutes:
-      seconds = seconds % 60;
-
-      if (hours > 0) {
-        return `${hours.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_hour`)} ${minutes.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
-      } else if (minutes > 0) {
-        return `${minutes.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minute`)} ${seconds.toFixed(0)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
+      if (info.years > 0) {
+        str = `${info.years}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_years`)}`;
       }
-      return `${seconds.toFixed(2)}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_second`)} `;
+
+      if (info.months > 0) {
+        str = str + ` ${info.months}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_months`)}`;
+      }
+
+      if (info.weeks > 0) {
+        str = str + ` ${info.weeks}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_weeks`)}`;
+      }
+
+      if (info.days > 0) {
+        str = str + ` ${info.days}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_days`)}`;
+      }
+
+      if (info.hours > 0) {
+        str = str + ` ${info.hours}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_hours`)}`;
+      }
+
+      if (info.minutes > 0) {
+        str = str + ` ${info.minutes}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minutes`)}`;
+      }
+
+      str = str + ` ${info.seconds}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_seconds`)}`;
+
+      return str.trim();
     } catch (error) {
       error.method = `Utility/utilties/toReadableTime(language = ${JSON.stringify(language)}, milliseconds = ${JSON.stringify(milliseconds)})`;
       throw error;

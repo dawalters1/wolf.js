@@ -43,6 +43,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   *
+   * List of all phrases loaded into the bot
+   */
   list () {
     try {
       return this._phrases.concat(this._local).filter(Boolean);
@@ -52,6 +56,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   *
+   * Get overall phrase count, and phrase count by language
+   */
   count () {
     try {
       const result = [...new Set(this.list().map((phrase) => phrase.language.toLowerCase()))].reduce((result, value) => {
@@ -70,6 +78,9 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Clear all phrases
+   */
   clear () {
     try {
       this._local = [];
@@ -80,6 +91,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Load phrases into the cache
+   * @param {[{name: string, value: string, language: string}]} phrases - List of phrases
+   */
   load (phrases) {
     try {
       if (!validator.isValidArray(phrases)) {
@@ -107,6 +122,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   *
+   * List of all languages in the cache
+   */
   getLanguageList () {
     try {
       return [...new Set(this.list().map((phrase) => phrase.language))];
@@ -116,6 +135,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * List of all phrases by name
+   * @param {String} name - The name of the phrase
+   */
   getAllByName (name) {
     try {
       if (validator.isNullOrWhitespace(name)) {
@@ -128,6 +151,11 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Get a phrase by language and name
+   * @param {string} language - The phrase languages
+   * @param {string} name - The phrase name
+   */
   getByLanguageAndName (language, name) {
     try {
       if (validator.isNullOrWhitespace(language)) {
@@ -155,6 +183,11 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Get a phrase by name using command language
+   * @param {Object} command - The command
+   * @param {String} name - The phrase name
+   */
   getByCommandAndName (command, name) {
     try {
       if (typeof (command) !== 'object') {
@@ -172,6 +205,11 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Check to see if what the user sent matches a specific phrase
+   * @param {*} name - The phrase name
+   * @param {*} value - The user input
+   */
   isRequestedPhrase (name, value) {
     try {
       return this.list().find((phrase) => this._bot.utility().string().isEqual(phrase.name, name) && this._bot.utility().string().isEqual(phrase.value, value));

@@ -2,7 +2,9 @@ const BaseEvent = require('../BaseEvent');
 
 const crypto = require('crypto');
 
-const { deviceType } = require('@dawalters1/constants');
+const {
+  deviceType
+} = require('@dawalters1/constants');
 
 const internal = require('../../../constants/internal');
 const request = require('../../../constants/request');
@@ -18,32 +20,32 @@ module.exports = class Welcome extends BaseEvent {
     this._bot.on._emit(this._command, data);
 
     if (!data.loggedInUser) {
-      const result = await this._websocket.emit(request.SECURITY_LOGIN,
-      {
-			  headers: {
+      const loginSettings = this._bot.config._loginSettings;
+      const result = await this._websocket.emit(request.SECURITY_LOGIN, {
+        headers: {
           version: 2
-			  },
-		  	body: {
-          type: this._bot.config.app.loginSettings.loginType,
-          deviceTypeId: toDeviceTypeId(this._bot.config.app.loginSettings.loginDevice),
-          onlineState: this._bot.config.app.loginSettings.onlineState,
-          username: this._bot.config.app.loginSettings.email,
-          password: crypto.createHash('md5').update(this._bot.config.app.loginSettings.password).digest('hex'),
-				  md5Password: true
+        },
+        body: {
+          type: loginSettings.loginType,
+          deviceTypeId: toDeviceTypeId(loginSettings.loginDevice),
+          onlineState: loginSettings.onlineState,
+          username: loginSettings.email,
+          password: crypto.createHash('md5').update(loginSettings.password).digest('hex'),
+          md5Password: true
         }
       });
 
-		  if (!result.success) {
-			  this._bot.on._emit(internal.LOGIN_FAILED, result);
-			  return;
-		  }
+      if (!result.success) {
+        this._bot.on._emit(internal.LOGIN_FAILED, result);
+        return;
+      }
 
-		  this._bot.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
-		  this._bot._cognito = result.body.cognito;
-		  this._bot.currentSubscriber = result.body.subscriber;
-		  this._bot._endpointConfig = data.endpointConfig;
+      this._bot.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
+      this._bot._cognito = result.body.cognito;
+      this._bot.currentSubscriber = result.body.subscriber;
+      this._bot._endpointConfig = data.endpointConfig;
     } else {
-		  this._bot.currentSubscriber = data.loggedInUser;
+      this._bot.currentSubscriber = data.loggedInUser;
     }
 
     this.onSuccess(data.loggedInUser);
