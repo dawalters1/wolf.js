@@ -13,6 +13,10 @@ module.exports = class Stage extends Helper {
     this._slots = {};
   }
 
+  /**
+   * Get list of stages available
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getStages (requestNew = false) {
     try {
       if (!requestNew && this._stages.stageCache) {
@@ -32,6 +36,11 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Get stage slots for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getSlots (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -60,6 +69,11 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Update a specific slot in a group
+   * @param {*} groupId - The id of the group
+   * @param {{id: Number, locked: Boolean}} slot - The slot to update
+   */
   async updateSlot (groupId, slot) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -95,6 +109,11 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Update a specific slot in a group
+   * @param {Number} groupId - The id of the group
+   * @param {{id: Number, locked: Boolean, slotId: Number, occupierId: Number, occupierMuted: Boolean}} slot - The slot to update
+   */
   async broadcastUpdate (groupId, slot) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -137,6 +156,12 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Disconnect a slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The id of the slot
+   * @param {Number} sourceSubscriberId - The id of the current subscriber using slot
+   */
   async broadcastDisconnect (groupId, slotId, sourceSubscriberId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -169,6 +194,12 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Join a stage
+   * @param {Number} groupId - The id of a group
+   * @param {Number} slotId - The id of the slot
+   * @param {String} sdp - RTC data
+   */
   async broadcast (groupId, slotId, sdp) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -200,6 +231,12 @@ module.exports = class Stage extends Helper {
     }
   }
 
+  /**
+   * Receive data for a slot
+   * @param {*} groupId - The id of the group
+   * @param {*} slotId - The id of the slot
+   * @param {*} sdp - RTC data
+   */
   async consume (groupId, slotId, sdp) {
     try {
       if (!validator.isValidNumber(groupId)) {

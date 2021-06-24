@@ -16,6 +16,11 @@ module.exports = class Event extends Helper {
     this._subscriptions = [];
   }
 
+  /**
+   * Get a list of events for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getGroupEvents (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -43,6 +48,11 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Get details about events by ID
+   * @param {[Number]} eventIds - The ids of the events
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (eventIds, requestNew = false) {
     try {
       if (!validator.isValidArray(eventIds)) {
@@ -100,6 +110,11 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Get details about an event by ID
+   * @param {Number} eventId - The id of the event
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (eventId, requestNew = false) {
     try {
       if (!validator.isValidNumber(eventId)) {
@@ -115,6 +130,16 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Create an event for a group
+   * @param {Number} groupId - The id of the group to create the event for
+   * @param {String} title - The name of the event
+   * @param {Date} startsAt - The time at which the event starts
+   * @param {Date} endsAt - The time at which the event ends
+   * @param {String} shortDescription - A short brief description about the event (Optional)
+   * @param {String} longDescription - The long description about the event (Optional)
+   * @param {Buffer} image - The event thumbnail (Optional)
+   */
   async createEvent (groupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, image = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -142,7 +167,6 @@ module.exports = class Event extends Helper {
       if (image !== undefined && !Buffer.isBuffer(image)) {
         throw new Error('image must be a buffer');
       }
-    
 
       const result = await this._websocket.emit(request.GROUP_EVENT_CREATE, {
         endsAt: new Date(endsAt),
@@ -153,7 +177,7 @@ module.exports = class Event extends Helper {
         title
       });
 
-      if(result.success && image !== undefined){
+      if (result.success && image !== undefined) {
         result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, result.body.id);
       }
 
@@ -164,6 +188,18 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Update an existing event for a group
+   * @param {Number} groupId - The id of the group to create the event for
+   * @param {Number} eventId - The id of the event in which to update
+   * @param {String} title - The name of the event
+   * @param {Date} startsAt - The time at which the event starts
+   * @param {Date} endsAt - The time at which the event ends
+   * @param {String} shortDescription - A short brief description about the event (Optional)
+   * @param {String} longDescription - The long description about the event (Optional)
+   * @param {String} imageUrl - The current url for the event thumbnail
+   * @param {Buffer} image - The event thumbnail (Optional)
+   */
   async updateEvent (groupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, image = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -197,8 +233,8 @@ module.exports = class Event extends Helper {
       if (image !== undefined && !Buffer.isBuffer(image)) {
         throw new Error('image must be a buffer');
       }
-    
-      const result =  await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
+
+      const result = await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
         id: eventId,
         endsAt: new Date(endsAt),
         groupId,
@@ -210,7 +246,7 @@ module.exports = class Event extends Helper {
         isRemoved: false
       });
 
-      if(result.success && image !== undefined){
+      if (result.success && image !== undefined) {
         result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
       }
 
@@ -221,7 +257,12 @@ module.exports = class Event extends Helper {
     }
   }
 
-  async updateEventImage(eventId, image){
+  /**
+   * Update an event thumbnail
+   * @param {Number} eventId - The id of the event
+   * @param {Buffer} image - The thumbnail for the event
+   */
+  async updateEventImage (eventId, image) {
     try {
       if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
@@ -232,14 +273,19 @@ module.exports = class Event extends Helper {
       if (image !== undefined && !Buffer.isBuffer(image)) {
         throw new Error('image must be a buffer');
       }
-    
+
       return await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
     } catch (error) {
-      error.method = `Helper/Event/updateEventImage(eventId = ${JSON.stringify(groupId)}, image = ${JSON.stringify('too large to display')})`;
+      error.method = `Helper/Event/updateEventImage(eventId = ${JSON.stringify(eventId)}, image = ${JSON.stringify('too large to display')})`;
       throw error;
     }
   }
 
+  /**
+   * Delete an event for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Number} eventId - The id of the event
+   */
   async deleteEvent (groupId, eventId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -265,6 +311,10 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Subscribe to an event
+   * @param {Number} eventId - The id of the event
+   */
   async subscribeToEvent (eventId) {
     try {
       if (!validator.isValidNumber(eventId)) {
@@ -282,6 +332,10 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Unsubscribe to an event
+   * @param {Number} eventId - The id of the event
+   */
   async unsubscribeFromEvent (eventId) {
     try {
       if (!validator.isValidNumber(eventId)) {
@@ -299,6 +353,11 @@ module.exports = class Event extends Helper {
     }
   }
 
+  /**
+   * Request a list of all subscribed events
+   * @param {Boolean} requestNew - Request new data from the server
+   * @returns
+   */
   async getEventSubscriptions (requestNew = false) {
     if (!requestNew && this._subscriptions.length > 0) {
       return this._subscriptions;

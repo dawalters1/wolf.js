@@ -24,7 +24,7 @@ module.exports = class SubscriberUpdate extends BaseEvent {
       if (this._bot.contact()._contacts.length > 0 && this._bot.contact().isContact(subscriber.id)) {
         this._bot.contact()._patch(subscriber);
       }
-  
+
       if (this._bot.blocked()._blocked.length > 0 && this._bot.blocked().isBlocked(subscriber.id)) {
         this._bot.blocked()._patch(subscriber);
       }

@@ -14,6 +14,12 @@ module.exports = class Notification extends Helper {
     this._notifications = {};
   }
 
+  /**
+   * Get notification list by Language - Use @dawalters1/constants for language
+   * @param {Number} language - The language of the notifications
+   * @param {Boolean} requestNew - Request new data from the server
+   * @returns
+   */
   async list (language = constants.language.ENGLISH, requestNew = false) {
     try {
       if (validator.isNullOrWhitespace(language)) {
@@ -41,6 +47,10 @@ module.exports = class Notification extends Helper {
     }
   }
 
+  /**
+   *
+   * Clear the notification lists
+   */
   async clear () {
     try {
       const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);

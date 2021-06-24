@@ -29,6 +29,11 @@ module.exports = class Charm extends Helper {
     return this._charms[language] || [];
   }
 
+  /**
+   * Request the list of charms by language - Use @dawalters1/constants for language
+   * @param {Number} language - The language of the charms
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async list (language = constants.language.ENGLISH, requestNew = false) {
     try {
       return await this._getCharmList(language, requestNew);
@@ -38,6 +43,12 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Request a charm by ID and Language - Use @dawalters1/constants for language
+   * @param {Number} charmId - The id of the charm
+   * @param {Number} language - The language of the charm
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (charmId, language = constants.language.ENGLISH, requestNew = false) {
     try {
       if (!validator.isValidNumber(charmId)) {
@@ -59,6 +70,12 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Request a charms by ID and Language - Use @dawalters1/constants for language
+   * @param {[Number]} charmIds - The ids of the charms
+   * @param {Number} language - The language of the charms
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (charmIds, language = constants.language.ENGLISH, requestNew = false) {
     try {
       if (!validator.isValidArray(charmIds)) {
@@ -88,6 +105,10 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Get charm gift information for a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async getSubscriberStatistics (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -105,6 +126,12 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Get a list of active charms for a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number} limit - How many charms should be returned
+   * @param {Number} offset - Index where the returned charms should start
+   */
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -136,6 +163,12 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Get a list of expired charms for a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number} limit - How many charms should be returned
+   * @param {Number} offset - Index where the returned charms should start
+   */
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -167,6 +200,10 @@ module.exports = class Charm extends Helper {
     }
   }
 
+  /**
+   * Get a list of charms and how many of each a subscriber has
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async getSubscriberCharmSummary (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {

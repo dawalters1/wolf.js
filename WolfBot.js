@@ -32,6 +32,7 @@ const constants = require('@dawalters1/constants');
 const routes = require('./MultiMediaService/routes');
 const uploadToMediaService = require('./utils/uploadToMediaService');
 const MultiMediaService = require('./MultiMediaService/MultiMediaService');
+// const Response = require('./networking/Response');
 
 const validateConfig = (bot, config) => {
   if (!config) {
@@ -57,42 +58,6 @@ const validateConfig = (bot, config) => {
     throw new Error('defaultLanguage must be a string\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
-  if (!app.loginSettings) {
-    throw new Error('config must contain loginSettings\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  const loginSettings = app.loginSettings;
-
-  if (!loginSettings.email) {
-    throw new Error('loginSettings must contain email\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (validator.isNullOrWhitespace(loginSettings.email)) {
-    throw new Error('email cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  if (!loginSettings.password) {
-    throw new Error('loginSettings must contain password\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (validator.isNullOrWhitespace(loginSettings.password)) {
-    throw new Error('password cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  if (!loginSettings.loginDevice) {
-    throw new Error('loginSettings must contain loginDevice\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (!Object.values(constants.loginDevice).includes(loginSettings.loginDevice)) {
-    throw new Error('loginDevice is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  if (!loginSettings.onlineState) {
-    throw new Error('loginSettings must contain onlineState\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (!Object.values(constants.onlineState).includes(loginSettings.onlineState)) {
-    throw new Error('onlineState is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  if (!loginSettings.loginType) {
-    throw new Error('loginSettings must contain loginType\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (!Object.values(constants.loginType).includes(loginSettings.loginType)) {
-    throw new Error('loginType is invalid\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
   config.options = {
   };
 
@@ -113,8 +78,6 @@ const validateConfig = (bot, config) => {
   if (app.defaultLanguage) {
     config.options.defaultLanguage = app.defaultLanguage || 'en';
   };
-
-  config.options.token = loginSettings.token || crypto.randomBytes(32).toString('hex');
 
   bot.config = config;
 };
@@ -162,71 +125,168 @@ module.exports = class WolfBot {
     return this._eventManager;
   }
 
+  /**
+   * Exposes the achievement methods
+   */
   achievement () {
     return this._achievement;
   }
 
+  /**
+   * Exposes the authorization methods
+   */
   authorization () {
     return this._authorization;
   }
 
+  /**
+   * Exposes the banned methods
+   */
   banned () {
     return this._banned;
   }
 
+  /**
+   * Exposes the blocked methods
+   */
   blocked () {
     return this._blocked;
   }
 
+  /**
+   * Exposes the charm methods
+   */
   charm () {
     return this._charm;
   }
 
+  /**
+   * Exposes the contact methods
+   */
   contact () {
     return this._contact;
   }
 
+  /**
+   * Exposes the event methods
+   */
   event () {
     return this._event;
   }
 
+  /**
+   * Exposes the group methods
+   */
   group () {
     return this._group;
   }
 
+  /**
+   * Exposes the messaging methods
+   */
   messaging () {
     return this._messaging;
   }
 
+  /**
+   * Exposes the notification methods
+   */
   notification () {
     return this._notification;
   }
 
+  /**
+   * Exposes the phrase methods
+   */
   phrase () {
     return this._phrase;
   }
 
+  /**
+   * Exposes the stage methods
+   */
   stage () {
     return this._stage;
   }
 
+  /**
+   * Exposes the subscriber methods
+   */
   subscriber () {
     return this._subscriber;
   }
 
+  /**
+   * Exposes the tip methods
+   */
   tip () {
     return this._tip;
   }
 
+  /**
+   * Exposes the utilities
+   */
   utility () {
     return this._utilities;
   }
 
-  login () {
-    this._eventManager._register();
-    this.websocket.create();
+  /**
+   * Login to an account - Use @dawalters1/constants for loginDevice, onlineState & loginType
+   * @param {*} email - The email that belongs to the account
+   * @param {*} password - The password that belongs to the account
+   * @param {*} loginDevice - Android, iPhone, Web & iPad
+   * @param {*} onlineState - Online, Busy, Away, Invisible
+   * @param {*} loginType - Email, Google, Facebook, Twitter, Snapchat, apple
+   * @param {*} token - The token belonging to the account, leave unset for one to automatically be generated
+   */
+  login (email, password, loginDevice = constants.loginDevice.ANDROID, onlineState = constants.onlineState.ONLINE, loginType = constants.loginType.EMAIL, token = undefined) {
+    try {
+      if (validator.isNullOrWhitespace(email)) {
+        throw new Error('email cannot be null or empty');
+      }
+
+      if (validator.isNullOrWhitespace(password)) {
+        throw new Error('password cannot be null or empty');
+      }
+
+      if (validator.isNullOrWhitespace(loginDevice)) {
+        throw new Error('loginDevice must be a valid string');
+      } else if (!Object.values(constants.loginDevice).includes(loginDevice)) {
+        throw new Error('loginDevice is not valid');
+      }
+
+      if (!validator.isValidNumber(onlineState)) {
+        throw new Error('onlineState must be a valid number');
+      } else if (!Object.values(constants.onlineState).includes(onlineState)) {
+        throw new Error('onlineState is not valid');
+      }
+
+      if (validator.isNullOrWhitespace(loginType)) {
+        throw new Error('loginType must be a valid string');
+      } else if (!Object.values(constants.loginType).includes(loginType)) {
+        throw new Error('loginType is not valid');
+      }
+
+      this.config._loginSettings = {
+        email,
+        password,
+        loginDevice,
+        onlineState,
+        loginType,
+        token: token && !validator.isNullOrWhitespace(token) ? token : crypto.randomBytes(32).toString('hex')
+      };
+
+      this._eventManager._register();
+      this.websocket.create();
+    } catch (error) {
+      error.method = `WolfBot/login(email = ${JSON.stringify(email)}, password = ${JSON.stringify(password)}, loginDevice = ${JSON.stringify(loginDevice)}, onlineState = ${JSON.stringify(onlineState)}, loginType = ${JSON.stringify(loginType)})`;
+      throw error;
+    }
   }
 
+  /**
+   * Logout the account
+   */
   logout () {
     this.websocket.emit(request.SECURITY_LOGOUT);
 
@@ -237,6 +297,10 @@ module.exports = class WolfBot {
     this._cleanUp();
   }
 
+  /**
+   * Set the online state for the bot - Use @dawalters1/constants
+   * @param {*} onlineState
+   */
   async setOnlineState (onlineState) {
     try {
       if (!validator.isValidNumber(onlineState)) {
@@ -256,6 +320,10 @@ module.exports = class WolfBot {
     }
   }
 
+  /**
+   * Set the selected charm to appear on the bots profile
+   * @param {[{ position: number, charmId: number }]} charms
+   */
   async setSelectedCharms (charms) {
     try {
       if (validator.isValidArray(charms)) {
@@ -319,6 +387,10 @@ module.exports = class WolfBot {
     }
   }
 
+  /**
+   * Delete charms from the bot account
+   * @param {Number[]} charmIds
+   */
   async deleteCharms (charmIds) {
     try {
       if (validator.isValidArray(charmIds)) {
@@ -352,10 +424,17 @@ module.exports = class WolfBot {
     }
   }
 
+  /**
+   * Get the message filter settings for the bot
+   */
   async getMessageSettings () {
     return await this.websocket.emit(request.MESSAGE_SETTING);
   }
 
+  /**
+   * Set the message filter settings for the bot - Use @dawalters1/constants for messageFilterTier
+   * @param {Number} messageFilterTier
+   */
   async setMessageSettings (messageFilterTier) {
     try {
       if (!validator.isValidNumber(messageFilterTier)) {
@@ -376,6 +455,10 @@ module.exports = class WolfBot {
     }
   }
 
+  /**
+   * Update the bots avatar
+   * @param {Buffer} avatar
+   */
   async updateAvatar (avatar) {
     try {
       return await uploadToMediaService(this, routes.SUBSCRIBER_AVATAR_UPLOAD, avatar);

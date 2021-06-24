@@ -12,6 +12,11 @@ module.exports = class Subscriber extends Helper {
     this._subscribers = [];
   }
 
+  /**
+   * Get a list of subscribers by IDs
+   * @param {Number} subscriberIds - The ids of the subscribers
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (subscriberIds, requestNew = false) {
     try {
       if (!validator.isValidArray(subscriberIds)) {
@@ -76,6 +81,11 @@ module.exports = class Subscriber extends Helper {
     }
   }
 
+  /**
+   * Get a subscriber by ID
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (subscriberId, requestNew = false) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -91,6 +101,11 @@ module.exports = class Subscriber extends Helper {
     }
   }
 
+  /**
+   * Get chat history for a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number} timestamp - The last timestamp in the subscriber (0 for last messages sent)
+   */
   async getHistory (subscriberId, timestamp = 0) {
     try {
       if (!validator.isValidNumber(subscriberId)) {

@@ -7,7 +7,7 @@ const ignoreEvents = [
   'group member add',
   'group member delete',
   'group member update'
-]
+];
 
 module.exports = class WolfClient {
   constructor (bot) {
@@ -19,7 +19,7 @@ module.exports = class WolfClient {
   };
 
   create () {
-    this.socket = io(`${this.host}:${this.port}/?token=${this._bot.config.options.token}&device=${this._bot.config.app.loginSettings.loginDevice}`, {
+    this.socket = io(`${this.host}:${this.port}/?token=${this._bot.config._loginSettings.token}&device=${this._bot.config._loginSettings.loginDevice}`, {
       transports: ['websocket'],
       reconnection: true,
       reconnectionDelay: 1000,
@@ -36,7 +36,7 @@ module.exports = class WolfClient {
     this.socket.on('disconnect', reason => {
       this._bot._cleanUp();
       this._bot.on._emit('disconnect', reason);
-      //Socket doesnt reconnect on io server disconnect, manually reconnect
+      // Socket doesnt reconnect on io server disconnect, manually reconnect
       if (reason === 'io server disconnect') {
         this.socket.connect();
       }
@@ -60,14 +60,14 @@ module.exports = class WolfClient {
 
       const handler = this._bot._eventManager._handlers[eventString];
 
-      if(!ignoreEvents.includes(eventString)){
+      if (!ignoreEvents.includes(eventString)) {
         if (handler) {
           handler.process(data.body ? data.body : data);
         } else {
           this._bot.on._emit(internal.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
         }
 
-          this._bot.on._emit(internal.PACKET_RECEIVED, eventString, data);
+        this._bot.on._emit(internal.PACKET_RECEIVED, eventString, data);
       }
       return Promise.resolve();
     });
