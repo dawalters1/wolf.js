@@ -9,10 +9,17 @@ module.exports = class Authorized extends Helper {
     this._authorized = [];
   }
 
+  /**
+   * List of all authorized subscriber id
+   */
   list () {
     return this._authorized;
   }
 
+  /**
+   * Check to see if a subscriber is authorized
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   isAuthorized (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -28,10 +35,17 @@ module.exports = class Authorized extends Helper {
     }
   }
 
+  /**
+   * Clear the authorized subscriber list
+   */
   clear () {
     this._authorized = [];
   }
 
+  /**
+   * Authorize a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers to authorize
+   */
   authorize (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {
@@ -57,6 +71,10 @@ module.exports = class Authorized extends Helper {
     }
   }
 
+  /**
+   * Unauthorize a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers to Unauthorize
+   */
   unauthorize (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {

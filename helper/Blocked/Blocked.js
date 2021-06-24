@@ -10,6 +10,9 @@ module.exports = class Blocked extends Helper {
     this._blocked = [];
   }
 
+  /**
+   * Get the list of contacts that are blocked
+   */
   async list () {
     if (this._blocked.length > 0) {
       return this._blocked;
@@ -27,6 +30,10 @@ module.exports = class Blocked extends Helper {
     return this._blocked || [];
   }
 
+  /**
+   * Check to see if a subscriber is a blocked contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async isBlocked (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -42,6 +49,10 @@ module.exports = class Blocked extends Helper {
     }
   }
 
+  /**
+   * Block a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async block (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -59,6 +70,10 @@ module.exports = class Blocked extends Helper {
     }
   }
 
+  /**
+   * Unblock a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async unblock (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
