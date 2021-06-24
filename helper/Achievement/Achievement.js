@@ -19,14 +19,25 @@ module.exports = class Achievement extends Helper {
     this._subscriber = new Subscriber(bot);
   }
 
+  /**
+   * Exposed the group achievement methods
+   */
   group () {
     return this._group;
   }
 
+  /**
+   * Exposed the subscriber achievement methods
+   */
   subscriber () {
     return this._subscriber;
   }
 
+  /**
+   * Get achievement categories by language - Use @dawalters1/constants for language
+   * @param {Number} language - Language of the category list
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getCategoryList (language = constants.language.ENGLISH, requestNew = false) {
     try {
       if (!validator.isValidNumber(language)) {
@@ -54,6 +65,13 @@ module.exports = class Achievement extends Helper {
     }
   }
 
+  /**
+   * Get achievements from their ID and Language - Use @dawalters1/constants for language
+   * @param {[Number]} achievementIds - The ids of the achievements
+   * @param {Number} language - Language of the achievement
+   * @param {Boolean} requestNew - Request new data from the server
+   * @returns
+   */
   async getAchievementByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
     try {
       if (!validator.isValidArray(achievementIds)) {
@@ -102,11 +120,17 @@ module.exports = class Achievement extends Helper {
               if (achievement.success) {
                 achievements.push(this._process(achievement.body, language));
               } else {
-                achievement.push({ id: batchAchievementIdList[index], exists: false });
+                achievement.push({
+                  id: batchAchievementIdList[index],
+                  exists: false
+                });
               }
             }
           } else {
-            achievements.push(...batchAchievementIdList.map((id) => ({ id, exists: false })));
+            achievements.push(...batchAchievementIdList.map((id) => ({
+              id,
+              exists: false
+            })));
           }
         }
       }

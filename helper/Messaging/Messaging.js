@@ -12,7 +12,7 @@ const targetTypes = {
 
 const typesToUseMMS = [
   'image/jpeg',
-  'image/gif',
+  'image/gif'
 ];
 
 const supportedMessageTypes = [
@@ -141,8 +141,8 @@ module.exports = class Messaging extends Helper {
 
         if (includeEmbeds) {
           const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
-            //Only 1 embed per message, else the server will throw an error.
-            if((await result).length > 0){
+            // Only 1 embed per message, else the server will throw an error.
+            if ((await result).length > 0) {
               return result;
             }
 
@@ -182,6 +182,12 @@ module.exports = class Messaging extends Helper {
     }
   }
 
+  /**
+   * Send a message in a group
+   * @param {Number} targetGroupId - The id of the group
+   * @param {String} content - The message to send
+   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   */
   async sendGroupMessage (targetGroupId, content, includeEmbeds = false) {
     try {
       if (!validator.isValidNumber(targetGroupId)) {
@@ -205,6 +211,12 @@ module.exports = class Messaging extends Helper {
     }
   }
 
+  /**
+   * Send a message to a subscriber
+   * @param {Number} targetSubscriberId - The id of the subscriber
+   * @param {String} content - The message to send
+   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   */
   async sendPrivateMessage (targetSubscriberId, content, includeEmbeds = false) {
     try {
       if (!validator.isValidNumber(targetSubscriberId)) {
@@ -228,22 +240,34 @@ module.exports = class Messaging extends Helper {
     }
   }
 
-  async sendMessage (commandOrMessage, content, includeEmbeds = false, messageType = constants.messageType.TEXT_PLAIN) {
+  /**
+   * Send a message using Command or Message
+   * @param {Object} commandOrMessage - The command or message to use
+   * @param {Number} targetSubscriberId - The id of the subscriber
+   * @param {String} content - The message to send
+   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   */
+  async sendMessage (commandOrMessage, content, includeEmbeds = false) {
     try {
       if (typeof (commandOrMessage) !== 'object') {
         throw new Error('command must be an object');
       }
 
       if (commandOrMessage.isGroup) {
-        return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds, messageType);
+        return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds);
       }
-      return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds, messageType);
+      return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds);
     } catch (error) {
       error.method = `Helper/Messaging/sendGroupMessage(commandOrMessage = ${JSON.stringify(commandOrMessage)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
       throw error;
     }
   }
 
+  /**
+   * Delete a message in a group
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} timestamp - The timestamp of the message
+   */
   async deleteGroupMessage (targetGroupId, timestamp) {
     try {
       if (!validator.isValidNumber(targetGroupId)) {
@@ -271,6 +295,11 @@ module.exports = class Messaging extends Helper {
     }
   }
 
+  /**
+   * Restore a deleted message in a group
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} timestamp - The timestamp of the message
+   */
   async restoreGroupMessage (targetGroupId, timestamp) {
     try {
       if (!validator.isValidNumber(targetGroupId)) {
@@ -298,6 +327,10 @@ module.exports = class Messaging extends Helper {
     }
   }
 
+  /**
+   * Get information about a url
+   * @param {String} link
+   */
   async getLinkMetadata (link) {
     try {
       if (validator.isNullOrWhitespace(link)) {

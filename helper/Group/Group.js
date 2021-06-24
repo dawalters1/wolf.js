@@ -13,6 +13,11 @@ module.exports = class Group extends Helper {
     this._joinedGroupsRequested = false;
   }
 
+  /**
+   * Get a list of groups by IDs
+   * @param {Number} groupIds - The ids of the groups
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (groupIds, requestNew = false) {
     try {
       if (!validator.isValidArray(groupIds)) {
@@ -82,6 +87,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get a group by ID
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -97,14 +107,19 @@ module.exports = class Group extends Helper {
     }
   }
 
-  async getByName (targetGroupName, requestNew = false) {
+  /**
+   * Get a group by name
+   * @param {String} name - The name of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
+  async getByName (name, requestNew = false) {
     try {
-      if (validator.isNullOrWhitespace(targetGroupName)) {
-        throw new Error('targetGroupName cannot be null or empty');
+      if (validator.isNullOrWhitespace(name)) {
+        throw new Error('name cannot be null or empty');
       }
 
       if (!requestNew) {
-        const group = this._groups.find((grp) => grp.name.toLowerCase() === targetGroupName.toLowerCase().trim());
+        const group = this._groups.find((grp) => grp.name.toLowerCase() === name.toLowerCase().trim());
 
         if (group) {
           return group;
@@ -116,7 +131,7 @@ module.exports = class Group extends Helper {
           version: 4
         },
         body: {
-          name: targetGroupName,
+          name: name,
           subscribe: true,
           entities: ['base', 'extended', 'audioCounts', 'audioConfig']
         }
@@ -135,15 +150,20 @@ module.exports = class Group extends Helper {
 
       return {
         id: 0,
-        name: targetGroupName,
+        name: name,
         exists: false
       };
     } catch (error) {
-      error.method = `Helper/Group/getByName(targetGroupName = ${JSON.stringify(targetGroupName)}, requestNew = ${JSON.stringify(requestNew)})`;
+      error.method = `Helper/Group/getByName(name = ${JSON.stringify(name)}, requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
 
+  /**
+   * Join a group by id
+   * @param {Number} groupId - The id of the group
+   * @param {String} password - Request new data from the server (Optional)
+   */
   async joinById (groupId, password = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -162,6 +182,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Join a group by name
+   * @param {String} name - The name of the group
+   * @param {String} password - Request new data from the server (Optional)
+   */
   async joinByName (targetGroupName, password = undefined) {
     try {
       if (validator.isNullOrWhitespace(targetGroupName)) {
@@ -177,6 +202,10 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Leave a group by ID
+   * @param {Number} groupId - The Id of the group
+   */
   async leaveById (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -193,18 +222,27 @@ module.exports = class Group extends Helper {
     }
   }
 
-  async leaveByName (targetGroupName) {
+  /**
+   * Leave a group by name
+   * @param {String} name - The name of the group
+   */
+  async leaveByName (name) {
     try {
-      if (validator.isNullOrWhitespace(targetGroupName)) {
-        throw new Error('targetGroupName cannot be null or empty');
+      if (validator.isNullOrWhitespace(name)) {
+        throw new Error('name cannot be null or empty');
       }
-      return await this.leaveById((await this.getByName(targetGroupName)).id);
+      return await this.leaveById((await this.getByName(name)).id);
     } catch (error) {
-      error.method = `Helper/Group/leaveByName(targetGroupName = ${JSON.stringify(targetGroupName)})`;
+      error.method = `Helper/Group/leaveByName(name = ${JSON.stringify(name)})`;
       throw error;
     }
   }
 
+  /**
+   * Get chat history for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Number} timestamp - The last timestamp in the group (0 for last messages sent)
+   */
   async getHistory (groupId, timestamp = 0) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -255,6 +293,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get the members list for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getSubscriberList (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -294,6 +337,10 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get the conversation stats for a group
+   * @param {Number} groupId - The id of the gorup
+   */
   async getStats (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -310,6 +357,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Update a groups avatar
+   * @param {Number} groupId - The id of the group
+   * @param {Buffer} avatar - The new avatar
+   */
   async updateAvatar (groupId, avatar) {
     try {
       return await uploadToMediaService(this._bot, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
@@ -319,6 +371,12 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Update a group subscribers role - Use @dawalters1/constants for capability
+   * @param {Number} groupId - The id of the group
+   * @param {Number} subscriberId - The id of the subscriber to update
+   * @param {Number} capability - The new role for the subscriber
+   */
   async updateGroupSubscriber (groupId, subscriberId, capability) {
     try {
       if (!validator.isValidNumber(groupId)) {

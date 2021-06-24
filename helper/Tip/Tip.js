@@ -20,6 +20,13 @@ module.exports = class Tip extends Helper {
     return await this._websocket.emit(request.TIP_PRIVATE_SUBSCRIBE);
   }
 
+  /**
+   * Tip a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number} groupId - The id of the group
+   * @param {{type: String, id: Number}} context - The context information
+   * @param {[{id: Number, quantity: Number}]} charms - The charms to tip
+   */
   async tip (subscriberId, groupId, context, charms) {
     try {
     // #region
@@ -127,6 +134,13 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get tipping details for a message
+   * @param {Number} groupId - The id of the group
+   * @param {Number} timestamp - The timestamp of the message
+   * @param {Number} limit - How many tips to return
+   * @param {Number} offset - The index where return tips should start
+   */
   async getDetails (groupId, timestamp, limit = 20, offset = 0) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -164,6 +178,13 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get tipping summary for a message
+   * @param {Number} groupId - The id of the group
+   * @param {Number} timestamp - The timestamp of the message
+   * @param {Number} limit - How many tips to return
+   * @param {Number} offset - The index where return tips should start
+   */
   async getSummary (groupId, timestamp, limit = 20, offset = 0) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -201,6 +222,13 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get group tipping leaderboard - Use @dawalters1/constants for tipPeriod, tipType, tipDirection
+   * @param {Number} groupId - The id of the group
+   * @param {String} tipPeriod - The tipping period
+   * @param {String} tipType - The type of tips
+   * @param {String} tipDirection - The direction of tips sent/received
+   */
   async getGroupLeaderboard (groupId, tipPeriod, tipType, tipDirection) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -241,6 +269,13 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get group tipping leaderboard summary - Use @dawalters1/constants for tipPeriod, tipType, tipDirection
+   * @param {Number} groupId - The id of the group
+   * @param {String} tipPeriod - The tipping period
+   * @param {String} tipType - The type of tips
+   * @param {String} tipDirection - The direction of tips sent/received
+   */
   async getGroupLeaderboardSummary (groupId, tipPeriod, tipType, tipDirection) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -281,6 +316,12 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get global tipping leaderboard - Use @dawalters1/constants for tipPeriod, tipType, tipDirection
+   * @param {String} tipPeriod - The tipping period
+   * @param {String} tipType - The type of tips
+   * @param {String} tipDirection - The direction of tips sent/received
+   */
   async getGlobalLeaderboard (tipPeriod, tipType, tipDirection = undefined) {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {
@@ -310,6 +351,10 @@ module.exports = class Tip extends Helper {
     }
   }
 
+  /**
+   * Get global tipping leaderboard summary - Use @dawalters1/constants for tipPeriod
+   * @param {String} tipPeriod - The tipping period
+   */
   async getGlobalLeaderboardSummary (tipPeriod) {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {

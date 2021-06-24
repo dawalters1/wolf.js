@@ -8,6 +8,10 @@ module.exports = class Subscriber extends Helper {
     super(bot);
   }
 
+  /**
+   * Get achievements for a subscriber
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   */
   async getById (sourceSubscriberId) {
     try {
       if (!validator.isValidNumber(sourceSubscriberId)) {

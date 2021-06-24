@@ -10,6 +10,10 @@ module.exports = class Contact extends Helper {
     this._contacts = [];
   }
 
+  /**
+   *
+   * List of contacts for the bot
+   */
   async list () {
     try {
       if (this._contacts.length > 0) {
@@ -32,6 +36,10 @@ module.exports = class Contact extends Helper {
     }
   }
 
+  /**
+   * Check to see if a subscriber is a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async isContact (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -47,6 +55,10 @@ module.exports = class Contact extends Helper {
     }
   }
 
+  /**
+   * Add a subscriber as a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async add (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -64,6 +76,10 @@ module.exports = class Contact extends Helper {
     }
   }
 
+  /**
+   * Delete a subscriber as a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async delete (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
