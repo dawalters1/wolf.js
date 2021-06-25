@@ -140,7 +140,7 @@ module.exports = class Messaging extends Helper {
         }
 
         if (includeEmbeds) {
-          const embeds = await body.metadata.formatting.groupLinks.concat(body.metadata.formatting.links).filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+          const embeds = await (body.metadata.formatting.groupLinks ? body.metadata.formatting.groupLinks : []).concat(body.metadata.formatting.links ? body.metadata.formatting.links : []).filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
             // Only 1 embed per message, else the server will throw an error.
             if ((await result).length > 0) {
               return result;
@@ -154,7 +154,6 @@ module.exports = class Messaging extends Helper {
                   {
                     type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
                     url: item.url,
-                    image: metadata.body.imageSize === 0 || validator.isNullOrWhitespace(metadata.body.imageUrl) ? null : this._bot.utility().download().file(metadata.body.imageUrl),
                     title: metadata.body.title,
                     body: metadata.body.description
                   });
