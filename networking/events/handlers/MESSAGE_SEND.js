@@ -41,7 +41,7 @@ module.exports = class MessageSend extends BaseEvent {
   async process (data) {
     const message = {
       id: data.id,
-      body: data.data.toString(),
+      body: data.data.toString().trim(),
       sourceSubscriberId: data.originator.id ? data.originator.id : data.originator,
       targetGroupId: data.isGroup ? data.recipient.id ? data.recipient.id : data.recipient : null,
       embeds: data.embeds,
