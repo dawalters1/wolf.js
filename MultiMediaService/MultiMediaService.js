@@ -40,7 +40,7 @@ module.exports = class MultiMediaService {
   }
 
   async _getCredentialsIfNeeded () {
-    if (this._creds && !this._creds.needsRefresh()) {
+    if (this._creds && !this._creds.needsRefresh() && !this._creds.expired) {
       return this._creds;
     }
 
