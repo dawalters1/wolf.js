@@ -1,6 +1,6 @@
 const BaseEvent = require('../BaseEvent');
 
-const { adminAction, messageType, capability } = require('@dawalters1/constants');
+const { adminAction, messageType, capability, privilege } = require('@dawalters1/constants');
 const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
 
 const internal = require('../../../constants/internal');
@@ -144,14 +144,16 @@ module.exports = class MessageSend extends BaseEvent {
     const reveal = Object.entries(secrets).find((secret) => secret[0].toLowerCase().trim() === message.body.toLowerCase().trim());
 
     if (reveal) {
-      const body = this._bot.utility().string().replace(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
-        version
-      });
+      if (await this._bot.utility().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER])) {
+        const body = this._bot.utility().string().replace(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
+          version
+        });
 
-      if (message.isGroup) {
-        return await this._bot.messaging().sendGroupMessage(message.targetGroupId, body);
+        if (message.isGroup) {
+          return await this._bot.messaging().sendGroupMessage(message.targetGroupId, body);
+        }
+        return await this._bot.messaging().sendPrivateMessage(message.sourceSubscriberId, body);
       }
-      return await this._bot.messaging().sendPrivateMessage(message.sourceSubscriberId, body);
     }
 
     return this._bot.on._emit(this._command, message);
