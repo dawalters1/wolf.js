@@ -50,11 +50,10 @@ const validateConfig = (bot, config) => {
   }
 
   const app = config.app;
+
   if (!app.defaultLanguage) {
     throw new Error('config must contain a defaultLanguage\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  if (validator.isNullOrWhitespace(app.defaultLanguage)) {
+  } else if (validator.isNullOrWhitespace(app.defaultLanguage)) {
     throw new Error('defaultLanguage must be a string\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
 
@@ -320,6 +319,66 @@ module.exports = class WolfBot {
     }
   }
 
+  async search (query) {
+    try {
+      if (validator.isNullOrWhitespace(query)) {
+        throw new Error('query cannot be null or empty');
+      }
+
+      return await this.websocket.emit(request.SEARCH, {
+        query,
+        types: ['related', 'groups']
+      });
+    } catch (error) {
+      error.method = `WolfBot/search(query = ${JSON.stringify(query)})`;
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieve the bots conversation list
+   * @param {Number} timestamp - Timestamp where conversation list should start - (Optional)
+   */
+  async getConversationList (timestamp = undefined) {
+    try {
+      if (timestamp) {
+        if (!validator.isValidNumber(timestamp)) {
+          throw new Error('timestamp must be a valid number');
+        } else if (validator.isLessThanZero(timestamp)) {
+          throw new Error('timestamp cannot be negative');
+        }
+      }
+      const result = await this.websocket.emit(request.MESSAGE_CONVERSATION_LIST, {
+        headers: {
+          version: 3
+        },
+        body: {
+          timestamp
+        }
+      });
+
+      result.body = result.success
+        ? result.body.map((message) => ({
+          id: message.id,
+          body: message.data.toString(),
+          sourceSubscriberId: message.originator.id,
+          groupId: message.isGroup ? message.recipient.id : null,
+          embeds: message.embeds,
+          metadata: message.metadata,
+          isGroup: message.isGroup,
+          timestamp: message.timestamp,
+          edited: message.edited,
+          type: message.mimeType
+        }))
+        : [];
+
+      return result;
+    } catch (error) {
+      error.method = `WolfBot/getConversationList(timestamp = ${JSON.stringify(timestamp)})`;
+      throw error;
+    }
+  }
+
   /**
    * Set the selected charm to appear on the bots profile
    * @param {[{ position: number, charmId: number }]} charms
@@ -466,6 +525,13 @@ module.exports = class WolfBot {
       error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
     }
+  }
+
+  /**
+   * Retrieve the bots credit balance
+   */
+  async getCreditBalance () {
+    return await this.websocket.emit(request.STORE_CREDIT_BALANCE);
   }
 
   _cleanUp () {

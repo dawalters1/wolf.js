@@ -1,4 +1,3 @@
-
 const BaseEvent = require('../BaseEvent');
 
 module.exports = class SubscriberBlockAdd extends BaseEvent {
