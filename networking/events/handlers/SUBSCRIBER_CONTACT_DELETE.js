@@ -1,4 +1,3 @@
-
 const BaseEvent = require('../BaseEvent');
 
 module.exports = class SubscriberContactDelete extends BaseEvent {

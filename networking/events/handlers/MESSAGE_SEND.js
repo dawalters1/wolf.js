@@ -1,11 +1,9 @@
 const BaseEvent = require('../BaseEvent');
-
-const { adminAction, messageType, capability, privilege } = require('@dawalters1/constants');
-const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
-
 const internal = require('../../../constants/internal');
 const event = require('../../../constants/event');
 
+const { adminAction, messageType, capability, privilege } = require('@dawalters1/constants');
+const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
 const { version } = require('../../../package.json');
 
 const secrets = {
@@ -139,6 +137,10 @@ module.exports = class MessageSend extends BaseEvent {
       case messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: {
         this._bot.on._emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await this._bot.subscriber().getById(message.sourceSubscriberId));
       }
+    }
+
+    if (message.sourceSubscriberId === this._bot.currentSubscriber.id) {
+      return Promise.resolve();
     }
 
     const reveal = Object.entries(secrets).find((secret) => secret[0].toLowerCase().trim() === message.body.toLowerCase().trim());
