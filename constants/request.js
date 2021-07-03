@@ -50,11 +50,15 @@ module.exports = {
   NOTIFICATION_LIST: 'notification list',
   NOTIFICATION_LIST_CLEAR: 'notification list clear',
 
+  SEARCH: 'search',
+
   SECURITY_LOGIN: 'security login',
   SECURITY_LOGOUT: 'security logout',
 
   STAGE_LIST: 'stage list',
   STAGE_GROUP_ACTIVE_LIST: 'stage group active list',
+
+  STORE_CREDIT_BALANCE: 'store credit balance',
 
   SUBSCRIBER_GROUP_EVENT_ADD: 'subscriber group event add',
   SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriber group event delete',

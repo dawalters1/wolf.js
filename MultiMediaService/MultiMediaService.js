@@ -40,13 +40,17 @@ module.exports = class MultiMediaService {
   }
 
   async _getCredentialsIfNeeded () {
-    if (this._creds && !this._creds.needsRefresh() && !this._creds.expired) {
+    if (this._creds && !this._creds.needsRefresh() && !this._creds.expired && this._creds.data.Credentials.AccessKeyId) {
       return this._creds;
     }
 
-    this._creds = await _getCredentials(this._bot, this._creds !== undefined);
+    this._creds = await _getCredentials(this._bot, this._creds);
 
-    return this._creds;
+    if (!this._creds.needsRefresh() && !this._creds.expired && this._creds.data.Credentials.AccessKeyId) {
+      return this._creds;
+    }
+
+    return await this._getCredentialsIfNeeded();
   }
 
   async request (method, route, body) {
