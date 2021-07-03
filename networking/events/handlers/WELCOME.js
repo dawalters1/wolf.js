@@ -2,12 +2,10 @@ const BaseEvent = require('../BaseEvent');
 
 const crypto = require('crypto');
 
-const {
-  deviceType
-} = require('@dawalters1/constants');
-
 const internal = require('../../../constants/internal');
 const request = require('../../../constants/request');
+
+const { deviceType } = require('@dawalters1/constants');
 
 const toDeviceTypeId = (dev) => {
   const devices = Object.entries(deviceType);
@@ -40,7 +38,7 @@ module.exports = class Welcome extends BaseEvent {
           bot.on._emit(internal.LOGIN_FAILED, result);
 
           if (result.headers && result.headers.subCode && result.headers.subCode > 1) {
-            await bot.utility().delay(90000);// Attempt to reconnect after 30 seconds regardless of expiry given
+            await bot.utility().delay(90000);// Attempt to reconnect after 90 seconds regardless of expiry given (Typically too many requests were sent and bot was barred)
             await login(bot);
           }
 

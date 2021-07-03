@@ -251,7 +251,7 @@ module.exports = class Stage extends Helper {
         throw new Error('slotId cannot be less than or equal to 0');
       }
 
-      if (!validator.isNullOrWhitespace(sdp)) {
+      if (validator.isNullOrWhitespace(sdp)) {
         throw new Error('sdp cannot be null or empty');
       }
 
