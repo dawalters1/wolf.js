@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const internal = require('../../../constants/internal');
 const request = require('../../../constants/request');
 
-const { deviceType } = require('@dawalters1/constants');
+const { deviceType, loginType } = require('@dawalters1/constants');
 
 const toDeviceTypeId = (dev) => {
   const devices = Object.entries(deviceType);
@@ -30,8 +30,8 @@ module.exports = class Welcome extends BaseEvent {
             deviceTypeId: toDeviceTypeId(loginSettings.loginDevice),
             onlineState: loginSettings.onlineState,
             username: loginSettings.email,
-            password: crypto.createHash('md5').update(loginSettings.password).digest('hex'),
-            md5Password: true
+            password: loginSettings.loginType === loginType.EMAIL ? crypto.createHash('md5').update(loginSettings.password).digest('hex') : loginSettings.password,
+            md5Password: loginSettings.loginType === loginType.EMAIL
           }
         });
         if (!result.success) {
