@@ -99,7 +99,7 @@ module.exports = class Messaging extends Helper {
 
       const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
 
-      const links = [...content.matchAll(/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/gi)] || [];
+      const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._bot.utility().isValidUrl(url[0])) || [];
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {
@@ -126,21 +126,31 @@ module.exports = class Messaging extends Helper {
         }
 
         if (links && links.length > 0) {
-          body.metadata.formatting.links = await links.reduce(async (result, value) => {
+          body.metadata.formatting.links = links.reduce((result, value) => {
             const link = {
               start: value.index,
               end: value.index + value[0].length,
               url: value[0]
             };
 
-            (await result).push(link);
+            result.push(link);
 
             return result;
-          }, Promise.resolve([]));
+          }, []);
         }
 
         if (includeEmbeds) {
-          const embeds = await (body.metadata.formatting.groupLinks ? body.metadata.formatting.groupLinks : []).concat(body.metadata.formatting.links ? body.metadata.formatting.links : []).filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+          const data = [];
+
+          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks > 0) {
+            data.push(body.metadata.formatting.groupLinks);
+          }
+
+          if (body.metadata.formatting.links && body.metadata.formatting.links > 0) {
+            data.push(body.metadata.formatting.links);
+          }
+
+          const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
             // Only 1 embed per message, else the server will throw an error.
             if ((await result).length > 0) {
               return result;
@@ -258,6 +268,53 @@ module.exports = class Messaging extends Helper {
       return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds);
     } catch (error) {
       error.method = `Helper/Messaging/sendGroupMessage(commandOrMessage = ${JSON.stringify(commandOrMessage)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
+      throw error;
+    }
+  }
+
+  async acceptPrivateMessageRequest (subscriberId) {
+    try {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
+
+      const checkHistory = async (timestamp = 0) => {
+        const messageHistory = (await this._bot.subscriber().getHistory(subscriberId, timestamp)).body;
+
+        if (messageHistory.length === 0 && timestamp === 0) {
+          throw new Error('No conversation history for this subscriber');
+        } else if (messageHistory.find((message) => message.type === constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE)) {
+          throw new Error('Private message request has already been accepted for this subscriber');
+        } else if (timestamp !== 0) {
+          throw new Error('Could not determine if subscriber has been filtered by message filter');
+        } else if (!messageHistory.some((message) => message.sourceSubscriberId === subscriberId)) {
+          return await checkHistory(messageHistory.slice(-1)[0].timestamp);
+        } else {
+          const lastMessage = messageHistory.filter((message) => message.sourceSubscriberId === subscriberId).slice(-1);
+
+          if (lastMessage) {
+            if (lastMessage.metadata) {
+              if (!lastMessage.metadata.isSpam) {
+                throw new Error('Subscriber has not been filtered by message filter');
+              }
+            }
+          }
+        }
+
+        return await this._websocket.emit(request.MESSAGE_SEND, {
+          recipient: subscriberId,
+          isGroup: false,
+          mimeType: constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE,
+          data: Buffer.from('This message request has been accepted.', 'utf8'),
+          flightId: uuidv4()
+        });
+      };
+
+      return await checkHistory();
+    } catch (error) {
+      error.method = `Helper/Messaging/acceptPrivateMessageRequest(subscriberId = ${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
