@@ -127,7 +127,7 @@ module.exports = class Subscriber extends Helper {
           },
           body: {
             id: subscriberId,
-            timestamp: timestamp === 0 ? null : timestamp
+            timestampEnd: timestamp === 0 ? null : timestamp
           }
         });
 
