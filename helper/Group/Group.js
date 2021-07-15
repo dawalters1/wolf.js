@@ -308,24 +308,23 @@ module.exports = class Group extends Helper {
 
       const group = await this.getById(groupId);
 
-      if (group.inGroup) {
-        if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
-          return group.subscribers;
-        }
+      if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
+        return group.subscribers;
+      }
 
-        const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
-          headers: {
-            version: 3
-          },
-          body: {
-            id: groupId,
-            subscribe: true
-          }
-        });
-
-        if (result.success) {
-          group.subscribers = result.body;
+      const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
+        headers: {
+          version: 3
+        },
+        body: {
+          id: groupId,
+          subscribe: true
         }
+      });
+
+      if (result.success) {
+        group.inGroup = true;
+        group.subscribers = result.body;
       }
 
       this._process(group);
