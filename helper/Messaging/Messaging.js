@@ -5,6 +5,8 @@ const {
   v4: uuidv4
 } = require('uuid');
 
+const protocols = ['http', 'https', 'ftp', 'ws', 'wss', 'smtp'];
+
 const targetTypes = {
   GROUP: 'group',
   PRIVATE: 'private'
@@ -142,12 +144,12 @@ module.exports = class Messaging extends Helper {
         if (includeEmbeds) {
           const data = [];
 
-          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks > 0) {
-            data.push(body.metadata.formatting.groupLinks);
+          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
+            data.push(...body.metadata.formatting.groupLinks);
           }
 
-          if (body.metadata.formatting.links && body.metadata.formatting.links > 0) {
-            data.push(body.metadata.formatting.links);
+          if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
+            data.push(...body.metadata.formatting.links);
           }
 
           const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
@@ -163,7 +165,7 @@ module.exports = class Messaging extends Helper {
                 (await result).push(
                   {
                     type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
-                    url: item.url,
+                    url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
                     title: metadata.body.title,
                     body: metadata.body.description
                   });
