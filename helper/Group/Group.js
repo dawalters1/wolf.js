@@ -1,5 +1,6 @@
 const Helper = require('../Helper');
 const Response = require('../../networking/Response');
+const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBuilder');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
@@ -11,6 +12,14 @@ module.exports = class Group extends Helper {
     super(bot);
     this._groups = [];
     this._joinedGroupsRequested = false;
+  }
+
+  /**
+   * Create a group
+   * @returns {GroupProfileBuilder} Group Profile Builder
+   */
+  async create () {
+    return new GroupProfileBuilder(this._bot)._create();
   }
 
   /**
@@ -403,6 +412,30 @@ module.exports = class Group extends Helper {
       });
     } catch (error) {
       error.method = `Helper/Group/updateGroupSubscriber(groupId = ${JSON.stringify(groupId)}, subscriberId = ${JSON.stringify(subscriberId)}, capability = ${JSON.stringify(capability)})`;
+      throw error;
+    }
+  }
+
+  /**
+   * Update a group
+   * @returns {GroupProfileBuilder} Group Profile Builder
+   */
+  async update (groupId) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+      const group = await this.getById(groupId);
+
+      if (group.exists) {
+        return new GroupProfileBuilder(this._bot)._update((await this.getById(groupId)));
+      } else {
+        throw new Error('group does not exist');
+      }
+    } catch (error) {
+      error.method = `Helper/Group/update(groupId = ${JSON.stringify(groupId)})`;
       throw error;
     }
   }
