@@ -32,7 +32,7 @@ const constants = require('@dawalters1/constants');
 const routes = require('./MultiMediaService/routes');
 const uploadToMediaService = require('./utils/uploadToMediaService');
 const MultiMediaService = require('./MultiMediaService/MultiMediaService');
-// const Response = require('./networking/Response');
+const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
 
 const validateConfig = (bot, config) => {
   if (!config) {
@@ -532,6 +532,14 @@ module.exports = class WolfBot {
    */
   async getCreditBalance () {
     return await this.websocket.emit(request.STORE_CREDIT_BALANCE);
+  }
+
+  /**
+   * Update the bots profile
+   * @returns {SubscriberProfileBuilder} subscriber profile builder
+   */
+  async updateProfile () {
+    return new SubscriberProfileBuilder(this, this.currentSubscriber);
   }
 
   _cleanUp () {

@@ -28,7 +28,7 @@ const validateCommand = command => {
   }
 
   Object.keys(commandCallbacks).forEach(callback => {
-    if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callback !== callbacks.PRIVATE) {
+    if (!Object.values(callbacks).includes(callback)) {
       throw new Error(`callbacks must be of the following: ${Object.values(callbacks).join(', ')}`);
     }
   });
