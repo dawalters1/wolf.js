@@ -1,6 +1,6 @@
 const Helper = require('../Helper');
 const Response = require('../../networking/Response');
-const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
+const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBuilder');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
