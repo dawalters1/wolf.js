@@ -2,7 +2,7 @@ const validator = require('@dawalters1/validator');
 const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
 
-module.exports = class Subscriber {
+module.exports = class SubscriberProfileBuilder {
   constructor (bot, subscriber) {
     this._bot = bot;
 

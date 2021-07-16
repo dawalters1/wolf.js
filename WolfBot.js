@@ -32,7 +32,7 @@ const constants = require('@dawalters1/constants');
 const routes = require('./MultiMediaService/routes');
 const uploadToMediaService = require('./utils/uploadToMediaService');
 const MultiMediaService = require('./MultiMediaService/MultiMediaService');
-const SubscriberProfileBuilder = require('./utils/ProfileBuilders/Subscriber');
+const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
 
 const validateConfig = (bot, config) => {
   if (!config) {
