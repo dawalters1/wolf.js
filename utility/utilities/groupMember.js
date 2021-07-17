@@ -17,7 +17,7 @@ module.exports = class GroupMember extends BaseUtility {
       kick: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
       ban: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
 
-      checkPermissions: (...args) => this.check(...args)
+      checkPermissions: (...args) => this.checkPermissions(...args)
     };
   }
 
