@@ -538,7 +538,7 @@ module.exports = class WolfBot {
    * Update the bots profile
    * @returns {SubscriberProfileBuilder} subscriber profile builder
    */
-  async updateProfile () {
+  updateProfile () {
     return new SubscriberProfileBuilder(this, this.currentSubscriber);
   }
 
