@@ -2,9 +2,29 @@ const AWS = require('aws-sdk');
 const Signer = AWS.Signers.V4;
 const Response = require('../networking/Response');
 
+const valid = () => AWS.config.credentials && !AWS.config.credentials.needsRefresh() && !AWS.config.credentials.expired && AWS.config.credentials.accessKeyId && AWS.config.credentials.secretAccessKey && AWS.config.credentials.sessionToken;
+
+const _requestToken = async (bot, attempt = 1) => {
+  const result = await bot.websocket.emit('security token refresh');
+
+  if (result.success) {
+    bot._cognito = result.body;
+  } else if (attempt < 3) {
+    await bot.utility().delay(350);
+    await _requestToken(bot, attempt + 1);
+  } else {
+    bot._cognito = null;
+  }
+};
+
 const _getCredentials = async (bot, refresh = false) => {
   if (refresh) {
-    bot._cognito = (await bot.websocket.emit('security token refresh')).body;
+    console.log('Requesting new security token');
+    await _requestToken(bot);
+
+    if (!bot._cognito) {
+      console.log('Failed to retrieve security token');
+    }
   }
 
   return new Promise((resolve) => {
@@ -40,16 +60,19 @@ module.exports = class MultiMediaService {
   }
 
   async _getCredentialsIfNeeded () {
-    if (this._creds && !this._creds.needsRefresh() && !this._creds.expired && this._creds.data.Credentials.AccessKeyId) {
+    if (this._creds && valid()) {
+      console.log('cached creds valid, returning');
       return this._creds;
     }
 
     this._creds = await _getCredentials(this._bot, this._creds);
 
-    if (!this._creds.needsRefresh() && !this._creds.expired && this._creds.data.Credentials.AccessKeyId) {
+    if (valid()) {
+      console.log('creds valid, returning');
       return this._creds;
     }
 
+    console.log('was invalid after request');
     return await this._getCredentialsIfNeeded();
   }
 
