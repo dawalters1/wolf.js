@@ -18,7 +18,7 @@ module.exports = class Group extends Helper {
    * Create a group
    * @returns {GroupProfileBuilder} Group Profile Builder
    */
-  async create () {
+  create () {
     return new GroupProfileBuilder(this._bot)._create();
   }
 
