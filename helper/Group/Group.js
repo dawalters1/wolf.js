@@ -427,10 +427,11 @@ module.exports = class Group extends Helper {
       } else if (validator.isLessThanOrEqualZero(groupId)) {
         throw new Error('groupId cannot be less than or equal to 0');
       }
+
       const group = await this.getById(groupId);
 
       if (group.exists) {
-        return new GroupProfileBuilder(this._bot)._update((await this.getById(groupId)));
+        return new GroupProfileBuilder(this._bot)._update(group);
       } else {
         throw new Error('group does not exist');
       }

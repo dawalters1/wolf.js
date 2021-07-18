@@ -19,12 +19,7 @@ const _requestToken = async (bot, attempt = 1) => {
 
 const _getCredentials = async (bot, refresh = false) => {
   if (refresh) {
-    console.log('Requesting new security token');
     await _requestToken(bot);
-
-    if (!bot._cognito) {
-      console.log('Failed to retrieve security token');
-    }
   }
 
   return new Promise((resolve) => {
@@ -61,18 +56,15 @@ module.exports = class MultiMediaService {
 
   async _getCredentialsIfNeeded () {
     if (this._creds && valid()) {
-      console.log('cached creds valid, returning');
       return this._creds;
     }
 
     this._creds = await _getCredentials(this._bot, this._creds);
 
     if (valid()) {
-      console.log('creds valid, returning');
       return this._creds;
     }
 
-    console.log('was invalid after request');
     return await this._getCredentialsIfNeeded();
   }
 
