@@ -62,7 +62,7 @@ app:
     },
     {
         "name": "{keyword}_help_message",
-        "value":"Welcome to the {botname} bot\n\n!{keyword} help - To display this message\n!example me - Display basic information about your profile",
+        "value":"Welcome to the {botname} bot\n\n!{keyword} help - To display this message\n!{keyword} me - Display basic information about your profile",
         "language": "en"
     },
 
