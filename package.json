@@ -26,6 +26,7 @@
   "dependencies": {
     "@dawalters1/constants": "^1.0.1",
     "@dawalters1/validator": "^1.0.5",
+    "@types/node": "^16.3.3",
     "aws-sdk": "^2.946.0",
     "config": "^3.3.6",
     "file-type": "^16.5.1",

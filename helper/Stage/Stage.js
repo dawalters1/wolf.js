@@ -70,99 +70,12 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-   * Update a specific slot in a group
-   * @param {*} groupId - The id of the group
-   * @param {{id: Number, locked: Boolean}} slot - The slot to update
-   */
-  async updateSlot (groupId, slot) {
-    try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
-      }
-
-      if (slot) {
-        if (!validator.isValidNumber(slot.id)) {
-          throw new Error('id must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(slot.id)) {
-          throw new Error('id cannot be less than or equal to 0');
-        }
-
-        if (slot.locked && !validator.isValidBoolean(slot.locked)) {
-          throw new Error('locked must be a valid boolean');
-        }
-      } else {
-        throw new Error('slot cannot be null or empty');
-      }
-
-      const result = await this._websocket.emit(request.GROUP_AUDIO_SLOT_UPDATE, slot);
-
-      if (result.success && this._slots[groupId]) {
-        this._slots[groupId][result.slot.id - 1] = result.slot;
-      }
-
-      return result;
-    } catch (error) {
-      error.method = `Helper/Stage/updateSlot(groupId = ${JSON.stringify(groupId)}, slot = ${JSON.stringify(slot)})`;
-      throw error;
-    }
-  }
-
-  /**
-   * Update a specific slot in a group
+   * Update the mute state of a specific slotroup
    * @param {Number} groupId - The id of the group
-   * @param {{id: Number, locked: Boolean, slotId: Number, occupierId: Number, occupierMuted: Boolean}} slot - The slot to update
+   * @param {Number} slotId - The ID of the slot to update
+   * @param {Boolean} muted - Whether or not the slot is muted
    */
-  async broadcastUpdate (groupId, slot) {
-    try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
-      }
-
-      if (slot) {
-        slot.id = groupId;
-
-        if (!validator.isValidNumber(slot.slotId)) {
-          throw new Error('slotId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(slot.slotId)) {
-          throw new Error('slotId cannot be less than or equal to 0');
-        }
-        if (!validator.isValidNumber(slot.occupierId)) {
-          throw new Error('occupierId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(slot.occupierId)) {
-          throw new Error('occupierId cannot be less than or equal to 0');
-        }
-        if (!validator.isValidBoolean(slot.occupireMuted)) {
-          throw new Error('locked must be a valid boolean');
-        }
-      } else {
-        throw new Error('slot cannot be null or empty');
-      }
-
-      const result = await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_UPDATE, slot);
-
-      if (result.success && this._slots[groupId]) {
-        this._slots[groupId][result.slot.id - 1] = result.slot;
-      }
-
-      return result;
-    } catch (error) {
-      error.method = `Helper/Stage/broadcastUpdate(groupId = ${JSON.stringify(groupId)}, slot = ${JSON.stringify(slot)})`;
-
-      throw error;
-    }
-  }
-
-  /**
-   * Disconnect a slot
-   * @param {Number} groupId - The id of the group
-   * @param {Number} slotId - The id of the slot
-   * @param {Number} sourceSubscriberId - The id of the current subscriber using slot
-   */
-  async broadcastDisconnect (groupId, slotId, sourceSubscriberId) {
+  async updateSlotMuteState (groupId, slotId, muted) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -176,19 +89,173 @@ module.exports = class Stage extends Helper {
         throw new Error('slotId cannot be less than or equal to 0');
       }
 
-      if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      if (!validator.isValidBoolean(muted)) {
+        throw new Error('muted must be a valid boolean');
       }
 
-      return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
-        id: groupId,
-        slotId,
-        occupierId: sourceSubscriberId
-      });
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length > 0) {
+        const slot = slots.find((slot) => slot.id === slotId);
+
+        if (slot) {
+          if (slot.occupierId !== this._bot.currentSubscriber.id && !muted) {
+            throw new Error('you can only unmute yourself');
+          }
+
+          return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_UPDATE,
+            {
+              id: groupId,
+              slotId,
+              occupierId: slot.occupierId,
+              occupierMuted: muted
+            });
+        }
+        throw new Error('invalid slot id');
+      }
+      throw new Error('not in group or stage is disabled');
     } catch (error) {
-      error.method = `Helper/Stage/broadcastDisconnect(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)})`;
+      error.method = `Helper/Stage/updateSlotMuteState(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, muted = ${JSON.stringify(muted)})`;
+      throw error;
+    }
+  }
+
+  /**
+   * Update the lock state of a specific slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The ID of the slot to update
+   * @param {Boolean} locked - Whether or not the slot is locked
+   */
+  async updateSlotLockState (groupId, slotId, locked) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidNumber(slotId)) {
+        throw new Error('slotId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(slotId)) {
+        throw new Error('slotId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidBoolean(locked)) {
+        throw new Error('locked must be a valid boolean');
+      }
+
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length > 0) {
+        const slot = slots.find((slot) => slot.id === slotId);
+
+        if (slot) {
+          const result = await this._websocket.emit(request.GROUP_AUDIO_SLOT_UPDATE, {
+            id: groupId,
+            slot: {
+              id: slotId,
+              locked
+            }
+          });
+
+          return result;
+        }
+        throw new Error('invalid slot id');
+      }
+      throw new Error('not in group or stage is disabled');
+    } catch (error) {
+      error.method = `Helper/Stage/updateSlotLockState(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, locked = ${JSON.stringify(locked)})`;
+
+      throw error;
+    }
+  }
+
+  /**
+   * Leave a slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The id of the slot
+   */
+  async leaveSlot (groupId, slotId) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidNumber(slotId)) {
+        throw new Error('slotId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(slotId)) {
+        throw new Error('slotId cannot be less than or equal to 0');
+      }
+
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length > 0) {
+        const slot = slots.find((slot) => slot.id === slotId);
+
+        if (slot) {
+          if (slot.occupierId) {
+            if (slot.occupierId !== this._bot.currentSubscriber.id) {
+              return this.removeSubscriberFromSlot(groupId, slot.id, slot.occupierId);
+            }
+
+            return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+              id: groupId,
+              slotId,
+              occupierId: this._bot.currentSubscriber.id
+            });
+          }
+          throw new Error('no subscriber occupying slot');
+        }
+        throw new Error('invalid slot id');
+      }
+      throw new Error('not in group or stage is disabled');
+    } catch (error) {
+      error.method = `Helper/Stage/leaveSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)})`;
+
+      throw error;
+    }
+  }
+
+  /**
+   * Kick a slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The id of the slot
+   */
+  async removeSubscriberFromSlot (groupId, slotId) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidNumber(slotId)) {
+        throw new Error('slotId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(slotId)) {
+        throw new Error('slotId cannot be less than or equal to 0');
+      }
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length > 0) {
+        const slot = slots.find((slot) => slot.id === slotId);
+
+        if (slot) {
+          if (slot.occupierId) {
+            return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+              id: groupId,
+              slotId,
+              occupierId: slot.occupierId
+            });
+          }
+          throw new Error('no subscriber occupying slot');
+        }
+        throw new Error('invalid slot id');
+      }
+      throw new Error('not in group or stage is disabled');
+    } catch (error) {
+      error.method = `Helper/Stage/removeSubscriberFromSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)})`;
 
       throw error;
     }
@@ -200,7 +267,7 @@ module.exports = class Stage extends Helper {
    * @param {Number} slotId - The id of the slot
    * @param {String} sdp - RTC data
    */
-  async broadcast (groupId, slotId, sdp) {
+  async joinSlot (groupId, slotId, sdp) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -225,7 +292,7 @@ module.exports = class Stage extends Helper {
           sdp
         });
     } catch (error) {
-      error.method = `Helper/Stage/broadcast(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
+      error.method = `Helper/Stage/joinSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
 
       throw error;
     }
@@ -237,7 +304,7 @@ module.exports = class Stage extends Helper {
    * @param {*} slotId - The id of the slot
    * @param {*} sdp - RTC data
    */
-  async consume (groupId, slotId, sdp) {
+  async consumeSlot (groupId, slotId, sdp) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -262,7 +329,7 @@ module.exports = class Stage extends Helper {
           sdp
         });
     } catch (error) {
-      error.method = `Helper/Stage/consume(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
+      error.method = `Helper/Stage/consumeSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
 
       throw error;
     }
