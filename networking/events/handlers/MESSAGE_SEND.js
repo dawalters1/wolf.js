@@ -2,7 +2,8 @@ const BaseEvent = require('../BaseEvent');
 const internal = require('../../../constants/internal');
 const event = require('../../../constants/event');
 
-const { adminAction, messageType, capability, privilege } = require('@dawalters1/constants');
+const { messageType, capability, privilege } = require('@dawalters1/constants');
+const toAdminActionFromString = require('../../../utils/toAdminActionFromString');
 const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
 const { version } = require('../../../package.json');
 
@@ -51,7 +52,7 @@ module.exports = class MessageSend extends BaseEvent {
       isCommand: this._bot.commandHandler.isCommand(data.data.toString())
     };
 
-    switch (message.messageType) {
+    switch (message.type) {
       case messageType.APPLICATION_PALRINGO_GROUP_ACTION:
         {
           const group = await this._bot.group().getById(message.targetGroupId);
@@ -59,20 +60,22 @@ module.exports = class MessageSend extends BaseEvent {
           const subscriber = await this._bot.subscriber().getById(message.sourceSubscriberId);
 
           const action = JSON.parse(message.body);
-          switch (action.type) {
-            case adminAction.JOIN: {
-              group.subscribers.add({
-                subscriberId: subscriber.id,
-                groupId: group.id,
-                capabilities: group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR,
-                additionalInfo: {
-                  hash: subscriber.hash,
-                  nickname: subscriber.nickname,
-                  privileges: subscriber.privileges,
-                  onlineState: subscriber.onlineState
-                }
-              });
 
+          switch (action.type) {
+            case 'join': {
+              if (group && group.subscribers) {
+                group.subscribers.add({
+                  subscriberId: subscriber.id,
+                  groupId: group.id,
+                  capabilities: group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR,
+                  additionalInfo: {
+                    hash: subscriber.hash,
+                    nickname: subscriber.nickname,
+                    privileges: subscriber.privileges,
+                    onlineState: subscriber.onlineState
+                  }
+                });
+              }
               if (message.sourceSubscriberId === this._bot.currentSubscriber.id) {
                 group.capabilities = group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR;
                 group.inGroup = true;
@@ -81,14 +84,15 @@ module.exports = class MessageSend extends BaseEvent {
               } else {
                 this._bot.on._emit(event.GROUP_MEMBER_ADD, group, subscriber);
               }
+              break;
             }
             // eslint-disable-next-line no-fallthrough
             default: {
-              if (action.type === adminAction.LEAVE && action.instigatorId !== 0) {
-                action.type = adminAction.KICK;
+              if (action.type === 'leave' && action.instigatorId) {
+                action.type = 'kick';
               }
               if (message.sourceSubscriberId === this._bot.currentSubscriber.id) {
-                group.capabilities = toGroupMemberCapability(action.type);
+                group.capabilities = toGroupMemberCapability(toAdminActionFromString(action.type));
 
                 if (group.capabilities === capability.NOT_MEMBER) {
                   group.inGroup = false;
@@ -101,34 +105,34 @@ module.exports = class MessageSend extends BaseEvent {
                   const member = group.subscribers.find((groupSubscriber) => groupSubscriber.subscriberId === subscriber.id);
 
                   if (member) {
-                    if (action.type === adminAction.OWNER) {
+                    if (action.type === 'owner') {
                       group.owner = subscriber.hash;
                     }
 
                     if (member) {
-                      if (action.type === adminAction.KICK || action.type === adminAction.LEAVE) {
+                      if (action.type === 'kick' || action.type === 'leave') {
                         group.subscribers.splice(group.subscribers.indexOf(member), 1);
                       } else {
-                        member.capabilities = toGroupMemberCapability(action.type);
+                        member.capabilities = toGroupMemberCapability(toAdminActionFromString(action.type));
                       }
                     }
                   }
                 }
-                if (action.type === adminAction.LEAVE) {
-                  this._bot.on._emit(subscriber.id === this._bot.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE, group, subscriber);
-                } else {
-                  this._bot.on._emit(event.GROUP_MEMBER_UPDATE,
-                    {
-                      group,
-                      action: {
-                        groupId: group.id,
-                        sourceId: action.instigatorId,
-                        targetId: message.sourceSubscriberId,
-                        action: action.type
-                      }
-                    });
-                }
               }
+
+              if (action.type === 'leave' || action.type === 'kick') {
+                this._bot.on._emit(subscriber.id === this._bot.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE, group, subscriber);
+              } else {
+                this._bot.on._emit(event.GROUP_MEMBER_UPDATE,
+                  group,
+                  {
+                    groupId: group.id,
+                    sourceId: action.instigatorId,
+                    targetId: message.sourceSubscriberId,
+                    action: action.type
+                  });
+              }
+              break;
             }
           }
         }
