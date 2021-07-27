@@ -14,6 +14,26 @@ module.exports = class Stage extends Helper {
   }
 
   /**
+   * Retrieve group stage settings
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Whether or not the bot should request new data
+   */
+  async getSettings (groupId, requestNew = false) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+
+      return (await this._bot.group().getById(groupId, requestNew)).audioConfig;
+    } catch (error) {
+      error.method = `Helper/Stage/getSettings(groupId =${JSON.stringify(groupId)}, requestNew = ${JSON.stringify(requestNew)})`;
+      throw error;
+    }
+  }
+
+  /**
    * Get list of stages available
    * @param {Boolean} requestNew - Request new data from the server
    */
@@ -51,6 +71,16 @@ module.exports = class Stage extends Helper {
 
       if (!requestNew && this._slots[groupId]) {
         return this._slots[groupId];
+      }
+
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
       }
 
       const slots = await this._websocket.emit(request.GROUP_AUDIO_SLOT_LIST, {
@@ -93,27 +123,39 @@ module.exports = class Stage extends Helper {
         throw new Error('muted must be a valid boolean');
       }
 
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
       const slots = await this.getSlots(groupId);
 
-      if (slots.length > 0) {
-        const slot = slots.find((slot) => slot.id === slotId);
-
-        if (slot) {
-          if (slot.occupierId !== this._bot.currentSubscriber.id && !muted) {
-            throw new Error('you can only unmute yourself');
-          }
-
-          return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_UPDATE,
-            {
-              id: groupId,
-              slotId,
-              occupierId: slot.occupierId,
-              occupierMuted: muted
-            });
-        }
-        throw new Error('invalid slot id');
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
       }
-      throw new Error('not in group or stage is disabled');
+
+      const slot = slots.find((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (slot.occupierId !== this._bot.currentSubscriber.id && !muted) {
+        throw new Error('occupierId must be self');
+      }
+
+      return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_UPDATE,
+        {
+          id: groupId,
+          slotId,
+          occupierId: slot.occupierId,
+          occupierMuted: muted
+        });
     } catch (error) {
       error.method = `Helper/Stage/updateSlotMuteState(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, muted = ${JSON.stringify(muted)})`;
       throw error;
@@ -144,25 +186,35 @@ module.exports = class Stage extends Helper {
         throw new Error('locked must be a valid boolean');
       }
 
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
       const slots = await this.getSlots(groupId);
 
-      if (slots.length > 0) {
-        const slot = slots.find((slot) => slot.id === slotId);
-
-        if (slot) {
-          const result = await this._websocket.emit(request.GROUP_AUDIO_SLOT_UPDATE, {
-            id: groupId,
-            slot: {
-              id: slotId,
-              locked
-            }
-          });
-
-          return result;
-        }
-        throw new Error('invalid slot id');
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
       }
-      throw new Error('not in group or stage is disabled');
+
+      const slot = slots.find((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      return await this._websocket.emit(request.GROUP_AUDIO_SLOT_UPDATE, {
+        id: groupId,
+        slot: {
+          id: slotId,
+          locked
+        }
+      });
     } catch (error) {
       error.method = `Helper/Stage/updateSlotLockState(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, locked = ${JSON.stringify(locked)})`;
 
@@ -173,9 +225,8 @@ module.exports = class Stage extends Helper {
   /**
    * Leave a slot
    * @param {Number} groupId - The id of the group
-   * @param {Number} slotId - The id of the slot
    */
-  async leaveSlot (groupId, slotId) {
+  async leaveSlot (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -183,36 +234,35 @@ module.exports = class Stage extends Helper {
         throw new Error('groupId cannot be less than or equal to 0');
       }
 
-      if (!validator.isValidNumber(slotId)) {
-        throw new Error('slotId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(slotId)) {
-        throw new Error('slotId cannot be less than or equal to 0');
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
       }
 
       const slots = await this.getSlots(groupId);
 
-      if (slots.length > 0) {
-        const slot = slots.find((slot) => slot.id === slotId);
-
-        if (slot) {
-          if (slot.occupierId) {
-            if (slot.occupierId !== this._bot.currentSubscriber.id) {
-              return this.removeSubscriberFromSlot(groupId, slot.id, slot.occupierId);
-            }
-
-            return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
-              id: groupId,
-              slotId,
-              occupierId: this._bot.currentSubscriber.id
-            });
-          }
-          throw new Error('no subscriber occupying slot');
-        }
-        throw new Error('invalid slot id');
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
       }
-      throw new Error('not in group or stage is disabled');
+
+      const slot = slots.find((slot) => slot.occupierId && slot.occupierId === this._bot.currentSubscriber.id);
+
+      if (!slot) {
+        throw new Error('bot does not occupy a slot in this group');
+      }
+
+      return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+        id: groupId,
+        slotId: slot.id,
+        occupierId: this._bot.currentSubscriber.id
+      });
     } catch (error) {
-      error.method = `Helper/Stage/leaveSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)})`;
+      error.method = `Helper/Stage/leaveSlot(groupId = ${JSON.stringify(groupId)})`;
 
       throw error;
     }
@@ -236,24 +286,38 @@ module.exports = class Stage extends Helper {
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
+
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
       const slots = await this.getSlots(groupId);
 
-      if (slots.length > 0) {
-        const slot = slots.find((slot) => slot.id === slotId);
-
-        if (slot) {
-          if (slot.occupierId) {
-            return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
-              id: groupId,
-              slotId,
-              occupierId: slot.occupierId
-            });
-          }
-          throw new Error('no subscriber occupying slot');
-        }
-        throw new Error('invalid slot id');
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
       }
-      throw new Error('not in group or stage is disabled');
+
+      const slot = slots.find((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (!slot.occupierId) {
+        throw new Error('no subscriber occupies slot');
+      }
+
+      return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+        id: groupId,
+        slotId,
+        occupierId: slot.occupierId
+      });
     } catch (error) {
       error.method = `Helper/Stage/removeSubscriberFromSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)})`;
 
@@ -283,6 +347,32 @@ module.exports = class Stage extends Helper {
 
       if (validator.isNullOrWhitespace(sdp)) {
         throw new Error('sdp cannot be null or empty');
+      }
+
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
+      }
+
+      const slot = slots.find((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (slot.occupierId) {
+        throw new Error('a subscriber already occupies this slot');
       }
 
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST,
@@ -320,6 +410,32 @@ module.exports = class Stage extends Helper {
 
       if (validator.isNullOrWhitespace(sdp)) {
         throw new Error('sdp cannot be null or empty');
+      }
+
+      const settings = await this.getSettings(groupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(groupId);
+
+      if (slots.length === 0) {
+        throw new Error('unable to retrieve slots');
+      }
+
+      const slot = slots.find((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (!slot.occupierId) {
+        throw new Error('no subscriber occupies slot');
       }
 
       return await this._websocket.emit(request.GROUP_AUDIO_CONSUME,
