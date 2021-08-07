@@ -17,7 +17,6 @@ const BITS_PER_SAMPLE = 16;
 const CHANNEL_COUNT = 2;
 const NUMBER_OF_FRAMES = SAMPLE_RATE / 100;
 const SLIZE_SIZE = 1920;
-const BROADCAST_DURATION = 10;
 
 // #endregion
 
@@ -55,12 +54,12 @@ module.exports = class Client {
 
     this._sender = this._client.addTrack(track, mediaStream);
 
-    this._broadcaster = setInterval(() => {
+    const onData = async () => {
       if (this._playing) {
         if (!this._paused) {
           if (this._samples.length >= SLIZE_SIZE) {
             if (!this._muted) {
-              this._source.onData({
+              await this._source.onData({
                 samples: this._samples.slice(0, SLIZE_SIZE),
                 sampleRate: SAMPLE_RATE,
                 bitsPerSample: BITS_PER_SAMPLE,
@@ -69,22 +68,27 @@ module.exports = class Client {
               });
             }
 
-            this._samples = this._samples.slice(SLIZE_SIZE);
-
             this._duration += 10;
+
+            this._samples = this._samples.slice(SLIZE_SIZE);
           } else {
             if ((this._ffmpeg && !this._ffmpeg.ffmpegProc)) {
               this._ffmpegSignal(signal.ABORT);
 
-              return this._api.on.emit(internal.STAGE_CLIENT_BROADCAST_ENDED,
+              return this._api.on._emit(internal.STAGE_CLIENT_BROADCAST_ENDED,
                 {
-                  groupId: this.groupId
+                  groupId: this._groupId
                 });
             }
           }
         }
       }
-    }, BROADCAST_DURATION);
+    };
+
+    (function repeat () {
+      onData();
+      setTimeout(repeat);
+    })();
   }
 
   async _handleSlotUpdate (slot) {
@@ -98,7 +102,7 @@ module.exports = class Client {
       this._ready = false;
       this._slotId = 0;
 
-      this._api.on.emit(internal.STAGE_CLIENT_DISCONNECTED,
+      this._api.on._emit(internal.STAGE_CLIENT_DISCONNECTED,
         {
           groupId: this._groupId,
           duration: this._duration / 1000,
@@ -108,16 +112,23 @@ module.exports = class Client {
       this._ffmpegSignal(signal.ABORT);
     } else {
       if (!this._ready && slot.connectionState === 'CONNECTED') {
+        this._api.on._emit(internal.STAGE_CLIENT_CONNECTED,
+          {
+            groupId: this._groupId
+          });
+
         await this._api.utility().delay(4000);
+
         this._ready = true;
-        this._api.on.emit(internal.STAGE_CLIENT_READY,
+
+        this._api.on._emit(internal.STAGE_CLIENT_READY,
           {
             groupId: this._groupId
           });
       } else {
         if (this._muted && !slot.occupierMuted) {
           this._muted = false;
-          return this._api.on.emit(internal.STAGE_CLIENT_UNMUTED,
+          return this._api.on._emit(internal.STAGE_CLIENT_UNMUTED,
             {
               groupId: this._groupId,
               duration: this._duration / 1000,
@@ -147,14 +158,20 @@ module.exports = class Client {
 
     this._ffmpeg = ffmpeg(this._stream)
       .toFormat('wav')
+      // .withAudioChannels(2)
+    // .withAudioQuality(0)
+    //  .withAudioFrequency(48000)
+    //    .withAudioBitrate(192)
+      // .addOutputOption('-page_duration 10')
+      // .audioCodec('pcm-mulaw')
       .native()
       .noVideo()
       .on('error', error => {
         if (this._ready) {
           if (this._playing) {
-            this._api.on.emit(internal.STAGE_CLIENT_ERROR,
+            this._api.on._emit(internal.STAGE_CLIENT_ERROR,
               {
-                groupId: this.groupId,
+                groupId: this._groupId,
                 error
               });
           }
@@ -174,6 +191,15 @@ module.exports = class Client {
 
       this._playing = true;
     });
+
+    //   const fromBuffer = new Uint8Array(chunk);
+    //  const newSamples = new Uint8Array(this._samples.length + fromBuffer.length);
+    // newSamples.set(this._samples);
+    // newSamples.set(fromBuffer, this._samples.length);
+    // this._samples = newSamples;
+
+    // this._playing = true;
+    // });
   }
 
   /**
@@ -257,9 +283,9 @@ module.exports = class Client {
   async pause () {
     await this._ffmpegSignal(signal.PAUSE);
 
-    this._api.on.emit(internal.STAGE_CLIENT_PAUSED,
+    this._api.on._emit(internal.STAGE_CLIENT_PAUSED,
       {
-        groupId: this.groupId,
+        groupId: this._groupId,
         duration: this._duration / 1000
       });
 
@@ -273,12 +299,14 @@ module.exports = class Client {
   async unpause () {
     await this._ffmpegSignal(signal.RESUME);
 
-    this._api.on.emit(internal.STAGE_CLIENT_UNPAUSED,
+    this._api.on._emit(internal.STAGE_CLIENT_UNPAUSED,
       {
-        groupId: this.groupId,
+        groupId: this._groupId,
 
         duration: this._duration / 1000
       });
+
+    return this._duration / 1000;
   }
 
   /**
@@ -290,12 +318,14 @@ module.exports = class Client {
 
     await this._ffmpegSignal(signal.ABORT);
 
-    this._api.on.emit(internal.STAGE_CLIENT_STOPPED,
+    this._api.on._emit(internal.STAGE_CLIENT_STOPPED,
       {
-        groupId: this.groupId,
+        groupId: this._groupId,
 
         duration: duration / 1000
       });
+
+    return this._duration / 1000;
   }
 
   /**
@@ -366,7 +396,7 @@ module.exports = class Client {
     // Kill the ffmpeg
     this._ffmpegSignal(signal.ABORT);
 
-    await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+    await this._api.websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
       id: this._groupId,
       slotId: this._slotId,
       occupierId: this._api.currentSubscriber.id
