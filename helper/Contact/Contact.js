@@ -4,8 +4,8 @@ const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
 module.exports = class Contact extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._contacts = [];
   }
@@ -105,7 +105,7 @@ module.exports = class Contact extends Helper {
 
       return existing;
     } else {
-      const subscriber = await this._bot.subscriber().getById(id);
+      const subscriber = await this._api.subscriber().getById(id);
 
       const contact = {
         id,

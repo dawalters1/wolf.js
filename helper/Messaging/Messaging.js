@@ -31,8 +31,8 @@ const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
   }
 
   async _messageGroupSubscribe () {
@@ -82,7 +82,7 @@ module.exports = class Messaging extends Helper {
       const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
       if (typesToUseMMS.includes(mimeType)) {
-        return await uploadToMediaService(this._bot, routes.MESSAGE_SEND, content, mimeType, targetId, targetType === targetTypes.GROUP);
+        return await uploadToMediaService(this._api, routes.MESSAGE_SEND, content, mimeType, targetId, targetType === targetTypes.GROUP);
       }
 
       if (validator.isNullOrWhitespace(mimeType)) {
@@ -101,7 +101,7 @@ module.exports = class Messaging extends Helper {
 
       const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
 
-      const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._bot.utility().isValidUrl(url[0])) || [];
+      const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {
@@ -115,7 +115,7 @@ module.exports = class Messaging extends Helper {
               end: value.index + value[0].length
             };
 
-            const group = await this._bot.group().getByName(value[1]);
+            const group = await this._api.group().getByName(value[1]);
 
             if (group.exists) {
               ad.groupId = group.id;
@@ -283,7 +283,7 @@ module.exports = class Messaging extends Helper {
       }
 
       const checkHistory = async (timestamp = 0) => {
-        const messageHistory = (await this._bot.subscriber().getHistory(subscriberId, timestamp)).body;
+        const messageHistory = (await this._api.subscriber().getHistory(subscriberId, timestamp)).body;
 
         if (messageHistory.length === 0 && timestamp === 0) {
           throw new Error('No conversation history for this subscriber');
