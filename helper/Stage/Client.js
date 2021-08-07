@@ -158,12 +158,6 @@ module.exports = class Client {
 
     this._ffmpeg = ffmpeg(this._stream)
       .toFormat('wav')
-      // .withAudioChannels(2)
-    // .withAudioQuality(0)
-    //  .withAudioFrequency(48000)
-    //    .withAudioBitrate(192)
-      // .addOutputOption('-page_duration 10')
-      // .audioCodec('pcm-mulaw')
       .native()
       .noVideo()
       .on('error', error => {
@@ -191,15 +185,6 @@ module.exports = class Client {
 
       this._playing = true;
     });
-
-    //   const fromBuffer = new Uint8Array(chunk);
-    //  const newSamples = new Uint8Array(this._samples.length + fromBuffer.length);
-    // newSamples.set(this._samples);
-    // newSamples.set(fromBuffer, this._samples.length);
-    // this._samples = newSamples;
-
-    // this._playing = true;
-    // });
   }
 
   /**
