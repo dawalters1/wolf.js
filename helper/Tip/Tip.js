@@ -8,8 +8,8 @@ const constants = require('@dawalters1/constants');
 
 module.exports = class Tip extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
   }
 
   async _groupSubscribe () {

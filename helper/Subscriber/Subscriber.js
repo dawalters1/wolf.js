@@ -6,8 +6,8 @@ const request = require('../../constants/request');
 
 module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._subscribers = [];
   }
@@ -43,7 +43,7 @@ module.exports = class Subscriber extends Helper {
       }
 
       if (subscribers.length !== subscriberIds.length) {
-        for (const batchSubscriberIdList of this._bot.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+        for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
           const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
             headers: {
               version: 4
