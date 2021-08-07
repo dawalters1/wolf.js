@@ -44,13 +44,7 @@ module.exports = class Stage extends Helper {
       const client = this._clients[data.id];
 
       if (client) {
-        const slot = data.slot;
-
-        if (client._slotId !== slot.id) {
-          return Promise.resolve();
-        }
-
-        return this._api.on.emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED, data.audioCounts.consumerCount);
+        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED, data.audioCounts.consumerCount);
       }
 
       return Promise.resolve();
@@ -468,7 +462,7 @@ module.exports = class Stage extends Helper {
           });
       }
 
-      return await (await this._getClient(groupId)).joinSlot(slotId);
+      return await (await this._getClient(groupId, true)).joinSlot(slotId);
     } catch (error) {
       error.method = `Helper/Stage/joinSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
 
@@ -690,6 +684,10 @@ module.exports = class Stage extends Helper {
     }
 
     return client._duration / 1000;
+  }
+
+  async hasClient (groupId) {
+    return await this._getClient(groupId) !== undefined;
   }
 
   _process (data) {
