@@ -44,7 +44,11 @@ module.exports = class Stage extends Helper {
       const client = this._clients[data.id];
 
       if (client) {
-        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED, data.audioCounts.consumerCount);
+        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
+          {
+            groupId: data.id,
+            count: data.audioCounts.consumerCount
+          });
       }
 
       return Promise.resolve();
