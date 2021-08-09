@@ -32,7 +32,6 @@
     "config": "^3.3.6",
     "file-type": "^16.5.1",
     "fluent-ffmpeg": "^2.1.2",
-    "fluent-ffmpeg-util": "^0.2.0-alpha.1",
     "http-status-codes": "^2.1.4",
     "image-size": "^1.0.0",
     "moment": "^2.29.1",

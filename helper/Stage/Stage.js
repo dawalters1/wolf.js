@@ -34,7 +34,7 @@ module.exports = class Stage extends Helper {
           return Promise.resolve();
         }
 
-        return await client._handleSlotUpdate(slot);
+        return await client._handleSlotUpdate(slot, data.sourceSubscriberId);
       }
 
       return Promise.resolve();
@@ -52,6 +52,10 @@ module.exports = class Stage extends Helper {
       }
 
       return Promise.resolve();
+    });
+
+    api.on.stageClientDisconnected(async (data) => {
+      Reflect.deleteProperty(this._clients, data.groupId);
     });
   }
 
