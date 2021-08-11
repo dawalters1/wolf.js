@@ -553,7 +553,9 @@ module.exports = class Stage extends Helper {
       throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
     }
 
-    if (!client._ready) {
+    console.log(client);
+
+    if (!await client.isReady()) {
       throw new Error('stage client is not ready to broadcast, are you sure it has joined a slot?');
     }
 
