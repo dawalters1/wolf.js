@@ -146,6 +146,7 @@ module.exports = class Client {
 
     this._ffmpegPipe.on('data', (buffer) => {
       const newSamples = new Int8Array(buffer);
+      console.log(newSamples.length);
       const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
       mergedSamples.set(this._samples);
       mergedSamples.set(newSamples, this._samples.length);
@@ -162,11 +163,7 @@ module.exports = class Client {
         return;
       }
 
-      if (this._paused) {
-        return;
-      }
-
-      if (this._data.length === 0) {
+      if (this._samples.length < SLIZE_SIZE) {
         if (!this._endOfData) {
           return;
         }
@@ -198,17 +195,18 @@ module.exports = class Client {
         channelCount: CHANNEL_COUNT,
         numberOfFrames: NUMBER_OF_FRAMES
       });
+
+      if (this._pausedFor > 0) {
+        this._pausedFor -= 10;
+      }
     };
 
     (async function repeat () {
-    // TODO: figure a way to determine if data should be sent, as it appears setTimeout is highly inconsistent when firing
-
-      const result = broadcast();
-
-      if (result === 'eod') {
+      if (broadcast() === 'eod') {
         return; // No more data avilable break loop
       }
-      setImmediate(repeat);
+
+      setTimeout(repeat);
     })();
   }
 
