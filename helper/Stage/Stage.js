@@ -342,7 +342,7 @@ module.exports = class Stage extends Helper {
       if (client) {
         this._clients[groupId] = undefined;
 
-        return await client.leaveSlot();
+        return await client.disconnect();
       }
 
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
