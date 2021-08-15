@@ -6,17 +6,17 @@ const MediaStream = require('wrtc').MediaStream;
 const { request, internal } = require('../../constants');
 
 const ffmpeg = require('fluent-ffmpeg');
+// const ffmpegUtil = require('fluent-ffmpeg-util');
 
 const stream = require('stream');
 
 // #region WRTC
 
 const SAMPLE_RATE = 48000;
-const BITS_PER_SAMPLE = 16;
+const SLICE_COUNT = 1920;// sampleRate / 100;
 const CHANNEL_COUNT = 2;
-const NUMBER_OF_FRAMES = SAMPLE_RATE / 100;
-const SLIZE_SIZE = 1920;
-
+const BITRATE = 16;
+const FRAMES = 480;
 // #endregion
 
 module.exports = class Client {
@@ -30,7 +30,8 @@ module.exports = class Client {
     this._muted = false;
     this._paused = false;
 
-    this._pausedFor = 0;
+    this._volume = 1.0;
+
     this._duration = 0;
 
     this._client = new RTCPeerConnection();
@@ -71,27 +72,24 @@ module.exports = class Client {
 
       this._client.close();
 
-      this._api.on._emit(internal.STAGE_CLIENT_DISCONNECTED,
+      this._emit(internal.STAGE_CLIENT_DISCONNECTED,
         {
-          groupId: this._groupId,
           duration: this._duration / 1000,
           sourceSubscriberId: sourceSubscriberId
         });
     } else {
       if (this._muted && !slot.occupierMuted) {
         this._muted = false;
-        return this._api.on._emit(internal.STAGE_CLIENT_UNMUTED,
+        return this._emit(internal.STAGE_CLIENT_UNMUTED,
           {
-            groupId: this._groupId,
             duration: this._duration / 1000,
             sourceSubscriberId: sourceSubscriberId
           });
       } else if (!this._muted && slot.occupierMuted) {
         this._muted = true;
 
-        return this.emit(internal.STAGE_CLIENT_MUTED,
+        return this._emit(internal.STAGE_CLIENT_MUTED,
           {
-            groupId: this._groupId,
             duration: this._duration / 1000,
             sourceSubscriberId: sourceSubscriberId
           });
@@ -105,65 +103,78 @@ module.exports = class Client {
     return this._api.on._emit(eventString, data);
   }
 
-  _reset () {
-    if (this._ffmpegPipe) {
-      this._ffmpegPipe.destroy();
-      this._ffmpegCommand = undefined;
-      this._duration = 0;
-      this._playing = false;
-    }
-
-    this._pausedFor = 0;
-    this._endOfData = false;
-
+  _resetTrack () {
     this._source = new RTCAudioSource();
-    this._samples = new Uint8Array(0);
 
-    const track = this._source.createTrack();
+    this._track = this._source.createTrack();
     const mediaStream = new MediaStream();
-    mediaStream.addTrack(track);
+    mediaStream.addTrack(this._track);
 
     if (this._sender === undefined) {
-      this._sender = this._client.addTrack(track, mediaStream);
+      this._sender = this._client.addTrack(this._track, mediaStream);
     } else {
-      this._sender.replaceTrack(track);
+      this._sender.replaceTrack(this._track);
     }
   }
 
-  _converter (data) {
+  _reset (ffmpeg = true) {
+    if (ffmpeg && this._ffmpegPipe) {
+      this._ffmpegPipe.destroy();
+      this._ffmpegCommand = undefined;
+      this._downloader.destroy();
+    }
+
+    this._duration = 0;
+    this._playing = false;
+    this._endOfData = false;
+    this._samples = new Uint8Array(0);
+
+    return this._resetTrack();
+  }
+
+  _converter () {
     this._reset();
 
-    this._ffmpegCommand = ffmpeg(data)
+    this._ffmpegCommand = ffmpeg(this._downloader)
       .toFormat('wav')
       .native()
       .noVideo()
+      .addOutputOption('-page_duration 1')
+
+      .audioFilters(`volume=${this._volume}`)
       .on('error', (error) => {
-        data.destroy();
-        throw error;
+        this._downloader.destroy();
+
+        if (this._ffmpegCommand === undefined) {
+          return;
+        }
+        this._emit(internal.STAGE_CLIENT_ERROR, error);
       });
 
-    this._ffmpegPipe = this._ffmpegCommand.pipe();
+    this._ffmpegPipe = this._ffmpegCommand.pipe(); // Despite being throttled it still will spam 'data' repeatedly after being paused
 
     this._ffmpegPipe.on('data', (buffer) => {
       const newSamples = new Int8Array(buffer);
-      console.log(newSamples.length);
       const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
       mergedSamples.set(this._samples);
       mergedSamples.set(newSamples, this._samples.length);
       this._samples = mergedSamples;
-
       this._playing = true;
     })
-      .on('finish', () => { console.log('done'); this._endOfData = true; });
+      .on('finish', () => { this._endOfData = true; });
   }
 
   _broadcast () {
-    const broadcast = () => {
+    const broadcast = async () => {
       if (!this._ready) {
         return;
       }
 
-      if (this._samples.length < SLIZE_SIZE) {
+      if (this._paused) {
+        return;
+      }
+
+      if (this._samples.length < SLICE_COUNT) {
         if (!this._endOfData) {
           return;
         }
@@ -179,8 +190,8 @@ module.exports = class Client {
         return 'eod';
       }
 
-      const samples = this._samples.slice(0, SLIZE_SIZE);
-      this._samples = this._samples.slice(SLIZE_SIZE);
+      const sampleSlice = this._samples.slice(0, SLICE_COUNT);
+      this._samples = this._samples.slice(SLICE_COUNT);
 
       this._duration += 10;
 
@@ -189,24 +200,19 @@ module.exports = class Client {
       }
 
       this._source.onData({
-        samples: samples,
+        samples: sampleSlice,
         sampleRate: SAMPLE_RATE,
-        bitsPerSample: BITS_PER_SAMPLE,
+        bitsPerSample: BITRATE,
         channelCount: CHANNEL_COUNT,
-        numberOfFrames: NUMBER_OF_FRAMES
+        numberOfFrames: FRAMES
       });
-
-      if (this._pausedFor > 0) {
-        this._pausedFor -= 10;
-      }
     };
 
     (async function repeat () {
-      if (broadcast() === 'eod') {
+      if (await broadcast() === 'eod') {
         return; // No more data avilable break loop
       }
-
-      setTimeout(repeat);
+      setImmediate(repeat);
     })();
   }
 
@@ -227,7 +233,9 @@ module.exports = class Client {
       throw new Error('stream must be instance of readable');
     }
 
-    this._converter(data);
+    this._downloader = data;
+
+    this._converter();
 
     this._broadcast();
   };
@@ -242,9 +250,9 @@ module.exports = class Client {
   };
 
   async pause () {
-    this._ffmpegPipe.pause();
-
     this._paused = true;
+
+    this._ffmpegPipe.pause();
 
     this._emit(
       internal.STAGE_CLIENT_PAUSED,
@@ -331,6 +339,18 @@ module.exports = class Client {
 
     return Promise.resolve();
   }
+
+  // async increaseVolume () {
+  // this._volume = this._volume + 0.1;
+  // }
+
+  // async decreaseVolume () {
+  // if (this._volume === 0) {
+  // throw new Error('volume cannot be negative');
+  // }
+
+  // this._volume = this._volume - 0.1;
+  // }
 
   /**
    * @returns {Boolean} Whether or not the client has connected to a slot and is ready to broadcast
