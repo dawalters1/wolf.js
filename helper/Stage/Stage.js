@@ -55,7 +55,7 @@ module.exports = class Stage extends Helper {
     });
 
     api.on.stageClientDisconnected(async (data) => {
-      Reflect.deleteProperty(this._clients, data.groupId);
+      Reflect.deleteProperty(this._clients, data.targetGroupId);
     });
   }
 
@@ -342,7 +342,7 @@ module.exports = class Stage extends Helper {
       if (client) {
         this._clients[groupId] = undefined;
 
-        return await client.leaveSlot();
+        return await client.disconnect();
       }
 
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
@@ -552,8 +552,6 @@ module.exports = class Stage extends Helper {
     if (!client) {
       throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
     }
-
-    console.log(client);
 
     if (!await client.isReady()) {
       throw new Error('stage client is not ready to broadcast, are you sure it has joined a slot?');
