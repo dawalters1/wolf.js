@@ -1,15 +1,7 @@
 const Helper = require('../Helper');
 
-const Client = require('./Client');
-
-const { request, internal } = require('../../constants');
+const request = require('../../constants/request');
 const validator = require('@dawalters1/validator');
-
-const commandExists = require('command-exists-promise');
-// eslint-disable-next-line no-unused-vars
-const Stream = require('stream');
-
-let _ffmpegExists = false;
 
 module.exports = class Stage extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -19,86 +11,13 @@ module.exports = class Stage extends Helper {
     this._stages = [];
 
     this._slots = {};
-
-    this._clients = {};
-
-    api.on.groupAudioSlotUpdate(async (data) => {
-      const groupId = data.id;
-
-      const client = this._clients[groupId];
-
-      if (client) {
-        const slot = data.slot;
-
-        if (client._slotId !== slot.id) {
-          return Promise.resolve();
-        }
-
-        return await client._handleSlotUpdate(slot, data.sourceSubscriberId);
-      }
-
-      return Promise.resolve();
-    });
-
-    api.on.groupAudioCountUpdate(async (data) => {
-      const client = this._clients[data.id];
-
-      if (client) {
-        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
-          {
-            groupId: data.id,
-            count: data.audioCounts.consumerCount
-          });
-      }
-
-      return Promise.resolve();
-    });
-
-    api.on.stageClientDisconnected(async (data) => {
-      Reflect.deleteProperty(this._clients, data.targetGroupId);
-    });
   }
-
-  // #region stageHandling
-
-  async _getClient (groupId, create = false) {
-    const getClient = () => {
-      if (this._clients[groupId] || !create) {
-        return this._clients[groupId];
-      }
-
-      this._clients[groupId] = new Client(this._api, groupId);
-
-      return getClient(groupId);
-    };
-
-    try {
-      if (_ffmpegExists || await commandExists('ffmpeg')) {
-        _ffmpegExists = true;
-
-        return getClient();
-      }
-
-      const exists = await commandExists('ffmpeg');
-
-      if (exists) {
-        _ffmpegExists = true;
-        return getClient();
-      }
-
-      throw new Error('ffmpeg must be installed on this device');
-    } catch (error) {
-      throw console.error();
-    }
-  }
-
-  // #endregion
 
   /**
-  * Retrieve group stage settings
-  * @param {Number} groupId - The id of the group
-  * @param {Boolean} requestNew - Whether or not the bot should request new data
-  */
+   * Retrieve group stage settings
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Whether or not the bot should request new data
+   */
   async getSettings (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -115,9 +34,9 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Get list of stages available
-  * @param {Boolean} requestNew - Request new data from the server
-  */
+   * Get list of stages available
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getStages (requestNew = false) {
     try {
       if (!requestNew && this._stages.stageCache) {
@@ -138,10 +57,10 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Get stage slots for a group
-  * @param {Number} groupId - The id of the group
-  * @param {Boolean} requestNew - Request new data from the server
-  */
+   * Get stage slots for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getSlots (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -181,11 +100,11 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Update the mute state of a specific slotroup
-  * @param {Number} groupId - The id of the group
-  * @param {Number} slotId - The ID of the slot to update
-  * @param {Boolean} muted - Whether or not the slot is muted
-  */
+   * Update the mute state of a specific slotroup
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The ID of the slot to update
+   * @param {Boolean} muted - Whether or not the slot is muted
+   */
   async updateSlotMuteState (groupId, slotId, muted) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -227,8 +146,9 @@ module.exports = class Stage extends Helper {
       }
 
       if (slot.occupierId !== this._api.currentSubscriber.id && !muted) {
-        throw new Error('occupierId must be self');
+        throw new Error('occupierId must be self'); // privacy
       }
+
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_UPDATE,
         {
           id: groupId,
@@ -243,11 +163,11 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Update the lock state of a specific slot
-  * @param {Number} groupId - The id of the group
-  * @param {Number} slotId - The ID of the slot to update
-  * @param {Boolean} locked - Whether or not the slot is locked
-  */
+   * Update the lock state of a specific slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The ID of the slot to update
+   * @param {Boolean} locked - Whether or not the slot is locked
+   */
   async updateSlotLockState (groupId, slotId, locked) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -303,9 +223,9 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Leave a slot
-  * @param {Number} groupId - The id of the group
-  */
+   * Leave a slot
+   * @param {Number} groupId - The id of the group
+   */
   async leaveSlot (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -336,14 +256,6 @@ module.exports = class Stage extends Helper {
         throw new Error('bot does not occupy a slot in this group');
       }
 
-      const client = await this._getClient(groupId);
-
-      if (client) {
-        this._clients[groupId] = undefined;
-
-        return await client.disconnect();
-      }
-
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
         id: groupId,
         slotId: slot.id,
@@ -357,10 +269,10 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Kick a slot
-  * @param {Number} groupId - The id of the group
-  * @param {Number} slotId - The id of the slot
-  */
+   * Kick a slot
+   * @param {Number} groupId - The id of the group
+   * @param {Number} slotId - The id of the slot
+   */
   async removeSubscriberFromSlot (groupId, slotId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -396,7 +308,7 @@ module.exports = class Stage extends Helper {
       if (!slot) {
         throw new Error('unable to locate slot with this id');
       }
-      
+
       if (!slot.occupierId) {
         throw new Error('no subscriber occupies slot');
       }
@@ -414,12 +326,12 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-  * Join a stage
-  * @param {Number} groupId - The id of a group
-  * @param {Number} slotId - The id of the slot
-  * @param {String} sdp - Do not include if you want to use the built in stage client
-  */
-  async joinSlot (groupId, slotId, sdp = undefined) {
+   * Join a stage
+   * @param {Number} groupId - The id of a group
+   * @param {Number} slotId - The id of the slot
+   * @param {String} sdp - RTC data
+   */
+  async joinSlot (groupId, slotId, sdp) {
     try {
       if (!validator.isValidNumber(groupId)) {
         throw new Error('groupId must be a valid number');
@@ -432,6 +344,12 @@ module.exports = class Stage extends Helper {
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
+
+      if (validator.isNullOrWhitespace(sdp)) {
+        throw new Error('sdp cannot be null or empty');
+      }
+
+      const settings = await this.getSettings(groupId);
 
       if (!settings) {
         throw new Error('unable to retrieve stage configuration');
@@ -461,17 +379,12 @@ module.exports = class Stage extends Helper {
         throw new Error('a subscriber already occupies this slot');
       }
 
-      // If sdp exists, assume they are using a personal rtc
-      if (sdp) {
-        return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST,
-          {
-            id: this._groupId,
-            slotId,
-            sdp
-          });
-      }
-
-      return await (await this._getClient(groupId, true)).joinSlot(slotId);
+      return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST,
+        {
+          id: groupId,
+          slotId,
+          sdp
+        });
     } catch (error) {
       error.method = `Helper/Stage/joinSlot(groupId = ${JSON.stringify(groupId)}, slotId = ${JSON.stringify(slotId)}, sdp = ${JSON.stringify(sdp)})`;
 
@@ -541,164 +454,6 @@ module.exports = class Stage extends Helper {
       throw error;
     }
   }
-
-  /**
-   * Play audio on a group stage
-   * @param {Number} groupId - The id of the group to play in
-   * @param {Stream.Readable} data - The stream to play
-   */
-  async play (groupId, data) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
-    }
-
-    if (!await client.isReady()) {
-      throw new Error('stage client is not ready to broadcast, are you sure it has joined a slot?');
-    }
-
-    return await client.play(data);
-  }
-
-  /**
-   * Pause the current audio in a group
-   * @param {Number} groupId - The id of the group to pause
-   */
-  async pause (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
-    }
-
-    return await client.pause();
-  }
-
-  /**
-   * Unpause the current audio in a group
-   * @param {Number} groupId - The id of the group to unpause
-   */
-  async unpause (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
-    }
-
-    return await client.unpause();
-  }
-
-  /**
-   * Stops the current audio in a group (Resets, cannot be resumed)
-   * @param {Number} groupId - The id of the group to stop
-   */
-  async stop (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group, use api.stage().joinSlot(groupId, slotId) to initialize a stage client');
-    }
-
-    return await client.stop();
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the client has connected to a slot and is ready to broadcast
-  */
-  async isReady (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._ready;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the clients broadcast has been paused
-  */
-  async isPaused (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._paused;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the client has been muted on stage
-  */
-  async isMuted (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._muted;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the client is broadcasting data
-  */
-  async isPlaying (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._playing;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the client has connected to a slot
-  */
-  async isConnected (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._slotId !== 0;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Boolean} Whether or not the client is currently in the process of connecting
-  */
-  async isConnecting (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-    return client._isConnecting;
-  }
-
-  /**
-  * @param {Number} groupId - The id of the group
-  * @returns {Number} How many seconds of audio have been broadcasted
-  */
-  async duration (groupId) {
-    const client = await this._getClient(groupId);
-
-    if (!client) {
-      throw new Error('stage client does not exist for group');
-    }
-
-    return client._duration / 1000;
-  }
-
-  async hasClient (groupId) {
-    return await this._getClient(groupId) !== undefined;
-  }
-
 
   _process (data) {
     if (this._slots[data.id]) {
