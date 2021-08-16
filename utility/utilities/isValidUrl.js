@@ -7,8 +7,8 @@ const BaseUtility = require('../BaseUtility');
 const validator = require('@dawalters1/validator');
 
 module.exports = class IsValidUrl extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'isValidUrl');
+  constructor (api) {
+    super(api, 'isValidUrl');
   }
 
   _func (url) {

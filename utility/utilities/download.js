@@ -7,8 +7,8 @@ const download = async (url) => superagent.get(url)
   .then(res => res.body);
 
 module.exports = class Download extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'download');
+  constructor (api) {
+    super(api, 'download');
   }
 
   _func () {

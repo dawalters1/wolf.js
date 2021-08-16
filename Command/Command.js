@@ -50,35 +50,11 @@ module.exports = class Command {
   }
 
   constructor (trigger, commandCallbacks, children = []) {
-    if (typeof (trigger) !== 'string') {
-      throw new Error('trigger must be a string');
-    } else if (validator.isNullOrWhitespace(trigger)) {
-      throw new Error('trigger cannot be null or empty');
-    }
-
-    if (commandCallbacks === undefined || commandCallbacks === null) {
-      throw new Error('callbacks cannot be null or undefined');
-    } else if (typeof commandCallbacks !== 'object') {
-      throw new Error('callbacks must be an object');
-    }
-
-    Object.keys(commandCallbacks).forEach(callback => {
-      if (callback !== callbacks.GROUP && callback !== callbacks.BOTH && callback !== callbacks.PRIVATE) {
-        throw new Error(`callbacks must be of the following: ${Object.values(callbacks).join(', ')}`);
-      }
-    });
-
-    if (children === undefined || children === null) {
-      throw new Error('children cannot be null or undefined');
-    } else if (!Array.isArray(children)) {
-      throw new Error('children must be an array');
-    }
-
-    children.forEach(command => validateCommand(command));
-
     this.trigger = trigger;
     this.commandCallbacks = commandCallbacks;
     this.commandCallbackTypes = Object.keys(commandCallbacks);
     this.children = children;
+
+    validateCommand(this);
   }
 };

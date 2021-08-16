@@ -34,7 +34,7 @@ const uploadToMediaService = require('./utils/uploadToMediaService');
 const MultiMediaService = require('./MultiMediaService/MultiMediaService');
 const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
 
-const validateConfig = (bot, config) => {
+const validateConfig = (api, config) => {
   if (!config) {
     throw new Error('config cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
   }
@@ -78,7 +78,7 @@ const validateConfig = (bot, config) => {
     config.options.defaultLanguage = app.defaultLanguage || 'en';
   };
 
-  bot.config = config;
+  api.config = config;
 };
 
 module.exports = class WolfBot {
