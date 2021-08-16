@@ -7,8 +7,8 @@ const event = require('../../constants/event');
 const internal = require('../../constants/internal');
 
 module.exports = class EventManager {
-  constructor (bot) {
-    this._bot = bot;
+  constructor (api) {
+    this._api = api;
     this._eventEmitter = new EventEmitter();
     this._handlers = {};
   }
@@ -47,7 +47,17 @@ module.exports = class EventManager {
   presenceUpdate (fn) { this._eventEmitter.on(event.PRESENCE_UPDATE, fn); }
   privateMessageRequestAccepted (fn) { this._eventEmitter.on(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, fn); }
   permissionFailed (fn) { this._eventEmitter.on(internal.PERMISSIONS_FAILED, fn); }
-  messageReceived (fn) { this._eventEmitter.on(event.MESSAGE_SEND, fn); }
+  messageReceived (fn) {
+    this._eventEmitter.on(event.MESSAGE_SEND, () => {
+      console.warn('[DEPRECATED]: use groupMessage or privateMessage');
+      // eslint-disable-next-line no-unused-expressions
+      fn;
+    });
+  }
+
+  groupMessage (fn) { this._eventEmitter.on(internal.GROUP_MESSAGE, fn); }
+  privateMessage (fn) { this._eventEmitter.on(internal.PRIVATE_MESSAGE, fn); }
+  notification (fn) { this._eventEmitter.on(internal.NOTIFICATION_RECEIVED, fn); }
   messageUpdated (fn) { this._eventEmitter.on(event.MESSAGE_UPDATE, fn); }
   tipped (fn) { this._eventEmitter.on(event.TIP_ADD, fn); }
   contactAdded (fn) { this._eventEmitter.on(event.SUBSCRIBER_CONTACT_ADD, fn); }
@@ -61,9 +71,9 @@ module.exports = class EventManager {
       try {
         const Event = require(path.join(__dirname, `./handlers/${handler}`));
         this._handlers[name] = new Event(this, name);
-        this._bot.on._emit(internal.LOG, `Registered Server Event: ${name}`);
+        this._api.on._emit(internal.LOG, `Registered Server Event: ${name}`);
       } catch (error) {
-        this._bot.on._emit(internal.ERROR, `Unable to register Server Event: ${name}\nError: ${JSON.stringify(error, null, 4)}`);
+        this._api.on._emit(internal.ERROR, `Unable to register Server Event: ${name}\nError: ${JSON.stringify(error, null, 4)}`);
       }
     }
   }

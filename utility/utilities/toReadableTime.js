@@ -3,8 +3,8 @@ const validator = require('@dawalters1/validator');
 const moment = require('moment');
 
 module.exports = class ToReadableTime extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'toReadableTime');
+  constructor (api) {
+    super(api, 'toReadableTime');
   }
 
   _func (...args) {
@@ -29,30 +29,30 @@ module.exports = class ToReadableTime extends BaseUtility {
       let str = '';
 
       if (info.years > 0) {
-        str = `${info.years}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_years`)}`;
+        str = `${info.years}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_years`)}`;
       }
 
       if (info.months > 0) {
-        str = str + ` ${info.months}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_months`)}`;
+        str = str + ` ${info.months}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_months`)}`;
       }
 
       if (info.weeks > 0) {
-        str = str + ` ${info.weeks}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_weeks`)}`;
+        str = str + ` ${info.weeks}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_weeks`)}`;
       }
 
       if (info.days > 0) {
-        str = str + ` ${info.days}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_days`)}`;
+        str = str + ` ${info.days}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_days`)}`;
       }
 
       if (info.hours > 0) {
-        str = str + ` ${info.hours}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_hours`)}`;
+        str = str + ` ${info.hours}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_hours`)}`;
       }
 
       if (info.minutes > 0) {
-        str = str + ` ${info.minutes}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_minutes`)}`;
+        str = str + ` ${info.minutes}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_minutes`)}`;
       }
 
-      str = str + ` ${info.seconds}${this._bot.phrase().getByLanguageAndName(language, `${this._bot.config.keyword}_time_type_seconds`)}`;
+      str = str + ` ${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`;
 
       return str.trim();
     } catch (error) {

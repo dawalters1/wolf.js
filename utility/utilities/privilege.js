@@ -4,8 +4,8 @@ const validator = require('@dawalters1/validator');
 const constants = require('@dawalters1/constants');
 
 module.exports = class privilege extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'privilege');
+  constructor (api) {
+    super(api, 'privilege');
   }
 
   _func () {
@@ -34,7 +34,7 @@ module.exports = class privilege extends BaseUtility {
         }
       }
 
-      const subscriber = await this._bot.subscriber().getById(sourceSubscriberId);
+      const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
       return privs.some((priv) => (subscriber.privileges & priv) === priv);
     } catch (error) {
       error.method = `Utility/utilties/privilege/has(sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)}, privilege = ${JSON.stringify(privs)})`;

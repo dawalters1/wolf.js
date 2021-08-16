@@ -9,8 +9,8 @@ const routes = require('../../MultiMediaService/routes');
 const fileType = require('file-type');
 
 module.exports = class Event extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
     this._events = [];
     this._eventList = {};
     this._subscriptions = [];
@@ -79,7 +79,7 @@ module.exports = class Event extends Helper {
       }
 
       if (events.length !== eventIds.length) {
-        for (const batchEventIdList of this._bot.utility().batchArray(eventIds.filter((eventId) => !events.some((group) => group.id === eventId)), 50)) {
+        for (const batchEventIdList of this._api.utility().batchArray(eventIds.filter((eventId) => !events.some((group) => group.id === eventId)), 50)) {
           const result = await this._websocket.emit(request.GROUP_EVENT, {
             headers: {
               version: 1
@@ -178,7 +178,7 @@ module.exports = class Event extends Helper {
       });
 
       if (result.success && image !== undefined) {
-        result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, result.body.id);
+        result.body.imageUpload = await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, result.body.id);
       }
 
       return result;
@@ -247,7 +247,7 @@ module.exports = class Event extends Helper {
       });
 
       if (result.success && image !== undefined) {
-        result.body.imageUpload = await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+        result.body.imageUpload = await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
       }
 
       return result;
@@ -274,7 +274,7 @@ module.exports = class Event extends Helper {
         throw new Error('image must be a buffer');
       }
 
-      return await uploadToMediaService(this._bot, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+      return await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
     } catch (error) {
       error.method = `Helper/Event/updateEventImage(eventId = ${JSON.stringify(eventId)}, image = ${JSON.stringify('too large to display')})`;
       throw error;

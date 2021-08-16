@@ -7,8 +7,8 @@ function escapeRegExp (string) {
 }
 
 module.exports = class String extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'string');
+  constructor (api) {
+    super(api, 'string');
   }
 
   _func () {

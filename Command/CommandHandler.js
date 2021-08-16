@@ -3,26 +3,39 @@ const { privilege, messageType } = require('@dawalters1/constants');
 const Command = require('./Command');
 
 module.exports = class CommandHandler {
-  constructor (bot) {
-    this._bot = bot;
+  constructor (api) {
+    this._api = api;
     this._commands = [];
 
-    bot.on.messageReceived(async message => {
+    this._api.on.privateMessage(async message => {
       try {
         await this.processMessage(message);
       } catch (error) {
-        error.message = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+        error.message = `Error handling Private Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+        throw error;
+      }
+    });
+
+    this._api.on.groupMessage(async message => {
+      try {
+        await this.processMessage(message);
+      } catch (error) {
+        error.message = `Error handling Group Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
         throw error;
       }
     });
   }
 
-  isCommand (input) {
+  isCommand (message) {
     return this._commands.find((command) => {
-      const match = this._bot.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === input.split(/[\s]+/)[0].toLowerCase());
+      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === message.body.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
-        return true;
+        const commandCallbacks = command.commandCallbackTypes;
+
+        if (commandCallbacks.includes(Command.getCallback.BOTH) || (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) || (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
+          return true;
+        }
       }
       return false;
     }) !== undefined;
@@ -33,7 +46,7 @@ module.exports = class CommandHandler {
   }
 
   async processMessage (message) {
-    if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._bot.currentSubscriber.id || this._bot.banned().isBanned(message.sourceSubscriberId)) {
+    if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || this._api.banned().isBanned(message.sourceSubscriberId)) {
       return Promise.resolve();
     }
 
@@ -50,7 +63,7 @@ module.exports = class CommandHandler {
     };
 
     const commandCollection = this._commands.find((command) => {
-      const match = this._bot.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
         if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
@@ -65,7 +78,7 @@ module.exports = class CommandHandler {
       return false;
     });
 
-    if (!commandCollection || (this._bot.config.options.ignoreOfficialBots && await this._bot.utility().privilege().has(message.sourceSubscriberId, privilege.BOT))) {
+    if (!commandCollection || (this._api.config.options.ignoreOfficialBots && await this._api.utility().privilege().has(message.sourceSubscriberId, privilege.BOT))) {
       return Promise.resolve();
     }
 
@@ -84,7 +97,7 @@ module.exports = class CommandHandler {
     }
 
     const command = parentCommand.children.find((child) => {
-      const match = this._bot.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+      const match = this._api.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
         if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
