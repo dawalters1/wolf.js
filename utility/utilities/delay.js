@@ -2,8 +2,8 @@ const BaseUtility = require('../BaseUtility');
 const validator = require('@dawalters1/validator');
 
 module.exports = class Delay extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'delay');
+  constructor (api) {
+    super(api, 'delay');
   }
 
   _func (duration) {

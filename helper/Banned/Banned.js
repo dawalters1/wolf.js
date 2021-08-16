@@ -2,8 +2,8 @@ const Helper = require('../Helper');
 
 const validator = require('@dawalters1/validator');
 module.exports = class Banned extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._banned = [];
   }

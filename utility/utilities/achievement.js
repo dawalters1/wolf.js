@@ -4,8 +4,8 @@ const validator = require('@dawalters1/validator');
 const constants = require('@dawalters1/constants');
 
 module.exports = class Achievement extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'achievement');
+  constructor (api) {
+    super(api, 'achievement');
   }
 
   _func () {
@@ -54,7 +54,7 @@ module.exports = class Achievement extends BaseUtility {
         }
       }
 
-      const categories = await this._bot.achievement().getCategoryList(language);
+      const categories = await this._api.achievement().getCategoryList(language);
 
       return categories.reduce((result, category) => {
         const achivementForCategory = achievements.filter((achievement) => achievement.additionalInfo.categoryId === category.id);

@@ -2,12 +2,12 @@ const BaseEvent = require('../BaseEvent');
 
 module.exports = class SubscriberUpdate extends BaseEvent {
   async process (data) {
-    const existing = await this._bot.subscriber()._subscribers.find((subscriber) => subscriber.id === data.id);
+    const existing = await this._api.subscriber()._subscribers.find((subscriber) => subscriber.id === data.id);
 
     if (existing && existing.hash !== data.hash) {
-      const subscriber = await this._bot.subscriber().getById(data.id, true);
+      const subscriber = await this._api.subscriber().getById(data.id, true);
 
-      const groups = await this._bot.group()._getJoinedGroups();
+      const groups = await this._api.group()._getJoinedGroups();
 
       for (const group of groups) {
         if (group.subscribers) {
@@ -20,15 +20,15 @@ module.exports = class SubscriberUpdate extends BaseEvent {
         }
       }
 
-      if (this._bot.contact()._contacts.length > 0 && this._bot.contact().isContact(subscriber.id)) {
-        this._bot.contact()._patch(subscriber);
+      if (this._api.contact()._contacts.length > 0 && this._api.contact().isContact(subscriber.id)) {
+        this._api.contact()._patch(subscriber);
       }
 
-      if (this._bot.blocked()._blocked.length > 0 && this._bot.blocked().isBlocked(subscriber.id)) {
-        this._bot.blocked()._patch(subscriber);
+      if (this._api.blocked()._blocked.length > 0 && this._api.blocked().isBlocked(subscriber.id)) {
+        this._api.blocked()._patch(subscriber);
       }
 
-      this._bot.on._emit(this._command, subscriber);
+      this._api.on._emit(this._command, subscriber);
     }
 
     return Promise.resolve();

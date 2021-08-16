@@ -9,14 +9,14 @@ const Subscriber = require('./Subscriber');
 
 module.exports = class Achievement extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._categories = {};
     this._achievements = {};
 
-    this._group = new Group(bot);
-    this._subscriber = new Subscriber(bot);
+    this._group = new Group(api);
+    this._subscriber = new Subscriber(api);
   }
 
   /**
@@ -104,7 +104,7 @@ module.exports = class Achievement extends Helper {
         }
       }
       if (achievements.length !== achievementIds.length) {
-        for (const batchAchievementIdList of this._bot.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
+        for (const batchAchievementIdList of this._api.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
           const result = await this._websocket.emit(request.ACHIEVEMENT, {
             headers: {
               version: 2

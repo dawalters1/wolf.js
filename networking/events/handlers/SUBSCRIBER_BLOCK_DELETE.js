@@ -2,6 +2,6 @@ const BaseEvent = require('../BaseEvent');
 
 module.exports = class SubscriberBlockDelete extends BaseEvent {
   async process (data) {
-    this._bot.on._emit(this._command, this._bot.blocked()._process(data.targetId));
+    this._api.on._emit(this._command, this._api.blocked()._process(data.targetId));
   }
 };

@@ -5,8 +5,8 @@ const validator = require('@dawalters1/validator');
 
 module.exports = class Stage extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._stages = [];
 
@@ -26,7 +26,7 @@ module.exports = class Stage extends Helper {
         throw new Error('groupId cannot be less than or equal to 0');
       }
 
-      return (await this._bot.group().getById(groupId, requestNew)).audioConfig;
+      return (await this._api.group().getById(groupId, requestNew)).audioConfig;
     } catch (error) {
       error.method = `Helper/Stage/getSettings(groupId =${JSON.stringify(groupId)}, requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
@@ -145,7 +145,7 @@ module.exports = class Stage extends Helper {
         throw new Error('unable to locate slot with this id');
       }
 
-      if (slot.occupierId !== this._bot.currentSubscriber.id && !muted) {
+      if (slot.occupierId !== this._api.currentSubscriber.id && !muted) {
         throw new Error('occupierId must be self'); // privacy
       }
 
@@ -250,7 +250,7 @@ module.exports = class Stage extends Helper {
         throw new Error('unable to retrieve slots');
       }
 
-      const slot = slots.find((slot) => slot.occupierId && slot.occupierId === this._bot.currentSubscriber.id);
+      const slot = slots.find((slot) => slot.occupierId && slot.occupierId === this._api.currentSubscriber.id);
 
       if (!slot) {
         throw new Error('bot does not occupy a slot in this group');
@@ -259,7 +259,7 @@ module.exports = class Stage extends Helper {
       return await this._websocket.emit(request.GROUP_AUDIO_BROADCAST_DISCONNECT, {
         id: groupId,
         slotId: slot.id,
-        occupierId: this._bot.currentSubscriber.id
+        occupierId: this._api.currentSubscriber.id
       });
     } catch (error) {
       error.method = `Helper/Stage/leaveSlot(groupId = ${JSON.stringify(groupId)})`;
@@ -357,6 +357,10 @@ module.exports = class Stage extends Helper {
 
       if (!settings.enabled) {
         throw new Error('stage is disabled for requested group');
+      }
+
+      if (settings.minRepLevel > Math.floor(this._api.currentSubscriber.reputation)) {
+        throw new Error(`stage is only accessible to users who are level ${settings.minRepLevel} or above`);
       }
 
       const slots = await this.getSlots(groupId);

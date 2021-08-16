@@ -3,8 +3,8 @@ const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
 
 module.exports = class GroupProfileBuilder {
-  constructor (bot) {
-    this._bot = bot;
+  constructor (api) {
+    this._api = api;
 
     this._id = 0;
     this._name = undefined;
@@ -141,7 +141,7 @@ module.exports = class GroupProfileBuilder {
   }
 
   async _doCorrectAction (command) {
-    return await this._bot.websocket.emit(command,
+    return await this._api.websocket.emit(command,
       {
         id: this._id,
         name: this._name,

@@ -8,8 +8,8 @@ const uploadToMediaService = require('../../utils/uploadToMediaService');
 const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Group extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
     this._groups = [];
     this._joinedGroupsRequested = false;
   }
@@ -19,7 +19,7 @@ module.exports = class Group extends Helper {
    * @returns {GroupProfileBuilder} Group Profile Builder
    */
   create () {
-    return new GroupProfileBuilder(this._bot)._create();
+    return new GroupProfileBuilder(this._api)._create();
   }
 
   /**
@@ -53,7 +53,7 @@ module.exports = class Group extends Helper {
       }
 
       if (groups.length !== groupIds.length) {
-        for (const batchGroupIdList of this._bot.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
+        for (const batchGroupIdList of this._api.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
           const result = await this._websocket.emit(request.GROUP_PROFILE, {
             headers: {
               version: 4
@@ -372,7 +372,7 @@ module.exports = class Group extends Helper {
    */
   async updateAvatar (groupId, avatar) {
     try {
-      return await uploadToMediaService(this._bot, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
+      return await uploadToMediaService(this._api, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
     } catch (error) {
       error.method = `Helper/Group/updateAvatar(groupId = ${JSON.stringify(groupId)}, avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
@@ -431,7 +431,7 @@ module.exports = class Group extends Helper {
       const group = await this.getById(groupId);
 
       if (group.exists) {
-        return new GroupProfileBuilder(this._bot)._update(group);
+        return new GroupProfileBuilder(this._api)._update(group);
       } else {
         throw new Error('group does not exist');
       }

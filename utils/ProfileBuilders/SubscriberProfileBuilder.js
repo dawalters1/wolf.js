@@ -3,8 +3,8 @@ const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
 
 module.exports = class SubscriberProfileBuilder {
-  constructor (bot, subscriber) {
-    this._bot = bot;
+  constructor (api, subscriber) {
+    this._api = api;
 
     if (!subscriber) {
       throw new Error('You must be logged in to update a profile');
@@ -123,7 +123,7 @@ module.exports = class SubscriberProfileBuilder {
       throw new Error('url cannot be null or empty');
     }
 
-    this._urls = this._urls.filter((_url) => !this._bot.utility().string().isEqual(_url, url));
+    this._urls = this._urls.filter((_url) => !this._api.utility().string().isEqual(_url, url));
 
     return this;
   }
@@ -135,7 +135,7 @@ module.exports = class SubscriberProfileBuilder {
   }
 
   async save () {
-    return await this._bot.websocket.emit(request.SUBSCRIBER_PROFILE_UPDATE,
+    return await this._api.websocket.emit(request.SUBSCRIBER_PROFILE_UPDATE,
       {
         id: this._id,
         extended:

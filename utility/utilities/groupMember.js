@@ -4,18 +4,18 @@ const { capability, privilege, adminAction } = require('@dawalters1/constants');
 const validator = require('@dawalters1/validator');
 
 module.exports = class GroupMember extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'groupMember');
+  constructor (api) {
+    super(api, 'groupMember');
   }
 
   _func () {
     return {
       get: (...args) => this.get(...args),
-      admin: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.ADMIN),
-      mod: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.MOD),
-      reset: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.REGULAR),
-      kick: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
-      ban: (...args) => this._bot.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
+      admin: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.ADMIN),
+      mod: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.MOD),
+      reset: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.REGULAR),
+      kick: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
+      ban: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
 
       checkPermissions: (...args) => this.checkPermissions(...args)
     };
@@ -35,7 +35,7 @@ module.exports = class GroupMember extends BaseUtility {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
-      const groupSubscriberList = await this._bot.group().getSubscriberList(groupId);
+      const groupSubscriberList = await this._api.group().getSubscriberList(groupId);
 
       if (groupSubscriberList.length === 0) {
         return null;
@@ -74,24 +74,24 @@ module.exports = class GroupMember extends BaseUtility {
       }
 
       if (checkStaff) {
-        const subscriber = await this._bot.subscriber().getById(sourceSubscriberId);
+        const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
 
         if ((subscriber.privileges & privilege.STAFF) === privilege.STAFF) {
           return true;
         }
       }
 
-      if (includeAuthorizedSubscribers && this._bot.authorization().isAuthorized(sourceSubscriberId)) {
+      if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(sourceSubscriberId)) {
         return true;
       }
 
-      const group = await this._bot.group().getById(groupId);
+      const group = await this._api.group().getById(groupId);
 
       if (requiredCapability === capability.OWNER) {
         return group.owner.id === sourceSubscriberId;
       }
 
-      const groupSubscriberList = await this._bot.group().getSubscriberList(groupId);
+      const groupSubscriberList = await this._api.group().getSubscriberList(groupId);
 
       if (groupSubscriberList.length === 0) {
         return false;
