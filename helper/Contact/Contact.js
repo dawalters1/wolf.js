@@ -4,16 +4,20 @@ const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
 module.exports = class Contact extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
-    this._cache = [];
+    this._contacts = [];
   }
 
+  /**
+   *
+   * List of contacts for the bot
+   */
   async list () {
     try {
-      if (this._cache.length > 0) {
-        return this._cache;
+      if (this._contacts.length > 0) {
+        return this._contacts;
       }
 
       const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
@@ -22,16 +26,20 @@ module.exports = class Contact extends Helper {
         });
 
       if (result.success) {
-        this._cache = result.body;
+        this._contacts = result.body;
       }
 
-      return this._cache || [];
+      return this._contacts || [];
     } catch (error) {
       error.method = 'Helper/Contact/list()';
       throw error;
     }
   }
 
+  /**
+   * Check to see if a subscriber is a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async isContact (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -47,6 +55,10 @@ module.exports = class Contact extends Helper {
     }
   }
 
+  /**
+   * Add a subscriber as a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async add (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -64,6 +76,10 @@ module.exports = class Contact extends Helper {
     }
   }
 
+  /**
+   * Delete a subscriber as a contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async delete (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -82,14 +98,14 @@ module.exports = class Contact extends Helper {
   }
 
   async _process (id) {
-    const existing = this._cache.find((contact) => contact.id === id);
+    const existing = this._contacts.find((contact) => contact.id === id);
 
     if (existing) {
-      this._cache = this._cache.filter((contact) => contact.id !== id);
+      this._contacts = this._contacts.filter((contact) => contact.id !== id);
 
       return existing;
     } else {
-      const subscriber = await this._bot.subscriber().getById(id);
+      const subscriber = await this._api.subscriber().getById(id);
 
       const contact = {
         id,
@@ -101,14 +117,14 @@ module.exports = class Contact extends Helper {
         }
       };
 
-      this._cache.push(contact);
+      this._contacts.push(contact);
 
       return contact;
     }
   }
 
   async _patch (subscriber) {
-    const existing = this._cache.find((contact) => contact.id === subscriber.id);
+    const existing = this._contacts.find((contact) => contact.id === subscriber.id);
 
     if (existing) {
       for (const key in subscriber) {
@@ -117,5 +133,9 @@ module.exports = class Contact extends Helper {
     }
 
     return existing;
+  }
+
+  _cleanUp () {
+    this._contacts = [];
   }
 };

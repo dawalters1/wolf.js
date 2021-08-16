@@ -1,62 +1,52 @@
-
 'use strict';
-const { privilege } = require('@dawalters1/constants');
+const { privilege, messageType } = require('@dawalters1/constants');
 const Command = require('./Command');
 
-/**
-Cancerous code, dont care lol, it works.
-*/
-class CommandHandler {
-  constructor (bot) {
-    this._bot = bot;
+module.exports = class CommandHandler {
+  constructor (api) {
+    this._api = api;
     this._commands = [];
-    bot.on.messageReceived(async message => {
+
+    this._api.on.privateMessage(async message => {
       try {
         await this.processMessage(message);
       } catch (error) {
-        throw new Error(`CommandHandler error:\nMessage: ${JSON.stringify(message, null, 4)}\nError: ${error}`);
+        error.message = `Error handling Private Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+        throw error;
+      }
+    });
+
+    this._api.on.groupMessage(async message => {
+      try {
+        await this.processMessage(message);
+      } catch (error) {
+        error.message = `Error handling Group Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+        throw error;
       }
     });
   }
 
-  isCommand (input) {
-    return this._commands.reduce((result, command) => {
-      if (!result) {
-        const phrases = this._bot.phrase().getAllByName(command.trigger);
+  isCommand (message) {
+    return this._commands.find((command) => {
+      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === message.body.split(/[\s]+/)[0].toLowerCase());
 
-        const match = phrases.find(phrase => phrase.value.toLowerCase() === input.split(/[\s]+/)[0].toLowerCase());
+      if (match) {
+        const commandCallbacks = command.commandCallbackTypes;
 
-        if (match) {
-          result = true;
+        if (commandCallbacks.includes(Command.getCallback.BOTH) || (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) || (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
+          return true;
         }
       }
-
-      return result;
-    }, false);
+      return false;
+    }) !== undefined;
   }
 
   register (commands) {
-    const validateCommands = cmds => {
-      cmds.forEach(command => {
-        const phrase = this._bot.phrase().getAllByName(command.trigger);
-
-        if (!phrase) {
-          throw Error(`Missing phrase ${command.trigger}`);
-        }
-
-        if (command.children.length > 0) {
-          validateCommands(command.children);
-        }
-      });
-    };
-
-    validateCommands(commands);
-
     this._commands = commands;
   }
 
   async processMessage (message) {
-    if (!message.body) {
+    if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || this._api.banned().isBanned(message.sourceSubscriberId)) {
       return Promise.resolve();
     }
 
@@ -68,42 +58,31 @@ class CommandHandler {
       targetGroupId: message.targetGroupId,
       sourceSubscriberId: message.sourceSubscriberId,
       timestamp: message.timestamp,
-      type: message.type
+      type: message.type,
+      route: []
     };
 
-    const baseCommand = this._commands.reduce((result, command) => {
-      if (!result) {
-        const phrases = this._bot.phrase().getAllByName(command.trigger);
+    const commandCollection = this._commands.find((command) => {
+      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
-        // eslint-disable-next-line max-len
-        const match = phrases.find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
-
-        if (match) {
-          if (
-            command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
-                        (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
-                        (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))
-          ) {
-            commandContext.argument = commandContext.argument.substr(match.value.length).trim();
-            commandContext.language = match.language;
-            commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
-
-            return command;
-          }
+      if (match) {
+        if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+          commandContext.argument = commandContext.argument.substr(match.value.length).trim();
+          commandContext.language = match.language;
+          commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
+          commandContext.route.push(match.value);
+          return command;
         }
       }
-      return result;
-    }, false);
 
-    if (!baseCommand || message.sourceSubscriberId === this._bot.currentSubscriber.id || this._bot.banned().isBanned(message.sourceSubscriberId)) {
+      return false;
+    });
+
+    if (!commandCollection || (this._api.config.options.ignoreOfficialBots && await this._api.utility().privilege().has(message.sourceSubscriberId, privilege.BOT))) {
       return Promise.resolve();
     }
 
-    if ((this._bot.config.options.ignoreOfficialBots && await this._bot.utility().privilege().has(message.sourceSubscriberId, privilege.BOT))) {
-      return Promise.resolve();
-    }
-
-    const command = this._getChildCommand(baseCommand, commandContext);
+    const command = this._getChildCommand(commandCollection, commandContext);
 
     const callback = command.callback;
 
@@ -112,38 +91,30 @@ class CommandHandler {
     return callback.call(this, command);
   }
 
-  _getChildCommand (command, commandContext) {
+  _getChildCommand (parentCommand, commandContext) {
     if (!commandContext.argument) {
       return commandContext;
     }
 
-    const foundCommand = command.children.reduce((result, child) => {
-      if (!result) {
-        const phrase = this._bot.phrase().getByLanguageAndName(commandContext.language, child.trigger);
+    const command = parentCommand.children.find((child) => {
+      const match = this._api.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
-        if (phrase) {
-          if (phrase.toLowerCase() === commandContext.argument.split(' ')[0].toLowerCase()) {
-            if (
-              child.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
-                            (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
-                            (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))
-            ) {
-              commandContext.argument = commandContext.argument.substr(phrase.length).trim();
-              commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
-              return child;
-            }
-          }
+      if (match) {
+        if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+          commandContext.argument = commandContext.argument.substr(match.value.length).trim();
+          commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
+          commandContext.route.push(match.name);
+          return child;
         }
       }
-      return result;
-    }, false);
 
-    if (!foundCommand) {
+      return false;
+    });
+
+    if (!command || command.children.length === 0) {
       return commandContext;
     }
 
-    return this._getChildCommand(foundCommand, commandContext);
+    return this._getChildCommand(command, commandContext);
   }
-}
-
-module.exports = CommandHandler;
+};

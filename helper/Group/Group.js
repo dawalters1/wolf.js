@@ -1,17 +1,32 @@
 const Helper = require('../Helper');
 const Response = require('../../networking/Response');
+const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBuilder');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
+const uploadToMediaService = require('../../utils/uploadToMediaService');
+const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Group extends Helper {
-  constructor (bot) {
-    super(bot);
-    this._cache = [];
+  constructor (api) {
+    super(api);
+    this._groups = [];
     this._joinedGroupsRequested = false;
   }
 
+  /**
+   * Create a group
+   * @returns {GroupProfileBuilder} Group Profile Builder
+   */
+  create () {
+    return new GroupProfileBuilder(this._api)._create();
+  }
+
+  /**
+   * Get a list of groups by IDs
+   * @param {Number} groupIds - The ids of the groups
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (groupIds, requestNew = false) {
     try {
       if (!validator.isValidArray(groupIds)) {
@@ -19,9 +34,9 @@ module.exports = class Group extends Helper {
       } else {
         for (const groupId of groupIds) {
           if (!validator.isValidNumber(groupId)) {
-            throw new Error('subscriberId must be a valid number');
+            throw new Error('groupId must be a valid number');
           } else if (validator.isLessThanOrEqualZero(groupId)) {
-            throw new Error('subscriberId cannot be less than or equal to 0');
+            throw new Error('groupId cannot be less than or equal to 0');
           }
         }
       }
@@ -31,14 +46,14 @@ module.exports = class Group extends Helper {
       const groups = [];
 
       if (!requestNew) {
-        const cached = this._cache.filter((group) => groupIds.includes(group.id));
+        const cached = this._groups.filter((group) => groupIds.includes(group.id));
         if (cached.length > 0) {
           groups.push(...cached);
         }
       }
 
       if (groups.length !== groupIds.length) {
-        for (const batchGroupIdList of this._bot.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
+        for (const batchGroupIdList of this._api.utility().batchArray(groupIds.filter((groupId) => !groups.some((group) => group.id === groupId)), 50)) {
           const result = await this._websocket.emit(request.GROUP_PROFILE, {
             headers: {
               version: 4
@@ -81,6 +96,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get a group by ID
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -96,14 +116,19 @@ module.exports = class Group extends Helper {
     }
   }
 
-  async getByName (targetGroupName, requestNew = false) {
+  /**
+   * Get a group by name
+   * @param {String} name - The name of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
+  async getByName (name, requestNew = false) {
     try {
-      if (validator.isNullOrWhitespace(targetGroupName)) {
-        throw new Error('targetGroupName cannot be null or empty');
+      if (validator.isNullOrWhitespace(name)) {
+        throw new Error('name cannot be null or empty');
       }
 
       if (!requestNew) {
-        const group = this._cache.find((grp) => grp.name.toLowerCase() === targetGroupName.toLowerCase().trim());
+        const group = this._groups.find((grp) => grp.name.toLowerCase() === name.toLowerCase().trim());
 
         if (group) {
           return group;
@@ -115,7 +140,7 @@ module.exports = class Group extends Helper {
           version: 4
         },
         body: {
-          name: targetGroupName,
+          name: name,
           subscribe: true,
           entities: ['base', 'extended', 'audioCounts', 'audioConfig']
         }
@@ -134,15 +159,20 @@ module.exports = class Group extends Helper {
 
       return {
         id: 0,
-        name: targetGroupName,
+        name: name,
         exists: false
       };
     } catch (error) {
-      error.method = `Helper/Group/getByName(targetGroupName = ${JSON.stringify(targetGroupName)}, requestNew = ${JSON.stringify(requestNew)})`;
+      error.method = `Helper/Group/getByName(name = ${JSON.stringify(name)}, requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
 
+  /**
+   * Join a group by id
+   * @param {Number} groupId - The id of the group
+   * @param {String} password - Request new data from the server (Optional)
+   */
   async joinById (groupId, password = undefined) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -161,6 +191,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Join a group by name
+   * @param {String} name - The name of the group
+   * @param {String} password - Request new data from the server (Optional)
+   */
   async joinByName (targetGroupName, password = undefined) {
     try {
       if (validator.isNullOrWhitespace(targetGroupName)) {
@@ -176,6 +211,10 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Leave a group by ID
+   * @param {Number} groupId - The Id of the group
+   */
   async leaveById (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -192,18 +231,27 @@ module.exports = class Group extends Helper {
     }
   }
 
-  async leaveByName (targetGroupName) {
+  /**
+   * Leave a group by name
+   * @param {String} name - The name of the group
+   */
+  async leaveByName (name) {
     try {
-      if (validator.isNullOrWhitespace(targetGroupName)) {
-        throw new Error('targetGroupName cannot be null or empty');
+      if (validator.isNullOrWhitespace(name)) {
+        throw new Error('name cannot be null or empty');
       }
-      return await this.leaveById((await this.getByName(targetGroupName)).id);
+      return await this.leaveById((await this.getByName(name)).id);
     } catch (error) {
-      error.method = `Helper/Group/leaveByName(targetGroupName = ${JSON.stringify(targetGroupName)})`;
+      error.method = `Helper/Group/leaveByName(name = ${JSON.stringify(name)})`;
       throw error;
     }
   }
 
+  /**
+   * Get chat history for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Number} timestamp - The last timestamp in the group (0 for last messages sent)
+   */
   async getHistory (groupId, timestamp = 0) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -254,6 +302,11 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get the members list for a group
+   * @param {Number} groupId - The id of the group
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getSubscriberList (groupId, requestNew = false) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -264,25 +317,26 @@ module.exports = class Group extends Helper {
 
       const group = await this.getById(groupId);
 
-      if (group.inGroup) {
-        if (!requestNew && group.subscribers && group.subscribers.length === group.members) {
-          return group.subscribers;
-        }
-
-        const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
-          headers: {
-            version: 3
-          },
-          body: {
-            id: groupId,
-            subscribe: true
-          }
-        });
-
-        if (result.success) {
-          group.subscribers = result.body;
-        }
+      if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
+        return group.subscribers;
       }
+
+      const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
+        headers: {
+          version: 3
+        },
+        body: {
+          id: groupId,
+          subscribe: true
+        }
+      });
+
+      if (result.success) {
+        group.inGroup = true;
+        group.subscribers = result.body;
+      }
+
+      this._process(group);
 
       return group.subscribers || [];
     } catch (error) {
@@ -291,6 +345,10 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Get the conversation stats for a group
+   * @param {Number} groupId - The id of the gorup
+   */
   async getStats (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -307,6 +365,26 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Update a groups avatar
+   * @param {Number} groupId - The id of the group
+   * @param {Buffer} avatar - The new avatar
+   */
+  async updateAvatar (groupId, avatar) {
+    try {
+      return await uploadToMediaService(this._api, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
+    } catch (error) {
+      error.method = `Helper/Group/updateAvatar(groupId = ${JSON.stringify(groupId)}, avatar = ${JSON.stringify('Too big, not displaying this')})`;
+      throw error;
+    }
+  }
+
+  /**
+   * Update a group subscribers role - Use @dawalters1/constants for capability
+   * @param {Number} groupId - The id of the group
+   * @param {Number} subscriberId - The id of the subscriber to update
+   * @param {Number} capability - The new role for the subscriber
+   */
   async updateGroupSubscriber (groupId, subscriberId, capability) {
     try {
       if (!validator.isValidNumber(groupId)) {
@@ -338,10 +416,35 @@ module.exports = class Group extends Helper {
     }
   }
 
+  /**
+   * Update a group
+   * @returns {GroupProfileBuilder} Group Profile Builder
+   */
+  async update (groupId) {
+    try {
+      if (!validator.isValidNumber(groupId)) {
+        throw new Error('groupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(groupId)) {
+        throw new Error('groupId cannot be less than or equal to 0');
+      }
+
+      const group = await this.getById(groupId);
+
+      if (group.exists) {
+        return new GroupProfileBuilder(this._api)._update(group);
+      } else {
+        throw new Error('group does not exist');
+      }
+    } catch (error) {
+      error.method = `Helper/Group/update(groupId = ${JSON.stringify(groupId)})`;
+      throw error;
+    }
+  }
+
   async _getJoinedGroups () {
     try {
       if (this._joinedGroupsRequested) {
-        return this._cache.filter((group) => group.inGroup);
+        return this._groups.filter((group) => group.inGroup);
       }
 
       const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_LIST, {
@@ -368,21 +471,26 @@ module.exports = class Group extends Helper {
 
   _process (group) {
     if (group.exists) {
-      const existing = this._cache.find((grp) => grp.id === group.id);
+      const existing = this._groups.find((grp) => grp.id === group.id);
 
       if (existing) {
         for (const key in group) {
           existing[key] = group[key];
         }
       } else {
-        this._cache.push(group);
+        this._groups.push(group);
       }
     }
+
+    if (group.audioConfig && !group.audioConfig.enabled) {
+      Reflect.deleteProperty(this._api.stage()._slots, group.id);
+    }
+
     return group;
   }
 
   _cleanUp () {
-    this._cache = [];
+    this._groups = [];
     this._joinedGroupsRequested = false;
   }
 };

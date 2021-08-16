@@ -1,15 +1,10 @@
 
 module.exports = class Helper {
-  constructor (bot) {
-    this._bot = bot;
-    this._config = this._bot.config;
-    this._websocket = this._bot.websocket;
-    this._cache = [];
+  constructor (api) {
+    this._api = api;
+    this._config = this._api.config;
+    this._websocket = this._api.websocket;
   }
 
-  _cleanUp () {
-    if (this._cache) {
-      this._cache = [];
-    }
-  }
+  _cleanUp () { }
 };

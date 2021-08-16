@@ -2,10 +2,10 @@ const BaseEvent = require('../BaseEvent');
 
 const crypto = require('crypto');
 
-const { deviceType } = require('@dawalters1/constants');
-
 const internal = require('../../../constants/internal');
 const request = require('../../../constants/request');
+
+const { deviceType, loginType } = require('@dawalters1/constants');
 
 const toDeviceTypeId = (dev) => {
   const devices = Object.entries(deviceType);
@@ -15,53 +15,62 @@ const toDeviceTypeId = (dev) => {
 
 module.exports = class Welcome extends BaseEvent {
   async process (data) {
-    this._bot.on._emit(this._command, data);
+    this._api.on._emit(this._command, data);
 
     if (!data.loggedInUser) {
-      const result = await this._websocket.emit(request.SECURITY_LOGIN,
-        {
-          headers:
-                    {
-                      version: 2
-                    },
-          body:
-                    {
-                      type: this._bot.config.app.loginSettings.loginType,
-                      deviceTypeId: toDeviceTypeId(this._bot.config.app.loginSettings.loginDevice),
-                      onlineState: this._bot.config.app.loginSettings.onlineState,
-                      username: this._bot.config.app.loginSettings.email,
-                      password: crypto.createHash('md5').update(this._bot.config.app.loginSettings.password).digest('hex'),
-                      md5Password: true
-                    }
+      const login = async (api) => {
+        const loginSettings = api.config._loginSettings;
+
+        const result = await this._websocket.emit(request.SECURITY_LOGIN, {
+          headers: {
+            version: 2
+          },
+          body: {
+            type: loginSettings.loginType,
+            deviceTypeId: toDeviceTypeId(loginSettings.loginDevice),
+            onlineState: loginSettings.onlineState,
+            username: loginSettings.email,
+            password: loginSettings.loginType === loginType.EMAIL ? crypto.createHash('md5').update(loginSettings.password).digest('hex') : loginSettings.password,
+            md5Password: loginSettings.loginType === loginType.EMAIL
+          }
         });
+        if (!result.success) {
+          api.on._emit(internal.LOGIN_FAILED, result);
 
-      if (!result.success) {
-        this._bot.on._emit(internal.LOGIN_FAILED, result);
+          if (result.headers && result.headers.subCode && result.headers.subCode > 1) {
+            await api.utility().delay(90000);// Attempt to reconnect after 90 seconds regardless of expiry given (Typically too many requests were sent and bot was barred)
+            await login(api);
+          }
 
-        return;
-      }
+          return;
+        }
 
-      this._bot.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
-      this._bot._cognito = result.body.cognito;
-      this._bot.currentSubscriber = result.body.subscriber;
-      this._bot._endpointConfig = data.endpointConfig;
+        api.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
+        api._cognito = result.body.cognito;
+        api.currentSubscriber = result.body.subscriber;
+        api._endpointConfig = data.endpointConfig;
+
+        this.onSuccess(false);
+      };
+
+      return await login(this._api);
     } else {
-      this._bot.currentSubscriber = data.loggedInUser;
-    }
+      this._api.currentSubscriber = data.loggedInUser;
 
-    this.onSuccess(data.loggedInUser);
+      this.onSuccess(true);
+    }
   }
 
   async onSuccess (reconnect = false) {
     await Promise.all([
-      this._bot.group()._getJoinedGroups(),
-      this._bot.messaging()._messageGroupSubscribe(),
-      this._bot.messaging()._messagePrivateSubscribe(),
-      this._bot.tip()._groupSubscribe()
+      this._api.group()._getJoinedGroups(),
+      this._api.messaging()._messageGroupSubscribe(),
+      this._api.messaging()._messagePrivateSubscribe(),
+      this._api.tip()._groupSubscribe()
     ]);
 
-    this._bot.currentSubscriber = await this._bot.subscriber().getById(this._bot.currentSubscriber.id);
+    this._api.currentSubscriber = await this._api.subscriber().getById(this._api.currentSubscriber.id);
 
-    this._bot.on._emit(reconnect ? internal.RECONNECTED : internal.READY);
+    this._api.on._emit(reconnect ? internal.RECONNECTED : internal.READY);
   }
 };

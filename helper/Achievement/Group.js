@@ -4,10 +4,14 @@ const validator = require('@dawalters1/validator');
 
 module.exports = class Group extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
   }
 
+  /**
+   * Get achievements for a group
+   * @param {Number} groupId - The id of the group
+   */
   async getById (groupId) {
     try {
       if (!validator.isValidNumber(groupId)) {

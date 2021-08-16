@@ -8,8 +8,8 @@ function * batch (arr, batchSize) {
 }
 
 module.exports = class BatchArray extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'batchArray');
+  constructor (api) {
+    super(api, 'batchArray');
   }
 
   _func (...args) {

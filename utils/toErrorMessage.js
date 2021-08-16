@@ -22,13 +22,14 @@ const codes = {
   },
   'security login': {
     1: 'Incorrect email or password',
-    2: 'TOS VIOLATIONS'
+    2: 'TOS VIOLATIONS',
+    3: 'Too many login attempts'
   }
 };
 
 module.exports = (command, code, subCode, message = null) => {
   if (command === request.SECURITY_LOGIN && subCode === 2) {
-    return `${codes[command][subCode]} - ${message}`;
+    return `${codes[command][subCode]} - ${message || 'No reason provided'}`;
   }
 
   if (message) {

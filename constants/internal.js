@@ -1,15 +1,17 @@
 
 module.exports = {
-
-  CONNECTING: 'connecting',
+ CONNECTING: 'connecting',
   CONNECTED: 'connect',
   DISCONNECTED: 'disconnect',
   RECONNECTING: 'reconnecting',
   RECONNECTED: 'reconnected',
   CONNECTION_ERROR: 'connect_error',
   CONNECTION_TIMEOUT: 'connect_timeout',
+  GROUP_MESSAGE: 'group message',
+  NOTIFICATION_RECEIVED: 'notification received',
   PING: 'ping',
   PONG: 'pong',
+  PRIVATE_MESSAGE: 'private message',
   PACKET_SENT: 'packet sent',
   PACKET_RECEIVED: 'packet received',
   LOGIN_SUCCESS: 'login success',
