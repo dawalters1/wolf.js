@@ -6,9 +6,9 @@ const MediaStream = require('wrtc').MediaStream;
 const { request, internal } = require('../../constants');
 
 const ffmpeg = require('fluent-ffmpeg');
-// const ffmpegUtil = require('fluent-ffmpeg-util');
+const Limiter = require('./Limiter');
 
-const stream = require('stream');
+const Stream = require('stream');
 
 // #region WRTC
 
@@ -58,7 +58,11 @@ module.exports = class Client {
       return Promise.resolve();
     };
 
-    return this._reset();
+    this._client.ontrack = () => console.log('track');
+
+    this._reset();
+
+    return this._broadcast();
   }
 
   async _handleSlotUpdate (slot, sourceSubscriberId) {
@@ -117,10 +121,14 @@ module.exports = class Client {
     }
   }
 
-  _reset (ffmpeg = true) {
-    if (ffmpeg && this._ffmpegPipe) {
-      this._ffmpegPipe.destroy();
+  _reset () {
+    if (this._ffmpegCommand) {
       this._ffmpegCommand = undefined;
+      this._ffmpegPipe.destroy();
+      this._samples = new Uint8Array(0);
+    }
+
+    if (this._downloader) {
       this._downloader.destroy();
     }
 
@@ -133,15 +141,10 @@ module.exports = class Client {
   }
 
   _converter () {
-    this._reset();
-
     this._ffmpegCommand = ffmpeg(this._downloader)
       .toFormat('wav')
       .native()
       .noVideo()
-      .addOutputOption('-page_duration 1')
-
-      .audioFilters(`volume=${this._volume}`)
       .on('error', (error) => {
         this._downloader.destroy();
 
@@ -151,26 +154,42 @@ module.exports = class Client {
         this._emit(internal.STAGE_CLIENT_ERROR, error);
       });
 
-    this._ffmpegPipe = this._ffmpegCommand.pipe(); // Despite being throttled it still will spam 'data' repeatedly after being paused
+    this._ffmpegPipe = this._ffmpegCommand.pipe();
 
-    this._ffmpegPipe.on('data', (buffer) => {
-      const newSamples = new Int8Array(buffer);
-      const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
-      mergedSamples.set(this._samples);
-      mergedSamples.set(newSamples, this._samples.length);
-      this._samples = mergedSamples;
-      this._playing = true;
-    })
-      .on('finish', () => { this._endOfData = true; });
+    /* Issue: FFMPEG cannot reliably be paused & resumed - It floods the samples and without a delay it leads to audio issues
+   Solutions:
+
+   1. 10MS delay -> This works, but leads to choppy issues broadcasting normally, and massive choppiness when paused for a long time
+   2. Limiter -> Basically handles all the data from the pipe, can be paused and resumed while still processing data and only send the 1920 chunk at a time
+
+   Using the terrible limiter solution.
+   */
+    this._limiter = new Limiter(this._ffmpegPipe, SLICE_COUNT);
+
+    this._limiter
+      .on('data', (samples) => {
+        const newSamples = new Int8Array(samples);
+        const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
+        mergedSamples.set(this._samples);
+        mergedSamples.set(newSamples, this._samples.length);
+        this._samples = mergedSamples;
+        this._playing = true;
+      })
+      .on('finish', () => {
+        this._reset();
+
+        console.log('ended');
+        this._emit(
+          internal.STAGE_CLIENT_BROADCAST_ENDED,
+          {
+            targetGroupId: this._targetGroupId
+          });
+      });
   }
 
   _broadcast () {
     const broadcast = async () => {
       if (!this._ready) {
-        return;
-      }
-
-      if (this._paused) {
         return;
       }
 
@@ -187,7 +206,7 @@ module.exports = class Client {
             targetGroupId: this._targetGroupId
           });
 
-        return 'eod';
+        return;
       }
 
       const sampleSlice = this._samples.slice(0, SLICE_COUNT);
@@ -209,9 +228,7 @@ module.exports = class Client {
     };
 
     (async function repeat () {
-      if (await broadcast() === 'eod') {
-        return; // No more data avilable break loop
-      }
+      await broadcast();
       setImmediate(repeat);
     })();
   }
@@ -229,15 +246,15 @@ module.exports = class Client {
       throw new Error('data cannot be null or empty');
     }
 
-    if (!(data instanceof stream.Stream) || !typeof (data._read === 'function') || !typeof (data._readableState === 'object')) {
+    if (!(data instanceof Stream.Stream) || !typeof (data._read === 'function') || !typeof (data._readableState === 'object')) {
       throw new Error('stream must be instance of readable');
     }
+
+    this._reset();
 
     this._downloader = data;
 
     this._converter();
-
-    this._broadcast();
   };
 
   async stop () {
@@ -252,7 +269,9 @@ module.exports = class Client {
   async pause () {
     this._paused = true;
 
-    this._ffmpegPipe.pause();
+    this._limiter.pause();
+
+    this._track.enabled = false;
 
     this._emit(
       internal.STAGE_CLIENT_PAUSED,
@@ -267,7 +286,9 @@ module.exports = class Client {
   async unpause () {
     this._paused = false;
 
-    this._ffmpegPipe.resume();
+    this._limiter.resume();
+
+    this._track.enabled = true;
 
     this._emit(
       internal.STAGE_CLIENT_UNPAUSED,
@@ -339,18 +360,6 @@ module.exports = class Client {
 
     return Promise.resolve();
   }
-
-  // async increaseVolume () {
-  // this._volume = this._volume + 0.1;
-  // }
-
-  // async decreaseVolume () {
-  // if (this._volume === 0) {
-  // throw new Error('volume cannot be negative');
-  // }
-
-  // this._volume = this._volume - 0.1;
-  // }
 
   /**
    * @returns {Boolean} Whether or not the client has connected to a slot and is ready to broadcast

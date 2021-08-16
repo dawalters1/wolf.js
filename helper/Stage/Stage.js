@@ -698,6 +698,26 @@ module.exports = class Stage extends Helper {
     return await this._getClient(groupId) !== undefined;
   }
 
+  async setVolume (groupId, value) {
+    const client = await this._getClient(groupId);
+
+    if (!client) {
+      throw new Error('stage client does not exist for group');
+    }
+
+    return await client.adjustVolume(value);
+  }
+
+  async getVolume (groupId) {
+    const client = await this._getClient(groupId);
+
+    if (!client) {
+      throw new Error('stage client does not exist for group');
+    }
+
+    return client._volume;
+  }
+
   _process (data) {
     if (this._slots[data.id]) {
       this._slots[data.id][data.slot.id - 1] = data.slot;
