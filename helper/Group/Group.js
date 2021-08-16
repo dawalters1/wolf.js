@@ -481,6 +481,11 @@ module.exports = class Group extends Helper {
         this._groups.push(group);
       }
     }
+
+    if (group.audioConfig && !group.audioConfig.enabled) {
+      Reflect.deleteProperty(this._api.stage()._slots, group.id);
+    }
+
     return group;
   }
 
