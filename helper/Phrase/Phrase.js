@@ -6,10 +6,10 @@ const fs = require('fs');
 const validator = require('@dawalters1/validator');
 
 module.exports = class Phrase extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
-    this._cache = [];
+    this._phrases = [];
     this._local = [];
     try {
       const phrasePath = path.join(path.dirname(require.main.filename), '/phrases/');
@@ -25,9 +25,9 @@ module.exports = class Phrase extends Helper {
               if (validator.isNullOrWhitespace(item.value)) {
                 throw new Error('value cannot be null or empty');
               }
-              if (validator.isNullOrWhitespace(item.language)) {
-                throw new Error('language cannot be null or empty');
-              }
+
+              item.language = path.parse(phrase).name;
+
               this._local.push(item);
             }
           }
@@ -43,15 +43,23 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   *
+   * List of all phrases loaded into the bot
+   */
   list () {
     try {
-      return this._cache.concat(this._local).filter(Boolean);
+      return this._phrases.concat(this._local).filter(Boolean);
     } catch (error) {
       error.method = 'Helper/Phrase/list()';
       throw error;
     }
   }
 
+  /**
+   *
+   * Get overall phrase count, and phrase count by language
+   */
   count () {
     try {
       const result = [...new Set(this.list().map((phrase) => phrase.language.toLowerCase()))].reduce((result, value) => {
@@ -70,16 +78,23 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Clear all phrases
+   */
   clear () {
     try {
       this._local = [];
-      this._cache = [];
+      this._phrases = [];
     } catch (error) {
       error.method = 'Helper/Phrase/clear()';
       throw error;
     }
   }
 
+  /**
+   * Load phrases into the cache
+   * @param {[{name: string, value: string, language: string}]} phrases - List of phrases
+   */
   load (phrases) {
     try {
       if (!validator.isValidArray(phrases)) {
@@ -100,13 +115,17 @@ module.exports = class Phrase extends Helper {
         }
       }
 
-      this._cache = phrases;
+      this._phrases = phrases;
     } catch (error) {
       error.method = `Helper/Phrase/load(phrases = ${JSON.stringify(phrases)})`;
       throw error;
     }
   }
 
+  /**
+   *
+   * List of all languages in the cache
+   */
   getLanguageList () {
     try {
       return [...new Set(this.list().map((phrase) => phrase.language))];
@@ -116,6 +135,10 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * List of all phrases by name
+   * @param {String} name - The name of the phrase
+   */
   getAllByName (name) {
     try {
       if (validator.isNullOrWhitespace(name)) {
@@ -128,6 +151,11 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Get a phrase by language and name
+   * @param {string} language - The phrase languages
+   * @param {string} name - The phrase name
+   */
   getByLanguageAndName (language, name) {
     try {
       if (validator.isNullOrWhitespace(language)) {
@@ -155,6 +183,11 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Get a phrase by name using command language
+   * @param {Object} command - The command
+   * @param {String} name - The phrase name
+   */
   getByCommandAndName (command, name) {
     try {
       if (typeof (command) !== 'object') {
@@ -172,12 +205,22 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  /**
+   * Check to see if what the user sent matches a specific phrase
+   * @param {*} name - The phrase name
+   * @param {*} value - The user input
+   */
   isRequestedPhrase (name, value) {
     try {
-      return this.list().find((phrase) => this._bot.utility().string().isEqual(phrase.name, name) && this._bot.utility().string().isEqual(phrase.value, value));
+      return this.list().find((phrase) => this._api.utility().string().isEqual(phrase.name, name) && this._api.utility().string().isEqual(phrase.value, value));
     } catch (error) {
       error.method = `Helper/Phrase/isRequestedPhrase(name = ${JSON.stringify(name)}, value = ${JSON.stringify(value)})`;
       throw error;
     }
+  }
+
+  _cleanUp () {
+    this._local = [];
+    this._phrases = [];
   }
 };

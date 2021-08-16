@@ -4,10 +4,14 @@ const validator = require('@dawalters1/validator');
 
 module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
   }
 
+  /**
+   * Get achievements for a subscriber
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   */
   async getById (sourceSubscriberId) {
     try {
       if (!validator.isValidNumber(sourceSubscriberId)) {

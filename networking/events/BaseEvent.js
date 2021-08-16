@@ -1,9 +1,9 @@
 
 module.exports = class BaseEvent {
   constructor (eventManager, command) {
-    this._bot = eventManager._bot;
-    this._config = this._bot.config;
-    this._websocket = this._bot.websocket;
+    this._api = eventManager._api;
+    this._config = this._api.config;
+    this._websocket = this._api.websocket;
     this._command = command;
   }
 

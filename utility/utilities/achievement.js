@@ -4,8 +4,8 @@ const validator = require('@dawalters1/validator');
 const constants = require('@dawalters1/constants');
 
 module.exports = class Achievement extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'achievement');
+  constructor (api) {
+    super(api, 'achievement');
   }
 
   _func () {
@@ -14,10 +14,7 @@ module.exports = class Achievement extends BaseUtility {
     };
   }
 
-  async mapToCategories (...args) {
-    const achievements = args[0];
-
-    const language = args[1];
+  async mapToCategories (achievements, language) {
     try {
       if (!validator.isValidArray(achievements)) {
         throw new Error('achievements must be an array');
@@ -57,7 +54,7 @@ module.exports = class Achievement extends BaseUtility {
         }
       }
 
-      const categories = await this._bot.achievement().getCategoryList(language);
+      const categories = await this._api.achievement().getCategoryList(language);
 
       return categories.reduce((result, category) => {
         const achivementForCategory = achievements.filter((achievement) => achievement.additionalInfo.categoryId === category.id);
@@ -71,7 +68,7 @@ module.exports = class Achievement extends BaseUtility {
         return result;
       }, []);
     } catch (error) {
-      error.method = `Utility/utilties/achievement/mapToCategories(achievements = ${JSON.stringify(args[0])}, language = ${JSON.stringify(language)})`;
+      error.method = `Utility/utilties/achievement/mapToCategories(achievements = ${JSON.stringify(achievements)}, language = ${JSON.stringify(language)})`;
       throw error;
     }
   }

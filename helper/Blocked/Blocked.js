@@ -4,15 +4,18 @@ const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
 module.exports = class Blocked extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
-    this._cache = [];
+    this._blocked = [];
   }
 
+  /**
+   * Get the list of contacts that are blocked
+   */
   async list () {
-    if (this._cache.length > 0) {
-      return this._cache;
+    if (this._blocked.length > 0) {
+      return this._blocked;
     }
 
     const result = await this._websocket.emit(request.SUBSCRIBER_BLOCK_LIST,
@@ -21,12 +24,16 @@ module.exports = class Blocked extends Helper {
       });
 
     if (result.success) {
-      this._cache = result.body;
+      this._blocked = result.body;
     }
 
-    return this._cache || [];
+    return this._blocked || [];
   }
 
+  /**
+   * Check to see if a subscriber is a blocked contact
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async isBlocked (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -42,6 +49,10 @@ module.exports = class Blocked extends Helper {
     }
   }
 
+  /**
+   * Block a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async block (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -59,6 +70,10 @@ module.exports = class Blocked extends Helper {
     }
   }
 
+  /**
+   * Unblock a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   async unblock (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -77,14 +92,14 @@ module.exports = class Blocked extends Helper {
   }
 
   async _process (id) {
-    const existing = this._cache.find((blocked) => blocked.id === id);
+    const existing = this._blocked.find((blocked) => blocked.id === id);
 
     if (existing) {
-      this._cache = this._cache.filter((blocked) => blocked.id !== id);
+      this._blocked = this._blocked.filter((blocked) => blocked.id !== id);
 
       return existing;
     } else {
-      const subscriber = await this._bot.subscriber().getById(id);
+      const subscriber = await this._api.subscriber().getById(id);
 
       const blocked = {
         id,
@@ -96,14 +111,14 @@ module.exports = class Blocked extends Helper {
         }
       };
 
-      this._cache.push(blocked);
+      this._blocked.push(blocked);
 
       return blocked;
     }
   }
 
   async _patch (subscriber) {
-    const existing = this._cache.find((contact) => contact.id === subscriber.id);
+    const existing = this._blocked.find((contact) => contact.id === subscriber.id);
 
     if (existing) {
       for (const key in subscriber) {
@@ -112,5 +127,9 @@ module.exports = class Blocked extends Helper {
     }
 
     return existing;
+  }
+
+  _cleanUp () {
+    this._blocked = [];
   }
 };

@@ -1,7 +1,7 @@
 
 module.exports = class BaseUtility {
-  constructor (bot, utilityName) {
-    this._bot = bot;
+  constructor (api, utilityName) {
+    this._api = api;
     this._utilityName = utilityName;
   }
 

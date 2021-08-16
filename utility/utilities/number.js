@@ -1,8 +1,8 @@
 const BaseUtility = require('../BaseUtility');
 
 module.exports = class Number extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'number');
+  constructor (api) {
+    super(api, 'number');
   }
 
   _func () {

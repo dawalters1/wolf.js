@@ -3,16 +3,23 @@ const Helper = require('../Helper');
 const validator = require('@dawalters1/validator');
 
 module.exports = class Authorized extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
-    this._cache = [];
+    this._authorized = [];
   }
 
+  /**
+   * List of all authorized subscriber id
+   */
   list () {
-    return this._cache;
+    return this._authorized;
   }
 
+  /**
+   * Check to see if a subscriber is authorized
+   * @param {Number} subscriberId - The id of the subscriber
+   */
   isAuthorized (subscriberId) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -28,10 +35,17 @@ module.exports = class Authorized extends Helper {
     }
   }
 
+  /**
+   * Clear the authorized subscriber list
+   */
   clear () {
-    this._cache = [];
+    this._authorized = [];
   }
 
+  /**
+   * Authorize a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers to authorize
+   */
   authorize (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {
@@ -50,13 +64,17 @@ module.exports = class Authorized extends Helper {
         }
       }
 
-      this._cache.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
+      this._authorized.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
     } catch (error) {
       error.method = `Helper/Authroization/authorize(subscriberIds = ${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
 
+  /**
+   * Unauthorize a subscriber or subscribers
+   * @param {[Number]} subscriberIds - The id/ids of the subscribers to Unauthorize
+   */
   unauthorize (subscriberIds) {
     try {
       if (validator.isValidArray(subscriberIds)) {
@@ -75,7 +93,7 @@ module.exports = class Authorized extends Helper {
         }
       }
 
-      this._cache = this._cache.filter((authorized) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(authorized) : authorized === subscriberIds);
+      this._authorized = this._authorized.filter((authorized) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(authorized) : authorized === subscriberIds);
     } catch (error) {
       error.method = `Helper/Authroization/unauthorize(subscriberIds = ${JSON.stringify(subscriberIds)})`;
       throw error;

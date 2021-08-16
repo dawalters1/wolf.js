@@ -6,10 +6,17 @@ const request = require('../../constants/request');
 
 module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
+
+    this._subscribers = [];
   }
 
+  /**
+   * Get a list of subscribers by IDs
+   * @param {Number} subscriberIds - The ids of the subscribers
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getByIds (subscriberIds, requestNew = false) {
     try {
       if (!validator.isValidArray(subscriberIds)) {
@@ -29,14 +36,14 @@ module.exports = class Subscriber extends Helper {
       const subscribers = [];
 
       if (!requestNew) {
-        const cached = this._cache.filter((subscriber) => subscriberIds.includes(subscriber.id));
+        const cached = this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id));
         if (cached.length > 0) {
           subscribers.push(...cached);
         }
       }
 
       if (subscribers.length !== subscriberIds.length) {
-        for (const batchSubscriberIdList of this._bot.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+        for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
           const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
             headers: {
               version: 4
@@ -74,6 +81,11 @@ module.exports = class Subscriber extends Helper {
     }
   }
 
+  /**
+   * Get a subscriber by ID
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Boolean} requestNew - Request new data from the server
+   */
   async getById (subscriberId, requestNew = false) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -89,6 +101,11 @@ module.exports = class Subscriber extends Helper {
     }
   }
 
+  /**
+   * Get chat history for a subscriber
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number} timestamp - The last timestamp in the subscriber (0 for last messages sent)
+   */
   async getHistory (subscriberId, timestamp = 0) {
     try {
       if (!validator.isValidNumber(subscriberId)) {
@@ -110,7 +127,7 @@ module.exports = class Subscriber extends Helper {
           },
           body: {
             id: subscriberId,
-            timestamp: timestamp === 0 ? null : timestamp
+            timestampEnd: timestamp === 0 ? null : timestamp
           }
         });
 
@@ -139,16 +156,20 @@ module.exports = class Subscriber extends Helper {
 
   _process (subscriber) {
     if (subscriber.exists) {
-      const existing = this._cache.find((sub) => sub.id === subscriber.id);
+      const existing = this._subscribers.find((sub) => sub.id === subscriber.id);
 
       if (existing) {
         for (const key in subscriber) {
           existing[key] = subscriber[key];
         }
       } else {
-        this._cache.push(subscriber);
+        this._subscribers.push(subscriber);
       }
     }
     return subscriber;
+  }
+
+  _cleanUp () {
+    this._subscribers = [];
   }
 };

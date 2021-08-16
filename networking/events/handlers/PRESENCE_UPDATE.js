@@ -1,9 +1,8 @@
-
 const BaseEvent = require('../BaseEvent');
 
 module.exports = class PresenceUpdate extends BaseEvent {
   async process (data) {
-    const groups = await this._bot.group()._getJoinedGroups();
+    const groups = await this._api.group()._getJoinedGroups();
 
     for (const group of groups) {
       if (group.subscribers) {
@@ -15,20 +14,20 @@ module.exports = class PresenceUpdate extends BaseEvent {
       }
     }
 
-    const subscriber = await this._bot.subscriber()._cache.find((subscriber) => subscriber.id === data.id);
+    const subscriber = await this._api.subscriber()._subscribers.find((subscriber) => subscriber.id === data.id);
 
     if (subscriber) {
-      this._bot.subscriber()._process(data);
+      this._api.subscriber()._process(data);
     }
 
-    if (this._bot.contact().isContact(data.id)) {
-      this._bot.contact()._patch(data);
+    if (this._api.contact()._contacts.length > 0 && this._api.contact().isContact(data.id)) {
+      this._api.contact()._patch(data);
     }
 
-    if (this._bot.blocked().isBlocked(data.id)) {
-      this._bot.blocked()._patch(data);
+    if (this._api.blocked()._blocked.length > 0 && this._api.blocked().isBlocked(data.id)) {
+      this._api.blocked()._patch(data);
     }
 
-    this._bot.on._emit(this._command, subscriber, data);
+    this._api.on._emit(this._command, subscriber, data);
   }
 };
