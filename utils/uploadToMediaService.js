@@ -12,7 +12,7 @@ const allowedMimeTypes = {
   IMAGE_GIF: 'image/gif'
 };
 
-module.exports = async (bot, route, content, mimeType, targetId = undefined, isGroup = false) => {
+module.exports = async (api, route, content, mimeType, targetId = undefined, isGroup = false) => {
   try {
     if (route === routes.GROUP_AVATAR_UPLOAD || route === routes.EVENT_IMAGE) {
       if (!validator.isValidNumber(targetId)) {
@@ -45,7 +45,7 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
     };
 
     if (route === routes.MESSAGE_SEND) {
-      body.source = bot.currentSubscriber.id;
+      body.source = api.currentSubscriber.id;
       body.recipient = targetId;
       body.isGroup = isGroup;
       body.flightId = uuidv4();
@@ -55,7 +55,7 @@ module.exports = async (bot, route, content, mimeType, targetId = undefined, isG
       body.id = targetId;
     }
 
-    return await bot._mediaService.request('POST', route, body);
+    return await api._mediaService.request('POST', route, body);
   } catch (error) {
     error.method = `Utils/uploadToMediaService(route = ${JSON.stringify(route)}, content =${JSON.stringify('not displaying')}, mimeType = ${JSON.stringify(mimeType)}, targetId = ${JSON.stringify(targetId)}, isGroup = ${JSON.stringify(isGroup)})`;
     throw error;

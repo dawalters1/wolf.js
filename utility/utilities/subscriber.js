@@ -2,8 +2,8 @@ const BaseUtility = require('../BaseUtility');
 const validator = require('@dawalters1/validator');
 
 module.exports = class Subscriber extends BaseUtility {
-  constructor (bot) {
-    super(bot, 'subscriber');
+  constructor (api) {
+    super(api, 'subscriber');
   }
 
   _func () {

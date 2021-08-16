@@ -6,8 +6,8 @@ const fs = require('fs');
 const validator = require('@dawalters1/validator');
 
 module.exports = class Phrase extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
 
     this._phrases = [];
     this._local = [];
@@ -25,9 +25,9 @@ module.exports = class Phrase extends Helper {
               if (validator.isNullOrWhitespace(item.value)) {
                 throw new Error('value cannot be null or empty');
               }
-              if (validator.isNullOrWhitespace(item.language)) {
-                throw new Error('language cannot be null or empty');
-              }
+
+              item.language = path.parse(phrase).name;
+
               this._local.push(item);
             }
           }
@@ -212,7 +212,7 @@ module.exports = class Phrase extends Helper {
    */
   isRequestedPhrase (name, value) {
     try {
-      return this.list().find((phrase) => this._bot.utility().string().isEqual(phrase.name, name) && this._bot.utility().string().isEqual(phrase.value, value));
+      return this.list().find((phrase) => this._api.utility().string().isEqual(phrase.name, name) && this._api.utility().string().isEqual(phrase.value, value));
     } catch (error) {
       error.method = `Helper/Phrase/isRequestedPhrase(name = ${JSON.stringify(name)}, value = ${JSON.stringify(value)})`;
       throw error;

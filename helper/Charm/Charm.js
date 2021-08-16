@@ -7,8 +7,8 @@ const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 
 module.exports = class Charm extends Helper {
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
     this._charms = {};
   }
 

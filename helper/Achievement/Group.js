@@ -4,8 +4,8 @@ const validator = require('@dawalters1/validator');
 
 module.exports = class Group extends Helper {
   // eslint-disable-next-line no-useless-constructor
-  constructor (bot) {
-    super(bot);
+  constructor (api) {
+    super(api);
   }
 
   /**
