@@ -98,7 +98,7 @@ module.exports = class MessageSend extends BaseEvent {
                   group.inGroup = false;
                   group.subscribers = [];
 
-                  this._bot.group()._messageGroupUnsubscribe(group.id);
+                  this._bot.messaging()._messageGroupUnsubscribe(group.id);
                 }
               } else {
                 if (group.subscribers) {
