@@ -64,7 +64,7 @@ module.exports = class MessageSend extends BaseEvent {
           switch (action.type) {
             case 'join': {
               if (group && group.subscribers) {
-                group.subscribers.add({
+                group.subscribers.push({
                   subscriberId: subscriber.id,
                   groupId: group.id,
                   capabilities: group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR,
@@ -98,7 +98,7 @@ module.exports = class MessageSend extends BaseEvent {
                   group.inGroup = false;
                   group.subscribers = [];
 
-                  this._bot.group()._messageGroupUnsubscribe(group.id);
+                  this._bot.messaging()._messageGroupUnsubscribe(group.id);
                 }
               } else {
                 if (group.subscribers) {
