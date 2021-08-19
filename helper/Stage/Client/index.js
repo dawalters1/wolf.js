@@ -103,6 +103,8 @@ class WRTCWrapper {
   }
 
   _reset () {
+    clearInterval(this._broadcaster);
+
     if (this._ffmpeg) {
       this._ffmpeg.destroy();
     }
@@ -119,8 +121,6 @@ class WRTCWrapper {
       if (!this._endOfData) {
         return Promise.resolve();
       }
-
-      clearInterval(this._broadcaster);
 
       this._reset();
 
@@ -163,10 +163,6 @@ class WRTCWrapper {
 
     this._connectionState = state.DISCONNECTED;
 
-    if (this._broadcaster) {
-      clearInterval(this._broadcaster);
-    }
-
     this._reset();
 
     this._client.close();
@@ -181,9 +177,6 @@ class WRTCWrapper {
 
     let _samples = new Uint8Array(0);
 
-    if (!this._paused) {
-      this._broadcaster = setInterval(() => this._broadcast(), 9.9);
-    }
     this._ffmpeg = ffmpeg(this._downloader)
       .toFormat('wav')
       .native()
@@ -222,14 +215,15 @@ class WRTCWrapper {
       .on('finish', () => {
         this._endOfData = true;
       });
+
+    if (!this._paused) {
+      this._broadcaster = setInterval(() => this._broadcast(), 9.9);
+    }
   }
 
   stop () {
     this._playing = false;
 
-    if (this._broadcaster) {
-      clearInterval(this._broadcaster);
-    }
     this._reset();
 
     this._em.emit(event.STOP, this._getData());
@@ -240,9 +234,8 @@ class WRTCWrapper {
   pause () {
     this._paused = true;
 
-    if (this._broadcaster) {
-      clearInterval(this._broadcaster);
-    }
+    clearInterval(this._broadcaster);
+
     this._em.emit(event.PAUSED, this._getData());
 
     return this.duration();
@@ -280,10 +273,6 @@ class WRTCWrapper {
 
   disconnect () {
     this._connectionState = state.DISCONNECTED;
-
-    if (this._broadcaster) {
-      clearInterval(this._broadcaster);
-    }
 
     this._reset();
 
