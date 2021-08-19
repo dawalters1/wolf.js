@@ -681,10 +681,10 @@ module.exports = class Stage extends Helper {
   }
 
   /**
-   * Unpause the current audio in a group
-   * @param {Number} targetGroupId - The id of the group to unpause
+   * resume the current audio in a group
+   * @param {Number} targetGroupId - The id of the group to resume
    */
-  async unpause (targetGroupId) {
+  async resume (targetGroupId) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
