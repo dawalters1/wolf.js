@@ -47,8 +47,11 @@ module.exports = class Phrase extends Helper {
    *
    * List of all phrases loaded into the bot
    */
-  list () {
+  list (includeLocal = true) {
     try {
+      if (!includeLocal) {
+        return this._phrases;
+      }
       return this._phrases.concat(this._local).filter(Boolean);
     } catch (error) {
       error.method = 'Helper/Phrase/list()';
@@ -135,6 +138,16 @@ module.exports = class Phrase extends Helper {
     }
   }
 
+  _getAllByName (name, includeLocal = false) {
+    const phrases = this.list(includeLocal).filter((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim());
+
+    if (phrases.length === 0 && !includeLocal) {
+      return this._getAllByName(name, true);
+    }
+
+    return phrases;
+  }
+
   /**
    * List of all phrases by name
    * @param {String} name - The name of the phrase
@@ -144,11 +157,21 @@ module.exports = class Phrase extends Helper {
       if (validator.isNullOrWhitespace(name)) {
         throw new Error('name cannot be null or empty');
       }
-      return this.list().filter((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim());
+      return this._getAllByName(name);
     } catch (error) {
       error.method = `Helper/Phrase/getAllByName(name = ${JSON.stringify(name)})`;
       throw error;
     }
+  }
+
+  _getByNameAndLanguage (name, language, includeLocal = false) {
+    const phrase = this.list(includeLocal).find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.language.toLowerCase().trim() === language.toLowerCase().trim());
+
+    if (!phrase && !includeLocal) {
+      return this._getByNameAndLanguage(name, language, true);
+    }
+
+    return phrase;
   }
 
   /**
@@ -166,7 +189,7 @@ module.exports = class Phrase extends Helper {
         throw new Error('name cannot be null or empty');
       }
 
-      const phrase = this.list().find((phrase) => phrase.name.toLowerCase().trim() === name.toLowerCase().trim() && phrase.language.toLowerCase().trim() === language.toLowerCase().trim());
+      const phrase = this._getByNameAndLanguage(name, language);
 
       if (phrase) {
         return phrase.value;
@@ -198,7 +221,7 @@ module.exports = class Phrase extends Helper {
         throw new Error('language cannot be null or empty');
       }
 
-      return this.getByLanguageAndName(command, name);
+      return this.getByLanguageAndName(command.language, name);
     } catch (error) {
       error.method = `Helper/Phrase/getByCommandAndName(command = ${JSON.stringify(command)}, name = ${JSON.stringify(name)})`;
       throw error;
