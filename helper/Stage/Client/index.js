@@ -181,8 +181,9 @@ class WRTCWrapper {
 
     let _samples = new Uint8Array(0);
 
-    this._broadcaster = setInterval(() => this._broadcast(), 9.9);
-
+    if (!this._paused) {
+      this._broadcaster = setInterval(() => this._broadcast(), 9.9);
+    }
     this._ffmpeg = ffmpeg(this._downloader)
       .toFormat('wav')
       .native()
@@ -237,10 +238,11 @@ class WRTCWrapper {
   }
 
   pause () {
-    clearInterval(this._broadcaster);
-
     this._paused = true;
 
+    if (this._broadcaster) {
+      clearInterval(this._broadcaster);
+    }
     this._em.emit(event.PAUSED, this._getData());
 
     return this.duration();
