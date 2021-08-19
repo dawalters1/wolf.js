@@ -149,7 +149,7 @@ class WRTCWrapper {
   // #region Public
 
   handleSlotUpdate (slot, sourceSubscriberId) {
-    if (slot.occuperId !== null) {
+    if (slot.occupierId !== null) {
       if (this._muted && !slot.occupierMuted) {
         this._muted = false;
         return this._em.emit(event.UNMUTED, this._getData(sourceSubscriberId));
@@ -171,7 +171,7 @@ class WRTCWrapper {
 
     this._client.close();
 
-    this._em.emit(sourceSubscriberId ? event.KICKED : event.DISCONNECTED, this._getData(sourceSubscriberId));
+    this._em.emit(sourceSubscriberId !== undefined ? event.KICKED : event.DISCONNECTED, this._getData(sourceSubscriberId));
   }
 
   broadcast (data) {
