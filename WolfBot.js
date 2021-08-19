@@ -362,7 +362,7 @@ module.exports = class WolfBot {
           id: message.id,
           body: message.data.toString(),
           sourceSubscriberId: message.originator.id,
-          groupId: message.isGroup ? message.recipient.id : null,
+          targetGroupId: message.isGroup ? message.recipient.id : null,
           embeds: message.embeds,
           metadata: message.metadata,
           isGroup: message.isGroup,
