@@ -15,32 +15,32 @@ module.exports = class Event extends Helper {
 
   /**
    * Get a list of events for a group
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {Boolean} requestNew - Request new data from the server
    */
-  async getGroupEvents (groupId, requestNew = false) {
+  async getGroupEvents (targetGroupId, requestNew = false) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (!requestNew && this._eventList[groupId]) {
-        return this._eventList[groupId];
+      if (!requestNew && this._eventList[targetGroupId]) {
+        return this._eventList[targetGroupId];
       }
 
       const result = await this._websocket.emit(request.GROUP_EVENT_LIST, {
-        id: groupId,
+        id: targetGroupId,
         subscribe: true
       });
 
       if (result.success) {
-        this._eventList[groupId] = await this.getByIds(result.body.map((evt) => evt.id));
+        this._eventList[targetGroupId] = await this.getByIds(result.body.map((evt) => evt.id));
       }
 
-      return this._eventList[groupId] || [];
+      return this._eventList[targetGroupId] || [];
     } catch (error) {
-      error.method = `Helper/Event/getGroupEvents(groupId = ${JSON.stringify(groupId)}, requestNew = ${JSON.stringify(requestNew)})`;
+      error.method = `Helper/Event/getGroupEvents(targetGroupId = ${JSON.stringify(targetGroupId)}, requestNew = ${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -129,7 +129,7 @@ module.exports = class Event extends Helper {
 
   /**
    * Create an event for a group
-   * @param {Number} groupId - The id of the group to create the event for
+   * @param {Number} targetGroupId - The id of the group to create the event for
    * @param {String} title - The name of the event
    * @param {Date} startsAt - The time at which the event starts
    * @param {Date} endsAt - The time at which the event ends
@@ -137,12 +137,12 @@ module.exports = class Event extends Helper {
    * @param {String} longDescription - The long description about the event (Optional)
    * @param {Buffer} thumbnail - The event thumbnail (Optional)
    */
-  async createEvent (groupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
+  async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (validator.isNullOrWhitespace(title)) {
@@ -167,7 +167,7 @@ module.exports = class Event extends Helper {
 
       const result = await this._websocket.emit(request.GROUP_EVENT_CREATE, {
         endsAt: new Date(endsAt),
-        groupId,
+        groupId: targetGroupId,
         longDescription,
         shortDescription,
         startsAt: new Date(startsAt),
@@ -180,14 +180,14 @@ module.exports = class Event extends Helper {
 
       return result;
     } catch (error) {
-      error.method = `Helper/Event/createEvent(groupId = ${JSON.stringify(groupId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)})`;
+      error.method = `Helper/Event/createEvent(targetGroupId = ${JSON.stringify(targetGroupId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)})`;
       throw error;
     }
   }
 
   /**
    * Update an existing event for a group
-   * @param {Number} groupId - The id of the group to create the event for
+   * @param {Number} targetGroupId - The id of the group to create the event for
    * @param {Number} eventId - The id of the event in which to update
    * @param {String} title - The name of the event
    * @param {Date} startsAt - The time at which the event starts
@@ -197,12 +197,13 @@ module.exports = class Event extends Helper {
    * @param {String} imageUrl - The current url for the event thumbnail
    * @param {Buffer} thumbnail - The event thumbnail (Optional)
    */
-  async updateEvent (groupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
+  async updateEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
+
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (!validator.isValidNumber(eventId)) {
@@ -234,7 +235,7 @@ module.exports = class Event extends Helper {
       const result = await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
         id: eventId,
         endsAt: new Date(endsAt),
-        groupId,
+        groupId: targetGroupId,
         longDescription,
         shortDescription,
         startsAt: new Date(startsAt),
@@ -249,7 +250,7 @@ module.exports = class Event extends Helper {
 
       return result;
     } catch (error) {
-      error.method = `Helper/Event/updateEvent(groupId = ${JSON.stringify(groupId)}, eventId = ${JSON.stringify(eventId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)}, imageUrl = ${JSON.stringify(imageUrl)}, isRemoved = ${JSON.stringify(false)})`;
+      error.method = `Helper/Event/updateEvent(targetGroupId = ${JSON.stringify(targetGroupId)}, eventId = ${JSON.stringify(eventId)}, title = ${JSON.stringify(title)}, startsAt = ${JSON.stringify(startsAt)}, endsAt = ${JSON.stringify(endsAt)}, shortDescription = ${JSON.stringify(shortDescription)}, longDescription = ${JSON.stringify(longDescription)}, imageUrl = ${JSON.stringify(imageUrl)}, isRemoved = ${JSON.stringify(false)})`;
       throw error;
     }
   }
@@ -280,15 +281,15 @@ module.exports = class Event extends Helper {
 
   /**
    * Delete an event for a group
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {Number} eventId - The id of the event
    */
-  async deleteEvent (groupId, eventId) {
+  async deleteEvent (targetGroupId, eventId) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (!validator.isValidNumber(eventId)) {
@@ -299,11 +300,11 @@ module.exports = class Event extends Helper {
 
       return await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
         id: eventId,
-        groupId,
+        groupId: targetGroupId,
         isRemoved: true
       });
     } catch (error) {
-      error.method = `Helper/Event/deleteEvent(groupId = ${JSON.stringify(groupId)}, eventId = ${JSON.stringify(eventId)}`;
+      error.method = `Helper/Event/deleteEvent(targetGroupId = ${JSON.stringify(targetGroupId)}, eventId = ${JSON.stringify(eventId)}`;
       throw error;
     }
   }
@@ -376,8 +377,8 @@ module.exports = class Event extends Helper {
     if (event.isRemoved) {
       this._events = this._events.filter((evt) => evt.id !== event.id);
 
-      if (this._eventList[event.groupId]) {
-        this._eventList[event.groupId] = this._eventList[event.groupId].filter((evt) => evt.id !== event.id);
+      if (this._eventList[event.targetGroupId]) {
+        this._eventList[event.targetGroupId] = this._eventList[event.targetGroupId].filter((evt) => evt.id !== event.id);
       }
     } else {
       const existing = this._events.find((evt) => evt.id === event.id);
@@ -387,8 +388,8 @@ module.exports = class Event extends Helper {
           existing[key] = event[key];
         }
 
-        if (this._eventList[event.groupId]) {
-          const groupEvent = this._eventList[event.groupId].find((evt) => evt.id === event.id);
+        if (this._eventList[event.targetGroupId]) {
+          const groupEvent = this._eventList[event.targetGroupId].find((evt) => evt.id === event.id);
           for (const key in event) {
             groupEvent[key] = event[key];
           }
@@ -396,10 +397,10 @@ module.exports = class Event extends Helper {
       } else {
         this._events.push(event);
 
-        if (this._eventList[event.groupId]) {
-          this._eventList[event.groupId].push(event);
+        if (this._eventList[event.targetGroupId]) {
+          this._eventList[event.targetGroupId].push(event);
         } else {
-          this._eventList[event.groupId] = [event];
+          this._eventList[event.targetGroupId] = [event];
         }
       }
     }
