@@ -4,8 +4,7 @@ const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBui
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
-const uploadToMediaService = require('../../utils/uploadToMediaService');
-const routes = require('../../MultiMediaService/routes');
+const fileType = require('file-type');
 
 module.exports = class Group extends Helper {
   constructor (api) {
@@ -372,7 +371,7 @@ module.exports = class Group extends Helper {
    */
   async updateAvatar (groupId, avatar) {
     try {
-      return await uploadToMediaService(this._api, routes.GROUP_AVATAR_UPLOAD, avatar, groupId);
+      return await this._api._mediaService().uploadGroupAvatar(groupId, avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
       error.method = `Helper/Group/updateAvatar(groupId = ${JSON.stringify(groupId)}, avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
