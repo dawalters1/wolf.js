@@ -3,9 +3,6 @@ const Response = require('../../networking/Response');
 const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
-const uploadToMediaService = require('../../utils/uploadToMediaService');
-const routes = require('../../MultiMediaService/routes');
-
 const fileType = require('file-type');
 
 module.exports = class Event extends Helper {
@@ -138,9 +135,9 @@ module.exports = class Event extends Helper {
    * @param {Date} endsAt - The time at which the event ends
    * @param {String} shortDescription - A short brief description about the event (Optional)
    * @param {String} longDescription - The long description about the event (Optional)
-   * @param {Buffer} image - The event thumbnail (Optional)
+   * @param {Buffer} thumbnail - The event thumbnail (Optional)
    */
-  async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, image = undefined) {
+  async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
     try {
       if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
@@ -164,8 +161,8 @@ module.exports = class Event extends Helper {
         throw new Error('endsAt must be after startsAt');
       }
 
-      if (image !== undefined && !Buffer.isBuffer(image)) {
-        throw new Error('image must be a buffer');
+      if (thumbnail !== undefined && !Buffer.isBuffer(thumbnail)) {
+        throw new Error('thumbnail must be a buffer');
       }
 
       const result = await this._websocket.emit(request.GROUP_EVENT_CREATE, {
@@ -177,8 +174,8 @@ module.exports = class Event extends Helper {
         title
       });
 
-      if (result.success && image !== undefined) {
-        result.body.imageUpload = await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, result.body.id);
+      if (result.success && thumbnail !== undefined) {
+        result.body.imageUpload = await this._api._mediaService().uploadEventAvatar(result.body.id, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
       }
 
       return result;
@@ -198,9 +195,10 @@ module.exports = class Event extends Helper {
    * @param {String} shortDescription - A short brief description about the event (Optional)
    * @param {String} longDescription - The long description about the event (Optional)
    * @param {String} imageUrl - The current url for the event thumbnail
-   * @param {Buffer} image - The event thumbnail (Optional)
+   * @param {Buffer} thumbnail - The event thumbnail (Optional)
    */
-  async updateEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, image = undefined) {
+  async updateEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
+
     try {
       if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
@@ -230,8 +228,8 @@ module.exports = class Event extends Helper {
         throw new Error('endsAt must be after startsAt');
       }
 
-      if (image !== undefined && !Buffer.isBuffer(image)) {
-        throw new Error('image must be a buffer');
+      if (thumbnail !== undefined && !Buffer.isBuffer(thumbnail)) {
+        throw new Error('thumbnail must be a buffer');
       }
 
       const result = await this._websocket.emit(request.GROUP_EVENT_UPDATE, {
@@ -246,8 +244,8 @@ module.exports = class Event extends Helper {
         isRemoved: false
       });
 
-      if (result.success && image !== undefined) {
-        result.body.imageUpload = await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+      if (result.success && thumbnail !== undefined) {
+        result.body.imageUpload = await this._api._mediaService().uploadEventAvatar(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
       }
 
       return result;
@@ -260,9 +258,9 @@ module.exports = class Event extends Helper {
   /**
    * Update an event thumbnail
    * @param {Number} eventId - The id of the event
-   * @param {Buffer} image - The thumbnail for the event
+   * @param {Buffer} thumbnail - The thumbnail for the event
    */
-  async updateEventImage (eventId, image) {
+  async updateEventImage (eventId, thumbnail) {
     try {
       if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
@@ -270,11 +268,11 @@ module.exports = class Event extends Helper {
         throw new Error('eventId cannot be less than or equal to 0');
       }
 
-      if (image !== undefined && !Buffer.isBuffer(image)) {
-        throw new Error('image must be a buffer');
+      if (thumbnail !== undefined && !Buffer.isBuffer(thumbnail)) {
+        throw new Error('thumbnail must be a buffer');
       }
 
-      return await uploadToMediaService(this._api, routes.EVENT_IMAGE, image, (await fileType.fromBuffer(image)).mime, eventId);
+      return await this._api._mediaService().uploadEventAvatar(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
     } catch (error) {
       error.method = `Helper/Event/updateEventImage(eventId = ${JSON.stringify(eventId)}, image = ${JSON.stringify('too large to display')})`;
       throw error;

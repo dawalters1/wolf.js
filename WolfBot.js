@@ -29,10 +29,11 @@ const Utilities = require('./utility');
 const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
-const routes = require('./MultiMediaService/routes');
-const uploadToMediaService = require('./utils/uploadToMediaService');
-const MultiMediaService = require('./MultiMediaService/MultiMediaService');
+
+const MultiMediaService = require('./MultiMediaService');
 const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
+
+const fileType = require('file-type');
 
 const validateConfig = (api, config) => {
   if (!config) {
@@ -227,6 +228,14 @@ module.exports = class WolfBot {
    */
   utility () {
     return this._utilities;
+  }
+
+  /**
+   *
+   * @returns {MultiMediaService}
+   */
+  _mediaService () {
+    return this._mediaService;
   }
 
   /**
@@ -520,7 +529,7 @@ module.exports = class WolfBot {
    */
   async updateAvatar (avatar) {
     try {
-      return await uploadToMediaService(this, routes.SUBSCRIBER_AVATAR_UPLOAD, avatar);
+      return await this._api._mediaService().uploadGroupAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
       error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
