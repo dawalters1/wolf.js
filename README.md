@@ -27,6 +27,12 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 
 - [constants](https://www.npmjs.com/package/@dawalters1/constants) - npm i @dawalters1/constants
 - [validator](https://www.npmjs.com/package/@dawalters1/validator) - npm i @dawalters1/validator
+- [ioredis](https://www.npmjs.com/package/ioredis) npm i ioredis
+  - Requires a local or remote redis server
+    - [Windows](https://github.com/tporadowski/redis/releases/tag/v5.0.10) - Github maintained port, because its no longer supported on windows
+    - [Linux](https://redis.io/download)
+  - Optional Redis Utils
+    - [dtimer](npm i dtimer) - Useful for timeouts/events that can be shared across serveral bot instances
 
 ## Getting Started 
 
@@ -37,11 +43,9 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 ```YML
 keyword: '{keyword}' # single word only
 app:
-  maxRetries: 8
   defaultLanguage: 'en'
   commandSettings:
     ignoreOfficialBots: true
-
 
 ```
 ---
@@ -51,30 +55,25 @@ app:
     {
         "name": "{keyword}_command_{keyword}",
         "comment":"{keyword} must match the keyword specified in config yaml",
-        "value":"!{keyword}",
-        "language": "en"
+        "value":"!{keyword}"
     },
 
     {
         "name": "{keyword}_command_help",
-        "value":"help",
-        "language": "en"
+        "value":"help"
     },
     {
         "name": "{keyword}_help_message",
-        "value":"Welcome to the {botname} bot\n\n!{keyword} help - To display this message\n!{keyword} me - Display basic information about your profile",
-        "language": "en"
+        "value":"Welcome to the {botname} bot\n\n!{keyword} help - To display this message\n!{keyword} me - Display basic information about your profile"
     },
 
     {
         "name": "{keyword}_command_me",
-        "value":"me",
-        "language": "en"
+        "value":"me"
     },
     {
         "name": "{keyword}_subscriber_message",
-        "value":"Nickname: {nickname} (ID: {id})\nStatus Message: {status}\nLevel: {level} ({percentage}% completed)",
-        "language": "en"
+        "value":"Nickname: {nickname} (ID: {id})\nStatus Message: {status}\nLevel: {level} ({percentage}% completed)"
     }
 ]
 ```
@@ -97,10 +96,20 @@ api.commandHandler.register([
   ])
 ]);
 
-api.on.messageReceived(async(message)=>{
+api.on.groupMessage(async(message)=>{
   if(message.body === '!ping'){
-    return await api.messaging().sendMessage(message, 'Pong!');
+    return await api.messaging().sendGroupMessage(message.targetGroupId, 'Pong!');
   }
+});
+
+api.on.privateMessage(async(message)=>{
+  if(message.isCommand){
+    return Promise.resolve();
+  }
+
+  const { language } = await api.subscriber().getById(message.sourceSubscriberId);
+
+  return await api.messaging().sendPrivateMessage(message.sourceSubscriberId, api.phrase().getByLanguageAndName(language, `${api.config.keyword}_help_message`));
 });
 
 api.on.ready(()=>{

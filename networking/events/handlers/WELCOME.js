@@ -45,10 +45,11 @@ module.exports = class Welcome extends BaseEvent {
           return;
         }
 
-        api.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
         api._cognito = result.body.cognito;
         api.currentSubscriber = result.body.subscriber;
         api._endpointConfig = data.endpointConfig;
+
+        api.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
 
         this.onSuccess(false);
       };
