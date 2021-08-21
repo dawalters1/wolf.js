@@ -53,6 +53,7 @@ module.exports = {
 
   SECURITY_LOGIN: 'security login',
   SECURITY_LOGOUT: 'security logout',
+  SECURITY_TOKEN_REFRESH: 'security token refresh',
 
   STAGE_GROUP_ACTIVE_LIST: 'stage group active list',
   STAGE_LIST: 'stage list',

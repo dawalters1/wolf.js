@@ -174,7 +174,7 @@ module.exports = class Messaging extends Helper {
 
       return await this._websocket.emit(request.MESSAGE_SEND, body);
     } catch (error) {
-      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
+      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${/* JSON.stringify(content) */''}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
       throw error;
     }
   }

@@ -116,7 +116,7 @@ module.exports = class WolfBot {
     this._tip = new Tip(this);
     this.currentSubscriber = null;
 
-    this._mediaService = new MultiMediaService(this);
+    this._multiMediaService = new MultiMediaService(this);
 
     this._utilities = Utilities(this);
   }
@@ -235,7 +235,7 @@ module.exports = class WolfBot {
    * @returns {MultiMediaService}
    */
   _mediaService () {
-    return this._mediaService;
+    return this._multiMediaService;
   }
 
   /**
@@ -549,6 +549,27 @@ module.exports = class WolfBot {
    */
   updateProfile () {
     return new SubscriberProfileBuilder(this, this.currentSubscriber);
+  }
+
+  /**
+   * Retrieve the AWS Cognito token
+   * @param {*} requestNew - Request new data from the server
+   * @returns { identityId: String, token: String } Cognito Identity
+   */
+  async getSecurityToken (requestNew = false) {
+    if (this._cognito && !requestNew) {
+      return this._cognito;
+    }
+
+    const result = await this.websocket.emit(request.SECURITY_TOKEN_REFRESH);
+
+    if (result.success) {
+      this._cognito = result.body;
+    } else {
+      throw new Error(result.headers.message || 'Error occurred while requesting new security token');
+    }
+
+    return this._cognito;
   }
 
   _cleanUp () {

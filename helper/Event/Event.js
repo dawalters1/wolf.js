@@ -198,7 +198,6 @@ module.exports = class Event extends Helper {
    * @param {Buffer} thumbnail - The event thumbnail (Optional)
    */
   async updateEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
-
     try {
       if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
