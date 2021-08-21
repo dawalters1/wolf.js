@@ -32,7 +32,7 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
     - [Windows](https://github.com/tporadowski/redis/releases/tag/v5.0.10) - Github maintained port, because its no longer supported on windows
     - [Linux](https://redis.io/download)
   - Optional Redis Utils
-    - [dtimer](npm i dtimer) - Useful for timeouts/events that can be shared across serveral bot instances
+    - [dtimer](https://www.npmjs.com/package/dtimer) - npm i dtimer - Useful for timeouts/events that can be shared across serveral bot instances
 
 ## Getting Started 
 
