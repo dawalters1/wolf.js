@@ -23,19 +23,14 @@ module.exports = class MultiMediaServiceClient {
       }, {
         region: 'eu-west-1'
       });
-
-      console.log('created credentials');
     });
 
     this._api.on.reconnected(async () => {
       await this._credentials(true);
-      console.log('updated on reconnect');
     });
   }
 
   async _credentials (requestNew = false) {
-    console.log('getting creds');
-
     const result = await new Promise((resolve) => {
       const onCredentials = (creds) => resolve(creds);
 
@@ -48,11 +43,10 @@ module.exports = class MultiMediaServiceClient {
           AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
           AWS.config.credentials.refresh();
           AWS.config.credentials.get(function () {
-            console.log('new');
             onCredentials(AWS.config.credentials);
           });
         }).catch((error) => {
-          console.log('error', error);
+          console.log('Failed to retrieve AWS credentials: ', error);
 
           return this._credentials(true);
         });
@@ -60,8 +54,6 @@ module.exports = class MultiMediaServiceClient {
     });
 
     if (AWS.config.credentials.needsRefresh() || AWS.config.credentials.expired || AWS.config.credentials.accessKeyId === undefined || AWS.config.credentials.secretAccessKey === undefined || AWS.config.credentials.sessionToken === undefined) {
-      console.log('expired?');
-
       return await this._credentials(true);
     }
     this._creds = result;
