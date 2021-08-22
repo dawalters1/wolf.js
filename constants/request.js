@@ -4,6 +4,8 @@ module.exports = {
   ACHIEVEMENT_GROUP_LIST: 'achievement group list',
   ACHIEVEMENT_SUBSCRIBER_LIST: 'achievement subscriber list',
 
+  // TODO: Blacklist url list
+
   CHARM_LIST: 'charm list',
   CHARM_SUBSCRIBER_ACTIVE_LIST: 'charm subscriber active list',
   CHARM_SUBSCRIBER_DELETE: 'charm subscriber delete',
@@ -44,6 +46,7 @@ module.exports = {
   MESSAGE_SETTING: 'message setting',
   MESSAGE_SETTING_UPDATE: 'message setting update',
   MESSAGE_UPDATE: 'message update',
+  MESSAGE_UPDATE_LIST: 'message update list',
   METADATA_URL: 'metadata url',
 
   NOTIFICATION_LIST: 'notification list',

@@ -372,6 +372,36 @@ module.exports = class Messaging extends Helper {
   }
 
   /**
+   *
+   * @param {Number} targetGroupId - The id of the group the message belongs too
+   * @param {Number} timestamp - The timestamp belonging to the message
+   * @returns
+   */
+  async getGroupMessageEditHistory (targetGroupId, timestamp) {
+    try {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(timestamp)) {
+        throw new Error('timestamp cannot be less than or equal to 0');
+      }
+
+      return await this._websocket.emit(request.MESSAGE_UPDATE_LIST, {
+        isGroup: true,
+        recipientId: targetGroupId,
+        timestamp
+      });
+    } catch (error) {
+      error.method = `Helper/Messaging/getGroupMessageEditHistory(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
+      throw error;
+    }
+  }
+
+  /**
    * Get information about a url
    * @param {String} link
    */
