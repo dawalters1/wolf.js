@@ -529,7 +529,7 @@ module.exports = class WolfBot {
    */
   async updateAvatar (avatar) {
     try {
-      return await this._api._mediaService().uploadGroupAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
+      return await this._mediaService().uploadSubscriberAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
       error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;

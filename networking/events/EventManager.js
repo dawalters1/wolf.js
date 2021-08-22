@@ -89,6 +89,7 @@ module.exports = class EventManager {
   stageClientConnecting (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_CONNECTING, fn); }
   stageClientConnected (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_CONNECTED, fn); }
   stageClientDisconnected (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_DISCONNECTED, fn); }
+  stageClientDurationUpdate (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_DURATION_UPDATE, fn); }
   stageClientError (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_ERROR, fn); }
   stageClientKicked (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_KICKED, fn); }
   stageClientMuted (fn) { this._eventEmitter.on(internal.STAGE_CLIENT_MUTED, fn); }

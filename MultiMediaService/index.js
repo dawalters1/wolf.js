@@ -187,9 +187,7 @@ module.exports = class MultiMediaServiceClient {
 
     const body = {
       data: avatar.toString('base64'),
-      mimeType,
-      id: this._api.currentSubscriber.id,
-      source: this._api.currentSubscriber.id
+      mimeType
     };
 
     return this._sendRequest('/v1/subscriber-avatar-update', body);
@@ -212,7 +210,7 @@ module.exports = class MultiMediaServiceClient {
 
     const body = {
       data: thumbnail.toString('base64'),
-      mimeType: '',
+      mimeType,
       id: eventId,
       source: this._api.currentSubscriber.id
     };
