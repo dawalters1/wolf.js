@@ -34,7 +34,7 @@ module.exports = class WolfClient {
     this.socket.on('connect_timeout', error => this._api.on._emit('connect timeout', error));
 
     this.socket.on('disconnect', reason => {
-      this._api._cleanUp();
+      this._api._clearCache();
       this._api.on._emit('disconnect', reason);
       // Socket doesnt reconnect on io server disconnect, manually reconnect
       if (reason === 'io server disconnect') {

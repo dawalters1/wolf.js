@@ -39,30 +39,25 @@ module.exports = class Achievement extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getCategoryList (language = constants.language.ENGLISH, requestNew = false) {
-    try {
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
-        throw new Error('language is invalid');
-      }
-
-      if (!requestNew && this._categories[language]) {
-        return this._categories[language];
-      }
-
-      const result = await this._websocket.emit(request.ACHIEVEMENT_CATEGORY_LIST, {
-        languageId: language
-      });
-
-      if (result.success) {
-        this._categories[language] = result.body;
-      }
-
-      return this._categories[language] || [];
-    } catch (error) {
-      error.method = `Helper/Achievement/getCategoryList(language = ${JSON.stringify(language)}, requestNew =  ${JSON.stringify(requestNew)})`;
-      throw error;
+    if (!validator.isValidNumber(language)) {
+      throw new Error('language must be a valid number');
+    } else if (!Object.values(constants.language).includes(language)) {
+      throw new Error('language is invalid');
     }
+
+    if (!requestNew && this._categories[language]) {
+      return this._categories[language];
+    }
+
+    const result = await this._websocket.emit(request.ACHIEVEMENT_CATEGORY_LIST, {
+      languageId: language
+    });
+
+    if (result.success) {
+      this._categories[language] = result.body;
+    }
+
+    return this._categories[language] || [];
   }
 
   /**
@@ -73,73 +68,68 @@ module.exports = class Achievement extends Helper {
    * @returns
    */
   async getAchievementByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
-    try {
-      if (!validator.isValidArray(achievementIds)) {
-        throw new Error('achievementIds must be an array');
-      } else if (achievementIds.length === 0) {
-        throw new Error('achievementIds cannot be an empty array');
-      }
-
-      for (const achievementId of achievementIds) {
-        if (!validator.isValidNumber(achievementId)) {
-          throw new Error('achievementId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(achievementId)) {
-          throw new Error('achievementId cannot be less than or equal to 0');
-        }
-      }
-
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
-        throw new Error('language is invalid');
-      }
-
-      const achievements = [];
-
-      if (!requestNew && this._achievements[language]) {
-        const cached = this._achievements[language].filter((achievement) => achievementIds.includes(achievement.id));
-
-        if (cached.length > 0) {
-          achievements.push(...cached);
-        }
-      }
-      if (achievements.length !== achievementIds.length) {
-        for (const batchAchievementIdList of this._api.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
-          const result = await this._websocket.emit(request.ACHIEVEMENT, {
-            headers: {
-              version: 2
-            },
-            body: {
-              idList: batchAchievementIdList,
-              languageId: language
-            }
-          });
-
-          if (result.success) {
-            for (const [index, achievement] of result.body.map((resp) => new Response(resp)).entries()) {
-              if (achievement.success) {
-                achievements.push(this._process(achievement.body, language));
-              } else {
-                achievement.push({
-                  id: batchAchievementIdList[index],
-                  exists: false
-                });
-              }
-            }
-          } else {
-            achievements.push(...batchAchievementIdList.map((id) => ({
-              id,
-              exists: false
-            })));
-          }
-        }
-      }
-
-      return achievements;
-    } catch (error) {
-      error.method = `Helper/Achievement/getAchievementByIds(achievementIds = ${JSON.stringify(achievementIds)}, language = ${JSON.stringify(language)}, requestNew =  ${JSON.stringify(requestNew)})`;
-      throw error;
+    if (!validator.isValidArray(achievementIds)) {
+      throw new Error('achievementIds must be an array');
+    } else if (achievementIds.length === 0) {
+      throw new Error('achievementIds cannot be an empty array');
     }
+
+    for (const achievementId of achievementIds) {
+      if (!validator.isValidNumber(achievementId)) {
+        throw new Error('achievementId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(achievementId)) {
+        throw new Error('achievementId cannot be less than or equal to 0');
+      }
+    }
+
+    if (!validator.isValidNumber(language)) {
+      throw new Error('language must be a valid number');
+    } else if (!Object.values(constants.language).includes(language)) {
+      throw new Error('language is invalid');
+    }
+
+    const achievements = [];
+
+    if (!requestNew && this._achievements[language]) {
+      const cached = this._achievements[language].filter((achievement) => achievementIds.includes(achievement.id));
+
+      if (cached.length > 0) {
+        achievements.push(...cached);
+      }
+    }
+    if (achievements.length !== achievementIds.length) {
+      for (const batchAchievementIdList of this._api.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
+        const result = await this._websocket.emit(request.ACHIEVEMENT, {
+          headers: {
+            version: 2
+          },
+          body: {
+            idList: batchAchievementIdList,
+            languageId: language
+          }
+        });
+
+        if (result.success) {
+          for (const [index, achievement] of result.body.map((resp) => new Response(resp)).entries()) {
+            if (achievement.success) {
+              achievements.push(this._process(achievement.body, language));
+            } else {
+              achievement.push({
+                id: batchAchievementIdList[index],
+                exists: false
+              });
+            }
+          }
+        } else {
+          achievements.push(...batchAchievementIdList.map((id) => ({
+            id,
+            exists: false
+          })));
+        }
+      }
+    }
+
+    return achievements;
   }
 
   _process (achievement, language) {

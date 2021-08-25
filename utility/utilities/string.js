@@ -20,56 +20,46 @@ module.exports = class String extends BaseUtility {
   }
 
   replace (string, replacements) {
-    try {
-      if (typeof (string) !== 'string') {
-        throw new Error('string must be a string');
-      } else if (validator.isNullOrWhitespace(string)) {
-        throw new Error('string cannot be null or empty');
-      }
-
-      const mapped = Object.fromEntries(Object.entries(replacements).map(([k, v]) => [k, v]));
-
-      if (mapped.length === 0 || Object.entries(mapped).some((value) => value.length !== 2)) {
-        throw new Error('replacements object is invalid');
-      }
-      return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), value[1].toString()), string);
-    } catch (error) {
-      error.method = `Utility/utilties/string/replace(string = ${JSON.stringify(string)}, replacements = ${JSON.stringify(replacements)})`;
-      throw error;
+    if (typeof (string) !== 'string') {
+      throw new Error('string must be a string');
+    } else if (validator.isNullOrWhitespace(string)) {
+      throw new Error('string cannot be null or empty');
     }
+
+    const mapped = Object.fromEntries(Object.entries(replacements).map(([k, v]) => [k, v]));
+
+    if (mapped.length === 0 || Object.entries(mapped).some((value) => value.length !== 2)) {
+      throw new Error('replacements object is invalid');
+    }
+    return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), value[1].toString()), string);
   }
 
   isEqual (sideA, sideB) {
-    try {
-      if (typeof (sideA) !== 'string') {
-        throw new Error('sideA must be a string');
-      }
-
-      if (typeof (sideB) !== 'string') {
-        throw new Error('sideB must be a string');
-      }
-
-      if (sideA === undefined && sideB === undefined) {
-        return true;
-      }
-
-      if (sideA === undefined || sideB === undefined) {
-        return false;
-      }
-
-      if (sideA === null && sideB === null) {
-        return true;
-      }
-
-      if (sideA === null || sideB === null) {
-        return false;
-      }
-
-      return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
-    } catch (error) {
-      error.method = `Utility/utilties/string/isEqual(sideA = ${JSON.stringify(sideA)}, sideB = ${JSON.stringify(sideB)})`;
-      throw error;
+    if (typeof (sideA) !== 'string') {
+      throw new Error('sideA must be a string');
     }
+
+    if (typeof (sideB) !== 'string') {
+      throw new Error('sideB must be a string');
+    }
+
+    if (sideA === undefined && sideB === undefined) {
+      return true;
+    }
+
+    if (sideA === undefined || sideB === undefined) {
+      return false;
+    }
+
+    if (sideA === null && sideB === null) {
+      return true;
+    }
+
+    if (sideA === null || sideB === null) {
+      return false;
+    }
+
+    return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
   }
 
   chunk (string, max = 1000, splitChar = '\n', joinChar = '\n') {

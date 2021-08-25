@@ -15,25 +15,20 @@ module.exports = class Contact extends Helper {
    * List of contacts for the bot
    */
   async list () {
-    try {
-      if (this._contacts.length > 0) {
-        return this._contacts;
-      }
-
-      const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
-        {
-          subscribe: true
-        });
-
-      if (result.success) {
-        this._contacts = result.body;
-      }
-
-      return this._contacts || [];
-    } catch (error) {
-      error.method = 'Helper/Contact/list()';
-      throw error;
+    if (this._contacts.length > 0) {
+      return this._contacts;
     }
+
+    const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
+      {
+        subscribe: true
+      });
+
+    if (result.success) {
+      this._contacts = result.body;
+    }
+
+    return this._contacts || [];
   }
 
   /**
@@ -41,18 +36,13 @@ module.exports = class Contact extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async isContact (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return (await this.list()).find((contact) => contact.id === subscriberId) !== null;
-    } catch (error) {
-      error.method = `Helper/Contact/isContact(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return (await this.list()).find((contact) => contact.id === subscriberId) !== null;
   }
 
   /**
@@ -60,20 +50,15 @@ module.exports = class Contact extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async add (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Contact/add(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
+      id: subscriberId
+    });
   }
 
   /**
@@ -81,20 +66,15 @@ module.exports = class Contact extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async delete (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Contact/delete(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
+      id: subscriberId
+    });
   }
 
   async _process (id) {
