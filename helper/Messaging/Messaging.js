@@ -12,22 +12,8 @@ const targetTypes = {
   PRIVATE: 'private'
 };
 
-const typesToUseMMS = [
-  'image/jpeg',
-  'image/gif'
-];
-
-const supportedMessageTypes = [
-  'text/plain',
-  'image/jpeg',
-  'image/gif'
-];
-
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
-const uploadToMediaService = require('../../utils/uploadToMediaService');
-const routes = require('../../MultiMediaService/routes');
 
 module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -81,14 +67,14 @@ module.exports = class Messaging extends Helper {
     try {
       const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-      if (typesToUseMMS.includes(mimeType)) {
-        return await uploadToMediaService(this._api, routes.MESSAGE_SEND, content, mimeType, targetId, targetType === targetTypes.GROUP);
+      if (['image/jpeg', 'image/gif'].includes(mimeType)) {
+        return await this._api._mediaService().sendMessage(targetType, targetId, content, mimeType);
       }
 
       if (validator.isNullOrWhitespace(mimeType)) {
         throw new Error('mimeType cannot be null or empty');
-      } else if (!supportedMessageTypes.includes(mimeType)) {
-        throw new Error('mimeType is not supported');
+      } else if (!['text/plain'].includes(mimeType)) {
+        throw new Error('mimeType is unsupported');
       }
 
       const body = {
@@ -188,7 +174,7 @@ module.exports = class Messaging extends Helper {
 
       return await this._websocket.emit(request.MESSAGE_SEND, body);
     } catch (error) {
-      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
+      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${/* JSON.stringify(content) */''}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
       throw error;
     }
   }
@@ -381,6 +367,36 @@ module.exports = class Messaging extends Helper {
       });
     } catch (error) {
       error.method = `Helper/Messaging/restoreGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
+      throw error;
+    }
+  }
+
+  /**
+   *
+   * @param {Number} targetGroupId - The id of the group the message belongs too
+   * @param {Number} timestamp - The timestamp belonging to the message
+   * @returns
+   */
+  async getGroupMessageEditHistory (targetGroupId, timestamp) {
+    try {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(timestamp)) {
+        throw new Error('timestamp cannot be less than or equal to 0');
+      }
+
+      return await this._websocket.emit(request.MESSAGE_UPDATE_LIST, {
+        isGroup: true,
+        recipientId: targetGroupId,
+        timestamp
+      });
+    } catch (error) {
+      error.method = `Helper/Messaging/getGroupMessageEditHistory(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
       throw error;
     }
   }

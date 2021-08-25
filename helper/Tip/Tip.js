@@ -23,11 +23,11 @@ module.exports = class Tip extends Helper {
   /**
    * Tip a subscriber
    * @param {Number} subscriberId - The id of the subscriber
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {{type: String, id: Number}} context - The context information
    * @param {[{id: Number, quantity: Number}]} charms - The charms to tip
    */
-  async tip (subscriberId, groupId, context, charms) {
+  async tip (subscriberId, targetGroupId, context, charms) {
     try {
     // #region
       if (!validator.isValidNumber(subscriberId)) {
@@ -35,10 +35,10 @@ module.exports = class Tip extends Helper {
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (validator.isNull(context)) {
@@ -124,29 +124,29 @@ module.exports = class Tip extends Helper {
 
       return await this._websocket.emit(request.TIP_ADD, {
         subscriberId,
-        groupId,
+        groupId: targetGroupId,
         charmList: validator.isValidArray(charms) ? charms : [charms],
         context
       });
     } catch (error) {
-      error.method = `Helper/Tip/tip(subscriberId = ${JSON.stringify(subscriberId)}, groupId = ${JSON.stringify(groupId)}, context = ${JSON.stringify(context)}, charms =  ${JSON.stringify(charms)})`;
+      error.method = `Helper/Tip/tip(subscriberId = ${JSON.stringify(subscriberId)}, targetGroupId = ${JSON.stringify(targetGroupId)}, context = ${JSON.stringify(context)}, charms =  ${JSON.stringify(charms)})`;
       throw error;
     }
   }
 
   /**
    * Get tipping details for a message
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {Number} timestamp - The timestamp of the message
    * @param {Number} limit - How many tips to return
    * @param {Number} offset - The index where return tips should start
    */
-  async getDetails (groupId, timestamp, limit = 20, offset = 0) {
+  async getDetails (targetGroupId, timestamp, limit = 20, offset = 0) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
@@ -166,31 +166,31 @@ module.exports = class Tip extends Helper {
       }
 
       return await this._websocket.emit(request.TIP_DETAIL, {
-        groupId,
+        groupId: targetGroupId,
         id: timestamp,
         contextType: constants.contextType.MESSAGE,
         limit,
         offset
       });
     } catch (error) {
-      error.method = `Helper/Tip/getDetails(groupId = ${JSON.stringify(groupId)}, timestamp = ${JSON.stringify(timestamp)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
+      error.method = `Helper/Tip/getDetails(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
       throw error;
     }
   }
 
   /**
    * Get tipping summary for a message
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {Number} timestamp - The timestamp of the message
    * @param {Number} limit - How many tips to return
    * @param {Number} offset - The index where return tips should start
    */
-  async getSummary (groupId, timestamp, limit = 20, offset = 0) {
+  async getSummary (targetGroupId, timestamp, limit = 20, offset = 0) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
@@ -210,31 +210,31 @@ module.exports = class Tip extends Helper {
       }
 
       return await this._websocket.emit(request.TIP_SUMMARY, {
-        groupId,
+        groupId: targetGroupId,
         id: timestamp,
         contextType: constants.contextType.MESSAGE,
         limit,
         offset
       });
     } catch (error) {
-      error.method = `Helper/Tip/getSummary(groupId = ${JSON.stringify(groupId)}, timestamp = ${JSON.stringify(timestamp)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
+      error.method = `Helper/Tip/getSummary(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
       throw error;
     }
   }
 
   /**
    * Get group tipping leaderboard - Use @dawalters1/constants for tipPeriod, tipType, tipDirection
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {String} tipPeriod - The tipping period
    * @param {String} tipType - The type of tips
    * @param {String} tipDirection - The direction of tips sent/received
    */
-  async getGroupLeaderboard (groupId, tipPeriod, tipType, tipDirection) {
+  async getGroupLeaderboard (targetGroupId, tipPeriod, tipType, tipDirection) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (validator.isNullOrWhitespace(tipPeriod)) {
@@ -258,30 +258,30 @@ module.exports = class Tip extends Helper {
       }
 
       return await this._websocket.emit(request.TIP_LEADERBOARD_GROUP, {
-        groupId,
+        groupId: targetGroupId,
         period: tipPeriod,
         type: tipType,
         tipDirection: tipType === constants.tipType.CHARM ? undefined : tipDirection
       });
     } catch (error) {
-      error.method = `Helper/Tip/getGroupLeaderboard(groupId = ${JSON.stringify(groupId)}, tipPeriod = ${JSON.stringify(tipPeriod)}, tipType = ${JSON.stringify(tipType)}, tipDirection = ${JSON.stringify(tipDirection)})`;
+      error.method = `Helper/Tip/getGroupLeaderboard(targetGroupId = ${JSON.stringify(targetGroupId)}, tipPeriod = ${JSON.stringify(tipPeriod)}, tipType = ${JSON.stringify(tipType)}, tipDirection = ${JSON.stringify(tipDirection)})`;
       throw error;
     }
   }
 
   /**
    * Get group tipping leaderboard summary - Use @dawalters1/constants for tipPeriod, tipType, tipDirection
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    * @param {String} tipPeriod - The tipping period
    * @param {String} tipType - The type of tips
    * @param {String} tipDirection - The direction of tips sent/received
    */
-  async getGroupLeaderboardSummary (groupId, tipPeriod, tipType, tipDirection) {
+  async getGroupLeaderboardSummary (targetGroupId, tipPeriod, tipType, tipDirection) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (validator.isNullOrWhitespace(tipPeriod)) {
@@ -305,13 +305,13 @@ module.exports = class Tip extends Helper {
       }
 
       return await this._websocket.emit(request.TIP_LEADERBOARD_GROUP_SUMMARY, {
-        id: groupId,
+        id: targetGroupId,
         period: tipPeriod,
         type: tipType,
         tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
       });
     } catch (error) {
-      error.method = `Helper/Tip/getGroupLeaderboardSummary(groupId = ${JSON.stringify(groupId)}, tipPeriod = ${JSON.stringify(tipPeriod)}, tipType = ${JSON.stringify(tipType)}, tipDirection = ${JSON.stringify(tipDirection)})`;
+      error.method = `Helper/Tip/getGroupLeaderboardSummary(targetGroupId = ${JSON.stringify(targetGroupId)}, tipPeriod = ${JSON.stringify(tipPeriod)}, tipType = ${JSON.stringify(tipType)}, tipDirection = ${JSON.stringify(tipDirection)})`;
       throw error;
     }
   }
