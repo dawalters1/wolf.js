@@ -154,7 +154,7 @@ module.exports = class Subscriber extends Helper {
     return subscriber;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._subscribers = [];
   }
 };

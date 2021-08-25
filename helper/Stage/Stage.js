@@ -845,7 +845,7 @@ module.exports = class Stage extends Helper {
     return data;
   }
 
-  _cleanUp (clearClients = false) {
+  _clearCache (clearClients = false) {
     this._stages = [];
     this._slots = {};
 

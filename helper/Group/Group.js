@@ -413,7 +413,7 @@ module.exports = class Group extends Helper {
     return group;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._groups = [];
     this._joinedGroupsRequested = false;
   }

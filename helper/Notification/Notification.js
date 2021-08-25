@@ -51,7 +51,7 @@ module.exports = class Notification extends Helper {
     const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
 
     if (result.success) {
-      this._cleanUp();
+      this._clearCache();
     }
 
     return result;
@@ -89,7 +89,7 @@ module.exports = class Notification extends Helper {
     }, 600000);
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._notifications = {};
 
     if (this._subscriptionInterval) {
