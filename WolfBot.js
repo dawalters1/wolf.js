@@ -248,48 +248,43 @@ module.exports = class WolfBot {
    * @param {*} token - The token belonging to the account, leave unset for one to automatically be generated
    */
   login (email, password, loginDevice = constants.loginDevice.ANDROID, onlineState = constants.onlineState.ONLINE, loginType = constants.loginType.EMAIL, token = undefined) {
-    try {
-      if (validator.isNullOrWhitespace(email)) {
-        throw new Error('email cannot be null or empty');
-      }
-
-      if (validator.isNullOrWhitespace(password)) {
-        throw new Error('password cannot be null or empty');
-      }
-
-      if (validator.isNullOrWhitespace(loginDevice)) {
-        throw new Error('loginDevice must be a valid string');
-      } else if (!Object.values(constants.loginDevice).includes(loginDevice)) {
-        throw new Error('loginDevice is not valid');
-      }
-
-      if (!validator.isValidNumber(onlineState)) {
-        throw new Error('onlineState must be a valid number');
-      } else if (!Object.values(constants.onlineState).includes(onlineState)) {
-        throw new Error('onlineState is not valid');
-      }
-
-      if (validator.isNullOrWhitespace(loginType)) {
-        throw new Error('loginType must be a valid string');
-      } else if (!Object.values(constants.loginType).includes(loginType)) {
-        throw new Error('loginType is not valid');
-      }
-
-      this.config._loginSettings = {
-        email,
-        password,
-        loginDevice,
-        onlineState,
-        loginType,
-        token: token && !validator.isNullOrWhitespace(token) ? token : crypto.randomBytes(32).toString('hex')
-      };
-
-      this._eventManager._register();
-      this.websocket.create();
-    } catch (error) {
-      error.method = `WolfBot/login(email = ${JSON.stringify(email)}, password = ${JSON.stringify(password)}, loginDevice = ${JSON.stringify(loginDevice)}, onlineState = ${JSON.stringify(onlineState)}, loginType = ${JSON.stringify(loginType)})`;
-      throw error;
+    if (validator.isNullOrWhitespace(email)) {
+      throw new Error('email cannot be null or empty');
     }
+
+    if (validator.isNullOrWhitespace(password)) {
+      throw new Error('password cannot be null or empty');
+    }
+
+    if (validator.isNullOrWhitespace(loginDevice)) {
+      throw new Error('loginDevice must be a valid string');
+    } else if (!Object.values(constants.loginDevice).includes(loginDevice)) {
+      throw new Error('loginDevice is not valid');
+    }
+
+    if (!validator.isValidNumber(onlineState)) {
+      throw new Error('onlineState must be a valid number');
+    } else if (!Object.values(constants.onlineState).includes(onlineState)) {
+      throw new Error('onlineState is not valid');
+    }
+
+    if (validator.isNullOrWhitespace(loginType)) {
+      throw new Error('loginType must be a valid string');
+    } else if (!Object.values(constants.loginType).includes(loginType)) {
+      throw new Error('loginType is not valid');
+    }
+
+    this.config._loginSettings = {
+      email,
+      password,
+      loginDevice,
+      onlineState,
+      loginType,
+      token: token && !validator.isNullOrWhitespace(token) ? token : crypto.randomBytes(32).toString('hex')
+    };
+
+    this._eventManager._register();
+    this.websocket.create();
   }
 
   /**
@@ -302,7 +297,7 @@ module.exports = class WolfBot {
 
     this._eventManager._unregister();
 
-    this._cleanUp();
+    this._clearCache();
   }
 
   /**
@@ -310,38 +305,28 @@ module.exports = class WolfBot {
    * @param {*} onlineState
    */
   async setOnlineState (onlineState) {
-    try {
-      if (!validator.isValidNumber(onlineState)) {
-        throw new Error('onlineState must be a valid number');
-      } else if (!Object.values(constants.onlineState).includes(onlineState)) {
-        throw new Error('onlineState is not valid');
-      }
-
-      return await this.websocket.emit(request.SUBSCRIBER_SETTINGS_UPDATE, {
-        state: {
-          state: onlineState
-        }
-      });
-    } catch (error) {
-      error.method = `WolfBot/setOnlineState(onlineState = ${JSON.stringify(onlineState)})`;
-      throw error;
+    if (!validator.isValidNumber(onlineState)) {
+      throw new Error('onlineState must be a valid number');
+    } else if (!Object.values(constants.onlineState).includes(onlineState)) {
+      throw new Error('onlineState is not valid');
     }
+
+    return await this.websocket.emit(request.SUBSCRIBER_SETTINGS_UPDATE, {
+      state: {
+        state: onlineState
+      }
+    });
   }
 
   async search (query) {
-    try {
-      if (validator.isNullOrWhitespace(query)) {
-        throw new Error('query cannot be null or empty');
-      }
-
-      return await this.websocket.emit(request.SEARCH, {
-        query,
-        types: ['related', 'groups']
-      });
-    } catch (error) {
-      error.method = `WolfBot/search(query = ${JSON.stringify(query)})`;
-      throw error;
+    if (validator.isNullOrWhitespace(query)) {
+      throw new Error('query cannot be null or empty');
     }
+
+    return await this.websocket.emit(request.SEARCH, {
+      query,
+      types: ['related', 'groups']
+    });
   }
 
   /**
@@ -349,43 +334,38 @@ module.exports = class WolfBot {
    * @param {Number} timestamp - Timestamp where conversation list should start - (Optional)
    */
   async getConversationList (timestamp = undefined) {
-    try {
-      if (timestamp) {
-        if (!validator.isValidNumber(timestamp)) {
-          throw new Error('timestamp must be a valid number');
-        } else if (validator.isLessThanZero(timestamp)) {
-          throw new Error('timestamp cannot be negative');
-        }
+    if (timestamp) {
+      if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanZero(timestamp)) {
+        throw new Error('timestamp cannot be negative');
       }
-      const result = await this.websocket.emit(request.MESSAGE_CONVERSATION_LIST, {
-        headers: {
-          version: 3
-        },
-        body: {
-          timestamp
-        }
-      });
-
-      result.body = result.success
-        ? result.body.map((message) => ({
-          id: message.id,
-          body: message.data.toString(),
-          sourceSubscriberId: message.originator.id,
-          targetGroupId: message.isGroup ? message.recipient.id : null,
-          embeds: message.embeds,
-          metadata: message.metadata,
-          isGroup: message.isGroup,
-          timestamp: message.timestamp,
-          edited: message.edited,
-          type: message.mimeType
-        }))
-        : [];
-
-      return result;
-    } catch (error) {
-      error.method = `WolfBot/getConversationList(timestamp = ${JSON.stringify(timestamp)})`;
-      throw error;
     }
+    const result = await this.websocket.emit(request.MESSAGE_CONVERSATION_LIST, {
+      headers: {
+        version: 3
+      },
+      body: {
+        timestamp
+      }
+    });
+
+    result.body = result.success
+      ? result.body.map((message) => ({
+        id: message.id,
+        body: message.data.toString(),
+        sourceSubscriberId: message.originator.id,
+        targetGroupId: message.isGroup ? message.recipient.id : null,
+        embeds: message.embeds,
+        metadata: message.metadata,
+        isGroup: message.isGroup,
+        timestamp: message.timestamp,
+        edited: message.edited,
+        type: message.mimeType
+      }))
+      : [];
+
+    return result;
   }
 
   /**
@@ -393,49 +373,23 @@ module.exports = class WolfBot {
    * @param {[{ position: number, charmId: number }]} charms
    */
   async setSelectedCharms (charms) {
-    try {
-      if (validator.isValidArray(charms)) {
-        for (const charm of charms) {
-          if (charm) {
-            if (charm.position) {
-              if (!validator.isValidNumber(charm.position)) {
-                throw new Error('position must be a valid number');
-              } else if (validator.isLessThanZero(charm.position)) {
-                throw new Error('position must be larger than or equal to 0');
-              }
-            } else {
-              throw new Error('charm must contain a position');
-            }
-
-            if (charm.charmId) {
-              if (!validator.isValidNumber(charm.charmId)) {
-                throw new Error('charmId must be a valid number');
-              } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
-                throw new Error('charmId cannot be less than or equal to 0');
-              }
-            } else {
-              throw new Error('charm must contain a charmId');
-            }
-          } else {
-            throw new Error('charm cannot be null or empty');
-          }
-        }
-      } else {
-        if (charms) {
-          if (charms.position) {
-            if (!validator.isValidNumber(charms.position)) {
+    if (validator.isValidArray(charms)) {
+      for (const charm of charms) {
+        if (charm) {
+          if (charm.position) {
+            if (!validator.isValidNumber(charm.position)) {
               throw new Error('position must be a valid number');
-            } else if (validator.isLessThanZero(charms.position)) {
+            } else if (validator.isLessThanZero(charm.position)) {
               throw new Error('position must be larger than or equal to 0');
             }
           } else {
             throw new Error('charm must contain a position');
           }
 
-          if (charms.charmId) {
-            if (!validator.isValidNumber(charms.charmId)) {
+          if (charm.charmId) {
+            if (!validator.isValidNumber(charm.charmId)) {
               throw new Error('charmId must be a valid number');
-            } else if (validator.isLessThanOrEqualZero(charms.charmId)) {
+            } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
               throw new Error('charmId cannot be less than or equal to 0');
             }
           } else {
@@ -445,14 +399,35 @@ module.exports = class WolfBot {
           throw new Error('charm cannot be null or empty');
         }
       }
+    } else {
+      if (charms) {
+        if (charms.position) {
+          if (!validator.isValidNumber(charms.position)) {
+            throw new Error('position must be a valid number');
+          } else if (validator.isLessThanZero(charms.position)) {
+            throw new Error('position must be larger than or equal to 0');
+          }
+        } else {
+          throw new Error('charm must contain a position');
+        }
 
-      return await this.websocket.emit(request.CHARM_SUBSCRIBER_SET_SELECTED, {
-        selectedList: validator.isValidArray(charms) ? charms : [charms]
-      });
-    } catch (error) {
-      error.method = `WolfBot/setSelectedCharms(charms = ${JSON.stringify(charms)})`;
-      throw error;
+        if (charms.charmId) {
+          if (!validator.isValidNumber(charms.charmId)) {
+            throw new Error('charmId must be a valid number');
+          } else if (validator.isLessThanOrEqualZero(charms.charmId)) {
+            throw new Error('charmId cannot be less than or equal to 0');
+          }
+        } else {
+          throw new Error('charm must contain a charmId');
+        }
+      } else {
+        throw new Error('charm cannot be null or empty');
+      }
     }
+
+    return await this.websocket.emit(request.CHARM_SUBSCRIBER_SET_SELECTED, {
+      selectedList: validator.isValidArray(charms) ? charms : [charms]
+    });
   }
 
   /**
@@ -460,36 +435,31 @@ module.exports = class WolfBot {
    * @param {Number[]} charmIds
    */
   async deleteCharms (charmIds) {
-    try {
-      if (validator.isValidArray(charmIds)) {
-        if (charmIds.length === 0) {
-          throw new Error('charmIds cannot be an empty array');
-        }
-
-        for (const charmId of charmIds) {
-          if (!validator.isValidNumber(charmId)) {
-            throw new Error('charmId must be a valid number');
-          } else if (validator.isLessThanOrEqualZero(charmIds)) {
-            throw new Error('charmId cannot be less than or equal to 0');
-          }
-        }
-      } else {
-        if (charmIds) {
-          if (!validator.isValidNumber(charmIds)) {
-            throw new Error('charmIds must be a valid number');
-          } else if (validator.isLessThanOrEqualZero(charmIds)) {
-            throw new Error('charmIds cannot be less than or equal to 0');
-          }
-        }
+    if (validator.isValidArray(charmIds)) {
+      if (charmIds.length === 0) {
+        throw new Error('charmIds cannot be an empty array');
       }
 
-      return await this.websocket.emit(request.CHARM_SUBSCRIBER_DELETE, {
-        idList: validator.isValidArray(charmIds) ? charmIds : [charmIds]
-      });
-    } catch (error) {
-      error.method = `WolfBot/deleteCharms(charmIds = ${JSON.stringify(charmIds)})`;
-      throw error;
+      for (const charmId of charmIds) {
+        if (!validator.isValidNumber(charmId)) {
+          throw new Error('charmId must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(charmIds)) {
+          throw new Error('charmId cannot be less than or equal to 0');
+        }
+      }
+    } else {
+      if (charmIds) {
+        if (!validator.isValidNumber(charmIds)) {
+          throw new Error('charmIds must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(charmIds)) {
+          throw new Error('charmIds cannot be less than or equal to 0');
+        }
+      }
     }
+
+    return await this.websocket.emit(request.CHARM_SUBSCRIBER_DELETE, {
+      idList: validator.isValidArray(charmIds) ? charmIds : [charmIds]
+    });
   }
 
   /**
@@ -504,23 +474,18 @@ module.exports = class WolfBot {
    * @param {Number} messageFilterTier
    */
   async setMessageSettings (messageFilterTier) {
-    try {
-      if (!validator.isValidNumber(messageFilterTier)) {
-        throw new Error('messageFilterTier must be a valid number');
-      } else if (!Object.values(constants.messageFilter).includes(messageFilterTier)) {
-        throw new Error('messageFilterTier is not valid');
-      }
-
-      return await this.websocket.emit(request.MESSAGE_SETTING_UPDATE, {
-        spamFilter: {
-          enabled: messageFilterTier !== constants.messageFilter.OFF,
-          tier: messageFilterTier
-        }
-      });
-    } catch (error) {
-      error.method = `WolfBot/setMessageSettings(messageFilterTier = ${JSON.stringify(messageFilterTier)})`;
-      throw error;
+    if (!validator.isValidNumber(messageFilterTier)) {
+      throw new Error('messageFilterTier must be a valid number');
+    } else if (!Object.values(constants.messageFilter).includes(messageFilterTier)) {
+      throw new Error('messageFilterTier is not valid');
     }
+
+    return await this.websocket.emit(request.MESSAGE_SETTING_UPDATE, {
+      spamFilter: {
+        enabled: messageFilterTier !== constants.messageFilter.OFF,
+        tier: messageFilterTier
+      }
+    });
   }
 
   /**
@@ -528,12 +493,7 @@ module.exports = class WolfBot {
    * @param {Buffer} avatar
    */
   async updateAvatar (avatar) {
-    try {
-      return await this._mediaService().uploadSubscriberAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
-    } catch (error) {
-      error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
-      throw error;
-    }
+    return await this._mediaService().uploadSubscriberAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
   }
 
   /**
@@ -572,18 +532,18 @@ module.exports = class WolfBot {
     return this._cognito;
   }
 
-  _cleanUp () {
-    this._blocked._cleanUp();
-    this._contact._cleanUp();
-    this._charm._cleanUp();
-    this._event._cleanUp();
-    this._group._cleanUp();
-    this._subscriber._cleanUp();
-    this._notification._cleanUp();
-    this._achievement._cleanUp();
-    this._achievement.group()._cleanUp();
-    this._achievement.subscriber()._cleanUp();
+  _clearCache () {
+    this._blocked._clearCache();
+    this._contact._clearCache();
+    this._charm._clearCache();
+    this._event._clearCache();
+    this._group._clearCache();
+    this._subscriber._clearCache();
+    this._notification._clearCache();
+    this._achievement._clearCache();
+    this._achievement.group()._clearCache();
+    this._achievement.subscriber()._clearCache();
     this.currentSubscriber = null;
-    this._stage._cleanUp();
+    this._stage._clearCache();
   }
 };

@@ -35,18 +35,13 @@ module.exports = class Blocked extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async isBlocked (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return (await this.list()).find((blocked) => blocked.id === subscriberId) !== null;
-    } catch (error) {
-      error.method = `Helper/Blocked/isBlocked(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return (await this.list()).find((blocked) => blocked.id === subscriberId) !== null;
   }
 
   /**
@@ -54,20 +49,15 @@ module.exports = class Blocked extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async block (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.SUBSCRIBER_BLOCK_ADD, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Blocked/block(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.SUBSCRIBER_BLOCK_ADD, {
+      id: subscriberId
+    });
   }
 
   /**
@@ -75,20 +65,15 @@ module.exports = class Blocked extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async unblock (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.SUBSCRIBER_BLOCK_DELETE, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Blocked/unblock(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.SUBSCRIBER_BLOCK_DELETE, {
+      id: subscriberId
+    });
   }
 
   async _process (id) {
