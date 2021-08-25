@@ -114,7 +114,7 @@ module.exports = class Blocked extends Helper {
     return existing;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._blocked = [];
   }
 };

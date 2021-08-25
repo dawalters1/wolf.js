@@ -374,7 +374,7 @@ module.exports = class Event extends Helper {
     return subscription;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._eventList = {};
     this._events = [];
     this._subscriptions = [];

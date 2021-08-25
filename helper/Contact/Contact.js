@@ -115,7 +115,7 @@ module.exports = class Contact extends Helper {
     return existing;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._contacts = [];
   }
 };

@@ -192,7 +192,7 @@ module.exports = class Charm extends Helper {
     });
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._charms = {};
   }
 };

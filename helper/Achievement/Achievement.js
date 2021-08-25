@@ -144,7 +144,7 @@ module.exports = class Achievement extends Helper {
     return achievement;
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._categories = {};
     this._achievements = {};
   }

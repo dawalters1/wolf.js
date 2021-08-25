@@ -6,5 +6,5 @@ module.exports = class Helper {
     this._websocket = this._api.websocket;
   }
 
-  _cleanUp () { }
+  _clearCache () { }
 };

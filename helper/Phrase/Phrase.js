@@ -193,7 +193,7 @@ module.exports = class Phrase extends Helper {
     return this.list().find((phrase) => this._api.utility().string().isEqual(phrase.name, name) && this._api.utility().string().isEqual(phrase.value, value));
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._local = [];
     this._phrases = [];
   }
