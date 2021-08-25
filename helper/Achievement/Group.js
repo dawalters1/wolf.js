@@ -10,14 +10,14 @@ module.exports = class Group extends Helper {
 
   /**
    * Get achievements for a group
-   * @param {Number} groupId - The id of the group
+   * @param {Number} targetGroupId - The id of the group
    */
-  async getById (groupId) {
+  async getById (targetGroupId) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       const result = await this._websocket.emit(request.ACHIEVEMENT_GROUP_LIST, {
@@ -25,13 +25,13 @@ module.exports = class Group extends Helper {
           version: 2
         },
         body: {
-          id: groupId
+          id: targetGroupId
         }
       });
 
       return result.success ? result.body : [];
     } catch (error) {
-      error.method = `Helper/Achievement/Group/getById(groupId = ${JSON.stringify(groupId)})`;
+      error.method = `Helper/Achievement/Group/getById(targetGroupId = ${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }

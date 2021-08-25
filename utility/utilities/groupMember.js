@@ -21,12 +21,12 @@ module.exports = class GroupMember extends BaseUtility {
     };
   }
 
-  async get (groupId, sourceSubscriberId) {
+  async get (targetGroupId, sourceSubscriberId) {
     try {
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (!validator.isValidNumber(sourceSubscriberId)) {
@@ -35,7 +35,7 @@ module.exports = class GroupMember extends BaseUtility {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
-      const groupSubscriberList = await this._api.group().getSubscriberList(groupId);
+      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
 
       if (groupSubscriberList.length === 0) {
         return null;
@@ -43,18 +43,18 @@ module.exports = class GroupMember extends BaseUtility {
 
       return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
     } catch (error) {
-      error.method = `Utility/utilties/groupMember/get(groupId = ${JSON.stringify(groupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)})`;
+      error.method = `Utility/utilties/groupMember/get(targetGroupId = ${JSON.stringify(targetGroupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)})`;
       throw error;
     }
   }
 
-  async checkPermissions (groupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
+  async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     try {
       // #region validation
-      if (!validator.isValidNumber(groupId)) {
-        throw new Error('groupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(groupId)) {
-        throw new Error('groupId cannot be less than or equal to 0');
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (!validator.isValidNumber(sourceSubscriberId)) {
@@ -85,13 +85,13 @@ module.exports = class GroupMember extends BaseUtility {
         return true;
       }
 
-      const group = await this._api.group().getById(groupId);
+      const group = await this._api.group().getById(targetGroupId);
 
       if (requiredCapability === capability.OWNER) {
         return group.owner.id === sourceSubscriberId;
       }
 
-      const groupSubscriberList = await this._api.group().getSubscriberList(groupId);
+      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
 
       if (groupSubscriberList.length === 0) {
         return false;
@@ -116,7 +116,7 @@ module.exports = class GroupMember extends BaseUtility {
 
     // #endregion
     } catch (error) {
-      error.method = `Utility/utilties/groupMember/checkPermissions(groupId = ${JSON.stringify(groupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)}, requiredCapability = ${JSON.stringify(requiredCapability)}, checkStaff = ${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers = ${JSON.stringify(includeAuthorizedSubscribers)})`;
+      error.method = `Utility/utilties/groupMember/checkPermissions(targetGroupId = ${JSON.stringify(targetGroupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)}, requiredCapability = ${JSON.stringify(requiredCapability)}, checkStaff = ${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers = ${JSON.stringify(includeAuthorizedSubscribers)})`;
       throw error;
     }
   }
