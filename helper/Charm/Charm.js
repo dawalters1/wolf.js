@@ -35,12 +35,13 @@ module.exports = class Charm extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async list (language = constants.language.ENGLISH, requestNew = false) {
-    try {
-      return await this._getCharmList(language, requestNew);
-    } catch (error) {
-      error.method = `Helper/Charm/list(language = ${JSON.stringify(language)}, requestNew = ${JSON.stringify(requestNew)})`;
-      throw error;
+    if (!validator.isValidNumber(language)) {
+      throw new Error('language must be a valid number');
+    } else if (!Object.values(constants.language).includes(language)) {
+      throw new Error('language is invalid');
     }
+
+    return await this._getCharmList(language, requestNew);
   }
 
   /**
@@ -50,24 +51,19 @@ module.exports = class Charm extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getById (charmId, language = constants.language.ENGLISH, requestNew = false) {
-    try {
-      if (!validator.isValidNumber(charmId)) {
-        throw new Error('charmId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(charmId)) {
-        throw new Error('charmId cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
-        throw new Error('language is invalid');
-      }
-
-      return (await this._getCharmList(language, requestNew)).find((charm) => charm.id === charmId);
-    } catch (error) {
-      error.method = `Helper/Charm/getById(charmId = ${JSON.stringify(charmId)}, language = ${JSON.stringify(language)}, requestNew = ${JSON.stringify(requestNew)})`;
-      throw error;
+    if (!validator.isValidNumber(charmId)) {
+      throw new Error('charmId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(charmId)) {
+      throw new Error('charmId cannot be less than or equal to 0');
     }
+
+    if (!validator.isValidNumber(language)) {
+      throw new Error('language must be a valid number');
+    } else if (!Object.values(constants.language).includes(language)) {
+      throw new Error('language is invalid');
+    }
+
+    return (await this._getCharmList(language, requestNew)).find((charm) => charm.id === charmId);
   }
 
   /**
@@ -77,32 +73,27 @@ module.exports = class Charm extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getByIds (charmIds, language = constants.language.ENGLISH, requestNew = false) {
-    try {
-      if (!validator.isValidArray(charmIds)) {
-        throw new Error('charmIds must be an array');
-      } else if (charmIds.length === 0) {
-        throw new Error('charmIds cannot be an empty array');
-      }
-
-      for (const charmId of charmIds) {
-        if (!validator.isValidNumber(charmId)) {
-          throw new Error('charmId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(charmId)) {
-          throw new Error('charmId cannot be less than or equal to 0');
-        }
-      }
-
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
-        throw new Error('language is invalid');
-      }
-
-      return (await this._getCharmList(language, requestNew)).filter((charm) => charmIds.includes(charm.id));
-    } catch (error) {
-      error.method = `Helper/Charm/getByIds(charmIds = ${JSON.stringify(charmIds)}, language = ${JSON.stringify(language)}, requestNew = ${JSON.stringify(requestNew)})`;
-      throw error;
+    if (!validator.isValidArray(charmIds)) {
+      throw new Error('charmIds must be an array');
+    } else if (charmIds.length === 0) {
+      throw new Error('charmIds cannot be an empty array');
     }
+
+    for (const charmId of charmIds) {
+      if (!validator.isValidNumber(charmId)) {
+        throw new Error('charmId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(charmId)) {
+        throw new Error('charmId cannot be less than or equal to 0');
+      }
+    }
+
+    if (!validator.isValidNumber(language)) {
+      throw new Error('language must be a valid number');
+    } else if (!Object.values(constants.language).includes(language)) {
+      throw new Error('language is invalid');
+    }
+
+    return (await this._getCharmList(language, requestNew)).filter((charm) => charmIds.includes(charm.id));
   }
 
   /**
@@ -110,20 +101,15 @@ module.exports = class Charm extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async getSubscriberStatistics (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.CHARM_SUBSCRIBER_STATISTICS, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Charm/getSubscriberStatistics(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_STATISTICS, {
+      id: subscriberId
+    });
   }
 
   /**
@@ -133,34 +119,29 @@ module.exports = class Charm extends Helper {
    * @param {Number} offset - Index where the returned charms should start
    */
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(limit)) {
-        throw new Error('limit must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(limit)) {
-        throw new Error('limit cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(offset)) {
-        throw new Error('offset must be a valid number');
-      } else if (validator.isLessThanZero(offset)) {
-        throw new Error('offset cannot be less than 0');
-      }
-
-      return await this._websocket.emit(request.CHARM_SUBSCRIBER_ACTIVE_LIST, {
-        id: subscriberId,
-        limit,
-        offset
-      });
-    } catch (error) {
-      error.method = `Helper/Charm/getSubscriberActiveList(subscriberId = ${JSON.stringify(subscriberId)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    if (!validator.isValidNumber(limit)) {
+      throw new Error('limit must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(limit)) {
+      throw new Error('limit cannot be less than or equal to 0');
+    }
+
+    if (!validator.isValidNumber(offset)) {
+      throw new Error('offset must be a valid number');
+    } else if (validator.isLessThanZero(offset)) {
+      throw new Error('offset cannot be less than 0');
+    }
+
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_ACTIVE_LIST, {
+      id: subscriberId,
+      limit,
+      offset
+    });
   }
 
   /**
@@ -170,34 +151,29 @@ module.exports = class Charm extends Helper {
    * @param {Number} offset - Index where the returned charms should start
    */
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(limit)) {
-        throw new Error('limit must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(limit)) {
-        throw new Error('limit cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(offset)) {
-        throw new Error('offset must be a valid number');
-      } else if (validator.isLessThanZero(offset)) {
-        throw new Error('offset cannot be less than 0');
-      }
-
-      return await this._websocket.emit(request.CHARM_SUBSCRIBER_EXPIRED_LIST, {
-        id: subscriberId,
-        limit,
-        offset
-      });
-    } catch (error) {
-      error.method = `Helper/Charm/getSubscriberExpiredList(subscriberId = ${JSON.stringify(subscriberId)}, limit = ${JSON.stringify(limit)}, offset = ${JSON.stringify(offset)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    if (!validator.isValidNumber(limit)) {
+      throw new Error('limit must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(limit)) {
+      throw new Error('limit cannot be less than or equal to 0');
+    }
+
+    if (!validator.isValidNumber(offset)) {
+      throw new Error('offset must be a valid number');
+    } else if (validator.isLessThanZero(offset)) {
+      throw new Error('offset cannot be less than 0');
+    }
+
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_EXPIRED_LIST, {
+      id: subscriberId,
+      limit,
+      offset
+    });
   }
 
   /**
@@ -205,23 +181,18 @@ module.exports = class Charm extends Helper {
    * @param {Number} subscriberId - The id of the subscriber
    */
   async getSubscriberCharmSummary (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.CHARM_SUBSCRIBER_SUMMARY_LIST, {
-        id: subscriberId
-      });
-    } catch (error) {
-      error.method = `Helper/Charm/getSubscriberCharmSummary(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
     }
+
+    return await this._websocket.emit(request.CHARM_SUBSCRIBER_SUMMARY_LIST, {
+      id: subscriberId
+    });
   }
 
-  _cleanUp () {
+  _clearCache () {
     this._charms = {};
   }
 };

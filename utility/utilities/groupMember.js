@@ -22,102 +22,89 @@ module.exports = class GroupMember extends BaseUtility {
   }
 
   async get (targetGroupId, sourceSubscriberId) {
-    try {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-
-      if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
-
-      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
-
-      if (groupSubscriberList.length === 0) {
-        return null;
-      }
-
-      return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
-    } catch (error) {
-      error.method = `Utility/utilties/groupMember/get(targetGroupId = ${JSON.stringify(targetGroupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)})`;
-      throw error;
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
     }
+
+    if (!validator.isValidNumber(sourceSubscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
+
+    const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
+
+    if (groupSubscriberList.length === 0) {
+      return null;
+    }
+
+    return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
   }
 
   async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
-    try {
-      // #region validation
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
+    }
 
-      if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
+    if (!validator.isValidNumber(sourceSubscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
 
-      if (!validator.isValidNumber(requiredCapability)) {
-        throw new Error('requiredCapability must be a valid number');
-      } else if (!Object.values(capability).includes(requiredCapability)) {
-        throw new Error('requiredCapability is not valid');
-      }
+    if (!validator.isValidNumber(requiredCapability)) {
+      throw new Error('requiredCapability must be a valid number');
+    } else if (!Object.values(capability).includes(requiredCapability)) {
+      throw new Error('requiredCapability is not valid');
+    }
 
-      if (!validator.isValidBoolean(checkStaff)) {
-        throw new Error('checkStaff must be a valid boolean');
-      }
+    if (!validator.isValidBoolean(checkStaff)) {
+      throw new Error('checkStaff must be a valid boolean');
+    }
 
-      if (checkStaff) {
-        const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
+    if (checkStaff) {
+      const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
 
-        if ((subscriber.privileges & privilege.STAFF) === privilege.STAFF) {
-          return true;
-        }
-      }
-
-      if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(sourceSubscriberId)) {
+      if ((subscriber.privileges & privilege.STAFF) === privilege.STAFF) {
         return true;
       }
+    }
 
-      const group = await this._api.group().getById(targetGroupId);
+    if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(sourceSubscriberId)) {
+      return true;
+    }
 
-      if (requiredCapability === capability.OWNER) {
-        return group.owner.id === sourceSubscriberId;
-      }
+    const group = await this._api.group().getById(targetGroupId);
 
-      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
+    if (requiredCapability === capability.OWNER) {
+      return group.owner.id === sourceSubscriberId;
+    }
 
-      if (groupSubscriberList.length === 0) {
-        return false;
-      }
+    const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
 
-      const groupSubscriber = groupSubscriberList.find((subscriber) => subscriber.id === sourceSubscriberId);
+    if (groupSubscriberList.length === 0) {
+      return false;
+    }
 
-      if (!groupSubscriber) {
-        return false;
-      }
+    const groupSubscriber = groupSubscriberList.find((subscriber) => subscriber.id === sourceSubscriberId);
 
-      const subscriberCapability = groupSubscriber.capabilities;
+    if (!groupSubscriber) {
+      return false;
+    }
 
-      switch (requiredCapability) {
-        case capability.ADMIN:
-          return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN;
-        case capability.MOD:
-          return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN || subscriberCapability === capability.MOD;
-        default:
-          return true;
-      }
+    const subscriberCapability = groupSubscriber.capabilities;
 
-    // #endregion
-    } catch (error) {
-      error.method = `Utility/utilties/groupMember/checkPermissions(targetGroupId = ${JSON.stringify(targetGroupId)}, sourceSubscriberId = ${JSON.stringify(sourceSubscriberId)}, requiredCapability = ${JSON.stringify(requiredCapability)}, checkStaff = ${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers = ${JSON.stringify(includeAuthorizedSubscribers)})`;
-      throw error;
+    switch (requiredCapability) {
+      case capability.ADMIN:
+        return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN;
+      case capability.MOD:
+        return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN || subscriberCapability === capability.MOD;
+      default:
+        return true;
     }
   }
 };
