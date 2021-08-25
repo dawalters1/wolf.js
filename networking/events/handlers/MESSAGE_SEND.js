@@ -92,14 +92,15 @@ module.exports = class MessageSend extends BaseEvent {
               if (action.type === 'leave' && action.instigatorId) {
                 action.type = 'kick';
               }
+
               if (message.sourceSubscriberId === this._api.currentSubscriber.id) {
                 group.capabilities = toGroupMemberCapability(toAdminActionFromString(action.type));
 
-                if (group.capabilities === capability.NOT_MEMBER) {
+                if (group.capabilities === capability.NOT_MEMBER || group.capabilities === capability.BANNED) {
                   group.inGroup = false;
                   group.subscribers = [];
 
-                  this._api.messaging()._messageGroupUnsubscribe(group.id);
+                  await this._api.messaging()._messageGroupUnsubscribe(group.id);
                 }
               } else {
                 if (group.subscribers) {

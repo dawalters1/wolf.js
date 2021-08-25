@@ -29,10 +29,11 @@ const Utilities = require('./utility');
 const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
-const routes = require('./MultiMediaService/routes');
-const uploadToMediaService = require('./utils/uploadToMediaService');
-const MultiMediaService = require('./MultiMediaService/MultiMediaService');
+
+const MultiMediaService = require('./MultiMediaService');
 const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
+
+const fileType = require('file-type');
 
 const validateConfig = (api, config) => {
   if (!config) {
@@ -115,7 +116,7 @@ module.exports = class WolfBot {
     this._tip = new Tip(this);
     this.currentSubscriber = null;
 
-    this._mediaService = new MultiMediaService(this);
+    this._multiMediaService = new MultiMediaService(this);
 
     this._utilities = Utilities(this);
   }
@@ -227,6 +228,14 @@ module.exports = class WolfBot {
    */
   utility () {
     return this._utilities;
+  }
+
+  /**
+   *
+   * @returns {MultiMediaService}
+   */
+  _mediaService () {
+    return this._multiMediaService;
   }
 
   /**
@@ -362,7 +371,7 @@ module.exports = class WolfBot {
           id: message.id,
           body: message.data.toString(),
           sourceSubscriberId: message.originator.id,
-          groupId: message.isGroup ? message.recipient.id : null,
+          targetGroupId: message.isGroup ? message.recipient.id : null,
           embeds: message.embeds,
           metadata: message.metadata,
           isGroup: message.isGroup,
@@ -520,7 +529,7 @@ module.exports = class WolfBot {
    */
   async updateAvatar (avatar) {
     try {
-      return await uploadToMediaService(this, routes.SUBSCRIBER_AVATAR_UPLOAD, avatar);
+      return await this._mediaService().uploadSubscriberAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
       error.method = `WolfBot/updateAvatar(avatar = ${JSON.stringify('Too big, not displaying this')})`;
       throw error;
@@ -540,6 +549,27 @@ module.exports = class WolfBot {
    */
   updateProfile () {
     return new SubscriberProfileBuilder(this, this.currentSubscriber);
+  }
+
+  /**
+   * Retrieve the AWS Cognito token
+   * @param {*} requestNew - Request new data from the server
+   * @returns { identityId: String, token: String } Cognito Identity
+   */
+  async getSecurityToken (requestNew = false) {
+    if (this._cognito && !requestNew) {
+      return this._cognito;
+    }
+
+    const result = await this.websocket.emit(request.SECURITY_TOKEN_REFRESH);
+
+    if (result.success) {
+      this._cognito = result.body;
+    } else {
+      throw new Error(result.headers.message || 'Error occurred while requesting new security token');
+    }
+
+    return this._cognito;
   }
 
   _cleanUp () {
