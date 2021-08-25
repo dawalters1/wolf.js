@@ -22,161 +22,141 @@ module.exports = class Messaging extends Helper {
   }
 
   async _messageGroupSubscribe () {
-    try {
-      return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
-        headers: {
-          version: 4
-        }
-      });
-    } catch (error) {
-      error.method = 'Helper/Messaging/_messageGroupSubscribe()';
-      throw error;
-    }
+    return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
+      headers: {
+        version: 4
+      }
+    });
   }
 
   async _messageGroupUnsubscribe (id) {
-    try {
-      return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
-        headers: {
-          version: 4
-        },
-        body: {
-          id
-        }
-      });
-    } catch (error) {
-      error.method = 'Helper/Messaging/_messageGroupUnsubscribe()';
-      throw error;
-    }
+    return await this._websocket.emit(request.MESSAGE_GROUP_UNSUBSCRIBE, {
+      headers: {
+        version: 4
+      },
+      body: {
+        id
+      }
+    });
   }
 
   async _messagePrivateSubscribe () {
-    try {
-      return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE, {
-        headers: {
-          version: 2
-        }
-      });
-    } catch (error) {
-      error.method = 'Helper/Messaging/_messagePrivatesubscribe()';
-      throw error;
-    }
+    return await this._websocket.emit(request.MESSAGE_PRIVATE_SUBSCRIBE, {
+      headers: {
+        version: 2
+      }
+    });
   }
 
   async _sendMessage (targetType, targetId, content, includeEmbeds = false) {
-    try {
-      const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
+    const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-      if (['image/jpeg', 'image/gif'].includes(mimeType)) {
-        return await this._api._mediaService().sendMessage(targetType, targetId, content, mimeType);
-      }
+    if (['image/jpeg', 'image/gif'].includes(mimeType)) {
+      return await this._api._mediaService().sendMessage(targetType, targetId, content, mimeType);
+    }
 
-      if (validator.isNullOrWhitespace(mimeType)) {
-        throw new Error('mimeType cannot be null or empty');
-      } else if (!['text/plain'].includes(mimeType)) {
-        throw new Error('mimeType is unsupported');
-      }
+    if (validator.isNullOrWhitespace(mimeType)) {
+      throw new Error('mimeType cannot be null or empty');
+    } else if (!['text/plain'].includes(mimeType)) {
+      throw new Error('mimeType is unsupported');
+    }
 
-      const body = {
-        recipient: targetId,
-        isGroup: targetType === targetTypes.GROUP,
-        mimeType,
-        data: Buffer.from(content, 'utf8'),
-        flightId: uuidv4()
+    const body = {
+      recipient: targetId,
+      isGroup: targetType === targetTypes.GROUP,
+      mimeType,
+      data: Buffer.from(content, 'utf8'),
+      flightId: uuidv4()
+    };
+
+    const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
+
+    const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
+
+    if (links.length > 0 || ads.length > 0) {
+      body.metadata = {
+        formatting: {}
       };
 
-      const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
+      if (ads && ads.length > 0) {
+        body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
+          const ad = {
+            start: value.index,
+            end: value.index + value[0].length
+          };
 
-      const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
+          const group = await this._api.group().getByName(value[1]);
 
-      if (links.length > 0 || ads.length > 0) {
-        body.metadata = {
-          formatting: {}
-        };
-
-        if (ads && ads.length > 0) {
-          body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
-            const ad = {
-              start: value.index,
-              end: value.index + value[0].length
-            };
-
-            const group = await this._api.group().getByName(value[1]);
-
-            if (group.exists) {
-              ad.groupId = group.id;
-            }
-
-            (await result).push(ad);
-
-            return result;
-          }, Promise.resolve([]));
-        }
-
-        if (links && links.length > 0) {
-          body.metadata.formatting.links = links.reduce((result, value) => {
-            const link = {
-              start: value.index,
-              end: value.index + value[0].length,
-              url: value[0]
-            };
-
-            result.push(link);
-
-            return result;
-          }, []);
-        }
-
-        if (includeEmbeds) {
-          const data = [];
-
-          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
-            data.push(...body.metadata.formatting.groupLinks);
+          if (group.exists) {
+            ad.groupId = group.id;
           }
 
-          if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
-            data.push(...body.metadata.formatting.links);
-          }
+          (await result).push(ad);
 
-          const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
-            // Only 1 embed per message, else the server will throw an error.
-            if ((await result).length > 0) {
-              return result;
-            }
-
-            if (Reflect.has(item, 'url')) {
-              const metadata = await this.getLinkMetadata(item.url);
-
-              if (metadata.success && !metadata.body.isBlacklisted) {
-                (await result).push(
-                  {
-                    type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
-                    url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
-                    title: metadata.body.title,
-                    body: metadata.body.description
-                  });
-              }
-            } else if (Reflect.has(item, 'groupId')) {
-              (await result).push({
-                type: constants.embedType.GROUP_PREVIEW,
-                groupId: item.groupId
-              });
-            }
-
-            return result;
-          }, Promise.resolve([]));
-
-          if (embeds.length > 0) {
-            body.embeds = embeds;
-          }
-        }
+          return result;
+        }, Promise.resolve([]));
       }
 
-      return await this._websocket.emit(request.MESSAGE_SEND, body);
-    } catch (error) {
-      error.method = `Helper/Messaging/_sendMessage(targetType = ${JSON.stringify(targetType)}, targetId = ${JSON.stringify(targetId)}, content = ${/* JSON.stringify(content) */''}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
-      throw error;
+      if (links && links.length > 0) {
+        body.metadata.formatting.links = links.reduce((result, value) => {
+          const link = {
+            start: value.index,
+            end: value.index + value[0].length,
+            url: value[0]
+          };
+
+          result.push(link);
+
+          return result;
+        }, []);
+      }
+
+      if (includeEmbeds) {
+        const data = [];
+
+        if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
+          data.push(...body.metadata.formatting.groupLinks);
+        }
+
+        if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
+          data.push(...body.metadata.formatting.links);
+        }
+
+        const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+          // Only 1 embed per message, else the server will throw an error.
+          if ((await result).length > 0) {
+            return result;
+          }
+
+          if (Reflect.has(item, 'url')) {
+            const metadata = await this.getLinkMetadata(item.url);
+
+            if (metadata.success && !metadata.body.isBlacklisted) {
+              (await result).push(
+                {
+                  type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
+                  url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
+                  title: metadata.body.title,
+                  body: metadata.body.description
+                });
+            }
+          } else if (Reflect.has(item, 'groupId')) {
+            (await result).push({
+              type: constants.embedType.GROUP_PREVIEW,
+              groupId: item.groupId
+            });
+          }
+
+          return result;
+        }, Promise.resolve([]));
+
+        if (embeds.length > 0) {
+          body.embeds = embeds;
+        }
+      }
     }
+
+    return await this._websocket.emit(request.MESSAGE_SEND, body);
   }
 
   /**
@@ -186,26 +166,21 @@ module.exports = class Messaging extends Helper {
    * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
    */
   async sendGroupMessage (targetGroupId, content, includeEmbeds = false) {
-    try {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-
-      if (validator.isNullOrWhitespace(content)) {
-        throw new Error('content cannot null or empty');
-      }
-
-      if (!validator.isValidBoolean(includeEmbeds)) {
-        throw new Error('includeEmbeds must be a boolean');
-      }
-
-      return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, includeEmbeds);
-    } catch (error) {
-      error.method = `Helper/Messaging/sendGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
-      throw error;
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
     }
+
+    if (validator.isNullOrWhitespace(content)) {
+      throw new Error('content cannot null or empty');
+    }
+
+    if (!validator.isValidBoolean(includeEmbeds)) {
+      throw new Error('includeEmbeds must be a boolean');
+    }
+
+    return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, includeEmbeds);
   }
 
   /**
@@ -215,26 +190,21 @@ module.exports = class Messaging extends Helper {
    * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
    */
   async sendPrivateMessage (targetSubscriberId, content, includeEmbeds = false) {
-    try {
-      if (!validator.isValidNumber(targetSubscriberId)) {
-        throw new Error('targetSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
-        throw new Error('targetSubscriberId cannot be less than or equal to 0');
-      }
-
-      if (validator.isNullOrWhitespace(content)) {
-        throw new Error('content cannot null or empty');
-      }
-
-      if (!validator.isValidBoolean(includeEmbeds)) {
-        throw new Error('includeEmbeds must be a boolean');
-      }
-
-      return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, includeEmbeds);
-    } catch (error) {
-      error.method = `Helper/Messaging/sendPrivateMessage(targetSubscriberId = ${JSON.stringify(targetSubscriberId)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
-      throw error;
+    if (!validator.isValidNumber(targetSubscriberId)) {
+      throw new Error('targetSubscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+      throw new Error('targetSubscriberId cannot be less than or equal to 0');
     }
+
+    if (validator.isNullOrWhitespace(content)) {
+      throw new Error('content cannot null or empty');
+    }
+
+    if (!validator.isValidBoolean(includeEmbeds)) {
+      throw new Error('includeEmbeds must be a boolean');
+    }
+
+    return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, includeEmbeds);
   }
 
   /**
@@ -245,66 +215,56 @@ module.exports = class Messaging extends Helper {
    * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
    */
   async sendMessage (commandOrMessage, content, includeEmbeds = false) {
-    try {
-      if (typeof (commandOrMessage) !== 'object') {
-        throw new Error('command must be an object');
-      }
-
-      if (commandOrMessage.isGroup) {
-        return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds);
-      }
-      return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds);
-    } catch (error) {
-      error.method = `Helper/Messaging/sendGroupMessage(commandOrMessage = ${JSON.stringify(commandOrMessage)}, content = ${JSON.stringify(content)}, includeEmbeds = ${JSON.stringify(includeEmbeds)})`;
-      throw error;
+    if (typeof (commandOrMessage) !== 'object') {
+      throw new Error('command must be an object');
     }
+
+    if (commandOrMessage.isGroup) {
+      return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds);
+    }
+    return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds);
   }
 
   async acceptPrivateMessageRequest (subscriberId) {
-    try {
-      if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
-      }
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
 
-      const checkHistory = async (timestamp = 0) => {
-        const messageHistory = (await this._api.subscriber().getHistory(subscriberId, timestamp)).body;
+    const checkHistory = async (timestamp = 0) => {
+      const messageHistory = (await this._api.subscriber().getHistory(subscriberId, timestamp)).body;
 
-        if (messageHistory.length === 0 && timestamp === 0) {
-          throw new Error('No conversation history for this subscriber');
-        } else if (messageHistory.find((message) => message.type === constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE)) {
-          throw new Error('Private message request has already been accepted for this subscriber');
-        } else if (timestamp !== 0) {
-          throw new Error('Could not determine if subscriber has been filtered by message filter');
-        } else if (!messageHistory.some((message) => message.sourceSubscriberId === subscriberId)) {
-          return await checkHistory(messageHistory.slice(-1)[0].timestamp);
-        } else {
-          const lastMessage = messageHistory.filter((message) => message.sourceSubscriberId === subscriberId).slice(-1);
+      if (messageHistory.length === 0 && timestamp === 0) {
+        throw new Error('No conversation history for this subscriber');
+      } else if (messageHistory.find((message) => message.type === constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE)) {
+        throw new Error('Private message request has already been accepted for this subscriber');
+      } else if (timestamp !== 0) {
+        throw new Error('Could not determine if subscriber has been filtered by message filter');
+      } else if (!messageHistory.some((message) => message.sourceSubscriberId === subscriberId)) {
+        return await checkHistory(messageHistory.slice(-1)[0].timestamp);
+      } else {
+        const lastMessage = messageHistory.filter((message) => message.sourceSubscriberId === subscriberId).slice(-1);
 
-          if (lastMessage) {
-            if (lastMessage.metadata) {
-              if (!lastMessage.metadata.isSpam) {
-                throw new Error('Subscriber has not been filtered by message filter');
-              }
+        if (lastMessage) {
+          if (lastMessage.metadata) {
+            if (!lastMessage.metadata.isSpam) {
+              throw new Error('Subscriber has not been filtered by message filter');
             }
           }
         }
+      }
 
-        return await this._websocket.emit(request.MESSAGE_SEND, {
-          recipient: subscriberId,
-          isGroup: false,
-          mimeType: constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE,
-          data: Buffer.from('This message request has been accepted.', 'utf8'),
-          flightId: uuidv4()
-        });
-      };
+      return await this._websocket.emit(request.MESSAGE_SEND, {
+        recipient: subscriberId,
+        isGroup: false,
+        mimeType: constants.messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE,
+        data: Buffer.from('This message request has been accepted.', 'utf8'),
+        flightId: uuidv4()
+      });
+    };
 
-      return await checkHistory();
-    } catch (error) {
-      error.method = `Helper/Messaging/acceptPrivateMessageRequest(subscriberId = ${JSON.stringify(subscriberId)})`;
-      throw error;
-    }
+    return await checkHistory();
   }
 
   /**
@@ -313,30 +273,25 @@ module.exports = class Messaging extends Helper {
    * @param {Number} timestamp - The timestamp of the message
    */
   async deleteGroupMessage (targetGroupId, timestamp) {
-    try {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-      if (!validator.isValidNumber(timestamp)) {
-        throw new Error('timestamp must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new Error('timestamp cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.MESSAGE_UPDATE, {
-        isGroup: true,
-        metadata: {
-          isDeleted: true
-        },
-        recipientId: targetGroupId,
-        timestamp
-      });
-    } catch (error) {
-      error.method = `Helper/Messaging/deleteGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
-      throw error;
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
     }
+    if (!validator.isValidNumber(timestamp)) {
+      throw new Error('timestamp must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new Error('timestamp cannot be less than or equal to 0');
+    }
+
+    return await this._websocket.emit(request.MESSAGE_UPDATE, {
+      isGroup: true,
+      metadata: {
+        isDeleted: true
+      },
+      recipientId: targetGroupId,
+      timestamp
+    });
   }
 
   /**
@@ -345,30 +300,25 @@ module.exports = class Messaging extends Helper {
    * @param {Number} timestamp - The timestamp of the message
    */
   async restoreGroupMessage (targetGroupId, timestamp) {
-    try {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-      if (!validator.isValidNumber(timestamp)) {
-        throw new Error('timestamp must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new Error('timestamp cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.MESSAGE_UPDATE, {
-        isGroup: true,
-        metadata: {
-          isDeleted: false
-        },
-        recipientId: targetGroupId,
-        timestamp
-      });
-    } catch (error) {
-      error.method = `Helper/Messaging/restoreGroupMessage(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
-      throw error;
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
     }
+    if (!validator.isValidNumber(timestamp)) {
+      throw new Error('timestamp must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new Error('timestamp cannot be less than or equal to 0');
+    }
+
+    return await this._websocket.emit(request.MESSAGE_UPDATE, {
+      isGroup: true,
+      metadata: {
+        isDeleted: false
+      },
+      recipientId: targetGroupId,
+      timestamp
+    });
   }
 
   /**
@@ -378,27 +328,22 @@ module.exports = class Messaging extends Helper {
    * @returns
    */
   async getGroupMessageEditHistory (targetGroupId, timestamp) {
-    try {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-      if (!validator.isValidNumber(timestamp)) {
-        throw new Error('timestamp must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new Error('timestamp cannot be less than or equal to 0');
-      }
-
-      return await this._websocket.emit(request.MESSAGE_UPDATE_LIST, {
-        isGroup: true,
-        recipientId: targetGroupId,
-        timestamp
-      });
-    } catch (error) {
-      error.method = `Helper/Messaging/getGroupMessageEditHistory(targetGroupId = ${JSON.stringify(targetGroupId)}, timestamp = ${JSON.stringify(timestamp)})`;
-      throw error;
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
     }
+    if (!validator.isValidNumber(timestamp)) {
+      throw new Error('timestamp must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new Error('timestamp cannot be less than or equal to 0');
+    }
+
+    return await this._websocket.emit(request.MESSAGE_UPDATE_LIST, {
+      isGroup: true,
+      recipientId: targetGroupId,
+      timestamp
+    });
   }
 
   /**
@@ -406,15 +351,10 @@ module.exports = class Messaging extends Helper {
    * @param {String} link
    */
   async getLinkMetadata (link) {
-    try {
-      if (validator.isNullOrWhitespace(link)) {
-        throw new Error('link cannot be null or empty');
-      }
-
-      return await this._websocket.emit(request.METADATA_URL, { url: link });
-    } catch (error) {
-      error.method = `Helper/Messaging/getLinkMetadata(link = ${JSON.stringify(link)})`;
-      throw error;
+    if (validator.isNullOrWhitespace(link)) {
+      throw new Error('link cannot be null or empty');
     }
+
+    return await this._websocket.emit(request.METADATA_URL, { url: link });
   }
 };
