@@ -1,10 +1,8 @@
 const Helper = require('../Helper');
+const validator = require('../../utils/validator');
 
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
-
-const validator = require('@dawalters1/validator');
 const internal = require('../../constants/internal');
 
 module.exports = class Notification extends Helper {
@@ -57,7 +55,22 @@ module.exports = class Notification extends Helper {
     return result;
   }
 
+  /**
+   * Subscibe to notificiations (will be checked every 10 minutes)
+   * @param {Number} language - The language of the notifications
+   * @deprecated Will be removed in 1.0.0 use subscribe(language) instead
+   */
   async subscribeToNotifications (language = constants.language.ENGLISH) {
+    console.warn('subscribeToNotifications(language) is deprecated and will be removed in 1.0.0 use subscribe(language) instead');
+    return await this.subscribe(language);
+  }
+
+  /**
+   * Subscibe to notificiations (will be checked every 10 minutes)
+   * @param {Number} language - The language of the notifications
+   * @returns
+   */
+  async subscribe (language = constants.language.ENGLISH) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
     } else if (!Object.values(constants.language).includes(language)) {

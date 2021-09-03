@@ -12,7 +12,7 @@ const ffmpeg = require('fluent-ffmpeg');
 // #region WRTC
 
 const SAMPLE_RATE = 48000;
-const SLICE_COUNT = 1920;// sampleRate / 100;
+const SLICE_COUNT = 1920;
 const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
@@ -48,13 +48,11 @@ class WRTCWrapper {
         if (this._connectionState === state.CONNECTING) {
           this._connectionState = state.CONNECTED;
 
-          await delay(2000);
+          await delay(1000);
 
           this._connectionState = state.READY;
 
-          this._em.emit(event.READY, {});
-
-          return;
+          return this._em.emit(event.READY, {});
         }
 
         this._connectionState = state.CONNECTING;
@@ -69,7 +67,7 @@ class WRTCWrapper {
 
         this._client.close();
 
-        this._em.emit(event.DISCONNECTED, this._getData());
+        return this._em.emit(event.DISCONNECTED, this._getData());
       }
 
       return Promise.resolve();

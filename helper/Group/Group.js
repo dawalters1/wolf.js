@@ -1,16 +1,27 @@
 const Helper = require('../Helper');
+const validator = require('../../utils/validator');
+
 const Response = require('../../networking/Response');
 const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBuilder');
-const validator = require('@dawalters1/validator');
+
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 const fileType = require('file-type');
+
+const toLanguageKey = require('../../utils/toLanguageKey');
 
 module.exports = class Group extends Helper {
   constructor (api) {
     super(api);
     this._groups = [];
     this._joinedGroupsRequested = false;
+  }
+
+  /**
+   * Get a list of all the bots joined groups
+   */
+  list () {
+    return this._groups.filter((group) => group.inGroup || (group.subscribers && group.subscribers.length > 0));
   }
 
   /**
@@ -68,9 +79,10 @@ module.exports = class Group extends Helper {
             if (value.success) {
               const body = value.body;
               const base = body.base;
+              base.extended = body.extended;
+              base.language = toLanguageKey(base.extended.language);
               base.audioConfig = body.audioConfig;
               base.audioCounts = body.audioCounts;
-              base.extended = body.extended;
               base.exists = true;
 
               return base;
@@ -328,8 +340,20 @@ module.exports = class Group extends Helper {
    * @param {Number} targetGroupId - The id of the group
    * @param {Number} subscriberId - The id of the subscriber to update
    * @param {Number} capability - The new role for the subscriber
+   * @deprecated Will be removed in 1.0.0 use updateSubscriber(targetGroupId, subscriberId, capability) instead
    */
   async updateGroupSubscriber (targetGroupId, subscriberId, capability) {
+    console.warn('updateGroupSubscriber(targetGroupId, subscriberId, capability) is deprecated and will be removed in 1.0.0 use updateSubscriber(targetGroupId, subscriberId, capability) instead');
+    return await this.updateSubscriber(targetGroupId, subscriberId, capability);
+  }
+
+  /**
+   * Update a group subscribers role - Use @dawalters1/constants for capability
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} subscriberId - The id of the subscriber to update
+   * @param {Number} capability - The new role for the subscriber
+   */
+  async updateSubscriber (targetGroupId, subscriberId, capability) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {

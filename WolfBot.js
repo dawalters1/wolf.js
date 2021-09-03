@@ -2,23 +2,23 @@ const path = require('path');
 const fs = require('fs');
 
 const Websocket = require('./networking/Websocket');
-const CommandHandler = require('./Command/CommandHandler');
+const CommandHandler = require('./command/CommandHandler');
 
 const EventManager = require('./networking/events/EventManager');
-const Achievement = require('./helper/Achievement/Achievement');
-const Authorization = require('./helper/Authorization/Authorization');
-const Banned = require('./helper/Banned/Banned');
-const Blocked = require('./helper/Blocked/Blocked');
-const Charm = require('./helper/Charm/Charm');
-const Contact = require('./helper/Contact/Contact');
-const Event = require('./helper/Event/Event');
-const Group = require('./helper/Group/Group');
-const Messaging = require('./helper/Messaging/Messaging');
-const Notification = require('./helper/Notification/Notification');
-const Phrase = require('./helper/Phrase/Phrase');
-const Stage = require('./helper/Stage/Stage');
-const Subscriber = require('./helper/Subscriber/Subscriber');
-const Tip = require('./helper/Tip/Tip');
+const Achievement = require('./helper/achievement/Achievement');
+const Authorization = require('./helper/authorization/Authorization');
+const Banned = require('./helper/banned/Banned');
+const Blocked = require('./helper/blocked/Blocked');
+const Charm = require('./helper/charm/Charm');
+const Contact = require('./helper/contact/Contact');
+const Event = require('./helper/event/Event');
+const Group = require('./helper/group/Group');
+const Messaging = require('./helper/messaging/Messaging');
+const Notification = require('./helper/notification/Notification');
+const Phrase = require('./helper/phrase/Phrase');
+const Stage = require('./helper/stage/Stage');
+const Subscriber = require('./helper/subscriber/Subscriber');
+const Tip = require('./helper/tip/Tip');
 
 const yaml = require('yaml');
 
@@ -30,7 +30,7 @@ const request = require('./constants/request');
 
 const constants = require('@dawalters1/constants');
 
-const MultiMediaService = require('./MultiMediaService');
+const MultiMediaService = require('./multimediaservice');
 const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
 
 const fileType = require('file-type');

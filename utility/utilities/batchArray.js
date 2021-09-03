@@ -1,5 +1,5 @@
 const BaseUtility = require('../BaseUtility');
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
 
 function * batch (arr, batchSize) {
   for (let i = 0; i < arr.length; i += batchSize) {

@@ -1,9 +1,7 @@
 const Helper = require('../Helper');
-
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
 
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
 
 module.exports = class Tip extends Helper {
