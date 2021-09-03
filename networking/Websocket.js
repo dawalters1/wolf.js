@@ -9,7 +9,7 @@ const ignoreEvents = [
   'group member update'
 ];
 
-module.exports = class WolfClient {
+module.exports = class Websocket {
   constructor (api) {
     this._api = api;
     this._config = this._api.config;

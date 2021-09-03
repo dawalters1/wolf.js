@@ -1,8 +1,9 @@
 const Helper = require('../Helper');
-const Response = require('../../networking/Response');
-const validator = require('@dawalters1/validator');
-const request = require('../../constants/request');
+const validator = require('../../utils/validator');
 
+const Response = require('../../networking/Response');
+
+const request = require('../../constants/request');
 const fileType = require('file-type');
 
 module.exports = class Event extends Helper {
@@ -233,8 +234,19 @@ module.exports = class Event extends Helper {
    * Update an event thumbnail
    * @param {Number} eventId - The id of the event
    * @param {Buffer} thumbnail - The thumbnail for the event
+   * @deprecated Will be removed in 1.0.0 use updateEventThumbnail(eventId, thumbnail) instead
    */
   async updateEventImage (eventId, thumbnail) {
+    console.warn('updateEventImage(eventId, thumbnail) is deprecated and will be removed in 1.0.0 use updateEventThumbnail(eventId, thumbnail) instead');
+    return this.updateEventThumbnail(eventId, thumbnail);
+  }
+
+  /**
+   * Update an event thumbnail
+   * @param {Number} eventId - The id of the event
+   * @param {Buffer} thumbnail - The thumbnail for the event
+   */
+  async updateEventThumbnail (eventId, thumbnail) {
     if (!validator.isValidNumber(eventId)) {
       throw new Error('eventId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(eventId)) {

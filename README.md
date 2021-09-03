@@ -26,7 +26,8 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 #### Optional Packages
 
 - [constants](https://www.npmjs.com/package/@dawalters1/constants) - npm i @dawalters1/constants
-- [validator](https://www.npmjs.com/package/@dawalters1/validator) - npm i @dawalters1/validator
+- [validator](https://www.npmjs.com/package/@dawalters1/validator) - npm i @dawalters1/validator - **DEPRECATED** 
+  - Integrated into the api ```const validator = require('@dawalters1/wolf.js).Validator;```
 - [ioredis](https://www.npmjs.com/package/ioredis) npm i ioredis
   - Requires a local or remote redis server
     - [Windows](https://github.com/tporadowski/redis/releases/tag/v5.0.10) - Github maintained port, because its no longer supported on windows
@@ -147,12 +148,14 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Known Issues
 
-- Occassional issue with MultiMedia service when sending Images
+- Occassional issue with MultiMedia service when sending Images - *Potentially addressed in 0.9.X +*
 - Voice Messages are unsupported (That or I am dumb 😊)
- 
+- Stage Audio occasionally speeds up and slows down - Actively Investigating 
+
 ## Lacking Features
 
 - Discovery 2.0
+- Stage Volume Control 
 
 ## Contact
 

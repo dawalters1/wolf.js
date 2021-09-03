@@ -1,4 +1,4 @@
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
 const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
 
