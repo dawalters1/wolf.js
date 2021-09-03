@@ -2,7 +2,8 @@ const AWS = require('aws-sdk');
 const Signer = AWS.Signers.V4;
 const Response = require('../networking/Response');
 
-const validator = require('@dawalters1/validator');
+const validator = require('../utils/validator');
+
 const imageSize = require('image-size');
 
 const {
@@ -117,6 +118,10 @@ module.exports = class MultiMediaServiceClient {
 
     if (!['image/jpeg', 'image/gif'].includes(mimeType)) {
       throw new Error('mimeType is unsupported');
+    }
+
+    if (mimeType === 'audio/x-m4a') {
+      mimeType = 'audio/m4a';
     }
 
     const body = {

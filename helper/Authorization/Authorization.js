@@ -1,6 +1,5 @@
 const Helper = require('../Helper');
-
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
 
 module.exports = class Authorized extends Helper {
   constructor (api) {

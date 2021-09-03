@@ -1,6 +1,6 @@
 const Helper = require('../Helper');
+const validator = require('../../utils/validator');
 
-const validator = require('@dawalters1/validator');
 const request = require('../../constants/request');
 
 module.exports = class Blocked extends Helper {

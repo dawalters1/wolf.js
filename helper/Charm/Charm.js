@@ -1,9 +1,7 @@
 const Helper = require('../Helper');
-
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
 
 const request = require('../../constants/request');
-
 const constants = require('@dawalters1/constants');
 
 module.exports = class Charm extends Helper {
@@ -179,8 +177,18 @@ module.exports = class Charm extends Helper {
   /**
    * Get a list of charms and how many of each a subscriber has
    * @param {Number} subscriberId - The id of the subscriber
+   * @deprecated Will be removed in 1.0.0 use getSubscriberSumamry(subscriber) instead
    */
   async getSubscriberCharmSummary (subscriberId) {
+    console.warn('getSubscriberCharmSummary(subscriberId) is deprecated and will be removed in 1.0.0 use getSubscriberSumamry(subscriber) instead');
+    return this.getSubscriberSummary(subscriberId);
+  }
+
+  /**
+   * Get a list of charms and how many of each a subscriber has
+   * @param {Number} subscriberId - The id of the subscriber
+   */
+  async getSubscriberSummary (subscriberId) {
     if (!validator.isValidNumber(subscriberId)) {
       throw new Error('subscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {

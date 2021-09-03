@@ -1,9 +1,9 @@
 const Helper = require('../Helper');
+const validator = require('../../utils/validator');
 
 const Client = require('./Client');
 
 const { request, internal } = require('../../constants');
-const validator = require('@dawalters1/validator');
 
 const commandExists = require('command-exists-promise');
 // eslint-disable-next-line no-unused-vars
