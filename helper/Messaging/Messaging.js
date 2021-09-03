@@ -1,9 +1,8 @@
 const Helper = require('../Helper');
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
+
 const fileType = require('file-type');
-const {
-  v4: uuidv4
-} = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 const protocols = ['http', 'https', 'ftp', 'ws', 'wss', 'smtp'];
 
@@ -19,6 +18,10 @@ module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
     super(api);
+
+    this._messageSubscriptions = [];
+    this._deferreds = {};
+    this._subscriptionId = 1;
   }
 
   async _messageGroupSubscribe () {
@@ -356,5 +359,79 @@ module.exports = class Messaging extends Helper {
     }
 
     return await this._websocket.emit(request.METADATA_URL, { url: link });
+  }
+
+  /**
+   * Manually subscribe to a specific message
+   * @param {Predicate} predicate - The predicate the message should match
+   * @param {Number} timeout - How long the subscription should wait before timing out
+   * @returns Promise.resolve(message) OR Promise.resolve(null) - No errors should be thrown
+   */
+  async subscribeToNextMessage (predicate, timeout = Infinity) {
+    if (this._messageSubscriptions.some((subscription) => subscription.predicate === predicate)) {
+      return null;
+    }
+
+    const subscriptionId = this._subscriptionId;
+
+    this._subscriptionId++;
+
+    this._messageSubscriptions.push(
+      {
+        subscriptionId,
+        predicate,
+        timeoutInterval: timeout === Infinity
+          ? undefined
+          : setTimeout(() => {
+            this._deferreds[subscriptionId].resolve(null);
+          }, timeout)
+      }
+    );
+
+    // eslint-disable-next-line no-new
+    const result = await new Promise((resolve, reject) => {
+      this._deferreds[subscriptionId] = { resolve: resolve, reject: reject };
+    });
+
+    Reflect.deleteProperty(this._deferreds, subscriptionId);
+
+    return result;
+  }
+
+  /**
+   * Manually subscribe to the next message in a group
+   * @param {Number} targetGroupId - The ID of the group
+   * @param {Number} timeout - How long the subscription should wait before timing out
+   * @returns Promise.resolve(message) OR Promise.resolve(null) - No errors should be thrown
+   */
+  async subscribeToNextGroupMessage (targetGroupId, timeout = Infinity) {
+    return await this.subscribeToNextMessage((message) =>
+      message.isGroup && message.targetGroupId === targetGroupId
+    , timeout);
+  }
+
+  /**
+   * Manually subscribe to the next message from a subscriber
+   * @param {Number} sourceSubscriberId - The ID of the subscriber
+   * @param {Number} timeout - How long the subscription should wait before timing out
+   * @returns Promise.resolve(message) OR Promise.resolve(null) - No errors should be thrown
+   */
+  async subscribeToNextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
+    return await this.subscribeToNextMessage((message) =>
+      !message.isGroup && message.sourceSubscriberId === sourceSubscriberId
+    , timeout);
+  }
+
+  /**
+   * Manually subscribe to the next message in a group from a specific subscriber
+   * @param {Number} targetGroupId - The ID of the group
+   * @param {Number} sourceSubscriberId - The ID of the subscriber
+   * @param {Number} timeout - How long the subscription should wait before timing out
+   * @returns Promise.resolve(message) OR Promise.resolve(null) - No errors should be thrown
+   */
+  async subscribeToNextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
+    return await this.subscribeToNextMessage((message) =>
+      message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId
+    , timeout);
   }
 };

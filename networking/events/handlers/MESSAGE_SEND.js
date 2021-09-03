@@ -164,6 +164,19 @@ module.exports = class MessageSend extends BaseEvent {
       }
     }
 
+    const messageSubscriptions = this._api.messaging()._messageSubscriptions.filter((subscription) => subscription.predicate(message));
+
+    if (messageSubscriptions.length > 0) {
+      for (const messageSubscription of messageSubscriptions) {
+        if (messageSubscription.timeoutInterval) {
+          clearTimeout(messageSubscription.timeoutInterval);
+        }
+
+        this._api.messaging()._messageSubscriptions = this._api.messaging()._messageSubscriptions.filter((subscription) => subscription.subscriptionId !== messageSubscription.subscriptionId);
+        this._api.messaging()._deferreds[messageSubscription.subscriptionId].resolve(message);
+      }
+    }
+
     this._api.on._emit(message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE, message);
 
     return this._api.on._emit(this._command, message);

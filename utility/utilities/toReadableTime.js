@@ -1,5 +1,6 @@
 const BaseUtility = require('../BaseUtility');
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
+
 const moment = require('moment');
 
 module.exports = class ToReadableTime extends BaseUtility {

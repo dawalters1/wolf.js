@@ -33,7 +33,9 @@ module.exports = class CommandHandler {
       if (match) {
         const commandCallbacks = command.commandCallbackTypes;
 
-        if (commandCallbacks.includes(Command.getCallback.BOTH) || (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) || (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
+        if (commandCallbacks.includes(Command.getCallback.BOTH) ||
+        (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) ||
+        (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
           return true;
         }
       }
@@ -66,7 +68,9 @@ module.exports = class CommandHandler {
       const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
-        if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+        if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
+        (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
+        (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
           commandContext.argument = commandContext.argument.substr(match.value.length).trim();
           commandContext.language = match.language;
           commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
@@ -100,7 +104,9 @@ module.exports = class CommandHandler {
       const match = this._api.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
-        if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+        if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
+        (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
+        (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
           commandContext.argument = commandContext.argument.substr(match.value.length).trim();
           commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
           commandContext.route.push(match.name);

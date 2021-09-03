@@ -1,11 +1,12 @@
 const Helper = require('../Helper');
+const validator = require('../../utils/validator');
 
-const constants = require('@dawalters1/constants');
-const validator = require('@dawalters1/validator');
-const request = require('../../constants/request');
 const Response = require('../../networking/Response');
 const Group = require('./Group');
 const Subscriber = require('./Subscriber');
+
+const constants = require('@dawalters1/constants');
+const request = require('../../constants/request');
 
 module.exports = class Achievement extends Helper {
   // eslint-disable-next-line no-useless-constructor
@@ -65,9 +66,22 @@ module.exports = class Achievement extends Helper {
    * @param {[Number]} achievementIds - The ids of the achievements
    * @param {Number} language - Language of the achievement
    * @param {Boolean} requestNew - Request new data from the server
+   * @deprecated Will be removed in 1.0.0 use getByIds(subscriber, language, requestNew) instead
+   */
+
+  async getAchievementByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
+    console.warn('getAchievementByIds(subscriber, language, requestNew) is deprecated and will be removed in 1.0.0 use getByIds(subscriber, language, requestNew) instead');
+    return this.getByIds(achievementIds, language, requestNew);
+  }
+
+  /**
+   * Get achievements from their ID and Language - Use @dawalters1/constants for language
+   * @param {[Number]} achievementIds - The ids of the achievements
+   * @param {Number} language - Language of the achievement
+   * @param {Boolean} requestNew - Request new data from the server
    * @returns
    */
-  async getAchievementByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
+  async getByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
     if (!validator.isValidArray(achievementIds)) {
       throw new Error('achievementIds must be an array');
     } else if (achievementIds.length === 0) {

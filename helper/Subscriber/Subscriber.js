@@ -1,5 +1,8 @@
 const Helper = require('../Helper');
-const validator = require('@dawalters1/validator');
+const validator = require('../../utils/validator');
+
+const toLanguageKey = require('../../utils/toLanguageKey');
+
 const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');
@@ -59,7 +62,7 @@ module.exports = class Subscriber extends Helper {
             const value = new Response(result.body[subscriberId.toString()]);
             if (value.success) {
               value.body.exists = true;
-
+              value.body.language = toLanguageKey(value.body.extended.language);
               return value.body;
             } else {
               return {
