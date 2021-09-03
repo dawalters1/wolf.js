@@ -6,7 +6,7 @@ const isLessThanOrEqualZero = arg => isValidNumber(arg) && !(parseInt(arg) > 0);
 
 const isLessThanZero = arg => isValidNumber(arg) && !(parseInt(arg) >= 0);
 
-const isValidNumber = arg => typeof arg === 'number' && !Number.isNaN(arg);
+const isValidNumber = arg => /^-?\d+$/.test(arg);
 
 const isValidArray = arg => Array.isArray(arg);
 
