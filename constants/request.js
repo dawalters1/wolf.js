@@ -46,7 +46,9 @@ module.exports = {
   MESSAGE_SETTING_UPDATE: 'message setting update',
   MESSAGE_UPDATE: 'message update',
   MESSAGE_UPDATE_LIST: 'message update list',
+
   METADATA_URL: 'metadata url',
+  METADATA_URL_BLACKLIST: 'metadata url blacklist',
 
   NOTIFICATION_LIST: 'notification list',
   NOTIFICATION_LIST_CLEAR: 'notification list clear',

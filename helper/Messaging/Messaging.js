@@ -352,6 +352,7 @@ module.exports = class Messaging extends Helper {
   /**
    * Get information about a url
    * @param {String} link
+   * @deprecated Will be removed in 1.0.0 use api/bot.getLinkMeta(link) instead
    */
   async getLinkMetadata (link) {
     if (validator.isNullOrWhitespace(link)) {
