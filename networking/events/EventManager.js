@@ -120,9 +120,9 @@ module.exports = class EventManager {
       try {
         const Event = require(path.join(__dirname, `./handlers/${handler}`));
         this._handlers[name] = new Event(this, name);
-        this._api.on._emit(internal.LOG, `Registered Server Event: ${name}`);
+        this._api.on._emit(internal.LOG, `[Event Manager]: Registered Server Event: ${name}`);
       } catch (error) {
-        this._api.on._emit(internal.ERROR, `Unable to register Server Event: ${name}\nError: ${JSON.stringify(error, null, 4)}`);
+        this._api.on._emit(internal.ERROR, `[Event Manager]: Unable to register Server Event: ${name} - ${error.message}`);
       }
     }
   }
