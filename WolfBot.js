@@ -122,6 +122,8 @@ module.exports = class WolfBot {
     this._multiMediaService = new MultiMediaService(this);
 
     this._utilities = Utilities(this);
+
+    this._blacklist = [];
   }
 
   get on () {
@@ -542,6 +544,37 @@ module.exports = class WolfBot {
     return this._cognito;
   }
 
+  /**
+   * Get information about a url
+   * @param {String} link
+   */
+  async getLinkMetadata (link) {
+    if (validator.isNullOrWhitespace(link)) {
+      throw new Error('link cannot be null or empty');
+    }
+
+    return await this._websocket.emit(request.METADATA_URL, { url: link });
+  }
+
+  /**
+   * Retrieve the blacklisted url list
+   * @param {Boolean} requestNew - Whether or not to request new data from server
+   * @returns {[Object{id: Number, regex: String}]}
+   */
+  async getLinkBlacklist (requestNew = false) {
+    if (!requestNew && this._blacklist.length > 0) {
+      return this._blacklist;
+    }
+
+    const result = await this.websocket.emit(request.METADATA_URL_BLACKLIST);
+
+    if (result.success) {
+      this._blacklist = result.body;
+    }
+
+    return this._blacklist;
+  }
+
   _clearCache () {
     this._blocked._clearCache();
     this._contact._clearCache();
@@ -556,5 +589,6 @@ module.exports = class WolfBot {
     this.currentSubscriber = null;
     this._stage._clearCache();
     this._discovery._clearCache();
+    this._blacklist = [];
   }
 };

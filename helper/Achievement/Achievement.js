@@ -128,7 +128,7 @@ module.exports = class Achievement extends Helper {
             if (achievement.success) {
               achievements.push(this._process(achievement.body, language));
             } else {
-              achievement.push({
+              achievements.push({
                 id: batchAchievementIdList[index],
                 exists: false
               });
