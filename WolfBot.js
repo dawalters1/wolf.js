@@ -11,6 +11,7 @@ const Banned = require('./helper/banned/Banned');
 const Blocked = require('./helper/blocked/Blocked');
 const Charm = require('./helper/charm/Charm');
 const Contact = require('./helper/contact/Contact');
+const Discovery = require('./helper/discovery/Discovery');
 const Event = require('./helper/event/Event');
 const Group = require('./helper/group/Group');
 const Messaging = require('./helper/messaging/Messaging');
@@ -22,7 +23,8 @@ const Tip = require('./helper/tip/Tip');
 
 const yaml = require('yaml');
 
-const validator = require('@dawalters1/validator');
+const validator = require('./utils/validator');
+
 const crypto = require('crypto');
 const Utilities = require('./utility');
 
@@ -106,6 +108,7 @@ module.exports = class WolfBot {
     this._blocked = new Blocked(this);
     this._charm = new Charm(this);
     this._contact = new Contact(this);
+    this._discovery = new Discovery(this);
     this._event = new Event(this);
     this._group = new Group(this);
     this._messaging = new Messaging(this);
@@ -119,6 +122,8 @@ module.exports = class WolfBot {
     this._multiMediaService = new MultiMediaService(this);
 
     this._utilities = Utilities(this);
+
+    this._blacklist = [];
   }
 
   get on () {
@@ -165,6 +170,13 @@ module.exports = class WolfBot {
    */
   contact () {
     return this._contact;
+  }
+
+  /**
+   * Exposes the discovery methods (LIMITED Setup)
+   */
+  discovery () {
+    return this._discovery;
   }
 
   /**
@@ -532,6 +544,37 @@ module.exports = class WolfBot {
     return this._cognito;
   }
 
+  /**
+   * Get information about a url
+   * @param {String} link
+   */
+  async getLinkMetadata (link) {
+    if (validator.isNullOrWhitespace(link)) {
+      throw new Error('link cannot be null or empty');
+    }
+
+    return await this._websocket.emit(request.METADATA_URL, { url: link });
+  }
+
+  /**
+   * Retrieve the blacklisted url list
+   * @param {Boolean} requestNew - Whether or not to request new data from server
+   * @returns {[Object{id: Number, regex: String}]}
+   */
+  async getLinkBlacklist (requestNew = false) {
+    if (!requestNew && this._blacklist.length > 0) {
+      return this._blacklist;
+    }
+
+    const result = await this.websocket.emit(request.METADATA_URL_BLACKLIST);
+
+    if (result.success) {
+      this._blacklist = result.body;
+    }
+
+    return this._blacklist;
+  }
+
   _clearCache () {
     this._blocked._clearCache();
     this._contact._clearCache();
@@ -545,5 +588,7 @@ module.exports = class WolfBot {
     this._achievement.subscriber()._clearCache();
     this.currentSubscriber = null;
     this._stage._clearCache();
+    this._discovery._clearCache();
+    this._blacklist = [];
   }
 };

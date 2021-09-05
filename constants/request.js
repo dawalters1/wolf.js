@@ -22,7 +22,6 @@ module.exports = {
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
   GROUP_CREATE: 'group create',
-  GROUP_DISCOVERY_LIST: 'group discovery list',
   GROUP_EVENT: 'group event',
   GROUP_EVENT_CREATE: 'group event create',
   GROUP_EVENT_DELETE: 'group event delete',
@@ -47,7 +46,9 @@ module.exports = {
   MESSAGE_SETTING_UPDATE: 'message setting update',
   MESSAGE_UPDATE: 'message update',
   MESSAGE_UPDATE_LIST: 'message update list',
+
   METADATA_URL: 'metadata url',
+  METADATA_URL_BLACKLIST: 'metadata url blacklist',
 
   NOTIFICATION_LIST: 'notification list',
   NOTIFICATION_LIST_CLEAR: 'notification list clear',
@@ -85,5 +86,8 @@ module.exports = {
   TIP_LEADERBOARD_GROUP: 'tip leaderboard group',
   TIP_LEADERBOARD_GROUP_SUMMARY: 'tip leaderboard group summary',
   TIP_PRIVATE_SUBSCRIBE: 'tip private subscribe',
-  TIP_SUMMARY: 'tip summary'
+  TIP_SUMMARY: 'tip summary',
+
+  TOPIC_PAGE_LAYOUT: 'topic page layout',
+  TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list'
 };

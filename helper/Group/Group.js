@@ -227,8 +227,9 @@ module.exports = class Group extends Helper {
    * Get chat history for a group
    * @param {Number} targetGroupId - The id of the group
    * @param {Number} timestamp - The last timestamp in the group (0 for last messages sent)
+   * @param {Number} limit - How many messages the request should return (Min 5, Max 100)
    */
-  async getHistory (targetGroupId, timestamp = 0) {
+  async getHistory (targetGroupId, timestamp = 0, limit = 10) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
@@ -241,6 +242,18 @@ module.exports = class Group extends Helper {
       throw new Error('timestamp cannot be less than 0');
     }
 
+    if (!validator.isValidNumber(limit)) {
+      throw new Error('limit must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(limit)) {
+      throw new Error('limit cannot be less than or equal to 0');
+    }
+
+    if (limit < 5) {
+      throw new Error('limit cannot be less than 5');
+    } else if (limit > 100) {
+      throw new Error('limit cannot be larger than 100');
+    }
+
     const result = await this._websocket.emit(request.MESSAGE_GROUP_HISTORY_LIST,
       {
         headers: {
@@ -248,6 +261,7 @@ module.exports = class Group extends Helper {
         },
         body: {
           id: targetGroupId,
+          limit,
           chronological: false,
           timestampBegin: timestamp === 0,
           timestampEnd: timestamp === 0 ? undefined : timestamp

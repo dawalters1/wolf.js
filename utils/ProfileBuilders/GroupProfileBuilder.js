@@ -16,6 +16,12 @@ module.exports = class GroupProfileBuilder {
     this._entryLevel = 0;
     this._language = constants.language.NOT_SPECIFIED;
     this._category = constants.category.NOT_SPECIFIED;
+
+    this._audioConfig = {
+      minRepLevel: 0,
+      enabled: false,
+      stageId: null
+    };
   }
 
   _create () {
@@ -35,6 +41,8 @@ module.exports = class GroupProfileBuilder {
     this._entryLevel = group.extended.entryLevel;
     this._language = group.extended.language;
     this._category = group.extended.category;
+    this._audioConfig = group.audioConfig;
+
     this._isNew = false;
 
     return this;
@@ -132,6 +140,41 @@ module.exports = class GroupProfileBuilder {
     return this;
   }
 
+  setStageId (stageId) {
+    if (!validator.isValidNumber(stageId)) {
+      throw new Error('stageId must be a number');
+    } else if (validator.isLessThanZero(stageId)) {
+      throw new Error('stageId must be greater than zero');
+    }
+
+    // StageId 0 = Basic/No Theme
+    this._audioConfig.stageId = stageId === 0 ? null : stageId;
+
+    return this;
+  }
+
+  setStageState (isEnabled) {
+    if (!validator.isValidBoolean(isEnabled)) {
+      throw new Error('isEnabled is not a valid boolean');
+    }
+
+    this._audioConfig.enabled = isEnabled;
+
+    return this;
+  }
+
+  setStageLevel (level) {
+    if (!validator.isValidNumber(level)) {
+      throw new Error('level must be a number');
+    } else if (validator.isLessThanZero(level)) {
+      throw new Error('level must be greater than zero');
+    }
+
+    this._audioConfig.minRepLevel = level;
+
+    return this;
+  }
+
   async create () {
     return await (!this.isNew ? this.save() : this._doCorrectAction(request.GROUP_CREATE));
   }
@@ -141,7 +184,7 @@ module.exports = class GroupProfileBuilder {
   }
 
   async _doCorrectAction (command) {
-    return await this._api.websocket.emit(command,
+    const result = await this._api.websocket.emit(command,
       {
         id: this._id,
         name: this._name,
@@ -157,5 +200,11 @@ module.exports = class GroupProfileBuilder {
         description: this._tagLine,
         peekable: this._peekable
       });
+
+    if (result.success) {
+      await this._api.websocket.emit(request.GROUP_AUDIO_UPDATE, this._audioConfig);
+    }
+
+    return result;
   }
 };
