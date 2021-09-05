@@ -98,8 +98,9 @@ module.exports = class Subscriber extends Helper {
    * Get chat history for a subscriber
    * @param {Number} subscriberId - The id of the subscriber
    * @param {Number} timestamp - The last timestamp in the subscriber (0 for last messages sent)
+   * @param {Number} limit - How many messages the request should return (Min 5, Max 100)
    */
-  async getHistory (subscriberId, timestamp = 0) {
+  async getHistory (subscriberId, timestamp = 0, limit = 5) {
     if (!validator.isValidNumber(subscriberId)) {
       throw new Error('subscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
@@ -112,6 +113,18 @@ module.exports = class Subscriber extends Helper {
       throw new Error('timestamp cannot be less than 0');
     }
 
+    if (!validator.isValidNumber(limit)) {
+      throw new Error('limit must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(limit)) {
+      throw new Error('limit cannot be less than or equal to 0');
+    }
+
+    if (limit < 5) {
+      throw new Error('limit cannot be less than 5');
+    } else if (limit > 100) {
+      throw new Error('limit cannot be larger than 100');
+    }
+
     const result = await this._websocket.emit(request.MESSAGE_PRIVATE_HISTORY_LIST,
       {
         headers: {
@@ -119,6 +132,7 @@ module.exports = class Subscriber extends Helper {
         },
         body: {
           id: subscriberId,
+          limit,
           timestampEnd: timestamp === 0 ? null : timestamp
         }
       });

@@ -18,6 +18,8 @@ module.exports = class Stage extends Helper {
 
     this._stages = [];
 
+    this._groupStages = {};
+
     this._slots = {};
 
     this._clients = [];
@@ -205,6 +207,28 @@ module.exports = class Stage extends Helper {
     }
 
     return this._stages.stageCache || [];
+  }
+
+  /**
+  * Get list of stages available for a specific group
+  * @param {Number} targetGroupId - The id of the group
+  * @param {Boolean} requestNew - Request new data from the server
+  */
+  async getStagesForGroup (targetGroupId, requestNew = false) {
+    if (!requestNew && this._groupStages[targetGroupId]) {
+      return this._groupStages[targetGroupId];
+    }
+
+    const result = await this._websocket.emit(request.STAGE_GROUP_ACTIVE_LIST,
+      {
+        id: targetGroupId
+      });
+
+    if (result.success) {
+      this._groupStages[targetGroupId] = result.body;
+    }
+
+    return this._groupStages[targetGroupId] || [];
   }
 
   /**

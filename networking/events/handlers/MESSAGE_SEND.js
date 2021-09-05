@@ -11,13 +11,22 @@ const secrets = {
 
   '>reveal your secrets': [
     "I'd love to stay and chat, but I'm lying.\nWOLF.js: {version}",
-    'Hey, I found your nose... It was in my Business\nWOLF.js: {version}',
-    'In my defense, I was left unsupervised\nWOLF.js: {version}',
-    'I am a bot using\nWOLF.js: {version}',
-    'Maybe you should get your own life and stop interfering in mine\nWOLF.js: {version}',
+    'Hey, I found your nose... It was in my Business.\nWOLF.js: {version}',
+    'In my defense, I was left unsupervised.\nWOLF.js: {version}',
+    'I am a bot using.\nWOLF.js: {version}',
+    'Maybe you should get your own life and stop interfering in mine.\nWOLF.js: {version}',
     'Nothing will bring you greater peace than minding your own business.\nWOLF.js: {version}',
-    'I am who I am, your approval isnt needed\nWOLF.js: {version}'
+    'I am who I am, your approval isnt needed.\nWOLF.js: {version}',
+    'Where\'s your off button?\nWOLF.js: {version}',
+    'Oops! I forgot the world revolves around you, how silly of me.\nWOLF.js: {version}',
+    'If you listen closely you can hear me not caring.\nWOLF.js: {version}',
+    'I smile, just not when you are around.\nWOLF.js: {version}',
+    'If you have a problem with me, tell me, not anyone else.\nWOLF.js: {version}',
+    'Sorry, sarcasm falls out of my mouth like stupidity falls out of yours.\nWOLF.js: {version}',
+    'You\'re so fake, Barbie is jelous.\nWOLF.js: {version}',
+    'I love the sound you make when you shut up.\nWOLF.js: {version}'
   ],
+
   '>sırlarını ifşala': [
     'Kalıp sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWOLF.js: {version}',
     'Ayy burnunu buldum… Benim işlerimin arasından çıktı.\nWOLF.js: {version}',
@@ -31,7 +40,13 @@ const secrets = {
     'لنكن منصفين مصممي تركني من غير مراقبة\nWOLF.js: {version}',
     'انا بوت استخدم\nWOLF.js: {version}',
     'مارأيك بالاهتمام بحياتك بدلا من الاهتمام بحياة الغير\nWOLF.js: {version}',
-    'لا يوجد شيء يجلب لك السلام إلا الاهتمام باشغالك\nWOLF.js: {version}'
+    'لا يوجد شيء يجلب لك السلام إلا الاهتمام باشغالك\nWOLF.js: {version}',
+    'وين زر ايقاف التشغيل الخاص بك؟🤔\nWOLF.js: {version}',
+    'اوووه، نسيت ان العالم يدور حولك 😏.\nWOLF.js: {version}',
+    'لو تركز قليلاً لوجدت اني لا أهتم 🙃.\nWOLF.js: {version}',
+    'انا سعيد. ولكن بدون تواجدك حولي\nWOLF.js: {version}',
+    'اذا كان هنالك مشكله بي. اعلمني انا وليس غيري\nWOLF.js: {version}',
+    'المعذره، السخريه على لساني دائماً، مثل ما الغباء على لسانك😏.\nWOLF.js {version}'
   ]
 
 };
