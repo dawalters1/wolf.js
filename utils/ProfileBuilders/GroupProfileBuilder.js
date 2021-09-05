@@ -17,7 +17,11 @@ module.exports = class GroupProfileBuilder {
     this._language = constants.language.NOT_SPECIFIED;
     this._category = constants.category.NOT_SPECIFIED;
 
-    this._audioConfig = undefined;
+    this._audioConfig = {
+      minRepLevel: 0,
+      enabled: false,
+      stageId: null
+    };
   }
 
   _create () {
