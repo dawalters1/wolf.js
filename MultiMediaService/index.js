@@ -87,7 +87,13 @@ module.exports = class MultiMediaServiceClient {
           let responseBody = '';
           response.on('data', function (chunk) { responseBody += chunk; });
 
-          response.on('end', function () { resolve(new Response(JSON.parse(responseBody))); });
+          response.on('end', function () {
+            try {
+              resolve(new Response(JSON.parse(responseBody)));
+            } catch (error) {
+              reject(responseBody);
+            }
+          });
         }, function (error) {
           reject(error);
         });
