@@ -66,7 +66,7 @@ module.exports = class MultiMediaServiceClient {
     new Signer(request, 'execute-api').addAuthorization(await this._credentials(retry), new Date());
   }
 
-  async _sendRequest (route, body) {
+  async _sendRequest (route, body, attempt = 1) {
     try {
       const data = JSON.stringify({ body });
 
@@ -101,7 +101,11 @@ module.exports = class MultiMediaServiceClient {
     } catch (error) {
       await this._credentials(true);
 
-      return await this._sendRequest(route, body);
+      if (attempt <= 3) {
+        return await this._sendRequest(route, body, attempt++);
+      }
+
+      throw error;
     }
   }
 
