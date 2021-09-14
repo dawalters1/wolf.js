@@ -43,9 +43,8 @@ module.exports = class MultiMediaServiceClient {
         this._api.getSecurityToken(true).then((cognito) => {
           AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
           AWS.config.credentials.refresh();
-          AWS.config.credentials.get(function () {
-            onCredentials(AWS.config.credentials);
-          });
+
+          return this._credentials();
         }).catch((error) => {
           console.log('Failed to retrieve AWS credentials: ', error);
 
@@ -53,18 +52,19 @@ module.exports = class MultiMediaServiceClient {
         });
       }
     });
+    try {
+      if (AWS.config.credentials.needsRefresh() || AWS.config.credentials.expired || AWS.config.credentials.accessKeyId === undefined || AWS.config.credentials.secretAccessKey === undefined || AWS.config.credentials.sessionToken === undefined) {
+        return await this._credentials(true);
+      }
+      this._creds = result;
 
-    if (AWS.config.credentials.needsRefresh() || AWS.config.credentials.expired || AWS.config.credentials.accessKeyId === undefined || AWS.config.credentials.secretAccessKey === undefined || AWS.config.credentials.sessionToken === undefined) {
+      return this._creds;
+    } catch (error) {
+      console.log('Failed to retrieve AWS credentials: ', error);
+
       return await this._credentials(true);
     }
-    this._creds = result;
-
-    return this._creds;
   };
-
-  async _sign (request, retry = false) {
-    new Signer(request, 'execute-api').addAuthorization(await this._credentials(retry), new Date());
-  }
 
   async _sendRequest (route, body, attempt = 1) {
     try {
