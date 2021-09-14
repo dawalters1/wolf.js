@@ -182,10 +182,9 @@ class WRTCWrapper {
       .on('error', (error) => {
         this._downloader.destroy();
 
-        if (this._ffmpeg === undefined) {
-          return;
+        if (!this._playing) {
+          return Promise.resolve();
         }
-
         this._em.emit(event.ERROR, { error });
       })
       .pipe()
