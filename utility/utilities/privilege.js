@@ -26,11 +26,13 @@ module.exports = class privilege extends BaseUtility {
     if (privs.length > 0) {
       for (const priv of privs) {
         if (!validator.isValidNumber(priv)) {
-          throw new Error('privilege must be a valid number');
+          throw new Error('privs must be a valid number');
         } else if (!Object.values(constants.privilege).includes(priv)) {
-          throw new Error('privilege is not valid');
+          throw new Error('privs is not valid');
         }
       }
+    } else {
+      throw new Error('privs cannot be any empty array');
     }
 
     const subscriber = await this._api.subscriber().getById(sourceSubscriberId);

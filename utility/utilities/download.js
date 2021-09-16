@@ -19,7 +19,7 @@ module.exports = class Download extends BaseUtility {
   }
 
   async file (url) {
-    if (typeof (arg) !== 'string') {
+    if (typeof (url) !== 'string') {
       throw new Error('argument must be a string');
     } else if (validator.isNullOrWhitespace(url)) {
       throw new Error('url cannot be null or empty');

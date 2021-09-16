@@ -10,6 +10,13 @@ const {
   v4: uuidv4
 } = require('uuid');
 
+const refresh = async (api) => {
+  const result = await api.getSecurityToken(true);
+
+  AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = result.token;
+  AWS.config.credentials.refresh();
+};
+
 module.exports = class MultiMediaServiceClient {
   constructor (api) {
     this._api = api;
@@ -26,45 +33,38 @@ module.exports = class MultiMediaServiceClient {
       });
     });
 
-    this._api.on.reconnected(async () => {
-      await this._credentials(true);
-    });
+    this._api.on.reconnected(async () => await refresh(this._api));
   }
 
-  async _credentials (requestNew = false) {
-    const result = await new Promise((resolve) => {
-      const onCredentials = (creds) => resolve(creds);
+  async _getCredentials (attempt = 1) {
+    try {
+      if (!(AWS.config.credentials.needsRefresh() ||
+      AWS.config.credentials.expired ||
+      AWS.config.credentials.accessKeyId === undefined ||
+      AWS.config.credentials.secretAccessKey === undefined ||
+      AWS.config.credentials.sessionToken === undefined)) {
+        await refresh(this._api);
+      }
 
-      if (!requestNew) {
+      return await new Promise((resolve) => {
+        const onCredentials = (credentials) => {
+          resolve(credentials);
+        };
+
         AWS.config.credentials.get(function () {
           onCredentials(AWS.config.credentials);
         });
-      } else {
-        this._api.getSecurityToken(true).then((cognito) => {
-          AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
-          AWS.config.credentials.refresh();
-
-          return this._credentials();
-        }).catch((error) => {
-          console.log('Failed to retrieve AWS credentials: ', error);
-
-          return this._credentials(true);
-        });
-      }
-    });
-    try {
-      if (AWS.config.credentials.needsRefresh() || AWS.config.credentials.expired || AWS.config.credentials.accessKeyId === undefined || AWS.config.credentials.secretAccessKey === undefined || AWS.config.credentials.sessionToken === undefined) {
-        return await this._credentials(true);
-      }
-      this._creds = result;
-
-      return this._creds;
+      });
     } catch (error) {
-      console.log('Failed to retrieve AWS credentials: ', error);
+      if (attempt === 3) {
+        throw error;
+      }
 
-      return await this._credentials(true);
-    }
-  };
+      console.log(`[MultiMediaService]: Failed to retrieve AWS credentials ${error.message}... retrying...`);
+
+      return this._getCredentials(attempt++);
+    };
+  }
 
   async _sendRequest (route, body, attempt = 1) {
     try {
@@ -80,7 +80,7 @@ module.exports = class MultiMediaServiceClient {
 
       awsRequest.body = data;
 
-      new Signer(awsRequest, 'execute-api').addAuthorization(await this._credentials(), new Date());
+      new Signer(awsRequest, 'execute-api').addAuthorization(await this._getCredentials(), new Date());
 
       return await new Promise((resolve, reject) => {
         this._client.handleRequest(awsRequest, null, function (response) {
@@ -99,13 +99,15 @@ module.exports = class MultiMediaServiceClient {
         });
       });
     } catch (error) {
-      await this._credentials(true);
-
-      if (attempt <= 3) {
-        return await this._sendRequest(route, body, attempt++);
+      if (attempt >= 3) {
+        throw error;
       }
 
-      throw error;
+      console.log(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient}, retrying...`);
+
+      await this._getCredentials(true);
+
+      return await this._sendRequest(route, body, attempt++);
     }
   }
 
@@ -128,10 +130,6 @@ module.exports = class MultiMediaServiceClient {
 
     if (!['image/jpeg', 'image/gif'].includes(mimeType)) {
       throw new Error('mimeType is unsupported');
-    }
-
-    if (mimeType === 'audio/x-m4a') {
-      mimeType = 'audio/m4a';
     }
 
     const body = {
