@@ -47,7 +47,8 @@ app:
   defaultLanguage: 'en'
   commandSettings:
     ignoreOfficialBots: true
-
+    ignoreUnofficialBots: false
+    
 ```
 ---
 #### Phrases - './phrases/en.json'
@@ -148,13 +149,10 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Known Issues
 
-- Occassional issue with MultiMedia service when sending Images - *Potentially addressed in 0.9.X +*
 - Voice Messages are unsupported (That or I am dumb 😊)
-- Stage Audio occasionally speeds up and slows down - Actively Investigating 
 
 ## Lacking Features
 
-- Discovery 2.0
 - Stage Volume Control 
 
 ## Contact
