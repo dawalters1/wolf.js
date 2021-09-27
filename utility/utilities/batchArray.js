@@ -26,6 +26,10 @@ module.exports = class BatchArray extends BaseUtility {
       throw new Error('length cannot be less than or equal to 0');
     }
 
+    if (array.length === 0) {
+      return array;
+    }
+
     return batch(array, length);
   }
 };

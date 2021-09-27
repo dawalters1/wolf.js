@@ -21,60 +21,47 @@ module.exports = class Subscriber extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getByIds (subscriberIds, requestNew = false) {
-    if (!validator.isValidArray(subscriberIds)) {
-      throw new Error('subscriberIds must be a valid array');
-    } else {
-      for (const subscriberId of subscriberIds) {
-        if (!validator.isValidNumber(subscriberId)) {
-          throw new Error('subscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new Error('subscriberId cannot be less than or equal to 0');
+    subscriberIds = [...new Set(Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds])];
+
+    for (const subscriberId of subscriberIds) {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
+    }
+
+    const subscribers = !requestNew ? this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id)) : [];
+
+    for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+      const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
+        headers: {
+          version: 4
+        },
+        body: {
+          idList: batchSubscriberIdList,
+          subscribe: true,
+          extended: true
         }
-      }
-    }
+      });
 
-    subscriberIds = [...new Set(subscriberIds)];
-
-    const subscribers = [];
-
-    if (!requestNew) {
-      const cached = this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id));
-      if (cached.length > 0) {
-        subscribers.push(...cached);
-      }
-    }
-
-    if (subscribers.length !== subscriberIds.length) {
-      for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
-        const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
-          headers: {
-            version: 4
-          },
-          body: {
-            idList: batchSubscriberIdList,
-            subscribe: true,
-            extended: true
+      if (result.success) {
+        for (const subscriber of Object.keys(result.body).map((subscriberId) => {
+          const value = new Response(result.body[subscriberId.toString()]);
+          if (value.success) {
+            value.body.exists = true;
+            value.body.language = toLanguageKey(value.body.extended.language);
+            return value.body;
+          } else {
+            return {
+              id: subscriberId,
+              exists: false
+            };
           }
-        });
-
-        if (result.success) {
-          for (const subscriber of Object.keys(result.body).map((subscriberId) => {
-            const value = new Response(result.body[subscriberId.toString()]);
-            if (value.success) {
-              value.body.exists = true;
-              value.body.language = toLanguageKey(value.body.extended.language);
-              return value.body;
-            } else {
-              return {
-                id: subscriberId,
-                exists: false
-              };
-            }
-          })) {
-            subscribers.push(this._process(subscriber));
-          }
-        } else { subscribers.push(batchSubscriberIdList.map((id) => ({ id: id, exists: false }))); }
-      }
+        })) {
+          subscribers.push(this._process(subscriber));
+        }
+      } else { subscribers.push(batchSubscriberIdList.map((id) => ({ id: id, exists: false }))); }
     }
     return subscribers;
   }

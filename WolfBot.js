@@ -37,65 +37,39 @@ const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProf
 
 const fileType = require('file-type');
 
-const validateConfig = (api, config) => {
-  if (!config) {
-    throw new Error('config cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
+const validateConfig = async (api, opts) => {
+  const _opts = Object.assign({}, opts);
 
-  if (!config.keyword) {
-    throw new Error('app must contain keyword\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (validator.isNullOrWhitespace(config.keyword)) {
-    throw new Error('keyword cannot be null or empty\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
+  _opts.keyword = validator.isNullOrWhitespace(_opts.keyword) ? 'default' : _opts.keyword;
 
-  if (!config.app) {
-    throw new Error('config must contain app\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
+  _opts.app = typeof (_opts.app) === 'object' ? _opts.app : {};
 
-  const app = config.app;
+  _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
-  if (!app.defaultLanguage) {
-    throw new Error('config must contain a defaultLanguage\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (validator.isNullOrWhitespace(app.defaultLanguage)) {
-    throw new Error('defaultLanguage must be a string\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
+  _opts.app.commandSettings = typeof (_opts.app.commandSettings) === 'object' ? _opts.app.commandSettings : {};
 
-  config.options = {
+  _opts.app.commandSettings.ignoreOfficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreOfficialBots) ? Boolean(_opts.app.commandSettings.ignoreOfficialBots) : false;
+
+  _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
+
+  api.options = {
+    keyword: _opts.keyword,
+    ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
+    ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots
   };
 
-  if (!app.commandSettings) {
-    throw new Error('app must contain commandSettings\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  const commandSettings = app.commandSettings;
-
-  if (!commandSettings.ignoreOfficialBots) {
-    throw new Error('commandSettings must contain ignoreOfficialBots\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  } else if (!validator.isValidBoolean(commandSettings.ignoreOfficialBots)) {
-    throw new Error('ignoreOfficialBots is not a valid boolean\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-  }
-
-  config.options.ignoreOfficialBots = commandSettings.ignoreOfficialBots;
-
-  if (app.defaultLanguage) {
-    config.options.defaultLanguage = app.defaultLanguage || 'en';
-  };
-
-  api.config = config;
+  api.config = _opts;
 };
 
 module.exports = class WolfBot {
   constructor () {
     const configPath = path.join(path.dirname(require.main.filename), '/config/');
 
-    if (fs.existsSync(configPath)) {
-      if (fs.existsSync(`${configPath}/default.yaml`)) {
-        validateConfig(this, yaml.parse(fs.readFileSync(`${configPath}/default.yaml`, 'utf-8')));
-      } else {
-        throw new Error('File default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
-      }
+    if (fs.existsSync(configPath) && fs.existsSync(`${configPath}/default.yaml`)) {
+      validateConfig(this, yaml.parse(fs.readFileSync(`${configPath}/default.yaml`, 'utf-8')));
     } else {
-      throw new Error('Folder config missing\nSee https://github.com/dawalters1/Bot-Template/tree/main/config');
+      validateConfig(this, {});
+      console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
     this._eventManager = new EventManager(this);
@@ -529,19 +503,19 @@ module.exports = class WolfBot {
    * @returns { identityId: String, token: String } Cognito Identity
    */
   async getSecurityToken (requestNew = false) {
-    if (this._cognito && !requestNew) {
-      return this._cognito;
+    if (this.cognito && !requestNew) {
+      return this.cognito;
     }
 
     const result = await this.websocket.emit(request.SECURITY_TOKEN_REFRESH);
 
     if (result.success) {
-      this._cognito = result.body;
+      this.cognito = result.body;
     } else {
       throw new Error(result.headers.message || 'Error occurred while requesting new security token');
     }
 
-    return this._cognito;
+    return this.cognito;
   }
 
   /**
