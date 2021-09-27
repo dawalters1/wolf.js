@@ -24,9 +24,9 @@ module.exports = class MultiMediaServiceClient {
 
     this._api.on.loginSuccess(() => {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityId: this._api._cognito.identity,
+        IdentityId: this._api.cognito.identity,
         Logins: {
-          'cognito-identity.amazonaws.com': this._api._cognito.token
+          'cognito-identity.amazonaws.com': this._api.cognito.token
         }
       }, {
         region: 'eu-west-1'
@@ -70,7 +70,7 @@ module.exports = class MultiMediaServiceClient {
     try {
       const data = JSON.stringify({ body });
 
-      const awsRequest = new AWS.HttpRequest(`${this._api._endpointConfig.mmsUploadEndpoint}${route}`, 'eu-west-1');
+      const awsRequest = new AWS.HttpRequest(`${this._api.endpointConfig.mmsUploadEndpoint}${route}`, 'eu-west-1');
       awsRequest.method = 'POST';
       awsRequest.headers = {
         'Content-Length': data.length,
