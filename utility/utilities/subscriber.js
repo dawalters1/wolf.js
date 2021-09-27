@@ -9,7 +9,8 @@ module.exports = class Subscriber extends BaseUtility {
   _func () {
     return {
       toDisplayName: (...args) => this.toDisplayName(...args),
-      trimAds: (...args) => this.trimAds(...args)
+      trimAds: (...args) => this.trimAds(...args),
+      hasCharm: (...args) => this.hasCharm(...args)
     };
   }
 
@@ -38,6 +39,12 @@ module.exports = class Subscriber extends BaseUtility {
   }
 
   trimAds (name) {
+    if (typeof (name) !== 'string') {
+      throw new Error('name must be a string');
+    } else if (validator.isNullOrWhitespace(name)) {
+      throw new Error('name cannot be null or empty');
+    }
+
     if (!name) {
       return name;
     }
@@ -54,5 +61,39 @@ module.exports = class Subscriber extends BaseUtility {
 
     // Loop check to prevent [[[]]]
     return this.trimAds(name);
+  }
+
+  async hasCharm (subscriberId, charmIds, requiresAll = false) {
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
+
+    charmIds = Array.isArray(charmIds) ? charmIds : [charmIds];
+
+    for (const charmId of charmIds) {
+      if (!validator.isValidNumber(charmId)) {
+        throw new Error('charmId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(charmId)) {
+        throw new Error('charmId cannot be less than or equal to 0');
+      }
+    }
+
+    const subscriber = await this._api.subscriber().getById(subscriberId);
+
+    if (!subscriber.exists) {
+      return false;
+    }
+
+    const summary = subscriber.charmSummary || ((await this._api.charm().getSubscriberSummary(subscriberId)).body || []).map((charm) => charm.charmId);
+
+    subscriber.charmIds = summary;
+
+    if (summary.length === 0) {
+      return false;
+    }
+
+    return requiresAll ? charmIds.every((id) => summary.includes(id)) : charmIds.some((id) => summary.includes(id));
   }
 };

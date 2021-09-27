@@ -45,9 +45,10 @@ module.exports = class Welcome extends BaseEvent {
           return;
         }
 
-        api._cognito = result.body.cognito;
+        api.cognito = result.body.cognito;
         api.currentSubscriber = result.body.subscriber;
-        api._endpointConfig = data.endpointConfig;
+        api.currentSubscriber.token = api.config._loginSettings.token;
+        api.endpointConfig = data.endpointConfig;
 
         api.on._emit(internal.LOGIN_SUCCESS, result.body.subscriber);
 
