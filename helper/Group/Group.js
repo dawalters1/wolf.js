@@ -38,65 +38,52 @@ module.exports = class Group extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getByIds (targetGroupIds, requestNew = false) {
-    if (!validator.isValidArray(targetGroupIds)) {
-      throw new Error('groupIds must be a valid array');
-    } else {
-      for (const targetGroupId of targetGroupIds) {
-        if (!validator.isValidNumber(targetGroupId)) {
-          throw new Error('targetGroupId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-          throw new Error('targetGroupId cannot be less than or equal to 0');
+    targetGroupIds = [...new Set(Array.isArray(targetGroupIds) ? targetGroupIds : [targetGroupIds])];
+
+    for (const targetGroupId of targetGroupIds) {
+      if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+    }
+
+    const groups = !requestNew ? this._groups.filter((group) => targetGroupIds.includes(group.id)) : [];
+
+    for (const batchTargetGroupIdList of this._api.utility().batchArray(targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId)), 50)) {
+      const result = await this._websocket.emit(request.GROUP_PROFILE, {
+        headers: {
+          version: 4
+        },
+        body: {
+          idList: batchTargetGroupIdList,
+          subscribe: true,
+          entities: ['base', 'extended', 'audioCounts', 'audioConfig']
         }
-      }
-    }
+      });
+      if (result.success) {
+        for (const group of Object.keys(result.body).map((targetGroupId) => {
+          const value = new Response(result.body[targetGroupId.toString()]);
+          if (value.success) {
+            const body = value.body;
+            const base = body.base;
+            base.extended = body.extended;
+            base.language = toLanguageKey(base.extended.language);
+            base.audioConfig = body.audioConfig;
+            base.audioCounts = body.audioCounts;
+            base.exists = true;
 
-    targetGroupIds = [...new Set(targetGroupIds)];
-
-    const groups = [];
-
-    if (!requestNew) {
-      const cached = this._groups.filter((group) => targetGroupIds.includes(group.id));
-      if (cached.length > 0) {
-        groups.push(...cached);
-      }
-    }
-
-    if (groups.length !== targetGroupIds.length) {
-      for (const batchTargetGroupIdList of this._api.utility().batchArray(targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId)), 50)) {
-        const result = await this._websocket.emit(request.GROUP_PROFILE, {
-          headers: {
-            version: 4
-          },
-          body: {
-            idList: batchTargetGroupIdList,
-            subscribe: true,
-            entities: ['base', 'extended', 'audioCounts', 'audioConfig']
+            return base;
+          } else {
+            return {
+              id: targetGroupId,
+              exists: false
+            };
           }
-        });
-        if (result.success) {
-          for (const group of Object.keys(result.body).map((targetGroupId) => {
-            const value = new Response(result.body[targetGroupId.toString()]);
-            if (value.success) {
-              const body = value.body;
-              const base = body.base;
-              base.extended = body.extended;
-              base.language = toLanguageKey(base.extended.language);
-              base.audioConfig = body.audioConfig;
-              base.audioCounts = body.audioCounts;
-              base.exists = true;
-
-              return base;
-            } else {
-              return {
-                id: targetGroupId,
-                exists: false
-              };
-            }
-          })) {
-            groups.push(this._process(group));
-          }
-        } else { groups.push(batchTargetGroupIdList.map((id) => ({ id: id, exists: false }))); }
-      }
+        })) {
+          groups.push(this._process(group));
+        }
+      } else { groups.push(batchTargetGroupIdList.map((id) => ({ id: id, exists: false }))); }
     }
 
     return groups;
