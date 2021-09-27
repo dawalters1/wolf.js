@@ -558,8 +558,6 @@ module.exports = class WolfBot {
     this._subscriber._clearCache();
     this._notification._clearCache();
     this._achievement._clearCache();
-    this._achievement.group()._clearCache();
-    this._achievement.subscriber()._clearCache();
     this.currentSubscriber = null;
     this._stage._clearCache();
     this._discovery._clearCache();
