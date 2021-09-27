@@ -161,5 +161,7 @@ module.exports = class Achievement extends Helper {
   _clearCache () {
     this._categories = {};
     this._achievements = {};
+    this._group()._clearCache();
+    this._subscriber()._clearCache();
   }
 };
