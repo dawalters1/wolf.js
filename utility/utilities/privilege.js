@@ -35,7 +35,16 @@ module.exports = class privilege extends BaseUtility {
       throw new Error('privs cannot be any empty array');
     }
 
-    const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
-    return privs.some((priv) => (subscriber.privileges & priv) === priv);
+    const groupMember = this._api.group().list().find((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.subscriberId === sourceSubscriberId));
+
+    let privileges = 0;
+
+    if (groupMember) {
+      privileges = groupMember.additionalInfo.privileges;
+    } else {
+      privileges = (await this._api.subscriber().getById(sourceSubscriberId)).privileges;
+    }
+
+    return privs.some((priv) => (privileges & priv) === priv);
   }
 };

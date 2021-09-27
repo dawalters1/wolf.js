@@ -95,11 +95,10 @@ module.exports = class MessageSend extends BaseEvent {
               if (message.sourceSubscriberId === this._api.currentSubscriber.id) {
                 group.capabilities = group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR;
                 group.inGroup = true;
-
-                this._api.on._emit(internal.JOINED_GROUP, group);
-              } else {
-                this._api.on._emit(event.GROUP_MEMBER_ADD, group, subscriber);
               }
+
+              this._api.on._emit(message.sourceSubscriberId === this._api.currentSubscriber.id ? internal.JOINED_GROUP : event.GROUP_MEMBER_ADD, group, subscriber);
+
               break;
             }
             // eslint-disable-next-line no-fallthrough
