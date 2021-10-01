@@ -14,7 +14,8 @@ module.exports = class String extends BaseUtility {
     return {
       replace: (...args) => this.replace(...args),
       isEqual: (...args) => this.isEqual(...args),
-      chunk: (...args) => this.chunk(...args)
+      chunk: (...args) => this.chunk(...args),
+      trimAds: (...args) => this.trimAds(...args)
     };
   }
 
@@ -62,51 +63,71 @@ module.exports = class String extends BaseUtility {
   }
 
   chunk (string, max = 1000, splitChar = '\n', joinChar = '\n') {
-    try {
-      if (typeof (string) !== 'string') {
-        throw new Error('string must be a string');
-      } else if (validator.isNullOrWhitespace(string)) {
-        throw new Error('string cannot be null or empty');
-      }
-
-      if (!validator.isValidNumber(max)) {
-        throw new Error('max must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(max)) {
-        throw new Error('max cannot be less than or equal to 0');
-      }
-
-      if (string.length <= max) {
-        return [string];
-      }
-
-      if (typeof (splitChar) !== 'string') {
-        throw new Error('splitChar must be a string');
-      }
-
-      if (typeof (joinChar) !== 'string') {
-        throw new Error('joinChar must be a string');
-      }
-
-      const lines = string.split(splitChar).filter(Boolean);
-
-      if (lines === 0) {
-        throw Error(`string is longer than ${max} characters and contains no ${splitChar} characters`);
-      }
-
-      return lines.reduce((result, value) => {
-        if (result.length > 0) {
-          if (result.slice(-1)[0].length + value.length <= max) {
-            result[result.length - 1] = `${result.slice(-1)[0]}${joinChar}${value}`;
-            return result;
-          }
-        }
-
-        result.push(value);
-        return result;
-      }, []);
-    } catch (error) {
-      error.method = `Utility/utilties/string/chunk(string = ${JSON.stringify(string)}, max = ${JSON.stringify(max)}, splitChar = ${JSON.stringify(splitChar)}, joinChar = ${JSON.stringify(joinChar)})`;
-      throw error;
+    if (typeof (string) !== 'string') {
+      throw new Error('string must be a string');
+    } else if (validator.isNullOrWhitespace(string)) {
+      throw new Error('string cannot be null or empty');
     }
+
+    if (!validator.isValidNumber(max)) {
+      throw new Error('max must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(max)) {
+      throw new Error('max cannot be less than or equal to 0');
+    }
+
+    if (string.length <= max) {
+      return [string];
+    }
+
+    if (typeof (splitChar) !== 'string') {
+      throw new Error('splitChar must be a string');
+    }
+
+    if (typeof (joinChar) !== 'string') {
+      throw new Error('joinChar must be a string');
+    }
+
+    const lines = string.split(splitChar).filter(Boolean);
+
+    if (lines === 0) {
+      throw Error(`string is longer than ${max} characters and contains no ${splitChar} characters`);
+    }
+
+    return lines.reduce((result, value) => {
+      if (result.length > 0) {
+        if (result.slice(-1)[0].length + value.length <= max) {
+          result[result.length - 1] = `${result.slice(-1)[0]}${joinChar}${value}`;
+          return result;
+        }
+      }
+
+      result.push(value);
+      return result;
+    }, []);
   };
+
+  trimAds (string) {
+    if (typeof (string) !== 'string') {
+      throw new Error('name must be a string');
+    } else if (validator.isNullOrWhitespace(string)) {
+      throw new Error('name cannot be null or empty');
+    }
+
+    if (!string) {
+      return string;
+    }
+
+    const matches = [...string.matchAll(/\[([^\][]*)]/g)];
+
+    if (matches.length === 0) {
+      return string;
+    }
+
+    for (const match of matches.reverse()) {
+      string = string.substring(0, match.index) + match[1] + string.substring(match.index + match[0].length);
+    }
+
+    // Loop check to prevent [[[]]]
+    return this.trimAds(string);
+  }
 };
