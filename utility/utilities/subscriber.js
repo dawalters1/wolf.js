@@ -39,28 +39,8 @@ module.exports = class Subscriber extends BaseUtility {
   }
 
   trimAds (name) {
-    if (typeof (name) !== 'string') {
-      throw new Error('name must be a string');
-    } else if (validator.isNullOrWhitespace(name)) {
-      throw new Error('name cannot be null or empty');
-    }
-
-    if (!name) {
-      return name;
-    }
-
-    const matches = [...name.matchAll(/\[([^\][]*)]/g)];
-
-    if (matches.length === 0) {
-      return name;
-    }
-
-    for (const match of matches.reverse()) {
-      name = name.substring(0, match.index) + match[1] + name.substring(match.index + match[0].length);
-    }
-
-    // Loop check to prevent [[[]]]
-    return this.trimAds(name);
+    console.warn('trimAds(name) is deprecated and will be removed in 1.0.0 use string().trimAds(name) instead');
+    return this._api.utility().string().trimAds(name);
   }
 
   async hasCharm (subscriberId, charmIds, requiresAll = false) {

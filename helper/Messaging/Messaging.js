@@ -72,7 +72,7 @@ module.exports = class Messaging extends Helper {
       flightId: uuidv4()
     };
 
-    const ads = [...content.matchAll(/\[(.*?)\]/g)] || [];
+    const ads = [...content.matchAll(/\[(.+?)\]/g)] || [];
 
     const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
 
