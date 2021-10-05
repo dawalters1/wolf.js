@@ -66,6 +66,10 @@ module.exports = class GroupMember extends BaseUtility {
       throw new Error('checkStaff must be a valid boolean');
     }
 
+    if (this._api.options.developerId === sourceSubscriberId) {
+      return true;
+    }
+
     if (checkStaff) {
       const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
 

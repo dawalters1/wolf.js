@@ -95,13 +95,13 @@ module.exports = class String extends BaseUtility {
 
     return lines.reduce((result, value) => {
       if (result.length > 0) {
-        if (result.slice(-1)[0].length + value.length <= max) {
+        if (result.slice(-1)[0].length + value.length + 1 <= max) {
           result[result.length - 1] = `${result.slice(-1)[0]}${joinChar}${value}`;
           return result;
         }
       }
 
-      result.push(value);
+      result.push(value.trim());
       return result;
     }, []);
   };
