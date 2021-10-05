@@ -44,6 +44,8 @@ const validateConfig = async (api, opts) => {
 
   _opts.app = typeof (_opts.app) === 'object' ? _opts.app : {};
 
+  _opts.app.developerId = typeof _opts.app.developerId === 'number' ? parseInt(_opts.app.developerId) : undefined;
+
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
   _opts.app.commandSettings = typeof (_opts.app.commandSettings) === 'object' ? _opts.app.commandSettings : {};
@@ -55,7 +57,8 @@ const validateConfig = async (api, opts) => {
   api.options = {
     keyword: _opts.keyword,
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
-    ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots
+    ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
+    developerId: _opts.app.developerId
   };
 
   api.config = _opts;

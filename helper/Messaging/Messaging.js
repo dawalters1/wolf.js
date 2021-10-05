@@ -24,6 +24,26 @@ module.exports = class Messaging extends Helper {
     this._subscriptionId = 1;
   }
 
+  _getDefaultOptions (opts) {
+    const _opts = Object.assign({}, opts);
+
+    _opts.chunkSize = typeof _opts.chunkSize === 'number' ? parseInt(_opts.chunkSize) : 1000;
+
+    _opts.chunk = typeof _opts.chunk === 'boolean' ? _opts.chunk : true;
+
+    _opts.includeEmbeds = typeof _opts.includeEmbeds === 'boolean' ? _opts.includeEmbeds : false;
+
+    if (_opts.chunkSize < 512) {
+      console.warn('[WARNING]: Message Helper - Minimum chunk size is 512');
+      _opts.chunkSize = 512;
+    } else if (_opts.chunkSize > 1000) {
+      console.warn('[WARNING]: Message Helper - Maximum chunk size is 1000');
+      _opts.chunkSize = 1000;
+    }
+
+    return _opts;
+  }
+
   async _messageGroupSubscribe () {
     return await this._websocket.emit(request.MESSAGE_GROUP_SUBSCRIBE, {
       headers: {
@@ -51,7 +71,7 @@ module.exports = class Messaging extends Helper {
     });
   }
 
-  async _sendMessage (targetType, targetId, content, includeEmbeds = false) {
+  async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
     if (['image/jpeg', 'image/gif'].includes(mimeType)) {
@@ -64,111 +84,137 @@ module.exports = class Messaging extends Helper {
       throw new Error('mimeType is unsupported');
     }
 
-    const body = {
-      recipient: targetId,
-      isGroup: targetType === targetTypes.GROUP,
-      mimeType,
-      data: Buffer.from(content, 'utf8'),
-      flightId: uuidv4()
-    };
+    const _opts = this._getDefaultOptions(opts);
 
-    const ads = [...content.matchAll(/\[(.+?)\]/g)] || [];
-
-    const links = [...content.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
-
-    if (links.length > 0 || ads.length > 0) {
-      body.metadata = {
-        formatting: {}
-      };
-
-      if (ads && ads.length > 0) {
-        body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
-          const ad = {
-            start: value.index,
-            end: value.index + value[0].length
-          };
-
-          const group = await this._api.group().getByName(value[1]);
-
-          if (group.exists) {
-            ad.groupId = group.id;
-          }
-
-          (await result).push(ad);
-
-          return result;
-        }, Promise.resolve([]));
-      }
-
-      if (links && links.length > 0) {
-        body.metadata.formatting.links = links.reduce((result, value) => {
-          const link = {
-            start: value.index,
-            end: value.index + value[0].length,
-            url: value[0]
-          };
-
-          result.push(link);
-
-          return result;
-        }, []);
-      }
-
-      if (includeEmbeds) {
-        const data = [];
-
-        if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
-          data.push(...body.metadata.formatting.groupLinks);
-        }
-
-        if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
-          data.push(...body.metadata.formatting.links);
-        }
-
-        const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
-          // Only 1 embed per message, else the server will throw an error.
-          if ((await result).length > 0) {
-            return result;
-          }
-
-          if (Reflect.has(item, 'url')) {
-            const metadata = await this.getLinkMetadata(item.url);
-
-            if (metadata.success && !metadata.body.isBlacklisted) {
-              (await result).push(
-                {
-                  type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
-                  url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
-                  title: metadata.body.title,
-                  body: metadata.body.description
-                });
-            }
-          } else if (Reflect.has(item, 'groupId')) {
-            (await result).push({
-              type: constants.embedType.GROUP_PREVIEW,
-              groupId: item.groupId
-            });
-          }
-
-          return result;
-        }, Promise.resolve([]));
-
-        if (embeds.length > 0) {
-          body.embeds = embeds;
-        }
-      }
+    if (!_opts.chunk && content.length > 1000) {
+      console.warn('[WARNING]: Message Helper - Maximum message length is 1,000');
     }
 
-    return await this._websocket.emit(request.MESSAGE_SEND, body);
+    let previewAdded = false;
+
+    const bodies = await this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ').reduce(async (result, value) => {
+      const body = {
+        recipient: targetId,
+        isGroup: targetType === targetTypes.GROUP,
+        mimeType,
+        data: Buffer.from(value, 'utf8'),
+        flightId: uuidv4()
+      };
+
+      const ads = [...value.matchAll(/\[(.+?)\]/g)] || [];
+
+      const links = [...value.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
+
+      if (links.length > 0 || ads.length > 0) {
+        body.metadata = {
+          formatting: {}
+        };
+
+        if (ads && ads.length > 0) {
+          body.metadata.formatting.groupLinks = await ads.reduce(async (result, value) => {
+            const ad = {
+              start: value.index,
+              end: value.index + value[0].length
+            };
+
+            const group = await this._api.group().getByName(value[1]);
+
+            if (group.exists) {
+              ad.groupId = group.id;
+            }
+
+            (await result).push(ad);
+
+            return result;
+          }, Promise.resolve([]));
+        }
+
+        if (links && links.length > 0) {
+          body.metadata.formatting.links = links.reduce((result, value) => {
+            const link = {
+              start: value.index,
+              end: value.index + value[0].length,
+              url: value[0]
+            };
+
+            result.push(link);
+
+            return result;
+          }, []);
+        }
+
+        if (!previewAdded && _opts.includeEmbeds) {
+          const data = []; ;
+
+          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
+            data.push(...body.metadata.formatting.groupLinks);
+          }
+
+          if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
+            data.push(...body.metadata.formatting.links);
+          }
+
+          const embeds = await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+          // Only 1 embed per message, else the server will throw an error.
+            if ((await result).length > 0) {
+              return result;
+            }
+
+            if (Reflect.has(item, 'url')) {
+              const metadata = await this.getLinkMetadata(item.url);
+
+              if (metadata.success && !metadata.body.isBlacklisted) {
+                (await result).push(
+                  {
+                    type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,
+                    url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
+                    title: metadata.body.title,
+                    body: metadata.body.description
+                  });
+              }
+            } else if (Reflect.has(item, 'groupId')) {
+              (await result).push({
+                type: constants.embedType.GROUP_PREVIEW,
+                groupId: item.groupId
+              });
+            }
+
+            return result;
+          }, Promise.resolve([]));
+
+          if (embeds.length > 0) {
+            body.embeds = embeds;
+            previewAdded = true;
+          }
+        }
+      }
+
+      (await result).push(body);
+
+      return result;
+    }, Promise.resolve([]));
+
+    const responses = [];
+
+    for (const body of bodies) {
+      responses.push(await this._websocket.emit(request.MESSAGE_SEND, body));
+    };
+
+    return responses.length > 1
+      ? {
+          code: 207,
+          body: responses
+        }
+      : responses[0];
   }
 
   /**
    * Send a message in a group
    * @param {Number} targetGroupId - The id of the group
    * @param {String} content - The message to send
-   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   * @param {{chunk: true chunkSize: 1000 includeEmbeds: false}} opts - Message sending options
    */
-  async sendGroupMessage (targetGroupId, content, includeEmbeds = false) {
+  async sendGroupMessage (targetGroupId, content, opts) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
@@ -179,20 +225,16 @@ module.exports = class Messaging extends Helper {
       throw new Error('content cannot null or empty');
     }
 
-    if (!validator.isValidBoolean(includeEmbeds)) {
-      throw new Error('includeEmbeds must be a boolean');
-    }
-
-    return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, includeEmbeds);
+    return await this._sendMessage(targetTypes.GROUP, targetGroupId, content, opts);
   }
 
   /**
    * Send a message to a subscriber
    * @param {Number} targetSubscriberId - The id of the subscriber
    * @param {String} content - The message to send
-   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   * @param {{chunk: true chunkSize: 1000 includeEmbeds: false}} opts - Message sending options
    */
-  async sendPrivateMessage (targetSubscriberId, content, includeEmbeds = false) {
+  async sendPrivateMessage (targetSubscriberId, content, opts) {
     if (!validator.isValidNumber(targetSubscriberId)) {
       throw new Error('targetSubscriberId must be a valid number');
     } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
@@ -203,11 +245,7 @@ module.exports = class Messaging extends Helper {
       throw new Error('content cannot null or empty');
     }
 
-    if (!validator.isValidBoolean(includeEmbeds)) {
-      throw new Error('includeEmbeds must be a boolean');
-    }
-
-    return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, includeEmbeds);
+    return await this._sendMessage(targetTypes.PRIVATE, targetSubscriberId, content, opts);
   }
 
   /**
@@ -215,17 +253,17 @@ module.exports = class Messaging extends Helper {
    * @param {Object} commandOrMessage - The command or message to use
    * @param {Number} targetSubscriberId - The id of the subscriber
    * @param {String} content - The message to send
-   * @param {Boolean} includeEmbeds - Show V10.9 embeds for links or ads
+   * @param {{chunk: true chunkSize: 1000 includeEmbeds: false}} opts - Message sending options
    */
-  async sendMessage (commandOrMessage, content, includeEmbeds = false) {
+  async sendMessage (commandOrMessage, content, opts) {
     if (typeof (commandOrMessage) !== 'object') {
       throw new Error('command must be an object');
     }
 
     if (commandOrMessage.isGroup) {
-      return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, includeEmbeds);
+      return await this.sendGroupMessage(commandOrMessage.targetGroupId, content, opts);
     }
-    return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, includeEmbeds);
+    return await this.sendPrivateMessage(commandOrMessage.sourceSubscriberId, content, opts);
   }
 
   async acceptPrivateMessageRequest (subscriberId) {

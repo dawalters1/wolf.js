@@ -127,7 +127,7 @@ module.exports = class Group extends Helper {
         version: 4
       },
       body: {
-        name: name,
+        name: name.toLowerCase(),
         subscribe: true,
         entities: ['base', 'extended', 'audioCounts', 'audioConfig']
       }
