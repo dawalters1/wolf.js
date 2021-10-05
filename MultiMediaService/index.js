@@ -22,7 +22,7 @@ module.exports = class MultiMediaServiceClient {
     this._api = api;
     this._client = new AWS.HttpClient();
 
-    this._api.on.loginSuccess(() => {
+    this._api.on.loginSuccess(async () => {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         IdentityId: this._api.cognito.identity,
         Logins: {
@@ -31,6 +31,8 @@ module.exports = class MultiMediaServiceClient {
       }, {
         region: 'eu-west-1'
       });
+
+      this._getCredentials();
     });
 
     this._api.on.reconnected(async () => await refresh(this._api));
@@ -38,11 +40,11 @@ module.exports = class MultiMediaServiceClient {
 
   async _getCredentials (attempt = 1) {
     try {
-      if (!(AWS.config.credentials.needsRefresh() ||
+      if (AWS.config.credentials.needsRefresh() ||
       AWS.config.credentials.expired ||
       AWS.config.credentials.accessKeyId === undefined ||
       AWS.config.credentials.secretAccessKey === undefined ||
-      AWS.config.credentials.sessionToken === undefined)) {
+      AWS.config.credentials.sessionToken === undefined) {
         await refresh(this._api);
       }
 
@@ -62,7 +64,7 @@ module.exports = class MultiMediaServiceClient {
 
       console.log(`[MultiMediaService]: Failed to retrieve AWS credentials ${error.message}... retrying...`);
 
-      return this._getCredentials(attempt++);
+      return this._getCredentials(attempt + 1);
     };
   }
 
@@ -107,7 +109,7 @@ module.exports = class MultiMediaServiceClient {
 
       await this._getCredentials(true);
 
-      return await this._sendRequest(route, body, attempt++);
+      return await this._sendRequest(route, body, attempt + 1);
     }
   }
 

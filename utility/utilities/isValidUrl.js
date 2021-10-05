@@ -33,8 +33,7 @@ module.exports = class IsValidUrl extends BaseUtility {
 
       if (data.host.includes('.')) {
         const tld = data.host.split('.').pop();
-
-        if (!validator.isValidNumber(tld) || tld.length < 2) {
+        if (validator.isValidNumber(tld) || tld.length < 2) {
           return false;
         }
 
