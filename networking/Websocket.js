@@ -9,6 +9,9 @@ const ignoreEvents = [
   'group member update'
 ];
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Websocket {
   constructor (api) {
     this._api = api;

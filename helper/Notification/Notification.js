@@ -1,16 +1,21 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 const internal = require('../../constants/internal');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Notification extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
     super(api);
 
     this._notifications = {};
+
+    this._subscriptions = {};
   }
 
   /**
@@ -58,16 +63,6 @@ module.exports = class Notification extends Helper {
   /**
    * Subscibe to notificiations (will be checked every 10 minutes)
    * @param {Number} language - The language of the notifications
-   * @deprecated Will be removed in 1.0.0 use subscribe(language) instead
-   */
-  async subscribeToNotifications (language = constants.language.ENGLISH) {
-    console.warn('subscribeToNotifications(language) is deprecated and will be removed in 1.0.0 use subscribe(language) instead');
-    return await this.subscribe(language);
-  }
-
-  /**
-   * Subscibe to notificiations (will be checked every 10 minutes)
-   * @param {Number} language - The language of the notifications
    * @returns
    */
   async subscribe (language = constants.language.ENGLISH) {
@@ -77,25 +72,22 @@ module.exports = class Notification extends Helper {
       throw new Error('language is not valid');
     }
 
-    if (this._subscriptionInterval !== undefined) {
-      if (this._subscriptionLanguage === language) {
-        throw new Error('already subscribed to notifications');
-      } else {
-        this._subscriptionLanguage = language;
-        return Promise.resolve();
-      }
+    if (this._subscriptions[language] !== undefined) {
+      throw new Error(`already subscribed to ${language} notifications`);
     }
 
-    this._subscriptionLanguage = language;
-
-    this._subscriptionInterval = setInterval(async () => {
+    this._subscriptions[language] = setInterval(async () => {
       const cached = this._notifications[language] || [];
-      const newData = await this.list(this._subscriptionLanguage, true);
+      const newData = await this.list(language, true);
 
       if (newData.length > 0) {
-        for (const item of newData) {
-          if (!cached.find((notification) => notification.id === item.id)) {
-            this._api.on._emit(internal.NOTIFICATION_RECEIVED, item);
+        for (const notification of newData) {
+          if (!cached.find((notif) => notif.id === notification.id)) {
+            this._api.on._emit(internal.NOTIFICATION_RECEIVED,
+              {
+                language,
+                notification
+              });
           }
         }
       }
@@ -105,8 +97,10 @@ module.exports = class Notification extends Helper {
   _clearCache () {
     this._notifications = {};
 
-    if (this._subscriptionInterval) {
-      clearInterval(this._subscriptionInterval);
+    for (const language of Object.keys(this._subscriptions)) {
+      clearInterval(this._subscriptions[language]);
     }
+
+    this._subscriptions = {};
   }
 };

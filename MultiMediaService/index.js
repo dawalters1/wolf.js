@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const Signer = AWS.Signers.V4;
 const Response = require('../networking/Response');
 
-const validator = require('../utils/validator');
+const validator = require('../validator');
 
 const imageSize = require('image-size');
 
@@ -17,6 +17,9 @@ const refresh = async (api) => {
   AWS.config.credentials.refresh();
 };
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class MultiMediaServiceClient {
   constructor (api) {
     this._api = api;

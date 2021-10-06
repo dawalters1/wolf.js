@@ -1,6 +1,9 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Banned extends Helper {
   constructor (api) {
     super(api);

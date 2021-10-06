@@ -1,11 +1,14 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');
 const fileType = require('file-type');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Event extends Helper {
   constructor (api) {
     super(api);
@@ -228,17 +231,6 @@ module.exports = class Event extends Helper {
     }
 
     return result;
-  }
-
-  /**
-   * Update an event thumbnail
-   * @param {Number} eventId - The id of the event
-   * @param {Buffer} thumbnail - The thumbnail for the event
-   * @deprecated Will be removed in 1.0.0 use updateEventThumbnail(eventId, thumbnail) instead
-   */
-  async updateEventImage (eventId, thumbnail) {
-    console.warn('updateEventImage(eventId, thumbnail) is deprecated and will be removed in 1.0.0 use updateEventThumbnail(eventId, thumbnail) instead');
-    return this.updateEventThumbnail(eventId, thumbnail);
   }
 
   /**

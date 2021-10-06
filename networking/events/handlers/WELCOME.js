@@ -7,12 +7,11 @@ const request = require('../../../constants/request');
 
 const { deviceType, loginType } = require('@dawalters1/constants');
 
-const toDeviceTypeId = (dev) => {
-  const devices = Object.entries(deviceType);
+const toDeviceTypeId = (dev) => Object.entries(deviceType).find((device) => device[0].toLowerCase() === dev.toLowerCase())[1];
 
-  return devices.find((device) => device[0].toLowerCase() === dev.toLowerCase())[1];
-};
-
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Welcome extends BaseEvent {
   async process (data) {
     this._api.on._emit(this._command, data);

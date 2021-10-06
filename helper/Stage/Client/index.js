@@ -23,6 +23,9 @@ const delay = async (duration) => new Promise(resolve => {
   setTimeout(resolve, duration);
 });
 
+/**
+ * {@hideconstructor}
+ */
 class WRTCWrapper {
   constructor () {
     this._em = new EventEmitter();

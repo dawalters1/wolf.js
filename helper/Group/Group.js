@@ -1,15 +1,18 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const Response = require('../../networking/Response');
-const GroupProfileBuilder = require('../../utils/ProfileBuilders/GroupProfileBuilder');
+const GroupProfileBuilder = require('./GroupProfileBuilder');
 
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 const fileType = require('file-type');
 
-const toLanguageKey = require('../../utils/toLanguageKey');
+const toLanguageKey = require('../../internalUtils/toLanguageKey');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Group extends Helper {
   constructor (api) {
     super(api);
@@ -334,18 +337,6 @@ module.exports = class Group extends Helper {
    */
   async updateAvatar (targetGroupId, avatar) {
     return await this._api._mediaService().uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
-  }
-
-  /**
-   * Update a group subscribers role - Use @dawalters1/constants for capability
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Number} subscriberId - The id of the subscriber to update
-   * @param {Number} capability - The new role for the subscriber
-   * @deprecated Will be removed in 1.0.0 use updateSubscriber(targetGroupId, subscriberId, capability) instead
-   */
-  async updateGroupSubscriber (targetGroupId, subscriberId, capability) {
-    console.warn('updateGroupSubscriber(targetGroupId, subscriberId, capability) is deprecated and will be removed in 1.0.0 use updateSubscriber(targetGroupId, subscriberId, capability) instead');
-    return await this.updateSubscriber(targetGroupId, subscriberId, capability);
   }
 
   /**

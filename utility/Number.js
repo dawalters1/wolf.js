@@ -1,19 +1,12 @@
-const BaseUtility = require('../BaseUtility');
-
-module.exports = class Number extends BaseUtility {
+class Number {
   constructor (api) {
-    super(api, 'number');
-  }
-
-  _func () {
-    return {
-      toEnglishNumbers: (...args) => this.toEnglishNumbers(...args),
-      toArabicNumbers: (...args) => this.toArabicNumbers(...args),
-      addCommas: (...args) => this.addCommas(...args)
-    };
+    this._api = api;
   }
 
   toEnglishNumbers (arg) {
+    if (!arg) {
+      throw new Error('arg cannot be undefined');
+    }
     // convert persian digits [۰۱۲۳۴۵۶۷۸۹]
     let e = '۰'.charCodeAt(0);
     arg = arg.replace(/[۰-۹]/g, function (t) {
@@ -29,6 +22,9 @@ module.exports = class Number extends BaseUtility {
   }
 
   toArabicNumbers (arg) {
+    if (!arg) {
+      throw new Error('arg cannot be undefined');
+    }
     const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
     return arg.replace(/[0-9]/g, function (w) {
       return arabicNumbers[+w];
@@ -36,8 +32,13 @@ module.exports = class Number extends BaseUtility {
   }
 
   addCommas (arg) {
+    if (!arg) {
+      throw new Error('arg cannot be undefined');
+    }
     const args = arg.toString().split('.');
 
     return `${args[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}${args[1] ? args[1] : ''}`;
   }
-};
+}
+
+module.exports = Number;
