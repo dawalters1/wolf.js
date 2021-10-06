@@ -2,8 +2,11 @@ const constants = require('@dawalters1/constants');
 const { request } = require('../../constants');
 const Helper = require('../Helper');
 
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Discovery extends Helper {
   constructor (api) {
     super(api);

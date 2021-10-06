@@ -1,24 +1,10 @@
-const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
 
-const { capability, privilege, adminAction } = require('@dawalters1/constants');
+const { capability, privilege } = require('@dawalters1/constants');
 
-module.exports = class GroupMember extends BaseUtility {
+class GroupMember {
   constructor (api) {
-    super(api, 'groupMember');
-  }
-
-  _func () {
-    return {
-      get: (...args) => this.get(...args),
-      admin: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.ADMIN),
-      mod: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.MOD),
-      reset: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.REGULAR),
-      kick: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
-      ban: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
-
-      checkPermissions: (...args) => this.checkPermissions(...args)
-    };
+    this._api = api;
   }
 
   async get (targetGroupId, sourceSubscriberId) {
@@ -111,4 +97,6 @@ module.exports = class GroupMember extends BaseUtility {
         return true;
     }
   }
-};
+}
+
+module.exports = GroupMember;

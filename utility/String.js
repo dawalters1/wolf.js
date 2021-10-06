@@ -1,22 +1,12 @@
-const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
 
 function escapeRegExp (string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-module.exports = class String extends BaseUtility {
+class String {
   constructor (api) {
-    super(api, 'string');
-  }
-
-  _func () {
-    return {
-      replace: (...args) => this.replace(...args),
-      isEqual: (...args) => this.isEqual(...args),
-      chunk: (...args) => this.chunk(...args),
-      trimAds: (...args) => this.trimAds(...args)
-    };
+    this._api = api;
   }
 
   replace (string, replacements) {
@@ -130,4 +120,6 @@ module.exports = class String extends BaseUtility {
     // Loop check to prevent [[[]]]
     return this.trimAds(string);
   }
-};
+}
+
+module.exports = String;

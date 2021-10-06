@@ -1,18 +1,9 @@
-
-const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
-
+const validator = require('../validator');
 const constants = require('@dawalters1/constants');
 
-module.exports = class Achievement extends BaseUtility {
+class Achievement {
   constructor (api) {
-    super(api, 'achievement');
-  }
-
-  _func () {
-    return {
-      mapToCategories: (...args) => this.mapToCategories(...args)
-    };
+    this._api = api;
   }
 
   async mapToCategories (achievements, language) {
@@ -68,4 +59,6 @@ module.exports = class Achievement extends BaseUtility {
       return result;
     }, []);
   }
-};
+}
+
+module.exports = Achievement;

@@ -1,17 +1,8 @@
-const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
 
-module.exports = class Subscriber extends BaseUtility {
+class Subscriber {
   constructor (api) {
-    super(api, 'subscriber');
-  }
-
-  _func () {
-    return {
-      toDisplayName: (...args) => this.toDisplayName(...args),
-      trimAds: (...args) => this.trimAds(...args),
-      hasCharm: (...args) => this.hasCharm(...args)
-    };
+    this._api = api;
   }
 
   toDisplayName (subscriber, trimAds = true, excludeId = false) {
@@ -36,11 +27,6 @@ module.exports = class Subscriber extends BaseUtility {
     }
 
     return `${trimAds ? this.trimAds(subscriber.nickname) : subscriber.nickname}${excludeId ? '' : ` (${subscriber.id})`}`;
-  }
-
-  trimAds (name) {
-    console.warn('trimAds(name) is deprecated and will be removed in 1.0.0 use string().trimAds(name) instead');
-    return this._api.utility().string().trimAds(name);
   }
 
   async hasCharm (subscriberId, charmIds, requiresAll = false) {
@@ -76,4 +62,6 @@ module.exports = class Subscriber extends BaseUtility {
 
     return requiresAll ? charmIds.every((id) => summary.includes(id)) : charmIds.some((id) => summary.includes(id));
   }
-};
+}
+
+module.exports = Subscriber;

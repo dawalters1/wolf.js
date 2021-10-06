@@ -3,8 +3,8 @@ const internal = require('../../../constants/internal');
 const event = require('../../../constants/event');
 
 const { messageType, capability, privilege } = require('@dawalters1/constants');
-const toAdminActionFromString = require('../../../utils/toAdminActionFromString');
-const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
+const toAdminActionFromString = require('../../../internalUtils/toAdminActionFromString');
+const toGroupMemberCapability = require('../../../internalUtils/toGroupMemberCapability');
 const { version } = require('../../../package.json');
 
 const secrets = {
@@ -51,6 +51,9 @@ const secrets = {
 
 };
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class MessageSend extends BaseEvent {
   async process (data) {
     const message = {

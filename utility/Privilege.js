@@ -1,17 +1,9 @@
-const BaseUtility = require('../BaseUtility');
 const validator = require('../../utils/validator');
-
 const constants = require('@dawalters1/constants');
 
-module.exports = class privilege extends BaseUtility {
+class Privilege {
   constructor (api) {
-    super(api, 'privilege');
-  }
-
-  _func () {
-    return {
-      has: (...args) => this.has(...args)
-    };
+    this._api = api;
   }
 
   async has (sourceSubscriberId, privs) {
@@ -48,4 +40,7 @@ module.exports = class privilege extends BaseUtility {
 
     return privs.some((priv) => (privileges & priv) === priv);
   }
-};
+}
+
+module.exports = Privilege
+;

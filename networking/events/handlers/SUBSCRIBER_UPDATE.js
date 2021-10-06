@@ -1,5 +1,8 @@
 const BaseEvent = require('../BaseEvent');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class SubscriberUpdate extends BaseEvent {
   async process (data) {
     const existing = await this._api.subscriber()._subscribers.find((subscriber) => subscriber.id === data.id);

@@ -1,5 +1,8 @@
 const BaseEvent = require('../BaseEvent');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class PresenceUpdate extends BaseEvent {
   async process (data) {
     const groups = await this._api.group()._getJoinedGroups();

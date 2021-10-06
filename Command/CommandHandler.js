@@ -2,6 +2,9 @@
 const { privilege, messageType } = require('@dawalters1/constants');
 const Command = require('./Command');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class CommandHandler {
   constructor (api) {
     this._api = api;
@@ -9,7 +12,7 @@ module.exports = class CommandHandler {
 
     this._api.on.privateMessage(async message => {
       try {
-        await this.processMessage(message);
+        await this._processMessage(message);
       } catch (error) {
         error.message = `Error handling Private Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
         throw error;
@@ -18,7 +21,7 @@ module.exports = class CommandHandler {
 
     this._api.on.groupMessage(async message => {
       try {
-        await this.processMessage(message);
+        await this._processMessage(message);
       } catch (error) {
         error.message = `Error handling Group Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
         throw error;
@@ -47,7 +50,7 @@ module.exports = class CommandHandler {
     this._commands = commands;
   }
 
-  async processMessage (message) {
+  async _processMessage (message) {
     if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || this._api.banned().isBanned(message.sourceSubscriberId)) {
       return Promise.resolve();
     }

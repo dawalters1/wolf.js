@@ -1,5 +1,8 @@
 const BaseEvent = require('../BaseEvent');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class GroupAudioUpdate extends BaseEvent {
   async process (data) {
     const existing = await this._api.group()._groups.find((group) => group.id === data.id);

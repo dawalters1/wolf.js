@@ -1,5 +1,5 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const fileType = require('file-type');
 const { v4: uuidv4 } = require('uuid');
@@ -14,6 +14,9 @@ const targetTypes = {
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Messaging extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
@@ -388,19 +391,6 @@ module.exports = class Messaging extends Helper {
   }
 
   /**
-   * Get information about a url
-   * @param {String} link
-   * @deprecated Will be removed in 1.0.0 use api/bot.getLinkMeta(link) instead
-   */
-  async getLinkMetadata (link) {
-    if (validator.isNullOrWhitespace(link)) {
-      throw new Error('link cannot be null or empty');
-    }
-
-    return await this._websocket.emit(request.METADATA_URL, { url: link });
-  }
-
-  /**
    * Manually subscribe to a specific message
    * @param {Predicate} predicate - The predicate the message should match
    * @param {Number} timeout - How long the subscription should wait before timing out
@@ -445,7 +435,8 @@ module.exports = class Messaging extends Helper {
    */
   async subscribeToNextGroupMessage (targetGroupId, timeout = Infinity) {
     return await this.subscribeToNextMessage((message) =>
-      message.isGroup && message.targetGroupId === targetGroupId
+      message.isGroup &&
+      message.targetGroupId === targetGroupId
     , timeout);
   }
 
@@ -457,7 +448,8 @@ module.exports = class Messaging extends Helper {
    */
   async subscribeToNextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
     return await this.subscribeToNextMessage((message) =>
-      !message.isGroup && message.sourceSubscriberId === sourceSubscriberId
+      !message.isGroup &&
+      message.sourceSubscriberId === sourceSubscriberId
     , timeout);
   }
 
@@ -470,7 +462,9 @@ module.exports = class Messaging extends Helper {
    */
   async subscribeToNextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
     return await this.subscribeToNextMessage((message) =>
-      message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId
+      message.isGroup &&
+      message.targetGroupId === targetGroupId &&
+      message.sourceSubscriberId === sourceSubscriberId
     , timeout);
   }
 };

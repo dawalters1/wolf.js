@@ -1,4 +1,7 @@
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Helper {
   constructor (api) {
     this._api = api;

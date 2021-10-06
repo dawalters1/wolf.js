@@ -1,9 +1,12 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const path = require('path');
 const fs = require('fs');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Phrase extends Helper {
   constructor (api) {
     super(api);

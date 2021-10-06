@@ -6,6 +6,9 @@ const path = require('path');
 const event = require('../../constants/event');
 const internal = require('../../constants/internal');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class EventManager {
   constructor (api) {
     this._api = api;
@@ -67,14 +70,6 @@ module.exports = class EventManager {
 
   // #region  Message Events
 
-  messageReceived (fn) {
-    this._eventEmitter.on(event.MESSAGE_SEND, () => {
-      console.warn('[DEPRECATED]: use groupMessage or privateMessage');
-      // eslint-disable-next-line no-unused-expressions
-      fn;
-    });
-  }
-
   groupMessage (fn) { this._eventEmitter.on(internal.GROUP_MESSAGE, fn); }
   privateMessage (fn) { this._eventEmitter.on(internal.PRIVATE_MESSAGE, fn); }
 
@@ -118,8 +113,7 @@ module.exports = class EventManager {
     for (const handler of fs.readdirSync(path.join(__dirname, './handlers')).filter(file => file.endsWith('.js'))) {
       const name = path.parse(handler).name.toLowerCase().replace(/_/gi, ' ');
       try {
-        const Event = require(path.join(__dirname, `./handlers/${handler}`));
-        this._handlers[name] = new Event(this, name);
+        this._handlers[name] = require(path.join(__dirname, `./handlers/${handler}`))(this, name);
         this._api.on._emit(internal.LOG, `[Event Manager]: Registered Server Event: ${name}`);
       } catch (error) {
         this._api.on._emit(internal.ERROR, `[Event Manager]: Unable to register Server Event: ${name} - ${error.message}`);
