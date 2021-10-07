@@ -1,4 +1,4 @@
-const validator = require('../validator');
+const validator = require('../../validator');
 
 function * chunk (arr, batchSize) {
   for (let i = 0; i < arr.length; i += batchSize) {
@@ -11,11 +11,17 @@ class Array {
     this._api = api;
   }
 
+  /**
+   * Chunk an array in to arrays of specific sizes
+   * @param {Array} array - The array you want to chunk
+   * @param {Number} length - How many items should be in each array
+   * @returns {Array.Array} Chunked array
+   */
   chunk (array, length) {
     if (!validator.isValidArray(array)) {
       throw new Error('array must be a valid number');
     } else if (array.length === 0) {
-      throw new Error('array cannot be null or empty');
+      return [];
     }
     if (!validator.isValidNumber(length)) {
       throw new Error('length must be a valid number');

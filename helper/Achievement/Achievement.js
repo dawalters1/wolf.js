@@ -103,7 +103,7 @@ module.exports = class Achievement extends Helper {
       }
     }
     if (achievements.length !== achievementIds.length) {
-      for (const batchAchievementIdList of this._api.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
+      for (const batchAchievementIdList of this._api.utility().array().chunk(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
         const result = await this._websocket.emit(request.ACHIEVEMENT, {
           headers: {
             version: 2

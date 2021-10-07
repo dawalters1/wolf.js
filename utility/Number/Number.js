@@ -3,6 +3,11 @@ class Number {
     this._api = api;
   }
 
+  /**
+   * Convert arabic or persian numbers to english
+   * @param {Number|String} arg - The number or string to convert numbers
+   * @returns {Number|String} - The argument with converted numbers
+   */
   toEnglishNumbers (arg) {
     if (!arg) {
       throw new Error('arg cannot be undefined');
@@ -21,6 +26,11 @@ class Number {
     return arg;
   }
 
+  /**
+   * Convert english numbers to arabic
+   * @param {Number | String} arg - The number or string to convert numbers
+   * @returns {Number|String} - The argument with converted numbers
+   */
   toArabicNumbers (arg) {
     if (!arg) {
       throw new Error('arg cannot be undefined');
@@ -31,6 +41,11 @@ class Number {
     });
   }
 
+  /**
+   * Add Commas to numbers
+   * @param {Number | String} arg - The number or string to commas too
+   * @returns {Number|String} - The argument with commas added
+   */
   addCommas (arg) {
     if (!arg) {
       throw new Error('arg cannot be undefined');

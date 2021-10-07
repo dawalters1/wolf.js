@@ -1,4 +1,4 @@
-const validator = require('../validator');
+const validator = require('../../validator');
 const superagent = require('superagent');
 
 class Download {
@@ -6,6 +6,11 @@ class Download {
     this._api = api;
   }
 
+  /**
+   * Download a file as a buffer
+   * @param {STRING} url - The url you want to download
+   * @returns {Buffer} The file buffer
+   */
   async file (url) {
     if (typeof (url) !== 'string') {
       throw new Error('argument must be a string');

@@ -74,7 +74,7 @@ module.exports = class Event extends Helper {
     }
 
     if (events.length !== eventIds.length) {
-      for (const batchEventIdList of this._api.utility().batchArray(eventIds.filter((eventId) => !events.some((group) => group.id === eventId)), 50)) {
+      for (const batchEventIdList of this._api.utility().array().chunk(eventIds.filter((eventId) => !events.some((group) => group.id === eventId)), 50)) {
         const result = await this._websocket.emit(request.GROUP_EVENT, {
           headers: {
             version: 1

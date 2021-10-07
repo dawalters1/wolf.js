@@ -85,7 +85,7 @@ module.exports = class CommandHandler {
       return false;
     });
 
-    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
+    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
       return Promise.resolve();
     }
 
