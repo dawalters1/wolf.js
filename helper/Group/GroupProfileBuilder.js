@@ -1,7 +1,10 @@
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
-
+/**
+ * Exposes the methods used to update or create group profiles
+ * {@hideconstructor}
+ */
 module.exports = class GroupProfileBuilder {
   constructor (api) {
     this._api = api;

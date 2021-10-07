@@ -1,7 +1,19 @@
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
+
+// #region  3rd party
+const yaml = require('yaml');
+const fileType = require('file-type');
+// #endregion
+
+const request = require('./constants/request');
+const constants = require('@dawalters1/constants');
+const validator = require('./validator');
 
 const Websocket = require('./networking/Websocket');
+
+// #region Helpers
 const CommandHandler = require('./command/CommandHandler');
 
 const EventManager = require('./networking/events/EventManager');
@@ -21,23 +33,13 @@ const Stage = require('./helper/stage/Stage');
 const Subscriber = require('./helper/subscriber/Subscriber');
 const Tip = require('./helper/tip/Tip');
 
-const yaml = require('yaml');
-
-const validator = require('./utils/validator');
-
-const crypto = require('crypto');
-const Utilities = require('./utility');
-
-const request = require('./constants/request');
-
-const constants = require('@dawalters1/constants');
+const Utility = require('./utility');
+// #endregion
 
 const MultiMediaService = require('./multimediaservice');
-const SubscriberProfileBuilder = require('./utils/ProfileBuilders/SubscriberProfileBuilder');
+const SubscriberProfileBuilder = require('./helper/subscriber/SubscriberProfileBuilder');
 
-const fileType = require('file-type');
-
-const validateConfig = async (api, opts) => {
+const validateConfig = (api, opts) => {
   const _opts = Object.assign({}, opts);
 
   _opts.keyword = validator.isNullOrWhitespace(_opts.keyword) ? 'default' : _opts.keyword;
@@ -75,9 +77,11 @@ module.exports = class WolfBot {
       console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
+    this.currentSubscriber = null;
+
     this._eventManager = new EventManager(this);
     this.websocket = new Websocket(this);
-    this.commandHandler = new CommandHandler(this);
+    this._commandHandler = new CommandHandler(this);
 
     this._achievement = new Achievement(this);
     this._authorization = new Authorization(this);
@@ -94,11 +98,10 @@ module.exports = class WolfBot {
     this._stage = new Stage(this);
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
-    this.currentSubscriber = null;
 
     this._multiMediaService = new MultiMediaService(this);
 
-    this._utilities = Utilities(this);
+    this._utility = new Utility(this);
 
     this._blacklist = [];
   }
@@ -109,6 +112,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the achievement methods
+   * @returns {Achievement}
    */
   achievement () {
     return this._achievement;
@@ -116,6 +120,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the authorization methods
+   * @returns {Authorization}
    */
   authorization () {
     return this._authorization;
@@ -123,6 +128,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the banned methods
+   * @returns {Banned}
    */
   banned () {
     return this._banned;
@@ -130,6 +136,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the blocked methods
+   * @returns {Blocked}
    */
   blocked () {
     return this._blocked;
@@ -137,6 +144,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the charm methods
+   * @returns {Charm}
    */
   charm () {
     return this._charm;
@@ -144,13 +152,24 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the contact methods
+   * @returns {Contact}
    */
   contact () {
     return this._contact;
   }
 
   /**
+   *
+   * Exposes commandHandler methods
+   * @returns {CommandHandler}
+   */
+  commandHandler () {
+    return this._commandHandler;
+  }
+
+  /**
    * Exposes the discovery methods (LIMITED Setup)
+   * @returns {Discovery}
    */
   discovery () {
     return this._discovery;
@@ -158,6 +177,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the event methods
+   * @returns {Event}
    */
   event () {
     return this._event;
@@ -165,6 +185,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the group methods
+   * @returns {Group}
    */
   group () {
     return this._group;
@@ -172,6 +193,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the messaging methods
+   * @returns {Messaging}
    */
   messaging () {
     return this._messaging;
@@ -179,6 +201,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the notification methods
+   * @returns {Notification}
    */
   notification () {
     return this._notification;
@@ -186,6 +209,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the phrase methods
+   * @returns {Phrase}
    */
   phrase () {
     return this._phrase;
@@ -193,6 +217,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the stage methods
+   * @returns {Stage}
    */
   stage () {
     return this._stage;
@@ -200,6 +225,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the subscriber methods
+   * @returns {subscriber}
    */
   subscriber () {
     return this._subscriber;
@@ -207,6 +233,7 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the tip methods
+   * @returns {Tip}
    */
   tip () {
     return this._tip;
@@ -214,9 +241,10 @@ module.exports = class WolfBot {
 
   /**
    * Exposes the utilities
+   * @returns {Utility}
    */
   utility () {
-    return this._utilities;
+    return this._utility;
   }
 
   /**
@@ -359,7 +387,7 @@ module.exports = class WolfBot {
 
   /**
    * Set the selected charm to appear on the bots profile
-   * @param {[{ position: number, charmId: number }]} charms
+   * @param {Array.<{position: number, charmId: number}>} charms
    */
   async setSelectedCharms (charms) {
     if (validator.isValidArray(charms)) {
@@ -502,8 +530,8 @@ module.exports = class WolfBot {
 
   /**
    * Retrieve the AWS Cognito token
-   * @param {*} requestNew - Request new data from the server
-   * @returns { identityId: String, token: String } Cognito Identity
+   * @param {Boolean} requestNew - Request new data from the server
+   * @returns { Object.<{identityId: String, token: String}> } Cognito Identity
    */
   async getSecurityToken (requestNew = false) {
     if (this.cognito && !requestNew) {
@@ -536,7 +564,7 @@ module.exports = class WolfBot {
   /**
    * Retrieve the blacklisted url list
    * @param {Boolean} requestNew - Whether or not to request new data from server
-   * @returns {[Object{id: Number, regex: String}]}
+   * @returns {Object.<{id: Number, regex: String}>}
    */
   async getLinkBlacklist (requestNew = false) {
     if (!requestNew && this._blacklist.length > 0) {

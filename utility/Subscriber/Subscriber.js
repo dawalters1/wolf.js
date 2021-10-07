@@ -1,19 +1,41 @@
-const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
+const Privilege = require('./Privilege');
 
-module.exports = class Subscriber extends BaseUtility {
+class Subscriber {
   constructor (api) {
-    super(api, 'subscriber');
+    this._api = api;
+    this._privilege = new Privilege(this._api);
   }
 
-  _func () {
-    return {
-      toDisplayName: (...args) => this.toDisplayName(...args),
-      trimAds: (...args) => this.trimAds(...args),
-      hasCharm: (...args) => this.hasCharm(...args)
-    };
+  /**
+   * Exposes the privilege methods
+   * @returns {Privilege}
+   */
+  privilege () {
+    return this._privilege;
   }
 
+  /**
+   * Download a subscribers avatar
+   * @param {Number} subscriberId - The ID of the subscriber
+   * @param {Number} size - The size of the image you want to download
+   * @returns {Buffer} The buffer of the image
+   */
+  async getAvatar (subscriberId, size) {
+    return await this._api.utility().download().file(this._api.utility().string().replace(`${this._api.endpointConfig.avatarEndpoint}/FileServerSpring/subsriber/avatar/{subscriberId}?size={size}`,
+      {
+        subscriberId,
+        size
+      }));
+  }
+
+  /**
+   * Convert subscriber to a displayable name string {nickname} ({subscriberId}) OR {nickname}
+   * @param {Object} subscriber - The subscriber
+   * @param {Boolean} trimAds - Whether or not to remove ads from the subscribers name
+   * @param {Boolean} excludeId - Whether or not to display the subscribers ID
+   * @returns
+   */
   toDisplayName (subscriber, trimAds = true, excludeId = false) {
     if (typeof subscriber !== 'object') {
       throw new Error('subscriber must be object');
@@ -35,14 +57,16 @@ module.exports = class Subscriber extends BaseUtility {
       throw new Error('excludeId must be a valid boolean');
     }
 
-    return `${trimAds ? this.trimAds(subscriber.nickname) : subscriber.nickname}${excludeId ? '' : ` (${subscriber.id})`}`;
+    return `${trimAds ? this._api.utility().string().trimAds(subscriber.nickname) : subscriber.nickname}${excludeId ? '' : ` (${subscriber.id})`}`;
   }
 
-  trimAds (name) {
-    console.warn('trimAds(name) is deprecated and will be removed in 1.0.0 use string().trimAds(name) instead');
-    return this._api.utility().string().trimAds(name);
-  }
-
+  /**
+   * Check to see if a subscriber has a specific charm or charms
+   * @param {Number} subscriberId - The id of the subscriber
+   * @param {Number|Array.<Number>} charmIds - The id of the charm or charms
+   * @param {Boolean} requiresAll - Whether or not the subscriber should have all the charm ids provided
+   * @returns {Boolean}
+   */
   async hasCharm (subscriberId, charmIds, requiresAll = false) {
     if (!validator.isValidNumber(subscriberId)) {
       throw new Error('subscriberId must be a valid number');
@@ -65,7 +89,6 @@ module.exports = class Subscriber extends BaseUtility {
     if (!subscriber.exists) {
       return false;
     }
-
     const summary = subscriber.charmSummary || ((await this._api.charm().getSubscriberSummary(subscriberId)).body || []).map((charm) => charm.charmId);
 
     subscriber.charmIds = summary;
@@ -76,4 +99,6 @@ module.exports = class Subscriber extends BaseUtility {
 
     return requiresAll ? charmIds.every((id) => summary.includes(id)) : charmIds.some((id) => summary.includes(id));
   }
-};
+}
+
+module.exports = Subscriber;

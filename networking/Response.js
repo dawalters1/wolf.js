@@ -1,5 +1,8 @@
-const toErrorMessage = require('../utils/toErrorMessage');
+const toErrorMessage = require('../internalUtils/toErrorMessage');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Response {
   constructor (arg1, arg2, arg3, command = undefined) {
     if (typeof (arg1) === 'object') {

@@ -1,8 +1,11 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const request = require('../../constants/request');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Blocked extends Helper {
   constructor (api) {
     super(api);

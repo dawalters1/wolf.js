@@ -45,6 +45,7 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 keyword: '{keyword}' # single word only
 app:
   defaultLanguage: 'en'
+  developerId: {your_user_id} # your user ID
   commandSettings:
     ignoreOfficialBots: true
     ignoreUnofficialBots: false
@@ -88,7 +89,7 @@ const api = new WOLF.WOLFBot();
 
 const me = require('./src/me')
 
-const keyword = api.config.keyword;
+const keyword = api.options.keyword;
 
 api.commandHandler.register([
   new WOLF.Command(`${keyword}_command_${keyword}`, { both: async (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) },
@@ -111,7 +112,7 @@ api.on.privateMessage(async(message)=>{
 
   const { language } = await api.subscriber().getById(message.sourceSubscriberId);
 
-  return await api.messaging().sendPrivateMessage(message.sourceSubscriberId, api.phrase().getByLanguageAndName(language, `${api.config.keyword}_help_message`));
+  return await api.messaging().sendPrivateMessage(message.sourceSubscriberId, api.phrase().getByLanguageAndName(language, `${api.options.keyword}_help_message`));
 });
 
 api.on.ready(()=>{
@@ -131,7 +132,7 @@ module.exports = async (api, command) => {
 
   return await api.messaging().sendMessage(
     command,
-    api.utility().string().replace(api.phrase().getByLanguageAndName(command.language, `${api.config.keyword}_subscriber_message`), 
+    api.utility().string().replace(api.phrase().getByLanguageAndName(command.language, `${api.options.keyword}_subscriber_message`), 
     {
       nickname: subscriber.nickname,
       id: subscriber.id,

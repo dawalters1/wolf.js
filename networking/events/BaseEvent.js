@@ -1,4 +1,7 @@
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class BaseEvent {
   constructor (eventManager, command) {
     this._api = eventManager._api;

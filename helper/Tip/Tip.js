@@ -1,9 +1,12 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Tip extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {

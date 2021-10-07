@@ -1,20 +1,19 @@
-const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
-
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 
-module.exports = class privilege extends BaseUtility {
+class Privilege {
   constructor (api) {
-    super(api, 'privilege');
+    this._api = api;
   }
 
-  _func () {
-    return {
-      has: (...args) => this.has(...args)
-    };
-  }
-
-  async has (sourceSubscriberId, privs) {
+  /**
+   * Check to see if a subscriber has a specific privilege or privileges
+   * @param {Number} sourceSubscriberId - The ID of the subscriber
+   * @param {Number| Array.<Number>} privs - The privilege or privileges
+   * @param {Boolean} requireAll - Whether or not the subscriber should have all
+   * @returns {Boolean}
+   */
+  async has (sourceSubscriberId, privs, requireAll = false) {
     privs = validator.isValidArray(privs) ? privs : [privs];
 
     if (!validator.isValidNumber(sourceSubscriberId)) {
@@ -46,6 +45,9 @@ module.exports = class privilege extends BaseUtility {
       privileges = (await this._api.subscriber().getById(sourceSubscriberId)).privileges;
     }
 
-    return privs.some((priv) => (privileges & priv) === priv);
+    return requireAll ? privs.every((priv) => (privileges & priv) === priv) : privs.some((priv) => (privileges & priv) === priv);
   }
-};
+}
+
+module.exports = Privilege
+;
