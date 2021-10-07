@@ -1,12 +1,18 @@
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const { capability, privilege } = require('@dawalters1/constants');
 
-class GroupMember {
+class Member {
   constructor (api) {
     this._api = api;
   }
 
+  /**
+   * Get a subscriber from the groups member list
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   * @returns {Object} The subscriber if they are in the group
+   */
   async get (targetGroupId, sourceSubscriberId) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
@@ -29,6 +35,15 @@ class GroupMember {
     return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
   }
 
+  /**
+   * Check to see if a group member has the minimum required capability
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   * @param {Number} requiredCapability - The minimum required capability
+   * @param {Boolean} checkStaff - Whether or not to check if the subscriber is staff
+   * @param {Boolean} includeAuthorizedSubscribers - Whether or not to check whether or not a subscriber is authorized
+   * @returns {Boolean}
+   */
   async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
@@ -99,4 +114,4 @@ class GroupMember {
   }
 }
 
-module.exports = GroupMember;
+module.exports = Member;

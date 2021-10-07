@@ -106,7 +106,7 @@ module.exports = class Messaging extends Helper {
 
       const ads = [...value.matchAll(/\[(.+?)\]/g)] || [];
 
-      const links = [...value.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().isValidUrl(url[0])) || [];
+      const links = [...value.matchAll(/([\w+]+:\/\/)?([\w\d-]+\.)*[\w-]+[.:]\w+([/?=&#.]?[\w-]+)*\/?/gm)].filter((url) => this._api.utility().string().isValidUrl(url[0])) || [];
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {

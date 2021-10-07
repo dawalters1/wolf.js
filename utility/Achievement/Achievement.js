@@ -1,4 +1,4 @@
-const validator = require('../validator');
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 
 class Achievement {
@@ -6,6 +6,12 @@ class Achievement {
     this._api = api;
   }
 
+  /**
+   * Map achievements to their appropriate category
+   * @param {Array.<Object>} achievements - The achievements to map
+   * @param {Number} language - The language of categories to map too
+   * @returns
+   */
   async mapToCategories (achievements, language) {
     if (!validator.isValidArray(achievements)) {
       throw new Error('achievements must be an array');

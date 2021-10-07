@@ -387,7 +387,7 @@ module.exports = class WolfBot {
 
   /**
    * Set the selected charm to appear on the bots profile
-   * @param {[{ position: number, charmId: number }]} charms
+   * @param {Array.<{position: number, charmId: number}>} charms
    */
   async setSelectedCharms (charms) {
     if (validator.isValidArray(charms)) {
@@ -530,8 +530,8 @@ module.exports = class WolfBot {
 
   /**
    * Retrieve the AWS Cognito token
-   * @param {*} requestNew - Request new data from the server
-   * @returns { identityId: String, token: String } Cognito Identity
+   * @param {Boolean} requestNew - Request new data from the server
+   * @returns { Object.<{identityId: String, token: String}> } Cognito Identity
    */
   async getSecurityToken (requestNew = false) {
     if (this.cognito && !requestNew) {
@@ -564,7 +564,7 @@ module.exports = class WolfBot {
   /**
    * Retrieve the blacklisted url list
    * @param {Boolean} requestNew - Whether or not to request new data from server
-   * @returns {[Object{id: Number, regex: String}]}
+   * @returns {Object.<{id: Number, regex: String}>}
    */
   async getLinkBlacklist (requestNew = false) {
     if (!requestNew && this._blacklist.length > 0) {

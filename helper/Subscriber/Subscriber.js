@@ -36,7 +36,7 @@ module.exports = class Subscriber extends Helper {
 
     const subscribers = !requestNew ? this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id)) : [];
 
-    for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+    for (const batchSubscriberIdList of this._api.utility().array().chunk(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
       const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
         headers: {
           version: 4

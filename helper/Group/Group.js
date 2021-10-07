@@ -53,7 +53,7 @@ module.exports = class Group extends Helper {
 
     const groups = !requestNew ? this._groups.filter((group) => targetGroupIds.includes(group.id)) : [];
 
-    for (const batchTargetGroupIdList of this._api.utility().batchArray(targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId)), 50)) {
+    for (const batchTargetGroupIdList of this._api.utility().array().chunk(targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId)), 50)) {
       const result = await this._websocket.emit(request.GROUP_PROFILE, {
         headers: {
           version: 4

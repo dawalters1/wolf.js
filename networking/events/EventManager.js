@@ -113,7 +113,8 @@ module.exports = class EventManager {
     for (const handler of fs.readdirSync(path.join(__dirname, './handlers')).filter(file => file.endsWith('.js'))) {
       const name = path.parse(handler).name.toLowerCase().replace(/_/gi, ' ');
       try {
-        this._handlers[name] = require(path.join(__dirname, `./handlers/${handler}`))(this, name);
+        const Event = require(path.join(__dirname, `./handlers/${handler}`));
+        this._handlers[name] = new Event(this, name);
         this._api.on._emit(internal.LOG, `[Event Manager]: Registered Server Event: ${name}`);
       } catch (error) {
         this._api.on._emit(internal.ERROR, `[Event Manager]: Unable to register Server Event: ${name} - ${error.message}`);
