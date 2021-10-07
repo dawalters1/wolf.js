@@ -21,6 +21,8 @@ module.exports = {
   GROUP_AUDIO_SLOT_LIST: 'group audio slot list',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
+  // TODO: Raise Hand support upon client release
+
   GROUP_CREATE: 'group create',
   GROUP_EVENT: 'group event',
   GROUP_EVENT_CREATE: 'group event create',

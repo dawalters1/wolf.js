@@ -3,8 +3,8 @@ const internal = require('../../../constants/internal');
 const event = require('../../../constants/event');
 
 const { messageType, capability, privilege } = require('@dawalters1/constants');
-const toAdminActionFromString = require('../../../utils/toAdminActionFromString');
-const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
+const toAdminActionFromString = require('../../../internalUtils/toAdminActionFromString');
+const toGroupMemberCapability = require('../../../internalUtils/toGroupMemberCapability');
 const { version } = require('../../../package.json');
 
 const secrets = {
@@ -51,6 +51,9 @@ const secrets = {
 
 };
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class MessageSend extends BaseEvent {
   async process (data) {
     const message = {
@@ -66,7 +69,7 @@ module.exports = class MessageSend extends BaseEvent {
       type: data.mimeType
     };
 
-    message.isCommand = this._api.commandHandler.isCommand(message);
+    message.isCommand = this._api.commandHandler().isCommand(message);
 
     switch (message.type) {
       case messageType.APPLICATION_PALRINGO_GROUP_ACTION:
@@ -166,7 +169,7 @@ module.exports = class MessageSend extends BaseEvent {
     const reveal = Object.entries(secrets).find((secret) => secret[0].toLowerCase().trim() === message.body.toLowerCase().trim());
 
     if (reveal) {
-      if (this._api.options.developerId === message.sourceSubscriberId || await this._api.utility().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER])) {
+      if (this._api.options.developerId === message.sourceSubscriberId || await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER])) {
         const body = this._api.utility().string().replace(reveal[1][Math.floor(Math.random() * reveal[1].length)], {
           version
         });

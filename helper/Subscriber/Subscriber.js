@@ -1,12 +1,15 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
-const toLanguageKey = require('../../utils/toLanguageKey');
+const toLanguageKey = require('../../internalUtils/toLanguageKey');
 
 const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Subscriber extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
@@ -33,7 +36,7 @@ module.exports = class Subscriber extends Helper {
 
     const subscribers = !requestNew ? this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id)) : [];
 
-    for (const batchSubscriberIdList of this._api.utility().batchArray(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
+    for (const batchSubscriberIdList of this._api.utility().array().chunk(subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), 50)) {
       const result = await this._websocket.emit(request.SUBSCRIBER_PROFILE, {
         headers: {
           version: 4

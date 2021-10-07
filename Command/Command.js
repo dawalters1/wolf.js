@@ -1,4 +1,4 @@
-const validator = require('../utils/validator');
+const validator = require('../validator');
 
 const callbacks = {
   GROUP: 'group',

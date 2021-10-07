@@ -1,20 +1,17 @@
-
-const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
-
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 
-module.exports = class Achievement extends BaseUtility {
+class Achievement {
   constructor (api) {
-    super(api, 'achievement');
+    this._api = api;
   }
 
-  _func () {
-    return {
-      mapToCategories: (...args) => this.mapToCategories(...args)
-    };
-  }
-
+  /**
+   * Map achievements to their appropriate category
+   * @param {Array.<Object>} achievements - The achievements to map
+   * @param {Number} language - The language of categories to map too
+   * @returns
+   */
   async mapToCategories (achievements, language) {
     if (!validator.isValidArray(achievements)) {
       throw new Error('achievements must be an array');
@@ -68,4 +65,6 @@ module.exports = class Achievement extends BaseUtility {
       return result;
     }, []);
   }
-};
+}
+
+module.exports = Achievement;

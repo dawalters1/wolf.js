@@ -1,26 +1,18 @@
-const BaseUtility = require('../BaseUtility');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
-const { capability, privilege, adminAction } = require('@dawalters1/constants');
+const { capability, privilege } = require('@dawalters1/constants');
 
-module.exports = class GroupMember extends BaseUtility {
+class Member {
   constructor (api) {
-    super(api, 'groupMember');
+    this._api = api;
   }
 
-  _func () {
-    return {
-      get: (...args) => this.get(...args),
-      admin: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.ADMIN),
-      mod: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.MOD),
-      reset: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.REGULAR),
-      kick: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.KICK),
-      ban: (...args) => this._api.group().updateGroupSubscriber(args[0], args[1], adminAction.BAN),
-
-      checkPermissions: (...args) => this.checkPermissions(...args)
-    };
-  }
-
+  /**
+   * Get a subscriber from the groups member list
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   * @returns {Object} The subscriber if they are in the group
+   */
   async get (targetGroupId, sourceSubscriberId) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
@@ -43,6 +35,15 @@ module.exports = class GroupMember extends BaseUtility {
     return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
   }
 
+  /**
+   * Check to see if a group member has the minimum required capability
+   * @param {Number} targetGroupId - The id of the group
+   * @param {Number} sourceSubscriberId - The id of the subscriber
+   * @param {Number} requiredCapability - The minimum required capability
+   * @param {Boolean} checkStaff - Whether or not to check if the subscriber is staff
+   * @param {Boolean} includeAuthorizedSubscribers - Whether or not to check whether or not a subscriber is authorized
+   * @returns {Boolean}
+   */
   async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     if (!validator.isValidNumber(targetGroupId)) {
       throw new Error('targetGroupId must be a valid number');
@@ -111,4 +112,6 @@ module.exports = class GroupMember extends BaseUtility {
         return true;
     }
   }
-};
+}
+
+module.exports = Member;

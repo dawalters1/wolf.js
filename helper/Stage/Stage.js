@@ -1,5 +1,5 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const Client = require('./Client');
 
@@ -11,6 +11,9 @@ const Stream = require('stream');
 
 let _ffmpegExists = false;
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Stage extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {

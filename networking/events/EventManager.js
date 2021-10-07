@@ -6,6 +6,9 @@ const path = require('path');
 const event = require('../../constants/event');
 const internal = require('../../constants/internal');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class EventManager {
   constructor (api) {
     this._api = api;
@@ -66,14 +69,6 @@ module.exports = class EventManager {
   // #endregion
 
   // #region  Message Events
-
-  messageReceived (fn) {
-    this._eventEmitter.on(event.MESSAGE_SEND, () => {
-      console.warn('[DEPRECATED]: use groupMessage or privateMessage');
-      // eslint-disable-next-line no-unused-expressions
-      fn;
-    });
-  }
 
   groupMessage (fn) { this._eventEmitter.on(internal.GROUP_MESSAGE, fn); }
   privateMessage (fn) { this._eventEmitter.on(internal.PRIVATE_MESSAGE, fn); }

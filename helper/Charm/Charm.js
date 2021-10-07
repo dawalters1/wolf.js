@@ -1,9 +1,12 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const request = require('../../constants/request');
 const constants = require('@dawalters1/constants');
 
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Charm extends Helper {
   constructor (api) {
     super(api);
@@ -172,16 +175,6 @@ module.exports = class Charm extends Helper {
       limit,
       offset
     });
-  }
-
-  /**
-   * Get a list of charms and how many of each a subscriber has
-   * @param {Number} subscriberId - The id of the subscriber
-   * @deprecated Will be removed in 1.0.0 use getSubscriberSumamry(subscriber) instead
-   */
-  async getSubscriberCharmSummary (subscriberId) {
-    console.warn('getSubscriberCharmSummary(subscriberId) is deprecated and will be removed in 1.0.0 use getSubscriberSumamry(subscriber) instead');
-    return this.getSubscriberSummary(subscriberId);
   }
 
   /**

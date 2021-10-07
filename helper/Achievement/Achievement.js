@@ -1,5 +1,5 @@
 const Helper = require('../Helper');
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 
 const Response = require('../../networking/Response');
 const Group = require('./Group');
@@ -7,7 +7,9 @@ const Subscriber = require('./Subscriber');
 
 const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
-
+/**
+ * {@hideconstructor}
+ */
 module.exports = class Achievement extends Helper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
@@ -22,6 +24,7 @@ module.exports = class Achievement extends Helper {
 
   /**
    * Exposed the group achievement methods
+   * @returns {Group}
    */
   group () {
     return this._group;
@@ -29,6 +32,7 @@ module.exports = class Achievement extends Helper {
 
   /**
    * Exposed the subscriber achievement methods
+   * @returns {Subscriber}
    */
   subscriber () {
     return this._subscriber;
@@ -59,19 +63,6 @@ module.exports = class Achievement extends Helper {
     }
 
     return this._categories[language] || [];
-  }
-
-  /**
-   * Get achievements from their ID and Language - Use @dawalters1/constants for language
-   * @param {[Number]} achievementIds - The ids of the achievements
-   * @param {Number} language - Language of the achievement
-   * @param {Boolean} requestNew - Request new data from the server
-   * @deprecated Will be removed in 1.0.0 use getByIds(subscriber, language, requestNew) instead
-   */
-
-  async getAchievementByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
-    console.warn('getAchievementByIds(subscriber, language, requestNew) is deprecated and will be removed in 1.0.0 use getByIds(subscriber, language, requestNew) instead');
-    return this.getByIds(achievementIds, language, requestNew);
   }
 
   /**
@@ -112,7 +103,7 @@ module.exports = class Achievement extends Helper {
       }
     }
     if (achievements.length !== achievementIds.length) {
-      for (const batchAchievementIdList of this._api.utility().batchArray(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
+      for (const batchAchievementIdList of this._api.utility().array().chunk(achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), 50)) {
         const result = await this._websocket.emit(request.ACHIEVEMENT, {
           headers: {
             version: 2

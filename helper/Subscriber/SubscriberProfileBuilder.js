@@ -1,7 +1,10 @@
-const validator = require('../../utils/validator');
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 const request = require('../../constants/request');
-
+/**
+ * Exposes the methods used to update the bots profiles
+ * {@hideconstructor}
+ */
 module.exports = class SubscriberProfileBuilder {
   constructor (api, subscriber) {
     this._api = api;
