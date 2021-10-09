@@ -154,7 +154,7 @@ class String {
    * @returns {Boolean}
    */
   isValidUrl (url) {
-    if (!url || !url.includes('.')) {
+    if (!url || !url.includes('.') && !url.includes(':')) {
       return false;
     }
 
@@ -186,6 +186,8 @@ class String {
           return false;
         }
 
+        return true;
+      } else if (data.host.includes(':') && data.port) {
         return true;
       }
 
