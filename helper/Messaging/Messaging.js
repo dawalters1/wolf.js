@@ -164,7 +164,7 @@ module.exports = class Messaging extends Helper {
             }
 
             if (Reflect.has(item, 'url')) {
-              const metadata = await this.getLinkMetadata(item.url);
+              const metadata = await this._api.getLinkMetadata(item.url);
 
               if (metadata.success && !metadata.body.isBlacklisted) {
                 (await result).push(
