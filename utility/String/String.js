@@ -160,6 +160,12 @@ class String {
 
     url = PROTOCOLS.some((proto) => url.toLowerCase().startsWith(proto)) ? url : `http://${url}`;
 
+    const protocol = PROTOCOLS.find((proto) => url.toLowerCase().startsWith(proto));
+
+    if (!url.slice(protocol.length).startsWith('www.')) {
+      url = url.slice(0, protocol.length) + 'www.' + url.slice(protocol.length);
+    }
+
     while (true) {
       const lastCharacter = url.slice(-1);
 
@@ -176,7 +182,7 @@ class String {
       if (data.host.includes('.')) {
         const tld = data.host.split('.').pop();
 
-        if (TLD.includes(tld)) {
+        if (!TLD.includes(tld)) {
           return false;
         }
 
