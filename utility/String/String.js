@@ -154,16 +154,19 @@ class String {
    * @returns {Boolean}
    */
   isValidUrl (url) {
-    if (!url || !url.includes('.') && !url.includes(':')) {
+    if (!url || (!url.includes('.') && !url.includes(':'))) {
       return false;
     }
 
-    url = PROTOCOLS.some((proto) => url.toLowerCase().startsWith(proto)) ? url : `http://${url}`;
+    let protocol = PROTOCOLS.find((proto) => url.toLowerCase().startsWith(proto));
 
-    const protocol = PROTOCOLS.find((proto) => url.toLowerCase().startsWith(proto));
+    if (!protocol) {
+      protocol = 'http://';
+      url = `${protocol}${url}`;
+    }
 
     if (!url.slice(protocol.length).startsWith('www.')) {
-      url = url.slice(0, protocol.length) + 'www.' + url.slice(protocol.length);
+      url = `${protocol}www.${url.slice(protocol.length)}`;
     }
 
     while (true) {
