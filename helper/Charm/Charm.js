@@ -13,6 +13,7 @@ module.exports = class Charm extends Helper {
     this._charms = {};
   }
 
+  /** @private */
   async _getCharmList (language, requestNew = false) {
     if (!requestNew && this._charms[language]) {
       return this._charms[language];
