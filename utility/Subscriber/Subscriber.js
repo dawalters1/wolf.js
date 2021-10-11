@@ -89,7 +89,8 @@ class Subscriber {
     if (!subscriber.exists) {
       return false;
     }
-    const summary = subscriber.charmSummary || ((await this._api.charm().getSubscriberSummary(subscriberId)).body || []).map((charm) => charm.charmId);
+
+    const summary = subscriber.charmIds || ((await this._api.charm().getSubscriberSummary(subscriberId)).body || []).map((charm) => charm.charmId);
 
     subscriber.charmIds = summary;
 
