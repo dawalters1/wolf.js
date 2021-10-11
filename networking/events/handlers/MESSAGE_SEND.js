@@ -194,8 +194,6 @@ module.exports = class MessageSend extends BaseEvent {
       }
     }
 
-    this._api.on._emit(message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE, message);
-
-    return this._api.on._emit(this._command, message);
+    return this._api.on._emit(message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE, message);
   }
 };
