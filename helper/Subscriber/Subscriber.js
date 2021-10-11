@@ -154,6 +154,8 @@ module.exports = class Subscriber extends Helper {
         for (const key in subscriber) {
           existing[key] = subscriber[key];
         }
+
+        Reflect.deleteProperty(existing, 'charmIds');
       } else {
         this._subscribers.push(subscriber);
       }
