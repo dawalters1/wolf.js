@@ -1,8 +1,6 @@
 const BullQueue = require('bull');
 
-const isNullOrWhitespace = arg => (arg === null || arg === undefined) || (typeof (arg) === 'string' && arg.trim().length === 0);
-const isLessThanOrEqualZero = arg => isValidNumber(arg) && !(parseInt(arg) > 0);
-const isValidNumber = arg => /^-?\d+$/.test(arg);
+const validator = require('../../validator');
 
 class Timer {
   constructor (api) {
@@ -47,13 +45,13 @@ class Timer {
 
     if (typeof name !== 'string') {
       throw new Error('name must be a string');
-    } else if (isNullOrWhitespace(name)) {
+    } else if (validator.isNullOrWhitespace(name)) {
       throw new Error('name cannot be null or empty');
     }
 
     if (typeof handler !== 'string') {
       throw new Error('handler must be a string');
-    } else if (isNullOrWhitespace(handler)) {
+    } else if (validator.isNullOrWhitespace(handler)) {
       throw new Error('handler cannot be null or empty');
     } else if (!Object.keys(this._handlers).includes(handler)) {
       throw new Error(`handler[name:${handler}] does not exist in handlers[${Object.keys(this._handlers).join(', ')}]`);
@@ -65,9 +63,9 @@ class Timer {
       throw new Error('data must contain at least 1 property');
     }
 
-    if (!isValidNumber(duration)) {
+    if (!validator.isValidNumber(duration)) {
       throw new Error('duration must be a valid number');
-    } else if (isLessThanOrEqualZero(duration)) {
+    } else if (validator.isLessThanOrEqualZero(duration)) {
       throw new Error('duration cannot be less than or equal to 0');
     }
 
@@ -91,7 +89,7 @@ class Timer {
 
     if (typeof name !== 'string') {
       throw new Error('name must be a string');
-    } else if (isNullOrWhitespace(name)) {
+    } else if (validator.isNullOrWhitespace(name)) {
       throw new Error('name cannot be null or empty');
     }
 
@@ -107,7 +105,7 @@ class Timer {
 
     if (typeof name !== 'string') {
       throw new Error('name must be a string');
-    } else if (isNullOrWhitespace(name)) {
+    } else if (validator.isNullOrWhitespace(name)) {
       throw new Error('name cannot be null or empty');
     }
 
@@ -127,13 +125,13 @@ class Timer {
 
     if (typeof name !== 'string') {
       throw new Error('name must be a string');
-    } else if (isNullOrWhitespace(name)) {
+    } else if (validator.isNullOrWhitespace(name)) {
       throw new Error('name cannot be null or empty');
     }
 
-    if (!isValidNumber(duration)) {
+    if (!validator.isValidNumber(duration)) {
       throw new Error('duration must be a valid number');
-    } else if (isLessThanOrEqualZero(duration)) {
+    } else if (validator.isLessThanOrEqualZero(duration)) {
       throw new Error('duration cannot be less than or equal to 0');
     }
 
