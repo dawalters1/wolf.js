@@ -126,8 +126,9 @@ class Utility {
       str = str + ` ${info.minutes}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_minutes`)}`;
     }
 
-    str = str + ` ${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`;
-
+    if (info.seconds > 0) {
+      str = str + ` ${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`;
+    }
     return str.trim();
   }
 
