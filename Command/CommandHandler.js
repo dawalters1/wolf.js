@@ -3,6 +3,28 @@ const { privilege, messageType } = require('@dawalters1/constants');
 const Command = require('./Command');
 
 /**
+ * Flags that unofficial bots should never have, check their profile before requesting summary
+ */
+const ignoreTagList = [
+  privilege.STAFF,
+  privilege.ENTERTAINER,
+  privilege.SELECTCLUB_1,
+  privilege.SELECTCLUB_2,
+  privilege.VOLUNTEER,
+  privilege.PEST,
+  privilege.GROUP_ADMIN,
+  privilege.ENTERTAINER,
+  privilege.ELITECLUB_1,
+  privilege.ELITECLUB_2,
+  privilege.ELITECLUB_3,
+  privilege.BOT,
+  privilege.BOT_TESTER,
+  privilege.CONTENT_SUBMITER,
+  privilege.ALPHA_TESTER,
+  privilege.TRANSLATOR
+];
+
+/**
  * {@hideconstructor}
  */
 module.exports = class CommandHandler {
@@ -85,7 +107,7 @@ module.exports = class CommandHandler {
       return false;
     });
 
-    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
+    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
       return Promise.resolve();
     }
 

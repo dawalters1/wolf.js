@@ -90,6 +90,11 @@ class Subscriber {
       return false;
     }
 
+    // Check to see if the charm is selected before requesting the summary
+    if ((!requiresAll || charmIds.length === 1) && subscriber.charms && subscriber.charms.selectedList && subscriber.charms.selectedList.some((selected) => charmIds.includes(selected.charmId))) {
+      return true;
+    }
+
     const summary = subscriber.charmIds || ((await this._api.charm().getSubscriberSummary(subscriberId)).body || []).map((charm) => charm.charmId);
 
     subscriber.charmIds = summary;
