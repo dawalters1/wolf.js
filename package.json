@@ -39,7 +39,8 @@
     "superagent": "6.1.0",
     "uuid": "^8.3.2",
     "wrtc": "^0.4.7",
-    "yaml": "^1.10.2"
+    "yaml": "^1.10.2",
+    "bull": "^3.29.2"
   },
   "license": "MIT",
   "devDependencies": {
