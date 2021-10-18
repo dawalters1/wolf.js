@@ -1,3 +1,5 @@
+const ARABIC = ['٠', '١', '٢', '٣', '٤', '٦', '٧', '٨', '٩'];
+const PERSIAN = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
 class Number {
   constructor (api) {
     this._api = api;
@@ -12,17 +14,10 @@ class Number {
     if (!arg) {
       throw new Error('arg cannot be undefined');
     }
-    // convert persian digits [۰۱۲۳۴۵۶۷۸۹]
-    let e = '۰'.charCodeAt(0);
-    arg = arg.replace(/[۰-۹]/g, function (t) {
-      return t.charCodeAt(0) - e;
-    });
 
-    // convert arabic indic digits [٠١٢٣٤٥٦٧٨٩]
-    e = '٠'.charCodeAt(0);
-    arg = arg.replace(/[٠-٩]/g, function (t) {
-      return t.charCodeAt(0) - e;
-    });
+    arg = arg.replace(/[۰-۹]/g, char => char.charCodeAt(0) - '۰'.charCodeAt(0));
+    arg = arg.replace(/[٠-٩]/g, char => char.charCodeAt(0) - '٠'.charCodeAt(0));
+
     return arg;
   }
 
@@ -35,10 +30,21 @@ class Number {
     if (!arg) {
       throw new Error('arg cannot be undefined');
     }
-    const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-    return arg.replace(/[0-9]/g, function (w) {
-      return arabicNumbers[+w];
-    });
+
+    return arg.toString().replace(/([0-9])/g, char => ARABIC[+char]);
+  }
+
+  /**
+   * Convert english numbers to persian
+   * @param {Number | String} arg - The number or string to convert numbers
+   * @returns {Number|String} - The argument with converted numbers
+   */
+  toPersianNumbers (arg) {
+    if (!arg) {
+      throw new Error('arg cannot be undefined');
+    }
+
+    return arg.toString().replace(/([0-9])/g, char => PERSIAN[+char]);
   }
 
   /**

@@ -58,9 +58,8 @@ module.exports = class CommandHandler {
       if (match) {
         const commandCallbacks = command.commandCallbackTypes;
 
-        if (commandCallbacks.includes(Command.getCallback.BOTH) ||
-        (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) ||
-        (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
+        // Check to see if the command is valid for the message type
+        if (commandCallbacks.includes(Command.getCallback.BOTH) || (message.isGroup && commandCallbacks.includes(Command.getCallback.GROUP)) || (!message.isGroup && commandCallbacks.includes(Command.getCallback.PRIVATE))) {
           return true;
         }
       }
@@ -85,8 +84,7 @@ module.exports = class CommandHandler {
       targetGroupId: message.targetGroupId,
       sourceSubscriberId: message.sourceSubscriberId,
       timestamp: message.timestamp,
-      type: message.type,
-      route: []
+      type: message.type
     };
 
     const commandCollection = this._commands.find((command) => {
@@ -99,7 +97,6 @@ module.exports = class CommandHandler {
           commandContext.argument = commandContext.argument.substr(match.value.length).trim();
           commandContext.language = match.language;
           commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
-          commandContext.route.push(match.value);
           return command;
         }
       }
@@ -111,16 +108,16 @@ module.exports = class CommandHandler {
       return Promise.resolve();
     }
 
-    const command = this._getChildCommand(commandCollection, commandContext);
+    const command = this._getCuurentOrChildCommand(commandCollection, commandContext);
 
     const callback = command.callback;
 
-    delete command.callback;
+    Reflect.deleteProperty(command, 'callback');
 
     return callback.call(this, command);
   }
 
-  _getChildCommand (parentCommand, commandContext) {
+  _getCuurentOrChildCommand (parentCommand, commandContext) {
     if (!commandContext.argument) {
       return commandContext;
     }
@@ -129,12 +126,9 @@ module.exports = class CommandHandler {
       const match = this._api.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
-        if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
-        (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
-        (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+        if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
           commandContext.argument = commandContext.argument.substr(match.value.length).trim();
           commandContext.callback = child.commandCallbackTypes.includes(Command.getCallback.BOTH) ? child.commandCallbacks.both : !commandContext.isGroup ? child.commandCallbacks.private : child.commandCallbacks.group;
-          commandContext.route.push(match.name);
           return child;
         }
       }
@@ -146,6 +140,6 @@ module.exports = class CommandHandler {
       return commandContext;
     }
 
-    return this._getChildCommand(command, commandContext);
+    return this._getCuurentOrChildCommand(command, commandContext);
   }
 };
