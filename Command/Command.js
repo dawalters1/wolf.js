@@ -33,11 +33,7 @@ const validateCommand = command => {
     }
   });
 
-  const children = command.children;
-
-  if (children === undefined || children === null) {
-    throw new Error('children cannot be null or undefined');
-  } else if (!Array.isArray(children)) {
+  if (!validator.isValidArray(command.children)) {
     throw new Error('children must be an array');
   }
 
@@ -53,7 +49,7 @@ module.exports = class Command {
     this.trigger = trigger;
     this.commandCallbacks = commandCallbacks;
     this.commandCallbackTypes = Object.keys(commandCallbacks);
-    this.children = children;
+    this.children = children || [];
 
     validateCommand(this);
   }
