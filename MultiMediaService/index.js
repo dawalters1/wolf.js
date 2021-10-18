@@ -108,7 +108,7 @@ module.exports = class MultiMediaServiceClient {
         throw error;
       }
 
-      console.log(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient}, retrying...`);
+      console.warn(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient}, retrying...`);
 
       await this._getCredentials(true);
 

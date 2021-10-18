@@ -182,8 +182,8 @@ class String {
     try {
       const data = new URL(url);
 
-      if (data.host.includes('.')) {
-        const tld = data.host.split('.').pop();
+      if (data.hostname.includes('.')) {
+        const tld = data.hostname.split('.').pop();
 
         if (!TLD.includes(tld)) {
           return false;
