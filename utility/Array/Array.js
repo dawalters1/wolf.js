@@ -19,7 +19,7 @@ class Array {
    */
   chunk (array, length) {
     if (!validator.isValidArray(array)) {
-      throw new Error('array must be a valid number');
+      throw new Error('array must be a valid array');
     } else if (array.length === 0) {
       return [];
     }

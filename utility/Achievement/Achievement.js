@@ -13,9 +13,9 @@ class Achievement {
    * @returns
    */
   async mapToCategories (achievements, language) {
-    if (!validator.isValidArray(achievements)) {
-      throw new Error('achievements must be an array');
-    } else if (achievements.length === 0) {
+    achievements = Array.isArray(achievements) ? achievements : [achievements];
+
+    if (achievements.length === 0) {
       throw new Error('achievements cannot be an empty array');
     }
 

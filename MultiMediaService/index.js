@@ -10,6 +10,29 @@ const {
   v4: uuidv4
 } = require('uuid');
 
+const ROUTES = {
+  MESSAGE_SEND: {
+    version: 1,
+    route: 'send-message'
+  },
+  GROUP_AVATAR: {
+    version: 1,
+    route: 'group-avatar-update'
+  },
+  SUBSCRIBER_AVATAR: {
+    version: 1,
+    route: 'subscriber-avatar-update'
+  },
+  GROUP_EVENT_IMAGE: {
+    version: 1,
+    route: 'group-event-image-update'
+  }
+};
+
+const buildRoute = (route) => {
+  return `v${route.version}/${route.route}`;
+};
+
 const refresh = async (api) => {
   const result = await api.getSecurityToken(true);
 
@@ -146,7 +169,7 @@ module.exports = class MultiMediaServiceClient {
       flightId: uuidv4()
     };
 
-    return this._sendRequest('/v1/send-message/', body);
+    return this._sendRequest(buildRoute(ROUTES.MESSAGE_SEND), body);
   }
 
   async uploadGroupAvatar (targetGroupId, avatar, mimeType) {
@@ -177,7 +200,7 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest('/v1/group-avatar-update', body);
+    return this._sendRequest(buildRoute(ROUTES.GROUP_AVATAR), body);
   }
 
   async uploadSubscriberAvatar (avatar, mimeType) {
@@ -200,7 +223,7 @@ module.exports = class MultiMediaServiceClient {
       mimeType
     };
 
-    return this._sendRequest('/v1/subscriber-avatar-update', body);
+    return this._sendRequest(buildRoute(ROUTES.SUBSCRIBER_AVATAR), body);
   }
 
   async uploadEventAvatar (eventId, thumbnail, mimeType) {
@@ -225,6 +248,6 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest('/v1/group-event-image-update', body);
+    return this._sendRequest(buildRoute(ROUTES.GROUP_EVENT_IMAGE), body);
   }
 };

@@ -102,9 +102,7 @@ module.exports = class SubscriberProfileBuilder {
   }
 
   setUrls (urls) {
-    if (!validator.isValidArray(urls)) {
-      throw new Error('urls must be a valid url');
-    }
+    urls = Array.isArray(urls) ? urls : [urls];
 
     this._urls = urls;
 
