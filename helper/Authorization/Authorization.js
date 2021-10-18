@@ -44,23 +44,20 @@ module.exports = class Authorized extends Helper {
    * @param {[Number]} subscriberIds - The id/ids of the subscribers to authorize
    */
   authorize (subscriberIds) {
-    if (validator.isValidArray(subscriberIds)) {
-      for (const subscriberId of subscriberIds) {
-        if (!validator.isValidNumber(subscriberId)) {
-          throw new Error('subscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new Error('subscriberId cannot be less than or equal to 0');
-        }
-      }
-    } else {
-      if (!validator.isValidNumber(subscriberIds)) {
-        throw new Error('subscriberIds must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberIds)) {
-        throw new Error('subscriberIds cannot be less than or equal to 0');
+    subscriberIds = Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds];
+
+    if (subscriberIds.length === 0) {
+      throw new Error('subscriberIds cannot be an empty array');
+    }
+    for (const subscriberId of subscriberIds) {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
     }
 
-    this._authorized.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
+    this._authorized.push(...subscriberIds);
   }
 
   /**
@@ -68,22 +65,19 @@ module.exports = class Authorized extends Helper {
    * @param {[Number]} subscriberIds - The id/ids of the subscribers to Unauthorize
    */
   unauthorize (subscriberIds) {
-    if (validator.isValidArray(subscriberIds)) {
-      for (const subscriberId of subscriberIds) {
-        if (!validator.isValidNumber(subscriberId)) {
-          throw new Error('subscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new Error('subscriberId cannot be less than or equal to 0');
-        }
-      }
-    } else {
-      if (!validator.isValidNumber(subscriberIds)) {
-        throw new Error('subscriberIds must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberIds)) {
-        throw new Error('subscriberIds cannot be less than or equal to 0');
+    subscriberIds = Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds];
+
+    if (subscriberIds.length === 0) {
+      throw new Error('subscriberIds cannot be an empty array');
+    }
+    for (const subscriberId of subscriberIds) {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
     }
 
-    this._authorized = this._authorized.filter((authorized) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(authorized) : authorized === subscriberIds);
+    this._authorized = this._authorized.filter((authorized) => !subscriberIds.includes(authorized));
   }
 };

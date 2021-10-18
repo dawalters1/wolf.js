@@ -44,23 +44,19 @@ module.exports = class Banned extends Helper {
    * @param {[Number]} subscriberIds - The id/ids of the subscribers
    */
   ban (subscriberIds) {
-    if (validator.isValidArray(subscriberIds)) {
-      for (const subscriberId of subscriberIds) {
-        if (!validator.isValidNumber(subscriberId)) {
-          throw new Error('subscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new Error('subscriberId cannot be less than or equal to 0');
-        }
-      }
-    } else {
-      if (!validator.isValidNumber(subscriberIds)) {
-        throw new Error('subscriberIds must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberIds)) {
-        throw new Error('subscriberIds cannot be less than or equal to 0');
+    subscriberIds = Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds];
+
+    if (subscriberIds.length === 0) {
+      throw new Error('subscriberIds cannot be an empty array');
+    }
+    for (const subscriberId of subscriberIds) {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
     }
-
-    this._banned.push(...(validator.isValidArray(subscriberIds) ? subscriberIds : [subscriberIds]));
+    this._banned.push(...subscriberIds);
   }
 
   /**
@@ -68,22 +64,20 @@ module.exports = class Banned extends Helper {
    * @param {[Number]} subscriberIds - The id/ids of the subscribers
    */
   unban (subscriberIds) {
-    if (validator.isValidArray(subscriberIds)) {
-      for (const subscriberId of subscriberIds) {
-        if (!validator.isValidNumber(subscriberId)) {
-          throw new Error('subscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new Error('subscriberId cannot be less than or equal to 0');
-        }
-      }
-    } else {
-      if (!validator.isValidNumber(subscriberIds)) {
-        throw new Error('subscriberIds must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(subscriberIds)) {
-        throw new Error('subscriberIds cannot be less than or equal to 0');
+    subscriberIds = Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds];
+
+    if (subscriberIds.length === 0) {
+      throw new Error('subscriberIds cannot be an empty array');
+    }
+
+    for (const subscriberId of subscriberIds) {
+      if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
     }
 
-    this._banned = this._banned.filter((banned) => validator.isValidArray(subscriberIds) ? subscriberIds.includes(banned) : banned === subscriberIds);
+    this._banned = this._banned.filter((banned) => !subscriberIds.includes(banned));
   }
 };

@@ -82,9 +82,9 @@ module.exports = class Phrase extends Helper {
    * @param {[{name: string, value: string, language: string}]} phrases - List of phrases
    */
   load (phrases) {
-    if (!validator.isValidArray(phrases)) {
-      throw new Error('phrases must be an array');
-    } else if (phrases.length === 0) {
+    phrases = Array.isArray(phrases) ? phrases : [phrases];
+
+    if (phrases.length === 0) {
       throw new Error('phrases must not be empty');
     }
 
@@ -162,11 +162,11 @@ module.exports = class Phrase extends Helper {
       return phrase.value;
     }
 
-    if (language === this._config.app.defaultLanguage) {
+    if (language === this._api.config.app.defaultLanguage) {
       return `missing_${language}_phrase_for_${name}`;
     }
 
-    return this.getByLanguageAndName(this._config.app.defaultLanguage, name);
+    return this.getByLanguageAndName(this._api.config.app.defaultLanguage, name);
   }
 
   /**
