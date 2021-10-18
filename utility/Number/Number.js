@@ -15,8 +15,8 @@ class Number {
       throw new Error('arg cannot be undefined');
     }
 
-    arg = arg.replace(/[۰-۹]/g, char => char.charCodeAt(0) - '۰'.charCodeAt(0));
-    arg = arg.replace(/[٠-٩]/g, char => char.charCodeAt(0) - '٠'.charCodeAt(0));
+    arg = arg.toString().replace(/[۰-۹]/g, char => char.charCodeAt(0) - '۰'.charCodeAt(0));
+    arg = arg.toString().replace(/[٠-٩]/g, char => char.charCodeAt(0) - '٠'.charCodeAt(0));
 
     return arg;
   }
