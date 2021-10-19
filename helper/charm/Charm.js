@@ -75,9 +75,9 @@ module.exports = class Charm extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getByIds (charmIds, language = constants.language.ENGLISH, requestNew = false) {
-    if (!validator.isValidArray(charmIds)) {
-      throw new Error('charmIds must be an array');
-    } else if (charmIds.length === 0) {
+    charmIds = Array.isArray(charmIds) ? charmIds : [charmIds];
+
+    if (charmIds.length === 0) {
       throw new Error('charmIds cannot be an empty array');
     }
 

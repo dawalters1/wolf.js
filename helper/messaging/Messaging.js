@@ -288,7 +288,7 @@ module.exports = class Messaging extends Helper {
       } else if (!messageHistory.some((message) => message.sourceSubscriberId === subscriberId)) {
         return await checkHistory(messageHistory.slice(-1)[0].timestamp);
       } else {
-        const lastMessage = messageHistory.filter((message) => message.sourceSubscriberId === subscriberId).slice(-1);
+        const lastMessage = messageHistory.filter((message) => message.sourceSubscriberId === subscriberId).slice(-1)[0];
 
         if (lastMessage) {
           if (lastMessage.metadata) {

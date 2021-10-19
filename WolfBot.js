@@ -56,14 +56,14 @@ const validateConfig = (api, opts) => {
 
   _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
 
-  api.options = {
+  api._options = {
     keyword: _opts.keyword,
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
     developerId: _opts.app.developerId
   };
 
-  api.config = _opts;
+  api._config = _opts;
 };
 
 module.exports = class WolfBot {
@@ -108,6 +108,14 @@ module.exports = class WolfBot {
 
   get on () {
     return this._eventManager;
+  }
+
+  get config () {
+    return this._config;
+  }
+
+  get options () {
+    return this._options;
   }
 
   /**
@@ -390,48 +398,24 @@ module.exports = class WolfBot {
    * @param {Array.<{position: number, charmId: number}>} charms
    */
   async setSelectedCharms (charms) {
-    if (validator.isValidArray(charms)) {
-      for (const charm of charms) {
-        if (charm) {
-          if (charm.position) {
-            if (!validator.isValidNumber(charm.position)) {
-              throw new Error('position must be a valid number');
-            } else if (validator.isLessThanZero(charm.position)) {
-              throw new Error('position must be larger than or equal to 0');
-            }
-          } else {
-            throw new Error('charm must contain a position');
-          }
+    charms = Array.isArray(charms) ? charms : [charms];
 
-          if (charm.charmId) {
-            if (!validator.isValidNumber(charm.charmId)) {
-              throw new Error('charmId must be a valid number');
-            } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
-              throw new Error('charmId cannot be less than or equal to 0');
-            }
-          } else {
-            throw new Error('charm must contain a charmId');
-          }
-        } else {
-          throw new Error('charm cannot be null or empty');
-        }
-      }
-    } else {
-      if (charms) {
-        if (charms.position) {
-          if (!validator.isValidNumber(charms.position)) {
+    for (const charm of charms) {
+      if (charm) {
+        if (charm.position) {
+          if (!validator.isValidNumber(charm.position)) {
             throw new Error('position must be a valid number');
-          } else if (validator.isLessThanZero(charms.position)) {
+          } else if (validator.isLessThanZero(charm.position)) {
             throw new Error('position must be larger than or equal to 0');
           }
         } else {
           throw new Error('charm must contain a position');
         }
 
-        if (charms.charmId) {
-          if (!validator.isValidNumber(charms.charmId)) {
+        if (charm.charmId) {
+          if (!validator.isValidNumber(charm.charmId)) {
             throw new Error('charmId must be a valid number');
-          } else if (validator.isLessThanOrEqualZero(charms.charmId)) {
+          } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
             throw new Error('charmId cannot be less than or equal to 0');
           }
         } else {
@@ -443,7 +427,7 @@ module.exports = class WolfBot {
     }
 
     return await this.websocket.emit(request.CHARM_SUBSCRIBER_SET_SELECTED, {
-      selectedList: validator.isValidArray(charms) ? charms : [charms]
+      selectedList: charms
     });
   }
 
@@ -452,30 +436,22 @@ module.exports = class WolfBot {
    * @param {Number[]} charmIds
    */
   async deleteCharms (charmIds) {
-    if (validator.isValidArray(charmIds)) {
-      if (charmIds.length === 0) {
-        throw new Error('charmIds cannot be an empty array');
-      }
+    charmIds = Array.isArray(charmIds) ? charmIds : [charmIds];
 
-      for (const charmId of charmIds) {
-        if (!validator.isValidNumber(charmId)) {
-          throw new Error('charmId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(charmIds)) {
-          throw new Error('charmId cannot be less than or equal to 0');
-        }
-      }
-    } else {
-      if (charmIds) {
-        if (!validator.isValidNumber(charmIds)) {
-          throw new Error('charmIds must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(charmIds)) {
-          throw new Error('charmIds cannot be less than or equal to 0');
-        }
+    if (charmIds.length === 0) {
+      throw new Error('charmIds cannot be an empty array');
+    }
+
+    for (const charmId of charmIds) {
+      if (!validator.isValidNumber(charmId)) {
+        throw new Error('charmId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(charmIds)) {
+        throw new Error('charmId cannot be less than or equal to 0');
       }
     }
 
     return await this.websocket.emit(request.CHARM_SUBSCRIBER_DELETE, {
-      idList: validator.isValidArray(charmIds) ? charmIds : [charmIds]
+      idList: charmIds
     });
   }
 

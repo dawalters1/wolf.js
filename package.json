@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.13.3",
+  "version": "0.14.0",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "repository": {
@@ -39,7 +39,8 @@
     "superagent": "6.1.0",
     "uuid": "^8.3.2",
     "wrtc": "^0.4.7",
-    "yaml": "^1.10.2"
+    "yaml": "^1.10.2",
+    "bull": "^3.29.2"
   },
   "license": "MIT",
   "devDependencies": {
@@ -49,11 +50,8 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0"
   },
-  "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs"
-  },
-  "exclude": [
-    "node_modules"
-  ]
+  "engines": {
+    "node": ">=12.0.0",
+    "npm": ">=6.0.0"
+  }
 }

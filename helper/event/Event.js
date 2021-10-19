@@ -50,15 +50,17 @@ module.exports = class Event extends Helper {
    * @param {Boolean} requestNew - Request new data from the server
    */
   async getByIds (eventIds, requestNew = false) {
-    if (!validator.isValidArray(eventIds)) {
-      throw new Error('eventIds must be a valid array');
-    } else {
-      for (const eventId of eventIds) {
-        if (!validator.isValidNumber(eventId)) {
-          throw new Error('eventId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(eventId)) {
-          throw new Error('eventId cannot be less than or equal to 0');
-        }
+    eventIds = Array.isArray(eventIds) ? eventIds : [eventIds];
+
+    if (eventIds.length === 0) {
+      throw new Error('charmIds cannot be an empty array');
+    }
+
+    for (const eventId of eventIds) {
+      if (!validator.isValidNumber(eventId)) {
+        throw new Error('eventId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new Error('eventId cannot be less than or equal to 0');
       }
     }
 
