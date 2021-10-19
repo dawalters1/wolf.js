@@ -73,9 +73,9 @@ module.exports = class Achievement extends Helper {
    * @returns
    */
   async getByIds (achievementIds, language = constants.language.ENGLISH, requestNew = false) {
-    if (!validator.isValidArray(achievementIds)) {
-      throw new Error('achievementIds must be an array');
-    } else if (achievementIds.length === 0) {
+    achievementIds = Array.isArray(achievementIds) ? achievementIds : [achievementIds];
+
+    if (achievementIds.length === 0) {
       throw new Error('achievementIds cannot be an empty array');
     }
 

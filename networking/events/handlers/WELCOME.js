@@ -20,7 +20,7 @@ module.exports = class Welcome extends BaseEvent {
       const login = async (api) => {
         const loginSettings = api.config._loginSettings;
 
-        const result = await this._websocket.emit(request.SECURITY_LOGIN, {
+        const result = await this._api.websocket.emit(request.SECURITY_LOGIN, {
           headers: {
             version: 2
           },
