@@ -69,48 +69,28 @@ module.exports = class Tip extends Helper {
       throw new Error('contextType is not valid');
     }
 
-    if (validator.isValidArray(charms)) {
-      for (const charm of charms) {
-        if (charm) {
-          if (charm.quantity) {
-            if (!validator.isValidNumber(charm.quantity)) {
-              throw new Error('quantity must be a valid number');
-            } else if (validator.isLessThanZero(charm.quantity)) {
-              throw new Error('quantity must be larger than or equal to 0');
-            }
-          } else {
-            throw new Error('charm must contain a quantity');
-          }
+    charms = Array.isArray(charms) ? charms : [charms];
 
-          if (charm.id) {
-            if (!validator.isValidNumber(charm.id)) {
-              throw new Error('id must be a valid number');
-            } else if (validator.isLessThanOrEqualZero(charm.id)) {
-              throw new Error('id cannot be less than or equal to 0');
-            }
-          } else {
-            throw new Error('charm must contain a id');
-          }
-        } else {
-          throw new Error('charm cannot be null or empty');
-        }
-      }
-    } else {
-      if (charms) {
-        if (charms.quantity) {
-          if (!validator.isValidNumber(charms.quantity)) {
+    if (charms.length === 0) {
+      throw new Error('charms cannot be an empty array');
+    }
+
+    for (const charm of charms) {
+      if (charm) {
+        if (charm.quantity) {
+          if (!validator.isValidNumber(charm.quantity)) {
             throw new Error('quantity must be a valid number');
-          } else if (validator.isLessThanZero(charms.quantity)) {
+          } else if (validator.isLessThanZero(charm.quantity)) {
             throw new Error('quantity must be larger than or equal to 0');
           }
         } else {
           throw new Error('charm must contain a quantity');
         }
 
-        if (charms.id) {
-          if (!validator.isValidNumber(charms.id)) {
+        if (charm.id) {
+          if (!validator.isValidNumber(charm.id)) {
             throw new Error('id must be a valid number');
-          } else if (validator.isLessThanOrEqualZero(charms.id)) {
+          } else if (validator.isLessThanOrEqualZero(charm.id)) {
             throw new Error('id cannot be less than or equal to 0');
           }
         } else {
@@ -120,12 +100,13 @@ module.exports = class Tip extends Helper {
         throw new Error('charm cannot be null or empty');
       }
     }
+
     // #endregion
 
     return await this._websocket.emit(request.TIP_ADD, {
       subscriberId,
       groupId: targetGroupId,
-      charmList: validator.isValidArray(charms) ? charms : [charms],
+      charmList: charms,
       context
     });
   }

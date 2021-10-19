@@ -14,7 +14,7 @@ class Privilege {
    * @returns {Boolean}
    */
   async has (sourceSubscriberId, privs, requireAll = false) {
-    privs = validator.isValidArray(privs) ? privs : [privs];
+    privs = Array.isArray(privs) ? privs : [privs];
 
     if (!validator.isValidNumber(sourceSubscriberId)) {
       throw new Error('subscriberId must be a valid number');
