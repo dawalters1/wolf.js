@@ -9,6 +9,7 @@ const Group = require('./Group/Group');
 const _Number = require('./Number/Number');
 const _String = require('./String/String');
 const Subscriber = require('./Subscriber/Subscriber');
+const Timer = require('./Timer/Timer');
 
 class Utility {
   constructor (api) {
@@ -21,10 +22,11 @@ class Utility {
     this._number = new _Number(this._api);
     this._string = new _String(this._api);
     this._subscriber = new Subscriber(this._api);
+    this._timer = new Timer(this._api);
   }
 
   /**
-   * Exposes the achievement utilities
+   * Exposes the achievement methods
    * @returns {Achievement}
    */
   achievement () {
@@ -32,7 +34,7 @@ class Utility {
   }
 
   /**
-   * Exposes the array utilities
+   * Exposes the array methods
    * @returns {Array}
    */
   array () {
@@ -40,7 +42,7 @@ class Utility {
   }
 
   /**
-   * Exposes the download utilities
+   * Exposes the download methods
    * @returns {Download}
    */
   download () {
@@ -48,7 +50,7 @@ class Utility {
   }
 
   /**
-   * Exposes the group utilities
+   * Exposes the group methods
    * @returns {Group}
    */
   group () {
@@ -56,7 +58,7 @@ class Utility {
   }
 
   /**
-   * Exposes the number utilities
+   * Exposes the number methods
    * @returns {_Number}
    */
   number () {
@@ -64,7 +66,7 @@ class Utility {
   }
 
   /**
-   * Exposes the string utilities
+   * Exposes the string methods
    * @returns {_String}
    */
   string () {
@@ -72,11 +74,19 @@ class Utility {
   }
 
   /**
-   * Exposes the subscriber utilities
+   * Exposes the subscriber methods
    * @returns {Subscriber}
    */
   subscriber () {
     return this._subscriber;
+  }
+
+  /**
+   * Exposes the timer methods
+   * @returns {Timer}
+   */
+  timer () {
+    return this._timer;
   }
 
   /**
