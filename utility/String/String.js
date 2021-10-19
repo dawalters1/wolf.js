@@ -19,7 +19,7 @@ class String {
    */
   replace (string, replacements) {
     if (typeof (string) !== 'string') {
-      throw new Error('string must be a string');
+      throw new Error('string must be type string');
     } else if (validator.isNullOrWhitespace(string)) {
       throw new Error('string cannot be null or empty');
     }
@@ -76,7 +76,7 @@ class String {
    */
   chunk (string, max = 1000, splitChar = '\n', joinChar = '\n') {
     if (typeof (string) !== 'string') {
-      throw new Error('string must be a string');
+      throw new Error('string must be type string');
     } else if (validator.isNullOrWhitespace(string)) {
       throw new Error('string cannot be null or empty');
     }
