@@ -46,25 +46,18 @@ module.exports = class Stage extends Helper {
     });
 
     api.on.groupAudioCountUpdate(async (data) => {
-      try {
-        const targetGroupId = data.id;
-        console.log('got targetGroupId', targetGroupId);
+      const targetGroupId = data.id;
+      const client = await this._getClient(targetGroupId);
 
-        const client = await this._getClient(targetGroupId);
-        console.log('got client', client);
-        if (client) {
-          console.log('emitting event for ', targetGroupId);
-          return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
-            {
-              targetGroupId: targetGroupId,
-              count: data.audioCounts.consumerCount
-            });
-        }
-
-        return Promise.resolve();
-      } catch (error) {
-        console.log(error);
+      if (client) {
+        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
+          {
+            targetGroupId: targetGroupId,
+            count: data.audioCounts.consumerCount
+          });
       }
+
+      return Promise.resolve();
     });
   }
 
