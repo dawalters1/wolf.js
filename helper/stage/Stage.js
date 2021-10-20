@@ -46,30 +46,44 @@ module.exports = class Stage extends Helper {
     });
 
     api.on.groupAudioCountUpdate(async (data) => {
-      const targetGroupId = data.id;
+      try {
+        const targetGroupId = data.id;
+        console.log('got targetGroupId', targetGroupId);
 
-      const client = await this._getClient(targetGroupId);
+        const client = await this._getClient(targetGroupId);
+        console.log('got client', client);
+        if (client) {
+          console.log('emitting event for ', targetGroupId);
+          return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
+            {
+              targetGroupId: targetGroupId,
+              count: data.audioCounts.consumerCount
+            });
+        }
 
-      if (client) {
-        return this._api.on._emit(internal.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
-          {
-            targetGroupId: targetGroupId,
-            count: data.audioCounts.consumerCount
-          });
+        return Promise.resolve();
+      } catch (error) {
+        console.log(error);
       }
-
-      return Promise.resolve();
     });
   }
 
   // #region stageHandling
 
   async _getClient (targetGroupId, create = false) {
-    const getClient = () => {
+    try {
       let client = this._clients.find((client) => client.targetGroupId === targetGroupId);
 
       if (client || !create) {
         return client;
+      }
+
+      if (!_ffmpegExists) {
+        if (!await commandExists('ffmpeg')) {
+          throw new Error('ffmpeg must be installed on this device to create a stage client');
+        }
+
+        _ffmpegExists = true;
       }
 
       client = new Client();
@@ -154,26 +168,9 @@ module.exports = class Stage extends Helper {
 
       this._clients.push(client);
 
-      return getClient(targetGroupId);
-    };
-
-    try {
-      if (_ffmpegExists || await commandExists('ffmpeg')) {
-        _ffmpegExists = true;
-
-        return getClient();
-      }
-
-      const exists = await commandExists('ffmpeg');
-
-      if (exists) {
-        _ffmpegExists = true;
-        return getClient();
-      }
-
-      throw new Error('ffmpeg must be installed on this device');
+      return client;
     } catch (error) {
-      throw console.error();
+      throw new Error('Unknown stage client error', error.message);
     }
   }
 
