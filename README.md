@@ -26,14 +26,10 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 #### Optional Packages
 
 - [constants](https://www.npmjs.com/package/@dawalters1/constants) - npm i @dawalters1/constants
-- [validator](https://www.npmjs.com/package/@dawalters1/validator) - npm i @dawalters1/validator - **DEPRECATED** 
-  - Integrated into the api ```const validator = require('@dawalters1/wolf.js).Validator;```
 - [ioredis](https://www.npmjs.com/package/ioredis) npm i ioredis
   - Requires a local or remote redis server
     - [Windows](https://github.com/tporadowski/redis/releases/tag/v5.0.10) - Github maintained port, because its no longer supported on windows
     - [Linux](https://redis.io/download)
-  - Optional Redis Utils
-    - [dtimer](https://www.npmjs.com/package/dtimer) - npm i dtimer - Useful for timeouts/events that can be shared across serveral bot instances
 
 ## Getting Started 
 
@@ -42,10 +38,10 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 #### Config - './config/default.yaml'
 
 ```YML
-keyword: '{keyword}' # single word only
+keyword: keyword # single word only
 app:
-  defaultLanguage: 'en'
-  developerId: {your_user_id} # your user ID
+  defaultLanguage: en
+  developerId: your_user_id # your user ID
   commandSettings:
     ignoreOfficialBots: true
     ignoreUnofficialBots: false
@@ -150,7 +146,7 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Known Issues
 
-- Voice Messages are unsupported (That or I am dumb 😊)
+- Nothing at all ᴺᵒᵗʰᶦⁿᵍ ᵃᵗ ᵃˡˡ
 
 ## Lacking Features
 

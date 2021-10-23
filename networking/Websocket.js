@@ -15,18 +15,14 @@ const ignoreEvents = [
 module.exports = class Websocket {
   constructor (api) {
     this._api = api;
-    this._config = this._api.config;
-
-    this.host = 'https://v3-rc.palringo.com';
-    this.port = 3051;
   };
 
   create () {
-    this.socket = io(`${this.host}:${this.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}`, {
+    this.socket = io(`${this._api._botConfig.endpoint.host}:${this._api._botConfig.endpoint.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}`, {
       transports: ['websocket'],
       reconnection: true,
       reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
+      reconnectionDelayMax: 3000,
       reconnectionAttempts: Infinity
     });
 

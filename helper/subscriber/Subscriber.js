@@ -6,6 +6,7 @@ const toLanguageKey = require('../../internalUtils/toLanguageKey');
 const Response = require('../../networking/Response');
 
 const request = require('../../constants/request');
+const toBaseMessage = require('../../internalUtils/toBaseMessage');
 
 /**
  * {@hideconstructor}
@@ -129,20 +130,7 @@ module.exports = class Subscriber extends Helper {
 
     return {
       code: result.code,
-      body: result.success
-        ? result.body.map((message) => ({
-          id: message.id,
-          body: message.data.toString(),
-          sourceSubscriberId: message.originator.id,
-          groupId: message.isGroup ? message.recipient.id : null,
-          embeds: message.embeds,
-          metadata: message.metadata,
-          isGroup: message.isGroup,
-          timestamp: message.timestamp,
-          edited: message.edited,
-          type: message.mimeType
-        }))
-        : []
+      body: result.success ? result.body.map((message) => toBaseMessage(this._api, message)) : []
     };
   }
 
