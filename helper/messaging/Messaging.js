@@ -36,11 +36,13 @@ module.exports = class Messaging extends Helper {
 
     _opts.includeEmbeds = typeof _opts.includeEmbeds === 'boolean' ? _opts.includeEmbeds : false;
 
-    if (_opts.chunkSize < 512) {
-      console.warn('[WARNING]: Message Helper - Minimum chunk size is 512');
+    const lengthValidation = this._api._botConfig.messaging.validation.length;
+
+    if (_opts.chunkSize < lengthValidation.min) {
+      console.warn(`[WARNING]: Message Helper - Minimum chunk size is ${lengthValidation.min}`);
       _opts.chunkSize = 512;
-    } else if (_opts.chunkSize > 1000) {
-      console.warn('[WARNING]: Message Helper - Maximum chunk size is 1000');
+    } else if (_opts.chunkSize > lengthValidation.max) {
+      console.warn(`[WARNING]: Message Helper - Maximum chunk size is  ${lengthValidation.min}`);
       _opts.chunkSize = 1000;
     }
 
@@ -77,20 +79,22 @@ module.exports = class Messaging extends Helper {
   async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-    if (['image/jpeg', 'image/gif'].includes(mimeType)) {
+    if (this._api._botConfig.mms.routes.MESSAGE_SEND.allowedTypes.includes(mimeType)) {
       return await this._api._mediaService().sendMessage(targetType, targetId, content, mimeType);
     }
 
     if (validator.isNullOrWhitespace(mimeType)) {
       throw new Error('mimeType cannot be null or empty');
-    } else if (!['text/plain'].includes(mimeType)) {
+    } else if (!this._api._botConfig.messaging.types.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
     }
 
     const _opts = this._getDefaultOptions(opts);
 
-    if (!_opts.chunk && content.length > 1000) {
-      console.warn('[WARNING]: Message Helper - Maximum message length is 1,000');
+    const lengthValidation = this._api._botConfig.messaging.validation.length;
+
+    if (!_opts.chunk && content.length > lengthValidation.max) {
+      console.warn(`[WARNING]: Message Helper - Maximum message length is ${lengthValidation.max}`);
     }
 
     let previewAdded = false;

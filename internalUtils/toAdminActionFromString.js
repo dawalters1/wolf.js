@@ -12,6 +12,8 @@ module.exports = (type) => {
       return adminAction.REGULAR;
     case 'kick':
       return adminAction.KICK;
+    case 'silence':
+      return adminAction.SILENCE;
     case 'ban':
       return adminAction.BAN;
     case 'leave':
