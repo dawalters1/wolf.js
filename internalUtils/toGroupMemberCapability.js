@@ -10,6 +10,8 @@ module.exports = (type) => {
       return capability.MOD;
     case adminAction.REGULAR:
       return capability.REGULAR;
+    case adminAction.SILENCE:
+      return capability.SILENCED;
     case adminAction.KICK:
       return capability.NOT_MEMBER;
     case adminAction.BAN:

@@ -9,6 +9,7 @@ const constants = require('@dawalters1/constants');
 const fileType = require('file-type');
 
 const toLanguageKey = require('../../internalUtils/toLanguageKey');
+const toBaseMessage = require('../../internalUtils/toBaseMessage');
 
 /**
  * {@hideconstructor}
@@ -260,20 +261,7 @@ module.exports = class Group extends Helper {
 
     return {
       code: result.code,
-      body: result.success
-        ? result.body.map((message) => ({
-          id: message.id,
-          body: message.data.toString(),
-          sourceSubscriberId: message.originator.id,
-          targetGroupId: message.isGroup ? message.recipient.id : null,
-          embeds: message.embeds,
-          metadata: message.metadata,
-          isGroup: message.isGroup,
-          timestamp: message.timestamp,
-          edited: message.edited,
-          type: message.mimeType
-        }))
-        : []
+      body: result.success ? result.body.map((message) => toBaseMessage(this._api, message)) : []
     };
   }
 

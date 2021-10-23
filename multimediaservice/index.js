@@ -5,32 +5,14 @@ const Response = require('../networking/Response');
 const validator = require('../validator');
 
 const imageSize = require('image-size');
+const fileType = require('file-type');
 
 const {
   v4: uuidv4
 } = require('uuid');
 
-const ROUTES = {
-  MESSAGE_SEND: {
-    version: 1,
-    route: 'send-message'
-  },
-  GROUP_AVATAR: {
-    version: 1,
-    route: 'group-avatar-update'
-  },
-  SUBSCRIBER_AVATAR: {
-    version: 1,
-    route: 'subscriber-avatar-update'
-  },
-  GROUP_EVENT_IMAGE: {
-    version: 1,
-    route: 'group-event-image-update'
-  }
-};
-
 const buildRoute = (route) => {
-  return `v${route.version}/${route.route}`;
+  return `/v${route.version}/${route.route}`;
 };
 
 const refresh = async (api) => {
@@ -156,20 +138,27 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('content must be a buffer');
     }
 
-    if (!['image/jpeg', 'image/gif'].includes(mimeType)) {
+    const routeData = this._api._botConfig.mms.routes.MESSAGE_SEND;
+
+    if (!routeData.allowedTypes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
     }
 
-    const body = {
-      data: content.toString('base64'),
-      mimeType,
+    const ext = (await fileType.fromBuffer(content)).ext;
+
+    if (Buffer.byteLength(content) > routeData.allowedSizes[ext]) {
+      throw new Error(`maximum size allowed for mimeType ${mimeType} is ${routeData.allowedSizes[ext]} bytes`);
+    }
+
+    const data = {
+      data: mimeType === 'audio/x-m4a' ? content : content.toString('base64'),
+      mimeType: mimeType === 'audio/x-m4a' ? 'audio/aac' : mimeType,
       recipient: targetId,
       isGroup: targetType === 'group',
-      source: this._api.currentSubscriber.id,
       flightId: uuidv4()
     };
 
-    return this._sendRequest(buildRoute(ROUTES.MESSAGE_SEND), body);
+    return this._sendRequest(buildRoute(routeData), data);
   }
 
   async uploadGroupAvatar (targetGroupId, avatar, mimeType) {
@@ -180,10 +169,12 @@ module.exports = class MultiMediaServiceClient {
     }
 
     if (!Buffer.isBuffer(avatar)) {
-      throw new Error('content must be a buffer');
+      throw new Error('avatar must be a buffer');
     }
 
-    if (!['image/jpeg', 'image/gif'].includes(mimeType)) {
+    const routeData = this._api._botConfig.mms.routes.GROUP_AVATAR_UPDATE;
+
+    if (!routeData.allowedTypes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
     }
 
@@ -191,6 +182,12 @@ module.exports = class MultiMediaServiceClient {
 
     if (size.width !== size.height) {
       throw new Error('image must be square');
+    }
+
+    const ext = (await fileType.fromBuffer(avatar)).ext;
+
+    if (Buffer.byteLength(avatar) > routeData.allowedSizes[ext]) {
+      throw new Error(`maximum size allowed for mimeType ${mimeType} is ${routeData.allowedSizes[ext]} bytes`);
     }
 
     const body = {
@@ -200,15 +197,16 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest(buildRoute(ROUTES.GROUP_AVATAR), body);
+    return this._sendRequest(buildRoute(routeData), body);
   }
 
   async uploadSubscriberAvatar (avatar, mimeType) {
     if (!Buffer.isBuffer(avatar)) {
       throw new Error('content must be a buffer');
     }
+    const routeData = this._api._botConfig.mms.routes.SUBSCRIBER_AVATAR_UPDATE;
 
-    if (!['image/jpeg', 'image/gif'].includes(mimeType)) {
+    if (!routeData.allowedTypes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
     }
 
@@ -218,12 +216,18 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('image must be square');
     }
 
+    const ext = (await fileType.fromBuffer(avatar)).ext;
+
+    if (Buffer.byteLength(avatar) > routeData.allowedSizes[ext]) {
+      throw new Error(`maximum size allowed for mimeType ${mimeType} is ${routeData.allowedSizes[ext]} bytes`);
+    }
+
     const body = {
       data: avatar.toString('base64'),
       mimeType
     };
 
-    return this._sendRequest(buildRoute(ROUTES.SUBSCRIBER_AVATAR), body);
+    return this._sendRequest(buildRoute(routeData), body);
   }
 
   async uploadEventAvatar (eventId, thumbnail, mimeType) {
@@ -231,7 +235,9 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('thumbnail must be a buffer');
     }
 
-    if (!['image/jpeg'].includes(mimeType)) {
+    const routeData = this._api._botConfig.mms.routes.GROUP_EVENT_IMAGE_UPDATE;
+
+    if (!routeData.allowedTypes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
     }
 
@@ -248,6 +254,6 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest(buildRoute(ROUTES.GROUP_EVENT_IMAGE), body);
+    return this._sendRequest(buildRoute(this._api._botConfig.mms.routes.GROUP_EVENT_IMAGE_UPDATE), body);
   }
 };
