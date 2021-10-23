@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const Achievement = require('./Achievement/Achievement');
 const Array = require('./Array/Array');
+const Discovery = require('./Discovery/Discovery');
 const Download = require('./Download/Download');
 const Group = require('./Group/Group');
 const _Number = require('./Number/Number');
@@ -17,6 +18,7 @@ class Utility {
 
     this._achievement = new Achievement(this._api);
     this._array = new Array(this._api);
+    this._discovery = new Discovery(this._api);
     this._download = new Download(this._api);
     this._group = new Group(this._api);
     this._number = new _Number(this._api);
@@ -39,6 +41,14 @@ class Utility {
    */
   array () {
     return this._array;
+  }
+
+  /**
+   * Exposes the discovery methods
+   * @returns {Discovery}
+   */
+  discovery () {
+    return this._discovery;
   }
 
   /**
