@@ -181,7 +181,7 @@ module.exports = class MultiMediaServiceClient {
     const size = imageSize(avatar);
 
     if (size.width !== size.height) {
-      throw new Error('image must be square');
+      throw new Error('avatar must be square');
     }
 
     const ext = (await fileType.fromBuffer(avatar)).ext;
@@ -202,7 +202,7 @@ module.exports = class MultiMediaServiceClient {
 
   async uploadSubscriberAvatar (avatar, mimeType) {
     if (!Buffer.isBuffer(avatar)) {
-      throw new Error('content must be a buffer');
+      throw new Error('avatar must be a buffer');
     }
     const routeData = this._api._botConfig.mms.routes.SUBSCRIBER_AVATAR_UPDATE;
 
@@ -213,7 +213,7 @@ module.exports = class MultiMediaServiceClient {
     const size = imageSize(avatar);
 
     if (size.width !== size.height) {
-      throw new Error('image must be square');
+      throw new Error('avatar must be square');
     }
 
     const ext = (await fileType.fromBuffer(avatar)).ext;
@@ -244,7 +244,7 @@ module.exports = class MultiMediaServiceClient {
     const size = imageSize(thumbnail);
 
     if (size.width !== size.height) {
-      throw new Error('image must be square');
+      throw new Error('thumbnail must be square');
     }
 
     const body = {
