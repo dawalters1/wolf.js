@@ -77,10 +77,10 @@ module.exports = class WolfBot {
       console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
-    this.currentSubscriber = null;
+    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, './config/default.yaml'), 'utf-8'));
 
-    this._eventManager = new EventManager(this);
     this.websocket = new Websocket(this);
+    this._eventManager = new EventManager(this);
     this._commandHandler = new CommandHandler(this);
 
     this._achievement = new Achievement(this);
@@ -93,15 +93,15 @@ module.exports = class WolfBot {
     this._event = new Event(this);
     this._group = new Group(this);
     this._messaging = new Messaging(this);
+    this._multiMediaService = new MultiMediaService(this);
     this._notification = new Notification(this);
     this._phrase = new Phrase(this);
     this._stage = new Stage(this);
     this._subscriber = new Subscriber(this);
     this._tip = new Tip(this);
-
-    this._multiMediaService = new MultiMediaService(this);
-
     this._utility = new Utility(this);
+
+    this.currentSubscriber = null;
 
     this._blacklist = [];
   }
