@@ -254,6 +254,6 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest(buildRoute(this._api._botConfig.mms.routes.GROUP_EVENT_IMAGE_UPDATE), body);
+    return this._sendRequest(buildRoute(routeData), body);
   }
 };
