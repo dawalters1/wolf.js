@@ -2,6 +2,17 @@ const validator = require('../../validator');
 
 const { capability, privilege } = require('@dawalters1/constants');
 
+const checkCapability = (requiredCapability, subscriberCapability) => {
+  switch (requiredCapability) {
+    case capability.ADMIN:
+      return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN;
+    case capability.MOD:
+      return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN || subscriberCapability === capability.MOD;
+    default:
+      return true;
+  }
+};
+
 class Member {
   constructor (api) {
     this._api = api;
@@ -71,6 +82,18 @@ class Member {
       return true;
     }
 
+    if (this._api.currentSubscriber.id === sourceSubscriberId) {
+      const group = await this._api.group().getById(targetGroupId);
+      
+      if (group.owner.id === sourceSubscriberId) {
+        return true;
+      }
+
+      if (group.inGroup && group.capabilities) {
+        return checkCapability(requiredCapability, group.capabilities);
+      }
+    }
+
     if (checkStaff) {
       const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
 
@@ -85,8 +108,8 @@ class Member {
 
     const group = await this._api.group().getById(targetGroupId);
 
-    if (requiredCapability === capability.OWNER) {
-      return group.owner.id === sourceSubscriberId;
+    if (group.owner.id === sourceSubscriberId) {
+      return true;
     }
 
     const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
@@ -101,16 +124,7 @@ class Member {
       return false;
     }
 
-    const subscriberCapability = groupSubscriber.capabilities;
-
-    switch (requiredCapability) {
-      case capability.ADMIN:
-        return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN;
-      case capability.MOD:
-        return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN || subscriberCapability === capability.MOD;
-      default:
-        return true;
-    }
+    return checkCapability(requiredCapability, groupSubscriber.capabilities);
   }
 }
 

@@ -76,7 +76,7 @@ module.exports = class Discovery extends Helper {
     if (!requestNew && this._recipes[language] && this._recipes[language][id]) {
       return {
         type,
-        idList: this._recipes[language][id]
+        idList: this._recipes[language][id].map((hash) => hash.id)
       };
     }
 
