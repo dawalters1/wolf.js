@@ -53,6 +53,10 @@ class Number {
    * @returns {Number|String} - The argument with commas added
    */
   addCommas (arg) {
+    if(arg === 0){
+      return arg;
+    }
+
     if (!arg) {
       throw new Error('arg cannot be undefined');
     }
