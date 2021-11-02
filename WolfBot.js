@@ -534,7 +534,7 @@ module.exports = class WolfBot {
       throw new Error('link cannot be null or empty');
     }
 
-    return await this._websocket.emit(request.METADATA_URL, { url: link });
+    return await this.websocket.emit(request.METADATA_URL, { url: link });
   }
 
   /**
