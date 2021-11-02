@@ -22,6 +22,16 @@ class Subscriber {
    * @returns {Buffer} The buffer of the image
    */
   async getAvatar (subscriberId, size) {
+    if (!validator.isValidNumber(subscriberId)) {
+      throw new Error('subscriberId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new Error('subscriberId cannot be less than or equal to 0');
+    }
+    if (!validator.isValidNumber(size)) {
+      throw new Error('size must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(size)) {
+      throw new Error('size cannot be less than or equal to 0');
+    }
     return await this._api.utility().download().file(this._api.utility().string().replace(`${this._api.endpointConfig.avatarEndpoint}/FileServerSpring/subsriber/avatar/{subscriberId}?size={size}`,
       {
         subscriberId,

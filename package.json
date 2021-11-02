@@ -1,6 +1,6 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.16.2",
+  "version": "0.16.5",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "repository": {
@@ -25,8 +25,9 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
     "@dawalters1/constants": "^1.0.4",
-    "@types/node": "^16.10.3",
+    "@types/node": "^16.11.6",
     "aws-sdk": "^2.1002.0",
+    "bull": "^3.29.2",
     "command-exists-promise": "^2.0.2",
     "config": "^3.3.6",
     "file-type": "^16.5.3",
@@ -39,8 +40,7 @@
     "superagent": "6.1.0",
     "uuid": "^8.3.2",
     "wrtc": "^0.4.7",
-    "yaml": "^1.10.2",
-    "bull": "^3.29.2"
+    "yaml": "^1.10.2"
   },
   "license": "MIT",
   "devDependencies": {

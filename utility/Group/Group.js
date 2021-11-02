@@ -23,6 +23,17 @@ class Group {
    * @returns {Buffer} The buffer of the image
    */
   async getAvatar (targetGroupId, size) {
+    if (!validator.isValidNumber(targetGroupId)) {
+      throw new Error('targetGroupId must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new Error('targetGroupId cannot be less than or equal to 0');
+    }
+    if (!validator.isValidNumber(size)) {
+      throw new Error('size must be a valid number');
+    } else if (validator.isLessThanOrEqualZero(size)) {
+      throw new Error('size cannot be less than or equal to 0');
+    }
+
     return await this._api.utility().download().file(this._api.utility().string().replace(`${this._api.endpointConfig.avatarEndpoint}/FileServerSpring/group/avatar/{targetGroupId}?size={size}`,
       {
         targetGroupId,
