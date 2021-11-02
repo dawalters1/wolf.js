@@ -11,7 +11,7 @@ class Number {
    * @returns {Number|String} - The argument with converted numbers
    */
   toEnglishNumbers (arg) {
-    if (!arg) {
+    if (arg === undefined || arg === null) {
       throw new Error('arg cannot be undefined');
     }
 
@@ -27,7 +27,7 @@ class Number {
    * @returns {Number|String} - The argument with converted numbers
    */
   toArabicNumbers (arg) {
-    if (!arg) {
+    if (arg === undefined || arg === null) {
       throw new Error('arg cannot be undefined');
     }
 
@@ -40,7 +40,7 @@ class Number {
    * @returns {Number|String} - The argument with converted numbers
    */
   toPersianNumbers (arg) {
-    if (!arg) {
+    if (arg === undefined || arg === null) {
       throw new Error('arg cannot be undefined');
     }
 
@@ -53,13 +53,10 @@ class Number {
    * @returns {Number|String} - The argument with commas added
    */
   addCommas (arg) {
-    if(arg === 0){
-      return arg;
-    }
-
-    if (!arg) {
+    if (arg === undefined || arg === null) {
       throw new Error('arg cannot be undefined');
     }
+
     const args = arg.toString().split('.');
 
     return `${args[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}${args[1] ? args[1] : ''}`;
