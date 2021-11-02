@@ -1,8 +1,13 @@
 {
   "name": "@dawalters1/wolf.js",
-  "version": "0.17.0",
+  "version": "0.17.0-ptb.9",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
+  "typings": "typings/index.d.ts",
+  "files": [
+    "src",
+    "typings"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dawalters1/wolf.js.git"

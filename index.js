@@ -1,6 +1,6 @@
-const WOLFBot = require('./WolfBot');
-const Command = require('./command/Command');
-const Validator = require('./validator');
+const WOLFBot = require('./src/WolfBot');
+const Command = require('./src/command/Command');
+const Validator = require('./src/validator');
 
 module.exports = {
   WOLFBot,

@@ -58,9 +58,19 @@ module.exports = class EventManager {
   groupAudioSlotUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_SLOT_UPDATE, fn); }
   groupAudioUpdate (fn) { this._eventEmitter.on(event.GROUP_AUDIO_UPDATE, fn); }
   groupEventCreated (fn) { this._eventEmitter.on(event.GROUP_EVENT_CREATE, fn); }
-  groupEventUpdated (fn) { this._eventEmitter.on(event.GROUP_EVENT_UPDATE, fn); }
+  groupEventUpdate (fn) { this._eventEmitter.on(event.GROUP_EVENT_UPDATE, fn); };
+  groupEventUpdated (fn) {
+    console.warn('groupEventUpdated is deprecated, use groupEventUpdate instead');
+    this._eventEmitter.on(event.GROUP_EVENT_UPDATE, fn);
+  }
+
   groupSubscriberUpdate (fn) { this._eventEmitter.on(event.GROUP_MEMBER_UPDATE, fn); }
-  groupUpdated (fn) { this._eventEmitter.on(event.GROUP_UPDATE, fn); }
+  groupUpdate (fn) { this._eventEmitter.on(event.GROUP_UPDATE, fn); }
+  groupUpdated (fn) {
+    console.warn('groupUpdated is deprecated, use groupUpdate instead');
+    this._eventEmitter.on(event.GROUP_UPDATE, fn);
+  }
+
   joinedGroup (fn) { this._eventEmitter.on(internal.JOINED_GROUP, fn); }
   leftGroup (fn) { this._eventEmitter.on(internal.LEFT_GROUP, fn); }
   subscriberJoined (fn) { this._eventEmitter.on(event.GROUP_MEMBER_ADD, fn); }
@@ -73,7 +83,12 @@ module.exports = class EventManager {
   groupMessage (fn) { this._eventEmitter.on(internal.GROUP_MESSAGE, fn); }
   privateMessage (fn) { this._eventEmitter.on(internal.PRIVATE_MESSAGE, fn); }
 
-  messageUpdated (fn) { this._eventEmitter.on(event.MESSAGE_UPDATE, fn); }
+  messageUpdate (fn) { this._eventEmitter.on(event.MESSAGE_UPDATE, fn); }
+  messageUpdated (fn) {
+    console.warn('messageUpdated is deprecated, use messageUpdate instead');
+    this._eventEmitter.on(event.MESSAGE_UPDATE, fn);
+  }
+
   tipped (fn) { this._eventEmitter.on(event.TIP_ADD, fn); }
 
   // #endregion
