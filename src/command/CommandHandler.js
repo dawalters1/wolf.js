@@ -108,7 +108,7 @@ module.exports = class CommandHandler {
       return Promise.resolve();
     }
 
-    const command = this._getCuurentOrChildCommand(commandCollection, commandContext);
+    const command = this._getCurrentOrChildCommand(commandCollection, commandContext);
 
     const callback = command.callback;
 
@@ -117,7 +117,7 @@ module.exports = class CommandHandler {
     return callback.call(this, command);
   }
 
-  _getCuurentOrChildCommand (parentCommand, commandContext) {
+  _getCurrentOrChildCommand (parentCommand, commandContext) {
     if (!commandContext.argument) {
       return commandContext;
     }
@@ -140,6 +140,6 @@ module.exports = class CommandHandler {
       return commandContext;
     }
 
-    return this._getCuurentOrChildCommand(command, commandContext);
+    return this._getCurrentOrChildCommand(command, commandContext);
   }
 };

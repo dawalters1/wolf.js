@@ -1,12 +1,11 @@
-import type { Readable, Stream } from "stream";
+import type { Readable } from "stream";
 
-export class Websocket{
+export class Websocket {
     private constructor(api: WOLFBot);
     public create(): undefined;
     public emit(command: String, data: Object): Promise<Object>;
 }
-
-export class NetworkSettingsObject{
+export class NetworkSettingsObject {
     public retryMode: Number;
     public retryAttempts: Number;
 }
@@ -15,7 +14,6 @@ export class CommandSettingsObject {
     public ignoreUnofficialBots: Boolean;
 }
 export class AppObject {
-
     public developerId: Number;
     public defaultLanguage: String;
     public commandSettings: CommandSettingsObject;
@@ -32,6 +30,14 @@ export class Options {
     public developerId: Number;
     public networking: NetworkSettingsObject;
 }
+
+export class Response<T = undefined> {
+    public code: Number;
+    public body: T;
+    public headers: Object;
+    public success: Boolean
+}
+
 export class WOLFBot {
     public constructor();
     public websocket: Websocket;
@@ -57,7 +63,7 @@ export class WOLFBot {
     public utility(): Utility;
     public currentSubscriber: Object;
     public login(email: String, password: String, loginDevice?: String, onlineState?: Number, loginType?: String, token?: String): void;
-    public logout(): Promise<Object>;
+    public logout(): Promise<Response>;
     public setOnlineState(onlineState: Number): Promise<Object>;
     public search(query: String): Promise<Object>;
     public getConverstaionList(timestamp?: Number): Promise<Array<Object>>;
