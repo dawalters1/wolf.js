@@ -3,6 +3,8 @@ const io = require('socket.io-client');
 const internal = require('../constants/internal');
 const Response = require('./Response');
 
+// These events are ignored because I manually handle them via on MESSAGE_SEND
+
 const ignoreEvents = [
   'group member add',
   'group member delete',
