@@ -45,6 +45,9 @@ app:
   commandSettings:
     ignoreOfficialBots: true
     ignoreUnofficialBots: false
+  networking:
+    retryMode: 1 # retry requests on 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout & 408 Timeout
+    retryAttempts: 1
     
 ```
 ---
@@ -87,7 +90,7 @@ const me = require('./src/me')
 
 const keyword = api.options.keyword;
 
-api.commandHandler.register([
+api.commandHandler().register([
   new WOLF.Command(`${keyword}_command_${keyword}`, { both: async (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) },
   [
       new WOLF.Command(`${keyword}_command_help`, { both: (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) }),
