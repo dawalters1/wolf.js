@@ -1,6 +1,7 @@
 
 const io = require('socket.io-client');
 const internal = require('../constants/internal');
+const { retryMode } = require('@dawalters1/constants');
 const Response = require('./Response');
 
 // These events are ignored because I manually handle them via on MESSAGE_SEND
@@ -74,19 +75,29 @@ module.exports = class Websocket {
     });
   }
 
-  emit (command, data) {
+  async _emit (command, data, attempt = 1) {
     if (data && !data.body && !data.headers) {
       data = {
         body: data
       };
     }
 
-    return new Promise((resolve, reject) => {
+    const response = new Promise((resolve, reject) => {
       this._api.on._emit(internal.PACKET_SENT, command, data);
 
       this.socket.emit(command, data, resp => {
         resolve(new Response(resp.code, resp.body, resp.headers, command));
       });
     });
+
+    if (this._api._botConfig.networking.retryOn.includes(response.code) && this._api.options.networking.retryMode === retryMode.ALWAYS_RETRY && attempt <= this._api.options.networking.retryAttempts) {
+      return await this._emit(command, data, attempt + 1);
+    }
+
+    return response;
+  }
+
+  async emit (command, data) {
+    return await this._emit(command, data);
   }
 };

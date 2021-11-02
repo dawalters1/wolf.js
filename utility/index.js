@@ -120,36 +120,37 @@ class Utility {
 
     const info = moment.duration(milliseconds, 'milliseconds')._data;
 
-    let str = '';
+    const time = [];
 
     if (info.years > 0) {
-      str = `${info.years}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_years`)}`;
+      time.push(`${info.years}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_years`)}`);
     }
 
     if (info.months > 0) {
-      str = str + ` ${info.months}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_months`)}`;
+      time.push(` ${info.months}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_months`)}`);
     }
 
     if (info.weeks > 0) {
-      str = str + ` ${info.weeks}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_weeks`)}`;
+      time.push(` ${info.weeks}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_weeks`)}`);
     }
 
     if (info.days > 0) {
-      str = str + ` ${info.days}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_days`)}`;
+      time.push(` ${info.days}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_days`)}`);
     }
 
     if (info.hours > 0) {
-      str = str + ` ${info.hours}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_hours`)}`;
+      time.push(` ${info.hours}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_hours`)}`);
     }
 
     if (info.minutes > 0) {
-      str = str + ` ${info.minutes}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_minutes`)}`;
+      time.push(` ${info.minutes}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_minutes`)}`);
     }
 
     if (info.seconds > 0) {
-      str = str + ` ${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`;
+      time.push(` ${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`);
     }
-    return str.trim();
+
+    return time.join(' ');
   }
 
   /**
