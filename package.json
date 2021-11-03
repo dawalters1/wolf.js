@@ -6,7 +6,8 @@
   "typings": "typings/index.d.ts",
   "files": [
     "src",
-    "typings"
+    "typings",
+    "config"
   ],
   "repository": {
     "type": "git",
