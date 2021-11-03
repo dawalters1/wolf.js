@@ -253,6 +253,9 @@ export class EventManager {
     public subscriberLeft(fn: Function): void;
     public groupMessage(fn: Function): void;
     public privateMessage(fn: Function): void;
+/**
+ * @param {Function(MessageObject)} fn
+ */
     public messageUpdate(fn: Function): void;
     public tipped(fn: Function): void;
     public stageClientBroadcastEnded(fn: Function): void;
