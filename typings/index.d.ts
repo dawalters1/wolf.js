@@ -19,32 +19,168 @@ export class AppObject {
     public commandSettings: CommandSettingsObject;
     public networkSettings: NetworkSettingsObject;
 }
-export class Configuration {
+export class ConfigurationObject {
     public keyword: String;
     public app: AppObject;
 }
-export class Options {
+export class OptionsObject {
     public keyword: String;
     public ignoreOfficialBots: Boolean;
     public ignoreUnofficialBots: Boolean;
     public developerId: Number;
     public networking: NetworkSettingsObject;
 }
-
-export class Response<T = undefined> {
+export class ResponseObject<T = undefined> {
     public code: Number;
     public body: T;
     public headers: Object;
     public success: Boolean
 }
-
+export class MessageObject{
+    public body: String;
+    public edited: {subscriberId: Number, timestamp: Number};
+    public embeds: Array<{type: String, groupId: Number, url: String, title: String, image: Buffer, body: String}>;
+    public id: String;
+    public isGroup: Boolean;
+    public metadata : {
+        formatting: {
+            groupLinks: Array<{start: Number, stop: Number; groupId: Number}>;
+            links: Array<{start: Number; end: Number; url: String}>
+        };
+        isDeleted: Boolean;
+        isSpam: Boolean;
+    }
+    public targetGroupId: Number;
+    public sourceSubscriberId: Number;
+    public timestamp: Number;
+    public type: String;
+    public isCommand: Boolean;
+}
+export class SubscriberObject{
+    private constructor();
+    public exists: Boolean;
+    public charms: { selectedList: Array<{charmId: Number; position: Number;}> };
+    public deviceType: Number;
+    public extended : {  about: String;   gender: Number;   language: Number; lookingFor: Number;  name: String; relationship: Number; urls: Array<String>; utcOffset: Number;};
+    public hash: String;
+    public icon: Number;
+    public id: Number;
+    public nickname: String;
+    public onlineState: Number;
+    public privileges: Number;
+    public reputation: Number;
+    public status: String;
+}
+export class SubscriberHashObject{
+    public id: Number;
+    public hash: String;
+}
+export class GroupStatsActiveSubscriberObject {
+    public actionCount: Number;
+    public emoticonCount: Number;
+    public groupId: Number;
+    public happyEmoticonCount: Number;
+    public imageCount: Number;
+    public lineCount: Number;
+    public message: String;
+    public nickname: String;
+    public packCount: Number;
+    public questionCount: Number;
+    public randomQoute: String;
+    public sadEmoticonCount: Number;
+    public subId: Number;
+    public swearCount: Number;
+    public textCount: Number;
+    public voidCount: Number;
+    public wordCount: Number;
+}
+export class GroupStatsTopSubscriberObject {
+    public nickname: String;
+    public percentage: Number;
+    public subId: Number; 
+    public value: Number;
+    public randomQoute: String;
+}
+export class GroupStatsObject{
+    public details : {
+        actionCount: Number;
+        emoticonCount: Number;
+        happyCount: Number;
+        id: Number;
+        imageCount: Number;
+        lineCount: Number;
+        memberCount: Number;
+        name: String;
+        owner: {subId: Number, level: Number, nickname: String}
+        packCount: Number;
+        questionCount: Number;
+        sadCount: Number;
+        spokenCount: Number;
+        swearCount: Number;
+        textCount: Number;
+        timestamp: Number;
+        voiceCount: Number;
+        wordCount: Number;
+    };
+    public next30: Array<GroupStatsActiveSubscriberObject>;
+    public top25: Array<GroupStatsActiveSubscriberObject>;
+    public topAction: Array<GroupStatsTopSubscriberObject>;
+    public topEmoticon: Array<GroupStatsTopSubscriberObject>;
+    public topHappy: Array<GroupStatsTopSubscriberObject>;
+    public toImage: Array<GroupStatsTopSubscriberObject>;
+    public topQuestion: Array<GroupStatsTopSubscriberObject>;
+    public topSad: Array<GroupStatsTopSubscriberObject>;
+    public topSwear: Array<GroupStatsTopSubscriberObject>;
+    public topText: Array<GroupStatsTopSubscriberObject>;
+    public topWord: Array<GroupStatsTopSubscriberObject>;
+    public trends:  Array<{ day: number, lineCount: Number}>
+    public trendsDay:  Array<{ day: number, lineCount: Number}>
+    public trendsHour: Array<{ hour: number, lineCount: Number}>
+}
+export class GroupSubscriberObject{
+    public id: Number;
+    public groupId: Number;
+    public additionalInfo: { hash: String; nickname: String; privileges: Number;  onlineState: Number;};
+    public capabilities: Number;
+}
+export class AudioConfigObject{
+    public id: Number;
+    public enabled: Boolean;
+    public minRepLevel: Number;
+    public stageId: Number;
+    public sourceSubscriberId: Number;
+}
+export class AudioCountObject{
+    public id: Number;
+    public consumerCount: Number;
+    public broadcasterCount: Number;
+}
+export class GroupObject{
+    private constructor();
+    public exists: Boolean;
+    public id: Number;
+    public icon: Number;
+    public hash: String;
+    public description: String;
+    public reputation: Number;
+    public members: Number;
+    public subscribers: Array<GroupSubscriberObject>;
+    public official: Boolean;
+    public owner: SubscriberHashObject;
+    public peekable: Boolean;
+    public extended: { discoverable: Boolean;advancedAdmin: Boolean; locked: Boolean;questionable: Boolean;entryLevel: Number;passworded: Boolean; language: Number; longDescription: String; id: Number;};
+    public audioConfig: AudioConfigObject;
+    public audioCount: AudioCountObject;
+    public inGroup: Boolean;
+    public capabilities: Number;
+}
 export class WOLFBot {
     public constructor();
     public websocket: Websocket;
     public commandHandler(): CommandHandler;
     public on : EventManager;
-    public config: Configuration;
-    public options: Options;
+    public config: ConfigurationObject;
+    public options: OptionsObject;
     public achievement(): AchievementHelper;
     public authorization(): AuthorizationHelper;
     public banned(): BannedHelper;
@@ -63,7 +199,7 @@ export class WOLFBot {
     public utility(): Utility;
     public currentSubscriber: Object;
     public login(email: String, password: String, loginDevice?: String, onlineState?: Number, loginType?: String, token?: String): void;
-    public logout(): Promise<Response>;
+    public logout(): Promise<ResponseObject>;
     public setOnlineState(onlineState: Number): Promise<Object>;
     public search(query: String): Promise<Object>;
     public getConverstaionList(timestamp?: Number): Promise<Array<Object>>;
@@ -137,12 +273,23 @@ export class EventManager {
     public permissionFailed(fn: Function): void;
     public notification(fn: Function): void;
 }
+
+export class CommandObject{
+    public isGroup: Boolean;
+    public language: String;
+    public argument: String;
+    public message: MessageObject;
+    public targetGroupId: Number;
+    public sourceSubscriberId: Number;
+    public timestamp: Number;
+    public type: String;
+}
 export class Command{
     constructor(trigger: string, commandCallbacks: object, children: Array<Command>);
 }
 export class CommandHandler{
     private constructor(api: WOLFBot);
-    public isCommand(message: Object): Boolean;
+    public isCommand(message: MessageObject): Boolean;
     public register(commands: Array<Command>): void;
 }
 export abstract class Helper {
@@ -182,10 +329,10 @@ export class BannedHelper extends Helper {
 }
 export class BlockedHelper extends Helper {
     private constructor(api : WOLFBot);
-    public list(): Promise<Array<Object>>;
+    public list(): Promise<Array<GroupSubscriberObject>>;
     public isBanned(subscriberId: Number): Promise<Boolean>;
-    public block(subscriberId : Number): Promise<Object>;
-    public unblock(subscriberId : Number): Promise<Object>;
+    public block(subscriberId : Number): Promise<ResponseObject>;
+    public unblock(subscriberId : Number): Promise<ResponseObject>;
 }
 export class CharmHelper extends Helper {
     private constructor(api : WOLFBot);
@@ -199,10 +346,10 @@ export class CharmHelper extends Helper {
 }
 export class ContactHelper extends Helper {
     private constructor(api : WOLFBot);
-    public list(): Promise<Array<Object>>;
+    public list(): Promise<Array<GroupSubscriberObject>>;
     public isContact(subscriberId: Number): Promise<Boolean>;
-    public add(subscriberId : Number): Promise<Object>;
-    public delete(subscriberId : Number): Promise<Object>;
+    public add(subscriberId : Number): Promise<ResponseObject>;
+    public delete(subscriberId : Number): Promise<ResponseObject>;
 }
 export class DiscoveryHelper extends Helper {
     private constructor(api : WOLFBot);
@@ -237,55 +384,64 @@ export class GroupProfileBuilder {
     public setConversationPreview(isEnabled: Boolean): GroupProfileBuilder;
     public setStageState(isEnabled: Boolean): GroupProfileBuilder;
     public setStageLevel(level: Number): GroupProfileBuilder;
-    public create() : Promise<Object>;
-    public save(): Promise<Object>;
+    public create() : Promise<ResponseObject>;
+    public save(): Promise<ResponseObject>;
 }
 export class GroupHelper extends Helper {
     private constructor(api : WOLFBot);
-    public list() : Array<Object>;
+    public list() : Promise<Array<GroupObject>>;
     public create(): GroupProfileBuilder;
-    public getByIds(targetGroupIds: Number| Array<Number>, requestNew?: Boolean): Promise<Array<Object>>;
-    public getById(targetGroupId: Number, requestNew?: Boolean): Promise<Object>;
-    public joinById(targetGroupId: Number, password?: String): Promise<Object>;
-    public joinByName(name: String, password?: String): Promise<Object>;
-    public leaveById(targetGroupId: Number): Promise<Object>;
-    public leaveByName(name: String): Promise<Object>;
-    public getHistory(targetGroupId: Number, timestamp?: Number, limit?: Number): Promise<Array<Object>>;
-    public getSubscriberList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<Object>>;
-    public getStats(targetGroupId: Number): Promise<Object>;
-    public updateAvatar(targetGroupId: Number, avatar: Buffer) : Promise<Object>;
-    public updateSubscriber(targetGroupId: Number, subscriberId: Number, capability: Number): Promise<Object>;  
+    public getByIds(targetGroupIds: Number| Array<Number>, requestNew?: Boolean): Promise<Array<GroupObject>>;
+    public getById(targetGroupId: Number, requestNew?: Boolean): Promise<GroupObject>;
+    public joinById(targetGroupId: Number, password?: String): Promise<ResponseObject>;
+    public joinByName(name: String, password?: String): Promise<ResponseObject>;
+    public leaveById(targetGroupId: Number): Promise<ResponseObject>;
+    public leaveByName(name: String): Promise<ResponseObject>;
+    public getHistory(targetGroupId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    public getSubscriberList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupSubscriberObject>>;
+    public getStats(targetGroupId: Number): Promise<GroupStatsObject>;
+    public updateAvatar(targetGroupId: Number, avatar: Buffer) : Promise<ResponseObject>;
+    public updateSubscriber(targetGroupId: Number, subscriberId: Number, capability: Number): Promise<ResponseObject>;  
+}
+export class MessageSendResponseObject{
+    public timestamp: Number;
+    public uuid: String;
 }
 export class MessagingHelper extends Helper {
     private constructor(api : WOLFBot);
-    public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: Object): Promise<Object>;
-    public sendPrivateMessage(sourceSubscriberId: Number, content: Buffer | String, opts?: Object): Promise<Object>;
-    public sendMessage(commandOrMessage: Object, content: Buffer | String, opts?: Object): Promise<Object>;
+    public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: Object): Promise<ResponseObject<MessageSendResponseObject>>;
+    public sendPrivateMessage(sourceSubscriberId: Number, content: Buffer | String, opts?: Object):  Promise<ResponseObject<MessageSendResponseObject>>;
+    public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: Object):  Promise<ResponseObject<MessageSendResponseObject>>;
     public acceptPrivateMessageRequest(subscriberId :Number): Promise<Object>;
     public deleteGroupMessage(targetGroupId: Number, timestamp: Number): Promise<Object>;
     public restoreGroupMessage(targetGroupId: Number, timestamp: Number): Promise<Object>;
     public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<Object>;
-    public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<Object>;
-    public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<Object>;
-    public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<Object>;
-    public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<Object>;
+    public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
 }
 export class NotificationHelper extends Helper {
     private constructor(api : WOLFBot);
     public list(language: Number, requestNew?: Boolean) : Promise<Array<Object>>;
-    public clear(): Promise<Object>;
-    public subscribe(language: Number): Promise<Object>;
+    public clear(): Promise<ResponseObject>;
+    public subscribe(language: Number): Promise<ResponseObject>;
+}
+export class PhraseObject {
+    public name: String;
+    public value: String;
+    public language: String;
 }
 export class PhraseHelper extends Helper {
     private constructor(api : WOLFBot);
-    public list(includeLocal: Boolean): Array<Object>;
+    public list(includeLocal: Boolean): Array<PhraseObject>;
     public count(): Object;
     public clear(): void;
-    public load(phrases: Array<Object>): void;
+    public load(phrases: Array<PhraseObject>): void;
     public getLanguageList(): Array<String>;
-    public getAllByName(name: String): Array<Object>;
+    public getAllByName(name: String): Array<PhraseObject>;
     public getByLanguageAndName(language: String, Name: string): String;
-    public getByCommandAndName(command: Object, Name: string): String;
+    public getByCommandAndName(command: CommandObject, Name: string): String;
     public isRequestedPhrase(name: string, value: string): Boolean;
 }
 export class StageHelper extends Helper {
@@ -326,17 +482,17 @@ export class SubscriberProfileBuilder {
     public setUrls(urls: Array<String>): SubscriberProfileBuilder;
     public addUrl(url: String): SubscriberProfileBuilder;
     public removeUrl(url: string): SubscriberProfileBuilder;
-    public save(): Promise<Object>;
+    public save(): Promise<ResponseObject>;
 }
 export class SubscriberHelper extends Helper {
     private constructor(api : WOLFBot);
-    public getByIds(sourceSubscriberIds: Number| Array<Number>, requestNew?: Boolean): Promise<Array<Object>>;
-    public getById(sourceSubscriberId: Number, requestNew?: Boolean): Promise<Object>;
-    public getHistory(sourceSubscriberId: Number, timestamp?: Number, limit?: Number): Promise<Array<Object>>;
+    public getByIds(sourceSubscriberIds: Number| Array<Number>, requestNew?: Boolean): Promise<Array<SubscriberObject>>;
+    public getById(sourceSubscriberId: Number, requestNew?: Boolean): Promise<SubscriberObject>;
+    public getHistory(sourceSubscriberId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
 }
 export class TipHelper extends Helper {
     private constructor(api : WOLFBot);
-    public tip(subscriberId: Number, targetGroupId: Number, context: Object, charms: Array<Object>): Promise<Object>;
+    public tip(subscriberId: Number, targetGroupId: Number, context: Object, charms: Array<Object>): Promise<ResponseObject>;
     public getDetails(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<Object>;
     public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<Object>;
     public getGroupLeaderboard(targetGroupId: Number, tipPeriod: String, tipType: String, tipDirection: String): Promise<Object>

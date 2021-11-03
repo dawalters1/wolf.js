@@ -125,6 +125,10 @@ api.login('email', 'password');
 ---
 ```JS
 
+/**
+ * Declare the paramater type so that intellisense works in the file
+ * @param {import('@dawalters1/wolf.js').WOLFBot } api - The api
+ */
 module.exports = async (api, command) => {
 
   const subscriber = await api.subscriber().getById(command.sourceSubscriberId);
