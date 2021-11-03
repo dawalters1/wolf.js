@@ -94,7 +94,7 @@ module.exports = class WolfBot {
       console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
-    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../config/default.yaml'), 'utf-8'));
+    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
 
     this.websocket = new Websocket(this);
     this._eventManager = new EventManager(this);
