@@ -14,7 +14,7 @@ const validator = require('./validator');
 const Websocket = require('./networking/Websocket');
 
 // #region Helpers
-const CommandHandler = require('./command/CommandHandler');
+const CommandHandler = require('./Commands/CommandHandler');
 
 const EventManager = require('./networking/events/EventManager');
 const Achievement = require('./helper/achievement/Achievement');

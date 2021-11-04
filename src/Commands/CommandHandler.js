@@ -1,6 +1,7 @@
 'use strict';
 const { privilege, messageType } = require('@dawalters1/constants');
-const Command = require('./Command');
+const CommandObject = require('../structures/CommandObject');
+const Command = require('./structures/Command');
 
 /**
  * Flags that unofficial bots should never have, check their profile before requesting summary
@@ -112,9 +113,7 @@ module.exports = class CommandHandler {
 
     const callback = command.callback;
 
-    Reflect.deleteProperty(command, 'callback');
-
-    return callback.call(this, command);
+    return callback.call(this, new CommandObject(command));
   }
 
   _getCurrentOrChildCommand (parentCommand, commandContext) {
