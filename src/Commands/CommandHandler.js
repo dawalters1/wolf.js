@@ -1,7 +1,7 @@
 'use strict';
 const { privilege, messageType } = require('@dawalters1/constants');
 const CommandObject = require('../structures/CommandObject');
-const Command = require('./structures/Command');
+const Command = require('./Command');
 
 /**
  * Flags that unofficial bots should never have, check their profile before requesting summary
