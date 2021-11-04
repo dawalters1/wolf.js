@@ -45,7 +45,7 @@ app:
   commandSettings:
     ignoreOfficialBots: true
     ignoreUnofficialBots: false
-  networking:
+  networkSettings:
     retryMode: 1 # retry requests on 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout & 408 Timeout
     retryAttempts: 1
     
