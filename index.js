@@ -1,9 +1,4 @@
-const WOLFBot = require('./src/WolfBot');
-const Command = require('./src/command/Command');
-const Validator = require('./src/validator');
-
-module.exports = {
-  WOLFBot,
-  Command,
-  Validator
-};
+exports.WOLFBot = require('./src/WolfBot');
+exports.Command = require('./src/command/Command');
+exports.Validator = require('./src/validator');
+exports.CommandObject = require('./src/structures/CommandObject');
