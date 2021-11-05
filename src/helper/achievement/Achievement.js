@@ -61,7 +61,7 @@ class Achievement extends BaseHelper {
 
   async getById (achievementId, language, requestNew = false) {
     try {
-      return await this.getByIds([achievementId], language, requestNew);
+      return (await this.getByIds([achievementId], language, requestNew))[0];
     } catch (error) {
       error.internalErrorMessage = `api.achievement().getById(achievementId=${JSON.stringify(achievementId)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
@@ -100,7 +100,7 @@ class Achievement extends BaseHelper {
       }
 
       if (achievements.length !== achievementIds) {
-        const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievementIds.some((achievement) => achievement.id === achievementId));
+        const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId));
 
         for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api.botConfig.batch.length)) {
           const result = await this._websocket.emit(
