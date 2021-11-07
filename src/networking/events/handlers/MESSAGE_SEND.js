@@ -6,7 +6,7 @@ const event = require('../../../constants/event');
 const { messageType, capability, privilege } = require('@dawalters1/constants');
 const toAdminActionFromString = require('../../../internalUtils/toAdminActionFromString');
 const toGroupMemberCapability = require('../../../internalUtils/toGroupMemberCapability');
-const { version } = require('../../../package.json');
+const { version } = require('../../../../package.json');
 const toBaseMessage = require('../../../internalUtils/toBaseMessage');
 
 const handleAdminAction = async (api, message) => {

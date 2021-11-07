@@ -394,7 +394,7 @@ module.exports = class Group extends Helper {
 
       for (const group of groups) {
         group.inGroup = true;
-        group.myCapabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.capability.REGULAR;
+        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.capability.REGULAR;
       }
 
       return groups;

@@ -1,5 +1,6 @@
 'use strict';
 const { privilege, messageType } = require('@dawalters1/constants');
+const CommandObject = require('../structures/CommandObject');
 const Command = require('./Command');
 
 /**
@@ -104,20 +105,20 @@ module.exports = class CommandHandler {
       return false;
     });
 
-    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.charms.unofficial))) {
+    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
       return Promise.resolve();
     }
 
-    const command = this._getCuurentOrChildCommand(commandCollection, commandContext);
+    const command = this._getCurrentOrChildCommand(commandCollection, commandContext);
 
     const callback = command.callback;
 
     Reflect.deleteProperty(command, 'callback');
 
-    return callback.call(this, command);
+    return callback.call(this, new CommandObject(command));
   }
 
-  _getCuurentOrChildCommand (parentCommand, commandContext) {
+  _getCurrentOrChildCommand (parentCommand, commandContext) {
     if (!commandContext.argument) {
       return commandContext;
     }
@@ -140,6 +141,6 @@ module.exports = class CommandHandler {
       return commandContext;
     }
 
-    return this._getCuurentOrChildCommand(command, commandContext);
+    return this._getCurrentOrChildCommand(command, commandContext);
   }
 };
