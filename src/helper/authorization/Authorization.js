@@ -1,18 +1,18 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator/Validator');
 
-class Banned extends BaseHelper {
+class Authorization extends BaseHelper {
   constructor (api) {
     super(api);
 
-    this._banned = [];
+    this._authorized = [];
   }
 
   async list () {
-    return this._banned;
+    return this._authorized;
   }
 
-  async isBanned (subscriberIds) {
+  async isAuthorize (subscriberIds) {
     try {
       subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
 
@@ -29,16 +29,16 @@ class Banned extends BaseHelper {
         }
       }
 
-      const results = subscriberIds.map((subscriberId) => this._banned.includes(subscriberId));
+      const results = subscriberIds.map((subscriberId) => this._authorized.includes(subscriberId));
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().isBanned(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization().isAuthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
 
-  async ban (subscriberIds) {
+  async authorize (subscriberIds) {
     try {
       subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
 
@@ -56,8 +56,8 @@ class Banned extends BaseHelper {
       }
 
       const results = subscriberIds.reduce((result, value) => {
-        if (!this._banned.includes(value)) {
-          this._banned.push(value);
+        if (!this._authorized.includes(value)) {
+          this._authorized.push(value);
           result.push(true);
         } else {
           result.push(false);
@@ -68,12 +68,12 @@ class Banned extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().ban(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization().authorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
 
-  async unban (subscriberIds) {
+  async unauthorize (subscriberIds) {
     try {
       subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
 
@@ -91,8 +91,8 @@ class Banned extends BaseHelper {
       }
 
       const results = subscriberIds.reduce((result, value) => {
-        if (this._banned.includes(value)) {
-          this._banned.splice(this._banned.indexOf(value), 1);
+        if (this._authorized.includes(value)) {
+          this._authorized.splice(this._authorized.indexOf(value), 1);
           result.push(true);
         } else {
           result.push(false);
@@ -103,10 +103,10 @@ class Banned extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().unban(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization().unauthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
 }
 
-module.exports = Banned;
+module.exports = Authorization;

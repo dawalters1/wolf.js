@@ -1,4 +1,25 @@
 
+const isType = (arg, type) => {
+  const typeOf = typeof arg;
+  switch (type) {
+    case 'string':
+      return typeOf === 'string';
+    case 'object':
+      return typeOf === 'object';
+    case 'bigint':
+      return typeOf === 'bigint';
+    case 'symbol':
+      return typeOf === 'symbol';
+    case 'number':
+      return typeOf === 'number';
+    case 'boolean':
+      return typeOf === 'boolean';
+    case 'undefined':
+      return typeOf === undefined;
+  }
+
+  throw new Error('type is not a valid typeof');
+};
 const isNull = arg => arg === null;
 
 const isNullOrUndefined = arg => arg === null || arg === undefined;
@@ -29,7 +50,8 @@ module.exports = {
   isLessThanZero,
   isValidBoolean,
   isValidDate,
-  isBuffer
+  isBuffer,
+  isType
 };
 
 module.exports = {
