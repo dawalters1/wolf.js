@@ -27,7 +27,7 @@ class Achievement extends BaseHelper {
     return this._subscriber;
   }
 
-  async getCategoryList (language = constants.language.ENGLISH, requestNew = false) {
+  async getCategoryList (language, requestNew = false) {
     try {
       if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');

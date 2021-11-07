@@ -4,7 +4,11 @@
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "typings": "typings/index.d.ts",
-  "files": [],
+  "files": [
+    "typings",
+    "src",
+    "config"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/dawalters1/wolf.js.git"
@@ -27,6 +31,7 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
     "@dawalters1/constants": "^1.0.5",
+    "file-type": "^16.5.3",
     "node-cache": "^5.1.2"
   },
   "license": "MIT",

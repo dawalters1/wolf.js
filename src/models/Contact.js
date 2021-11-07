@@ -20,8 +20,8 @@ class Contact {
     return await this._api.contact().add(this.id);
   }
 
-  async delete () {
-    return await this._api.contact().delete(this.id);
+  async remove () {
+    return await this._api.contact().remove(this.id);
   }
 
   async block () {
