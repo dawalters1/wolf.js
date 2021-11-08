@@ -8,6 +8,8 @@ module.exports = async (api, data) => {
     api.event()._subscriptions.splice(api.event()._subscriptions.indexOf(event), 1);
   }
 
+  api.on._emit(command, event);
+
   return await api.emit(
     command,
     event

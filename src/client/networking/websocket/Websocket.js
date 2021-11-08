@@ -1,8 +1,8 @@
 const Handler = require('./handlers');
-const Response = require('../../models/Response');
+const Response = require('../../../models/Response');
 
 const io = require('socket.io-client');
-const internal = require('../../constants/internal');
+const internal = require('../../../constants/internal');
 const { retryMode } = require('@dawalters1/constants');
 
 /**
@@ -12,6 +12,8 @@ module.exports = class Websocket {
   constructor (api) {
     this._api = api;
     this._handler = new Handler(this._api);
+
+    // TODO: prevent duplicate requests with the use of defs
   };
 
   _init () {
@@ -63,7 +65,12 @@ module.exports = class Websocket {
     }
 
     const response = new Promise((resolve, reject) => {
-      this._api.emit(internal.PACKET_SENT, command, data);
+      this._api.emit(internal.PACKET_SENT,
+        {
+          command,
+          data
+        }
+      );
 
       this.socket.emit(command, data, resp => {
         resolve(new Response(resp.code, resp.body, resp.headers, command));

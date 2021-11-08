@@ -16,6 +16,8 @@ module.exports = async (api, data) => {
 
   api.blocked()._blocked.push(blocked);
 
+  api.on._emit(command, blocked);
+
   return await api.emit(
     command,
     blocked

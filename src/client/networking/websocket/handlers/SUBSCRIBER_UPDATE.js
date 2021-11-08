@@ -16,24 +16,26 @@ module.exports = async (api, data) => {
   const groups = await api.group()._groups.filter((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === body.id));
 
   groups.forEach(group => {
-    const subscriber = group.subscribers.find((subscriber) => subscriber.id === data.id);
+    const subscriber = group.subscribers.find((subscriber) => subscriber.id === body.id);
 
     if (subscriber) {
       patch(subscriber.additionalInfo, subscriber);
     }
   });
 
-  const contact = await api.contact()._contacts.find((contact) => contact.id === data.id);
+  const contact = await api.contact()._contacts.find((contact) => contact.id === body.id);
 
   if (contact) {
     patch(contact.additionalInfo, subscriber);
   }
 
-  const blocked = api.blocked()._blocked.find((blocked) => blocked.id === data.id);
+  const blocked = api.blocked()._blocked.find((blocked) => blocked.id === body.id);
 
   if (blocked) {
     patch(blocked.additionalInfo, subscriber);
   }
+
+  api.on._emit(command, subscriber);
 
   return api.emit(
     command,

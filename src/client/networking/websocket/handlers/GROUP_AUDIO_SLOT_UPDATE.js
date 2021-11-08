@@ -9,15 +9,17 @@ module.exports = async (api, data) => {
     return Promise.resolve();
   }
 
-  const cached = group.slots[data.slot.id];
+  const cached = group.slots[body.slot.id];
 
-  group.slots[data.slot.id] = data.slot;
+  group.slots[data.slot.id] = body.slot;
+
+  api.on._emit(command, cached, body);
 
   return api.emit(
     command,
     {
       old: cached,
-      new: data
+      new: body
     }
   );
 };

@@ -1,7 +1,7 @@
-const SubscriberObject = require('../../../models/SubscriberObject');
+const SubscriberObject = require('../../../../models/SubscriberObject');
 
 const crypto = require('crypto');
-const { internal, request } = require('../../../constants');
+const { internal, request } = require('../../../../constants');
 
 const { deviceType, loginType } = require('@dawalters1/constants');
 
@@ -64,12 +64,13 @@ module.exports = async (api, data) => {
   api.endpointConfig = body.endpointConfig;
 
   await api.emit(command, body);
+  api.on._emit(command, body);
 
   if (!body.loggedInUser) {
     return await login();
   }
 
-  api.currentSubscriber = new SubscriberObject(data.loggedInUser);
+  api.currentSubscriber = new SubscriberObject(body.loggedInUser);
 
   return await onSuccess(api, true);
 };

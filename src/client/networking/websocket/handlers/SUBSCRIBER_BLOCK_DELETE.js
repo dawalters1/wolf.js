@@ -8,6 +8,8 @@ module.exports = async (api, data) => {
     api.blocked()._blocked.splice(api.blocked()._blocked.indexOf(blocked), 1);
   }
 
+  api.on._emit(command, blocked);
+
   return await api.emit(
     command,
     blocked

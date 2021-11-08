@@ -259,6 +259,48 @@ class Charm extends BaseHelper {
     }
   }
 
+  async set (charms) {
+    try {
+      charms = Array.isArray(charms) ? charms : [charms];
+
+      for (const charm of charms) {
+        if (validator.isNullOrUndefined(charm)) {
+          throw new Error('charm cannot be null or undefined');
+        }
+
+        if (!Reflect.has(charm, 'position')) {
+          throw new Error('charm must have property position');
+        } else if (validator.isNullOrUndefined(charm.position)) {
+          throw new Error('position cannot be null or undefined');
+        } else if (validator.isValidNumber(charm.position)) {
+          throw new Error('position must be a valid number');
+        } else if (validator.isLessThanZero(charm.position)) {
+          throw new Error('position cannot be less than 0');
+        }
+
+        if (!Reflect.has(charm, 'id')) {
+          throw new Error('charm must have property id');
+        } else if (validator.isNullOrUndefined(charm.id)) {
+          throw new Error('id cannot be null or undefined');
+        } else if (validator.isValidNumber(charm.id)) {
+          throw new Error('id must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(charm.id)) {
+          throw new Error('id cannot be less than or equal to 0');
+        }
+      }
+
+      return await this.websocket.emit(
+        request.CHARM_SUBSCRIBER_SET_SELECTED,
+        {
+          selectedList: charms
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.charm().set(charms=${JSON.stringify(charms)})`;
+      throw error;
+    }
+  }
+
   _cleanup () {
     this._charms = {};
   }

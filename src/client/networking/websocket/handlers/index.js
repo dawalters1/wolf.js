@@ -1,5 +1,4 @@
-const { internal } = require('../../../constants');
-const events = require('../../../constants/event');
+const { events, internal } = require('../../../../constants');
 
 class Handler {
   constructor (api) {

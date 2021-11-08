@@ -6,6 +6,8 @@ module.exports = async (api, data) => {
 
   api.event()._subscriptions.push(event);
 
+  api.on._emit(command, event);
+
   return await api.emit(
     command,
     event

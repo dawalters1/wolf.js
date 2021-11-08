@@ -13,6 +13,8 @@ module.exports = async (api, data) => {
 
   group.events.push(event);
 
+  api.on._emit(command, event);
+
   return api.emit(
     command,
     {

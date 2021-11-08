@@ -19,7 +19,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link create}
+   * @use {@link create}
    */
   async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
     return await this.create(targetGroupId, title, startsAt, endsAt, shortDescription, longDescription, thumbnail);
@@ -94,7 +94,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link edit}
+   * @use {@link edit}
    */
   async editEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
     return await this.edit(targetGroupId, eventId, title, startsAt, endsAt, shortDescription, longDescription, imageUrl, thumbnail);
@@ -186,7 +186,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link updateThumbnail}
+   * @use {@link updateThumbnail}
    */
   async updateEventThumbnail (eventId, thumbnail) {
     return await this.updateThumbnail(eventId, thumbnail);
@@ -216,7 +216,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link remove}
+   * @use {@link remove}
    */
   async deleteEvent (targetGroupId, eventId) {
     return await this.remove(targetGroupId, eventId);
@@ -338,7 +338,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link getGroupEventList}
+   * @use {@link getGroupEventList}
    */
   async getGroupEvents (targetGroupId, requestNew = false) {
     return await this.getGroupEventList(targetGroupId, requestNew);
@@ -378,7 +378,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link getSubscriptionList}
+   * @use {@link getSubscriptionList}
    */
   async getEventSubscriptions (requestNew = false) {
     return await this.getSubscriptionList(requestNew);
@@ -414,7 +414,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link subscribe}
+   * @use {@link subscribe}
    */
   async subscribeToEvent (eventId) {
     return await this.subscribe(eventId);
@@ -444,7 +444,7 @@ class Event extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link unsubscribe}
+   * @use {@link unsubscribe}
    */
   async unsubscribeFromEvent (eventId) {
     return await this.subscribe(eventId);

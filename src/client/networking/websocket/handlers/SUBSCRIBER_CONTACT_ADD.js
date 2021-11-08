@@ -15,6 +15,7 @@ module.exports = async (api, data) => {
   };
 
   api.contact()._contacts.push(contact);
+  api.on._emit(command, contact);
 
   return await api.emit(
     command,
