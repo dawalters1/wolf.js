@@ -4,8 +4,6 @@ module.exports = {
   ACHIEVEMENT_GROUP_LIST: 'achievement group list',
   ACHIEVEMENT_SUBSCRIBER_LIST: 'achievement subscriber list',
 
-  // TODO: Blacklist url list
-
   CHARM_LIST: 'charm list',
   CHARM_SUBSCRIBER_ACTIVE_LIST: 'charm subscriber active list',
   CHARM_SUBSCRIBER_DELETE: 'charm subscriber delete',
@@ -21,6 +19,7 @@ module.exports = {
   GROUP_AUDIO_SLOT_LIST: 'group audio slot list',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
+
   // TODO: Raise Hand support upon client release
 
   GROUP_CREATE: 'group create',
@@ -43,6 +42,7 @@ module.exports = {
   MESSAGE_GROUP_UNSUBSCRIBE: 'message group unsubscribe',
   MESSAGE_PRIVATE_HISTORY_LIST: 'message private history list',
   MESSAGE_PRIVATE_SUBSCRIBE: 'message private subscribe',
+  MESSAGE_PRIVATE_UNSUBSCRIBE: 'message private unsubscribe',
   MESSAGE_SEND: 'message send',
   MESSAGE_SETTING: 'message setting',
   MESSAGE_SETTING_UPDATE: 'message setting update',
