@@ -10,6 +10,7 @@ const validator = require('../../validator/Validator');
 const fileType = require('file-type');
 
 const constants = require('@dawalters1/constants');
+const toLanguageKey = require('../../utils/ToLanguageKey/toLanguageKey');
 
 class Group extends BaseHelper {
   constructor (api) {
@@ -78,8 +79,6 @@ class Group extends BaseHelper {
                 const body = groupResponse.body;
                 const base = body.base;
                 base.extended = body.extended;
-                // eslint-disable-next-line no-undef
-                base.language = toLanguageKey(base.extended.language); // TODO
                 base.audioConfig = body.audioConfig;
                 base.audioCounts = body.audioCounts;
                 base.exists = true;
@@ -146,8 +145,6 @@ class Group extends BaseHelper {
         const body = result.body;
         const base = body.base;
         base.extended = body.extended;
-        // eslint-disable-next-line no-undef
-        base.language = toLanguageKey(base.extended.language); // TODO:
         base.audioConfig = body.audioConfig;
         base.audioCounts = body.audioCounts;
         base.exists = true;
@@ -175,7 +172,7 @@ class Group extends BaseHelper {
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (!validator.isNullOrWhitespace(password)) {
+      if (!validator.isNullOrUndefined(password)) {
         if (validator.isNullOrWhitespace(password)) {
           throw new Error('password cannot be null or empty');
         }
@@ -201,7 +198,7 @@ class Group extends BaseHelper {
       } else if (validator.isNullOrWhitespace(targetGroupName)) {
         throw new Error('targetGroupName cannot be null or empty');
       }
-      if (!validator.isNullOrWhitespace(password)) {
+      if (!validator.isNullOrUndefined(password)) {
         if (validator.isNullOrWhitespace(password)) {
           throw new Error('password cannot be null or empty');
         }
@@ -475,6 +472,8 @@ class Group extends BaseHelper {
 
   _process (group) {
     group = new GroupObject(group);
+
+    group.language = toLanguageKey(group.extended.language);
 
     const existing = this._groups.find((grp) => grp.id === group.id);
 

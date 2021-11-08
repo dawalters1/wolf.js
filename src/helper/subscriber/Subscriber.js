@@ -1,8 +1,12 @@
 const BaseHelper = require('../BaseHelper');
+const SubscriberObject = require('../../models/SubscriberObject');
+const Message = require('../../models/Message');
+const Response = require('../../models/Response');
+
 const validator = require('../../validator/Validator');
 const { request } = require('../../constants');
 const patch = require('../../utils/Patch/patch');
-const SubscriberObject = require('../../../../Bot-Tag/src/TagSDK/dto/SubscriberObject');
+const toLanguageKey = require('../../utils/ToLanguageKey/toLanguageKey');
 
 class Subscriber extends BaseHelper {
   constructor (api) {
@@ -99,7 +103,66 @@ class Subscriber extends BaseHelper {
     }
   }
 
-  // TODO: subscriber history
+  /**
+   * @deprecated Will be removed in 21.0
+   * @see {@link getChatHistory}
+   */
+  async getHistory (subscriberId, timestamp = 0, limit = 15) {
+    return await this.getChatHistory(subscriberId, timestamp, limit);
+  }
+
+  async getChatHistory (targetSubscriberId, timestamp = 0, limit = 15) {
+    try {
+      if (validator.isNullOrUndefined(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be null or undefined');
+      } else if (validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(timestamp)) {
+        throw new Error('timestamp cannot be null or undefined');
+      } if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanZero(timestamp)) {
+        throw new Error('timestamp cannot be less than 0');
+      }
+      if (validator.isNullOrUndefined(limit)) {
+        throw new Error('limit cannot be null or undefined');
+      } if (!validator.isValidNumber(limit)) {
+        throw new Error('limit must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new Error('limit cannot be less than or equal to 0');
+      }
+      if (limit < 5) {
+        throw new Error('limit cannot be less than 5');
+      } else if (limit > 100) {
+        throw new Error('limit cannot be larger than 100');
+      }
+
+      const result = await this._websocket.emit(
+        request.MESSAGE_PRIVATE_HISTORY_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: targetSubscriberId,
+            limit,
+            timestampEnd: timestamp === 0 ? undefined : timestamp
+          }
+        }
+      );
+
+      return {
+        code: result.code,
+        body: result.success ? result.body.map((message) => new Message(this._api, message)) : []
+      };
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getChatHistory(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
+      throw error;
+    }
+  }
 
   _process (subscriber) {
     subscriber.exists = subscriber.exists || true;
@@ -107,7 +170,7 @@ class Subscriber extends BaseHelper {
     subscriber = new SubscriberObject(this._api, subscriber);
 
     if (subscriber.exists) {
-      subscriber.language = 'en'; // TODO: Convert actual language into phrase language
+      subscriber.language = toLanguageKey(subscriber.extended.language);
 
       const existing = this._subscribers.find((sub) => sub.id === subscriber.id);
 

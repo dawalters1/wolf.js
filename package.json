@@ -32,7 +32,8 @@
   "dependencies": {
     "@dawalters1/constants": "^1.0.5",
     "file-type": "^16.5.3",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "uuid": "^8.3.2"
   },
   "license": "MIT",
   "devDependencies": {

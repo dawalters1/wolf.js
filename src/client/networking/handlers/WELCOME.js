@@ -1,6 +1,7 @@
-const { internal, request } = require('../../../constants');
+const SubscriberObject = require('../../../models/SubscriberObject');
 
-const Subscriber = require('../../../models/Subscriber');
+const crypto = require('crypto');
+const { internal, request } = require('../../../constants');
 
 const { deviceType, loginType } = require('@dawalters1/constants');
 
@@ -14,7 +15,7 @@ const onSuccess = async (api, reconnect = false) => {
 
   api.currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
-  api.on._emit(reconnect ? internal.RECONNECTED : internal.READY);
+  api.emit(reconnect ? internal.RECONNECTED : internal.READY);
 };
 
 const login = async (api) => {
@@ -33,8 +34,9 @@ const login = async (api) => {
       md5Password: loginSettings.loginType === loginType.EMAIL
     }
   });
+
   if (!result.success) {
-    api.on._emit(internal.LOGIN_FAILED, result);
+    api.emit(internal.LOGIN_FAILED, result);
 
     if (result.headers && result.headers.subCode && result.headers.subCode > 1) {
       await api.utility().delay(90000); // Attempt to reconnect after 90 seconds regardless of expiry given (Typically too many requests were sent and bot was barred)
@@ -67,7 +69,7 @@ module.exports = async (api, data) => {
     return await login();
   }
 
-  api.currentSubscriber = new Subscriber(data.loggedInUser);
+  api.currentSubscriber = new SubscriberObject(data.loggedInUser);
 
   return await onSuccess(api, true);
 };
