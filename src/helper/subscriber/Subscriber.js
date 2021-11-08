@@ -6,7 +6,7 @@ const Response = require('../../models/Response');
 const validator = require('../../validator/Validator');
 const { request } = require('../../constants');
 const patch = require('../../utils/Patch/patch');
-const toLanguageKey = require('../../utils/ToLanguageKey/toLanguageKey');
+const toLanguageKey = require('../../utils/ToLanguageKey');
 
 class Subscriber extends BaseHelper {
   constructor (api) {
@@ -105,7 +105,7 @@ class Subscriber extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link getChatHistory}
+   * @use {@link getChatHistory}
    */
   async getHistory (subscriberId, timestamp = 0, limit = 15) {
     return await this.getChatHistory(subscriberId, timestamp, limit);

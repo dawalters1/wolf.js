@@ -1,6 +1,6 @@
 const { messageType, capability, privilege } = require('@dawalters1/constants');
-const { internal, event } = require('../../../constants');
-const Message = require('../../../models/Message');
+const { internal, event } = require('../../../../constants');
+const Message = require('../../../../Messagemodels/Message');
 
 const toAdminActionFromString = require('../../../utils/toAdminActionFromString');
 const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
@@ -36,6 +36,8 @@ const handleAdminAction = async (api, message) => {
       group.capability = group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR;
       group.inGroup = true;
     }
+
+    api.on._emit(message.sourceSubscriberId === api.currentSubscriber.id ? internal.JOINED_GROUP : event.GROUP_MEMBER_ADD, group, subscriber);
 
     return api.emit(
       message.sourceSubscriberId === api.currentSubscriber.id ? internal.JOINED_GROUP : event.GROUP_MEMBER_ADD,
@@ -82,6 +84,8 @@ const handleAdminAction = async (api, message) => {
   }
 
   if (adminAction.type === 'leave' || adminAction.type === 'kick') {
+    api.on._emit(subscriber.id === api.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE, group, subscriber);
+
     return api.emit(
       subscriber.id === api.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE,
       {
@@ -90,6 +94,15 @@ const handleAdminAction = async (api, message) => {
       }
     );
   }
+
+  api.on._emit(event.GROUP_MEMBER_UPDATE, group,
+    {
+      groupId: group.id,
+      sourceId: adminAction.instigatorId,
+      targetId: message.sourceSubscriberId,
+      action: adminAction.type
+    }
+  );
 
   return api.emit(
     event.GROUP_MEMBER_UPDATE,
@@ -112,24 +125,25 @@ module.exports = async (api, data) => {
 
   switch (message.type) {
     case messageType.APPLICATION_PALRINGO_GROUP_ACTION:
-      await handleAdminAction(this._api, message);
+      await handleAdminAction(api, message);
       break;
     case messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
-      this._api.emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await this._api.subscriber().getById(message.sourceSubscriberId));
+      api.on._emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
+      api.emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
       break;
 
     case messageType.TEXT_PLAIN:
     {
-      if (message.sourceSubscriberId === this._api.currentSubscriber.id) {
+      if (message.sourceSubscriberId === api.currentSubscriber.id) {
         return Promise.resolve();
       }
 
-      const secret = this._api._botConfig.secrets.find((secret) => this._api.utility().string().isEqual(secret.command, message.body) || this._api.utility().string().isEqual(secret.commandShort, message.body));
+      const secret = api._botConfig.secrets.find((secret) => api.utility().string().isEqual(secret.command, message.body) || api.utility().string().isEqual(secret.commandShort, message.body));
 
-      if (secret && (this._api.options.developerId === message.sourceSubscriberId || await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER]))) {
-        return await this._api.messaging().sendMessage(
+      if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER]))) {
+        return await api.messaging().sendMessage(
           message,
-          this._api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
+          api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
             {
               version
             }
@@ -139,7 +153,7 @@ module.exports = async (api, data) => {
     }
   }
 
-  const messageSubscriptions = this._api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.predicate(message));
+  const messageSubscriptions = api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.predicate(message));
 
   if (messageSubscriptions.length > 0) {
     for (const messageSubscription of messageSubscriptions) {
@@ -147,10 +161,12 @@ module.exports = async (api, data) => {
         clearTimeout(messageSubscription.timeoutInterval);
       }
 
-      this._api.messaging()._subscriptionData.subscriptions = this._api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.subscriptionId !== messageSubscription.subscriptionId);
-      this._api.messaging()._subscriptionData.defs[messageSubscription.subscriptionId].resolve(message);
+      api.messaging()._subscriptionData.subscriptions = api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.subscriptionId !== messageSubscription.subscriptionId);
+      api.messaging()._subscriptionData.defs[messageSubscription.subscriptionId].resolve(message);
     }
   }
+
+  api.on._emit(message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE, message);
 
   return await api.emit(
     message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE,

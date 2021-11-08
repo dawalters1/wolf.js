@@ -8,6 +8,8 @@ module.exports = async (api, data) => {
     api.contact()._contacts.splice(api.contact()._contacts.indexOf(contact), 1);
   }
 
+  api.on._emit(command, contact);
+
   return await api.emit(
     command,
     contact

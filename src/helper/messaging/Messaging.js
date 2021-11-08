@@ -6,6 +6,7 @@ const fileType = require('file-type');
 const { v4: uuidv4 } = require('uuid');
 
 const { embedType } = require('@dawalters1/constants');
+const Message = require('../../models/Message');
 
 const targetType = {
   GROUP: 'group',
@@ -86,6 +87,31 @@ class Messaging extends BaseHelper {
         }
       }
     );
+  }
+
+  async getConversationList (timestamp = undefined) {
+    try {
+      if (validator.isNullOrUndefined(timestamp)) {
+        throw new Error('timestamp cannot be null or undefined');
+      } else if (validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(timestamp)) {
+        throw new Error('timestamp cannot be less than or equal to 0');
+      }
+      const result = await this.websocket.emit(request.MESSAGE_CONVERSATION_LIST, {
+        headers: {
+          version: 3
+        },
+        body: {
+          timestamp
+        }
+      });
+
+      return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
+    } catch (error) {
+      error.internalErrorMessage = `api.messaging().getConversationList(timestamp=${JSON.stringify(timestamp)})`;
+      throw error;
+    }
   }
 
   async _sendMessage (targetType, targetId, content, opts = {}) {

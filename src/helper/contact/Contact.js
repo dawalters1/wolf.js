@@ -82,7 +82,7 @@ class Contact extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link remove}
+   * @use {@link remove}
    */
   async delete (subscriberId) {
     return await this.remove(subscriberId);

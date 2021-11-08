@@ -5,15 +5,21 @@ module.exports = async (api, data) => {
 
   const group = api.group()._groups.find((group) => group.id === body.id);
 
-  if (!group || group.hash === data.hash) {
+  if (!group) {
     return Promise.resolve();
   }
+
+  const cached = group.audioConfig;
+
+  group.audioConfig = body;
+
+  api.on._emit(command, cached, body);
 
   return api.emit(
     command,
     {
-      old: group,
-      new: await api.group().getById(body.id, true)
+      old: cached,
+      new: body
     }
   );
 };

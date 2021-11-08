@@ -10,7 +10,7 @@ const validator = require('../../validator/Validator');
 const fileType = require('file-type');
 
 const constants = require('@dawalters1/constants');
-const toLanguageKey = require('../../utils/ToLanguageKey/toLanguageKey');
+const toLanguageKey = require('../../utils/ToLanguageKey');
 
 class Group extends BaseHelper {
   constructor (api) {
@@ -256,7 +256,7 @@ class Group extends BaseHelper {
 
   /**
    * @deprecated Will be removed in 21.0
-   * @see {@link getChatHistory}
+   * @use {@link getChatHistory}
    */
   async getHistory (targetGroupId, timestamp = 0, limit = 15) {
     return await this.getChatHistory(targetGroupId, false, timestamp, limit);
@@ -290,8 +290,8 @@ class Group extends BaseHelper {
       }
       if (limit < 5) {
         throw new Error('limit cannot be less than 5');
-      } else if (limit > 100) {
-        throw new Error('limit cannot be larger than 100');
+      } else if (limit > 30) {
+        throw new Error('limit cannot be larger than 30');
       }
 
       const result = await this._websocket.emit(
@@ -304,7 +304,6 @@ class Group extends BaseHelper {
             id: targetGroupId,
             limit,
             chronological,
-            timestampBegin: timestamp === 0,
             timestampEnd: timestamp === 0 ? undefined : timestamp
           }
         }

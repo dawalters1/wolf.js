@@ -9,15 +9,17 @@ module.exports = async (api, data) => {
     return Promise.resolve();
   }
 
-  const cached = group.audioConfig;
+  const cached = group.audioCounts;
 
-  group.audioConfig = data;
+  group.audioCounts = body;
+
+  api.on._emit(command, cached, body);
 
   return api.emit(
     command,
     {
       old: cached,
-      new: data
+      new: body
     }
   );
 };

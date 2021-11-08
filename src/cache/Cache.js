@@ -5,6 +5,9 @@ const EventEmitter = require('events').EventEmitter;
  * @private
  * @hideconstructor
  */
+
+// Potentially use this? Unsure yet.
+
 class Cache extends EventEmitter {
   constructor () {
     super();
