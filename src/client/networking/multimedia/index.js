@@ -235,7 +235,7 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('thumbnail must be a buffer');
     }
 
-    const eventThumbnailSettings = this._api._botConfig.multimedia.avatar.event;
+    const eventThumbnailSettings = this._api._botConfig.multimedia.event;
 
     if (!eventThumbnailSettings.validation.mimes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
