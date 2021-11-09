@@ -56,11 +56,28 @@ const validateConfig = (api, opts) => {
 
   _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
 
+  _opts.app.networkSettings = typeof (_opts.app.networkSettings) === 'object' ? _opts.app.networkSettings : {};
+
+  _opts.app.networkSettings.retryMode = typeof _opts.app.networkSettings.retryMode === 'number' && Object.values(constants.retryMode).includes(parseInt(_opts.app.networkSettings.retryMode)) ? parseInt(_opts.app.networkSettings.retryMode) : constants.retryMode.ALWAYS_RETRY;
+  _opts.app.networkSettings.retryAttempts = typeof _opts.app.networkSettings.retryAttempts === 'number' ? parseInt(_opts.app.networkSettings.retryAttempts) : 1;
+
+  if (_opts.app.networkSettings.retryAttempts <= 0) {
+    console.warn('[WARNING]: minimum retryAttempts is 1');
+    _opts.app.networkSettings.retryAttempts = 1;
+  } else if (_opts.app.networkSettings.retryAttempts >= 4) {
+    console.warn('[WARNING]: maximum retryAttempts is 3');
+    _opts.app.networkSettings.retryAttempts = 3;
+  }
+
   api._options = {
     keyword: _opts.keyword,
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
-    developerId: _opts.app.developerId
+    developerId: _opts.app.developerId,
+    networking: {
+      retryMode: _opts.app.networkSettings.retryMode,
+      retryAttempts: _opts.app.networkSettings.retryAttempts
+    }
   };
 
   api._config = _opts;
@@ -77,7 +94,7 @@ module.exports = class WolfBot {
       console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
-    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, './config/default.yaml'), 'utf-8'));
+    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../config/default.yaml'), 'utf-8'));
 
     this.websocket = new Websocket(this);
     this._eventManager = new EventManager(this);

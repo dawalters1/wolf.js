@@ -84,7 +84,7 @@ class Member {
 
     if (this._api.currentSubscriber.id === sourceSubscriberId) {
       const group = await this._api.group().getById(targetGroupId);
-      
+
       if (group.owner.id === sourceSubscriberId) {
         return true;
       }
