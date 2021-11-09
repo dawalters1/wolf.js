@@ -65,6 +65,7 @@ module.exports = {
   STAGE_LIST: 'stage list',
 
   STORE_CREDIT_BALANCE: 'store credit balance',
+  // TODO: Support store when released
 
   SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete',

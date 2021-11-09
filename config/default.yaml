@@ -2,6 +2,9 @@ endpoint:
   host: https://v3-rc.palringo.com
   port: 3051
 
+networking:
+  retryOn: [500, 502, 503, 504, 408]
+
 secrets:
   - command: ">reveal your secrets"
     commandShort: ">rys"
@@ -85,3 +88,6 @@ mms:
       allowedSizes:
         jpeg: 1048576 
       allowedTypes: ['image/jpeg']
+
+charms:
+  unofficial: [813, 814]
