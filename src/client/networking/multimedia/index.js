@@ -230,7 +230,7 @@ module.exports = class MultiMediaServiceClient {
     return this._sendRequest(buildRoute(subscriberAvatarSettings), body);
   }
 
-  async uploadEventAvatar (eventId, thumbnail, mimeType) {
+  async uploadEventThumbnail (eventId, thumbnail, mimeType) {
     if (!Buffer.isBuffer(thumbnail)) {
       throw new Error('thumbnail must be a buffer');
     }
