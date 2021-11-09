@@ -1,7 +1,7 @@
+const BaseHelper = require('../BaseHelper');
+
 const constants = require('@dawalters1/constants');
 const { request } = require('../../constants');
-const Helper = require('../Helper');
-
 const validator = require('../../validator');
 
 const format = (oldDiscovery) => {
@@ -35,7 +35,7 @@ const format = (oldDiscovery) => {
   return formattedDiscovery;
 };
 
-module.exports = class Discovery extends Helper {
+module.exports = class Discovery extends BaseHelper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
     super(api);

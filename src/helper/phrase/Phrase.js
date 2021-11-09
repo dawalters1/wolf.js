@@ -3,7 +3,7 @@ const path = require('path');
 
 const BaseHelper = require('../BaseHelper');
 
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 
 class Phrase extends BaseHelper {
   constructor (api) {

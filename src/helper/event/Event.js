@@ -1,10 +1,10 @@
 const BaseHelper = require('../BaseHelper');
-const GroupEvent = require('../../models/GroupEvent');
-const Response = require('../../models/Response');
+const GroupEvent = require('../../models/GroupEventObject');
+const Response = require('../../models/ResponseObject');
 
-const patch = require('../../utils/Patch/patch');
+const patch = require('../../utils/Patch');
 const { request } = require('../../constants');
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 
 const fileType = require('file-type');
 

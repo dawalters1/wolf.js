@@ -1,4 +1,4 @@
-const patch = require('../../../utils/patch');
+const patch = require('../../../../utils/Patch');
 
 module.exports = async (api, data) => {
   const command = data.command;

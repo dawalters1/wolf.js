@@ -1,4 +1,4 @@
-const patch = require('../utils/patch');
+const patch = require('../utils/Patch');
 
 const { contextType } = require('@dawalters1/constants');
 

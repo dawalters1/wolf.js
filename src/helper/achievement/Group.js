@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 const { request } = require('../../constants');
 
 class Group extends BaseHelper {

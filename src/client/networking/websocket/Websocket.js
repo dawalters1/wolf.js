@@ -1,5 +1,5 @@
 const Handler = require('./handlers');
-const Response = require('../../../models/Response');
+const Response = require('../../../models/ResponseObject');
 
 const io = require('socket.io-client');
 const internal = require('../../../constants/internal');
@@ -17,7 +17,7 @@ module.exports = class Websocket {
   };
 
   _init () {
-    this.socket = io(`${this._api._botConfig.endpoint.host}:${this._api._botConfig.endpoint.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}`,
+    this.socket = io(`${this._api._botConfig.connection.host}:${this._api._botConfig.connection.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}`,
       {
         transports: ['websocket'],
         reconnection: true,
