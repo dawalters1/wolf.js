@@ -1,7 +1,11 @@
+const path = require('path');
+const fs = require('fs');
+const yaml = require('yaml');
 const fileType = require('file-type');
 const { request } = require('../constants');
-const validator = require('../validator/Validator');
+const validator = require('../validator');
 const constants = require('@dawalters1/constants');
+
 const crypto = require('crypto');
 
 const EventEmitter = require('events').EventEmitter;
@@ -25,18 +29,79 @@ const Group = require('../helper/group/Group');
 const Messaging = require('../helper/messaging/Messaging');
 const Notification = require('../helper/notification/Notification');
 const Phrase = require('../helper/phrase/Phrase');
-const Stage = require('../stage/Stage');
+// const Stage = require('../stage/Stage');
 const Store = require('../helper/store/Store');
 const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 
 const Utility = require('../utils');
 
+const validateConfig = (api, opts) => {
+  const _opts = Object.assign({}, opts);
+
+  _opts.keyword = validator.isNullOrWhitespace(_opts.keyword) ? 'default' : _opts.keyword;
+
+  _opts.app = typeof (_opts.app) === 'object' ? _opts.app : {};
+
+  _opts.app.developerId = typeof _opts.app.developerId === 'number' ? parseInt(_opts.app.developerId) : undefined;
+
+  _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
+
+  _opts.app.commandSettings = typeof (_opts.app.commandSettings) === 'object' ? _opts.app.commandSettings : {};
+
+  _opts.app.commandSettings.ignoreOfficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreOfficialBots) ? Boolean(_opts.app.commandSettings.ignoreOfficialBots) : false;
+
+  _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
+
+  _opts.app.networkSettings = typeof (_opts.app.networkSettings) === 'object' ? _opts.app.networkSettings : {};
+
+  _opts.app.networkSettings.retryMode = typeof _opts.app.networkSettings.retryMode === 'number' && Object.values(constants.retryMode).includes(parseInt(_opts.app.networkSettings.retryMode)) ? parseInt(_opts.app.networkSettings.retryMode) : constants.retryMode.ALWAYS_RETRY;
+  _opts.app.networkSettings.retryAttempts = typeof _opts.app.networkSettings.retryAttempts === 'number' ? parseInt(_opts.app.networkSettings.retryAttempts) : 1;
+
+  if (_opts.app.networkSettings.retryAttempts <= 0) {
+    console.warn('[WARNING]: minimum retryAttempts is 1');
+    _opts.app.networkSettings.retryAttempts = 1;
+  } else if (_opts.app.networkSettings.retryAttempts >= 4) {
+    console.warn('[WARNING]: maximum retryAttempts is 3');
+    _opts.app.networkSettings.retryAttempts = 3;
+  }
+
+  api._options = {
+    keyword: _opts.keyword,
+    ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
+    ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
+    developerId: _opts.app.developerId,
+    networking: {
+      retryMode: _opts.app.networkSettings.retryMode,
+      retryAttempts: _opts.app.networkSettings.retryAttempts
+    }
+  };
+
+  api._config = _opts;
+};
+
 class WOLFBot extends EventEmitter {
   constructor () {
     super();
 
+    const configPath = path.join(path.dirname(require.main.filename), '/config/');
+
+    if (fs.existsSync(configPath) && fs.existsSync(`${configPath}/default.yaml`)) {
+      validateConfig(this, yaml.parse(fs.readFileSync(`${configPath}/default.yaml`, 'utf-8')));
+    } else {
+      validateConfig(this, {});
+      console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
+    }
+
+    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+
     this._websocket = new Websocket(this);
+
+    /**
+     * @deprecated
+     */
+    this._eventHandler = new EventHandler(this);
+
     this._multiMediaService = new MultiMediaService(this);
 
     this._commandHandler = new CommandHandler(this);
@@ -53,17 +118,12 @@ class WOLFBot extends EventEmitter {
     this._messaging = new Messaging(this);
     this._notification = new Notification(this);
     this._phrase = new Phrase(this);
-    this._stage = new Stage(this);
+    //   this._stage = new Stage(this);
     this._store = new Store(this);
     this._subscriber = new Subscriber(this);
     this._tipping = new Tipping(this);
 
     this._utility = new Utility(this);
-
-    /**
-     * @deprecated
-     */
-    this._eventHandler = new EventHandler(this);
   }
 
   // #region Networking Clients
@@ -129,7 +189,7 @@ class WOLFBot extends EventEmitter {
   }
 
   stage () {
-    return this._stage;
+    // return this._stage;
   }
 
   store () {
@@ -362,16 +422,6 @@ class WOLFBot extends EventEmitter {
   // #endregion
 
   // #region Deprecated methods
-
-  /**
-   * @deprecated Will be removed in 21.0
-   * @use api.on("command", data => {}) instead
-   */
-  get on () {
-    console.warn('[WARNING] WOLFBot: the use of api.on.event(()=>{}) is deprecated, use api.on("command", data=>{}) instead');
-
-    return this._eventHandler;
-  }
 
   /**
    * @deprecated Will be removed in 21.0

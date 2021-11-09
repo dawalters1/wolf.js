@@ -1,5 +1,5 @@
 const { capability } = require('@dawalters1/constants');
-const patch = require('../utils/patch');
+const patch = require('../utils/Patch');
 
 class GroupSubscriber {
   constructor (api, groupSubscriber) {

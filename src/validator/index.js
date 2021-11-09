@@ -53,7 +53,3 @@ module.exports = {
   isBuffer,
   isType
 };
-
-module.exports = {
-
-};

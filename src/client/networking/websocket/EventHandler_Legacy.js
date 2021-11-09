@@ -7,8 +7,9 @@ const internal = require('../../../constants/internal');
 /**
  * {@hideconstructor}
  */
-module.exports = class EventManager {
+module.exports = class EventManager extends EventEmitter {
   constructor (api) {
+    super();
     this._api = api;
     this._eventEmitter = new EventEmitter();
   }

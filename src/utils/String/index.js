@@ -1,4 +1,6 @@
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
+
+const PUNCTUATION_REGEX = /[/"()&*$￥^+=`~<>{}[]|-!#%,:;@¡§«¶·»¿;·՚-՟։֊؉،॥॰෴๏๚๛༄-༒༔༺-༽྅჻፠-፨᐀᙭᙮។-៖៘-៚‧‰-⁃⁅-⁑⁓-⁞⁽⁾₍₎、〃〈-【】〔-〟〰〽゠・﴾﴿︐-︙︰-﹒﹔-﹡﹣﹨﹪﹫！-＃％-＊，-／：；？＠［-］＿｛｝｟-･〔〕《》]/;
 
 function escapeRegExp (string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -158,7 +160,7 @@ class String {
       while (true) {
         const lastCharacter = url.slice(-1);
 
-        if (lastCharacter.match(this._api._botConfig.validation.link.punctuationRegex)) {
+        if (lastCharacter.match(PUNCTUATION_REGEX)) {
           url = url.slice(0, url.length - 1);
         } else {
           break;

@@ -1,12 +1,12 @@
 const BaseHelper = require('../BaseHelper');
 const GroupObject = require('../../models/GroupObject');
-const GroupSubscriber = require('../../models/GroupSubscriber');
-const Message = require('../../models/Message');
-const Response = require('../../models/Response');
+const GroupSubscriber = require('../../models/GroupSubscriberObject');
+const Message = require('../../models/MessageObject');
+const Response = require('../../models/ResponseObject');
 
-const patch = require('../../utils/Patch/patch');
+const patch = require('../../utils/Patch');
 const { request } = require('../../constants');
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 const fileType = require('file-type');
 
 const constants = require('@dawalters1/constants');

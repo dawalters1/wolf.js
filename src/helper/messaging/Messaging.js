@@ -6,7 +6,7 @@ const fileType = require('file-type');
 const { v4: uuidv4 } = require('uuid');
 
 const { embedType } = require('@dawalters1/constants');
-const Message = require('../../models/Message');
+const Message = require('../../models/MessageObject');
 
 const targetType = {
   GROUP: 'group',

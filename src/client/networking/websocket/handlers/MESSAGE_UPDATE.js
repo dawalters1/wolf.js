@@ -1,4 +1,4 @@
-const Message = require('../../../models/Message');
+const Message = require('../../../../models/MessageObject');
 
 module.exports = async (api, data) => {
   const command = data.command;

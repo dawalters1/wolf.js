@@ -1,4 +1,4 @@
-const patch = require('../utils/patch');
+const patch = require('../utils/Patch');
 
 class Contact {
   constructor (api, contact) {

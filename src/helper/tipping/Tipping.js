@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
 const { request } = require('../../constants');
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 const constants = require('@dawalters1/constants');
 
 class Tipping extends BaseHelper {

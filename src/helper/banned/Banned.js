@@ -1,5 +1,5 @@
 const BaseHelper = require('../BaseHelper');
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 
 class Banned extends BaseHelper {
   constructor (api) {

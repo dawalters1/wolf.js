@@ -1,11 +1,11 @@
 const BaseHelper = require('../BaseHelper');
 const SubscriberObject = require('../../models/SubscriberObject');
-const Message = require('../../models/Message');
-const Response = require('../../models/Response');
+const Message = require('../../models/MessageObject');
+const Response = require('../../models/ResponseObject');
 
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 const { request } = require('../../constants');
-const patch = require('../../utils/Patch/patch');
+const patch = require('../../utils/Patch');
 const toLanguageKey = require('../../utils/ToLanguageKey');
 
 class Subscriber extends BaseHelper {

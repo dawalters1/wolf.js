@@ -1,10 +1,10 @@
 const { messageType, capability, privilege } = require('@dawalters1/constants');
 const { internal, event } = require('../../../../constants');
-const Message = require('../../../../Messagemodels/Message');
+const Message = require('../../../../models/MessageObject');
 
-const toAdminActionFromString = require('../../../utils/toAdminActionFromString');
-const toGroupMemberCapability = require('../../../utils/toGroupMemberCapability');
-const { version } = require('../../../package.json');
+const toAdminActionFromString = require('../../../../utils/ToAdminActionFromString');
+const toGroupMemberCapability = require('../../../../utils/ToGroupMemberCapability');
+const { version } = require('../../../../../package.json');
 
 const handleAdminAction = async (api, message) => {
   const [group, subscriber] = await Promise.all([

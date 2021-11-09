@@ -1,4 +1,4 @@
-const { events, internal } = require('../../../../constants');
+const { event, internal } = require('../../../../constants');
 
 class Handler {
   constructor (api) {
@@ -6,8 +6,12 @@ class Handler {
 
     this._handlers = {};
 
-    for (const event of Object.entries(events)) {
-      this.handlers[event[1]] = require(`./${event[0]}.js`);
+    for (const evt of Object.entries(event)) {
+      if (this._api._botConfig.networking.events.ignore.includes(evt[1])) {
+        continue;
+      }
+
+      this._handlers[evt[1]] = require(`./${evt[0]}.js`);
     }
   }
 

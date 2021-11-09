@@ -33,6 +33,8 @@ module.exports = class CommandHandler {
     this._api = api;
     this._commands = [];
 
+    console.log(this._api);
+
     this._api.on(internal.GROUP_MESSAGE, async message => await this._processMessage(message));
     this._api.on(internal.PRIVATE_MESSAGE, async message => await this._processMessage(message));
   }

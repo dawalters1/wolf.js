@@ -1,12 +1,12 @@
 const BaseHelper = require('../BaseHelper');
 const Group = require('./Group');
 const Subscriber = require('./Subscriber');
-const Response = require('../../models/Response');
+const Response = require('../../models/ResponseObject');
 
-const patch = require('../../utils/Patch/patch');
+const patch = require('../../utils/Patch');
 const { request } = require('../../constants');
 const constants = require('@dawalters1/constants');
-const validator = require('../../validator/Validator');
+const validator = require('../../validator');
 
 class Achievement extends BaseHelper {
   constructor () {
