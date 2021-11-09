@@ -54,7 +54,7 @@ module.exports = class Websocket {
     const patch = require('socketio-wildcard')(io.Manager);
     patch(this.socket);
 
-    this.socket.on('*', packet => this._handler.handle(packet));
+    this.socket.on('*', packet => this._handler.handle(packet.data));
   }
 
   async _emit (command, data, attempt = 1) {
