@@ -221,7 +221,7 @@ class Charm extends BaseHelper {
     }
   }
 
-  async delete (charmIds) {
+  async remove (charmIds) {
     try {
       charmIds = Array.isArray(charmIds) ? [...new Set(charmIds)] : [charmIds];
 

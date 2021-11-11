@@ -104,7 +104,7 @@ class Subscriber extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link getChatHistory}
    */
   async getHistory (subscriberId, timestamp = 0, limit = 15) {

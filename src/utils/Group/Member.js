@@ -49,7 +49,7 @@ class Member {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use api.utility().group().member().hasCapabilities(targetGroupId, sourceSubscriberId, requiredCapability)
    */
   async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {

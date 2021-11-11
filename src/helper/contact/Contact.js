@@ -81,7 +81,7 @@ class Contact extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link remove}
    */
   async delete (subscriberId) {

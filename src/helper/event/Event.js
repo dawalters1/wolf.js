@@ -18,7 +18,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link create}
    */
   async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
@@ -93,7 +93,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link edit}
    */
   async editEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
@@ -185,7 +185,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link updateThumbnail}
    */
   async updateEventThumbnail (eventId, thumbnail) {
@@ -215,7 +215,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link remove}
    */
   async deleteEvent (targetGroupId, eventId) {
@@ -337,7 +337,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link getGroupEventList}
    */
   async getGroupEvents (targetGroupId, requestNew = false) {
@@ -377,7 +377,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link getSubscriptionList}
    */
   async getEventSubscriptions (requestNew = false) {
@@ -413,7 +413,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link subscribe}
    */
   async subscribeToEvent (eventId) {
@@ -443,7 +443,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link unsubscribe}
    */
   async unsubscribeFromEvent (eventId) {

@@ -11,6 +11,7 @@ const fileType = require('file-type');
 
 const constants = require('@dawalters1/constants');
 const toLanguageKey = require('../../utils/ToLanguageKey');
+const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
 
 class Group extends BaseHelper {
   constructor (api) {
@@ -47,7 +48,7 @@ class Group extends BaseHelper {
     return this._groups.find((group) => group.inGroup);
   }
 
-  list () {
+  async list () {
     return this._groups.filter((group) => group.inGroup || (group.subscribers && group.subscribers.length > 0));
   }
 
@@ -283,7 +284,7 @@ class Group extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use {@link getChatHistory}
    */
   async getHistory (targetGroupId, timestamp = 0, limit = 15) {
@@ -426,11 +427,11 @@ class Group extends BaseHelper {
   }
 
   create () {
-    // TODO
+    return new GroupProfileBuilder(this._api);
   }
 
-  update () {
-    // TODO
+  update (group) {
+    return new GroupProfileBuilder(this._api)._update(group);
   }
 
   async updateAvatar (targetGroupId, avatar) {
