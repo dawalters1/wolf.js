@@ -20,7 +20,7 @@ class Achievement {
 
         if (validator.isNullOrUndefined(achievement.id)) {
           throw new Error('id cannot be null or undefined');
-        } else if (validator.isValidNumber(achievement.id)) {
+        } else if (!validator.isValidNumber(achievement.id)) {
           throw new Error('id must be a valid number');
         } else if (validator.isLessThanOrEqualZero(achievement.id)) {
           throw new Error('id cannot be less than or equal to 0');
@@ -32,7 +32,7 @@ class Achievement {
             throw new Error('additionalInfo must have property categoryId');
           } else if (validator.isNullOrUndefined(additionalInfo.categoryId)) {
             throw new Error('categoryId cannot be null or undefined');
-          } else if (validator.isValidNumber(additionalInfo.categoryId)) {
+          } else if (!validator.isValidNumber(additionalInfo.categoryId)) {
             throw new Error('categoryId must be a valid number');
           } else if (validator.isLessThanOrEqualZero(additionalInfo.categoryId)) {
             throw new Error('categoryId cannot be less than or equal to 0');
@@ -47,7 +47,7 @@ class Achievement {
 
         if (validator.isNullOrUndefined(language)) {
           throw new Error('language cannot be null or undefined');
-        } else if (validator.isValidNumber(language)) {
+        } else if (!validator.isValidNumber(language)) {
           throw new Error('language must be a valid number');
         } else if (validator.isLessThanOrEqualZero(language)) {
           throw new Error('language cannot be less than or equal to 0');

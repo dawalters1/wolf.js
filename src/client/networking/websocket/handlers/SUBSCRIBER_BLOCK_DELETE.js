@@ -1,17 +1,14 @@
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
+const { events } = require('../../../../constants');
 
+module.exports = async (api, body) => {
   const blocked = api.blocked()._blocked.find((blocked) => blocked.id === body.targetId);
 
   if (blocked) {
     api.blocked()._blocked.splice(api.blocked()._blocked.indexOf(blocked), 1);
   }
 
-  api.on._emit(command, blocked);
-
   return await api.emit(
-    command,
+    events.SUBSCRIBER_BLOCK_DELETE,
     blocked
   );
 };

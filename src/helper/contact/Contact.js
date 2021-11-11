@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 
 class Contact extends BaseHelper {
   constructor (api) {
@@ -19,7 +19,7 @@ class Contact extends BaseHelper {
         return this._contacts;
       }
 
-      const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST);
+      const result = await this._websocket.emit(commands.SUBSCRIBER_CONTACT_LIST);
 
       if (result.success) {
         this._contacts = result.body;
@@ -42,7 +42,7 @@ class Contact extends BaseHelper {
       for (const subscriberId of subscriberIds) {
         if (validator.isNullOrUndefined(subscriberId)) {
           throw new Error('subscriberId cannot be null or undefined');
-        } else if (validator.isValidNumber(subscriberId)) {
+        } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
@@ -62,14 +62,14 @@ class Contact extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.SUBSCRIBER_CONTACT_ADD,
+        commands.SUBSCRIBER_CONTACT_ADD,
         {
           id: subscriberId
         }
@@ -92,14 +92,14 @@ class Contact extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.SUBSCRIBER_CONTACT_DELETE,
+        commands.SUBSCRIBER_CONTACT_DELETE,
         {
           id: subscriberId
         }

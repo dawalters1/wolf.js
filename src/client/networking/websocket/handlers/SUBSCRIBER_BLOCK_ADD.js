@@ -1,7 +1,6 @@
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
+const { events } = require('../../../../constants');
 
+module.exports = async (api, body) => {
   const subscriber = await api.subscriber().getById(body.targetId);
 
   const blocked = {
@@ -16,10 +15,8 @@ module.exports = async (api, data) => {
 
   api.blocked()._blocked.push(blocked);
 
-  api.on._emit(command, blocked);
-
   return await api.emit(
-    command,
+    events.SUBSCRIBER_BLOCK_ADD,
     blocked
   );
 };

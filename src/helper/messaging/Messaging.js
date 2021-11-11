@@ -1,4 +1,4 @@
-const { request } = require('../../constants');
+const { commands, messageTypes } = require('../../constants');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
@@ -7,11 +7,6 @@ const { v4: uuidv4 } = require('uuid');
 
 const { embedType } = require('@dawalters1/constants');
 const Message = require('../../models/MessageObject');
-
-const targetType = {
-  GROUP: 'group',
-  PRIVATE: 'private'
-};
 
 const getDefaultOptions = (api, opts) => {
   const _opts = Object.assign({}, opts);
@@ -39,7 +34,7 @@ class Messaging extends BaseHelper {
   constructor (api) {
     super(api);
 
-    this._subsciptionData = {
+    this._subscriptionData = {
       id: 1,
       defs: {},
       subscriptions: []
@@ -48,7 +43,7 @@ class Messaging extends BaseHelper {
 
   async _messageGroupSubscribe () {
     return await this._websocket.emit(
-      request.MESSAGE_GROUP_SUBSCRIBE, {
+      commands.MESSAGE_GROUP_SUBSCRIBE, {
         headers: {
           version: 4
         }
@@ -58,7 +53,7 @@ class Messaging extends BaseHelper {
 
   async _messageGroupUnsubscribe (id) {
     return await this._websocket.emit(
-      request.MESSAGE_GROUP_UNSUBSCRIBE, {
+      commands.MESSAGE_GROUP_UNSUBSCRIBE, {
         headers: {
           version: 4
         },
@@ -71,7 +66,7 @@ class Messaging extends BaseHelper {
 
   async _messagePrivateSubscribe () {
     return await this._websocket.emit(
-      request.MESSAGE_PRIVATE_SUBSCRIBE, {
+      commands.MESSAGE_PRIVATE_SUBSCRIBE, {
         headers: {
           version: 2
         }
@@ -81,7 +76,7 @@ class Messaging extends BaseHelper {
 
   async _messagePrivateUnsubscribe () {
     return await this._websocket.emit(
-      request.MESSAGE_PRIVATE_UNSUBSCRIBE, {
+      commands.MESSAGE_PRIVATE_UNSUBSCRIBE, {
         headers: {
           version: 2
         }
@@ -93,12 +88,12 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(timestamp)) {
         throw new Error('timestamp cannot be null or undefined');
-      } else if (validator.isValidNumber(timestamp)) {
+      } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
-      const result = await this.websocket.emit(request.MESSAGE_CONVERSATION_LIST, {
+      const result = await this.websocket.emit(commands.MESSAGE_CONVERSATION_LIST, {
         headers: {
           version: 3
         },
@@ -117,10 +112,10 @@ class Messaging extends BaseHelper {
   async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-    const multimediaMimes = this._api._botConfig.multiemdia.validation.mimes;
+    const multimediaMimes = this._api._botConfig.multimedia.messaging.validation.mimes;
 
     if (multimediaMimes.includes(mimeType)) {
-      return await this._api.multiemdia().sendMessage(targetType, targetId, content, mimeType);
+      return await this._api.multiMediaService().sendMessage(targetType, targetId, content, mimeType);
     }
 
     if (!this._api._botConfig.validation.messaging.mimes.includes(mimeType)) {
@@ -134,14 +129,14 @@ class Messaging extends BaseHelper {
       console.warn(`[WARNING]: Message Helper - Maximum message length is ${lengthValidation.max}`);
     }
 
-    const protocols = this._api._botConfig.validation.links.protocols;
+    const protocols = this._api._botConfig.validation.link.protocols;
 
     let previewAdded = false;
 
     const bodies = await this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ').reduce(async (result, value) => {
       const body = {
         recipient: targetId,
-        isGroup: targetType === targetType.GROUP,
+        isGroup: targetType === messageTypes.GROUP,
         mimeType,
         data: Buffer.from(value, 'utf8'),
         flightId: uuidv4(),
@@ -245,7 +240,7 @@ class Messaging extends BaseHelper {
     const responses = [];
 
     for (const body of bodies) {
-      responses.push(await this._websocket.emit(request.MESSAGE_SEND, body));
+      responses.push(await this._websocket.emit(commands.MESSAGE_SEND, body));
     };
 
     return responses.length > 1
@@ -260,7 +255,7 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -271,7 +266,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(targetType.GROUP, targetGroupId, content, opts);
+      return await this._sendMessage(messageTypes.GROUP, targetGroupId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -282,7 +277,7 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetSubscriberId)) {
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
@@ -293,7 +288,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(targetType.PRIVATE, targetSubscriberId, content, opts);
+      return await this._sendMessage(messageTypes.PRIVATE, targetSubscriberId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendPrivateMessage(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -315,9 +310,9 @@ class Messaging extends BaseHelper {
         throw new Error('commandOrMessage must contain propery isGroup');
       }
 
-      return await this._sendMessage(commandOrMessage.isGroup ? targetType.GROUP : targetType.PRIVATE, content, opts);
+      return await this._sendMessage(commandOrMessage.isGroup ? messageTypes.GROUP : messageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().sendMessage(commandOrMessage=${JSON.stringify(commandOrMessage)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
+      error.internalErrorMessage = `api.messaging().sendMessage(commandOrMessage=${commandOrMessage}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
     }
   }
@@ -326,21 +321,21 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(timestamp)) {
         throw new Error('timestamp cannot be null or undefined');
-      } else if (validator.isValidNumber(timestamp)) {
+      } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.MESSAGE_UPDATE,
+        commands.MESSAGE_UPDATE,
         {
           isGroup: true,
           metadata: {
@@ -360,21 +355,21 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(timestamp)) {
         throw new Error('timestamp cannot be null or undefined');
-      } else if (validator.isValidNumber(timestamp)) {
+      } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.MESSAGE_UPDATE,
+        commands.MESSAGE_UPDATE,
         {
           isGroup: true,
           metadata: {
@@ -394,21 +389,21 @@ class Messaging extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(timestamp)) {
         throw new Error('timestamp cannot be null or undefined');
-      } else if (validator.isValidNumber(timestamp)) {
+      } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.MESSAGE_UPDATE_LIST,
+        commands.MESSAGE_UPDATE_LIST,
         {
           isGroup: true,
           recipientId: targetGroupId,
@@ -426,24 +421,24 @@ class Messaging extends BaseHelper {
       return null;
     }
 
-    const subId = this._subsciptionData.id;
-    this._subsciptionData.id++;
+    const subId = this._subscriptionData.id;
+    this._subscriptionData.id++;
 
-    this._subsciptionData.subscriptions.push(
+    this._subscriptionData.subscriptions.push(
       {
         subId,
         predicate,
         timeoutInterval: timeout === Infinity
           ? undefined
           : setTimeout(() => {
-            this._subsciptionData.defs[subId].resolve(null);
+            this._subscriptionData.defs[subId].resolve(null);
           }, timeout)
       }
     );
 
     // eslint-disable-next-line no-new
     const result = await new Promise((resolve, reject) => {
-      this._subsciptionData.defs[subId] = { resolve, reject };
+      this._subscriptionData.defs[subId] = { resolve, reject };
     });
 
     Reflect.deleteProperty(this._deferreds, subId);

@@ -5,7 +5,7 @@ const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const validator = require('../../validator');
 const fileType = require('file-type');
 
@@ -17,6 +17,34 @@ class Group extends BaseHelper {
     super(api);
 
     this._groups = [];
+
+    this._joinedGroupsFetched = false;
+  }
+
+  async _joinedGroups () {
+    if (this._joinedGroupsFetched) {
+      return this._groups.find((group) => group.inGroup);
+    }
+
+    const result = await this._websocket.emit(
+      commands.SUBSCRIBER_GROUP_LIST,
+      {
+        subscribe: true
+      }
+    );
+
+    if (result.success) {
+      this._joinedGroupsFetched = true;
+
+      const groups = await this.getByIds(result.body.map((group) => group.id));
+
+      for (const group of groups) {
+        group.inGroup = true;
+        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.capability.REGULAR;
+      }
+    }
+
+    return this._groups.find((group) => group.inGroup);
   }
 
   list () {
@@ -37,7 +65,7 @@ class Group extends BaseHelper {
       for (const targetGroupId of targetGroupIds) {
         if (validator.isNullOrUndefined(targetGroupId)) {
           throw new Error('targetGroupId cannot be null or undefined');
-        } else if (validator.isValidNumber(targetGroupId)) {
+        } else if (!validator.isValidNumber(targetGroupId)) {
           throw new Error('targetGroupId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
           throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -56,9 +84,9 @@ class Group extends BaseHelper {
       if (groups.length !== targetGroupIds.length) {
         const targetGroupIdsToRequest = targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId));
 
-        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api.botConfig.batch.length)) {
+        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            request.GROUP_PROFILE,
+            commands.GROUP_PROFILE,
             {
               headers: {
                 version: 4
@@ -72,7 +100,7 @@ class Group extends BaseHelper {
           );
 
           if (result.success) {
-            const groupResponses = Object.values(result.body).map((groupResponse) => new Response(groupResponse, request.GROUP_PROFILE));
+            const groupResponses = Object.values(result.body).map((groupResponse) => new Response(groupResponse, commands.GROUP_PROFILE));
 
             for (const [index, groupResponse] of groupResponses.entries()) {
               if (groupResponse.success) {
@@ -128,7 +156,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_PROFILE,
+        commands.GROUP_PROFILE,
         {
           headers: {
             version: 4
@@ -167,7 +195,7 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -179,7 +207,7 @@ class Group extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        request.GROUP_MEMBER_ADD,
+        commands.GROUP_MEMBER_ADD,
         {
           groupId: targetGroupId,
           password
@@ -205,7 +233,7 @@ class Group extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        request.GROUP_MEMBER_ADD,
+        commands.GROUP_MEMBER_ADD,
         {
           name: targetGroupName.toLowerCase(),
           password
@@ -221,14 +249,14 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.GROUP_MEMBER_DELETE,
+        commands.GROUP_MEMBER_DELETE,
         {
           groupId: targetGroupId
         }
@@ -266,7 +294,7 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -295,7 +323,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.MESSAGE_GROUP_HISTORY_LIST,
+        commands.MESSAGE_GROUP_HISTORY_LIST,
         {
           headers: {
             version: 3
@@ -323,7 +351,7 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -339,7 +367,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_MEMBER_LIST,
+        commands.GROUP_MEMBER_LIST,
         {
           headers: {
             version: 3
@@ -367,7 +395,7 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -380,7 +408,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_STATS,
+        commands.GROUP_STATS,
         {
           id: targetGroupId
         }
@@ -409,7 +437,7 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -431,28 +459,28 @@ class Group extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetSubscriberId)) {
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(capabilities)) {
         throw new Error('capabilities cannot be null or undefined');
-      } else if (validator.isValidNumber(capabilities)) {
+      } else if (!validator.isValidNumber(capabilities)) {
         throw new Error('capabilities must be a valid number');
       } else if (!Object.values(constants.adminAction).includes(capabilities)) {
         throw new Error('capabilities is not valid');
       }
 
       return await this._websocket.emit(
-        request.GROUP_MEMBER_UPDATE,
+        commands.GROUP_MEMBER_UPDATE,
         {
           groupId: targetGroupId,
           id: targetSubscriberId,
@@ -470,7 +498,7 @@ class Group extends BaseHelper {
   }
 
   _process (group) {
-    group = new GroupObject(group);
+    group = new GroupObject(this._api, group);
 
     group.language = toLanguageKey(group.extended.language);
 

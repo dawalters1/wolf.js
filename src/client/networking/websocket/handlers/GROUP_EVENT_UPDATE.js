@@ -1,15 +1,11 @@
+const { events } = require('../../../../constants');
 
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
-
+module.exports = async (api, body) => {
   const group = await api.group().getById(body.groupId);
   const event = api.event()._events.find((event) => event.id === body.id);
 
-  api.on._emit(command, event);
-
   return api.emit(
-    command,
+    events.GROUP_EVENT_UPDATE,
     {
       group,
       event: {

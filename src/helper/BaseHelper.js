@@ -5,7 +5,8 @@ const cache = new Cache();
 class BaseHelper {
   constructor (api) {
     this._api = api;
-    this._websocket = this._api.websocket;
+
+    this._websocket = api.websocket;
 
     this._cache = cache;
   }

@@ -4,16 +4,16 @@ const Subscriber = require('./Subscriber');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const constants = require('@dawalters1/constants');
 const validator = require('../../validator');
 
 class Achievement extends BaseHelper {
-  constructor () {
-    super();
+  constructor (api) {
+    super(api);
 
     this._group = new Group(this._api);
-    this._subscriber = new Subscriber(this._ap);
+    this._subscriber = new Subscriber(this._api);
 
     this._achievements = {};
     this._categories = {};
@@ -42,7 +42,7 @@ class Achievement extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.ACHIEVEMENT_CATEGORY_LIST,
+        commands.ACHIEVEMENT_CATEGORY_LIST,
         {
           languageId: language
         }
@@ -78,7 +78,7 @@ class Achievement extends BaseHelper {
       for (const achievementId of achievementIds) {
         if (validator.isNullOrUndefined(achievementId)) {
           throw new Error('achievementId cannot be null or undefined');
-        } else if (validator.isValidNumber(achievementId)) {
+        } else if (!validator.isValidNumber(achievementId)) {
           throw new Error('achievementId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(achievementId)) {
           throw new Error('achievementId cannot be less than or equal to 0');
@@ -102,9 +102,9 @@ class Achievement extends BaseHelper {
       if (achievements.length !== achievementIds) {
         const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId));
 
-        for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api.botConfig.batch.length)) {
+        for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            request.ACHIEVEMENT,
+            commands.ACHIEVEMENT,
             {
               headers: {
                 version: 2
@@ -117,7 +117,7 @@ class Achievement extends BaseHelper {
           );
 
           if (result.success) {
-            const achievementResponses = result.body.map((achievementResponse) => new Response(achievementResponse, request.ACHIEVEMENT));
+            const achievementResponses = Object.values(result.body).map((achievementResponse) => new Response(achievementResponse, commands.ACHIEVEMENT));
 
             for (const [index, achievementResponse] of achievementResponses.entries()) {
               if (achievementResponse.success) {

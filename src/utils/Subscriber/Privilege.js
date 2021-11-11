@@ -12,7 +12,7 @@ class Privilege {
 
       if (validator.isNullOrUndefined(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(sourceSubscriberId)) {
+      } else if (!validator.isValidNumber(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be less than or equal to 0');
@@ -24,7 +24,7 @@ class Privilege {
       for (const priv of privs) {
         if (validator.isNullOrUndefined(priv)) {
           throw new Error('priv cannot be null or undefined');
-        } else if (validator.isValidNumber(priv)) {
+        } else if (!validator.isValidNumber(priv)) {
           throw new Error('priv must be a valid number');
         } else if (validator.isLessThanOrEqualZero(priv)) {
           throw new Error('priv cannot be less than or equal to 0');

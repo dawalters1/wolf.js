@@ -3,7 +3,7 @@ const GroupEvent = require('../../models/GroupEventObject');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const validator = require('../../validator');
 
 const fileType = require('file-type');
@@ -29,7 +29,7 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -70,7 +70,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_EVENT_CREATE,
+        commands.GROUP_EVENT_CREATE,
         {
           groupId: targetGroupId,
           title,
@@ -104,14 +104,14 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(eventId)) {
         throw new Error('eventId cannot be null or undefined');
-      } else if (validator.isValidNumber(eventId)) {
+      } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
@@ -159,7 +159,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_EVENT_UPDATE,
+        commands.GROUP_EVENT_UPDATE,
         {
           groupId: targetGroupId,
           id: eventId,
@@ -196,7 +196,7 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(eventId)) {
         throw new Error('eventId cannot be null or undefined');
-      } else if (validator.isValidNumber(eventId)) {
+      } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
@@ -226,21 +226,21 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(eventId)) {
         throw new Error('eventId cannot be null or undefined');
-      } else if (validator.isValidNumber(eventId)) {
+      } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.GROUP_EVENT_UPDATE,
+        commands.GROUP_EVENT_UPDATE,
         {
           groupId: targetGroupId,
           id: eventId,
@@ -267,7 +267,7 @@ class Event extends BaseHelper {
       for (const eventId of eventIds) {
         if (validator.isNullOrUndefined(eventId)) {
           throw new Error('eventId cannot be null or undefined');
-        } else if (validator.isValidNumber(eventId)) {
+        } else if (!validator.isValidNumber(eventId)) {
           throw new Error('eventId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(eventId)) {
           throw new Error('eventId cannot be less than or equal to 0');
@@ -286,9 +286,9 @@ class Event extends BaseHelper {
       if (events.length !== eventIds) {
         const eventIdsToRequest = eventIds.filter((eventId) => !events.some((event) => event.id === eventId));
 
-        for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api.botConfig.batch.length)) {
+        for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            request.GROUP_EVENT,
+            commands.GROUP_EVENT,
             {
               headers: {
                 version: 1
@@ -300,7 +300,7 @@ class Event extends BaseHelper {
           );
 
           if (result.success) {
-            const eventResponses = result.body.map((eventResponse) => new Response(eventResponse, request.GROUP_EVENT));
+            const eventResponses = Object.values(result.body).map((eventResponse) => new Response(eventResponse, commands.GROUP_EVENT));
 
             for (const [index, eventResponse] of eventResponses.entries()) {
               if (eventResponse.success) {
@@ -348,7 +348,7 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
@@ -358,7 +358,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.GROUP_EVENT_LIST,
+        commands.GROUP_EVENT_LIST,
         {
           id: targetGroupId,
           subscribe: true
@@ -395,7 +395,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.SUBSCRIBER_GROUP_EVENT_LIST,
+        commands.SUBSCRIBER_GROUP_EVENT_LIST,
         {
           subscribe: true
         }
@@ -424,14 +424,14 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(eventId)) {
         throw new Error('eventId cannot be null or undefined');
-      } else if (validator.isValidNumber(eventId)) {
+      } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.SUBSCRIBER_GROUP_EVENT_ADD,
+        commands.SUBSCRIBER_GROUP_EVENT_ADD,
         {
           id: eventId
         }
@@ -454,14 +454,14 @@ class Event extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(eventId)) {
         throw new Error('eventId cannot be null or undefined');
-      } else if (validator.isValidNumber(eventId)) {
+      } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.SUBSCRIBER_GROUP_EVENT_DELETE,
+        commands.SUBSCRIBER_GROUP_EVENT_DELETE,
         {
           id: eventId
         }

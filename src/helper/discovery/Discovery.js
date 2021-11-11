@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
 const constants = require('@dawalters1/constants');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const validator = require('../../validator');
 
 const format = (oldDiscovery) => {
@@ -59,7 +59,7 @@ module.exports = class Discovery extends BaseHelper {
       return this._discovery[language];
     }
 
-    const result = await this._websocket.emit(request.TOPIC_PAGE_LAYOUT,
+    const result = await this._websocket.emit(commands.TOPIC_PAGE_LAYOUT,
       {
         name: 'discover',
         languageId: language
@@ -84,7 +84,7 @@ module.exports = class Discovery extends BaseHelper {
       this._recipes[language] = {};
     }
 
-    const result = await this._websocket.emit(request.TOPIC_PAGE_RECIPE_LIST,
+    const result = await this._websocket.emit(commands.TOPIC_PAGE_RECIPE_LIST,
       {
         id,
         languageId: language,
@@ -123,7 +123,6 @@ module.exports = class Discovery extends BaseHelper {
     const sections = await this._api.utility().discovery().getRecipeSections(language, requestNew);
 
     const requestedSection = sections.find((section) => {
-      console.log(section.elements.collection);
       return section.elements.collection.recipe.id === id;
     });
 

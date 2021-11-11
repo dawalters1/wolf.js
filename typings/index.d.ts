@@ -254,6 +254,7 @@ export class WOLFBot {
 
     public commandHandler: CommandHandler;
 
+    /*
     public achievement: Achivement;
     public authorization: Authorization;
     public banned: Banned;
@@ -273,9 +274,73 @@ export class WOLFBot {
     * @deprecated Will be removed in 21.0
     * @use {@link tipping}
     */
+   /*
     public tip: Tipping;
     public tipping: Tipping;
 
     public setSelectedCharms(charms: )//TODO;
+    */
+    public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
 }
 //#endregion
+
+export interface ClientEvents {
+    connected: [],
+    connecting: [],
+    connectionError: [error: object],
+    connectionTimeOut: [error: object],
+    disconnected: [reason: String],
+    groupAudioCountUpdate: [],
+    groupAudioSlotUpdate: [],
+    groupAudioUpdate: [],
+    groupEventCreate: [],
+    groupEventUpdate: [],
+    groupMemberAdd: [],
+    groupMemberDelete: [],
+    groupMessage: [message: MessageObject],
+    groupMessageUpdate: [message: MessageObject],
+    groupTipAdd: [tip: object],
+    groupUpdate: [],
+    internalError: [],
+    joinedGroup: [],
+    leftGroup: [],
+    log: [log: string],
+    loginFailed: [response: ResponseObject],
+    loginSuccess: [subscriber: Object],
+    notificationReceived:[notification: Object],
+    packetRecieved: [],
+    packetSent: [],
+    ping: [],
+    pong: [],
+    presenceUpdate: [],
+    privateMessage: [message: MessageObject],
+    privateMessageAcceptResponse: [message: MessageObject],
+    privateMessageUpdate: [message: MessageObject],
+    privateTipAdd: [tip: object],
+    ready: [void],
+    reconnected: [void],
+    reconnecting: [void], 
+    reconnectFailed: [error: object],
+    stageClientBroadcastEnd: [],
+    stageClientConnected: [],
+    stageClietnConnecting: [],
+    stageClientDisconnected: [],
+    stageClientDuration: [],
+    stageClientError: [],
+    stageClientKicked: [],
+    stageClientMuted: [],
+    stageClientPaused: [],
+    stageClientReady: [],
+    stageClientStopped: [],
+    stageClientUnmuted: [],
+    stageClientUnpaused: [],
+    stageClientViewerCountChanged: [],
+    subscriberBlockAdd: [],
+    subscriberBlockDelete: [],
+    subscriberContactAdd: [],
+    subscriberContactDelete: [],
+    subscriberGroupEventAdd: [],
+    subscriberGroupEventDelete: [],
+    subscriberUpdate: [],
+    welcome: [],
+  }

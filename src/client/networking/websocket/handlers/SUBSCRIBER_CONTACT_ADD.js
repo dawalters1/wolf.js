@@ -1,7 +1,6 @@
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
+const { events } = require('../../../../constants');
 
+module.exports = async (api, body) => {
   const subscriber = await api.subscriber().getById(body.targetId);
 
   const contact = {
@@ -15,10 +14,9 @@ module.exports = async (api, data) => {
   };
 
   api.contact()._contacts.push(contact);
-  api.on._emit(command, contact);
 
   return await api.emit(
-    command,
+    events.SUBSCRIBER_CONTACT_ADD,
     contact
   );
 };

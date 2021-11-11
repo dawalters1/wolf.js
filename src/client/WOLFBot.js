@@ -2,15 +2,13 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('yaml');
 const fileType = require('file-type');
-const { request } = require('../constants');
+const { commands } = require('../constants');
 const validator = require('../validator');
 const constants = require('@dawalters1/constants');
 
 const crypto = require('crypto');
 
 const EventEmitter = require('events').EventEmitter;
-
-const EventHandler = require('./networking/websocket/EventHandler_Legacy');
 
 const Websocket = require('./networking/websocket/Websocket');
 const MultiMediaService = require('./networking/multimedia');
@@ -96,14 +94,7 @@ class WOLFBot extends EventEmitter {
     this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
 
     this._websocket = new Websocket(this);
-
-    /**
-     * @deprecated
-     */
-    this._eventHandler = new EventHandler(this);
-
     this._multiMediaService = new MultiMediaService(this);
-
     this._commandHandler = new CommandHandler(this);
 
     this._achievement = new Achievement(this);
@@ -124,6 +115,14 @@ class WOLFBot extends EventEmitter {
     this._tipping = new Tipping(this);
 
     this._utility = new Utility(this);
+  }
+
+  get config () {
+    return this._config;
+  }
+
+  get options () {
+    return this._options;
   }
 
   // #region Networking Clients
@@ -236,7 +235,7 @@ class WOLFBot extends EventEmitter {
 
       if (validator.isNullOrUndefined(onlineState)) {
         throw new Error('onlineState cannot be null or undefined');
-      } else if (validator.isValidNumber(onlineState)) {
+      } else if (!validator.isValidNumber(onlineState)) {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
@@ -267,7 +266,7 @@ class WOLFBot extends EventEmitter {
   }
 
   logout () {
-    this.websocket.emit(request.SECURITY_LOGOUT);
+    this.websocket.emit(commands.SECURITY_LOGOUT);
 
     this.websocket.socket.disconnect();
 
@@ -282,7 +281,7 @@ class WOLFBot extends EventEmitter {
         return this.cognito;
       }
 
-      const result = await this.websocket.emit(request.SECURITY_TOKEN_REFRESH);
+      const result = await this.websocket.emit(commands.SECURITY_TOKEN_REFRESH);
 
       if (result.success) {
         this.cognito = result.body;
@@ -301,7 +300,7 @@ class WOLFBot extends EventEmitter {
     try {
       if (validator.isNullOrUndefined(onlineState)) {
         throw new Error('onlineState cannot be null or undefined');
-      } else if (validator.isValidNumber(onlineState)) {
+      } else if (!validator.isValidNumber(onlineState)) {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
@@ -309,7 +308,7 @@ class WOLFBot extends EventEmitter {
         throw new Error('onlineState is not valid');
       }
 
-      return await this.websocket.emit(request.SUBSCRIBER_SETTINGS_UPDATE, {
+      return await this.websocket.emit(commands.SUBSCRIBER_SETTINGS_UPDATE, {
         state: {
           state: onlineState
         }
@@ -326,7 +325,7 @@ class WOLFBot extends EventEmitter {
         throw new Error('query cannot be null or empty');
       }
 
-      return await this.websocket.emit(request.SEARCH, {
+      return await this.websocket.emit(commands.SEARCH, {
         query,
         types: ['related', 'groups']
       });
@@ -343,7 +342,7 @@ class WOLFBot extends EventEmitter {
       }
 
       return await this.websocket.emit(
-        request.METADATA_URL,
+        commands.METADATA_URL,
         { url: link }
       );
     } catch (error) {
@@ -362,7 +361,7 @@ class WOLFBot extends EventEmitter {
         return this._blacklist;
       }
 
-      const result = await this.websocket.emit(request.METADATA_URL_BLACKLIST);
+      const result = await this.websocket.emit(commands.METADATA_URL_BLACKLIST);
 
       if (result.success) {
         this._blacklist = result.body;
@@ -376,14 +375,14 @@ class WOLFBot extends EventEmitter {
   }
 
   async getMessageSettings () {
-    return await this.websocket.emit(request.MESSAGE_SETTING);
+    return await this.websocket.emit(commands.MESSAGE_SETTING);
   }
 
   async setMessageSettings (messageFilterTier) {
     try {
       if (validator.isNullOrUndefined(messageFilterTier)) {
         throw new Error('messageFilterTier cannot be null or undefined');
-      } else if (validator.isValidNumber(messageFilterTier)) {
+      } else if (!validator.isValidNumber(messageFilterTier)) {
         throw new Error('messageFilterTier must be a valid number');
       } else if (validator.isLessThanZero(messageFilterTier)) {
         throw new Error('messageFilterTier cannot be less than 0');
@@ -392,7 +391,7 @@ class WOLFBot extends EventEmitter {
       }
 
       return await this.websocket.emit(
-        request.MESSAGE_SETTING_UPDATE,
+        commands.MESSAGE_SETTING_UPDATE,
         {
           spamFilter: {
             enabled: messageFilterTier !== constants.messageFilter.OFF,
