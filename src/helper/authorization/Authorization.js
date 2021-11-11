@@ -16,7 +16,7 @@ class Authorization extends BaseHelper {
     this._banned = [];
   }
 
-  async isAuthorize (subscriberIds) {
+  async isAuthorized (subscriberIds) {
     try {
       subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
 

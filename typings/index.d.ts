@@ -103,6 +103,150 @@ export class CommandContextObject{
 //#endregion
 
 //#region Group 
+
+export class AchievementObject{
+    public acquisitionPercentage: Number;
+    public category: Number;
+    public description: String;
+    public id: Number;
+    public imageUrl: String;
+    public levelId: Number;
+    public levelName: String;
+    public name: String;
+    public parentId: Number;
+    public typeId: Number;
+}
+
+export class AchievementUnlockableObject{
+    public id: Number;
+    public additionalInfo: 
+    {
+        eTag: String,  
+        awardedAt: Date,  
+        categoryId: Number 
+    }
+}
+
+export class AchievementCategoryObject {
+    public id: Number;
+    public name: String;
+}
+
+export class CharmSelectedObject{
+    public position: Number;
+    public charmId: Number;
+}
+export class CharmObject{
+    public cost: Number;
+    public description: String;
+    public id: Number;
+    public imageUrl: String;
+    public name: String;
+    public productId: Number;
+}
+
+export class CharmSubscriberObject {
+    public charmId: Number;
+    public expireTime: Date;
+    public id: Number;
+    public sourceSubscriberId: Number;
+    public subscriberId: Number;
+}
+export class CharmSubscriberStatisticsObject {
+    public subscriberId: Number;
+    public totalActive: Number;
+    public totalExpired: Number;
+    public totalGiftedRecieved: Number;
+    public totalGiftedSent: Number;
+    public totalLifeTime: Number;
+}
+export class CharmSubscriberSummaryObject{
+    public charmId: Number;
+    public expireTime: Date;
+    public giftCount: Number;
+    public total: Number;
+}
+
+export class DiscoveryRecipeObject{
+    public type: String;
+    public idList: Number;
+}
+export class DiscoverySectionElementObject{
+    public onInvalid: String;
+    public aspect: 
+    {
+        width: Number;
+        height: Number,
+    };
+    public link: 
+    {
+        url: String,
+        text: String,
+    }
+    public autoplay: Boolean;
+    public muted: Boolean;
+    public loop: Boolean;
+    public context: String;
+    public url: String;
+    public recipe: 
+    {
+        id: Number,
+        min: Number;
+        max: Number;
+    }
+    public size: String;
+    public style: String;
+    public type: String;
+    public foregroundColour: String;
+    public backgroundColour: String;
+
+}
+export class DiscoverySectionObject{
+    public id: Number;
+    public validity :
+    {
+        fromTime: Date;
+        endTime: Date,
+    }
+    /**
+     * Key Value pairs
+     * Refer to @dawalters1/constants to view element types (EX: elements[elementType.sectionTitle])
+     */
+    public elements: { [key:string]: DiscoverySectionElementObject}
+}
+export class DiscoveryObject{
+    public title: String;
+    public name: String;
+    public section: Array<DiscoverySectionObject>;
+}
+
+export class EventGroupObject {
+    public id: Number;
+    public additionalInfo :
+    {
+        eTag: String;
+        startsAt: Date;
+        endsAt: Date
+    }
+
+    /**
+     * Only available when creating, updating events
+     */
+    public thumbnailUpload: ResponseObject;
+}
+export class EventObject {
+    public attendanceCount: Number;
+    public category: Number;
+    public createdBy: Number;
+    public endsAt: Date;
+    public groupId: Number;
+    public id: Number;
+    public imageUrl: String;
+    public isRemoved: Boolean;
+    public longDescription: String;
+    public shortDescription: String;
+    public title: String;
+}
 export class GroupProfileBuilder {
     public setName(name: String): GroupProfileBuilder;
     public setTagLine(tagLine: String): GroupProfileBuilder;
@@ -180,7 +324,111 @@ export class GroupObject{
     public getAvatar(size: Number): Promise<Buffer>
     public updateAvatar(avatar: Buffer): Promise<ResponseObject>
 }
+export class GroupStatsActiveSubscriberObject {
+    public actionCount: Number;
+    public emoticonCount: Number;
+    public groupId: Number;
+    public happyEmoticonCount: Number;
+    public imageCount: Number;
+    public lineCount: Number;
+    public message: String;
+    public nickname: String;
+    public packCount: Number;
+    public questionCount: Number;
+    public randomQoute: String;
+    public sadEmoticonCount: Number;
+    public subId: Number;
+    public swearCount: Number;
+    public textCount: Number;
+    public voidCount: Number;
+    public wordCount: Number;
+}
+export class GroupStatsTopSubscriberObject {
+    public nickname: String;
+    public percentage: Number;
+    public subId: Number; 
+    public value: Number;
+    public randomQoute: String;
+}
+export class GroupStatsObject{
+    public details : 
+    {
+        actionCount: Number;
+        emoticonCount: Number;
+        happyCount: Number;
+        id: Number;
+        imageCount: Number;
+        lineCount: Number;
+        memberCount: Number;
+        name: String;
+        owner: {subId: Number, level: Number, nickname: String}
+        packCount: Number;
+        questionCount: Number;
+        sadCount: Number;
+        spokenCount: Number;
+        swearCount: Number;
+        textCount: Number;
+        timestamp: Number;
+        voiceCount: Number;
+        wordCount: Number;
+    };
+    public next30: Array<GroupStatsActiveSubscriberObject>;
+    public top25: Array<GroupStatsActiveSubscriberObject>;
+    public topAction: Array<GroupStatsTopSubscriberObject>;
+    public topEmoticon: Array<GroupStatsTopSubscriberObject>;
+    public topHappy: Array<GroupStatsTopSubscriberObject>;
+    public toImage: Array<GroupStatsTopSubscriberObject>;
+    public topQuestion: Array<GroupStatsTopSubscriberObject>;
+    public topSad: Array<GroupStatsTopSubscriberObject>;
+    public topSwear: Array<GroupStatsTopSubscriberObject>;
+    public topText: Array<GroupStatsTopSubscriberObject>;
+    public topWord: Array<GroupStatsTopSubscriberObject>;
+    public trends:  Array<{ day: number, lineCount: Number}>
+    public trendsDay:  Array<{ day: number, lineCount: Number}>
+    public trendsHour: Array<{ hour: number, lineCount: Number}>
+}
+export class NotificationObject {
+    public actions: 
+    Array<
+        {
+            id: Number,
+            titleText: String;
+            actionUrl: String;
+            external: Boolean;
+            imageUrl: String
+        }
+    >;
+    public endAt: Date;
+    public favourite: Boolean;
+    public global: Boolean;
+    public id: Number;
+    public imageUrl: String;
+    public layoutType: Number;
+    public link: String;
+    public message: String;
+    /**
+     * Unsure what the object layout is
+     */
+    public metadata: Object;
+    public newsStreamType: Number;
+    public persistent: Boolean;
+    public startsAt: Date;
+    public title: String;
+    public type: Number;
+}
 
+export class PhraseObject {
+    public name: String;
+    public value: String;
+    public language: String;
+}
+export class PhraseCountObject {
+    /**
+     * example: {"en": 15, "ar": 4}
+     */
+    public countByLanguage: { [key: string]: number}
+    public total: Number;
+}
 //#endregion
 
 //#region Client Typings
@@ -252,38 +500,247 @@ export class WOLFBot {
     public websocket: Websocket;
     public multiMediaService(): MultiMediaService; 
 
-    public commandHandler: CommandHandler;
+    public commandHandler(): CommandHandler;
 
-    /*
-    public achievement: Achivement;
-    public authorization: Authorization;
-    public banned: Banned;
-    public blocked: Blocked;
-    public charm: Charm;
-    public contact: Contact;
-    public discovery: Discovery;
-    public event: Event;
-    public group: Group;
-    public messaging: Messaging;
-    public notification: Notification;
-    public phrase: Phrase;
-    public stage: Stage;
-    public store: Store;
-    public subscriber: Subscriber;
+    public achievement(): Achievement;
+    public authorization(): Authorization;
+    public banned(): Banned;
+    public blocked(): Blocked;
+    public charm(): Charm;
+    public contact(): Contact;
+    public discovery(): Discovery;
+    public event(): Event;
+    public group(): Group;
+    public messaging(): Messaging;
+    public notification(): Notification;
+    public phrase(): Phrase;
+   // public stage(): Stage;
+    public store(): Store;
+    public subscriber(): Subscriber;
     /**
-    * @deprecated Will be removed in 21.0
+    * @deprecated Will be removed in 1.0.0
     * @use {@link tipping}
     */
-   /*
-    public tip: Tipping;
-    public tipping: Tipping;
+    public tip(): Tipping;
+    public tipping(): Tipping;
 
-    public setSelectedCharms(charms: )//TODO;
-    */
+    //public setSelectedCharms(charms: )//TODO;
+    
     public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
+}
+
+export abstract class BaseHelper {
+    public constructor(api: WOLFBot);
+
+    private _api: WOLFBot;
+    private _websocket: Websocket;
+
+    private _cleanup(): void;
+    public _process(...args: any): void;
+
+}
+
+export class AchievementSubscriber{
+    private constructor(api: WOLFBot);
+
+    public getById(subscriberId: Number): Promise<Array<AchievementUnlockableObject>>
+}
+
+export class AchievementGroup{
+    private constructor(api: WOLFBot);
+
+    public getById(targetGroupId: Number): Promise<Array<AchievementUnlockableObject>>
+}
+
+export class Achievement extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public group() : AchievementGroup;
+    public subscriber(): AchievementSubscriber;
+    public getCategoryList(language: Number, requestNew?: Boolean): Promise<Array<AchievementCategoryObject>>;
+    public getById(achievementId: Number, language: Number, requestNew?: Boolean): Promise<AchievementObject>;
+    public getByIds(achievementIds: Array<Number>, language: Number, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
+}
+
+export class Authorization extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(): Promise<Array<Number>>;
+    public clear(): void;
+    public isAuthorized(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public authorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public unauthorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+}
+export class Banned extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(): Promise<Array<Number>>;
+    public clear(): void;
+    public isBanned(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public ban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public unban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+}
+export class Blocked extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(): Promise<Array<GroupSubscriberObject>>;
+    public isBlocked(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public block(subscriberId: Number) :  Promise<ResponseObject>
+    public unban(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+}
+export class Charm extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(language: Number, requestNew?: Boolean): Promise<Array<CharmObject>>;
+    public getById(charmId: Number, language: Number, requestNew?: Boolean): Promise<CharmObject>;
+    public getByIds(charmIds: Number | Array<Number>, language: Number, requestNew?: Boolean): Promise<CharmObject | Array<CharmObject>>
+    public getSubscriberSumamry(subscriberId: Number): Promise<CharmSubscriberSummaryObject>;
+    public getSubscriberStatistics(subscriberId: Number): Promise<CharmSubscriberStatisticsObject>;
+    public getSubscriberActiveList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
+    public getSubscriberExpiredList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
+    public remove(charmIds: Number | Array<Number>): Promise<ResponseObject>;
+    public set(charms: CharmSelectedObject | Array<CharmSelectedObject>): Promise<ResponseObject>;
+}
+export class Contact extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(): Promise<Array<GroupSubscriberObject>>;
+    public isContact(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    public add(subscriberId: Number) :  Promise<ResponseObject>
+    public remove(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+}
+
+export class Discovery extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public getByLanguage(language: Number, requestNew?: boolean): Promise<DiscoveryObject>;
+    public getRecipe(id: Number, language: Number, requestNew?: boolean): Promise<DiscoveryRecipeObject>;
+    public getRecipeBySectionId(id: Number, language: Number, requestNew?: boolean): Promise<DiscoverySectionObject>;
+}
+
+export class Event extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link create}
+    */
+    public createEvent(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    public create(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link edit}
+    */
+    public editEvent(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    public edit(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link updateThumbnail}
+    */
+    public updateEventThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
+    public updateThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link remove}
+    */
+    public deleteEvent(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
+    public remove(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
+    public getById(eventId: Number, requestNew?: Boolean): Promise<EventGroupObject>;
+    public getByIds(eventIds: Number|Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link getGroupEventList}
+    */
+    public getGroupEvents(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    public getGroupEventList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link getSubscriptionList}
+    */
+    public getEventSubscriptions(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    public getSubscriptionList(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link getGroupEventList}
+    */
+    public subscribeToEvent(eventId: Number): Promise<ResponseObject>;
+    public subscribe(eventId: Number): Promise<ResponseObject>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link unsubscribe}
+    */
+     public unsubscribeFromEvent(eventId: Number): Promise<ResponseObject>;
+     public unsubscribe(eventId: Number): Promise<ResponseObject>;              
+}
+
+export class Group extends BaseHelper {
+    private constructor(api: WOLFBot);
+
+    public list(): Promise<Array<GroupObject>>;
+    public getById(targetGroupId: Number, requestNew?: Boolean): Promise<GroupObject>;
+    public getByIds(targetGroupIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<GroupObject>>;
+    public getByName(targetGroupName: String, requestNew?: Boolean): Promise<GroupObject>;
+    public joinById(targetGroupId: Number, password?: String): Promise<ResponseObject>;
+    public joinByName(targetGroupName: String, password?: String): Promise<ResponseObject>
+    public leaveById(targetGroupId: Number): Promise<ResponseObject>;
+    public leaveByName(targetGroupName: String): Promise<ResponseObject>
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link getChatHistory}
+    */
+    public getHistory(targetGroupId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    public getChatHistory(targetGroupId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    public getSubscriberList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupSubscriberObject>>;
+    public getStats(targetGroupId: Number, requestNew?: Boolean): Promise<GroupStatsObject>
+    public create(): GroupProfileBuilder;
+    public update(group: GroupObject): GroupProfileBuilder;
+    public updateAvatar(targetGroupId: Number, avatar: Buffer): Promise<ResponseObject>;
+    public updateSubscriber(targetGroupId: Number, targetSubscriberId: Number, capabilities: Number): Promise<ResponseObject>
+}
+
+export class Messaging extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
+    public sendPrivateMessage(sourceSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+    public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+    public acceptPrivateMessageRequest(subscriberId :Number): Promise<ResponseObject<MessageResponseObject>>;
+    public deleteGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+    public restoreGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+    public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;
+    public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+    public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+}
+
+export class Notification extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public list(language: Number, requestNew?: Boolean) : Promise<Array<NotificationObject>>;
+    public clear(): Promise<ResponseObject>;
+    public subscribe(language: Number): Promise<void>;
+    public unsubscriber(language: Number): Promise<void>;
+}
+
+
+export class Phrase extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public list(): Array<PhraseObject>;
+    public count(): Promise<PhraseCountObject>;
+    public clear(): Promise<void>;
+    public load(phrases: Array<PhraseObject>): Promise<void>;
+    public getLanguageList(): Promise<Array<String>>;
+    public getAllByName(name: String): Array<PhraseObject>;
+    public getByLanguageAndName(language: String, Name: string): String;
+    public getByCommandAndName(command: CommandObject, Name: string): String;
+    public isRequestedPhrase(name: string, value: string): Boolean;
 }
 //#endregion
 
+//#region interfaces - Borrowed from Discord.JS setup - https://github.com/discordjs/discord.js
+// https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
 export interface ClientEvents {
     connected: [],
     connecting: [],
@@ -344,3 +801,5 @@ export interface ClientEvents {
     subscriberUpdate: [],
     welcome: [],
   }
+
+  //#endregion

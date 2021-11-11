@@ -200,7 +200,7 @@ class WOLFBot extends EventEmitter {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @see {@link tipping}
    */
   tip () {
@@ -423,7 +423,7 @@ class WOLFBot extends EventEmitter {
   // #region Deprecated methods
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use api.charm().set(charms)
    */
   async setSelectedCharms (charms) {
@@ -431,15 +431,15 @@ class WOLFBot extends EventEmitter {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
-   * @use api.charm().delete(charmIds)
+   * @deprecated Will be removed in 1.0.0
+   * @use api.charm().remove(charmIds)
    */
   async deleteCharms (charmIds) {
     return this._charm.delete(charmIds);
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use api.store().getBalance()
    */
   async getCreditBalance () {
@@ -447,7 +447,7 @@ class WOLFBot extends EventEmitter {
   }
 
   /**
-   * @deprecated Will be removed in 21.0
+   * @deprecated Will be removed in 1.0.0
    * @use api.messaging().getConversationList(timestamp)
    */
   async getConversationList (timestamp = undefined) {
