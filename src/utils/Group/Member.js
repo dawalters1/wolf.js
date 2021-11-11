@@ -22,14 +22,14 @@ class Member {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(sourceSubscriberId)) {
+      } else if (!validator.isValidNumber(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be less than or equal to 0');
@@ -60,14 +60,14 @@ class Member {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(sourceSubscriberId)) {
+      } else if (!validator.isValidNumber(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
         throw new Error('sourceSubscriberId cannot be less than or equal to 0');
@@ -75,7 +75,7 @@ class Member {
 
       if (validator.isNullOrUndefined(capability)) {
         throw new Error('capability cannot be null or undefined');
-      } else if (validator.isValidNumber(capability)) {
+      } else if (!validator.isValidNumber(capability)) {
         throw new Error('capability must be a valid number');
       } else if (!Object.values(capability).includes(requiredCapability)) {
         throw new Error('requiredCapability is not valid');

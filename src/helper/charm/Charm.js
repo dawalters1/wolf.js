@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const constants = require('@dawalters1/constants');
 
 class Charm extends BaseHelper {
@@ -26,7 +26,7 @@ class Charm extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.CHARM_LIST,
+        commands.CHARM_LIST,
         {
           language
         }
@@ -60,7 +60,7 @@ class Charm extends BaseHelper {
       for (const charmId of charmIds) {
         if (validator.isNullOrUndefined(charmId)) {
           throw new Error('charmId cannot be null or undefined');
-        } else if (validator.isValidNumber(charmId)) {
+        } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
@@ -101,14 +101,14 @@ class Charm extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.CHARM_SUBSCRIBER_SUMMARY_LIST,
+        commands.CHARM_SUBSCRIBER_SUMMARY_LIST,
         {
           id: subscriberId
         }
@@ -123,14 +123,14 @@ class Charm extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
       return await this._websocket.emit(
-        request.CHARM_SUBSCRIBER_STATISTICS,
+        commands.CHARM_SUBSCRIBER_STATISTICS,
         {
           id: subscriberId
         }
@@ -145,7 +145,7 @@ class Charm extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
@@ -153,7 +153,7 @@ class Charm extends BaseHelper {
 
       if (validator.isNullOrUndefined(limit)) {
         throw new Error('limit cannot be null or undefined');
-      } else if (validator.isValidNumber(limit)) {
+      } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
@@ -161,14 +161,14 @@ class Charm extends BaseHelper {
 
       if (validator.isNullOrUndefined(offset)) {
         throw new Error('offset cannot be null or undefined');
-      } else if (validator.isValidNumber(offset)) {
+      } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
       } else if (validator.isLessThanZero(offset)) {
         throw new Error('offset cannot be less than 0');
       }
 
       return await this._websocket.emit(
-        request.CHARM_SUBSCRIBER_ACTIVE_LIST,
+        commands.CHARM_SUBSCRIBER_ACTIVE_LIST,
         {
           id: subscriberId,
           limit,
@@ -185,7 +185,7 @@ class Charm extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
@@ -193,7 +193,7 @@ class Charm extends BaseHelper {
 
       if (validator.isNullOrUndefined(limit)) {
         throw new Error('limit cannot be null or undefined');
-      } else if (validator.isValidNumber(limit)) {
+      } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
@@ -201,14 +201,14 @@ class Charm extends BaseHelper {
 
       if (validator.isNullOrUndefined(offset)) {
         throw new Error('offset cannot be null or undefined');
-      } else if (validator.isValidNumber(offset)) {
+      } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
       } else if (validator.isLessThanZero(offset)) {
         throw new Error('offset cannot be less than 0');
       }
 
       return await this._websocket.emit(
-        request.CHARM_SUBSCRIBER_EXPIRED_LIST,
+        commands.CHARM_SUBSCRIBER_EXPIRED_LIST,
         {
           id: subscriberId,
           limit,
@@ -231,16 +231,16 @@ class Charm extends BaseHelper {
       for (const charmId of charmIds) {
         if (validator.isNullOrUndefined(charmId)) {
           throw new Error('charmId cannot be null or undefined');
-        } else if (validator.isValidNumber(charmId)) {
+        } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
         }
       }
       const results = [];
-      for (const charmIdBatch of this._api.utility().array().chunk(charmIds, this._api.botConfig.batch.length)) {
+      for (const charmIdBatch of this._api.utility().array().chunk(charmIds, this._api._botConfig.batch.length)) {
         results.push(await this._websocket.emit(
-          request.CHARM_SUBSCRIBER_DELETE,
+          commands.CHARM_SUBSCRIBER_DELETE,
           {
             idList: charmIdBatch
           }
@@ -272,7 +272,7 @@ class Charm extends BaseHelper {
           throw new Error('charm must have property position');
         } else if (validator.isNullOrUndefined(charm.position)) {
           throw new Error('position cannot be null or undefined');
-        } else if (validator.isValidNumber(charm.position)) {
+        } else if (!validator.isValidNumber(charm.position)) {
           throw new Error('position must be a valid number');
         } else if (validator.isLessThanZero(charm.position)) {
           throw new Error('position cannot be less than 0');
@@ -282,7 +282,7 @@ class Charm extends BaseHelper {
           throw new Error('charm must have property id');
         } else if (validator.isNullOrUndefined(charm.id)) {
           throw new Error('id cannot be null or undefined');
-        } else if (validator.isValidNumber(charm.id)) {
+        } else if (!validator.isValidNumber(charm.id)) {
           throw new Error('id must be a valid number');
         } else if (validator.isLessThanOrEqualZero(charm.id)) {
           throw new Error('id cannot be less than or equal to 0');
@@ -290,7 +290,7 @@ class Charm extends BaseHelper {
       }
 
       return await this.websocket.emit(
-        request.CHARM_SUBSCRIBER_SET_SELECTED,
+        commands.CHARM_SUBSCRIBER_SET_SELECTED,
         {
           selectedList: charms
         }

@@ -2,7 +2,7 @@ const BaseHelper = require('../BaseHelper');
 
 const constants = require('@dawalters1/constants');
 const validator = require('../../validator');
-const { request, internal } = require('../../constants');
+const { commands, events } = require('../../constants');
 
 class Notification extends BaseHelper {
   constructor (api) {
@@ -28,7 +28,7 @@ class Notification extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.NOTIFICATION_LIST,
+        commands.NOTIFICATION_LIST,
         {
           language
         }
@@ -47,7 +47,7 @@ class Notification extends BaseHelper {
 
   async clear () {
     try {
-      const result = await this._websocket.emit(request.NOTIFICATION_LIST_CLEAR);
+      const result = await this._websocket.emit(commands.NOTIFICATION_LIST_CLEAR);
 
       if (result.success) {
         this._notifications = {};
@@ -80,7 +80,7 @@ class Notification extends BaseHelper {
           for (const notification of newData) {
             if (!cached.find((notif) => notif.id === notification.id)) {
               this._api.emit(
-                internal.NOTIFICATION_RECEIVED,
+                events.NOTIFICATION_RECEIVED,
                 {
                   language,
                   notification

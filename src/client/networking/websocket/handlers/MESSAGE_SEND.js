@@ -1,10 +1,10 @@
 const { messageType, capability, privilege } = require('@dawalters1/constants');
-const { internal, event } = require('../../../../constants');
 const Message = require('../../../../models/MessageObject');
 
 const toAdminActionFromString = require('../../../../utils/ToAdminActionFromString');
 const toGroupMemberCapability = require('../../../../utils/ToGroupMemberCapability');
 const { version } = require('../../../../../package.json');
+const { events } = require('../../../../constants');
 
 const handleAdminAction = async (api, message) => {
   const [group, subscriber] = await Promise.all([
@@ -37,10 +37,8 @@ const handleAdminAction = async (api, message) => {
       group.inGroup = true;
     }
 
-    api.on._emit(message.sourceSubscriberId === api.currentSubscriber.id ? internal.JOINED_GROUP : event.GROUP_MEMBER_ADD, group, subscriber);
-
     return api.emit(
-      message.sourceSubscriberId === api.currentSubscriber.id ? internal.JOINED_GROUP : event.GROUP_MEMBER_ADD,
+      message.sourceSubscriberId === api.currentSubscriber.id ? events.JOINED_GROUP : events.GROUP_MEMBER_ADD,
       {
         group,
         subscriber
@@ -84,10 +82,8 @@ const handleAdminAction = async (api, message) => {
   }
 
   if (adminAction.type === 'leave' || adminAction.type === 'kick') {
-    api.on._emit(subscriber.id === api.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE, group, subscriber);
-
     return api.emit(
-      subscriber.id === api.currentSubscriber.id ? internal.LEFT_GROUP : event.GROUP_MEMBER_DELETE,
+      subscriber.id === api.currentSubscriber.id ? events.LEFT_GROUP : events.GROUP_MEMBER_DELETE,
       {
         group,
         subscriber
@@ -95,17 +91,8 @@ const handleAdminAction = async (api, message) => {
     );
   }
 
-  api.on._emit(event.GROUP_MEMBER_UPDATE, group,
-    {
-      groupId: group.id,
-      sourceId: adminAction.instigatorId,
-      targetId: message.sourceSubscriberId,
-      action: adminAction.type
-    }
-  );
-
   return api.emit(
-    event.GROUP_MEMBER_UPDATE,
+    events.GROUP_MEMBER_UPDATE,
     {
       group,
       action: {
@@ -118,9 +105,7 @@ const handleAdminAction = async (api, message) => {
   );
 };
 
-module.exports = async (api, data) => {
-  const body = data.body;
-
+module.exports = async (api, body) => {
   const message = new Message(api, body);
 
   switch (message.type) {
@@ -128,8 +113,7 @@ module.exports = async (api, data) => {
       await handleAdminAction(api, message);
       break;
     case messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
-      api.on._emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
-      api.emit(internal.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
+      api.emit(events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
       break;
 
     case messageType.TEXT_PLAIN:
@@ -166,10 +150,8 @@ module.exports = async (api, data) => {
     }
   }
 
-  api.on._emit(message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE, message);
-
   return await api.emit(
-    message.isGroup ? internal.GROUP_MESSAGE : internal.PRIVATE_MESSAGE,
+    message.isGroup ? events.GROUP_MESSAGE : events.PRIVATE_MESSAGE,
     message
   );
 };

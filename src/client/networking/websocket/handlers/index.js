@@ -1,4 +1,4 @@
-const { event, internal } = require('../../../../constants');
+const { serverEvents, events } = require('../../../../constants');
 
 class Handler {
   constructor (api) {
@@ -6,12 +6,11 @@ class Handler {
 
     this._handlers = {};
 
-    for (const evt of Object.entries(event)) {
+    for (const evt of Object.entries(serverEvents)) {
       if (this._api._botConfig.networking.events.ignore.includes(evt[1])) {
         continue;
       }
-
-      this._handlers[evt[1]] = require(`./${evt[0]}.js`);
+      this._handlers[evt[1].toString()] = require(`./${evt[0]}.js`);
     }
   }
 
@@ -24,7 +23,7 @@ class Handler {
     }
 
     this._api.emit(
-      internal.PACKET_RECEIVED,
+      events.PACKET_RECEIVED,
       {
         command,
         body
@@ -33,16 +32,12 @@ class Handler {
 
     if (!Object.keys(this._handlers).includes(command)) {
       return this._api.emit(
-        internal.INTERNAL_ERROR,
+        events.INTERNAL_ERROR,
           `Unhandled socket event: ${command}`
       );
     }
 
-    return await this.handlers[command](this._api,
-      {
-        command,
-        body: body.body ? body.body : body
-      });
+    return await this._handlers[command](this._api, body.body ? body.body : body);
   }
 }
 

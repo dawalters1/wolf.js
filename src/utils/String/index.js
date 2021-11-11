@@ -1,6 +1,17 @@
 const validator = require('../../validator');
 
-const PUNCTUATION_REGEX = /[/"()&*$￥^+=`~<>{}[]|-!#%,:;@¡§«¶·»¿;·՚-՟։֊؉،॥॰෴๏๚๛༄-༒༔༺-༽྅჻፠-፨᐀᙭᙮។-៖៘-៚‧‰-⁃⁅-⁑⁓-⁞⁽⁾₍₎、〃〈-【】〔-〟〰〽゠・﴾﴿︐-︙︰-﹒﹔-﹡﹣﹨﹪﹫！-＃％-＊，-／：；？＠［-］＿｛｝｟-･〔〕《》]/;
+const PUNCTUATION_REGEX = /[/"()&*$%￥^+=`,~<>{}[]|-!#%,:;@¡§«¶·»¿;·՚-՟։֊؉،॥॰෴๏๚๛༄-༒༔༺-༽྅჻፠-፨᐀᙭᙮។-៖៘-៚‧‰-⁃⁅-⁑⁓-⁞⁽⁾₍₎、〃〈-【】〔-〟〰〽゠・﴾﴿︐-︙︰-﹒﹔-﹡﹣﹨﹪﹫！-＃％-＊，-／：；？＠［-］＿｛｝｟-･〔〕《》]/;
+
+const removePunctuation = (url) => {
+  if (url) {
+    const lastCharacter = url.slice(-1);
+
+    if (lastCharacter.match(PUNCTUATION_REGEX)) {
+      return removePunctuation(url.slice(0, url.length - 1));
+    }
+  }
+  return url;
+};
 
 function escapeRegExp (string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -69,7 +80,7 @@ class String {
 
       if (validator.isNullOrUndefined(max)) {
         throw new Error('max cannot be null or undefined');
-      } else if (validator.isValidNumber(max)) {
+      } else if (!validator.isValidNumber(max)) {
         throw new Error('max must be a valid number');
       } else if (validator.isLessThanOrEqualZero(max)) {
         throw new Error('max cannot be less than or equal to 0');
@@ -142,44 +153,30 @@ class String {
 
   isValidUrl (url) {
     try {
+      const original = url;
+
+      url = removePunctuation(url);
+
       if (!url || (!url.includes('.') && !url.includes(':'))) {
         return false;
       }
+      const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto)) || 'http://';
 
-      let protocol = this._api._botConfig.validation.link.protocols.find((proto) => url.toLowerCase().startsWith(proto));
-
-      if (!protocol) {
-        protocol = 'http://';
+      if (!url.toLowerCase().startsWith(protocol)) {
         url = `${protocol}${url}`;
       }
 
-      if (!url.slice(protocol.length).startsWith('www.')) {
+      if (!url.slice(protocol.length).toLowerCase().startsWith('www.')) {
         url = `${protocol}www.${url.slice(protocol.length)}`;
-      }
-
-      while (true) {
-        const lastCharacter = url.slice(-1);
-
-        if (lastCharacter.match(PUNCTUATION_REGEX)) {
-          url = url.slice(0, url.length - 1);
-        } else {
-          break;
-        }
       }
 
       try {
         const data = new URL(url);
-
-        if (data.hostname.includes('.')) {
-          const tld = data.hostname.split('.').pop();
-
-          if (!this._api._botConfig.validation.link.tld.includes(tld)) {
-            return false;
-          }
-
-          return true;
-        } else if (data.host.includes(':') && data.port) {
-          return true;
+        if ((data.hostname.includes('.') && this._api._botConfig.validation.link.tld.includes(removePunctuation(data.hostname.split('.').pop()))) || (data.host.includes(':') && data.port)) {
+          return {
+            original,
+            formatted: data.href
+          };
         }
 
         return false;

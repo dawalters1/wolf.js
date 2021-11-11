@@ -16,14 +16,14 @@ class Group {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetGroupId)) {
+      } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(size)) {
         throw new Error('size cannot be null or undefined');
-      } else if (validator.isValidNumber(size)) {
+      } else if (!validator.isValidNumber(size)) {
         throw new Error('size must be a valid number');
       } else if (validator.isLessThanOrEqualZero(size)) {
         throw new Error('size cannot be less than or equal to 0');
@@ -59,7 +59,7 @@ class Group {
         throw new Error('group must contain id');
       } else if (validator.isNullOrUndefined(group.id)) {
         throw new Error('id cannot be null or undefined');
-      } else if (validator.isValidNumber(group.id)) {
+      } else if (!validator.isValidNumber(group.id)) {
         throw new Error('id must be a valid number');
       } else if (validator.isLessThanOrEqualZero(group.id)) {
         throw new Error('id cannot be less than or equal to 0');
@@ -71,6 +71,7 @@ class Group {
 
       return `${group.name}${excludeId ? '' : ` (${group.id})`}`;
     } catch (error) {
+      Reflect.deleteProperty(group, '_api');
       error.internalErrorMessage = `api.utility().group().toDisplayName(group=${JSON.stringify(group)}, excludeId=${JSON.stringify(excludeId)})`;
       throw error;
     }

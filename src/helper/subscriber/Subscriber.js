@@ -4,7 +4,7 @@ const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
 
 const validator = require('../../validator');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 const patch = require('../../utils/Patch');
 const toLanguageKey = require('../../utils/ToLanguageKey');
 
@@ -29,7 +29,7 @@ class Subscriber extends BaseHelper {
       for (const subscriberId of subscriberIds) {
         if (validator.isNullOrUndefined(subscriberId)) {
           throw new Error('subscriberId cannot be null or undefined');
-        } else if (validator.isValidNumber(subscriberId)) {
+        } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
@@ -49,9 +49,9 @@ class Subscriber extends BaseHelper {
       if (subscribers.length !== subscriberIds) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId));
 
-        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api.botConfig.batch.length)) {
+        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            request.SUBSCRIBER_PROFILE,
+            commands.SUBSCRIBER_PROFILE,
             {
               headers: {
                 version: 4
@@ -65,7 +65,7 @@ class Subscriber extends BaseHelper {
           );
 
           if (result.success) {
-            const subscriberResponses = result.body.map((subscriberResponse) => new Response(subscriberResponse, request.SUBSCRIBER_PROFILE));
+            const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, commands.SUBSCRIBER_PROFILE));
 
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
               if (subscriberResponse.success) {
@@ -115,7 +115,7 @@ class Subscriber extends BaseHelper {
     try {
       if (validator.isNullOrUndefined(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(targetSubscriberId)) {
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
@@ -141,7 +141,7 @@ class Subscriber extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        request.MESSAGE_PRIVATE_HISTORY_LIST,
+        commands.MESSAGE_PRIVATE_HISTORY_LIST,
         {
           headers: {
             version: 2

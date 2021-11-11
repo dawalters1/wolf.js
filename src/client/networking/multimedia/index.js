@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const Signer = AWS.Signers.V4;
 const Response = require('../../../models/ResponseObject');
 
-const validator = require('../../../validator/Validator');
+const validator = require('../../../validator');
 
 const imageSize = require('image-size');
 const fileType = require('file-type');
@@ -10,7 +10,7 @@ const fileType = require('file-type');
 const {
   v4: uuidv4
 } = require('uuid');
-const { internal } = require('../../../constants');
+const { events } = require('../../../constants');
 
 const buildRoute = (route) => {
   return `/v${route.version}/${route.route}`;
@@ -31,7 +31,7 @@ module.exports = class MultiMediaServiceClient {
     this._api = api;
     this._client = new AWS.HttpClient();
 
-    this._api.on(internal.LOGIN_SUCCESS, async () => {
+    this._api.on(events.LOGIN_SUCCESS, async () => {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials({
         IdentityId: this._api.cognito.identity,
         Logins: {
@@ -44,7 +44,7 @@ module.exports = class MultiMediaServiceClient {
       this._getCredentials();
     });
 
-    this._api.on(internal.RECONNECTED, async () => await refresh(this._api));
+    this._api.on(events.RECONNECTED, async () => await refresh(this._api));
   }
 
   async _getCredentials (attempt = 1) {

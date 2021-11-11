@@ -1,9 +1,7 @@
+const { events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
-
+module.exports = async (api, body) => {
   const oldPresence = {
     deviceType: undefined,
     onlineState: undefined
@@ -42,10 +40,8 @@ module.exports = async (api, data) => {
 
   Reflect.deleteProperty(body, 'id');
 
-  api.on._emit(command, subscriber, data);
-
   return await api.emit(
-    command,
+    events.PRESENCE_UPDATE,
     {
       old: oldPresence,
       new: body

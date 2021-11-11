@@ -1,8 +1,6 @@
+const { events } = require('../../../../constants');
 
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
-
+module.exports = async (api, body) => {
   const group = api.group()._groups.find((group) => group.id === body.groupId);
 
   if (!group) {
@@ -13,10 +11,8 @@ module.exports = async (api, data) => {
 
   group.events.push(event);
 
-  api.on._emit(command, event);
-
   return api.emit(
-    command,
+    events.GROUP_EVENT_CREATE,
     {
       group,
       event

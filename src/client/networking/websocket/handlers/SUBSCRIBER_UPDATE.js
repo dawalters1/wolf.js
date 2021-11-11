@@ -1,9 +1,7 @@
+const { events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
-module.exports = async (api, data) => {
-  const command = data.command;
-  const body = data.body;
-
+module.exports = async (api, body) => {
   let subscriber = await api.subscriber()._subscribers.find((subscriber) => subscriber.id === body.id);
 
   if (!subscriber || subscriber.hash === body.hash) {
@@ -35,10 +33,8 @@ module.exports = async (api, data) => {
     patch(blocked.additionalInfo, subscriber);
   }
 
-  api.on._emit(command, subscriber);
-
   return api.emit(
-    command,
+    events.SUBSCRIBER_UPDATE,
     {
       old,
       new: subscriber

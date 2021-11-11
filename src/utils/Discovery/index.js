@@ -10,7 +10,7 @@ class Discovery {
     try {
       if (validator.isNullOrUndefined(language)) {
         throw new Error('language cannot be null or undefined');
-      } else if (validator.isValidNumber(language)) {
+      } else if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');
       } else if (validator.isLessThanOrEqualZero(language)) {
         throw new Error('language cannot be less than or equal to 0');

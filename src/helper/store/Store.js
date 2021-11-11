@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
-const { request } = require('../../constants');
+const { commands } = require('../../constants');
 
 class Store extends BaseHelper {
   constructor (api) {
@@ -19,7 +19,7 @@ class Store extends BaseHelper {
         return this._balance;
       }
 
-      const result = await this._websocket.emit(request.STORE_CREDIT_BALANCE);
+      const result = await this._websocket.emit(commands.STORE_CREDIT_BALANCE);
 
       if (result.success) {
         this._balance = result.body.balance;

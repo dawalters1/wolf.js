@@ -12,11 +12,11 @@ class Phrase extends BaseHelper {
     this._phrases = {};
     this._defaultLanguage = api.config.app.defaultLanguage;
 
-    if (!fs.existsSync('../../../phrases')) {
+    if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
       throw new Error('Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
     }
 
-    const files = fs.readdirSync('../../../phrases').filter(file => file.endsWith('.json'));
+    const files = fs.readdirSync(path.resolve(require.main.filename, '../phrases')).filter(file => file.endsWith('.json'));
 
     if (files.length === 0) {
       throw new Error('Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
@@ -25,7 +25,7 @@ class Phrase extends BaseHelper {
     for (const file of files) {
       const language = path.parse(file).name;
 
-      const phrases = JSON.parse(fs.readFileSync(`../../../phrases/${file}`, 'utf-8'));
+      const phrases = JSON.parse(fs.readFileSync(path.resolve(require.main.filename, `../phrases/${file}`), 'utf8'));
 
       if (phrases.length === 0) {
         console.log(`[WARNING] Phrase Helper: ${language} json is empty`);
@@ -122,6 +122,23 @@ class Phrase extends BaseHelper {
       error.internalErrorMessage = 'api.phrase().count()';
       throw error;
     }
+  }
+
+  getAllByName (name) {
+    return Object.entries(this._phrases).reduce((result, value) => {
+      const phrase = value[1][name];
+
+      if (phrase) {
+        result.push(
+          {
+            name: name.toLowerCase(),
+            value: phrase,
+            language: value[0]
+          }
+        );
+      }
+      return result;
+    }, []);
   }
 
   isRequestedPhrase (name, value) {

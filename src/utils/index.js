@@ -73,7 +73,7 @@ class Utility {
 
       if (validator.isNullOrUndefined(milliseconds)) {
         throw new Error('milliseconds cannot be null or undefined');
-      } else if (validator.isValidNumber(milliseconds)) {
+      } else if (!validator.isValidNumber(milliseconds)) {
         throw new Error('milliseconds must be a valid number');
       } else if (validator.isLessThanOrEqualZero(milliseconds)) {
         throw new Error('milliseconds cannot be less than or equal to 0');
@@ -122,7 +122,7 @@ class Utility {
     try {
       if (validator.isNullOrUndefined(duration)) {
         throw new Error('duration cannot be null or undefined');
-      } else if (validator.isValidNumber(duration)) {
+      } else if (!validator.isValidNumber(duration)) {
         throw new Error('duration must be a valid number');
       } else if (validator.isLessThanOrEqualZero(duration)) {
         throw new Error('duration cannot be less than or equal to 0');

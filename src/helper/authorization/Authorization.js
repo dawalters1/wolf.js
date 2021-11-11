@@ -12,6 +12,10 @@ class Authorization extends BaseHelper {
     return this._authorized;
   }
 
+  async clear () {
+    this._banned = [];
+  }
+
   async isAuthorize (subscriberIds) {
     try {
       subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
@@ -22,7 +26,7 @@ class Authorization extends BaseHelper {
       for (const subscriberId of subscriberIds) {
         if (validator.isNullOrUndefined(subscriberId)) {
           throw new Error('subscriberId cannot be null or undefined');
-        } else if (validator.isValidNumber(subscriberId)) {
+        } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
@@ -48,7 +52,7 @@ class Authorization extends BaseHelper {
       for (const subscriberId of subscriberIds) {
         if (validator.isNullOrUndefined(subscriberId)) {
           throw new Error('subscriberId cannot be null or undefined');
-        } else if (validator.isValidNumber(subscriberId)) {
+        } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
@@ -83,7 +87,7 @@ class Authorization extends BaseHelper {
       for (const subscriberId of subscriberIds) {
         if (validator.isNullOrUndefined(subscriberId)) {
           throw new Error('subscriberId cannot be null or undefined');
-        } else if (validator.isValidNumber(subscriberId)) {
+        } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');

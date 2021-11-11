@@ -15,14 +15,14 @@ class Subscriber {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
       if (validator.isNullOrUndefined(size)) {
         throw new Error('size cannot be null or undefined');
-      } else if (validator.isValidNumber(size)) {
+      } else if (!validator.isValidNumber(size)) {
         throw new Error('size must be a valid number');
       } else if (validator.isLessThanOrEqualZero(size)) {
         throw new Error('size cannot be less than or equal to 0');
@@ -55,7 +55,7 @@ class Subscriber {
         throw new Error('subscriber must contain id');
       } else if (validator.isNullOrUndefined(subscriber.id)) {
         throw new Error('id cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriber.id)) {
+      } else if (!validator.isValidNumber(subscriber.id)) {
         throw new Error('id must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriber.id)) {
         throw new Error('id cannot be less than or equal to 0');
@@ -71,6 +71,7 @@ class Subscriber {
 
       return `${trimAds ? this._api.utility().string().trimAds(subscriber.nickname) : subscriber.nickname}${excludeId ? '' : ` (${subscriber.id})`}`;
     } catch (error) {
+      Reflect.deleteProperty(subscriber, '_api');
       error.internalErrorMessage = `api.utility().subscriber().toDisplayName(subscriber=${JSON.stringify(subscriber)}, trimAds=${JSON.stringify(trimAds)}, excludeId=${JSON.stringify(excludeId)})`;
       throw error;
     }
@@ -80,7 +81,7 @@ class Subscriber {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new Error('subscriberId cannot be null or undefined');
-      } else if (validator.isValidNumber(subscriberId)) {
+      } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
@@ -91,7 +92,7 @@ class Subscriber {
       for (const charmId of charmIds) {
         if (validator.isNullOrUndefined(charmId)) {
           throw new Error('charmId cannot be null or undefined');
-        } else if (validator.isValidNumber(charmId)) {
+        } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');

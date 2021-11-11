@@ -1,6 +1,6 @@
 'use strict';
 const { privilege, messageType } = require('@dawalters1/constants');
-const { internal } = require('../constants');
+const { events } = require('../constants');
 const Command = require('./Command');
 
 /**
@@ -33,10 +33,10 @@ module.exports = class CommandHandler {
     this._api = api;
     this._commands = [];
 
-    console.log(this._api);
-
-    this._api.on(internal.GROUP_MESSAGE, async message => await this._processMessage(message));
-    this._api.on(internal.PRIVATE_MESSAGE, async message => await this._processMessage(message));
+    this._api.on(events.GROUP_MESSAGE, async message => {
+      await this._processMessage(message);
+    });
+    this._api.on(events.PRIVATE_MESSAGE, async message => await this._processMessage(message));
   }
 
   isCommand (message) {
@@ -59,7 +59,7 @@ module.exports = class CommandHandler {
 
   async _processMessage (message) {
     try {
-      if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || this._api.banned().isBanned(message.sourceSubscriberId)) {
+      if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || await this._api.banned().isBanned(message.sourceSubscriberId)) {
         return Promise.resolve();
       }
 
@@ -67,7 +67,6 @@ module.exports = class CommandHandler {
         isGroup: message.isGroup,
         language: null,
         argument: message.body,
-        message,
         targetGroupId: message.targetGroupId,
         sourceSubscriberId: message.sourceSubscriberId,
         timestamp: message.timestamp,
@@ -91,7 +90,7 @@ module.exports = class CommandHandler {
         return false;
       });
 
-      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
+      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
         return Promise.resolve();
       }
 
