@@ -43,7 +43,15 @@ class Phrase extends BaseHelper {
           throw new Error('value cannot be null or empty');
         }
 
-        this._phrases[language][phrase.name] = phrase.value;
+        if (!this._phrases[language][phrase.name]) {
+          this._phrases[language][phrase.name] = [];
+        }
+        this._phrases[language][phrase.name].push(
+          {
+            value: phrase.value,
+            default: true
+          }
+        );
       }
     }
   }
@@ -70,7 +78,11 @@ class Phrase extends BaseHelper {
         if (!this._phrases[phrase.language]) {
           this._phrases[phrase.language] = {};
         }
-        this._phrases[phrase.language][phrase.name] = phrase.value;
+        if (!this._phrases[phrase.language][phrase.name]) {
+          this._phrases[phrase.language][phrase.name] = [];
+        }
+
+        this._phrases[phrase.language][phrase.name] = this._phrases[phrase.language][phrase.name].filter((phr) => !phr.default).concat(phrase.value);
       }
     } catch (error) {
       error.internalErrorMessage = `api.phrase().load(phrases=${JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''})`;
@@ -129,13 +141,15 @@ class Phrase extends BaseHelper {
       const phrase = value[1][name];
 
       if (phrase) {
-        result.push(
-          {
-            name: name.toLowerCase(),
-            value: phrase,
-            language: value[0]
-          }
-        );
+        result.push(...phrase.map((phr) =>
+          (
+            {
+              name: name.toLowerCase(),
+              value: phr,
+              language: value[0]
+            }
+          )
+        ));
       }
       return result;
     }, []);
@@ -143,13 +157,7 @@ class Phrase extends BaseHelper {
 
   isRequestedPhrase (name, value) {
     try {
-      const found = Object.values(this._phrases).map((phrase) => Object.entries(phrase)).flat().filter((phrase) => this._api.utility().string().isEqual(phrase[0], name));
-
-      if (found.length === 0) {
-        return false;
-      }
-
-      return found.some((phrase) => this._api.utility().string().isEqual(phrase[1], value));
+      return this.getAllByName(name).filter((phrase) => this._api.utility().string().isEqual(phrase.value, value));
     } catch (error) {
       error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
       throw error;
@@ -175,7 +183,7 @@ class Phrase extends BaseHelper {
         return this.getByLanguageAndName(this._defaultLanguage, name);
       }
 
-      return phrase;
+      return phrase[0];
     } catch (error) {
       error.internalErrorMessage = `api.phrase().getByLanguageAndName(language=${language}, name=${name})`;
       throw error;

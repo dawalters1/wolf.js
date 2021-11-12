@@ -51,6 +51,9 @@ module.exports = class Websocket {
 
     this.socket.on('reconnect_failed', error => this._api.emit(events.RECONNECT_FAILED, error));
 
+    this.socket.on('ping', () => this._api.emit(events.PING));
+    this.socket.on('pong', (latency) => this._api.emit(events.PONG, latency));
+
     const patch = require('socketio-wildcard')(io.Manager);
     patch(this.socket);
 

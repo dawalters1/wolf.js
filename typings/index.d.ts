@@ -1,3 +1,4 @@
+import type { Readable } from "stream";
 
 export class ResponseObject<T = undefined> {
     private constructor();
@@ -287,6 +288,16 @@ export class GroupAudioCountObject{
     public consumerCount: Number;
     public broadcasterCount: Number;
 }
+export class GroupAudioSlotObject{
+    public id: Number;
+    public locked: Number;
+    public occupierId: Number;
+    public occupierMuted: Boolean;
+    public uuid: String;
+    public connectionState: String;
+    public reservedExpiresAt: Date;
+    public reservedOccupierId: Number;
+}
 export class GroupExtendedObject{
     public discoverable: Boolean;
     public advancedAdmin: Boolean;
@@ -416,7 +427,6 @@ export class NotificationObject {
     public title: String;
     public type: Number;
 }
-
 export class PhraseObject {
     public name: String;
     public value: String;
@@ -428,6 +438,107 @@ export class PhraseCountObject {
      */
     public countByLanguage: { [key: string]: number}
     public total: Number;
+}
+export class StageGroupObject{
+    public id: Number;
+    public expireTime: Date;
+}
+export class StageObject{
+    public id: Number;
+    public name: String;
+    public schemaUrl: String;
+    public imageUrl: String;
+    public productId: Number;
+}
+export class StageClientUpdatedObject{
+    public slotId: Number;
+    public duration: Number;
+    public sourceSubscriberId: Number;
+}
+
+export class SubscriberObject {
+    private constructor(api: WOLFBot, subscriber: SubscriberObject);
+
+    public exists: Boolean;
+    public charms: { selectedList: Array<CharmSelectedObject> };
+    public deviceType: Number;
+    public extended : 
+    {  
+        about: String;  
+        gender: Number;   
+        language: Number; 
+        lookingFor: Number;  
+        name: String; 
+        relationship: Number; 
+        urls: Array<String>; 
+        utcOffset: Number;
+    };
+    public hash: String;
+    public icon: Number;
+    public id: Number;
+    public nickname: String;
+    public onlineState: Number;
+    public privileges: Number;
+    public reputation: Number;
+    public status: String;
+}
+export class TipDetailsObject {
+    id: Number;
+    charmList: Array<TipCharmObject>; 
+    version: Number;
+}
+export class TipSummaryObject {
+    id: Number;
+    list: Array<TipCharmObject>;
+    version: Number;
+}
+export class TipContextObject{
+    public type: String;
+    public id: Number;
+}
+export class TipCharmObject {
+    public id: Number;
+    public quantity: Number;
+    public credits: Number;
+    public magnitude: Number;
+    public subscriber: IdHashObject
+}
+export class TipLeaderboardItemObject{
+    public rank: Number;
+    public charmId: Number;
+    public quantity: Number;
+    public credits: Number;
+    public group: IdHashObject;
+    public subscriber: IdHashObject;
+}
+export class TipLeaderboardSumamryObject{
+    public topGifters: Array<IdHashObject>;
+    public topGroups: Array<IdHashObject>;
+    public topSpenders: Array<IdHashObject>;
+}
+export class TipLeaderboardObject{
+    public leaderboard: Array<TipLeaderboardItemObject>
+}
+export class PresenceObject{
+    public id: Number;
+    public deviceType: Number;
+    public onlineState: Number;
+}
+export class WelcomeBannerObject{
+    public notification:  {[key:string]: Object};
+    public promotion:  {[key:string]: Object};
+}
+export class WelcomeEndpointConfigObject{  
+    public avatarEndpoint: String;
+    public mmsUploadEndpoint: String;
+    public banner: WelcomeBannerObject;
+}
+export class WelcomeObject{
+    public ip: String;
+    public country: String;
+    public token: String;
+    public endpointConfig: WelcomeEndpointConfigObject;
+    public loggedInUser: SubscriberObject;
 }
 //#endregion
 
@@ -737,69 +848,126 @@ export class Phrase extends BaseHelper {
     public getByCommandAndName(command: CommandObject, Name: string): String;
     public isRequestedPhrase(name: string, value: string): Boolean;
 }
+export class Stage extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public getSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
+    public getStages(requestNew?: Boolean): Promise<Array<StageObject>>;
+    public getStagesForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
+    public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
+    public updateSlotMuteState(targetGroupId: Number, slotId: Number, muted: Boolean): Promise<ResponseObject>;
+    public updateSlotLockState(targetGroupId: Number, slotId: Number, locked: Boolean): Promise<ResponseObject>;
+    public leaveSlot(targetGroupId: Number): Promise<ResponseObject>;
+    public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
+    public joinSlot(targetGroupId :Number, slotId: Number, sdp?:String): Promise<ResponseObject>;
+    public consumeSlot(targetGroupId :Number, slotId: Number, sdp: String): Promise<ResponseObject>;
+    public play(targetGroupId: Number, data: Readable): void;
+    public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    public resume(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    public stop(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    public isReady(targetGroupId: Number): Promise<Boolean>;
+    public isPaused(targetGroupId: Number): Promise<Boolean>;
+    public isPlaying(targetGroupId: Number): Promise<Boolean>;
+    public isConnecting(targetGroupId: Number): Promise<Boolean>;
+    public isConnected(targetGroupId: Number): Promise<Boolean>;
+    public duration(targetGroupId: Number): Promise<Number>;
+    public hasClient(targetGroupId: Number): Promise<Boolean>;
+    public slotId(targetGroupId: Number): Promise<Number>;
+}
+export class Store extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public getBalance(requestNew?: Boolean) : Number;
+}
+
+export class Subscriber extends BaseHelper {
+    private constructor(api : WOLFBot);
+
+    public getById(subscriberId: Number, requestNew?: Boolean): Promise<SubscriberObject>;
+    public getByIds(targetGroupIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link getChatHistory}
+    */
+    public getHistory(subscriberId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    public getChatHistory(subscriberId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+}
+
+export class Tipping extends BaseHelper {
+    private constructor(api : WOLFBot);
+    
+    public tip(subscriberId: Number, targetGroupId: Number, context: TipContextObject, charms: Array<TipCharmObject>): Promise<ResponseObject>;
+    public getDetails(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<{id: Number, charmList: TipCharmObject, version: Number}>;
+    public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number):Promise<{id: Number, list: TipCharmObject, version: Number}>;
+    public getGroupLeaderboard(targetGroupId: Number, tipPeriod: String, tipType: String, tipDirection: String): Promise<TipLeaderboardObject>
+    public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: String, tipType: String, tipDirection: String): Promise<TipLeaderboardSumamryObject>
+    public getGlobalLeaderboard (tipPeriod: String, tipType: String, tipDirection?: String): Promise<TipLeaderboardObject>
+    public getGlobalLeaderboardSummary(tipPeriod: String): Promise<TipLeaderboardSumamryObject>
+}
+
 //#endregion
 
 //#region interfaces - Borrowed from Discord.JS setup - https://github.com/discordjs/discord.js
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
 export interface ClientEvents {
-    connected: [],
-    connecting: [],
+    connected: [void],
+    connecting: [void],
     connectionError: [error: object],
     connectionTimeOut: [error: object],
     disconnected: [reason: String],
-    groupAudioCountUpdate: [],
-    groupAudioSlotUpdate: [],
-    groupAudioUpdate: [],
-    groupEventCreate: [],
-    groupEventUpdate: [],
-    groupMemberAdd: [],
-    groupMemberDelete: [],
+    groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
+    groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
+    groupAudioUpdate: [old: GroupAudioConfigObject, new: GroupAudioConfigObject],
+    groupEventCreate: [event: EventGroupObject],
+    groupEventUpdate: [old: EventGroupObject, new: EventGroupObject],
+    groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
+    groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
     groupMessage: [message: MessageObject],
     groupMessageUpdate: [message: MessageObject],
     groupTipAdd: [tip: object],
-    groupUpdate: [],
+    groupUpdate: [old: GroupObject, new: GroupObject],
     internalError: [],
-    joinedGroup: [],
-    leftGroup: [],
+    joinedGroup: [group: GroupObject],
+    leftGroup: [group: GroupObject],
     log: [log: string],
     loginFailed: [response: ResponseObject],
-    loginSuccess: [subscriber: Object],
-    notificationReceived:[notification: Object],
-    packetRecieved: [],
-    packetSent: [],
-    ping: [],
-    pong: [],
-    presenceUpdate: [],
+    loginSuccess: [subscriber: SubscriberObject],
+    notificationReceived:[notification: NotificationObject],
+    packetRecieved: [command: string, body: object],
+    packetSent: [command: string, body: object],
+    ping: [void],
+    pong: [latency: number],
+    presenceUpdate: [old: PresenceObject, new: PresenceObject],
     privateMessage: [message: MessageObject],
     privateMessageAcceptResponse: [message: MessageObject],
     privateMessageUpdate: [message: MessageObject],
     privateTipAdd: [tip: object],
     ready: [void],
     reconnected: [void],
-    reconnecting: [void], 
+    reconnecting: [attempt: Number]
     reconnectFailed: [error: object],
-    stageClientBroadcastEnd: [],
-    stageClientConnected: [],
-    stageClietnConnecting: [],
-    stageClientDisconnected: [],
-    stageClientDuration: [],
-    stageClientError: [],
-    stageClientKicked: [],
-    stageClientMuted: [],
-    stageClientPaused: [],
-    stageClientReady: [],
-    stageClientStopped: [],
-    stageClientUnmuted: [],
-    stageClientUnpaused: [],
-    stageClientViewerCountChanged: [],
-    subscriberBlockAdd: [],
-    subscriberBlockDelete: [],
-    subscriberContactAdd: [],
-    subscriberContactDelete: [],
-    subscriberGroupEventAdd: [],
-    subscriberGroupEventDelete: [],
-    subscriberUpdate: [],
-    welcome: [],
+    stageClientBroadcastEnd: [change: StageClientUpdatedObject],
+    stageClientConnected: [change: StageClientUpdatedObject],
+    stageClietnConnecting: [change: StageClientUpdatedObject],
+    stageClientDisconnected: [change: StageClientUpdatedObject],
+    stageClientDuration: [change: StageClientUpdatedObject],
+    stageClientError: [change: StageClientUpdatedObject],
+    stageClientKicked: [change: StageClientUpdatedObject],
+    stageClientMuted: [change: StageClientUpdatedObject],
+    stageClientPaused: [change: StageClientUpdatedObject],
+    stageClientReady: [change: StageClientUpdatedObject],
+    stageClientStopped: [change: StageClientUpdatedObject],
+    stageClientUnmuted: [change: StageClientUpdatedObject],
+    stageClientUnpaused: [change: StageClientUpdatedObject],
+    stageClientViewerCountChanged: [change: StageClientUpdatedObject],
+    subscriberBlockAdd: [subscriber: SubscriberObject],
+    subscriberBlockDelete: [subscriber: SubscriberObject],
+    subscriberContactAdd: [subscriber: SubscriberObject],
+    subscriberContactDelete: [subscriber: SubscriberObject],
+    subscriberGroupEventAdd: [event: EventGroupObject],
+    subscriberGroupEventDelete: [event: EventGroupObject],
+    subscriberUpdate: [old: SubscriberObject, new: SubscriberObject],
+    welcome: [welcome: WelcomeObject],
   }
 
   //#endregion

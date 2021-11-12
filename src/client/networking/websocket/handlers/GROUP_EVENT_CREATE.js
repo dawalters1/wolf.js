@@ -7,15 +7,11 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  const event = await api.event().getById(body.id);
-
-  group.events.push(event);
-
   return api.emit(
     events.GROUP_EVENT_CREATE,
     {
       group,
-      event
+      event: await api.event().getById(body.id)
     }
   );
 };
