@@ -1,7 +1,7 @@
 /**
  * @private
  */
-exports.serverEvents = {
+exports.ServerEvents = {
   GROUP_AUDIO_COUNT_UPDATE: 'group audio count update',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
@@ -27,7 +27,7 @@ exports.serverEvents = {
 /**
  * @private
  */
-exports.events = {
+exports.Events = {
   CONNECTED: 'connected',
   CONNECTING: 'connecting',
   CONNECTION_ERROR: 'connectError',
@@ -92,14 +92,14 @@ exports.events = {
 /**
  * @private
  */
-exports.messageTypes = {
+exports.MessageTypes = {
   GROUP: 'group',
   PRIVATE: 'private'
 };
 /**
  * @private
  */
-exports.commands = {
+exports.Commands = {
   ACHIEVEMENT: 'achievement',
   ACHIEVEMENT_CATEGORY_LIST: 'achievement category list',
   ACHIEVEMENT_GROUP_LIST: 'achievement group list',
@@ -196,7 +196,7 @@ exports.commands = {
   TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list'
 };
 
-exports.adminAction = {
+exports.AdminAction = {
   REGULAR: 0,
   ADMIN: 1,
   MOD: 2,
@@ -208,7 +208,7 @@ exports.adminAction = {
   OWNER: 32
 };
 
-exports.capability = {
+exports.Capability = {
   NOT_MEMBER: -1,
   REGULAR: 0,
   ADMIN: 1,
@@ -217,7 +217,7 @@ exports.capability = {
   SILENCED: 8,
   OWNER: 32
 };
-exports.category = {
+exports.Category = {
   NOT_SPECIFIED: 0,
   BUSINESS: 8,
   EDUCATION: 10,
@@ -232,11 +232,11 @@ exports.category = {
   SPORTS: 19,
   TRAVEL_AND_LOCAL: 18
 };
-exports.contextType = {
+exports.ContextType = {
   MESSAGE: 'message',
   STAGE: 'stage'
 };
-exports.deviceType = {
+exports.DeviceType = {
   OTHER: 0,
   BOT: 1,
   IPHONE: 5,
@@ -244,17 +244,17 @@ exports.deviceType = {
   ANDROID: 7,
   WEB: 8
 };
-exports.embedType = {
+exports.EmbedType = {
   IMAGE_PREVIEW: 'imagePreview',
   GROUP_PREVIEW: 'groupPreview',
   LINK_PREVIEW: 'linkPreview'
 };
-exports.gender = {
+exports.Gender = {
   NOT_SPECIFIED: 0,
   MALE: 1,
   FEMALE: 2
 };
-exports.language = {
+exports.Language = {
   NOT_SPECIFIED: 0,
   ENGLISH: 1,
   GERMAN: 3,
@@ -293,13 +293,13 @@ exports.language = {
   UKRAINIAN: 44,
   BULGARIAN: 45
 };
-exports.loginDevice = {
+exports.LoginDevice = {
   IPHONE: 'iphone',
   IPAD: 'ipad',
   ANDROID: 'android',
   WEB: 'web'
 };
-exports.loginType = {
+exports.LoginType = {
   EMAIL: 'email',
   GOOGLE: 'google',
   FACEBOOK: 'facebook',
@@ -307,20 +307,20 @@ exports.loginType = {
   SNAPCHAT: 'snapchat',
   APPLE: 'apple'
 };
-exports.lookingFor = {
+exports.LookingFor = {
   NOT_SPECIFIED: 0,
   FRIENDSHIP: 1,
   DATING: 2,
   RELATIONSHIP: 4,
   NETWORKING: 8
 };
-exports.messageFilter = {
+exports.MessageFilter = {
   OFF: 0,
   RELAXED: 3,
   RECOMMENDED: 2,
   STRICT: 1
 };
-exports.messageType = {
+exports.MessageType = {
   TEXT_PLAIN: 'text/plain',
   TEXT_HTML: 'text/html',
   TEXT_IMAGE: 'text/image_link',
@@ -333,7 +333,7 @@ exports.messageType = {
   APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
   TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: 'text/palringo-private-request-response'
 };
-exports.onlineState = {
+exports.OnlineState = {
   OFFLINE: 0,
   ONLINE: 1,
   AWAY: 2,
@@ -341,7 +341,7 @@ exports.onlineState = {
   BUSY: 5,
   IDLE: 9
 };
-exports.privilege = {
+exports.Privilege = {
   SUBSCRIBER: 1,
   BOT_TESTER: 1 << 1,
   GAME_TESTER: 1 << 2,
@@ -366,7 +366,7 @@ exports.privilege = {
   ENTERTAINER: 1 << 29,
   SHADOW_BANNED: 1 << 30
 };
-exports.relationship = {
+exports.Relationship = {
   NOT_SPECIFIED: 0,
   SINGLE: 1,
   RELATIONSHIP: 2,
@@ -375,21 +375,21 @@ exports.relationship = {
   COMPLICATED: 5,
   OPEN: 6
 };
-exports.retryMode = {
+exports.RetryMode = {
   ALWAYS_FAIL: 0,
   ALWAYS_RETRY: 1
 };
-exports.tipDirection = {
+exports.TipDirection = {
   SENT: 'sent',
   RECEIVED: 'received'
 };
-exports.tipPeriod = {
+exports.TipPeriod = {
   ALL_TIME: 'alltime',
   DAY: 'day',
   WEEK: 'week',
   MONTH: 'month'
 };
-exports.tipType = {
+exports.TipType = {
   CHARM: 'charm',
   SUBSCRIBER: 'subscriber',
   GROUP: 'group'

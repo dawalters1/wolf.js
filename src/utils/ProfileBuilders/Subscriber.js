@@ -1,6 +1,6 @@
 const validator = require('../../validator');
 const constants = require('../../constants');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 /**
  * Exposes the methods used to update the bots profiles
  * {@hideconstructor}
@@ -56,7 +56,7 @@ module.exports = class SubscriberProfileBuilder {
   setLanguage (language) {
     if (!validator.isValidNumber(language)) {
       throw new Error('language must be a number');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(constants.Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -68,7 +68,7 @@ module.exports = class SubscriberProfileBuilder {
   setRelationship (relationship) {
     if (!validator.isValidNumber(relationship)) {
       throw new Error('relationship must be a number');
-    } else if (!Object.values(constants.relationship).includes(relationship)) {
+    } else if (!Object.values(constants.Relationship).includes(relationship)) {
       throw new Error('relationship is not valid');
     }
 
@@ -80,7 +80,7 @@ module.exports = class SubscriberProfileBuilder {
   setGender (gender) {
     if (!validator.isValidNumber(gender)) {
       throw new Error('gender must be a number');
-    } else if (!Object.values(constants.gender).includes(gender)) {
+    } else if (!Object.values(constants.Gender).includes(gender)) {
       throw new Error('gender is not valid');
     }
 
@@ -92,11 +92,11 @@ module.exports = class SubscriberProfileBuilder {
   setLookingFor (lookingFor) {
     if (!validator.isValidNumber(lookingFor)) {
       throw new Error('lookingFor must be a number');
-    } else if (!Object.values(constants.lookingFor).includes(lookingFor)) {
+    } else if (!Object.values(constants.LookingFor).includes(lookingFor)) {
       throw new Error('lookingFor is not valid');
     }
 
-    this._lookingFor = Object.values(constants.lookingFor).filter((look) => (lookingFor & look) === look).reduce((total, val) => total + (+val), 0);
+    this._lookingFor = Object.values(constants.LookingFor).filter((look) => (lookingFor & look) === look).reduce((total, val) => total + (+val), 0);
 
     return this;
   }
@@ -137,7 +137,7 @@ module.exports = class SubscriberProfileBuilder {
 
   async save () {
     return await this._api.websocket.emit(
-      commands.SUBSCRIBER_PROFILE_UPDATE,
+      Commands.SUBSCRIBER_PROFILE_UPDATE,
       {
         id: this._id,
         extended:

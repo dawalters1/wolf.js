@@ -1,24 +1,24 @@
-const { adminAction } = require('../../constants');
+const { AdminAction } = require('../../constants');
 
 module.exports = (type) => {
   switch (type.toLowerCase()) {
     case 'owner':
-      return adminAction.OWNER;
+      return AdminAction.OWNER;
     case 'admin':
-      return adminAction.ADMIN;
+      return AdminAction.ADMIN;
     case 'mod':
-      return adminAction.MOD;
+      return AdminAction.MOD;
     case 'reset':
-      return adminAction.REGULAR;
+      return AdminAction.REGULAR;
     case 'kick':
-      return adminAction.KICK;
+      return AdminAction.KICK;
     case 'silence':
-      return adminAction.SILENCE;
+      return AdminAction.SILENCE;
     case 'ban':
-      return adminAction.BAN;
+      return AdminAction.BAN;
     case 'leave':
-      return adminAction.LEAVE;
+      return AdminAction.LEAVE;
     case 'join':
-      return adminAction.REGULAR;
+      return AdminAction.REGULAR;
   }
 };

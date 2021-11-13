@@ -1,4 +1,4 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 
 module.exports = async (api, body) => {
   const group = api.group()._groups.find((group) => group.id === body.id);
@@ -12,7 +12,7 @@ module.exports = async (api, body) => {
   group.audioConfig = body;
 
   return api.emit(
-    events.GROUP_AUDIO_UPDATE,
+    Events.GROUP_AUDIO_UPDATE,
     cached,
     body
   );

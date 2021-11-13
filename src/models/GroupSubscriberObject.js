@@ -1,4 +1,4 @@
-const { capability } = require('../constants');
+const { AdminAction } = require('../constants');
 const patch = require('../utils/Patch');
 
 class GroupSubscriber {
@@ -38,23 +38,23 @@ class GroupSubscriber {
   }
 
   async admin () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, capability.ADMIN);
+    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.ADMIN);
   }
 
   async mod () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, capability.MOD);
+    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.MOD);
   }
 
   async regular () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, capability.REGULAR);
+    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.REGULAR);
   }
 
   async silence () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, capability.SILENCED);
+    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.SILENCE);
   }
 
   async ban () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, capability.BANNED);
+    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.BAN);
   }
 }
 

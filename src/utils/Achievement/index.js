@@ -51,7 +51,7 @@ class Achievement {
           throw new Error('language must be a valid number');
         } else if (validator.isLessThanOrEqualZero(language)) {
           throw new Error('language cannot be less than or equal to 0');
-        } else if (!Object.values(constants.language).includes(language)) {
+        } else if (!Object.values(constants.Language).includes(language)) {
           throw new Error('language is invalid');
         }
       }

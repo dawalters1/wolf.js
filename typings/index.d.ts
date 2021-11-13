@@ -27,7 +27,7 @@ export class CommandHandler{
      * @param message - The message
      */
     public isCommand(message: MessageObject) : Boolean;
-    public register(commands: CommandObject): void;
+    public register(Commands: CommandObject): void;
 }
 export class CommandContextObject{
     public isGroup: Boolean;
@@ -37,7 +37,7 @@ export class CommandContextObject{
     public targetGroupId: Number;
     public sourceSubscriberId: Number;
     public timestamp: Number;
-    public type: String;
+    public type: MessageType;
 }
 
 //#endregion
@@ -120,7 +120,7 @@ export class DiscoverySectionElementObject{
     {
         width: Number;
         height: Number,
-    };
+      };
     public link: 
     {
         url: String,
@@ -194,8 +194,8 @@ export class GroupProfileBuilder {
     public setName(name: String): GroupProfileBuilder;
     public setTagLine(tagLine: String): GroupProfileBuilder;
     public setDescription(description: String): GroupProfileBuilder;
-    public setCategory(category: Number): GroupProfileBuilder;
-    public setLanguage(language: Number): GroupProfileBuilder;
+    public setCategory(category: Category): GroupProfileBuilder;
+    public setLanguage(language: Language): GroupProfileBuilder;
     public setEntryLevel(entryLevel: Number): GroupProfileBuilder;
     public setAdvancedAdmin (isEnabled: Boolean): GroupProfileBuilder;
     public setDiscoverable(isEnabled: Boolean): GroupProfileBuilder;
@@ -210,13 +210,13 @@ export class GroupSubscriberAdditionalInfoObject{
     public hash: String;
     public nickname: String;
     public privileges: Number;
-    public onlineState: Number;
+    public onlineState: OnlineState;
 }
 export class GroupSubscriberObject{
     public id: Number;
     public groupId: Number;
     public additionalInfo: GroupSubscriberAdditionalInfoObject;
-    public capabilities: Number;
+    public capabilities: Capability;
 }
 export class GroupAudioConfigObject{
     public id: Number;
@@ -247,7 +247,7 @@ export class GroupExtendedObject{
     public questionable: Boolean;
     public entryLevel: Number;
     public passworded: Boolean;
-    public language: Number;
+    public language: Language;
     public longDescription: String
     public id: Number;
 }
@@ -267,7 +267,7 @@ export class GroupObject{
     public audioConfig: GroupAudioConfigObject;
     public audioCount: GroupAudioCountObject;
     public inGroup: Boolean;
-    public capabilities: Number;
+    public capabilities: Capability;
     public language: String;
 
     public toDisplayName(withId: Boolean): String;
@@ -325,7 +325,7 @@ export class GroupStatsObject{
         timestamp: Number;
         voiceCount: Number;
         wordCount: Number;
-    };
+      };
     public next30: Array<GroupStatsActiveSubscriberObject>;
     public top25: Array<GroupStatsActiveSubscriberObject>;
     public topAction: Array<GroupStatsTopSubscriberObject>;
@@ -362,7 +362,7 @@ export class MessageSettingsObject{
     public spamFilter: 
     {
         enabled: Boolean;
-        tier: Number
+        tier: MessageFilterTier
     }
 }
 export class MessageOptionsObject {
@@ -375,7 +375,7 @@ export class MessageResponseObject {
     public timestamp: Number;
 }
 export class MessageEmbedObject{
-    public type: String;
+    public type: EmbedType;
     public groupId: Number;
     public url: String;
     public title: String;
@@ -416,7 +416,7 @@ export class MessageObject {
     public isGroup: Boolean;
     public timestamp: Number;
     public edited: MessageEditObject;
-    public type: String;
+    public type: MessageType;
     public isCommand: Boolean;
 }
 export class NotificationObject {
@@ -462,7 +462,7 @@ export class PhraseCountObject {
 }
 export class SearchObject
 {
-    public type: String;
+    public type: SearchType;
     public id: Number; 
     public hash: String;
     public reason: String
@@ -489,10 +489,10 @@ export class SubscriberProfileBuilder {
     public setAbout(about: String) : SubscriberProfileBuilder;
     public setName(name: String): SubscriberProfileBuilder;
     public setStatus(status: String) : SubscriberProfileBuilder;
-    public setLanguage(language: Number): SubscriberProfileBuilder;
-    public setRelationship(relationship: Number): SubscriberProfileBuilder;
-    public setGender(gener: Number): SubscriberProfileBuilder;
-    public setLookingFor(lookingFor: Number): SubscriberProfileBuilder;
+    public setLanguage(language: Language): SubscriberProfileBuilder;
+    public setRelationship(relationship: Relationship): SubscriberProfileBuilder;
+    public setGender(gener: Gender): SubscriberProfileBuilder;
+    public setLookingFor(lookingFor: LookingFor): SubscriberProfileBuilder;
     public setUrls(urls: Array<String>): SubscriberProfileBuilder;
     public addUrl(url: String): SubscriberProfileBuilder;
     public removeUrl(url: string): SubscriberProfileBuilder;
@@ -503,37 +503,37 @@ export class SubscriberObject {
 
     public exists: Boolean;
     public charms: { selectedList: Array<CharmSelectedObject> };
-    public deviceType: Number;
+    public deviceType: DeviceType;
     public extended : 
     {  
         about: String;  
-        gender: Number;   
-        language: Number; 
-        lookingFor: Number;  
+        gender: Gender;   
+        language: Language; 
+        lookingFor: LookingFor;  
         name: String; 
-        relationship: Number; 
+        relationship: Relationship; 
         urls: Array<String>; 
         utcOffset: Number;
-    };
+      };
     public hash: String;
     public icon: Number;
     public id: Number;
     public nickname: String;
-    public onlineState: Number;
+    public onlineState: OnlineState;
     public privileges: Number;
     public reputation: Number;
     public status: String;
     public language: String;
 }
 export class TipDetailsObject {
-    id: Number;
-    charmList: Array<TipCharmObject>; 
-    version: Number;
+    public id: Number;
+    public charmList: Array<TipCharmObject>; 
+    public version: Number;
 }
 export class TipSummaryObject {
-    id: Number;
-    list: Array<TipCharmObject>;
-    version: Number;
+    public id: Number;
+    public list: Array<TipCharmObject>;
+    public version: Number;
 }
 export class TipContextObject{
     public type: String;
@@ -543,7 +543,6 @@ export class TipCharmObject {
     public id: Number;
     public quantity: Number;
     public credits: Number;
-    public magnitude: Number;
     public subscriber: IdHashObject
 }
 export class TipLeaderboardItemObject{
@@ -564,8 +563,8 @@ export class TipLeaderboardObject{
 }
 export class PresenceObject{
     public id: Number;
-    public deviceType: Number;
-    public onlineState: Number;
+    public deviceType: DeviceType;
+    public onlineState: OnlineState;
 }
 export class WelcomeBannerObject{
     public notification:  {[key:string]: Object};
@@ -678,11 +677,11 @@ export class WOLFBot {
     public tip(): Tipping;
     public tipping(): Tipping;
 
-    public search(query:String): Promise<ResponseObject<Array<SearchObject>>>
+    public search(query: String): Promise<ResponseObject<Array<SearchObject>>>
     public getLinkMetadata(link: String): Promise<ResponseObject<LinkMetadataObject>>;
     public getLinkBlackList(requestNew?: Boolean): Promise<Array<BlacklistItemObject>>;
     public getMessageSettings(): Promise<ResponseObject<MessageSettingsObject>>;
-    public setMessageSettings(messageFilterTier: Number): Promise<ResponseObject>;
+    public setMessageSettings(messageFilterTier: MessageFilterTier): Promise<ResponseObject>;
     public updateAvatar(avatar: Buffer): Promise<ResponseObject>;
     public updateProfile(): SubscriberProfileBuilder;
     /**
@@ -737,9 +736,9 @@ export class Achievement extends BaseHelper {
 
     public group() : AchievementGroup;
     public subscriber(): AchievementSubscriber;
-    public getCategoryList(language: Number, requestNew?: Boolean): Promise<Array<AchievementCategoryObject>>;
-    public getById(achievementId: Number, language: Number, requestNew?: Boolean): Promise<AchievementObject>;
-    public getByIds(achievementIds: Array<Number>, language: Number, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
+    public getCategoryList(language: Language, requestNew?: Boolean): Promise<Array<AchievementCategoryObject>>;
+    public getById(achievementId: Number, language: Language, requestNew?: Boolean): Promise<AchievementObject>;
+    public getByIds(achievementIds: Array<Number>, language: Language, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
 }
 
 export class Authorization extends BaseHelper {
@@ -771,9 +770,9 @@ export class Blocked extends BaseHelper {
 export class Charm extends BaseHelper {
     private constructor(api: WOLFBot);
 
-    public list(language: Number, requestNew?: Boolean): Promise<Array<CharmObject>>;
-    public getById(charmId: Number, language: Number, requestNew?: Boolean): Promise<CharmObject>;
-    public getByIds(charmIds: Number | Array<Number>, language: Number, requestNew?: Boolean): Promise<CharmObject | Array<CharmObject>>
+    public list(language: Language, requestNew?: Boolean): Promise<Array<CharmObject>>;
+    public getById(charmId: Number, language: Language, requestNew?: Boolean): Promise<CharmObject>;
+    public getByIds(charmIds: Number | Array<Number>, language: Language, requestNew?: Boolean): Promise<CharmObject | Array<CharmObject>>
     public getSubscriberSumamry(subscriberId: Number): Promise<CharmSubscriberSummaryObject>;
     public getSubscriberStatistics(subscriberId: Number): Promise<CharmSubscriberStatisticsObject>;
     public getSubscriberActiveList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
@@ -793,9 +792,9 @@ export class Contact extends BaseHelper {
 export class Discovery extends BaseHelper {
     private constructor(api : WOLFBot);
 
-    public getByLanguage(language: Number, requestNew?: boolean): Promise<DiscoveryObject>;
-    public getRecipe(id: Number, language: Number, requestNew?: boolean): Promise<DiscoveryRecipeObject>;
-    public getRecipeBySectionId(id: Number, language: Number, requestNew?: boolean): Promise<DiscoverySectionObject>;
+    public getByLanguage(language: Language, requestNew?: Boolean): Promise<DiscoveryObject>;
+    public getRecipe(id: Number, language: Language, requestNew?: Boolean): Promise<DiscoveryRecipeObject>;
+    public getRecipeBySectionId(id: Number, language: Language, requestNew?: Boolean): Promise<DiscoverySectionObject>;
 }
 
 export class Event extends BaseHelper {
@@ -875,7 +874,7 @@ export class Group extends BaseHelper {
     public create(): GroupProfileBuilder;
     public update(group: GroupObject): GroupProfileBuilder;
     public updateAvatar(targetGroupId: Number, avatar: Buffer): Promise<ResponseObject>;
-    public updateSubscriber(targetGroupId: Number, targetSubscriberId: Number, capabilities: Number): Promise<ResponseObject>
+    public updateSubscriber(targetGroupId: Number, targetSubscriberId: Number, capabilities: AdminAction): Promise<ResponseObject>
 }
 
 export class Messaging extends BaseHelper {
@@ -897,10 +896,10 @@ export class Messaging extends BaseHelper {
 export class Notification extends BaseHelper {
     private constructor(api : WOLFBot);
 
-    public list(language: Number, requestNew?: Boolean) : Promise<Array<NotificationObject>>;
+    public list(language: Language, requestNew?: Boolean) : Promise<Array<NotificationObject>>;
     public clear(): Promise<ResponseObject>;
-    public subscribe(language: Number): Promise<void>;
-    public unsubscriber(language: Number): Promise<void>;
+    public subscribe(language: Language): Promise<void>;
+    public unsubscriber(language: Language): Promise<void>;
 }
 
 
@@ -913,9 +912,9 @@ export class Phrase extends BaseHelper {
     public load(phrases: Array<PhraseObject>): Promise<void>;
     public getLanguageList(): Promise<Array<String>>;
     public getAllByName(name: String): Array<PhraseObject>;
-    public getByLanguageAndName(language: String, Name: string): String;
-    public getByCommandAndName(command: CommandObject, Name: string): String;
-    public isRequestedPhrase(name: string, value: string): Boolean;
+    public getByLanguageAndName(language: String, Name: String): String;
+    public getByCommandAndName(command: CommandObject, Name: String): String;
+    public isRequestedPhrase(name: String, value: String): Boolean;
 }
 export class Stage extends BaseHelper {
     private constructor(api : WOLFBot);
@@ -966,24 +965,229 @@ export class Tipping extends BaseHelper {
     private constructor(api : WOLFBot);
     
     public tip(subscriberId: Number, targetGroupId: Number, context: TipContextObject, charms: Array<TipCharmObject>): Promise<ResponseObject>;
-    public getDetails(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<{id: Number, charmList: TipCharmObject, version: Number}>;
-    public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number):Promise<{id: Number, list: TipCharmObject, version: Number}>;
-    public getGroupLeaderboard(targetGroupId: Number, tipPeriod: String, tipType: String, tipDirection: String): Promise<TipLeaderboardObject>
-    public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: String, tipType: String, tipDirection: String): Promise<TipLeaderboardSumamryObject>
-    public getGlobalLeaderboard (tipPeriod: String, tipType: String, tipDirection?: String): Promise<TipLeaderboardObject>
-    public getGlobalLeaderboardSummary(tipPeriod: String): Promise<TipLeaderboardSumamryObject>
+    public getDetails(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<TipDetailsObject>>;
+    public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<{ [key: number]: ResponseObject<TipSummaryObject>}>>
+    public getGroupLeaderboard(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardObject>
+    public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSumamryObject>
+    public getGlobalLeaderboard (tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardObject>
+    public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSumamryObject>
 }
 
 //#endregion
 
-//#region interfaces - Borrowed from Discord.JS setup - https://github.com/discordjs/discord.js
+//#region enums
+
+
+export enum AdminAction {
+    REGULAR = 0,
+    ADMIN = 1,
+    MOD = 2,
+    BAN = 4,
+    SILENCE = 8,
+    KICK = 16,
+    JOIN = 17,
+    LEAVE = 18,
+    OWNER = 32,
+}
+  
+export enum Capability {
+    NOT_MEMBER = -1,
+    REGULAR = 0,
+    ADMIN = 1,
+    MOD = 2,
+    BANNED = 4,
+    SILENCED = 8,
+    OWNER = 32,
+}
+export enum Category {
+    NOT_SPECIFIED = 0,
+    BUSINESS = 8,
+    EDUCATION = 10,
+    ENTERTAINMENT = 26,
+    GAMING = 12,
+    LIFESTYLE = 13,
+    MUSIC = 14,
+    NEWS_AND_POLITICS = 15,
+    PHOTOGRAPHY = 16,
+    SCIENCE_AND_TECH = 25,
+    SOCIAL_AND_PEOPLE = 17,
+    SPORTS = 19,
+    TRAVEL_AND_LOCAL = 18,
+}
+export enum ContextType {
+    MESSAGE = "message",
+    STAGE = "stage",
+}
+export enum DeviceType {
+    OTHER = 0,
+    BOT = 1,
+    IPHONE = 5,
+    IPAD = 6,
+    ANDROID = 7,
+    WEB = 8,
+}
+export enum EmbedType {
+    IMAGE_PREVIEW = "imagePreview",
+    GROUP_PREVIEW = "groupPreview",
+    LINK_PREVIEW = "linkPreview",
+}
+export enum Gender {
+    NOT_SPECIFIED = 0,
+    MALE = 1,
+    FEMALE = 2,
+}
+export enum Language {
+    NOT_SPECIFIED = 0,
+    ENGLISH = 1,
+    GERMAN = 3,
+    SPANISH = 4,
+    FRENCH = 6,
+    POLISH = 10,
+    CHINESE_SIMPLIFIED = 11,
+    RUSSIAN = 12,
+    ITALIAN = 13,
+    ARABIC = 14,
+    PERSIAN_FARSI = 15,
+    GREEK = 16,
+    PORTUGUESE = 17,
+    HINDI = 18,
+    JAPANESE = 19,
+    LATIN_SPANISH = 20,
+    SLOVAK = 21,
+    CZECH = 22,
+    DANISH = 24,
+    FINNISH = 25,
+    HUNGARIAN = 27,
+    BAHASA_INDONESIA = 28,
+    MALAY = 29,
+    DUTCH = 30,
+    NORWEGIAN = 31,
+    SWEDISH = 32,
+    THAI = 33,
+    TURKISH = 34,
+    VIETNAMESE = 35,
+    KOREAN = 36,
+    BRAZILIAN_PORTUGUESE = 37,
+    ESTONIAN = 39,
+    KAZAKH = 41,
+    LATVIAN = 42,
+    LITHUANIAN = 43,
+    UKRAINIAN = 44,
+    BULGARIAN = 45,
+}
+export enum LoginDevice {
+    IPHONE = "iphone",
+    IPAD = "ipad",
+    ANDROID = "android",
+    WEB = "web",
+}
+export enum LoginType {
+    EMAIL = "email",
+    GOOGLE = "google",
+    FACEBOOK = "facebook",
+    TWITTER = "twitter",
+    SNAPCHAT = "snapchat",
+    APPLE = "apple",
+}
+export enum LookingFor {
+    NOT_SPECIFIED = 0,
+    FRIENDSHIP = 1,
+    DATING = 2,
+    RELATIONSHIP = 4,
+    NETWORKING = 8,
+}
+export enum MessageFilterTier {
+    OFF = 0,
+    RELAXED = 3,
+    RECOMMENDED = 2,
+    STRICT = 1,
+}
+export enum MessageType {
+    TEXT_PLAIN = "text/plain",
+    TEXT_HTML = "text/html",
+    TEXT_IMAGE = "text/image_link",
+    IMAGE_JPEG = "image/jpeg",
+    IMAGE_GIF = "image/gif",
+    AUDIO_AAC = "audio/aac",
+    TEXT_VOICE = "text/voice_link",
+    AUDIO_SPEEX = "audio/x-speex",
+    IMAGE_JPEGHTML = "image/jpeghtml",
+    APPLICATION_PALRINGO_GROUP_ACTION = "application/palringo-group-action",
+    TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE = "text/palringo-private-request-response",
+}
+export enum OnlineState {
+    OFFLINE = 0,
+    ONLINE = 1,
+    AWAY = 2,
+    INVISIBLE = 3,
+    BUSY = 5,
+    IDLE = 9,
+}
+export enum Privilege {
+    SUBSCRIBER = 1,
+    BOT_TESTER = 1 << 1,
+    GAME_TESTER = 1 << 2,
+    CONTENT_SUBMITER = 1 << 3,
+    SELECTCLUB_1 = 1 << 4,
+    ELITECLUB_1 = 1 << 6,
+    VOLUNTEER = 1 << 9,
+    SELECTCLUB_2 = 1 << 10,
+    ALPHA_TESTER = 1 << 11,
+    STAFF = 1 << 12,
+    TRANSLATOR = 1 << 13,
+    DEVELOPER = 1 << 14,
+    ELITECLUB_2 = 1 << 17,
+    PEST = 1 << 18,
+    VALID_EMAIL = 1 << 19,
+    PREMIUM_ACCOUNT = 1 << 20,
+    VIP = 1 << 21,
+    ELITECLUB_3 = 1 << 22,
+    USER_ADMIN = 1 << 24,
+    GROUP_ADMIN = 1 << 25,
+    BOT = 1 << 26,
+    ENTERTAINER = 1 << 29,
+    SHADOW_BANNED = 1 << 30,
+}
+export enum Relationship {
+    NOT_SPECIFIED = 0,
+    SINGLE = 1,
+    RELATIONSHIP = 2,
+    ENGAGED = 3,
+    MARRIED = 4,
+    COMPLICATED = 5,
+    OPEN = 6,
+}
+export enum RetryMode {
+    ALWAYS_FAIL = 0,
+    ALWAYS_RETRY = 1,
+}
+export enum SearchType {
+    GROUP = "group",
+    SUBSCRIBER = "subscriber",
+}
+export enum TipDirection {
+    SENT = "sent",
+    RECEIVED = "received",
+}
+export enum TipPeriod {
+    ALL_TIME = "alltime",
+    DAY = "day",
+    WEEK = "week",
+    MONTH = "month",
+}
+export enum TipType {
+    CHARM = "charm",
+    SUBSCRIBER = "subscriber",
+    GROUP = "group",
+}
+  
+//#endregion
+
+//#region interfaces - Borrowed from Discord.JS setup - https=//github.com/discordjs/discord.js
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
 
-export interface commandCallBacks {
-    GROUP: 'group',
-    PRIVATE: 'private',
-    BOTH:'both',
-}
+
+
 export interface ClientEvents {
     connected: [void],
     connecting: [void],
@@ -1044,6 +1248,6 @@ export interface ClientEvents {
     subscriberGroupEventDelete: [event: EventGroupObject],
     subscriberUpdate: [old: SubscriberObject, new: SubscriberObject],
     welcome: [welcome: WelcomeObject],
-  }
+}
 
   //#endregion

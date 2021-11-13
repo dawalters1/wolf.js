@@ -6,7 +6,7 @@ const Client = require('./Client');
 const commandExists = require('command-exists-promise');
 // eslint-disable-next-line no-unused-vars
 const Stream = require('stream');
-const { events, commands } = require('../../constants');
+const { events, Commands } = require('../../constants');
 
 let _ffmpegExists = false;
 
@@ -196,7 +196,7 @@ module.exports = class Stage extends BaseHelper {
         return this._stages.stageCache;
       }
 
-      const result = await this._websocket.emit(commands.STAGE_LIST);
+      const result = await this._websocket.emit(Commands.STAGE_LIST);
 
       if (result.success) {
         this._stages.stageCache = result.body;
@@ -222,7 +222,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.STAGE_GROUP_ACTIVE_LIST,
+        Commands.STAGE_GROUP_ACTIVE_LIST,
         {
           id: targetGroupId
         }
@@ -268,7 +268,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_AUDIO_SLOT_LIST,
+        Commands.GROUP_AUDIO_SLOT_LIST,
         {
           id: targetGroupId,
           subscribe: true
@@ -336,7 +336,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('occupierId must be self');
       }
       return await this._websocket.emit(
-        commands.GROUP_AUDIO_BROADCAST_UPDATE,
+        Commands.GROUP_AUDIO_BROADCAST_UPDATE,
         {
           id: targetGroupId,
           slotId,
@@ -397,7 +397,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_AUDIO_SLOT_UPDATE,
+        Commands.GROUP_AUDIO_SLOT_UPDATE,
         {
           id: targetGroupId,
           slot: {
@@ -455,7 +455,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_AUDIO_BROADCAST_DISCONNECT,
+        Commands.GROUP_AUDIO_BROADCAST_DISCONNECT,
         {
           id: targetGroupId,
           slotId: slot.id,
@@ -514,7 +514,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_AUDIO_BROADCAST_DISCONNECT, {
+        Commands.GROUP_AUDIO_BROADCAST_DISCONNECT, {
           id: targetGroupId,
           slotId,
           occupierId: slot.occupierId
@@ -579,7 +579,7 @@ module.exports = class Stage extends BaseHelper {
       // If sdp exists, assume they are using a personal rtc
       if (sdp) {
         return await this._websocket.emit(
-          commands.GROUP_AUDIO_BROADCAST,
+          Commands.GROUP_AUDIO_BROADCAST,
           {
             id: targetGroupId,
             slotId,
@@ -657,7 +657,7 @@ module.exports = class Stage extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_AUDIO_CONSUME,
+        Commands.GROUP_AUDIO_CONSUME,
         {
           id: targetGroupId,
           slotId,

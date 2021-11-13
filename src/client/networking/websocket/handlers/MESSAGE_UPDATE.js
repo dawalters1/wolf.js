@@ -1,9 +1,9 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 const Message = require('../../../../models/MessageObject');
 
 module.exports = async (api, body) => {
   return api.emit(
-    body.isGroup ? events.GROUP_MESSAGE_UPDATE : events.PRIVATE_MESSAGE_UPDATE,
+    body.isGroup ? Events.GROUP_MESSAGE_UPDATE : Events.PRIVATE_MESSAGE_UPDATE,
     new Message(api, body)
   );
 };

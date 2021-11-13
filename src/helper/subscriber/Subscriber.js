@@ -4,7 +4,7 @@ const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
 
 const validator = require('../../validator');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const patch = require('../../utils/Patch');
 const toLanguageKey = require('../../utils/ToLanguageKey');
 
@@ -51,7 +51,7 @@ class Subscriber extends BaseHelper {
 
         for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            commands.SUBSCRIBER_PROFILE,
+            Commands.SUBSCRIBER_PROFILE,
             {
               headers: {
                 version: 4
@@ -65,7 +65,7 @@ class Subscriber extends BaseHelper {
           );
 
           if (result.success) {
-            const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, commands.SUBSCRIBER_PROFILE));
+            const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, Commands.SUBSCRIBER_PROFILE));
 
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
               if (subscriberResponse.success) {
@@ -141,7 +141,7 @@ class Subscriber extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.MESSAGE_PRIVATE_HISTORY_LIST,
+        Commands.MESSAGE_PRIVATE_HISTORY_LIST,
         {
           headers: {
             version: 2

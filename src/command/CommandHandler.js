@@ -1,27 +1,27 @@
 'use strict';
-const { events, privilege, messageType } = require('../constants');
+const { Events, Privilege, MessageType } = require('../constants');
 const Command = require('./Command');
 
 /**
  * Flags that unofficial bots should never have, check their profile before requesting summary
  */
 const ignoreTagList = [
-  privilege.STAFF,
-  privilege.ENTERTAINER,
-  privilege.SELECTCLUB_1,
-  privilege.SELECTCLUB_2,
-  privilege.VOLUNTEER,
-  privilege.PEST,
-  privilege.GROUP_ADMIN,
-  privilege.ENTERTAINER,
-  privilege.ELITECLUB_1,
-  privilege.ELITECLUB_2,
-  privilege.ELITECLUB_3,
-  privilege.BOT,
-  privilege.BOT_TESTER,
-  privilege.CONTENT_SUBMITER,
-  privilege.ALPHA_TESTER,
-  privilege.TRANSLATOR
+  Privilege.STAFF,
+  Privilege.ENTERTAINER,
+  Privilege.SELECTCLUB_1,
+  Privilege.SELECTCLUB_2,
+  Privilege.VOLUNTEER,
+  Privilege.PEST,
+  Privilege.GROUP_ADMIN,
+  Privilege.ENTERTAINER,
+  Privilege.ELITECLUB_1,
+  Privilege.ELITECLUB_2,
+  Privilege.ELITECLUB_3,
+  Privilege.BOT,
+  Privilege.BOT_TESTER,
+  Privilege.CONTENT_SUBMITER,
+  Privilege.ALPHA_TESTER,
+  Privilege.TRANSLATOR
 ];
 
 /**
@@ -32,10 +32,10 @@ module.exports = class CommandHandler {
     this._api = api;
     this._commands = [];
 
-    this._api.on(events.GROUP_MESSAGE, async message => {
+    this._api.on(Events.GROUP_MESSAGE, async message => {
       await this._processMessage(message);
     });
-    this._api.on(events.PRIVATE_MESSAGE, async message => await this._processMessage(message));
+    this._api.on(Events.PRIVATE_MESSAGE, async message => await this._processMessage(message));
   }
 
   isCommand (message) {
@@ -52,13 +52,13 @@ module.exports = class CommandHandler {
     }) !== undefined;
   }
 
-  register (commands) {
-    this._commands = commands;
+  register (Commands) {
+    this._commands = Commands;
   }
 
   async _processMessage (message) {
     try {
-      if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || await this._api.banned().isBanned(message.sourceSubscriberId)) {
+      if (!message.body || message.type !== MessageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || await this._api.banned().isBanned(message.sourceSubscriberId)) {
         return Promise.resolve();
       }
 
@@ -89,7 +89,7 @@ module.exports = class CommandHandler {
         return false;
       });
 
-      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
+      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().Privilege().has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().Privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
         return Promise.resolve();
       }
 

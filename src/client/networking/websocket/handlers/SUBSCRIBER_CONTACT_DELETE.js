@@ -1,4 +1,4 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 
 module.exports = async (api, body) => {
   const contact = api.contact()._contacts.find((contact) => contact.id === body.targetId);
@@ -8,7 +8,7 @@ module.exports = async (api, body) => {
   }
 
   return await api.emit(
-    events.SUBSCRIBER_CONTACT_DELETE,
+    Events.SUBSCRIBER_CONTACT_DELETE,
     contact
   );
 };

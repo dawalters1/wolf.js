@@ -1,13 +1,13 @@
 const validator = require('../../validator');
 
-const { capability, privilege } = require('../../constants');
+const { Capability, Privilege } = require('../../constants');
 
 const checkCapability = (requiredCapability, subscriberCapability) => {
   switch (requiredCapability) {
-    case capability.ADMIN:
-      return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN;
-    case capability.MOD:
-      return subscriberCapability === capability.OWNER || subscriberCapability === capability.ADMIN || subscriberCapability === capability.MOD;
+    case Capability.ADMIN:
+      return subscriberCapability === Capability.OWNER || subscriberCapability === Capability.ADMIN;
+    case Capability.MOD:
+      return subscriberCapability === Capability.OWNER || subscriberCapability === Capability.ADMIN || subscriberCapability === Capability.MOD;
     default:
       return true;
   }
@@ -73,11 +73,11 @@ class Member {
         throw new Error('sourceSubscriberId cannot be less than or equal to 0');
       }
 
-      if (validator.isNullOrUndefined(capability)) {
-        throw new Error('capability cannot be null or undefined');
-      } else if (!validator.isValidNumber(capability)) {
-        throw new Error('capability must be a valid number');
-      } else if (!Object.values(capability).includes(requiredCapability)) {
+      if (validator.isNullOrUndefined(Capability)) {
+        throw new Error('Capability cannot be null or undefined');
+      } else if (!validator.isValidNumber(Capability)) {
+        throw new Error('Capability must be a valid number');
+      } else if (!Object.values(Capability).includes(requiredCapability)) {
         throw new Error('requiredCapability is not valid');
       }
       if (!validator.isValidBoolean(checkStaff)) {
@@ -103,7 +103,7 @@ class Member {
       if (checkStaff) {
         const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
 
-        if ((subscriber.privileges & privilege.STAFF) === privilege.STAFF) {
+        if ((subscriber.privileges & Privilege.STAFF) === Privilege.STAFF) {
           return true;
         }
       }
@@ -132,7 +132,7 @@ class Member {
 
       return checkCapability(requiredCapability, groupSubscriber.capabilities);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, capability=${JSON.stringify(capability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
+      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, Capability=${JSON.stringify(Capability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
       throw error;
     }
   }
