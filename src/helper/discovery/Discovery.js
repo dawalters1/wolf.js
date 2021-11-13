@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
 const constants = require('../../constants');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const validator = require('../../validator');
 
 const format = (oldDiscovery) => {
@@ -47,7 +47,7 @@ module.exports = class Discovery extends BaseHelper {
   async getByLanguage (language, requestNew = false) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(constants.Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -59,7 +59,7 @@ module.exports = class Discovery extends BaseHelper {
       return this._discovery[language];
     }
 
-    const result = await this._websocket.emit(commands.TOPIC_PAGE_LAYOUT,
+    const result = await this._websocket.emit(Commands.TOPIC_PAGE_LAYOUT,
       {
         name: 'discover',
         languageId: language
@@ -84,7 +84,7 @@ module.exports = class Discovery extends BaseHelper {
       this._recipes[language] = {};
     }
 
-    const result = await this._websocket.emit(commands.TOPIC_PAGE_RECIPE_LIST,
+    const result = await this._websocket.emit(Commands.TOPIC_PAGE_RECIPE_LIST,
       {
         id,
         languageId: language,
@@ -112,7 +112,7 @@ module.exports = class Discovery extends BaseHelper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(constants.Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -135,7 +135,7 @@ module.exports = class Discovery extends BaseHelper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, constants.Language, type, recipe.min, recipe.max);
   }
 
   async getRecipeBySectionId (id, language, requestNew = false) {
@@ -146,7 +146,7 @@ module.exports = class Discovery extends BaseHelper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(constants.Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -167,7 +167,7 @@ module.exports = class Discovery extends BaseHelper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, constants.Language, type, recipe.min, recipe.max);
   }
 
   _cleanup () {

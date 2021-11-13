@@ -1,4 +1,4 @@
-const { commands, messageTypes, embedType } = require('../../constants');
+const { Commands, MessageTypes, EmbedType } = require('../../constants');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
@@ -42,7 +42,7 @@ class Messaging extends BaseHelper {
 
   async _messageGroupSubscribe () {
     return await this._websocket.emit(
-      commands.MESSAGE_GROUP_SUBSCRIBE, {
+      Commands.MESSAGE_GROUP_SUBSCRIBE, {
         headers: {
           version: 4
         }
@@ -52,7 +52,7 @@ class Messaging extends BaseHelper {
 
   async _messageGroupUnsubscribe (id) {
     return await this._websocket.emit(
-      commands.MESSAGE_GROUP_UNSUBSCRIBE, {
+      Commands.MESSAGE_GROUP_UNSUBSCRIBE, {
         headers: {
           version: 4
         },
@@ -65,7 +65,7 @@ class Messaging extends BaseHelper {
 
   async _messagePrivateSubscribe () {
     return await this._websocket.emit(
-      commands.MESSAGE_PRIVATE_SUBSCRIBE, {
+      Commands.MESSAGE_PRIVATE_SUBSCRIBE, {
         headers: {
           version: 2
         }
@@ -75,7 +75,7 @@ class Messaging extends BaseHelper {
 
   async _messagePrivateUnsubscribe () {
     return await this._websocket.emit(
-      commands.MESSAGE_PRIVATE_UNSUBSCRIBE, {
+      Commands.MESSAGE_PRIVATE_UNSUBSCRIBE, {
         headers: {
           version: 2
         }
@@ -92,7 +92,7 @@ class Messaging extends BaseHelper {
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
-      const result = await this.websocket.emit(commands.MESSAGE_CONVERSATION_LIST, {
+      const result = await this.websocket.emit(Commands.MESSAGE_CONVERSATION_LIST, {
         headers: {
           version: 3
         },
@@ -135,7 +135,7 @@ class Messaging extends BaseHelper {
     const bodies = await this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ').reduce(async (result, value) => {
       const body = {
         recipient: targetId,
-        isGroup: targetType === messageTypes.GROUP,
+        isGroup: targetType === MessageTypes.GROUP,
         mimeType,
         data: Buffer.from(value, 'utf8'),
         flightId: uuidv4(),
@@ -205,7 +205,7 @@ class Messaging extends BaseHelper {
               if (metadata.success && !metadata.body.isBlacklisted) {
                 (await result).push(
                   {
-                    type: metadata.body.imageSize > 0 ? embedType.IMAGE_PREVIEW : embedType.LINK_PREVIEW,
+                    type: metadata.body.imageSize > 0 ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
                     url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
                     title: metadata.body.title,
                     body: metadata.body.description
@@ -215,7 +215,7 @@ class Messaging extends BaseHelper {
             } else if (Reflect.has(item, 'groupId')) {
               (await result).push(
                 {
-                  type: embedType.GROUP_PREVIEW,
+                  type: EmbedType.GROUP_PREVIEW,
                   groupId: item.groupId
                 }
               );
@@ -239,7 +239,7 @@ class Messaging extends BaseHelper {
     const responses = [];
 
     for (const body of bodies) {
-      responses.push(await this._websocket.emit(commands.MESSAGE_SEND, body));
+      responses.push(await this._websocket.emit(Commands.MESSAGE_SEND, body));
     };
 
     return responses.length > 1
@@ -265,7 +265,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(messageTypes.GROUP, targetGroupId, content, opts);
+      return await this._sendMessage(MessageTypes.GROUP, targetGroupId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -287,7 +287,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(messageTypes.PRIVATE, targetSubscriberId, content, opts);
+      return await this._sendMessage(MessageTypes.PRIVATE, targetSubscriberId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendPrivateMessage(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -309,7 +309,7 @@ class Messaging extends BaseHelper {
         throw new Error('commandOrMessage must contain propery isGroup');
       }
 
-      return await this._sendMessage(commandOrMessage.isGroup ? messageTypes.GROUP : messageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
+      return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendMessage(commandOrMessage=${commandOrMessage}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -334,7 +334,7 @@ class Messaging extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.MESSAGE_UPDATE,
+        Commands.MESSAGE_UPDATE,
         {
           isGroup: true,
           metadata: {
@@ -368,7 +368,7 @@ class Messaging extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.MESSAGE_UPDATE,
+        Commands.MESSAGE_UPDATE,
         {
           isGroup: true,
           metadata: {
@@ -402,7 +402,7 @@ class Messaging extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.MESSAGE_UPDATE_LIST,
+        Commands.MESSAGE_UPDATE_LIST,
         {
           isGroup: true,
           recipientId: targetGroupId,

@@ -5,7 +5,7 @@ const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const validator = require('../../validator');
 const fileType = require('file-type');
 
@@ -28,7 +28,7 @@ class Group extends BaseHelper {
     }
 
     const result = await this._websocket.emit(
-      commands.SUBSCRIBER_GROUP_LIST,
+      Commands.SUBSCRIBER_GROUP_LIST,
       {
         subscribe: true
       }
@@ -41,7 +41,7 @@ class Group extends BaseHelper {
 
       for (const group of groups) {
         group.inGroup = true;
-        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.capability.REGULAR;
+        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.Capability.REGULAR;
       }
     }
 
@@ -87,7 +87,7 @@ class Group extends BaseHelper {
 
         for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            commands.GROUP_PROFILE,
+            Commands.GROUP_PROFILE,
             {
               headers: {
                 version: 4
@@ -101,7 +101,7 @@ class Group extends BaseHelper {
           );
 
           if (result.success) {
-            const groupResponses = Object.values(result.body).map((groupResponse) => new Response(groupResponse, commands.GROUP_PROFILE));
+            const groupResponses = Object.values(result.body).map((groupResponse) => new Response(groupResponse, Commands.GROUP_PROFILE));
 
             for (const [index, groupResponse] of groupResponses.entries()) {
               if (groupResponse.success) {
@@ -157,7 +157,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_PROFILE,
+        Commands.GROUP_PROFILE,
         {
           headers: {
             version: 4
@@ -208,7 +208,7 @@ class Group extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_MEMBER_ADD,
+        Commands.GROUP_MEMBER_ADD,
         {
           groupId: targetGroupId,
           password
@@ -234,7 +234,7 @@ class Group extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_MEMBER_ADD,
+        Commands.GROUP_MEMBER_ADD,
         {
           name: targetGroupName.toLowerCase(),
           password
@@ -257,7 +257,7 @@ class Group extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_MEMBER_DELETE,
+        Commands.GROUP_MEMBER_DELETE,
         {
           groupId: targetGroupId
         }
@@ -324,7 +324,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.MESSAGE_GROUP_HISTORY_LIST,
+        Commands.MESSAGE_GROUP_HISTORY_LIST,
         {
           headers: {
             version: 3
@@ -368,7 +368,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_MEMBER_LIST,
+        Commands.GROUP_MEMBER_LIST,
         {
           headers: {
             version: 3
@@ -409,7 +409,7 @@ class Group extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_STATS,
+        Commands.GROUP_STATS,
         {
           id: targetGroupId
         }
@@ -476,12 +476,12 @@ class Group extends BaseHelper {
         throw new Error('capabilities cannot be null or undefined');
       } else if (!validator.isValidNumber(capabilities)) {
         throw new Error('capabilities must be a valid number');
-      } else if (!Object.values(constants.adminAction).includes(capabilities)) {
+      } else if (!Object.values(constants.AdminAction).includes(capabilities)) {
         throw new Error('capabilities is not valid');
       }
 
       return await this._websocket.emit(
-        commands.GROUP_MEMBER_UPDATE,
+        Commands.GROUP_MEMBER_UPDATE,
         {
           groupId: targetGroupId,
           id: targetSubscriberId,

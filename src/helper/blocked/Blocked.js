@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 
 class Blocked extends BaseHelper {
   constructor (api) {
@@ -19,7 +19,7 @@ class Blocked extends BaseHelper {
         return this._blocked;
       }
 
-      const result = await this._websocket.emit(commands.SUBSCRIBER_BLOCK_LIST);
+      const result = await this._websocket.emit(Commands.SUBSCRIBER_BLOCK_LIST);
 
       if (result.success) {
         this._blocked = result.body;
@@ -69,7 +69,7 @@ class Blocked extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.SUBSCRIBER_BLOCK_ADD,
+        Commands.SUBSCRIBER_BLOCK_ADD,
         {
           id: subscriberId
         }
@@ -91,7 +91,7 @@ class Blocked extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.SUBSCRIBER_BLOCK_DELETE,
+        Commands.SUBSCRIBER_BLOCK_DELETE,
         {
           id: subscriberId
         }

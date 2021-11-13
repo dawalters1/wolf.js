@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 
 class Subscriber extends BaseHelper {
   async getById (subscriberId) {
@@ -14,7 +14,7 @@ class Subscriber extends BaseHelper {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
-      const result = await this._websocket.emit(commands.ACHIEVEMENT_SUBSCRIBER_LIST,
+      const result = await this._websocket.emit(Commands.ACHIEVEMENT_SUBSCRIBER_LIST,
         {
           headers: {
             version: 2

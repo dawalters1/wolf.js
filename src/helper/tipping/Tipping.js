@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const validator = require('../../validator');
 const constants = require('../../constants');
 
@@ -11,11 +11,11 @@ class Tipping extends BaseHelper {
   }
 
   async _groupSubscribe () {
-    return await this._websocket.emit(commands.TIP_GROUP_SUBSCRIBE);
+    return await this._websocket.emit(Commands.TIP_GROUP_SUBSCRIBE);
   }
 
   async _privateSubscribe () {
-    return await this._websocket.emit(commands.TIP_PRIVATE_SUBSCRIBE);
+    return await this._websocket.emit(Commands.TIP_PRIVATE_SUBSCRIBE);
   }
 
   async tip (targetSubscriberId, targetGroupId, context, charms) {
@@ -43,11 +43,11 @@ class Tipping extends BaseHelper {
         throw new Error('context must have property type');
       } else if (validator.isNullOrWhitespace(context.type)) {
         throw new Error('type cannot be null or empty');
-      } else if (!Object.values(constants.contextType).includes(context.type)) {
+      } else if (!Object.values(constants.ContextType).includes(context.type)) {
         throw new Error('type is not valid');
       }
 
-      if (context.type === constants.contextType.MESSAGE) {
+      if (context.type === constants.ContextType.MESSAGE) {
         if (!Reflect.has(context, 'id')) {
           throw new Error('context must have property id');
         } else if (validator.isNullOrUndefined(context.id)) {
@@ -84,7 +84,7 @@ class Tipping extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.TIP_ADD,
+        Commands.TIP_ADD,
         {
           subscriberId: targetSubscriberId,
           groupId: targetGroupId,
@@ -130,11 +130,11 @@ class Tipping extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.TIP_DETAIL,
+        Commands.TIP_DETAIL,
         {
           groupId: targetGroupId,
           id: timestamp,
-          contextType: constants.contextType.MESSAGE,
+          contextType: constants.ContextType.MESSAGE,
           limit,
           offset
         }
@@ -176,11 +176,11 @@ class Tipping extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.TIP_SUMMARY,
+        Commands.TIP_SUMMARY,
         {
           groupId: targetGroupId,
           id: timestamp,
-          contextType: constants.contextType.MESSAGE,
+          contextType: constants.ContextType.MESSAGE,
           limit,
           offset
         }
@@ -203,31 +203,31 @@ class Tipping extends BaseHelper {
 
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
 
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.tipType).includes(tipType)) {
+      } else if (!Object.values(constants.TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
 
-      if (tipType !== constants.tipType.CHARM) {
+      if (tipType !== constants.TipType.CHARM) {
         if (validator.isNullOrWhitespace(tipDirection)) {
           throw new Error('tipDirection cannot be null or empty');
-        } else if (!Object.values(constants.tipDirection).includes(tipDirection)) {
+        } else if (!Object.values(constants.TipDirection).includes(tipDirection)) {
           throw new Error('tipDirection is not valid');
         }
       }
 
       return await this._websocket.emit(
-        commands.TIP_LEADERBOARD_GROUP,
+        Commands.TIP_LEADERBOARD_GROUP,
         {
           groupId: targetGroupId,
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.tipType.CHARM ? undefined : tipDirection
+          tipDirection: tipType === constants.TipType.CHARM ? undefined : tipDirection
         }
       );
     } catch (error) {
@@ -247,29 +247,29 @@ class Tipping extends BaseHelper {
       }
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.tipType).includes(tipType)) {
+      } else if (!Object.values(constants.TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
-      if (tipType !== constants.tipType.CHARM) {
+      if (tipType !== constants.TipType.CHARM) {
         if (validator.isNullOrWhitespace(tipDirection)) {
           throw new Error('tipDirection cannot be null or empty');
-        } else if (!Object.values(constants.tipDirection).includes(tipDirection)) {
+        } else if (!Object.values(constants.TipDirection).includes(tipDirection)) {
           throw new Error('tipDirection is not valid');
         }
       }
 
       return await this._websocket.emit(
-        commands.TIP_LEADERBOARD_GROUP_SUMMARY,
+        Commands.TIP_LEADERBOARD_GROUP_SUMMARY,
         {
           id: targetGroupId,
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.tipType.CHARM ? null : tipDirection
+          tipDirection: tipType === constants.TipType.CHARM ? null : tipDirection
         }
       );
     } catch (error) {
@@ -282,24 +282,24 @@ class Tipping extends BaseHelper {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.tipType).includes(tipType)) {
+      } else if (!Object.values(constants.TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
-      if (tipType === constants.tipType.CHARM) {
+      if (tipType === constants.TipType.CHARM) {
         throw new Error('tipType is not valid');
       }
 
       return await this._websocket.emit(
-        commands.TIP_LEADERBOARD_GLOBAL,
+        Commands.TIP_LEADERBOARD_GLOBAL,
         {
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.tipType.GROUP ? undefined : tipDirection
+          tipDirection: tipType === constants.TipType.GROUP ? undefined : tipDirection
         }
       );
     } catch (error) {
@@ -312,12 +312,12 @@ class Tipping extends BaseHelper {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.tipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
 
       return await this._websocket.emit(
-        commands.TIP_LEADERBOARD_GLOBAL_SUMMARY,
+        Commands.TIP_LEADERBOARD_GLOBAL_SUMMARY,
         {
           period: tipPeriod
         }

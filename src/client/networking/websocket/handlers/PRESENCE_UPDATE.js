@@ -1,4 +1,4 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
 module.exports = async (api, body) => {
@@ -41,7 +41,7 @@ module.exports = async (api, body) => {
   Reflect.deleteProperty(body, 'id');
 
   return await api.emit(
-    events.PRESENCE_UPDATE,
+    Events.PRESENCE_UPDATE,
     oldPresence,
     body
   );

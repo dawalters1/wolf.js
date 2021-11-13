@@ -1,4 +1,4 @@
-const { commands } = require('../constants');
+const { Commands } = require('../constants');
 const HttpStatus = require('http-status-codes');
 
 const codes = {
@@ -39,7 +39,7 @@ class Response {
     }
 
     if (!this.success) {
-      if (command === commands.SECURITY_LOGIN && headers.subCode === 2) {
+      if (command === Commands.SECURITY_LOGIN && headers.subCode === 2) {
         return `${codes[command][headers.subCode]} - ${message || 'No reason provided'}`;
       }
 

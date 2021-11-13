@@ -4,7 +4,7 @@ const Subscriber = require('./Subscriber');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const constants = require('../../constants');
 const validator = require('../../validator');
 
@@ -31,7 +31,7 @@ class Achievement extends BaseHelper {
     try {
       if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
+      } else if (!Object.values(constants.Language).includes(language)) {
         throw new Error('language is not valid');
       }
       if (!validator.isValidBoolean(requestNew)) {
@@ -42,7 +42,7 @@ class Achievement extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.ACHIEVEMENT_CATEGORY_LIST,
+        Commands.ACHIEVEMENT_CATEGORY_LIST,
         {
           languageId: language
         }
@@ -86,7 +86,7 @@ class Achievement extends BaseHelper {
       }
       if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.language).includes(language)) {
+      } else if (!Object.values(constants.Language).includes(language)) {
         throw new Error('language is not valid');
       }
       if (!validator.isValidBoolean(requestNew)) {
@@ -104,7 +104,7 @@ class Achievement extends BaseHelper {
 
         for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            commands.ACHIEVEMENT,
+            Commands.ACHIEVEMENT,
             {
               headers: {
                 version: 2
@@ -117,7 +117,7 @@ class Achievement extends BaseHelper {
           );
 
           if (result.success) {
-            const achievementResponses = Object.values(result.body).map((achievementResponse) => new Response(achievementResponse, commands.ACHIEVEMENT));
+            const achievementResponses = Object.values(result.body).map((achievementResponse) => new Response(achievementResponse, Commands.ACHIEVEMENT));
 
             for (const [index, achievementResponse] of achievementResponses.entries()) {
               if (achievementResponse.success) {

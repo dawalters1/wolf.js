@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 
 class Group extends BaseHelper {
   async getById (targetGroupId) {
@@ -14,7 +14,7 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-      const result = await this._websocket.emit(commands.ACHIEVEMENT_GROUP_LIST,
+      const result = await this._websocket.emit(Commands.ACHIEVEMENT_GROUP_LIST,
         {
           headers: {
             version: 2

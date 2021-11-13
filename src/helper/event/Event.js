@@ -3,7 +3,7 @@ const GroupEvent = require('../../models/GroupEventObject');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 const validator = require('../../validator');
 
 const fileType = require('file-type');
@@ -70,7 +70,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_EVENT_CREATE,
+        Commands.GROUP_EVENT_CREATE,
         {
           groupId: targetGroupId,
           title,
@@ -159,7 +159,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_EVENT_UPDATE,
+        Commands.GROUP_EVENT_UPDATE,
         {
           groupId: targetGroupId,
           id: eventId,
@@ -240,7 +240,7 @@ class Event extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.GROUP_EVENT_UPDATE,
+        Commands.GROUP_EVENT_UPDATE,
         {
           groupId: targetGroupId,
           id: eventId,
@@ -288,7 +288,7 @@ class Event extends BaseHelper {
 
         for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api._botConfig.batch.length)) {
           const result = await this._websocket.emit(
-            commands.GROUP_EVENT,
+            Commands.GROUP_EVENT,
             {
               headers: {
                 version: 1
@@ -300,7 +300,7 @@ class Event extends BaseHelper {
           );
 
           if (result.success) {
-            const eventResponses = Object.values(result.body).map((eventResponse) => new Response(eventResponse, commands.GROUP_EVENT));
+            const eventResponses = Object.values(result.body).map((eventResponse) => new Response(eventResponse, Commands.GROUP_EVENT));
 
             for (const [index, eventResponse] of eventResponses.entries()) {
               if (eventResponse.success) {
@@ -358,7 +358,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.GROUP_EVENT_LIST,
+        Commands.GROUP_EVENT_LIST,
         {
           id: targetGroupId,
           subscribe: true
@@ -395,7 +395,7 @@ class Event extends BaseHelper {
       }
 
       const result = await this._websocket.emit(
-        commands.SUBSCRIBER_GROUP_EVENT_LIST,
+        Commands.SUBSCRIBER_GROUP_EVENT_LIST,
         {
           subscribe: true
         }
@@ -431,7 +431,7 @@ class Event extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.SUBSCRIBER_GROUP_EVENT_ADD,
+        Commands.SUBSCRIBER_GROUP_EVENT_ADD,
         {
           id: eventId
         }
@@ -461,7 +461,7 @@ class Event extends BaseHelper {
       }
 
       return await this._websocket.emit(
-        commands.SUBSCRIBER_GROUP_EVENT_DELETE,
+        Commands.SUBSCRIBER_GROUP_EVENT_DELETE,
         {
           id: eventId
         }

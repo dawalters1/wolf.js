@@ -3,7 +3,7 @@ const Message = require('../../../../models/MessageObject');
 const toAdminActionFromString = require('../../../../utils/ToAdminActionFromString');
 const toGroupMemberCapability = require('../../../../utils/ToGroupMemberCapability');
 const { version } = require('../../../../../package.json');
-const { events, messageType, capability, privilege } = require('../../../../constants');
+const { Events, MessageType, Capability, Privilege } = require('../../../../constants');
 
 const handleAdminAction = async (api, message) => {
   const [group, subscriber] = await Promise.all([
@@ -20,7 +20,7 @@ const handleAdminAction = async (api, message) => {
         {
           id: subscriber.id,
           groupId: group.id,
-          capabilities: group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR,
+          capabilities: group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR,
           additionalInfo: {
             hash: subscriber.hash,
             nickname: subscriber.nickname,
@@ -32,12 +32,12 @@ const handleAdminAction = async (api, message) => {
     }
 
     if (subscriber.id === api.currentSubscriber.id) {
-      group.capability = group.owner.id === subscriber.id ? capability.OWNER : capability.REGULAR;
+      group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
       group.inGroup = true;
     }
 
     return api.emit(
-      message.sourceSubscriberId === api.currentSubscriber.id ? events.JOINED_GROUP : events.GROUP_MEMBER_ADD,
+      message.sourceSubscriberId === api.currentSubscriber.id ? Events.JOINED_GROUP : Events.GROUP_MEMBER_ADD,
       {
         group,
         subscriber
@@ -53,12 +53,12 @@ const handleAdminAction = async (api, message) => {
   if (subscriber.id === api.currentSubscriber.id) {
     group.capabilities = toGroupMemberCapability(toAdminActionFromString(adminAction.type));
 
-    if (group.capabilities === capability.NOT_MEMBER || group.capabilities === capability.BANNED) {
+    if (group.capabilities === Capability.NOT_MEMBER || group.capabilities === Capability.BANNED) {
       group.inGroup = false;
       group.subscribers = [];
 
       await api.messaging()._messageGroupUnsubscribe(group.id);
-    } else if (group.capabilities === capability.OWNER) {
+    } else if (group.capabilities === Capability.OWNER) {
       group.owner.id = subscriber.id;
       group.owner.hash = subscriber.hash;
     }
@@ -69,7 +69,7 @@ const handleAdminAction = async (api, message) => {
       if (adminAction.type === 'owner') {
         group.owner.id = subscriber.id;
         group.owner.hash = subscriber.hash;
-        groupMember.capabilities = capability.OWNER;
+        groupMember.capabilities = Capability.OWNER;
       } else {
         if (adminAction.type === 'kick' || adminAction.type === 'leave') {
           group.subscribers.splice(group.subscribers.indexOf(groupMember), 1);
@@ -82,7 +82,7 @@ const handleAdminAction = async (api, message) => {
 
   if (adminAction.type === 'leave' || adminAction.type === 'kick') {
     return api.emit(
-      subscriber.id === api.currentSubscriber.id ? events.LEFT_GROUP : events.GROUP_MEMBER_DELETE,
+      subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
       {
         group,
         subscriber
@@ -91,7 +91,7 @@ const handleAdminAction = async (api, message) => {
   }
 
   return api.emit(
-    events.GROUP_MEMBER_UPDATE,
+    Events.GROUP_MEMBER_UPDATE,
     {
       group,
       action: {
@@ -108,14 +108,14 @@ module.exports = async (api, body) => {
   const message = new Message(api, body);
 
   switch (message.type) {
-    case messageType.APPLICATION_PALRINGO_GROUP_ACTION:
+    case MessageType.APPLICATION_PALRINGO_GROUP_ACTION:
       await handleAdminAction(api, message);
       break;
-    case messageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
-      api.emit(events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
+    case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
+      api.emit(Events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
       break;
 
-    case messageType.TEXT_PLAIN:
+    case MessageType.TEXT_PLAIN:
     {
       if (message.sourceSubscriberId === api.currentSubscriber.id) {
         return Promise.resolve();
@@ -123,7 +123,7 @@ module.exports = async (api, body) => {
 
       const secret = api._botConfig.secrets.find((secret) => api.utility().string().isEqual(secret.command, message.body) || api.utility().string().isEqual(secret.commandShort, message.body));
 
-      if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [privilege.STAFF, privilege.VOLUNTEER]))) {
+      if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) {
         return await api.messaging().sendMessage(
           message,
           api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
@@ -150,7 +150,7 @@ module.exports = async (api, body) => {
   }
 
   return await api.emit(
-    message.isGroup ? events.GROUP_MESSAGE : events.PRIVATE_MESSAGE,
+    message.isGroup ? Events.GROUP_MESSAGE : Events.PRIVATE_MESSAGE,
     message
   );
 };

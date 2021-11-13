@@ -1,6 +1,6 @@
 const patch = require('../utils/Patch');
 
-const { contextType } = require('../constants');
+const { ContextType } = require('../constants');
 
 const toBaseMessage = (api, messageData) => {
   const message = {
@@ -54,7 +54,7 @@ class Message {
         this.sourceSubscriberId,
         this.targetGroupId,
         {
-          type: contextType.MESSAGE,
+          type: ContextType.MESSAGE,
           id: this.timestamp
         },
         tips

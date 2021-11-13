@@ -1,4 +1,4 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
 module.exports = async (api, body) => {
@@ -34,7 +34,7 @@ module.exports = async (api, body) => {
   }
 
   return api.emit(
-    events.SUBSCRIBER_UPDATE,
+    Events.SUBSCRIBER_UPDATE,
     old,
     subscriber
   );

@@ -1,4 +1,4 @@
-const { events } = require('../../../../constants');
+const { Events } = require('../../../../constants');
 
 module.exports = async (api, body) => {
   const group = api.group()._groups.find((group) => group.id === body.id);
@@ -8,7 +8,7 @@ module.exports = async (api, body) => {
   }
 
   return api.emit(
-    events.GROUP_UPDATE,
+    Events.GROUP_UPDATE,
     group,
     await api.group().getById(body.id)
   );

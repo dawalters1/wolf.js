@@ -1,6 +1,6 @@
 const validator = require('../../validator');
 const constants = require('../../constants');
-const { commands } = require('../../constants');
+const { Commands } = require('../../constants');
 
 /**
  * Exposes the methods used to update or create group profiles
@@ -18,8 +18,8 @@ module.exports = class GroupProfileBuilder {
     this._discoverable = true;
     this._advancedAdmin = false;
     this._entryLevel = 0;
-    this._language = constants.language.NOT_SPECIFIED;
-    this._category = constants.category.NOT_SPECIFIED;
+    this._language = constants.Language.NOT_SPECIFIED;
+    this._category = constants.Category.NOT_SPECIFIED;
 
     this._audioConfig = {
       minRepLevel: 0,
@@ -81,7 +81,7 @@ module.exports = class GroupProfileBuilder {
   setCategory (category) {
     if (!validator.isValidNumber(category)) {
       throw new Error('category must be a number');
-    } else if (!Object.values(constants.category).includes(category)) {
+    } else if (!Object.values(constants.Category).includes(category)) {
       throw new Error('category is not valid');
     }
 
@@ -93,7 +93,7 @@ module.exports = class GroupProfileBuilder {
   setLanguage (language) {
     if (!validator.isValidNumber(language)) {
       throw new Error('language must be a number');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(constants.Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -180,11 +180,11 @@ module.exports = class GroupProfileBuilder {
   }
 
   async create () {
-    return await (!this.isNew ? this.save() : this._doCorrectAction(commands.GROUP_CREATE));
+    return await (!this.isNew ? this.save() : this._doCorrectAction(Commands.GROUP_CREATE));
   }
 
   async save () {
-    return await (this.isNew ? this.create() : this._doCorrectAction(commands.GROUP_PROFILE_UPDATE));
+    return await (this.isNew ? this.create() : this._doCorrectAction(Commands.GROUP_PROFILE_UPDATE));
   }
 
   async _doCorrectAction (command) {
@@ -209,7 +209,7 @@ module.exports = class GroupProfileBuilder {
 
     if (result.success) {
       await this._api.websocket.emit(
-        commands.GROUP_AUDIO_UPDATE,
+        Commands.GROUP_AUDIO_UPDATE,
         this._audioConfig
       );
     }

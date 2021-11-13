@@ -43,10 +43,14 @@ class Phrase extends BaseHelper {
           throw new Error('value cannot be null or empty');
         }
 
-        if (!this._phrases[language][phrase.name]) {
-          this._phrases[language][phrase.name] = [];
+        const phraseName = this._api.utility().string().replace(phrase.name, {
+          keyword: this._api.options.keyword
+        });
+
+        if (!this._phrases[language][phraseName]) {
+          this._phrases[language][phraseName] = [];
         }
-        this._phrases[language][phrase.name].push(
+        this._phrases[language][phraseName].push(
           {
             value: phrase.value,
             default: true
@@ -78,11 +82,16 @@ class Phrase extends BaseHelper {
         if (!this._phrases[phrase.language]) {
           this._phrases[phrase.language] = {};
         }
-        if (!this._phrases[phrase.language][phrase.name]) {
-          this._phrases[phrase.language][phrase.name] = [];
+
+        const phraseName = this._api.utility().string().replace(phrase.name, {
+          keyword: this._api.options.keyword
+        });
+
+        if (!this._phrases[phrase.language][phraseName]) {
+          this._phrases[phrase.language][phraseName] = [];
         }
 
-        this._phrases[phrase.language][phrase.name] = this._phrases[phrase.language][phrase.name].filter((phr) => !phr.default).concat(phrase.value);
+        this._phrases[phrase.language][phraseName] = this._phrases[phrase.language][phraseName].filter((phr) => !phr.default).concat(phrase.value);
       }
     } catch (error) {
       error.internalErrorMessage = `api.phrase().load(phrases=${JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''})`;

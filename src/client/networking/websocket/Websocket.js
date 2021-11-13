@@ -2,7 +2,7 @@ const Handler = require('./handlers');
 const Response = require('../../../models/ResponseObject');
 
 const io = require('socket.io-client');
-const { events, retryMode } = require('../../../constants');
+const { Events, RetryMode } = require('../../../constants');
 
 /**
  * {@hideconstructor}
@@ -26,32 +26,32 @@ module.exports = class Websocket {
       }
     );
 
-    this.socket.on('connect', () => this._api.emit(events.CONNECTED));
+    this.socket.on('connect', () => this._api.emit(Events.CONNECTED));
 
-    this.socket.on('connect_error', error => this._api.emit(events.CONNECTION_ERROR, error));
+    this.socket.on('connect_error', error => this._api.emit(Events.CONNECTION_ERROR, error));
 
-    this.socket.on('connect_timeout', error => this._api.emit(events.CONNECTION_TIMEOUT, error));
+    this.socket.on('connect_timeout', error => this._api.emit(Events.CONNECTION_TIMEOUT, error));
 
     this.socket.on('disconnect', reason => {
       this._api.cleanup();
 
-      this._api.emit(events.DISCONNECTED, reason);
+      this._api.emit(Events.DISCONNECTED, reason);
       // Socket doesnt reconnect on io server disconnect, manually reconnect
       if (reason === 'io server disconnect') {
         this.socket.connect();
       }
     });
 
-    this.socket.on('error', error => this._api.emit(events.ERROR, error));
+    this.socket.on('error', error => this._api.emit(Events.ERROR, error));
 
-    this.socket.on('reconnecting', reconnectNumber => this._api.emit(events.RECONNECTING, reconnectNumber));
+    this.socket.on('reconnecting', reconnectNumber => this._api.emit(Events.RECONNECTING, reconnectNumber));
 
-    this.socket.on('reconnect', () => this._api.emit(events.RECONNECTED));
+    this.socket.on('reconnect', () => this._api.emit(Events.RECONNECTED));
 
-    this.socket.on('reconnect_failed', error => this._api.emit(events.RECONNECT_FAILED, error));
+    this.socket.on('reconnect_failed', error => this._api.emit(Events.RECONNECT_FAILED, error));
 
-    this.socket.on('ping', () => this._api.emit(events.PING));
-    this.socket.on('pong', (latency) => this._api.emit(events.PONG, latency));
+    this.socket.on('ping', () => this._api.emit(Events.PING));
+    this.socket.on('pong', (latency) => this._api.emit(Events.PONG, latency));
 
     const patch = require('socketio-wildcard')(io.Manager);
     patch(this.socket);
@@ -69,7 +69,7 @@ module.exports = class Websocket {
     }
 
     const response = await new Promise((resolve, reject) => {
-      this._api.emit(events.PACKET_SENT,
+      this._api.emit(Events.PACKET_SENT,
         {
           command,
           data
@@ -81,7 +81,7 @@ module.exports = class Websocket {
       });
     });
 
-    if (this._api._botConfig.networking.retryOn.includes(response.code) && this._api.options.networking.retryMode === retryMode.ALWAYS_RETRY && attempt <= this._api.options.networking.retryAttempts) {
+    if (this._api._botConfig.networking.retryOn.includes(response.code) && this._api.options.networking.RetryMode === RetryMode.ALWAYS_RETRY && attempt <= this._api.options.networking.retryAttempts) {
       return await this._emit(command, data, attempt + 1);
     }
 

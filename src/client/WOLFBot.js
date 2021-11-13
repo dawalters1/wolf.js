@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('yaml');
 const fileType = require('file-type');
-const { commands } = require('../constants');
+const { Commands } = require('../constants');
 const constants = require('../constants');
 
 const validator = require('../validator');
@@ -56,7 +56,7 @@ const validateConfig = (api, opts) => {
 
   _opts.app.networkSettings = typeof (_opts.app.networkSettings) === 'object' ? _opts.app.networkSettings : {};
 
-  _opts.app.networkSettings.retryMode = typeof _opts.app.networkSettings.retryMode === 'number' && Object.values(constants.retryMode).includes(parseInt(_opts.app.networkSettings.retryMode)) ? parseInt(_opts.app.networkSettings.retryMode) : constants.retryMode.ALWAYS_RETRY;
+  _opts.app.networkSettings.retryMode = typeof _opts.app.networkSettings.retryMode === 'number' && Object.values(constants.RetryMode).includes(parseInt(_opts.app.networkSettings.retryMode)) ? parseInt(_opts.app.networkSettings.retryMode) : constants.RetryMode.ALWAYS_RETRY;
   _opts.app.networkSettings.retryAttempts = typeof _opts.app.networkSettings.retryAttempts === 'number' ? parseInt(_opts.app.networkSettings.retryAttempts) : 1;
 
   if (_opts.app.networkSettings.retryAttempts <= 0) {
@@ -220,7 +220,7 @@ class WOLFBot extends EventEmitter {
     return this._utility;
   }
 
-  login (email, password, loginDevice = constants.loginDevice.ANDROID, onlineState = constants.onlineState.ONLINE, loginType = constants.loginType.EMAIL, token = undefined) {
+  login (email, password, loginDevice = constants.LoginDevice.ANDROID, onlineState = constants.OnlineState.ONLINE, loginType = constants.LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
         throw new Error('email cannot be null or empty');
@@ -232,7 +232,7 @@ class WOLFBot extends EventEmitter {
 
       if (validator.isNullOrWhitespace(loginDevice)) {
         throw new Error('loginDevice must be a valid string');
-      } else if (!Object.values(constants.loginDevice).includes(loginDevice)) {
+      } else if (!Object.values(constants.LoginDevice).includes(loginDevice)) {
         throw new Error('loginDevice is not valid');
       }
 
@@ -242,13 +242,13 @@ class WOLFBot extends EventEmitter {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
-      } else if (!Object.values(constants.onlineState).includes(onlineState)) {
+      } else if (!Object.values(constants.OnlineState).includes(onlineState)) {
         throw new Error('onlineState is not valid');
       }
 
       if (validator.isNullOrWhitespace(loginType)) {
         throw new Error('loginType must be a valid string');
-      } else if (!Object.values(constants.loginType).includes(loginType)) {
+      } else if (!Object.values(constants.LoginType).includes(loginType)) {
         throw new Error('loginType is not valid');
       }
 
@@ -269,7 +269,7 @@ class WOLFBot extends EventEmitter {
   }
 
   logout () {
-    this.websocket.emit(commands.SECURITY_LOGOUT);
+    this.websocket.emit(Commands.SECURITY_LOGOUT);
 
     this.websocket.socket.disconnect();
 
@@ -284,7 +284,7 @@ class WOLFBot extends EventEmitter {
         return this.cognito;
       }
 
-      const result = await this.websocket.emit(commands.SECURITY_TOKEN_REFRESH);
+      const result = await this.websocket.emit(Commands.SECURITY_TOKEN_REFRESH);
 
       if (result.success) {
         this.cognito = result.body;
@@ -307,11 +307,11 @@ class WOLFBot extends EventEmitter {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
-      } else if (!Object.values(constants.onlineState).includes(onlineState)) {
+      } else if (!Object.values(constants.OnlineState).includes(onlineState)) {
         throw new Error('onlineState is not valid');
       }
 
-      return await this.websocket.emit(commands.SUBSCRIBER_SETTINGS_UPDATE, {
+      return await this.websocket.emit(Commands.SUBSCRIBER_SETTINGS_UPDATE, {
         state: {
           state: onlineState
         }
@@ -328,7 +328,7 @@ class WOLFBot extends EventEmitter {
         throw new Error('query cannot be null or empty');
       }
 
-      return await this.websocket.emit(commands.SEARCH, {
+      return await this.websocket.emit(Commands.SEARCH, {
         query,
         types: ['related', 'groups']
       });
@@ -345,7 +345,7 @@ class WOLFBot extends EventEmitter {
       }
 
       return await this.websocket.emit(
-        commands.METADATA_URL,
+        Commands.METADATA_URL,
         { url: link }
       );
     } catch (error) {
@@ -364,7 +364,7 @@ class WOLFBot extends EventEmitter {
         return this._blacklist;
       }
 
-      const result = await this.websocket.emit(commands.METADATA_URL_BLACKLIST);
+      const result = await this.websocket.emit(Commands.METADATA_URL_BLACKLIST);
 
       if (result.success) {
         this._blacklist = result.body;
@@ -378,7 +378,7 @@ class WOLFBot extends EventEmitter {
   }
 
   async getMessageSettings () {
-    return await this.websocket.emit(commands.MESSAGE_SETTING);
+    return await this.websocket.emit(Commands.MESSAGE_SETTING);
   }
 
   async setMessageSettings (messageFilterTier) {
@@ -389,15 +389,15 @@ class WOLFBot extends EventEmitter {
         throw new Error('messageFilterTier must be a valid number');
       } else if (validator.isLessThanZero(messageFilterTier)) {
         throw new Error('messageFilterTier cannot be less than 0');
-      } else if (!Object.values(constants.messageFilter).includes(messageFilterTier)) {
+      } else if (!Object.values(constants.MessageFilterTier).includes(messageFilterTier)) {
         throw new Error('messageFilterTier is not valid');
       }
 
       return await this.websocket.emit(
-        commands.MESSAGE_SETTING_UPDATE,
+        Commands.MESSAGE_SETTING_UPDATE,
         {
           spamFilter: {
-            enabled: messageFilterTier !== constants.messageFilter.OFF,
+            enabled: messageFilterTier !== constants.MessageFilterTier.OFF,
             tier: messageFilterTier
           }
         }
