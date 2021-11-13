@@ -832,7 +832,7 @@ export abstract class BaseHelper {
     private _websocket: Websocket;
 
     private _cleanup(): void;
-    public _process(...args: any): void;
+    private _process(...args: any): void;
 
 }
 export class AchievementSubscriber{
