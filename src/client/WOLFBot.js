@@ -3,8 +3,9 @@ const fs = require('fs');
 const yaml = require('yaml');
 const fileType = require('file-type');
 const { commands } = require('../constants');
+const constants = require('../constants');
+
 const validator = require('../validator');
-const constants = require('@dawalters1/constants');
 
 const SubscriberProfileBuilder = require('../utils/ProfileBuilders/Subscriber');
 

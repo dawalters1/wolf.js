@@ -1,4 +1,4 @@
-const { language } = require('@dawalters1/constants');
+const { language } = require('../../constants');
 
 module.exports = (lang) => {
   switch (lang) {

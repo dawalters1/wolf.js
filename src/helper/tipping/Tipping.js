@@ -2,7 +2,7 @@ const BaseHelper = require('../BaseHelper');
 
 const { commands } = require('../../constants');
 const validator = require('../../validator');
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 
 class Tipping extends BaseHelper {
   // eslint-disable-next-line no-useless-constructor

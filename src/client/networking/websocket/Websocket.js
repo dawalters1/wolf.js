@@ -2,8 +2,7 @@ const Handler = require('./handlers');
 const Response = require('../../../models/ResponseObject');
 
 const io = require('socket.io-client');
-const { retryMode } = require('@dawalters1/constants');
-const { events } = require('../../../constants');
+const { events, retryMode } = require('../../../constants');
 
 /**
  * {@hideconstructor}

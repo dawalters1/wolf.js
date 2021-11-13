@@ -1,4 +1,6 @@
-
+/**
+ * @private
+ */
 exports.serverEvents = {
   GROUP_AUDIO_COUNT_UPDATE: 'group audio count update',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
@@ -22,7 +24,9 @@ exports.serverEvents = {
   TIP_ADD: 'tip add',
   WELCOME: 'welcome'
 };
-
+/**
+ * @private
+ */
 exports.events = {
   CONNECTED: 'connected',
   CONNECTING: 'connecting',
@@ -85,12 +89,16 @@ exports.events = {
   SUBSCRIBER_UPDATE: 'subscriberUpdate',
   WELCOME: 'welcome'
 };
-
+/**
+ * @private
+ */
 exports.messageTypes = {
   GROUP: 'group',
   PRIVATE: 'private'
 };
-
+/**
+ * @private
+ */
 exports.commands = {
   ACHIEVEMENT: 'achievement',
   ACHIEVEMENT_CATEGORY_LIST: 'achievement category list',
@@ -186,4 +194,203 @@ exports.commands = {
 
   TOPIC_PAGE_LAYOUT: 'topic page layout',
   TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list'
+};
+
+exports.adminAction = {
+  REGULAR: 0,
+  ADMIN: 1,
+  MOD: 2,
+  BAN: 4,
+  SILENCE: 8,
+  KICK: 16,
+  JOIN: 17,
+  LEAVE: 18,
+  OWNER: 32
+};
+
+exports.capability = {
+  NOT_MEMBER: -1,
+  REGULAR: 0,
+  ADMIN: 1,
+  MOD: 2,
+  BANNED: 4,
+  SILENCED: 8,
+  OWNER: 32
+};
+exports.category = {
+  NOT_SPECIFIED: 0,
+  BUSINESS: 8,
+  EDUCATION: 10,
+  ENTERTAINMENT: 26,
+  GAMING: 12,
+  LIFESTYLE: 13,
+  MUSIC: 14,
+  NEWS_AND_POLITICS: 15,
+  PHOTOGRAPHY: 16,
+  SCIENCE_AND_TECH: 25,
+  SOCIAL_AND_PEOPLE: 17,
+  SPORTS: 19,
+  TRAVEL_AND_LOCAL: 18
+};
+exports.contextType = {
+  MESSAGE: 'message',
+  STAGE: 'stage'
+};
+exports.deviceType = {
+  OTHER: 0,
+  BOT: 1,
+  IPHONE: 5,
+  IPAD: 6,
+  ANDROID: 7,
+  WEB: 8
+};
+exports.embedType = {
+  IMAGE_PREVIEW: 'imagePreview',
+  GROUP_PREVIEW: 'groupPreview',
+  LINK_PREVIEW: 'linkPreview'
+};
+exports.gender = {
+  NOT_SPECIFIED: 0,
+  MALE: 1,
+  FEMALE: 2
+};
+exports.language = {
+  NOT_SPECIFIED: 0,
+  ENGLISH: 1,
+  GERMAN: 3,
+  SPANISH: 4,
+  FRENCH: 6,
+  POLISH: 10,
+  CHINESE_SIMPLIFIED: 11,
+  RUSSIAN: 12,
+  ITALIAN: 13,
+  ARABIC: 14,
+  PERSIAN_FARSI: 15,
+  GREEK: 16,
+  PORTUGUESE: 17,
+  HINDI: 18,
+  JAPANESE: 19,
+  LATIN_SPANISH: 20,
+  SLOVAK: 21,
+  CZECH: 22,
+  DANISH: 24,
+  FINNISH: 25,
+  HUNGARIAN: 27,
+  BAHASA_INDONESIA: 28,
+  MALAY: 29,
+  DUTCH: 30,
+  NORWEGIAN: 31,
+  SWEDISH: 32,
+  THAI: 33,
+  TURKISH: 34,
+  VIETNAMESE: 35,
+  KOREAN: 36,
+  BRAZILIAN_PORTUGUESE: 37,
+  ESTONIAN: 39,
+  KAZAKH: 41,
+  LATVIAN: 42,
+  LITHUANIAN: 43,
+  UKRAINIAN: 44,
+  BULGARIAN: 45
+};
+exports.loginDevice = {
+  IPHONE: 'iphone',
+  IPAD: 'ipad',
+  ANDROID: 'android',
+  WEB: 'web'
+};
+exports.loginType = {
+  EMAIL: 'email',
+  GOOGLE: 'google',
+  FACEBOOK: 'facebook',
+  TWITTER: 'twitter',
+  SNAPCHAT: 'snapchat',
+  APPLE: 'apple'
+};
+exports.lookingFor = {
+  NOT_SPECIFIED: 0,
+  FRIENDSHIP: 1,
+  DATING: 2,
+  RELATIONSHIP: 4,
+  NETWORKING: 8
+};
+exports.messageFilter = {
+  OFF: 0,
+  RELAXED: 3,
+  RECOMMENDED: 2,
+  STRICT: 1
+};
+exports.messageType = {
+  TEXT_PLAIN: 'text/plain',
+  TEXT_HTML: 'text/html',
+  TEXT_IMAGE: 'text/image_link',
+  IMAGE_JPEG: 'image/jpeg',
+  IMAGE_GIF: 'image/gif',
+  AUDIO_AAC: 'audio/aac',
+  TEXT_VOICE: 'text/voice_link',
+  AUDIO_SPEEX: 'audio/x-speex',
+  IMAGE_JPEGHTML: 'image/jpeghtml',
+  APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
+  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: 'text/palringo-private-request-response'
+};
+exports.onlineState = {
+  OFFLINE: 0,
+  ONLINE: 1,
+  AWAY: 2,
+  INVISIBLE: 3,
+  BUSY: 5,
+  IDLE: 9
+};
+exports.privilege = {
+  SUBSCRIBER: 1,
+  BOT_TESTER: 1 << 1,
+  GAME_TESTER: 1 << 2,
+  CONTENT_SUBMITER: 1 << 3,
+  SELECTCLUB_1: 1 << 4,
+  ELITECLUB_1: 1 << 6,
+  VOLUNTEER: 1 << 9,
+  SELECTCLUB_2: 1 << 10,
+  ALPHA_TESTER: 1 << 11,
+  STAFF: 1 << 12,
+  TRANSLATOR: 1 << 13,
+  DEVELOPER: 1 << 14,
+  ELITECLUB_2: 1 << 17,
+  PEST: 1 << 18,
+  VALID_EMAIL: 1 << 19,
+  PREMIUM_ACCOUNT: 1 << 20,
+  VIP: 1 << 21,
+  ELITECLUB_3: 1 << 22,
+  USER_ADMIN: 1 << 24,
+  GROUP_ADMIN: 1 << 25,
+  BOT: 1 << 26,
+  ENTERTAINER: 1 << 29,
+  SHADOW_BANNED: 1 << 30
+};
+exports.relationship = {
+  NOT_SPECIFIED: 0,
+  SINGLE: 1,
+  RELATIONSHIP: 2,
+  ENGAGED: 3,
+  MARRIED: 4,
+  COMPLICATED: 5,
+  OPEN: 6
+};
+exports.retryMode = {
+  ALWAYS_FAIL: 0,
+  ALWAYS_RETRY: 1
+};
+exports.tipDirection = {
+  SENT: 'sent',
+  RECEIVED: 'received'
+};
+exports.tipPeriod = {
+  ALL_TIME: 'alltime',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month'
+};
+exports.tipType = {
+  CHARM: 'charm',
+  SUBSCRIBER: 'subscriber',
+  GROUP: 'group'
 };

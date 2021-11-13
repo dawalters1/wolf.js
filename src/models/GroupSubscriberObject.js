@@ -1,4 +1,4 @@
-const { capability } = require('@dawalters1/constants');
+const { capability } = require('../constants');
 const patch = require('../utils/Patch');
 
 class GroupSubscriber {

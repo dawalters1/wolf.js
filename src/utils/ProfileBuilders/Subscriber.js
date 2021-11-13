@@ -1,5 +1,5 @@
 const validator = require('../../validator');
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 const { commands } = require('../../constants');
 /**
  * Exposes the methods used to update the bots profiles

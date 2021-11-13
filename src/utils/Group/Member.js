@@ -1,6 +1,6 @@
 const validator = require('../../validator');
 
-const { capability, privilege } = require('@dawalters1/constants');
+const { capability, privilege } = require('../../constants');
 
 const checkCapability = (requiredCapability, subscriberCapability) => {
   switch (requiredCapability) {

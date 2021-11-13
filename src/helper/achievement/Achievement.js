@@ -5,7 +5,7 @@ const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
 const { commands } = require('../../constants');
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 const validator = require('../../validator');
 
 class Achievement extends BaseHelper {

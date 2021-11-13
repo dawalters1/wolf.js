@@ -1,5 +1,5 @@
 const validator = require('../../validator');
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 
 class Achievement {
   constructor (api) {

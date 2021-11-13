@@ -1,9 +1,7 @@
 const SubscriberObject = require('../../../../models/SubscriberObject');
 
 const crypto = require('crypto');
-const { events, commands } = require('../../../../constants');
-
-const { deviceType, loginType } = require('@dawalters1/constants');
+const { events, commands, deviceType, loginType } = require('../../../../constants');
 
 const onSuccess = async (api, reconnect = false) => {
   await Promise.all([

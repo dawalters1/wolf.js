@@ -1,6 +1,6 @@
 const patch = require('../utils/Patch');
 
-const { contextType } = require('@dawalters1/constants');
+const { contextType } = require('../constants');
 
 const toBaseMessage = (api, messageData) => {
   const message = {

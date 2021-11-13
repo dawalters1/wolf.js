@@ -9,7 +9,7 @@ const { commands } = require('../../constants');
 const validator = require('../../validator');
 const fileType = require('file-type');
 
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 const toLanguageKey = require('../../utils/ToLanguageKey');
 const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
 

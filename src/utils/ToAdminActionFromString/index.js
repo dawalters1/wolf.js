@@ -1,4 +1,4 @@
-const { adminAction } = require('@dawalters1/constants');
+const { adminAction } = require('../../constants');
 
 module.exports = (type) => {
   switch (type.toLowerCase()) {

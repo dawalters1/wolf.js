@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 const validator = require('../../validator');
 const { commands, events } = require('../../constants');
 
