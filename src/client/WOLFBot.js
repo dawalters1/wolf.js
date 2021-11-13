@@ -6,6 +6,8 @@ const { commands } = require('../constants');
 const validator = require('../validator');
 const constants = require('@dawalters1/constants');
 
+const SubscriberProfileBuilder = require('../utils/ProfileBuilders/Subscriber');
+
 const crypto = require('crypto');
 
 const EventEmitter = require('events').EventEmitter;
@@ -415,7 +417,7 @@ class WOLFBot extends EventEmitter {
   }
 
   updateProfile () {
-    // TODO
+    return new SubscriberProfileBuilder(this, this.currentSubscriber);
   }
 
   // #endregion

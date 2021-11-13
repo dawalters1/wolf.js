@@ -42,9 +42,7 @@ module.exports = async (api, body) => {
 
   return await api.emit(
     events.PRESENCE_UPDATE,
-    {
-      old: oldPresence,
-      new: body
-    }
+    oldPresence,
+    body
   );
 };

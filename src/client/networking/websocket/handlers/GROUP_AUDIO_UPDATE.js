@@ -13,9 +13,7 @@ module.exports = async (api, body) => {
 
   return api.emit(
     events.GROUP_AUDIO_UPDATE,
-    {
-      old: cached,
-      new: body
-    }
+    cached,
+    body
   );
 };

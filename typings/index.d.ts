@@ -1,5 +1,10 @@
 import type { Readable } from "stream";
 
+  
+export class Command {
+    public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
+}
+
 export class ResponseObject<T = undefined> {
     private constructor();
 
@@ -9,72 +14,6 @@ export class ResponseObject<T = undefined> {
 
     public success: Boolean;
 }
-
-export class IdHashObject{
-    public id: Number;
-    public hash: String;
-    /**
-     * Not always provided
-     */
-    public nickname: String;
-}
-
-//#region Message
-export class MessageOptionsObject {
-    public chunk: Boolean;
-    public chunkSize: Number;
-    public includeEmbeds: Boolean;
-}
-export class MessageResponseObject {
-    public uuid: String;
-    public timestamp: Number;
-}
-export class MessageEmbedObject{
-    public type: String;
-    public groupId: Number;
-    public url: String;
-    public title: String;
-    public image: Buffer;
-    public body: String;
-}
-export class MessageFormattingGroupLinkObject{
-    public start: Number;
-    public end: Number;
-    public groupId: String;
-}
-export class MessageFormattingLinkObject{
-    public start: Number;
-    public end: Number;
-    public url: String;
-}
-export class MessageFormattingObject {
-    public groupLinks: Array<MessageFormattingGroupLinkObject>;
-    public links: Array<MessageFormattingLinkObject>;
-}
-export class MessageMetadataObject{
-    public formatting: MessageFormattingObject;
-    public isDeleted: Boolean;
-    public isSpam: Boolean;
-    public isTipped: Boolean;
-}
-export class MessageEditObject{
-    public subscriberId: Number;
-    public timestamp: Number;
-}
-export class MessageObject {
-    public id: string;
-    public body: String;
-    public  sourceSubscriberId:  Number;
-    public  targetGroupId: Number;
-    public  embeds: Array<MessageEmbedObject>;
-    public  metadata: MessageMetadataObject;
-    public  isGroup: Boolean;
-    public  timestamp: Number;
-    public edited: MessageEditObject;
-    public type: String;
-    public isCommand: Boolean;
-}
-//#endregion
 
 //#region Command
 export class CommandObject {
@@ -132,7 +71,10 @@ export class AchievementCategoryObject {
     public id: Number;
     public name: String;
 }
-
+export class BlacklistItemObject{
+    public id: Number;
+    public regex: String
+}
 export class CharmSelectedObject{
     public position: Number;
     public charmId: Number;
@@ -326,6 +268,7 @@ export class GroupObject{
     public audioCount: GroupAudioCountObject;
     public inGroup: Boolean;
     public capabilities: Number;
+    public language: String;
 
     public toDisplayName(withId: Boolean): String;
     public sendMessage(content: String | Buffer, opts : MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
@@ -398,6 +341,84 @@ export class GroupStatsObject{
     public trendsDay:  Array<{ day: number, lineCount: Number}>
     public trendsHour: Array<{ hour: number, lineCount: Number}>
 }
+
+export class IdHashObject{
+    public id: Number;
+    public hash: String;
+    /**
+     * Not always provided
+     */
+    public nickname: String;
+}
+export class LinkMetadataObject{
+    public description: String; 
+    public domain: String; 
+    public imageSize: String; 
+    public imageUrl: String; 
+    public isOfficial: Boolean; 
+    public title: String
+}
+export class MessageSettingsObject{
+    public spamFilter: 
+    {
+        enabled: Boolean;
+        tier: Number
+    }
+}
+export class MessageOptionsObject {
+    public chunk: Boolean;
+    public chunkSize: Number;
+    public includeEmbeds: Boolean;
+}
+export class MessageResponseObject {
+    public uuid: String;
+    public timestamp: Number;
+}
+export class MessageEmbedObject{
+    public type: String;
+    public groupId: Number;
+    public url: String;
+    public title: String;
+    public image: Buffer;
+    public body: String;
+}
+export class MessageFormattingGroupLinkObject{
+    public start: Number;
+    public end: Number;
+    public groupId: String;
+}
+export class MessageFormattingLinkObject{
+    public start: Number;
+    public end: Number;
+    public url: String;
+}
+export class MessageFormattingObject {
+    public groupLinks: Array<MessageFormattingGroupLinkObject>;
+    public links: Array<MessageFormattingLinkObject>;
+}
+export class MessageMetadataObject{
+    public formatting: MessageFormattingObject;
+    public isDeleted: Boolean;
+    public isSpam: Boolean;
+    public isTipped: Boolean;
+}
+export class MessageEditObject{
+    public subscriberId: Number;
+    public timestamp: Number;
+}
+export class MessageObject {
+    public id: string;
+    public body: String;
+    public sourceSubscriberId:  Number;
+    public targetGroupId: Number;
+    public embeds: Array<MessageEmbedObject>;
+    public metadata: MessageMetadataObject;
+    public isGroup: Boolean;
+    public timestamp: Number;
+    public edited: MessageEditObject;
+    public type: String;
+    public isCommand: Boolean;
+}
 export class NotificationObject {
     public actions: 
     Array<
@@ -439,6 +460,13 @@ export class PhraseCountObject {
     public countByLanguage: { [key: string]: number}
     public total: Number;
 }
+export class SearchObject
+{
+    public type: String;
+    public id: Number; 
+    public hash: String;
+    public reason: String
+}
 export class StageGroupObject{
     public id: Number;
     public expireTime: Date;
@@ -455,7 +483,21 @@ export class StageClientUpdatedObject{
     public duration: Number;
     public sourceSubscriberId: Number;
 }
-
+export class SubscriberProfileBuilder {
+    private constructor(api: WOLFBot, subscriber: SubscriberObject);
+    public setNickname(nickname: String): SubscriberProfileBuilder;
+    public setAbout(about: String) : SubscriberProfileBuilder;
+    public setName(name: String): SubscriberProfileBuilder;
+    public setStatus(status: String) : SubscriberProfileBuilder;
+    public setLanguage(language: Number): SubscriberProfileBuilder;
+    public setRelationship(relationship: Number): SubscriberProfileBuilder;
+    public setGender(gener: Number): SubscriberProfileBuilder;
+    public setLookingFor(lookingFor: Number): SubscriberProfileBuilder;
+    public setUrls(urls: Array<String>): SubscriberProfileBuilder;
+    public addUrl(url: String): SubscriberProfileBuilder;
+    public removeUrl(url: string): SubscriberProfileBuilder;
+    public save(): Promise<ResponseObject>;
+}
 export class SubscriberObject {
     private constructor(api: WOLFBot, subscriber: SubscriberObject);
 
@@ -481,6 +523,7 @@ export class SubscriberObject {
     public privileges: Number;
     public reputation: Number;
     public status: String;
+    public language: String;
 }
 export class TipDetailsObject {
     id: Number;
@@ -625,7 +668,7 @@ export class WOLFBot {
     public messaging(): Messaging;
     public notification(): Notification;
     public phrase(): Phrase;
-   // public stage(): Stage;
+    public stage(): Stage;
     public store(): Store;
     public subscriber(): Subscriber;
     /**
@@ -635,7 +678,33 @@ export class WOLFBot {
     public tip(): Tipping;
     public tipping(): Tipping;
 
-    //public setSelectedCharms(charms: )//TODO;
+    public search(query:String): Promise<ResponseObject<Array<SearchObject>>>
+    public getLinkMetadata(link: String): Promise<ResponseObject<LinkMetadataObject>>;
+    public getLinkBlackList(requestNew?: Boolean): Promise<Array<BlacklistItemObject>>;
+    public getMessageSettings(): Promise<ResponseObject<MessageSettingsObject>>;
+    public setMessageSettings(messageFilterTier: Number): Promise<ResponseObject>;
+    public updateAvatar(avatar: Buffer): Promise<ResponseObject>;
+    public updateProfile(): SubscriberProfileBuilder;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use api.charm().set(charms)
+    */
+    public setSelectedCharms(charms: Array<CharmSelectedObject>): Promise<ResponseObject>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use api.charm().remove(charmIds)
+    */
+    public deleteCharms(charmIds: Number | Array<Number>): Promise<ResponseObject>;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use api.store().getBalance()
+    */
+    public getCreditBalance(): Number;    
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use api.messaging().getConversationList(timestamp)
+    */
+    public getConversationList(timestamp: Number): Promise<Array<MessageObject>>;
     
     public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
 }
@@ -909,6 +978,12 @@ export class Tipping extends BaseHelper {
 
 //#region interfaces - Borrowed from Discord.JS setup - https://github.com/discordjs/discord.js
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
+
+export interface commandCallBacks {
+    GROUP: 'group',
+    PRIVATE: 'private',
+    BOTH:'both',
+}
 export interface ClientEvents {
     connected: [void],
     connecting: [void],
@@ -918,9 +993,10 @@ export interface ClientEvents {
     groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
     groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
     groupAudioUpdate: [old: GroupAudioConfigObject, new: GroupAudioConfigObject],
-    groupEventCreate: [event: EventGroupObject],
-    groupEventUpdate: [old: EventGroupObject, new: EventGroupObject],
+    groupEventCreate: [group: GroupObject, event: EventGroupObject],
+    groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
     groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
+    groupMemberUpdate: [group: GroupObject, subscriber: SubscriberObject, subscriber: SubscriberObject],
     groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
     groupMessage: [message: MessageObject],
     groupMessageUpdate: [message: MessageObject],

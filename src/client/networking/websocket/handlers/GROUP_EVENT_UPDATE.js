@@ -6,12 +6,8 @@ module.exports = async (api, body) => {
 
   return api.emit(
     events.GROUP_EVENT_UPDATE,
-    {
-      group,
-      event: {
-        old: event,
-        new: await api.event().getById(body.id)
-      }
-    }
+    group,
+    event,
+    await api.event().getById(body.id)
   );
 };
