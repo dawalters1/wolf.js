@@ -35,9 +35,7 @@ module.exports = async (api, body) => {
 
   return api.emit(
     events.SUBSCRIBER_UPDATE,
-    {
-      old,
-      new: subscriber
-    }
+    old,
+    subscriber
   );
 };

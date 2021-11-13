@@ -9,9 +9,7 @@ module.exports = async (api, body) => {
 
   return api.emit(
     events.GROUP_UPDATE,
-    {
-      old: group,
-      new: await api.group().getById(body.id)
-    }
+    group,
+    await api.group().getById(body.id)
   );
 };
