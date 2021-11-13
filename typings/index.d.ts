@@ -190,6 +190,12 @@ export class EventObject {
     public shortDescription: String;
     public title: String;
 }
+export class GroupAdminActionObject{
+    public groupId: Number;
+    public sourceId: Number;
+    public targetId: Number;
+    public action: String;
+}
 export class GroupProfileBuilder {
     public setName(name: String): GroupProfileBuilder;
     public setTagLine(tagLine: String): GroupProfileBuilder;
@@ -205,7 +211,6 @@ export class GroupProfileBuilder {
     public create() : Promise<ResponseObject>;
     public save(): Promise<ResponseObject>;
 }
-
 export class GroupSubscriberAdditionalInfoObject{
     public hash: String;
     public nickname: String;
@@ -973,6 +978,115 @@ export class Tipping extends BaseHelper {
     public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSumamryObject>
 }
 
+export class AchievementUtility {
+    private constructor(api: WOLFBot);
+
+    public mapToCategories(achievements: Array<AchievementObject>, language: Language): Promise<Array<{id: Number, name: String, achievements: Array<AchievementObject>}>>;
+}
+export class ArrayUtility {
+    private constructor(api: WOLFBot);
+
+    public chunk(array: Array<any>, length: Number): Array<Array<any>>;
+}
+export class DiscoveryUtility {
+    private constructor(api: WOLFBot);
+
+    public getRecipeSections(language: Language, requestNew?: Boolean): Promise<Array<DiscoverySectionObject>>;
+}
+export class DownloadUtility {
+    private constructor(api: WOLFBot);
+
+    public file(url: String): Promise<Buffer>;
+}
+export class MemberUtility {
+    private constructor(api: WOLFBot);
+
+    public get(targetGroupId: Number, sourceSubscriberId: Number): GroupSubscriberObject;
+    /**
+    * @deprecated Will be removed in 1.0.0
+    * @use {@link hasCapability}
+    */
+    public checkPermissions(targetGroupId: Number, sourceSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
+    public hasCapability(targetGroupId: Number, sourceSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
+
+}
+export class GroupUtility{
+    private constructor(api: WOLFBot);
+
+    public member(): MemberUtility;
+    public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
+    public toDisplayName(group: GroupObject, excludeId?: Boolean): String;
+}
+export class NumberUtility {
+    private constructor(api: WOLFBot);
+
+    public toEnglishNumbers(arg: String|Number): Number | String;
+    public toArabicNumbers(arg: String|Number): Number| String;
+    public toPersianNumbers(arg: String |Number): Number | String;
+    public addCommas(arg: Number | String) : Number | String;
+}
+export class StringUtility{
+    private constructor(api: WOLFBot);
+
+    /**
+     * @param replacements - Example: { nickname: 'Martin', subscriberId: 1 }
+     */
+    public replace(string: String, replacements: { [key: string]: String|Number}): String;
+    public isEqual(sideA: String, sideB: String): Boolean;
+    public chunk(string: String, max?: Number, splitChar?: String, joinChar?: String): Array<String>;
+    public trimAds(string: String): String;
+    public isValudUrl(url: String): Boolean;
+}
+export class PrivilegeUtility{
+    private constructor(api: WOLFBot);
+
+    public has(sourceSubscriberId: Number, privs: Array<Number>|Number, requiresAll?: Boolean): Promise<Boolean>
+}
+export class SubscriberUtility {
+    private constructor(api: WOLFBot);
+
+    public privilege(): PrivilegeUtility;
+    public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
+    public toDisplayName(subscriber: SubscriberObject, trimAds?: Boolean, excludeId?: Boolean): String;
+    public hasCharms(subscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
+}
+export class TimerUtility{
+    private constructor(api: WOLFBot);
+    public initialise(handlers: Object, ...args: any): Promise<any>;
+    public add(name: String, handler: String, data: Object, duration: Number): Promise<Object>
+    public cancel(name: String): Promise<any>;
+    public get(name: String): Promise<Object>;
+    public delay(name: String, duration: Number): Promise<Object>
+}
+
+export class Utility {
+    private constructor(api: WOLFBot);
+
+    public achievement(): AchievementUtility;
+    public array(): ArrayUtility;
+    public discovery(): DiscoveryUtility;
+    public download(): DownloadUtility;
+    public group(): GroupUtility;
+    public number(): NumberUtility;
+    public string(): StringUtility;
+    public subscriber(): SubscriberUtility;
+    public timer(): TimerUtility;
+
+    public toReadableTime(language: String, milliseconds: Number): String;
+    public delay(duration: Number): Promise<void>;
+}
+
+export class Validator {
+    public isType(arg: any, type: String): Boolean;
+    public isNull(arg: any): Boolean;
+    public isNullOrUndefined(arg: any): Boolean;
+    public isNullOrWhitespace(arg: any): Boolean;
+    public isLessThanOrEqualZero(arg: Number): Boolean;
+    public isLessThanZero(arg: Number): Boolean;
+    public isValidNumber(arg: String | Number): Boolean;
+    public isValidDate(arg: Date | Number): Boolean;
+    public isBuffer(arg: Buffer | String): Boolean
+}
 //#endregion
 
 //#region enums
@@ -1186,13 +1300,11 @@ export enum TipType {
 //#region interfaces - Borrowed from Discord.JS setup - https=//github.com/discordjs/discord.js
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
 
-
-
 export interface ClientEvents {
     connected: [void],
     connecting: [void],
-    connectionError: [error: object],
-    connectionTimeOut: [error: object],
+    connectionError: [error: Error],
+    connectionTimeOut: [error: Error],
     disconnected: [reason: String],
     groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
     groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
@@ -1200,13 +1312,13 @@ export interface ClientEvents {
     groupEventCreate: [group: GroupObject, event: EventGroupObject],
     groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
     groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
-    groupMemberUpdate: [group: GroupObject, subscriber: SubscriberObject, subscriber: SubscriberObject],
+    groupMemberUpdate: [group: GroupObject, action: GroupAdminActionObject],
     groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
     groupMessage: [message: MessageObject],
     groupMessageUpdate: [message: MessageObject],
     groupTipAdd: [tip: object],
     groupUpdate: [old: GroupObject, new: GroupObject],
-    internalError: [],
+    internalError: [error: Error],
     joinedGroup: [group: GroupObject],
     leftGroup: [group: GroupObject],
     log: [log: string],
