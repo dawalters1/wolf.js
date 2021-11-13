@@ -511,12 +511,12 @@ export class EventObject {
 }
 export class EventHelper extends Helper {
     private constructor(api : WOLFBot);
-    public getGroupEvents(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    public getGroupEvents(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventObject>>;
     public getByIds(evnetIds: Number | Array<Number>, requestNew?: Boolean): Promise<Array<EventObject>>;
-    public createEvent(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<GroupObject>>;
-    public updateEvent(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<GroupObject>>;
+    public createEvent(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventObject>>;
+    public updateEvent(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventObject>>;
     public updateEventThumbnail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
-    public deleteEvent(targetGroupId: Number, eventId: Number) : Promise<ResponseObject<EventGroupObject>>;
+    public deleteEvent(targetGroupId: Number, eventId: Number) : Promise<ResponseObject<EventObject>>;
     public subscribeToEvent(eventId: Number): Promise<ResponseObject<EventGroupObject>>;
     public unsubscribeFromEvent(eventId: Number): Promise<ResponseObject>;
     public getEventSubscriptions(requestNew?: Boolean): Promise<Array<Object>>;
