@@ -4,7 +4,6 @@ import type { Readable } from "stream";
 export class Command {
     public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
 }
-
 export class ResponseObject<T = undefined> {
     private constructor();
 
@@ -21,7 +20,6 @@ export class CommandObject {
 }
 export class CommandHandler{
     private constructor();
-
     /**
      * Determine whether or not the message starts with a command
      * @param message - The message
@@ -42,8 +40,7 @@ export class CommandContextObject{
 
 //#endregion
 
-//#region Group 
-
+//#region Objects
 export class AchievementObject{
     public acquisitionPercentage: Number;
     public category: Number;
@@ -56,7 +53,6 @@ export class AchievementObject{
     public parentId: Number;
     public typeId: Number;
 }
-
 export class AchievementUnlockableObject{
     public id: Number;
     public additionalInfo: 
@@ -66,7 +62,6 @@ export class AchievementUnlockableObject{
         categoryId: Number 
     }
 }
-
 export class AchievementCategoryObject {
     public id: Number;
     public name: String;
@@ -87,7 +82,6 @@ export class CharmObject{
     public name: String;
     public productId: Number;
 }
-
 export class CharmSubscriberObject {
     public charmId: Number;
     public expireTime: Date;
@@ -109,7 +103,31 @@ export class CharmSubscriberSummaryObject{
     public giftCount: Number;
     public total: Number;
 }
-
+export class ConfigNetworkSettingsObject {
+    public retryMode: Number;
+    public retryAttempts: Number;
+}
+export class ConfigCommandSettingsObject {
+    public ignoreOfficialBots: Boolean;
+    public ignoreUnofficialBots: Boolean;
+}
+export class ConfigAppObject {
+    public developerId: Number;
+    public defaultLanguage: String;
+    public commandSettings: ConfigCommandSettingsObject;
+    public networkSettings: ConfigNetworkSettingsObject;
+}
+export class ConfigObject {
+    public keyword: String;
+    public app: ConfigAppObject;
+}
+export class ConfigOptionsObject {
+    public keyword: String;
+    public ignoreOfficialBots: Boolean;
+    public ignoreUnofficialBots: Boolean;
+    public developerId: Number;
+    public networking: ConfigNetworkSettingsObject;
+}
 export class DiscoveryRecipeObject{
     public type: String;
     public idList: Number;
@@ -346,7 +364,6 @@ export class GroupStatsObject{
     public trendsDay:  Array<{ day: number, lineCount: Number}>
     public trendsHour: Array<{ hour: number, lineCount: Number}>
 }
-
 export class IdHashObject{
     public id: Number;
     public hash: String;
@@ -656,63 +673,158 @@ export class WOLFBot {
     public constructor();
 
     public websocket: Websocket;
-    public multiMediaService(): MultiMediaService; 
-
+    private multiMediaService(): MultiMediaService; 
+    /**
+     * Exposes the commandHandler methods
+     */
     public commandHandler(): CommandHandler;
-
+    /**
+     * Exposes the achievement methods
+     */
     public achievement(): Achievement;
+    /**
+     * Exposes the authorization methods
+     */    
     public authorization(): Authorization;
+    /**
+     * Exposes the banned methods
+     */    
     public banned(): Banned;
+    /**
+     * Exposes the blocked methods
+     */    
     public blocked(): Blocked;
+    /**
+     * Exposes the charm methods
+     */        
     public charm(): Charm;
+    /**
+     * Exposes the contact methods
+     */  
     public contact(): Contact;
+    /**
+     * Exposes the discovery methods
+     */      
     public discovery(): Discovery;
+    /**
+     * Exposes the event methods
+     */          
     public event(): Event;
+    /**
+     * Exposes the group methods
+     */       
     public group(): Group;
+    /**
+     * Exposes the messaging methods
+     */          
     public messaging(): Messaging;
+    /**
+     * Exposes the notification methods
+     */     
     public notification(): Notification;
+    /**
+     * Exposes the phrase methods
+     */ 
     public phrase(): Phrase;
+    /**
+     * Exposes the stage methods
+     */ 
     public stage(): Stage;
+    /**
+     * Exposes the store methods
+     */     
     public store(): Store;
+    /**
+     * Exposes the subscriber methods
+     */ 
     public subscriber(): Subscriber;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link tipping}
-    */
+     * Exposes the tipping methods
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link tipping}
+     */
     public tip(): Tipping;
+    /**
+     * Exposes the tipping methods
+     */    
     public tipping(): Tipping;
 
+    /**
+     * Search group a group or user
+     * @param query - The term to look for
+     */
     public search(query: String): Promise<ResponseObject<Array<SearchObject>>>
+    /**
+     * Get information about a link
+     * @param link - The link to look up
+     */
     public getLinkMetadata(link: String): Promise<ResponseObject<LinkMetadataObject>>;
+    /**
+     * 
+     * @param requestNew (Default: False)- Whether or not to request new information from server
+     */
     public getLinkBlackList(requestNew?: Boolean): Promise<Array<BlacklistItemObject>>;
+    /**
+     * Get the bots message filter settings
+     */
     public getMessageSettings(): Promise<ResponseObject<MessageSettingsObject>>;
+    /**
+     * Set the bots message filtering settings
+     * @param messageFilterTier - The tier to set
+     */
     public setMessageSettings(messageFilterTier: MessageFilterTier): Promise<ResponseObject>;
+    /**
+     * Update the bots avatar
+     * @param avatar - The avatar 
+     */
     public updateAvatar(avatar: Buffer): Promise<ResponseObject>;
+    /**
+     * Update the bots profile
+     */
     public updateProfile(): SubscriberProfileBuilder;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use api.charm().set(charms)
-    */
+     * Set the charms that appear over the bots avatar
+     * @deprecated Will be removed in 1.0.0
+     * @use api.charm().set(charms)
+     */
     public setSelectedCharms(charms: Array<CharmSelectedObject>): Promise<ResponseObject>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use api.charm().remove(charmIds)
-    */
+     * Delete charms from your active or expired list
+     * @deprecated Will be removed in 1.0.0
+     * @use api.charm().remove(charmIds)
+     */
     public deleteCharms(charmIds: Number | Array<Number>): Promise<ResponseObject>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use api.store().getBalance()
-    */
+     * Get the bots credit balance
+     * @deprecated Will be removed in 1.0.0
+     * @use api.store().getBalance()
+     */
     public getCreditBalance(): Number;    
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use api.messaging().getConversationList(timestamp)
-    */
+     * Get the bots chat list
+     * @deprecated Will be removed in 1.0.0
+     * @use api.messaging().getConversationList(timestamp)
+     */
     public getConversationList(timestamp: Number): Promise<Array<MessageObject>>;
-    
+    /**
+     * Handle an event 
+     * @param event - The event string
+     * @param listener - The event handler
+     */
     public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
-}
 
+    /**
+     * The bots yaml configuration 
+     */
+    public config: ConfigObject;
+
+    /**
+     * Config Settings
+     */
+    public options: ConfigOptionsObject;
+
+    public currentSubscriber: SubscriberObject;
+}
 export abstract class BaseHelper {
     public constructor(api: WOLFBot);
 
@@ -723,374 +835,1176 @@ export abstract class BaseHelper {
     public _process(...args: any): void;
 
 }
-
 export class AchievementSubscriber{
     private constructor(api: WOLFBot);
 
+    /**
+     * Get achievements belonging to a subscriber
+     * @param subscriberId - The id of the subscriber
+     */
     public getById(subscriberId: Number): Promise<Array<AchievementUnlockableObject>>
 }
-
 export class AchievementGroup{
     private constructor(api: WOLFBot);
 
+    /**
+     * Get achievements belonging to a group
+     * @param targetGroupId - The id of the group
+     */
     public getById(targetGroupId: Number): Promise<Array<AchievementUnlockableObject>>
 }
-
 export class Achievement extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Exposes the group achievement methods
+     */
     public group() : AchievementGroup;
+    /**
+     * Exposes the subscriber achievement methods
+     */
     public subscriber(): AchievementSubscriber;
+    /**
+     * Get the achievement category list
+     * @param language - The language of the categories
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getCategoryList(language: Language, requestNew?: Boolean): Promise<Array<AchievementCategoryObject>>;
+    /**
+     * Get an acheivement
+     * @param achievementId - The id of the achievement
+     * @param language - The language of the achievement
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getById(achievementId: Number, language: Language, requestNew?: Boolean): Promise<AchievementObject>;
+    /**
+     * Get multiple acheivements
+     * @param achievementIds - The ids of the achievements
+     * @param language - The language of the achievements
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getByIds(achievementIds: Array<Number>, language: Language, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
 }
-
 export class Authorization extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the list of authorized users
+     */
     public list(): Promise<Array<Number>>;
+    /**
+     * Clear the list of authorized users
+     */
     public clear(): void;
+    /**
+     * Check whether or not a subscriber is authorized
+     * @param subscriberIds - The id or ids of the subscribers to check
+     */
     public isAuthorized(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Authorize a subscriber (Subscriber bypasses permission checks)
+     * @param subscriberIds - The id or ids of the subscribers to authorize
+     */
     public authorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Unauthorize a subscriber (Subscriber no longer bypasses permission checks)
+     * @param subscriberIds - The id or ids of the subscribers to unauthorize
+     */
     public unauthorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
 }
 export class Banned extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the list of banned users
+     */
     public list(): Promise<Array<Number>>;
+    /**
+     * Clear the list of banned users
+     */
     public clear(): void;
+    /**
+     * Check whether or not a subscriber is banned
+     * @param subscriberIds - The id or ids of the subscribers to check
+     */
     public isBanned(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Ban a subscriber (Subscriber wont be able to use commands)
+     * @param subscriberIds - The id or ids of the subscribers to ban
+     */
     public ban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Unban a subscriber (Subscriber will be able to use commands)
+     * @param subscriberIds - The id or ids of the subscribers to unauthorize
+     */    
     public unban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
 }
 export class Blocked extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the bots blocked list
+     */
     public list(): Promise<Array<GroupSubscriberObject>>;
+    /**
+     * Check whether or not a subscriber is blocked
+     * @param subscriberIds - The id or ids of the subscribers to check
+     */
     public isBlocked(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Block a subscriber (They wont be able to PM the bot)
+     * @param subscriberId - The id of the subscriber to block
+     */
     public block(subscriberId: Number) :  Promise<ResponseObject>
-    public unban(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+    /**
+     * Unblock a subscriber (They will be able to PM the bot)
+     * @param subscriberId - The id of the subscriber to block
+     */
+    public unblock(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
 }
 export class Charm extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the list of charms
+     * @param language - The language of charms
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public list(language: Language, requestNew?: Boolean): Promise<Array<CharmObject>>;
+    /**
+     * Get a charm
+     * @param charmId - The id of the charm
+     * @param language - The language of the charm
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getById(charmId: Number, language: Language, requestNew?: Boolean): Promise<CharmObject>;
+    /**
+     * Get multiple charms
+     * @param charmIds - The ids of the charms
+     * @param language - The language of the charms
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getByIds(charmIds: Number | Array<Number>, language: Language, requestNew?: Boolean): Promise<CharmObject | Array<CharmObject>>
+    /**
+     * Get the charms & how many of each a subscriber has
+     * @param subscriberId - The id of the subscriber
+     */
     public getSubscriberSumamry(subscriberId: Number): Promise<CharmSubscriberSummaryObject>;
+    /**
+     * Get the gifting statistics of a subscriber
+     * @param subscriberId - The id of the subscriber
+     */
     public getSubscriberStatistics(subscriberId: Number): Promise<CharmSubscriberStatisticsObject>;
+    /**
+     * Get the list of active charms a subscriber has
+     * @param subscriberId - The id of the subscriber
+     * @param limit - (Default: 15) How many to request at one time
+     * @param offset - Position of where to request from
+     */
     public getSubscriberActiveList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
+    /**
+     * Get the list of expired charms a subscriber has
+     * @param subscriberId - The id of the subscriber
+     * @param limit - (Default: 15) How many to request at one time
+     * @param offset - Position of where to request from
+     */    
     public getSubscriberExpiredList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
+    /**
+     * Delete charms from your active or expired list
+     */
     public remove(charmIds: Number | Array<Number>): Promise<ResponseObject>;
+    /**
+     * Set the charms that appear over the bots avatar
+     */    
     public set(charms: CharmSelectedObject | Array<CharmSelectedObject>): Promise<ResponseObject>;
 }
 export class Contact extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the bots contact list
+     */
     public list(): Promise<Array<GroupSubscriberObject>>;
+    /**
+     * Check whether or not a subscriber is a contact
+     * @param subscriberIds - The id or ids of the subscribers to check
+     */
     public isContact(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+    /**
+     * Add a subscriber as a contact
+     * @param subscriberId - The id of the subscriber
+     */
     public add(subscriberId: Number) :  Promise<ResponseObject>
+    /**
+     * Remove a subscriber as a contact
+     * @param subscriberId - The id of the subscriber
+     */    
     public remove(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
 }
-
 export class Discovery extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Get the discovery section
+     * @param language - The language of the discovery list
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getByLanguage(language: Language, requestNew?: Boolean): Promise<DiscoveryObject>;
+    /**
+     * Get the idList of events & groups belonging to a discovery recipe id
+     * @param id - The id of the recipe
+     * @param language - The language of the discovery page
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getRecipe(id: Number, language: Language, requestNew?: Boolean): Promise<DiscoveryRecipeObject>;
+    /**
+     * Get the idList of events & groups belonging to a discovery section
+     * @param id - The id of the recipe
+     * @param language - The language of the discovery page
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getRecipeBySectionId(id: Number, language: Language, requestNew?: Boolean): Promise<DiscoverySectionObject>;
 }
-
 export class Event extends BaseHelper {
     private constructor(api: WOLFBot);
 
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link create}
-    */
+     * Create an event for a group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link create}
+     * @param targetGroupId - The id of the group
+     * @param title - The name of the event
+     * @param startsAt - The time the event starts
+     * @param endsAt - The time the event ends
+     * @param shortDescription - A short description about the event
+     * @param longDescription - A longer description about the event
+     * @param thumbnail - The thumbnail of the event
+     */
     public createEvent(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    /**
+     * Create an event for a group
+     * @param targetGroupId - The id of the group
+     * @param title - The name of the event
+     * @param startsAt - The time the event starts
+     * @param endsAt - The time the event ends
+     * @param shortDescription - A short description about the event
+     * @param longDescription - A longer description about the event
+     * @param thumbnail - The thumbnail of the event
+     */
     public create(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link edit}
-    */
+     * Edit an event belonging to a group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link edit}
+     * @param targetGroupId - The id of the group the event belongs too
+     * @param eventId - The id of the event
+     * @param title - The name of the event
+     * @param startsAt - The time the event starts
+     * @param endsAt - The time the event ends
+     * @param shortDescription - A short description about the event
+     * @param longDescription - A longer description about the event
+     * @param imageUrl - The existing URL for the event thumbnail
+     * @param thumbnail - The new thumbnail of the event
+     */
     public editEvent(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
+    /**
+     * Edit an event belonging to a group
+     * @param targetGroupId - The id of the group the event belongs too
+     * @param eventId - The id of the event
+     * @param title - The name of the event
+     * @param startsAt - The time the event starts
+     * @param endsAt - The time the event ends
+     * @param shortDescription - A short description about the event
+     * @param longDescription - A longer description about the event
+     * @param imageUrl - The existing URL for the event thumbnail
+     * @param thumbnail - The new thumbnail of the event
+     */
     public edit(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link updateThumbnail}
-    */
+     * Update an events thumbnail
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link updateThumbnail}
+     * @param eventId - The id of the event to delete
+     * @param thumbnail - The new thumbnail of the event
+     */
     public updateEventThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
+    /**
+     * Update an events thumbnail
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link updateThumbnail}
+     * @param eventId - The id of the event to delete
+     * @param thumbnail - The new thumbnail of the event
+     */    
     public updateThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link remove}
-    */
+     * Delete an event 
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link remove}
+     * @param targetGroupId - The id of the group the event belongs too
+     * @param eventId - The id of the event
+     */
     public deleteEvent(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
+    /**
+     * Delete an event 
+     * @param targetGroupId - The id of the group the event belongs too
+     * @param eventId - The id of the event
+     */
     public remove(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
+    /**
+     * Get an event 
+     * @param eventId - The id of the event
+     * @param requestNew - Whether or not to request new data from the server
+     */    
     public getById(eventId: Number, requestNew?: Boolean): Promise<EventGroupObject>;
+    /**
+     * Get multiple events 
+     * @param eventIds - The ids of the events
+     * @param requestNew - Whether or not to request new data from the server
+     */  
     public getByIds(eventIds: Number|Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link getGroupEventList}
-    */
+     * Get the events list for a group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getGroupEventList}
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getGroupEvents(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    /**
+     * Get the events list for a group
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getGroupEventList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link getSubscriptionList}
-    */
+     * Get the bots event subscription list
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getSubscriptionList}
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getEventSubscriptions(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
+    /**
+     * Get the bots event subscription list
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getSubscriptionList(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link getGroupEventList}
-    */
+     * Subscribe to an event
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getGroupEventList}
+     * @param eventId - The id of the event
+     */
     public subscribeToEvent(eventId: Number): Promise<ResponseObject>;
+    /**
+     * Subscribe to an event
+     * @param eventId - The id of the event
+     */
     public subscribe(eventId: Number): Promise<ResponseObject>;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link unsubscribe}
-    */
-     public unsubscribeFromEvent(eventId: Number): Promise<ResponseObject>;
-     public unsubscribe(eventId: Number): Promise<ResponseObject>;              
+     * Unsubscribe to an event
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link unsubscribe}
+     * @param eventId - The id of the event
+     */
+    public unsubscribeFromEvent(eventId: Number): Promise<ResponseObject>;
+    /**
+     * Unsubscribe to an event
+     * @param eventId - The id of the event
+     */
+    public unsubscribe(eventId: Number): Promise<ResponseObject>;              
 }
-
 export class Group extends BaseHelper {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get the list of groups the bot is in
+     */
     public list(): Promise<Array<GroupObject>>;
+    /**
+     * Get a group
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getById(targetGroupId: Number, requestNew?: Boolean): Promise<GroupObject>;
+    /**
+     * Get multiple groups
+     * @param targetGroupIds - The ids of the groups
+     * @param requestNew - Whether or not to request new data from the server
+     */    
     public getByIds(targetGroupIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<GroupObject>>;
+    /**
+     * 
+     * @param targetGroupName - The name of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getByName(targetGroupName: String, requestNew?: Boolean): Promise<GroupObject>;
+    /**
+     * Join a group
+     * @param targetGroupId - The id of the group
+     * @param password - The password of the group
+     */
     public joinById(targetGroupId: Number, password?: String): Promise<ResponseObject>;
+    /**
+     * Join a group
+     * @param targetGroupName - The name of the group
+     * @param password - The password of the group
+     */    
     public joinByName(targetGroupName: String, password?: String): Promise<ResponseObject>
+    /**
+     * Leave a group
+     * @param targetGroupId - The id of the group
+     */
     public leaveById(targetGroupId: Number): Promise<ResponseObject>;
+    /**
+     * Leave a group
+     * @param targetGroupName - The name of the group
+     */       
     public leaveByName(targetGroupName: String): Promise<ResponseObject>
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link getChatHistory}
-    */
+     * Get the chat history of a group 
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getChatHistory}
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp of the last message
+     * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+     */
     public getHistory(targetGroupId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    /**
+     * Get the chat history of a group 
+     * @param targetGroupId - The id of the group
+     * @param chronological - Whether or not to return in chronological order
+     * @param timestamp - The timestamp of the last message
+     * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+     */
     public getChatHistory(targetGroupId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    /**
+     * Get the groups member list
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getSubscriberList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupSubscriberObject>>;
+    /**
+     * Get the groups chat stats
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getStats(targetGroupId: Number, requestNew?: Boolean): Promise<GroupStatsObject>
+    /**
+     * Create a group
+     */
     public create(): GroupProfileBuilder;
+    /**
+     * Update a group
+     * @param group - The group to update
+     */
     public update(group: GroupObject): GroupProfileBuilder;
+    /**
+     * Update a groups avatar
+     * @param targetGroupId - The id of the group
+     * @param avatar - The new avatar
+     */
     public updateAvatar(targetGroupId: Number, avatar: Buffer): Promise<ResponseObject>;
+    /**
+     * Update a groups capabilities
+     * @param targetGroupId - The id of the group
+     * @param targetSubscriberId - The id of the subscriber
+     * @param capabilities - The new capabilities
+     */
     public updateSubscriber(targetGroupId: Number, targetSubscriberId: Number, capabilities: AdminAction): Promise<ResponseObject>
 }
-
 export class Messaging extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Send a group message
+     * @param targetGroupId - The id of the group
+     * @param content - The text, image/audio buffer 
+     * @param opts - The sending options (Text Only)
+     */
     public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
-    public sendPrivateMessage(sourceSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+    
+    /**
+     * Send a private message
+     * @param targetSubscriberId - The id of the subscriber
+     * @param content - The text, image/audio buffer 
+     * @param opts - The sending options (Text Only)
+     */   
+    public sendPrivateMessage(targetSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+    /**
+     * Send a message using command or message
+     * @param commandOrMessage - The command or message to respond too
+     * @param content - The text, image/audio buffer 
+     * @param opts - The sending options (Text Only)
+     */
     public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+    /**
+     * Accept a chat request
+     * @param subscriberId - The id of the subscriber
+     */
     public acceptPrivateMessageRequest(subscriberId :Number): Promise<ResponseObject<MessageResponseObject>>;
+    /**
+     * Delete a group message
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp belonging to the message
+     */
     public deleteGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+    /**
+     * Restore a deleted message
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp belonging to the message
+     */
     public restoreGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+    /**
+     * Get the last 10 actions done on a message
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp belonging to the message
+     */
     public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;
+    /**
+     * Watch for a message using specific paramaters
+     * @param predict - The paramaters ((message)=>message.isGroup && message.sourceSubscriberId === 80280172)
+     * @param timeout - How long until the subscription ends (Default: Infinite)
+     */
     public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<MessageObject>;
+    /**
+     * Watch for a message from a specific group
+     * @param targetGroupId - The id of the group
+     * @param timeout - How long until the subscription ends (Default: Infinite)
+     */
     public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
+    /**
+     * Watch for a message from a specific subscriber
+     * @param sourceSubscriberId - The id of the subscriber
+     * @param timeout - How long until the subscription ends (Default: Infinite)
+     */    
     public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+    /**
+     * Watch for a message from a specific group and subscriber
+     * @param targetGroupId - The id of the group
+     * @param sourceSubscriberId - The id of the subscriber
+     * @param timeout - How long until the subscription ends (Default: Infinite)
+     */  
     public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
 }
-
 export class Notification extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Request the notifications list
+     * @param language - The language of the notifications
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public list(language: Language, requestNew?: Boolean) : Promise<Array<NotificationObject>>;
+    /**
+     * Clears the notification list (All languages)
+     */
     public clear(): Promise<ResponseObject>;
+    /**
+     * Subscribe to new notifications (10 minute checks)
+     * @param language - The id of the notifications
+     */
     public subscribe(language: Language): Promise<void>;
+    /**
+     * Unsubscribe from new notifications
+     * @param language - The id of the notifications
+     */
     public unsubscriber(language: Language): Promise<void>;
 }
-
-
 export class Phrase extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Get the list of phrases
+     */
     public list(): Array<PhraseObject>;
+    /**
+     * Get the count of phrases per language and overall
+     */
     public count(): Promise<PhraseCountObject>;
+    /**
+     * Clear the list of phrases
+     */
     public clear(): Promise<void>;
+    /**
+     * Load phrases into the bot
+     * @param phrases - The phrases to load
+     */
     public load(phrases: Array<PhraseObject>): Promise<void>;
+    /**
+     * Get the list of languages
+     */
     public getLanguageList(): Promise<Array<String>>;
+    /**
+     * Get all phrases with a specific name
+     * @param name - The phrase name
+     */
     public getAllByName(name: String): Array<PhraseObject>;
-    public getByLanguageAndName(language: String, Name: String): String;
-    public getByCommandAndName(command: CommandObject, Name: String): String;
+    /**
+     * Get a specific phrase by language and name
+     * @param language - The language of the phrase
+     * @param name - The phrase name
+     */
+    public getByLanguageAndName(language: String, name: String): String;
+    /**
+     * Get a specific phrase using command and name
+     * @param command - The command 
+     * @param name - The phrase name
+     */
+    public getByCommandAndName(command: CommandObject, name: String): String;
+    /**
+     * Check whether or not a users input is a specific phrase
+     * @param name - The phrase name
+     * @param value - The user input string
+     */
     public isRequestedPhrase(name: String, value: String): Boolean;
 }
 export class Stage extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Get the groups audio configuration settings
+     * @param targetGroupId - The id of the group
+     * @param requestNew 
+     */
     public getSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
+    /**
+     * Get the list of publicly available stages
+     * @param requestNew 
+     */
     public getStages(requestNew?: Boolean): Promise<Array<StageObject>>;
+    /**
+     * Get the list of stages available to group
+     * @param targetGroupId - The id of the group
+     * @param requestNew 
+     */
     public getStagesForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
+    /**
+     * Get the slots for a group
+     * @param targetGroupId - The id of the group
+     * @param requestNew 
+     */
     public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
+    /**
+     * Update a slots mute state
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot
+     * @param muted - Whether or not the slot is muted
+     */
     public updateSlotMuteState(targetGroupId: Number, slotId: Number, muted: Boolean): Promise<ResponseObject>;
+    /**
+     * Update a slots lock state
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot
+     * @param locked - Whether or not the slot is locked
+     */
     public updateSlotLockState(targetGroupId: Number, slotId: Number, locked: Boolean): Promise<ResponseObject>;
+    /**
+     * Leave a slot
+     * @param targetGroupId - The id of the group
+     */
     public leaveSlot(targetGroupId: Number): Promise<ResponseObject>;
+    /**
+     * Kick a subscriber from a slot
+     * @param targetGroupId - The group Id
+     * @param slotId - The slot Id
+     */
     public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
+    /**
+     * Join a slot
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot
+     * @param sdp - The sdp (Leave empty for internal handling)
+     */
     public joinSlot(targetGroupId :Number, slotId: Number, sdp?:String): Promise<ResponseObject>;
+    /**
+     * Listen to a slot
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot
+     * @param sdp - The sdp belonging to the slot
+     */
     public consumeSlot(targetGroupId :Number, slotId: Number, sdp: String): Promise<ResponseObject>;
+    /**
+     * Broadcast in a group
+     * @param targetGroupId - The id of the group
+     * @param data - The audio stream
+     */
     public play(targetGroupId: Number, data: Readable): void;
+    /**
+     * Pause the broadcast of a group
+     * @param targetGroupId - The id of the group
+     */
     public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    /**
+     * Resume a broadcast of a group
+     * @param targetGroupId - The id of the group
+     */
     public resume(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    /**
+     * Stop a broadcast of a group
+     * @param targetGroupId - The id of the group
+     */
     public stop(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    /**
+     * Check whether or not the client is ready to broadcast
+     * @param targetGroupId - The id of the group
+     */
     public isReady(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Check whether or not the client is paused
+     * @param targetGroupId - The id of the group
+     */
     public isPaused(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Check whether or not the client is playing
+     * @param targetGroupId - The id of the group
+     */
     public isPlaying(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Check whether or not the client is connecting
+     * @param targetGroupId - The id of the group
+     */
     public isConnecting(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Check whether or not the client is connected
+     * @param targetGroupId - The id of the group
+     */
     public isConnected(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Get the current broadcast duration
+     * @param targetGroupId - The id of the group
+     */
     public duration(targetGroupId: Number): Promise<Number>;
+    /**
+     * Check whether or not a client exists for a group
+     * @param targetGroupId - The id of the group
+     */
     public hasClient(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Get the slot id the bot occupies for a group
+     * @param targetGroupId - The id of the group
+     */
     public slotId(targetGroupId: Number): Promise<Number>;
 }
 export class Store extends BaseHelper {
     private constructor(api : WOLFBot);
 
+    /**
+     * Get the credit balance
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getBalance(requestNew?: Boolean) : Number;
 }
-
 export class Subscriber extends BaseHelper {
     private constructor(api : WOLFBot);
 
-    public getById(subscriberId: Number, requestNew?: Boolean): Promise<SubscriberObject>;
-    public getByIds(targetGroupIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link getChatHistory}
-    */
+     * Get a subscriber
+     * @param subscriberId - The id of the subscriber
+     * @param requestNew - Whether or not to request new data from the server
+     */
+    public getById(subscriberId: Number, requestNew?: Boolean): Promise<SubscriberObject>;
+    /**
+     * Get multiple subscribers
+     * @param subscriberIds - The id or ids of the subscriber
+     * @param requestNew - Whether or not to request new data from the server
+     */
+    public getByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
+    /**
+     * Get the chat history of a subscriber 
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getChatHistory}
+     * @param subscriberId - The id of the subscriber
+     * @param timestamp - The timestamp of the last message
+     * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+     */
     public getHistory(subscriberId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
+    /**
+     * Get the chat history of a subscriberId 
+     * @param subscriberId - The id of the subscriberId
+     * @param chronological - Whether or not to return in chronological order
+     * @param timestamp - The timestamp of the last message
+     * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+     */
     public getChatHistory(subscriberId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
 }
-
 export class Tipping extends BaseHelper {
     private constructor(api : WOLFBot);
     
+    /**
+     * Add a tip to a message
+     * @param subscriberId - The id of the subscriber
+     * @param targetGroupId - The id of the group
+     * @param context - The context of the tip
+     * @param charms - The charms to give
+     */
     public tip(subscriberId: Number, targetGroupId: Number, context: TipContextObject, charms: Array<TipCharmObject>): Promise<ResponseObject>;
+    /**
+     * Get tipping details for a message
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp of the message
+     * @param limit - How many tips to return
+     * @param offset - The index where return tips should start
+     */
     public getDetails(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<TipDetailsObject>>;
+    /**
+     * Get tipping summary for a message
+     * @param targetGroupId - The id of the group
+     * @param timestamp - The timestamp of the message
+     * @param limit - How many tips to return
+     * @param offset - The index where return tips should start
+     */    
     public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<{ [key: number]: ResponseObject<TipSummaryObject>}>>
+    /**
+     * Get group tipping leaderboard
+     * @param targetGroupId - The id of the group
+     * @param tipPeriod - The tipping period
+     * @param tipType - The type of tips
+     * @param tipDirection - The direction of tips sent/received
+     */  
     public getGroupLeaderboard(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardObject>
+    /**
+     * Get group tipping leaderboard summary
+     * @param targetGroupId - The id of the group
+     * @param tipPeriod - The tipping period
+     * @param tipType - The type of tips
+     * @param tipDirection - The direction of tips sent/received
+     */    
     public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSumamryObject>
+    /**
+     * Get global tipping leaderboard
+     * @param tipPeriod - The tipping period
+     * @param tipType - The type of tips
+     * @param tipDirection - The direction of tips sent/received
+     */
     public getGlobalLeaderboard (tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardObject>
+    /**
+     * Get global tipping leaderboard summary
+     * @param tipPeriod - The tipping period
+     */    
     public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSumamryObject>
 }
-
 export class AchievementUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Map achievements to their correct category
+     * @param achievements - The achievements to map
+     * @param language - The language of the achievements
+     */
     public mapToCategories(achievements: Array<AchievementObject>, language: Language): Promise<Array<{id: Number, name: String, achievements: Array<AchievementObject>}>>;
 }
 export class ArrayUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Chunk an array into smaller arrays
+     * @param array - The array
+     * @param length - How long each array should be
+     */
     public chunk(array: Array<any>, length: Number): Array<Array<any>>;
 }
 export class DiscoveryUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Get all sections from the discovery page that contain a recipe id
+     * @param language - The language of the discovery page
+     * @param requestNew - Whether or not to request new data from the server
+     */
     public getRecipeSections(language: Language, requestNew?: Boolean): Promise<Array<DiscoverySectionObject>>;
 }
 export class DownloadUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Download a file from url
+     * @param url - The url
+     */
     public file(url: String): Promise<Buffer>;
 }
 export class MemberUtility {
     private constructor(api: WOLFBot);
 
-    public get(targetGroupId: Number, sourceSubscriberId: Number): GroupSubscriberObject;
     /**
-    * @deprecated Will be removed in 1.0.0
-    * @use {@link hasCapability}
+     * Get a group member
+     * @param targetGroupId - The id of the group
+     * @param targetSubscriberId - The id of the subscriber
+     */
+    public get(targetGroupId: Number, targetSubscriberId: Number): GroupSubscriberObject;
+    /**     
+     * Check whether or not a subscriber has the capability to use a command
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link hasCapability}
+     * @param targetGroupId - The id of the group
+     * @param targetSubscriberId - The id of the subscriber
+     * @param requiredCapability - The capability required
+     * @param checkStaff - Whether or not to allow staff to bypass check
+     * @param includeAuthorizedSubscribers - Whether or not to allow authorized users to bypass check
     */
-    public checkPermissions(targetGroupId: Number, sourceSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
-    public hasCapability(targetGroupId: Number, sourceSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
-
+    public checkPermissions(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
+    /**
+     * Check whether or not a subscriber has the capability to use a command
+     * @param targetGroupId - The id of the group
+     * @param targetSubscriberId - The id of the subscriber
+     * @param requiredCapability - The capability required
+     * @param checkStaff - Whether or not to allow staff to bypass check
+     * @param includeAuthorizedSubscribers - Whether or not to allow authorized users to bypass check
+     */
+    public hasCapability(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
 }
 export class GroupUtility{
     private constructor(api: WOLFBot);
 
+    /**
+     * Exposes the member methods
+     */
     public member(): MemberUtility;
-    public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
+    /**
+     * Get a groups avatar
+     * @param targetGroupId - The id of the group
+     * @param size - The size of the image
+     */
+    public getAvatar(targetGroupId: Number, size: Number): Promise<Buffer>;
+    /**
+     * Convert group details into [groupName] (groupId) or [groupName]
+     * @param group - The group
+     * @param excludeId - Whether or not to include the groups ID
+     */
     public toDisplayName(group: GroupObject, excludeId?: Boolean): String;
 }
 export class NumberUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Convert all numbers to english
+     * @param arg - The string or number to convert
+     */
     public toEnglishNumbers(arg: String|Number): Number | String;
+    /**
+     * Convert all numbers to arabic
+     * @param arg - The string or number to convert
+     */    
     public toArabicNumbers(arg: String|Number): Number| String;
+    /**
+     * Convert all numbers to persian
+     * @param arg - The string or number to convert
+     */        
     public toPersianNumbers(arg: String |Number): Number | String;
+    /**
+     * Add commas to a number
+     * @param arg The string or number
+     */
     public addCommas(arg: Number | String) : Number | String;
 }
 export class StringUtility{
     private constructor(api: WOLFBot);
 
     /**
+     * Replace placeholders with appropriate data
+     * @param string - The string to replace
      * @param replacements - Example: { nickname: 'Martin', subscriberId: 1 }
      */
     public replace(string: String, replacements: { [key: string]: String|Number}): String;
+    /**
+     * Check whether or not two strings are the same
+     * @param sideA - The first string
+     * @param sideB - The second string
+     */
     public isEqual(sideA: String, sideB: String): Boolean;
+    /**
+     * Check a string into an array of smaller strings
+     * @param string - The string to chunk
+     * @param max - The length of the chunk
+     * @param splitChar - The char to split at
+     * @param joinChar - The char to join with
+     */
     public chunk(string: String, max?: Number, splitChar?: String, joinChar?: String): Array<String>;
+    /**
+     * Remove ads from a string
+     * @param string - The string
+     */
     public trimAds(string: String): String;
+    /**
+     * Check whether or not a url is valid
+     * @param url - The url to check
+     */
     public isValudUrl(url: String): Boolean;
 }
 export class PrivilegeUtility{
     private constructor(api: WOLFBot);
 
-    public has(sourceSubscriberId: Number, privs: Array<Number>|Number, requiresAll?: Boolean): Promise<Boolean>
+    /**
+     * Check whether or not a subscriber has a privilege or privileges
+     * @param targetSubscriberId - The id of the subscriber
+     * @param privs - The privileges to check
+     * @param requiresAll - Whether or not a subscriber should have all privileges provided
+     */
+    public has(targetSubscriberId: Number, privs: Array<Number>|Number, requiresAll?: Boolean): Promise<Boolean>
 }
 export class SubscriberUtility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Exposes the privilege methods
+     */
     public privilege(): PrivilegeUtility;
+    /**
+     * Get a subscriber avatar
+     * @param subscriberId - The id of the group
+     * @param size - The size of the image
+     */    
     public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
+    /**
+     Convert group details into nickname (id) or nickname
+     * @param subscriber - The subscriber
+     * @param trimAds - Whether or not to trim ads from the nickname
+     * @param excludeId - Whether or not to show the subscribers id
+     */    
     public toDisplayName(subscriber: SubscriberObject, trimAds?: Boolean, excludeId?: Boolean): String;
-    public hasCharms(subscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
+    /**
+     * Check whether or not a subscriber has a charm or charms
+     * @param targetSubscriberId - The id of the subscriber
+     * @param charmIds - The id or ids of the charms to check
+     * @param requiresAll - Whether or not a subscriber should have all charms provided
+     */
+    public hasCharms(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
 }
 export class TimerUtility{
     private constructor(api: WOLFBot);
+    /**
+     * Initialise the timer util
+     * @param handlers - The handlers object
+     * @param args - The additional paramaters to pass to the handlers
+     */
     public initialise(handlers: Object, ...args: any): Promise<any>;
+    /**
+     * Add an event
+     * @param name - The name of the event
+     * @param handler - The handler that should handle the event
+     * @param data - The data to pass to the handler
+     * @param duration - How long until the event is fired
+     */
     public add(name: String, handler: String, data: Object, duration: Number): Promise<Object>
+    /**
+     * Cancel an event
+     * @param name The name of the event
+     */
     public cancel(name: String): Promise<any>;
+    /**
+     * Get an event
+     * @param name The name of the event
+     */
     public get(name: String): Promise<Object>;
+    /**
+     * Delay an event
+     * @param name - The name of the vent
+     * @param duration - How long until the event should fire
+     */
     public delay(name: String, duration: Number): Promise<Object>
 }
-
 export class Utility {
     private constructor(api: WOLFBot);
 
+    /**
+     * Exposes the achievement methods
+     */
     public achievement(): AchievementUtility;
+    /**
+     * Exposes the array methods
+     */
     public array(): ArrayUtility;
+    /**
+     * Exposes the discovery methods
+     */
     public discovery(): DiscoveryUtility;
+    /**
+     * Exposes the download methods
+     */
     public download(): DownloadUtility;
+    /**
+     * Exposes the group methods
+     */
     public group(): GroupUtility;
+    /**
+     * Exposes the number methods
+     */
     public number(): NumberUtility;
+    /**
+     * Exposes the string methods
+     */
     public string(): StringUtility;
+    /**
+     * Exposes the subscriber methods
+     */
     public subscriber(): SubscriberUtility;
+    /**
+     * Exposes the timer methods
+     */
     public timer(): TimerUtility;
 
+    /**
+     * Convert milliseconds into a display time (EX: 65000 - 1m 5s)
+     * @param language - The language of the phrase
+     * @param milliseconds - The time to convert
+     */
     public toReadableTime(language: String, milliseconds: Number): String;
+    /**
+     * Sleep a method
+     * @param duration - The time to delay
+     */
     public delay(duration: Number): Promise<void>;
 }
-
 export class Validator {
+    /**
+     * Check whether or not a arg is a specific type
+     * @param arg - The arg
+     * @param type - The type
+     */
     public isType(arg: any, type: String): Boolean;
+    /**
+     * Check to see if arg is null
+     * @param arg - The item
+     */
     public isNull(arg: any): Boolean;
+    /**
+     * Check to see if arg is null or undefined
+     * @param arg - The item
+     */
     public isNullOrUndefined(arg: any): Boolean;
-    public isNullOrWhitespace(arg: any): Boolean;
+    /**
+     * Check to seeif arg is null or empty/whitespace
+     * @param arg - The string 
+     */
+    public isNullOrWhitespace(arg: String): Boolean;
+    /**
+     * Check to see if arg is less than or equal to 0
+     * @param arg - The number
+     */
     public isLessThanOrEqualZero(arg: Number): Boolean;
+    /**
+     * Check to see if arg is less than 0
+     * @param arg - The number
+     */
     public isLessThanZero(arg: Number): Boolean;
+    /**
+     * Check to see if arg is a valid number
+     * @param arg - the number or string
+     */
     public isValidNumber(arg: String | Number): Boolean;
+    /**
+     * Check to see if arg is a valid date
+     * @param arg - The date or number
+     */
     public isValidDate(arg: Date | Number): Boolean;
+    /**
+     * Check to see if arg is a valid buffer
+     * @param arg - The string or buffer
+     */
     public isBuffer(arg: Buffer | String): Boolean
 }
 //#endregion
 
 //#region enums
-
 
 export enum AdminAction {
     REGULAR = 0,
@@ -1103,7 +2017,6 @@ export enum AdminAction {
     LEAVE = 18,
     OWNER = 32,
 }
-  
 export enum Capability {
     NOT_MEMBER = -1,
     REGULAR = 0,
@@ -1301,64 +2214,241 @@ export enum TipType {
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
 
 export interface ClientEvents {
+    /**
+     * The socket connected to the server
+     */
     connected: [void],
+    /**
+     * The socket is connecting to the server
+     */
     connecting: [void],
+    /**
+     * An error occurred while the socket was connecting to the server
+     */
     connectionError: [error: Error],
+    /**
+     * The socket didnt connect to the server in time
+     */
     connectionTimeOut: [error: Error],
+    /**
+     * The socket was disconnected from the server
+     */
     disconnected: [reason: String],
+    /**
+     * Groups audio count updated (Listener changed or someone joined a slot and is broadcasting)
+     */
     groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
+    /**
+     * A slot was updated (User joined/left, muted or slot was locked)
+     */
     groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
+    /**
+     * The groups audio configuration was updated
+     */
     groupAudioUpdate: [old: GroupAudioConfigObject, new: GroupAudioConfigObject],
+    /**
+     * A group event has been created
+     */
     groupEventCreate: [group: GroupObject, event: EventGroupObject],
+    /**
+     * A group event has been updated
+     */
     groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
+    /**
+     * A subscriber has joined the group
+     */
     groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
+    /**
+     * A subscribers capability has been updated in a group 
+     */
     groupMemberUpdate: [group: GroupObject, action: GroupAdminActionObject],
+    /**
+     * A subscriber left a group
+     */
     groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
+    /**
+     * A group message has been recieved
+     */
     groupMessage: [message: MessageObject],
+    /**
+     * A group message has been updated
+     */
     groupMessageUpdate: [message: MessageObject],
+    /**
+     * A tip has been added to a group message
+     */
     groupTipAdd: [tip: object],
+    /**
+     * A groups profile has been updated
+     */
     groupUpdate: [old: GroupObject, new: GroupObject],
+    /**
+     * An error has happened internally
+     */
     internalError: [error: Error],
+    /**
+     * The bot joined a group
+     */
     joinedGroup: [group: GroupObject],
+    /**
+     * The bot left a group
+     */
     leftGroup: [group: GroupObject],
+    /**
+     * An item was added to logs
+     */
     log: [log: string],
+    /**
+     * The bot failed to login
+     */
     loginFailed: [response: ResponseObject],
+    /**
+     * The bot logged in successfully
+     */
     loginSuccess: [subscriber: SubscriberObject],
+    /**
+     * A new notification was recieved
+     */
     notificationReceived:[notification: NotificationObject],
+    /**
+     * A packet was recieved from the server
+     */
     packetRecieved: [command: string, body: object],
+    /**
+     * A packet was sent to the server
+     */
     packetSent: [command: string, body: object],
+    /**
+     * Ping event
+     */
     ping: [void],
+    /**
+     * Pong event
+     */
     pong: [latency: number],
+    /**
+     * A subscribers device or online state changed
+     */
     presenceUpdate: [old: PresenceObject, new: PresenceObject],
+    /**
+     * A private message was received
+     */
     privateMessage: [message: MessageObject],
+    /**
+     * Someone accepted a private message request
+     */
     privateMessageAcceptResponse: [message: MessageObject],
+    /**
+     * A private message was updated (NOT IMPLEMENTED/NON-EXISTANT)
+     */
     privateMessageUpdate: [message: MessageObject],
+    /**
+     * A tip has been added to a private message (NOT IMPLEMENTED/NON-EXISTANT)
+     */
     privateTipAdd: [tip: object],
+    /**
+     * The client is ready for use
+     */
     ready: [void],
+    /**
+     * The socket reconnected to the server
+     */
     reconnected: [void],
+    /**
+     * The socket is attempting to reconnect to the server
+     */
     reconnecting: [attempt: Number]
+    /**
+     * The socket failed to reconnect to the server
+     */
     reconnectFailed: [error: object],
+    /**
+     * The bot has finished broadcasting in a group
+     */
     stageClientBroadcastEnd: [change: StageClientUpdatedObject],
+    /**
+     * The bot has successfully joined a slot
+     */
     stageClientConnected: [change: StageClientUpdatedObject],
+    /**
+     * The bot is attempting to join a slot
+     */
     stageClietnConnecting: [change: StageClientUpdatedObject],
+    /**
+     * The bot was disconnected from a slot
+     */
     stageClientDisconnected: [change: StageClientUpdatedObject],
+    /**
+     * The bots broadcast duration has been updated
+     */
     stageClientDuration: [change: StageClientUpdatedObject],
+    /**
+     * The bot encountered an error while broadcasting
+     */
     stageClientError: [change: StageClientUpdatedObject],
+    /**
+     * The bot was kicked from a slot
+     */
     stageClientKicked: [change: StageClientUpdatedObject],
+    /**
+     * The bots slot was muted
+     */
     stageClientMuted: [change: StageClientUpdatedObject],
+    /**
+     * The bots broadcast was paused
+     */
     stageClientPaused: [change: StageClientUpdatedObject],
+    /**
+     * The bot is ready to broadcast 
+     */
     stageClientReady: [change: StageClientUpdatedObject],
+    /**
+     * The bot broadcast has been stopped
+     */
     stageClientStopped: [change: StageClientUpdatedObject],
+    /**
+     * The bots slot has been unmuted
+     */
     stageClientUnmuted: [change: StageClientUpdatedObject],
+    /**
+     * The bots broadcast has been resumed
+     */
     stageClientUnpaused: [change: StageClientUpdatedObject],
+    /**
+     * The bots listener count has changed 
+     */
     stageClientViewerCountChanged: [change: StageClientUpdatedObject],
+    /**
+     * A subscriber was added to the bots blocked list
+     */
     subscriberBlockAdd: [subscriber: SubscriberObject],
+    /**
+     * A subscriber was removed from the bots blocked list
+     */
     subscriberBlockDelete: [subscriber: SubscriberObject],
+    /**
+     * A subscriber was added to the bots contact list
+     */
     subscriberContactAdd: [subscriber: SubscriberObject],
+    /**
+     * A subscriber was removed from the bots contact list
+     */
     subscriberContactDelete: [subscriber: SubscriberObject],
+    /**
+     * An event was added to the bots subscription list
+     */
     subscriberGroupEventAdd: [event: EventGroupObject],
+    /**
+     * An event was removed from the bots subscription list
+     */
     subscriberGroupEventDelete: [event: EventGroupObject],
+    /**
+     * A subscribers profile has been updated
+     */
     subscriberUpdate: [old: SubscriberObject, new: SubscriberObject],
+    /**
+     * The server welcomed the socket
+     */
     welcome: [welcome: WelcomeObject],
 }
 

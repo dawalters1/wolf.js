@@ -18,7 +18,7 @@ class Member {
     this._api = api;
   }
 
-  async get (targetGroupId, sourceSubscriberId) {
+  async get (targetGroupId, targetSubscriberId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -27,12 +27,12 @@ class Member {
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (validator.isNullOrUndefined(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      if (validator.isNullOrUndefined(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
       const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
@@ -41,22 +41,22 @@ class Member {
         return null;
       }
 
-      return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === sourceSubscriberId);
+      return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === targetSubscriberId);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().get(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)})`;
+      error.internalErrorMessage = `api.utility().group().member().get(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)})`;
       throw error;
     }
   }
 
   /**
    * @deprecated Will be removed in 1.0.0
-   * @use api.utility().group().member().hasCapabilities(targetGroupId, sourceSubscriberId, requiredCapability)
+   * @use api.utility().group().member().hasCapabilities(targetGroupId, targetSubscriberId, requiredCapability)
    */
-  async checkPermissions (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
-    return this.hasCapability(targetGroupId, sourceSubscriberId, requiredCapability, checkStaff, includeAuthorizedSubscribers);
+  async checkPermissions (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
+    return this.hasCapability(targetGroupId, targetSubscriberId, requiredCapability, checkStaff, includeAuthorizedSubscribers);
   }
 
-  async hasCapability (targetGroupId, sourceSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
+  async hasCapability (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -65,12 +65,12 @@ class Member {
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (validator.isNullOrUndefined(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      if (validator.isNullOrUndefined(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
       if (validator.isNullOrUndefined(Capability)) {
@@ -84,14 +84,14 @@ class Member {
         throw new Error('checkStaff must be a valid boolean');
       }
 
-      if (this._api.options.developerId === sourceSubscriberId) {
+      if (this._api.options.developerId === targetSubscriberId) {
         return true;
       }
 
-      if (this._api.currentSubscriber.id === sourceSubscriberId) {
+      if (this._api.currentSubscriber.id === targetSubscriberId) {
         const group = await this._api.group().getById(targetGroupId);
 
-        if (group.owner.id === sourceSubscriberId) {
+        if (group.owner.id === targetSubscriberId) {
           return true;
         }
 
@@ -101,20 +101,20 @@ class Member {
       }
 
       if (checkStaff) {
-        const subscriber = await this._api.subscriber().getById(sourceSubscriberId);
+        const subscriber = await this._api.subscriber().getById(targetSubscriberId);
 
         if ((subscriber.privileges & Privilege.STAFF) === Privilege.STAFF) {
           return true;
         }
       }
 
-      if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(sourceSubscriberId)) {
+      if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(targetSubscriberId)) {
         return true;
       }
 
       const group = await this._api.group().getById(targetGroupId);
 
-      if (group.owner.id === sourceSubscriberId) {
+      if (group.owner.id === targetSubscriberId) {
         return true;
       }
 
@@ -124,7 +124,7 @@ class Member {
         return false;
       }
 
-      const groupSubscriber = groupSubscriberList.find((subscriber) => subscriber.id === sourceSubscriberId);
+      const groupSubscriber = groupSubscriberList.find((subscriber) => subscriber.id === targetSubscriberId);
 
       if (!groupSubscriber) {
         return false;
@@ -132,7 +132,7 @@ class Member {
 
       return checkCapability(requiredCapability, groupSubscriber.capabilities);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, Capability=${JSON.stringify(Capability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
+      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, Capability=${JSON.stringify(Capability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
       throw error;
     }
   }

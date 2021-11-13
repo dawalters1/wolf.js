@@ -6,16 +6,16 @@ class Privilege {
     this._api = api;
   }
 
-  async has (sourceSubscriberId, privs, requireAll = false) {
+  async has (targetSubscriberId, privs, requireAll = false) {
     try {
       privs = Array.isArray(privs) ? privs : [privs];
 
-      if (validator.isNullOrUndefined(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be null or undefined');
-      } else if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      if (validator.isNullOrUndefined(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
       if (privs.length === 0) {
@@ -37,20 +37,20 @@ class Privilege {
         throw new Error('requireAll must be a valid boolean');
       }
 
-      const groupWithSubscriber = (await this._api.group().list()).find((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === sourceSubscriberId));
+      const groupWithSubscriber = (await this._api.group().list()).find((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === targetSubscriberId));
 
       let privileges = 0;
 
       if (groupWithSubscriber) {
-        const subscriber = groupWithSubscriber.subscribers.find((subscriber) => subscriber.id === sourceSubscriberId);
+        const subscriber = groupWithSubscriber.subscribers.find((subscriber) => subscriber.id === targetSubscriberId);
         privileges = subscriber.additionalInfo.privileges;
       } else {
-        privileges = (await this._api.subscriber().getById(sourceSubscriberId)).privileges;
+        privileges = (await this._api.subscriber().getById(targetSubscriberId)).privileges;
       }
 
       return requireAll ? privs.every((priv) => (privileges & priv) === priv) : privs.some((priv) => (privileges & priv) === priv);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().subscriber().privilege().has(sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, privs=${JSON.stringify(privs)}, requireAll=${JSON.stringify(requireAll)})`;
+      error.internalErrorMessage = `api.utility().subscriber().privilege().has(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, privs=${JSON.stringify(privs)}, requireAll=${JSON.stringify(requireAll)})`;
       throw error;
     }
   }
