@@ -1,7 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
 const { commands } = require('../../constants');
-const constants = require('@dawalters1/constants');
+const constants = require('../../constants');
 
 class Charm extends BaseHelper {
   constructor (api) {

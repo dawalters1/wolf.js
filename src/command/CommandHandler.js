@@ -1,6 +1,5 @@
 'use strict';
-const { privilege, messageType } = require('@dawalters1/constants');
-const { events } = require('../constants');
+const { events, privilege, messageType } = require('../constants');
 const Command = require('./Command');
 
 /**

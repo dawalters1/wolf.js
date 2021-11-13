@@ -1,11 +1,10 @@
-const { commands, messageTypes } = require('../../constants');
+const { commands, messageTypes, embedType } = require('../../constants');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
 const fileType = require('file-type');
 const { v4: uuidv4 } = require('uuid');
 
-const { embedType } = require('@dawalters1/constants');
 const Message = require('../../models/MessageObject');
 
 const getDefaultOptions = (api, opts) => {

@@ -1,4 +1,4 @@
-const { capability, adminAction } = require('@dawalters1/constants');
+const { capability, adminAction } = require('../../constants');
 
 module.exports = (type) => {
   switch (type) {

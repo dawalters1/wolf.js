@@ -153,7 +153,7 @@ export class DiscoverySectionObject{
     }
     /**
      * Key Value pairs
-     * Refer to @dawalters1/constants to view element types (EX: elements[elementType.sectionTitle])
+     * Refer to elementType enum
      */
     public elements: { [key:string]: DiscoverySectionElementObject}
 }
