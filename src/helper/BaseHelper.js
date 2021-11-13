@@ -1,6 +1,6 @@
-const Cache = require('../cache/cache');
+// const Cache = require('../cache/cache');
 
-const cache = new Cache();
+// const cache = new Cache();
 
 class BaseHelper {
   constructor (api) {
@@ -8,7 +8,7 @@ class BaseHelper {
 
     this._websocket = api.websocket;
 
-    this._cache = cache;
+    // this._cache = cache;
   }
 
   _cleanup () {
