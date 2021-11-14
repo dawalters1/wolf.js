@@ -1,6 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
 const { Commands } = require('../../constants');
+const ContactObject = require('../../models/ContactObject');
 
 class Contact extends BaseHelper {
   constructor (api) {
@@ -19,10 +20,14 @@ class Contact extends BaseHelper {
         return this._contacts;
       }
 
-      const result = await this._websocket.emit(Commands.SUBSCRIBER_CONTACT_LIST);
+      const result = await this._websocket.emit(Commands.SUBSCRIBER_CONTACT_LIST,
+        {
+          subscribe: true
+        }
+      );
 
       if (result.success) {
-        this._contacts = result.body;
+        this._contacts = result.body.map((subscriber) => new ContactObject(this._api, subscriber));
       }
 
       return this._contacts;

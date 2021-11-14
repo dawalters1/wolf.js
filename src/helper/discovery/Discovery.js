@@ -84,7 +84,16 @@ module.exports = class Discovery extends BaseHelper {
       this._recipes[language] = {};
     }
 
-    const result = await this._websocket.emit(Commands.TOPIC_PAGE_RECIPE_LIST,
+    console.log({
+      id,
+      languageId: language,
+      type,
+      offset: 0,
+      minResults: min,
+      maxResults: max
+    });
+    const result = await this._websocket.emit(
+      Commands.TOPIC_PAGE_RECIPE_LIST,
       {
         id,
         languageId: language,
@@ -92,8 +101,10 @@ module.exports = class Discovery extends BaseHelper {
         offset: 0,
         minResults: min,
         maxResults: max
-      });
+      }
+    );
 
+    console.log(result);
     if (result.success) {
       this._recipes[language][id] = result.body;
     }
@@ -135,7 +146,7 @@ module.exports = class Discovery extends BaseHelper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.Language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, language, type, recipe.min, recipe.max);
   }
 
   async getRecipeBySectionId (id, language, requestNew = false) {
@@ -167,7 +178,7 @@ module.exports = class Discovery extends BaseHelper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.Language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, language, type, recipe.min, recipe.max);
   }
 
   _cleanup () {

@@ -1,3 +1,4 @@
+const SubscriberObject = require('../../../../models/SubscriberObject');
 const { Events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
@@ -7,7 +8,8 @@ module.exports = async (api, body) => {
   if (!subscriber || subscriber.hash === body.hash) {
     return Promise.resolve();
   }
-  const old = subscriber;
+
+  const old = new SubscriberObject(api, Object.assign({}, subscriber));
 
   subscriber = await api.subscriber().getById(body.id, true);
 

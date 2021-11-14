@@ -7,7 +7,7 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  const cached = group.slots[body.slot.id];
+  const cached = Object.assign({}, group.slots[body.slot.id]);
 
   group.slots[body.slot.id] = body.slot;
 

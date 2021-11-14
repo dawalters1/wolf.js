@@ -39,6 +39,7 @@ exports.Events = {
   GROUP_AUDIO_UPDATE: 'groupAudioUpdate',
   GROUP_EVENT_CREATE: 'groupEventCreate',
   GROUP_EVENT_UPDATE: 'groupEventUpdate',
+  GROUP_EVENT_DELETE: 'groupEventDelete',
   GROUP_MEMBER_ADD: 'groupMemberAdd',
   GROUP_MEMBER_DELETE: 'groupMemberDelete',
   GROUP_MEMBER_UPDATE: 'groupMemberUpdate',

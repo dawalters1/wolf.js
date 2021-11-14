@@ -4,6 +4,8 @@ class Group {
   constructor (api, group) {
     this._api = api;
     patch(this, group);
+
+    this.subscribers = this.subscribers || [];
   }
 
   toDisplayName (withId = true) {

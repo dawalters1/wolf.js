@@ -130,7 +130,7 @@ class Phrase extends BaseHelper {
         const language = value[0];
         const phrases = value[1];
 
-        result[language] = phrases.length;
+        result[language] = Object.keys(phrases).length;
 
         return result;
       }, {});
@@ -154,7 +154,7 @@ class Phrase extends BaseHelper {
           (
             {
               name: name.toLowerCase(),
-              value: phr,
+              value: phr.value || phr,
               language: value[0]
             }
           )
@@ -192,7 +192,7 @@ class Phrase extends BaseHelper {
         return this.getByLanguageAndName(this._defaultLanguage, name);
       }
 
-      return phrase[0];
+      return phrase[0].value || phrase[0];
     } catch (error) {
       error.internalErrorMessage = `api.phrase().getByLanguageAndName(language=${language}, name=${name})`;
       throw error;

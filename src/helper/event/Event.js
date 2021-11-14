@@ -39,12 +39,13 @@ class Event extends BaseHelper {
       } else if (validator.isNullOrWhitespace(title)) {
         throw new Error('title cannot be null or whitespace');
       }
-      if (validator.isValidDate(startsAt)) {
+      console.log(new Date(startsAt));
+      if (!validator.isValidDate(startsAt)) {
         throw new Error('startsAt is not a valid date');
       } else if (new Date(startsAt) < Date.now()) {
         throw new Error('startsAt must be in the future');
       }
-      if (validator.isValidDate(endsAt)) {
+      if (!validator.isValidDate(endsAt)) {
         throw new Error('endsAt is not a valid date');
       } else if (new Date(endsAt) < new Date(startsAt)) {
         throw new Error('endsAt must be after startsAt');
@@ -121,12 +122,12 @@ class Event extends BaseHelper {
       } else if (validator.isNullOrWhitespace(title)) {
         throw new Error('title cannot be null or whitespace');
       }
-      if (validator.isValidDate(startsAt)) {
+      if (!validator.isValidDate(startsAt)) {
         throw new Error('startsAt is not a valid date');
       } else if (new Date(startsAt) < Date.now()) {
         throw new Error('startsAt must be in the future');
       }
-      if (validator.isValidDate(endsAt)) {
+      if (!validator.isValidDate(endsAt)) {
         throw new Error('endsAt is not a valid date');
       } else if (new Date(endsAt) < new Date(startsAt)) {
         throw new Error('endsAt must be after startsAt');
@@ -207,7 +208,7 @@ class Event extends BaseHelper {
         throw new Error('thumbnail must be a valid buffer');
       }
 
-      return this._api.mediaService().uploadEventThumbnail(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
+      return this._api.multiMediaService().uploadEventThumbnail(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
     } catch (error) {
       error.internalErrorMessage = `api.event().create(eventId=${JSON.stringify(eventId)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
@@ -366,7 +367,7 @@ class Event extends BaseHelper {
       );
 
       if (result.success) {
-        this._eventList[targetGroupId] = await this.getByIds(result.body.map((evt) => evt.id));
+        this._eventList[targetGroupId] = result.body.length > 0 ? await this.getByIds(result.body.map((evt) => evt.id)) : [];
       }
 
       return this._eventList[targetGroupId] || [];

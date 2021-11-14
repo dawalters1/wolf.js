@@ -24,7 +24,8 @@ class Group extends BaseHelper {
 
   async _joinedGroups () {
     if (this._joinedGroupsFetched) {
-      return this._groups.find((group) => group.inGroup);
+      console.log(this._groups);
+      return this._groups.filter((group) => group.inGroup);
     }
 
     const result = await this._websocket.emit(
@@ -338,10 +339,7 @@ class Group extends BaseHelper {
         }
       );
 
-      return {
-        code: result.code,
-        body: result.success ? result.body.map((message) => new Message(this._api, message)) : []
-      };
+      return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {
       error.internalErrorMessage = `api.group().getChatHistory(targetGroupId=${JSON.stringify(targetGroupId)}, chronological=${JSON.stringify(chronological)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
       throw error;
@@ -449,7 +447,7 @@ class Group extends BaseHelper {
         throw new Error('avatar must be a valid buffer');
       }
 
-      return this._api.mediaService().updateGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
+      return this._api.multiMediaService().uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
       error.internalErrorMessage = `api.group().updateAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, avatar=${JSON.stringify(avatar ? 'Buffer -- Too long to display' : avatar)})`;
       throw error;
@@ -495,12 +493,11 @@ class Group extends BaseHelper {
   }
 
   _cleanup () {
-    this._groups = {};
+    this._groups = [];
   }
 
   _process (group) {
     group = new GroupObject(this._api, group);
-
     group.language = toLanguageKey(group.extended.language);
 
     const existing = this._groups.find((grp) => grp.id === group.id);

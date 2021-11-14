@@ -1,9 +1,7 @@
 const Message = require('../../../../models/MessageObject');
 
-const toAdminActionFromString = require('../../../../utils/ToAdminActionFromString');
-const toGroupMemberCapability = require('../../../../utils/ToGroupMemberCapability');
 const { version } = require('../../../../../package.json');
-const { Events, MessageType, Capability, Privilege } = require('../../../../constants');
+const { Events, MessageType, Privilege } = require('../../../../constants');
 
 const handleAdminAction = async (api, message) => {
   const [group, subscriber] = await Promise.all([
@@ -13,36 +11,8 @@ const handleAdminAction = async (api, message) => {
 
   const adminAction = JSON.parse(message.body);
 
-  // Handle Join Action
   if (adminAction.type === 'join') {
-    if (group.subscribers) {
-      group.subscribers.push(
-        {
-          id: subscriber.id,
-          groupId: group.id,
-          capabilities: group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR,
-          additionalInfo: {
-            hash: subscriber.hash,
-            nickname: subscriber.nickname,
-            privileges: subscriber.privileges,
-            onlineState: subscriber.onlineState
-          }
-        }
-      );
-    }
-
-    if (subscriber.id === api.currentSubscriber.id) {
-      group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
-      group.inGroup = true;
-    }
-
-    return api.emit(
-      message.sourceSubscriberId === api.currentSubscriber.id ? Events.JOINED_GROUP : Events.GROUP_MEMBER_ADD,
-      {
-        group,
-        subscriber
-      }
-    );
+    return Promise.resolve();
   }
 
   // Handle all other actions
@@ -50,56 +20,28 @@ const handleAdminAction = async (api, message) => {
     adminAction.type = 'kick';
   }
 
-  if (subscriber.id === api.currentSubscriber.id) {
-    group.capabilities = toGroupMemberCapability(toAdminActionFromString(adminAction.type));
-
-    if (group.capabilities === Capability.NOT_MEMBER || group.capabilities === Capability.BANNED) {
-      group.inGroup = false;
-      group.subscribers = [];
-
-      await api.messaging()._messageGroupUnsubscribe(group.id);
-    } else if (group.capabilities === Capability.OWNER) {
-      group.owner.id = subscriber.id;
-      group.owner.hash = subscriber.hash;
-    }
-  } else if (group.subscribers) {
-    const groupMember = group.subscribers.find((grpMber) => grpMber.id === subscriber.id);
-
-    if (groupMember) {
-      if (adminAction.type === 'owner') {
-        group.owner.id = subscriber.id;
-        group.owner.hash = subscriber.hash;
-        groupMember.capabilities = Capability.OWNER;
-      } else {
-        if (adminAction.type === 'kick' || adminAction.type === 'leave') {
-          group.subscribers.splice(group.subscribers.indexOf(groupMember), 1);
-        } else {
-          groupMember.capabilities = toGroupMemberCapability(toAdminActionFromString(adminAction.type));
-        }
-      }
+  if (adminAction.type === 'leave' || adminAction.type === 'kick') {
+    if (subscriber.id !== api.currentSubscriber.id) {
+      api.emit(
+        subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
+        group,
+        subscriber
+      );
     }
   }
 
-  if (adminAction.type === 'leave' || adminAction.type === 'kick') {
-    return api.emit(
-      subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
-      {
-        group,
-        subscriber
-      }
-    );
+  if (adminAction.type === 'leave') {
+    return Promise.resolve();
   }
 
   return api.emit(
     Events.GROUP_MEMBER_UPDATE,
+    group,
     {
-      group,
-      action: {
-        groupId: group.id,
-        sourceId: adminAction.instigatorId,
-        targetId: message.sourceSubscriberId,
-        action: adminAction.type
-      }
+      groupId: group.id,
+      sourceId: adminAction.instigatorId,
+      targetId: message.sourceSubscriberId,
+      action: adminAction.type
     }
   );
 };

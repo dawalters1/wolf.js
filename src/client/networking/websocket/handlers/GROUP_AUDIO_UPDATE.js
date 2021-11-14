@@ -7,7 +7,7 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  const cached = group.audioConfig;
+  const cached = Object.assign({}, group.audioConfig);
 
   group.audioConfig = body;
 

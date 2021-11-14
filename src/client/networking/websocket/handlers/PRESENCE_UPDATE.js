@@ -2,11 +2,6 @@ const { Events } = require('../../../../constants');
 const patch = require('../../../../utils/Patch');
 
 module.exports = async (api, body) => {
-  const oldPresence = {
-    deviceType: undefined,
-    onlineState: undefined
-  };
-
   const groups = await api.group()._groups.filter((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === body.id));
 
   groups.forEach(group => {
@@ -32,9 +27,6 @@ module.exports = async (api, body) => {
   const subscriber = api.subscriber()._subscribers.find((subscriber) => subscriber.id === body.id);
 
   if (subscriber) {
-    oldPresence.deviceType = subscriber.deviceType;
-    oldPresence.onlineState = subscriber.onlineState;
-
     patch(subscriber, body);
   }
 
@@ -42,7 +34,6 @@ module.exports = async (api, body) => {
 
   return await api.emit(
     Events.PRESENCE_UPDATE,
-    oldPresence,
     body
   );
 };
