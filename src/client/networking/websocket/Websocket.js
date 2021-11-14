@@ -33,7 +33,7 @@ module.exports = class Websocket {
     this.socket.on('connect_timeout', error => this._api.emit(Events.CONNECTION_TIMEOUT, error));
 
     this.socket.on('disconnect', reason => {
-      this._api.cleanup();
+      this._api._cleanup();
 
       this._api.emit(Events.DISCONNECTED, reason);
       // Socket doesnt reconnect on io server disconnect, manually reconnect
@@ -70,10 +70,8 @@ module.exports = class Websocket {
 
     const response = await new Promise((resolve, reject) => {
       this._api.emit(Events.PACKET_SENT,
-        {
-          command,
-          data
-        }
+        command,
+        data
       );
 
       this.socket.emit(command, data, resp => {

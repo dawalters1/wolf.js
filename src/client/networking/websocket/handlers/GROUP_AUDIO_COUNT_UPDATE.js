@@ -7,7 +7,7 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  const cached = group.audioCounts;
+  const cached = Object.assign({}, group.audioCounts);
 
   group.audioCounts = body;
 

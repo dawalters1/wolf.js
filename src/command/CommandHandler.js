@@ -28,13 +28,11 @@ const ignoreTagList = [
  * {@hideconstructor}
  */
 module.exports = class CommandHandler {
-  constructor (api) {
+  constructor (api, cache) {
     this._api = api;
     this._commands = [];
 
-    this._api.on(Events.GROUP_MESSAGE, async message => {
-      await this._processMessage(message);
-    });
+    this._api.on(Events.GROUP_MESSAGE, async message => await this._processMessage(message));
     this._api.on(Events.PRIVATE_MESSAGE, async message => await this._processMessage(message));
   }
 
@@ -98,10 +96,9 @@ module.exports = class CommandHandler {
       const callback = command.callback;
 
       Reflect.deleteProperty(command, 'callback');
-
       return callback.call(this, command);
     } catch (error) {
-      error.message = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
+      error.internalErrorMessage = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.stack}`;
       throw error;
     }
   }

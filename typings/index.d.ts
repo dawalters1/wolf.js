@@ -93,7 +93,7 @@ export class CharmSubscriberStatisticsObject {
     public subscriberId: Number;
     public totalActive: Number;
     public totalExpired: Number;
-    public totalGiftedRecieved: Number;
+    public totalGiftedReceived: Number;
     public totalGiftedSent: Number;
     public totalLifeTime: Number;
 }
@@ -565,6 +565,7 @@ export class TipCharmObject {
     public id: Number;
     public quantity: Number;
     public credits: Number;
+    public magnitude: Number;
     public subscriber: IdHashObject
 }
 export class TipLeaderboardItemObject{
@@ -824,6 +825,11 @@ export class WOLFBot {
     public options: ConfigOptionsObject;
 
     public currentSubscriber: SubscriberObject;
+
+    /**
+     * Exposes the utility methods
+     */
+    public utility: Utility;
 }
 export abstract class BaseHelper {
     public constructor(api: WOLFBot);
@@ -989,7 +995,7 @@ export class Charm extends BaseHelper {
      * Get the charms & how many of each a subscriber has
      * @param subscriberId - The id of the subscriber
      */
-    public getSubscriberSumamry(subscriberId: Number): Promise<CharmSubscriberSummaryObject>;
+    public getSubscriberSummary(subscriberId: Number): Promise<CharmSubscriberSummaryObject>;
     /**
      * Get the gifting statistics of a subscriber
      * @param subscriberId - The id of the subscriber
@@ -1408,7 +1414,7 @@ export class Notification extends BaseHelper {
      * Unsubscribe from new notifications
      * @param language - The id of the notifications
      */
-    public unsubscriber(language: Language): Promise<void>;
+    public unsubscribe(language: Language): Promise<void>;
 }
 export class Phrase extends BaseHelper {
     private constructor(api : WOLFBot);
@@ -2217,11 +2223,11 @@ export interface ClientEvents {
     /**
      * The socket connected to the server
      */
-    connected: [void],
+    connected: [],
     /**
      * The socket is connecting to the server
      */
-    connecting: [void],
+    connecting: [],
     /**
      * An error occurred while the socket was connecting to the server
      */
@@ -2255,6 +2261,10 @@ export interface ClientEvents {
      */
     groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
     /**
+     * A group event has been removed/deleted
+     */
+    groupEventDelete: [group: GroupObject, event: EventGroupObject]
+    /**
      * A subscriber has joined the group
      */
     groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
@@ -2267,7 +2277,7 @@ export interface ClientEvents {
      */
     groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
     /**
-     * A group message has been recieved
+     * A group message has been received
      */
     groupMessage: [message: MessageObject],
     /**
@@ -2307,13 +2317,13 @@ export interface ClientEvents {
      */
     loginSuccess: [subscriber: SubscriberObject],
     /**
-     * A new notification was recieved
+     * A new notification was received
      */
     notificationReceived:[notification: NotificationObject],
     /**
-     * A packet was recieved from the server
+     * A packet was received from the server
      */
-    packetRecieved: [command: string, body: object],
+    packetReceived: [command: string, body: object],
     /**
      * A packet was sent to the server
      */
@@ -2321,7 +2331,7 @@ export interface ClientEvents {
     /**
      * Ping event
      */
-    ping: [void],
+    ping: [],
     /**
      * Pong event
      */
@@ -2329,7 +2339,7 @@ export interface ClientEvents {
     /**
      * A subscribers device or online state changed
      */
-    presenceUpdate: [old: PresenceObject, new: PresenceObject],
+    presenceUpdate: [presence: PresenceObject],
     /**
      * A private message was received
      */
@@ -2349,11 +2359,11 @@ export interface ClientEvents {
     /**
      * The client is ready for use
      */
-    ready: [void],
+    ready: [],
     /**
      * The socket reconnected to the server
      */
-    reconnected: [void],
+    reconnected: [],
     /**
      * The socket is attempting to reconnect to the server
      */

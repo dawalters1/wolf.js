@@ -89,7 +89,9 @@ class Notification extends BaseHelper {
             }
           }
         }
-      }, this._api.config.notificationSettings.duration || this._api._botConfig.notificationSettings.duration);
+      }, this._api._botConfig.notificationSettings.duration);
+
+      return Promise.resolve(true);
     } catch (error) {
       error.internalErrorMessage = `api.notification().subscribe(language=${JSON.stringify(language)})`;
       throw error;
@@ -104,9 +106,12 @@ class Notification extends BaseHelper {
         throw new Error('language is not valid');
       }
 
-      Reflect.deleteProperty(this._subscriptions, language);
+      if (this._subscriptions[language]) {
+        Reflect.deleteProperty(this._subscriptions, language);
 
-      return Promise.resolve();
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
     } catch (error) {
       error.internalErrorMessage = `api.notification().unsubscribe(language=${JSON.stringify(language)})`;
       throw error;

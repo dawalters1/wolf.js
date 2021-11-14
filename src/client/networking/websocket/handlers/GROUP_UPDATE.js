@@ -1,3 +1,4 @@
+const GroupObject = require('../../../../models/GroupObject');
 const { Events } = require('../../../../constants');
 
 module.exports = async (api, body) => {
@@ -9,7 +10,7 @@ module.exports = async (api, body) => {
 
   return api.emit(
     Events.GROUP_UPDATE,
-    group,
-    await api.group().getById(body.id)
+    new GroupObject(api, Object.assign({}, group)),
+    await api.group().getById(body.id, true)
   );
 };

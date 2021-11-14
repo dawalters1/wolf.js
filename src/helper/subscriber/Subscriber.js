@@ -154,10 +154,7 @@ class Subscriber extends BaseHelper {
         }
       );
 
-      return {
-        code: result.code,
-        body: result.success ? result.body.map((message) => new Message(this._api, message)) : []
-      };
+      return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {
       error.internalErrorMessage = `api.group().getChatHistory(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
       throw error;
@@ -182,6 +179,10 @@ class Subscriber extends BaseHelper {
     }
 
     return subscriber;
+  }
+
+  _cleanup () {
+    this._subscribers = [];
   }
 }
 

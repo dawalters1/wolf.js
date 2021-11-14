@@ -7,8 +7,10 @@ connection:
 networking:
   retryOn: [500, 502, 503, 504, 408]
   events:
-    ignore: ['group member add','group member delete','group member update']
-    
+    ignore: []
+notificationSettings:
+  duration:     600000
+  
 batch:
   length: 50
 

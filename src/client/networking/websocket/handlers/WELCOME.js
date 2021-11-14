@@ -11,7 +11,7 @@ const onSuccess = async (api, reconnect = false) => {
     api.tip()._groupSubscribe()
   ]);
 
-  api.currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
+  api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
   api.emit(reconnect ? Events.RECONNECTED : Events.READY);
 };
@@ -48,7 +48,7 @@ const login = async (api) => {
   }
 
   api.cognito = result.body.cognito;
-  api.currentSubscriber = result.body.subscriber;
+  api._currentSubscriber = result.body.subscriber;
   api.currentSubscriber.token = api.config._loginSettings.token;
 
   api.emit(
@@ -68,7 +68,7 @@ module.exports = async (api, body) => {
     return await login(api);
   }
 
-  api.currentSubscriber = new SubscriberObject(body.loggedInUser);
+  api._currentSubscriber = new SubscriberObject(body.loggedInUser);
 
   return await onSuccess(api, true);
 };

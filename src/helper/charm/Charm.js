@@ -78,8 +78,9 @@ class Charm extends BaseHelper {
       const charmList = await this.list(language, requestNew);
 
       return charmIds.reduce((result, value) => {
-        if (charmList.some((charm) => charm.id === value)) {
-          result.push(value);
+        const charm = charmList.find((charm) => charm.id === value);
+        if (charm) {
+          result.push(charm);
         } else {
           result.push(
             {
@@ -278,18 +279,18 @@ class Charm extends BaseHelper {
           throw new Error('position cannot be less than 0');
         }
 
-        if (!Reflect.has(charm, 'id')) {
-          throw new Error('charm must have property id');
-        } else if (validator.isNullOrUndefined(charm.id)) {
-          throw new Error('id cannot be null or undefined');
-        } else if (!validator.isValidNumber(charm.id)) {
-          throw new Error('id must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(charm.id)) {
-          throw new Error('id cannot be less than or equal to 0');
+        if (!Reflect.has(charm, 'charmId')) {
+          throw new Error('charm must have property charmId');
+        } else if (validator.isNullOrUndefined(charm.charmId)) {
+          throw new Error('charmId cannot be null or undefined');
+        } else if (!validator.isValidNumber(charm.charmId)) {
+          throw new Error('charmId must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
+          throw new Error('charmId cannot be less than or equal to 0');
         }
       }
 
-      return await this.websocket.emit(
+      return await this._websocket.emit(
         Commands.CHARM_SUBSCRIBER_SET_SELECTED,
         {
           selectedList: charms

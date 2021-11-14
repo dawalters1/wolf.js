@@ -30,14 +30,13 @@ const Group = require('../helper/group/Group');
 const Messaging = require('../helper/messaging/Messaging');
 const Notification = require('../helper/notification/Notification');
 const Phrase = require('../helper/phrase/Phrase');
-// const Stage = require('../stage/Stage');
+const Stage = require('../helper/stage/Stage');
 const Store = require('../helper/store/Store');
 const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 
 const Utility = require('../utils');
 const { validateUserConfig } = require('../utils/Config');
-const { Stage } = require('../../typings');
 
 class WOLFBot extends EventEmitter {
   constructor () {
@@ -53,6 +52,8 @@ class WOLFBot extends EventEmitter {
     }
 
     this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+
+    this._utility = new Utility(this);
 
     this._websocket = new Websocket(this);
     this._multiMediaService = new MultiMediaService(this);
@@ -75,7 +76,11 @@ class WOLFBot extends EventEmitter {
     this._subscriber = new Subscriber(this);
     this._tipping = new Tipping(this);
 
-    this._utility = new Utility(this);
+    this._currentSubscriber = undefined;
+  }
+
+  get currentSubscriber () {
+    return this._currentSubscriber;
   }
 
   get config () {
@@ -118,6 +123,10 @@ class WOLFBot extends EventEmitter {
 
   blocked () {
     return this._blocked;
+  }
+
+  contact () {
+    return this._contact;
   }
 
   charm () {

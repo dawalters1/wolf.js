@@ -1,5 +1,68 @@
 const { Commands } = require('../constants');
-const HttpStatus = require('http-status-codes');
+
+const statusCodes = {
+  100: 'Continue',
+  200: 'OK',
+  203: 'Non-Authoritative Information',
+  206: 'Partial Content',
+  226: 'IM Used',
+  300: 'Multiple Choices',
+  301: 'Moved Permanently',
+  302: 'Found',
+  303: 'See Other',
+  304: 'Not Modified',
+  305: 'Use Proxy',
+  306: 'Unused :|',
+  307: 'Temporary Redirect',
+  308: 'Permananent Redirect',
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  402: 'Payment Required',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  406: 'Not Acceptable',
+  407: 'Proxy Authentication Required',
+  408: 'Request Timeout',
+  409: 'Conflict',
+  410: 'Gone',
+  411: 'Length Required',
+  412: 'Precondition Failed',
+  413: 'Request Entity Too Large',
+  414: 'Request-URI Too Long',
+  415: 'Unsupported Media Type',
+  416: 'Requested Range Not Satisfiable',
+  417: 'Expectation Failed',
+  418: 'I\'m a teapot (RFC 2324)',
+  420: 'Enhance Your Calm (Twitter)',
+  422: 'Unprocessable Entity (WebDAV)',
+  423: 'Locked (WebDAV)',
+  424: 'Failed Dependency (WebDAV)',
+  425: 'Reserved for WebDAV',
+  426: 'Upgrade Required',
+  428: 'Precondition Required',
+  429: 'Too Many Requests',
+  431: 'Request Header Fields Too Large',
+  444: 'No Response (Nginx)',
+  449: 'Retry With (Microsoft)',
+  450: 'Blocked by Windows Parental Controls (Microsoft)',
+  451: 'Unavailable For Legal Reasons',
+  499: 'Client Closed Request (Nginx)',
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Timeout',
+  505: 'HTTP Version Not Supported',
+  506: 'Variant Also Negotiates (Experimental)',
+  507: 'Insufficient Storage (WebDAV)',
+  508: 'Loop Detected (WebDAV)',
+  509: 'Bandwidth Limit Exceeded (Apache)',
+  510: 'Not Extended',
+  511: 'Network Authentication Required',
+  598: 'Network read timeout error',
+  599: 'Network connect timeout error'
+};
 
 const codes = {
   'group member add': {
@@ -27,31 +90,38 @@ const codes = {
   }
 };
 
+const codeForMessage = {
+  'Endpoint request timed out': 408
+};
+
 class Response {
   constructor ({ code, body, headers, message }, command = undefined) {
     if (message) {
-      this.code = code || 403;
+      this.code = codeForMessage[message] || 400;
+      this.body = body;
       this.headers = { message };
     } else {
       this.code = code;
       this.body = body;
-      this.headers = headers;
+      this.headers = headers || {};
     }
 
     if (!this.success) {
-      if (command === Commands.SECURITY_LOGIN && headers.subCode === 2) {
-        return `${codes[command][headers.subCode]} - ${message || 'No reason provided'}`;
+      if (this.headers && this.headers.message) {
+        return;
       }
 
-      if (message) {
-        return message;
+      if (this.headers && !this.headers.subCode) {
+        this.headers.message = `Request ${command} failed (${statusCodes[this.code]})`;
+      } else if (command === Commands.SECURITY_LOGIN && this.headers.subCode === 2) {
+        this.headers.message = `${codes[command][this.headers.subCode]} - ${message || 'No reason provided'}`;
+      } else if (message) {
+        this.headers.message = message;
+      } else if (codes[command] && codes[command][this.headers.subCode]) {
+        this.headers.message = codes[command][this.headers.subCode];
+      } else {
+        this.headers.message = `Request ${command} failed with subCode ${this.headers.subCode} (${statusCodes[this.code]})`;
       }
-
-      if (codes[command] && codes[command][headers.subCode]) {
-        return codes[command][headers.subCode];
-      }
-
-      return `Request ${command} failed with subCode ${headers.subCode} (${HttpStatus.getReasonPhrase(code)})`;
     }
   }
 

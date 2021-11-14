@@ -92,14 +92,17 @@ class Messaging extends BaseHelper {
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
-      const result = await this.websocket.emit(Commands.MESSAGE_CONVERSATION_LIST, {
-        headers: {
-          version: 3
-        },
-        body: {
-          timestamp
+      const result = await this._websocket.emit(
+        Commands.MESSAGE_CONVERSATION_LIST,
+        {
+          headers: {
+            version: 3
+          },
+          body: {
+            timestamp
+          }
         }
-      });
+      );
 
       return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {

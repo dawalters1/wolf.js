@@ -19,7 +19,11 @@ class Blocked extends BaseHelper {
         return this._blocked;
       }
 
-      const result = await this._websocket.emit(Commands.SUBSCRIBER_BLOCK_LIST);
+      const result = await this._websocket.emit(Commands.SUBSCRIBER_BLOCK_LIST,
+        {
+          subscribe: true
+        }
+      );
 
       if (result.success) {
         this._blocked = result.body;

@@ -5,8 +5,6 @@ class GroupEvent {
     this._api = api;
 
     patch(this, event);
-
-    this.subscribers = this.subscribers || [];
   }
 
   async update (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
