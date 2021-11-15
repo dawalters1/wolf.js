@@ -157,40 +157,35 @@ class String {
 
       url = removePunctuation(url);
 
-      if (!url || (!url.includes('.') && !url.includes(':'))) {
-        return false;
-      }
-      const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto)) || 'http://';
+      if (url && (url.includes('.') || url.includes(':'))) {
+        const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto)) || 'http://';
 
-      if (!url.toLowerCase().startsWith(protocol)) {
-        url = `${protocol}${url}`;
-      }
-
-      if (!url.slice(protocol.length).toLowerCase().startsWith('www.')) {
-        url = `${protocol}www.${url.slice(protocol.length)}`;
-      }
-
-      if (url.split('.').length <= 2) {
-        return false;
-      }
-
-      try {
-        const data = new URL(url);
-        if ((data.hostname.includes('.') && this._api._botConfig.validation.link.tld.includes(removePunctuation(data.hostname.split('.').pop()))) || (data.host.includes(':') && data.port)) {
-          return {
-            original,
-            formatted: data.href
-          };
+        if (!url.toLowerCase().startsWith(protocol)) {
+          url = `${protocol}${url}`;
         }
 
-        return false;
-      } catch (error) {
-        return false;
+        if (!url.slice(protocol.length).toLowerCase().startsWith('www.')) {
+          url = `${protocol}www.${url.slice(protocol.length)}`;
+        }
+
+        if (url.split('.').length > 2) {
+          try {
+            const data = new URL(url);
+            if ((data.hostname.includes('.') && this._api._botConfig.validation.link.tld.includes(removePunctuation(data.hostname.split('.').pop()))) || (data.host.includes(':') && data.port)) {
+              return {
+                original,
+                formatted: data.href
+              };
+            }
+          } catch (error) {}
+        }
       }
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().isValidUrl(url=${JSON.stringify(url)})`;
       throw error;
     }
+
+    return false;
   };
 }
 

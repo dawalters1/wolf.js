@@ -205,7 +205,7 @@ class Messaging extends BaseHelper {
             if (Reflect.has(item, 'url')) {
               const metadata = await this._api.getLinkMetadata(item.url);
 
-              if (metadata.success && !metadata.body.isBlacklisted) {
+              if (metadata.success && !metadata.body.isBlacklisted && metadata.body.title) {
                 (await result).push(
                   {
                     type: metadata.body.imageSize > 0 ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
