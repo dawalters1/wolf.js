@@ -513,7 +513,7 @@ export class SubscriberProfileBuilder {
     public setStatus(status: String) : SubscriberProfileBuilder;
     public setLanguage(language: Language): SubscriberProfileBuilder;
     public setRelationship(relationship: Relationship): SubscriberProfileBuilder;
-    public setGender(gener: Gender): SubscriberProfileBuilder;
+    public setGender(gender: Gender): SubscriberProfileBuilder;
     public setLookingFor(lookingFor: LookingFor): SubscriberProfileBuilder;
     public setUrls(urls: Array<String>): SubscriberProfileBuilder;
     public addUrl(url: String): SubscriberProfileBuilder;
@@ -829,7 +829,7 @@ export class WOLFBot {
     /**
      * Exposes the utility methods
      */
-    public utility: Utility;
+    public utility(): Utility;
 }
 export abstract class BaseHelper {
     public constructor(api: WOLFBot);
@@ -877,14 +877,14 @@ export class Achievement extends BaseHelper {
      */
     public getCategoryList(language: Language, requestNew?: Boolean): Promise<Array<AchievementCategoryObject>>;
     /**
-     * Get an acheivement
+     * Get an achievement
      * @param achievementId - The id of the achievement
      * @param language - The language of the achievement
      * @param requestNew - Whether or not to request new data from the server
      */
     public getById(achievementId: Number, language: Language, requestNew?: Boolean): Promise<AchievementObject>;
     /**
-     * Get multiple acheivements
+     * Get multiple achievements
      * @param achievementIds - The ids of the achievements
      * @param language - The language of the achievements
      * @param requestNew - Whether or not to request new data from the server
@@ -2351,11 +2351,11 @@ export interface ClientEvents {
     /**
      * A private message was updated (NOT IMPLEMENTED/NON-EXISTANT)
      */
-    privateMessageUpdate: [message: MessageObject],
+    //privateMessageUpdate: [message: MessageObject],
     /**
      * A tip has been added to a private message (NOT IMPLEMENTED/NON-EXISTANT)
      */
-    privateTipAdd: [tip: object],
+    // privateTipAdd: [tip: object],
     /**
      * The client is ready for use
      */

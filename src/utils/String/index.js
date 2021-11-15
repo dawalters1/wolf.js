@@ -170,6 +170,10 @@ class String {
         url = `${protocol}www.${url.slice(protocol.length)}`;
       }
 
+      if (url.split('.').length <= 2) {
+        return false;
+      }
+
       try {
         const data = new URL(url);
         if ((data.hostname.includes('.') && this._api._botConfig.validation.link.tld.includes(removePunctuation(data.hostname.split('.').pop()))) || (data.host.includes(':') && data.port)) {
