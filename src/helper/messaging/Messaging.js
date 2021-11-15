@@ -170,7 +170,7 @@ module.exports = class Messaging extends Helper {
             if (Reflect.has(item, 'url')) {
               const metadata = await this._api.getLinkMetadata(item.url);
 
-              if (metadata.success && !metadata.body.isBlacklisted) {
+              if (metadata.success && !metadata.body.isBlacklisted && metadata.title) {
                 (await result).push(
                   {
                     type: metadata.body.imageSize > 0 ? constants.embedType.IMAGE_PREVIEW : constants.embedType.LINK_PREVIEW,

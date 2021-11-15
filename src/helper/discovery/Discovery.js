@@ -123,7 +123,6 @@ module.exports = class Discovery extends Helper {
     const sections = await this._api.utility().discovery().getRecipeSections(language, requestNew);
 
     const requestedSection = sections.find((section) => {
-      console.log(section.elements.collection);
       return section.elements.collection.recipe.id === id;
     });
 
