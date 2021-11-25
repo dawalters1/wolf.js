@@ -12,7 +12,7 @@ module.exports = async (api, body) => {
   group.stageRequestList.splice(group.stageRequestList.findIndex((request) => request.subscriberId === body.subscriberId), 1);
 
   return api.emit(
-    cached.reservedExpiresAt >= Date.now() ? Events.GROUP_AUDIO_REQUEST_EXPIRE : Events.GROUP_AUDIO_REQUEST_DELETE,
+    new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Events.GROUP_AUDIO_REQUEST_EXPIRE : Events.GROUP_AUDIO_REQUEST_DELETE,
     group,
     {
       reservedOccupierId: body.reservedOccupierId

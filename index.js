@@ -11,7 +11,7 @@ const ResponseObject = require('./src/models/ResponseObject');
 const SubscriberObject = require('./src/models/SubscriberObject');
 
 process.on('unhandledRejection', function (error) {
-  console.error(`${error.stack}\ninternalErrorMessage: ${error.internalErrorMessage}`);
+  console.error(`${error.stack}\ninternalErrorMessage: ${error.internalErrorMessage || 'No Error Provided'}`);
 });
 
 module.exports = {

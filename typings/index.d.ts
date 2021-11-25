@@ -256,8 +256,9 @@ export class GroupAudioCountObject{
 }
 
 export class GroupAudioRequestObject{
-    reservedOccupierId: Number;
-    reservedExpiresAt: Date;
+    public slotId: Number;
+    public reservedOccupierId: Number;
+    public reservedExpiresAt: Date;
 }
 
 export class GroupAudioSlotObject{
@@ -512,6 +513,11 @@ export class StageClientUpdatedObject{
     public duration: Number;
     public sourceSubscriberId: Number;
 }
+export class StageSlotRequestObject{
+    public subscriberId: Number;
+    public hash: String;
+    public expiresAt: Date;
+}    
 export class SubscriberProfileBuilder {
     private constructor(api: WOLFBot, subscriber: SubscriberObject);
     public setNickname(nickname: String): SubscriberProfileBuilder;
@@ -1477,42 +1483,80 @@ export class Stage extends BaseHelper {
     private constructor(api : WOLFBot);
 
     /**
-     * Get the groups audio configuration settings
-     * @param targetGroupId - The id of the group
-     * @param requestNew 
+     * Get group audio settings
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getGroupSettings}
+     * @param targetGroupId - The id of the grooup
+     * @param requestNew - Whether or not to request new data from the server
      */
     public getSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
     /**
+     * Get group audio settings
+     * @param targetGroupId - The id of the grooup
+     * @param requestNew - Whether or not to request new data from the server
+     */
+    public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
+    
+    
+    /**
      * Get the list of publicly available stages
-     * @param requestNew 
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getStageList}
+     * @param requestNew - Whether or not to request new data from the server
      */
     public getStages(requestNew?: Boolean): Promise<Array<StageObject>>;
     /**
+     * Get the list of publicly available stages
+     * @param requestNew  - Whether or not to request new data from the server
+     */
+    public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;
+    
+    
+    /**
      * Get the list of stages available to group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getStageListForGroup}
      * @param targetGroupId - The id of the group
      * @param requestNew 
      */
     public getStagesForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
     /**
-     * Get the slots for a group
+     * Get the list of stages available to group
      * @param targetGroupId - The id of the group
-     * @param requestNew 
+     * @param requestNew - Whether or not to request new data from the server
+     */
+    public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
+  
+    /**
+     * Get the slots for a group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link getGroupSlots}
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server 
      */
     public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
+    
+     /**
+     * Get the slots for a group
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server 
+     */
+      public getGroupSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
+       
     /**
      * Update a slots mute state
      * @param targetGroupId - The id of the group
      * @param slotId - The id of the slot
-     * @param muted - Whether or not the slot is muted
+     * @param isMuted - Whether or not the slot is muted
      */
-    public updateSlotMuteState(targetGroupId: Number, slotId: Number, muted: Boolean): Promise<ResponseObject>;
+    public updateSlotMuteState(targetGroupId: Number, slotId: Number, isMuted: Boolean): Promise<ResponseObject>;
     /**
      * Update a slots lock state
      * @param targetGroupId - The id of the group
      * @param slotId - The id of the slot
-     * @param locked - Whether or not the slot is locked
+     * @param isLocked - Whether or not the slot is locked
      */
-    public updateSlotLockState(targetGroupId: Number, slotId: Number, locked: Boolean): Promise<ResponseObject>;
+    public updateSlotLockState(targetGroupId: Number, slotId: Number, isLocked: Boolean): Promise<ResponseObject>;
     /**
      * Leave a slot
      * @param targetGroupId - The id of the group
@@ -1520,10 +1564,27 @@ export class Stage extends BaseHelper {
     public leaveSlot(targetGroupId: Number): Promise<ResponseObject>;
     /**
      * Kick a subscriber from a slot
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link kickSlot}
      * @param targetGroupId - The group Id
      * @param slotId - The slot Id
      */
     public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
+    
+    /**
+     * Kick a specific slot in a group
+     * @param targetGroupId - The group Id
+     * @param slotId - The slot Id
+     */
+    public kickSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
+    
+    /**
+     * Kick a slot using subscriber id
+     * @param targetGroupId - The group Id
+     * @param subscriberId - The id of the subscriber
+     */
+    public kickSubscriberFromStage(targetGroupId: Number, subscriberId: Number): Promise<ResponseObject>;
+       
     /**
      * Join a slot
      * @param targetGroupId - The id of the group
@@ -1540,15 +1601,23 @@ export class Stage extends BaseHelper {
     public consumeSlot(targetGroupId :Number, slotId: Number, sdp: String): Promise<ResponseObject>;
     /**
      * Broadcast in a group
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link broadcast}
      * @param targetGroupId - The id of the group
      * @param data - The audio stream
      */
     public play(targetGroupId: Number, data: Readable): void;
     /**
+     * Broadcast in a group
+     * @param targetGroupId - The id of the group
+     * @param data - The audio stream
+     */
+    public broadcast(targetGroupId: Number, data: Readable): void;
+    /**
      * Pause the broadcast of a group
      * @param targetGroupId - The id of the group
      */
-    public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>;
+    public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>; 
     /**
      * Resume a broadcast of a group
      * @param targetGroupId - The id of the group
@@ -1571,9 +1640,16 @@ export class Stage extends BaseHelper {
     public isPaused(targetGroupId: Number): Promise<Boolean>;
     /**
      * Check whether or not the client is playing
+     * @deprecated Will be removed in 1.0.0
+     * @use {@link isBroadcasting}
      * @param targetGroupId - The id of the group
      */
     public isPlaying(targetGroupId: Number): Promise<Boolean>;
+    /**
+     * Check whether or not the client is playing
+     * @param targetGroupId - The id of the group
+     */
+    public isBroadcasting(targetGroupId: Number): Promise<Boolean>;      
     /**
      * Check whether or not the client is connecting
      * @param targetGroupId - The id of the group
@@ -1599,6 +1675,40 @@ export class Stage extends BaseHelper {
      * @param targetGroupId - The id of the group
      */
     public slotId(targetGroupId: Number): Promise<Number>;
+    /**
+     * Get the slot request list for a group
+     * @param targetGroupId - The id of the group
+     * @param requestNew - Whether or not to request new data from the server
+     */
+    public getSlotRequestList(targetGroupId: Number, requestNew: Boolean): Promise<Array<StageSlotRequestObject>>
+    /**
+     * Request a stage slot in a group (Expires after 5 minutes)
+     * @param targetGroupId - The id of the group
+     */
+    public requestSlot(targetGroupId: Number): Promise<ResponseObject>
+    /**
+     * Cancel a stage slot request in a group
+     * @param targetGroupId - The id of the group
+     */
+    public cancelSlotRequest(targetGroupId: Number): Promise<ResponseObject>
+    /**
+     * Clear the slot request list for a group
+     * @param targetGroupId - The id of the group
+     */
+    public clearSlotRequestList(targetGroupId: Number): Promise<ResponseObject>
+    /**
+     * Request a user to join the stage (Expires after 30 seconds)
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot to assign to the user
+     * @param subscriberId - The id of the subscriber to assign
+     */
+    public addSlotRequrest(targetGroupId: Number, slotId: Number, subscriberId: Number): Promise<ResponseObject>
+    /**
+     * Cancel a user slot assign request
+     * @param targetGroupId - The id of the group
+     * @param slotId - The id of the slot to assign to the user
+     */
+    public removeSlotRequest(targetGroupId: Number, slotId: Number): Promise<ResponseObject>
 }
 export class Store extends BaseHelper {
     private constructor(api : WOLFBot);
