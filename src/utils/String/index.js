@@ -1,16 +1,16 @@
 const validator = require('../../validator');
 
-const PUNCTUATION_REGEX = /[/"()&*$%￥^+=`,~<>{}[]|-!#%,:;@¡§«¶·»¿;·՚-՟։֊؉،॥॰෴๏๚๛༄-༒༔༺-༽྅჻፠-፨᐀᙭᙮។-៖៘-៚‧‰-⁃⁅-⁑⁓-⁞⁽⁾₍₎、〃〈-【】〔-〟〰〽゠・﴾﴿︐-︙︰-﹒﹔-﹡﹣﹨﹪﹫！-＃％-＊，-／：；？＠［-］＿｛｝｟-･〔〕《》]/;
+const tlds = require('tldts');
+// eslint-disable-next-line prefer-regex-literals
+const START_REGEX = new RegExp(/^([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s+)/, 'g');
+// eslint-disable-next-line prefer-regex-literals
+const END_REGEX = new RegExp(/([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s)+$/, 'g');
 
-const removePunctuation = (url) => {
-  if (url) {
-    const lastCharacter = url.slice(-1);
-
-    if (lastCharacter.match(PUNCTUATION_REGEX)) {
-      return removePunctuation(url.slice(0, url.length - 1));
-    }
+const trimPunctuation = (string) => {
+  if (string) {
+    return string.replace(START_REGEX, '').replace(END_REGEX, '');
   }
-  return url;
+  return string;
 };
 
 function escapeRegExp (string) {
@@ -152,41 +152,38 @@ class String {
   }
 
   isValidUrl (url) {
-    try {
-      const original = url;
+    if (url && !(url.startsWith('[') && url.endsWith(']'))) {
+      if ((url.includes('.') || url.includes(':'))) {
+        let link = trimPunctuation(url.toLowerCase());
 
-      url = removePunctuation(url);
+        const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
 
-      if (url && (url.includes('.') || url.includes(':'))) {
-        const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto)) || 'http://';
-
-        if (!url.toLowerCase().startsWith(protocol)) {
-          url = `${protocol}${url}`;
+        if (protocol) {
+          link = link.slice(protocol ? protocol.length : 0);
         }
 
-        if (!url.slice(protocol.length).toLowerCase().startsWith('www.')) {
-          url = `${protocol}www.${url.slice(protocol.length)}`;
-        }
+        const split = link.split(/[.:]/g).filter(Boolean);
 
-        if (url.split('.').length > 2) {
+        if (split.length >= 2) {
           try {
-            const data = new URL(url);
-            if ((data.hostname.includes('.') && this._api._botConfig.validation.link.tld.includes(removePunctuation(data.hostname.split('.').pop()))) || (data.host.includes(':') && data.port)) {
+            const data = new URL(`${protocol || 'http://'}${link.trim()}`);
+
+            const parsed = tlds.parse(data.host);
+
+            if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.validation.link.tld.includes(tld))) {
               return {
-                original,
-                formatted: data.href
+                url,
+                hostname: parsed.hostname
               };
             }
-          } catch (error) {}
+          } catch (error) {
+            //
+          }
         }
       }
-    } catch (error) {
-      error.internalErrorMessage = `api.utility().string().isValidUrl(url=${JSON.stringify(url)})`;
-      throw error;
     }
-
     return false;
-  };
+  }
 }
 
 module.exports = String;

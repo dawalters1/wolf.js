@@ -2,6 +2,7 @@ const WOLFBot = require('./src/client/WOLFBot');
 const Command = require('./src/command/Command');
 const Validator = require('./src/validator');
 
+const CommandObject = require('./src/models/CommandObject');
 const ContactObject = require('./src/models/ContactObject');
 const GroupEventObject = require('./src/models/GroupEventObject');
 const GroupObject = require('./src/models/GroupObject');
@@ -19,6 +20,7 @@ module.exports = {
   Command,
   Validator,
 
+  CommandObject,
   ContactObject,
   GroupEventObject,
   GroupObject,

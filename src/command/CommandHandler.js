@@ -1,4 +1,5 @@
 'use strict';
+const { CommandObject } = require('../..');
 const { Events, Privilege, MessageType } = require('../constants');
 const Command = require('./Command');
 
@@ -50,8 +51,8 @@ module.exports = class CommandHandler {
     }) !== undefined;
   }
 
-  register (Commands) {
-    this._commands = Commands;
+  register (commands) {
+    this._commands = commands;
   }
 
   async _processMessage (message) {
@@ -96,7 +97,7 @@ module.exports = class CommandHandler {
       const callback = command.callback;
 
       Reflect.deleteProperty(command, 'callback');
-      return callback.call(this, command);
+      return callback.call(this, new CommandObject(command));
     } catch (error) {
       error.internalErrorMessage = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.stack}`;
       throw error;

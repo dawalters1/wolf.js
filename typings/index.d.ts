@@ -6,9 +6,7 @@
 
  import type { Readable } from "stream";
   
- export class Command {
-     public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
- }
+
  export class ResponseObject<T = undefined> {
      private constructor();
  
@@ -20,9 +18,25 @@
  }
  
  //#region Command
- export class CommandObject {
-     public constructor(trigger: String, commandCallbacks: Object, children: Array<CommandObject>);
- }
+export class Command {
+    public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
+}
+
+export class CommandObject {
+    private constructor(commandContext: Object);
+
+    public isGroup: Boolean;
+    public language: String;
+    public argument: String;
+    /**
+     * @deprecated Will be removed in 1.0.0
+     */
+    public message: MessageObject;
+    public targetGroupId: Number;
+    public sourceSubscriberId: Number;
+    public timestamp: Number;
+    public type: String;
+}
  export class CommandHandler{
      private constructor();
      /**
@@ -30,7 +44,7 @@
       * @param message - The message
       */
      public isCommand(message: MessageObject) : Boolean;
-     public register(Commands: CommandObject): void;
+     public register(Commands: Command): void;
  }
  export class CommandContextObject{
      public isGroup: Boolean;

@@ -42,6 +42,7 @@
     "socket.io-client": "^2.3.1",
     "socketio-wildcard": "^2.0.0",
     "superagent": "^6.1.0",
+    "tldts": "^5.7.53",
     "uuid": "^8.3.2",
     "wrtc": "^0.4.7",
     "yaml": "^1.10.2"
