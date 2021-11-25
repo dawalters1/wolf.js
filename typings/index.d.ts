@@ -254,6 +254,12 @@ export class GroupAudioCountObject{
     public consumerCount: Number;
     public broadcasterCount: Number;
 }
+
+export class GroupAudioRequestObject{
+    reservedOccupierId: Number;
+    reservedExpiresAt: Date;
+}
+
 export class GroupAudioSlotObject{
     public id: Number;
     public locked: Number;
@@ -1465,6 +1471,8 @@ export class Phrase extends BaseHelper {
      */
     public isRequestedPhrase(name: String, value: String): Boolean;
 }
+
+//TODO: Update to 0.20.0 methods
 export class Stage extends BaseHelper {
     private constructor(api : WOLFBot);
 
@@ -2245,6 +2253,26 @@ export interface ClientEvents {
      * Groups audio count updated (Listener changed or someone joined a slot and is broadcasting)
      */
     groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
+
+    /**
+     * A slot request was added
+     */
+    groupAudioRequestAdd: [group: Group, request: GroupAudioRequestObject],
+
+    /**
+     * A slot request was deleted
+     */
+    groupAudioRequestDelete: [group: Group, request: GroupAudioRequestObject],
+
+    /**
+     * A groups request slots list was cleared
+     */
+    groupAudioRequestListClear: [group: Group, request: GroupAudioRequestObject],
+
+    /**
+     * A slot request expired
+     */
+    groupAudioRequestExpire: [group: Group, request: GroupAudioRequestObject]
     /**
      * A slot was updated (User joined/left, muted or slot was locked)
      */

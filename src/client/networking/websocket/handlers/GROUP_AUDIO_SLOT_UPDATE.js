@@ -13,7 +13,7 @@ module.exports = async (api, body) => {
 
   if (cached.reservedOccupierId && !body.reservedOccupierId) {
     api.emit(
-      cached.reservedExpiresAt >= Date.now() ? Events.GROUP_AUDIO_SLOT_REQUEST_EXPIRE : Events.GROUP_AUDIO_SLOT_REQUEST_DELETE,
+      cached.reservedExpiresAt >= Date.now() ? Events.GROUP_AUDIO_REQUEST_EXPIRE : Events.GROUP_AUDIO_REQUEST_DELETE,
       group,
       {
         reservedOccupierId: body.reservedOccupierId
@@ -23,7 +23,7 @@ module.exports = async (api, body) => {
 
   if (!cached.reservedOccupierId && body.reservedOccupierId) {
     api.emit(
-      Events.GROUP_AUDIO_SLOT_REQUEST_ADD,
+      Events.GROUP_AUDIO_REQUEST_ADD,
       group,
       {
         reservedOccupierId: body.reservedOccupierId,

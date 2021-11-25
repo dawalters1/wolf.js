@@ -7,14 +7,10 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  group.stageRequestList.push(body);
+  group.stageRequestList = [];
 
   return api.emit(
-    Events.GROUP_AUDIO_REQUEST_ADD,
-    group,
-    {
-      reservedOccupierId: body.subscriberId,
-      reservedExpiresAt: body.expiresAt
-    }
+    Events.GROUP_AUDIO_REQUEST_CLEAR,
+    group
   );
 };
