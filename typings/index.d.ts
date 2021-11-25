@@ -1,5 +1,10 @@
-import type { Readable } from "stream";
+/**
+ * Typings support for 0.20.0
+ * Created: 8/11/21
+ * Updated: 25/11/21
+ */
 
+import type { Readable } from "stream";
   
 export class Command {
     public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
@@ -127,6 +132,10 @@ export class ConfigOptionsObject {
     public ignoreUnofficialBots: Boolean;
     public developerId: Number;
     public networking: ConfigNetworkSettingsObject;
+}
+export class CognitoObject{
+    public token: String;
+    public identity: String;
 }
 export class DiscoveryRecipeObject{
     public type: String;
@@ -764,6 +773,31 @@ export class WOLFBot {
     public tipping(): Tipping;
 
     /**
+     * Login to an account
+     * @param email - The email belonging to the account
+     * @param password - The password belonging to the account 
+     * @param loginDevice - The device to appear as 
+     * @param onlineState - The online state to appear as 
+     * @param loginType - The account type 
+     * @param token - The token to use to log in (Automatically generated if not provided)
+     */
+    public login(email: String, password: String, loginDevice: LoginDevice, onlineState: OnlineState, loginType: LoginType, token: String): void;
+
+    /**
+     * Logout of the current account
+     */
+    public logout(): void;
+    /**
+     * Get the AWS congito token
+     * @param requestNew - Whether or not to request new information from server
+     */
+    public getSecurityToken(requestNew: Boolean): Promise<CognitoObject>
+    /**
+     * Change the bots online state
+     * @param onlineState - The online state
+     */
+    public setOnlineState(onlineState: OnlineState): Promise<ResponseObject>
+    /**
      * Search group a group or user
      * @param query - The term to look for
      */
@@ -774,7 +808,7 @@ export class WOLFBot {
      */
     public getLinkMetadata(link: String): Promise<ResponseObject<LinkMetadataObject>>;
     /**
-     * 
+     * Get the link blacklist
      * @param requestNew (Default: False)- Whether or not to request new information from server
      */
     public getLinkBlackList(requestNew?: Boolean): Promise<Array<BlacklistItemObject>>;
@@ -837,6 +871,9 @@ export class WOLFBot {
      */
     public options: ConfigOptionsObject;
 
+  /**
+   * The current account logged in
+   */
     public currentSubscriber: SubscriberObject;
 
     /**
@@ -1359,7 +1396,7 @@ export class Messaging extends BaseHelper {
      * Accept a chat request
      * @param subscriberId - The id of the subscriber
      */
-    public acceptPrivateMessageRequest(subscriberId :Number): Promise<ResponseObject<MessageResponseObject>>;
+    public acceptPrivateMessageRequest(subscriberId: Number): Promise<ResponseObject<MessageResponseObject>>;
     /**
      * Delete a group message
      * @param targetGroupId - The id of the group
@@ -1579,14 +1616,14 @@ export class Stage extends BaseHelper {
      * @param slotId - The id of the slot
      * @param sdp - The sdp (Leave empty for internal handling)
      */
-    public joinSlot(targetGroupId :Number, slotId: Number, sdp?:String): Promise<ResponseObject>;
+    public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String): Promise<ResponseObject>;
     /**
      * Listen to a slot
      * @param targetGroupId - The id of the group
      * @param slotId - The id of the slot
      * @param sdp - The sdp belonging to the slot
      */
-    public consumeSlot(targetGroupId :Number, slotId: Number, sdp: String): Promise<ResponseObject>;
+    public consumeSlot(targetGroupId: Number, slotId: Number, sdp: String): Promise<ResponseObject>;
     /**
      * Broadcast in a group
      * @deprecated Will be removed in 1.0.0
