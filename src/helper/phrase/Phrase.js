@@ -166,7 +166,7 @@ class Phrase extends BaseHelper {
 
   isRequestedPhrase (name, value) {
     try {
-      return this.getAllByName(name).filter((phrase) => this._api.utility().string().isEqual(phrase.value, value));
+      return this.getAllByName(name).find((phrase) => this._api.utility().string().isEqual(phrase.value, value)) !== undefined;
     } catch (error) {
       error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
       throw error;

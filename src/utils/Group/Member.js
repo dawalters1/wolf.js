@@ -73,10 +73,10 @@ class Member {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
-      if (validator.isNullOrUndefined(Capability)) {
-        throw new Error('Capability cannot be null or undefined');
-      } else if (!validator.isValidNumber(Capability)) {
-        throw new Error('Capability must be a valid number');
+      if (validator.isNullOrUndefined(requiredCapability)) {
+        throw new Error('requiredCapability cannot be null or undefined');
+      } else if (!validator.isValidNumber(requiredCapability)) {
+        throw new Error('requiredCapability must be a valid number');
       } else if (!Object.values(Capability).includes(requiredCapability)) {
         throw new Error('requiredCapability is not valid');
       }
@@ -132,7 +132,7 @@ class Member {
 
       return checkCapability(requiredCapability, groupSubscriber.capabilities);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, Capability=${JSON.stringify(Capability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
+      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, requiredCapability=${JSON.stringify(requiredCapability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
       throw error;
     }
   }
