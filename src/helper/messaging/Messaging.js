@@ -114,9 +114,9 @@ class Messaging extends BaseHelper {
   async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-    const multimediaMimes = this._api._botConfig.multimedia.messaging.validation.mimes;
+    const multiMediaMimes = this._api._botConfig.multimedia.messaging.validation.mimes;
 
-    if (multimediaMimes.includes(mimeType)) {
+    if (multiMediaMimes.includes(mimeType)) {
       return await this._api.multiMediaService().sendMessage(targetType, targetId, content, mimeType);
     }
 
@@ -148,7 +148,19 @@ class Messaging extends BaseHelper {
 
       const ads = [...value.matchAll(/\[(.+?)\]/g)] || [];
 
-      const links = value.split(' ').filter((url) => this._api.utility().string().isValidUrl(url[0])) || [];
+      let index = 0;
+      const links = value.split(' ').reduce((result, link) => {
+        const url = this._api.utility().string().isValidUrl(link);
+        if (url) {
+          url.startsAt = value.indexOf(link, index);
+          url.endsAt = value.indexOf(link, index) + link.length;
+          result.push(url);
+        }
+
+        index++;
+
+        return result;
+      }, []);
 
       if (links.length > 0 || ads.length > 0) {
         body.metadata = {
@@ -175,9 +187,9 @@ class Messaging extends BaseHelper {
           body.metadata.formatting.links = links.reduce((result, value) => {
             result.push(
               {
-                start: value.index,
-                end: value.index + value[0].length,
-                url: value[0]
+                start: value.startsAt,
+                end: value.endsAt,
+                url: value.url
               }
             );
 
@@ -205,15 +217,22 @@ class Messaging extends BaseHelper {
             if (Reflect.has(item, 'url')) {
               const metadata = await this._api.getLinkMetadata(item.url);
 
-              if (metadata.success && !metadata.body.isBlacklisted && metadata.body.title) {
-                (await result).push(
-                  {
-                    type: metadata.body.imageSize > 0 ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
-                    url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`,
-                    title: metadata.body.title,
-                    body: metadata.body.description
+              if (metadata.success && !metadata.body.isBlacklisted) {
+                const preview = {
+                  type: !metadata.body.title && metadata.body.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
+                  url: protocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
+                };
+
+                if (preview.type === EmbedType.LINK_PREVIEW) {
+                  if (!metadata.body.title) {
+                    return result;
                   }
-                );
+
+                  preview.title = metadata.body.title || '-';
+                  preview.body = metadata.body.description || '-';
+                }
+
+                (await result).push(preview);
               }
             } else if (Reflect.has(item, 'groupId')) {
               (await result).push(

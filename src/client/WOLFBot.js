@@ -77,6 +77,8 @@ class WOLFBot extends EventEmitter {
     this._tipping = new Tipping(this);
 
     this._currentSubscriber = undefined;
+
+    this._blacklist = [];
   }
 
   /**
@@ -412,7 +414,12 @@ class WOLFBot extends EventEmitter {
 
       return await this.websocket.emit(
         Commands.METADATA_URL,
-        { url: link }
+        {
+          headers: {
+            version: 2
+          },
+          body: { url: link }
+        }
       );
     } catch (error) {
       error.internalErrorMessage = `api.getLinkMetadata(link=${JSON.stringify(link)})`;
