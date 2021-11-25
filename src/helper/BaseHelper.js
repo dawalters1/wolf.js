@@ -5,7 +5,7 @@ class BaseHelper {
     this._websocket = api.websocket;
   }
 
-  _cleanup () {
+  async _cleanup (disconnected = false) {
     throw new Error('NOT IMPLEMENTED');
   }
 

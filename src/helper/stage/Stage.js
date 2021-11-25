@@ -53,7 +53,7 @@ module.exports = class Stage extends BaseHelper {
       const result = await this._websocket.emit(Commands.STAGE_LIST);
 
       if (result.success) {
-        this._stages = result.body;
+        this._stageList = result.body;
       }
 
       return this._stageList;
@@ -1120,5 +1120,12 @@ module.exports = class Stage extends BaseHelper {
       error.internalErrorMessage = `api.stage().removeSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
+  }
+
+  async _cleanup (disconnected) {
+    if (!disconnected && this._stageList.length > 0) {
+      return await this.getStageList(true);
+    }
+    this._stageList = [];
   }
 };

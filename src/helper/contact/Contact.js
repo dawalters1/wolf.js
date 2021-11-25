@@ -115,7 +115,10 @@ class Contact extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup (disconnected) {
+    if (!disconnected && this._contacts.length > 0) {
+      return await this.list(true);
+    }
     this._contacts = [];
   }
 }

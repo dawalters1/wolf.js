@@ -302,7 +302,7 @@ class Charm extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup () {
     this._charms = {};
   }
 }

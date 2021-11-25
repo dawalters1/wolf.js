@@ -491,7 +491,7 @@ class Group extends BaseHelper {
     }
   }
 
-  _cleanup () {
+async _cleanup () {
     this._groups = [];
   }
 

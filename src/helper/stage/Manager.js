@@ -114,6 +114,12 @@ class Manager {
   async removeClient (targetGroupId) {
     return this._removeClient(targetGroupId);
   }
+
+  async closeAll () {
+    for (const id of Object.keys(this._clients)) {
+      this._removeClient(id);
+    }
+  }
 }
 
 module.exports = Manager;

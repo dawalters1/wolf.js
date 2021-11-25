@@ -172,7 +172,7 @@ module.exports = class Discovery extends BaseHelper {
     return await this._getRecipe(recipe.id, language, type, recipe.min, recipe.max);
   }
 
-  _cleanup () {
+  async _cleanup () {
     this._discovery = {};
     this._recipes = {};
   }

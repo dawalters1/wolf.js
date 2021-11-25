@@ -4,6 +4,8 @@ const crypto = require('crypto');
 const { Events, Commands, DeviceType, LoginType } = require('../../../../constants');
 
 const onSuccess = async (api, reconnect = false) => {
+  await api._cleanup(false);
+
   await Promise.all([
     api.group()._joinedGroups(),
     api.messaging()._messageGroupSubscribe(),
