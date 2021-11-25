@@ -6,7 +6,6 @@
 
  import type { Readable } from "stream";
   
-
  export class ResponseObject<T = undefined> {
      private constructor();
  
@@ -710,6 +709,9 @@ export class CommandObject {
      public constructor();
  
      public websocket: Websocket;
+     /**
+      * @ignore
+      */
      private multiMediaService(): MultiMediaService; 
      /**
       * Exposes the commandHandler methods
@@ -2169,206 +2171,230 @@ export class CommandObject {
  
  //#region enums
  
- export enum AdminAction {
-     REGULAR = 0,
-     ADMIN = 1,
-     MOD = 2,
-     BAN = 4,
-     SILENCE = 8,
-     KICK = 16,
-     JOIN = 17,
-     LEAVE = 18,
-     OWNER = 32,
+export const Constants: {
+    AdminAction: AdminAction;
+    Capability:Capability;
+    Category: Category;
+    ContextType:ContextType;
+    DeviceType: DeviceType;
+    EmbedType: EmbedType;
+    Gender: Gender;
+    Language: Language;
+    LoginDevice: LoginDevice;
+    LoginType: LoginType;
+    LookingFor: LookingFor;
+    MessageFilterTier: MessageFilterTier;
+    MessageType: MessageType;
+    OnlineState: OnlineState;
+    Privilege: Privilege;
+    Relationship: Relationship;
+    RetryMode: RetryMode;
+    SearchType: SearchType;
+    TipDirection: TipDirection;
+    TipPeriod: TipPeriod;
+    TipType: TipType;
+}
+
+ export interface AdminAction {
+     REGULAR : 0,
+     ADMIN : 1,
+     MOD : 2,
+     BAN : 4,
+     SILENCE : 8,
+     KICK : 16,
+     JOIN : 17,
+     LEAVE : 18,
+     OWNER : 32,
  }
- export enum Capability {
-     NOT_MEMBER = -1,
-     REGULAR = 0,
-     ADMIN = 1,
-     MOD = 2,
-     BANNED = 4,
-     SILENCED = 8,
-     OWNER = 32,
+ export interface Capability {
+     NOT_MEMBER : -1,
+     REGULAR : 0,
+     ADMIN : 1,
+     MOD : 2,
+     BANNED : 4,
+     SILENCED : 8,
+     OWNER : 32,
  }
- export enum Category {
-     NOT_SPECIFIED = 0,
-     BUSINESS = 8,
-     EDUCATION = 10,
-     ENTERTAINMENT = 26,
-     GAMING = 12,
-     LIFESTYLE = 13,
-     MUSIC = 14,
-     NEWS_AND_POLITICS = 15,
-     PHOTOGRAPHY = 16,
-     SCIENCE_AND_TECH = 25,
-     SOCIAL_AND_PEOPLE = 17,
-     SPORTS = 19,
-     TRAVEL_AND_LOCAL = 18,
+ export interface Category {
+     NOT_SPECIFIED : 0,
+     BUSINESS : 8,
+     EDUCATION : 10,
+     ENTERTAINMENT : 26,
+     GAMING : 12,
+     LIFESTYLE : 13,
+     MUSIC : 14,
+     NEWS_AND_POLITICS : 15,
+     PHOTOGRAPHY : 16,
+     SCIENCE_AND_TECH : 25,
+     SOCIAL_AND_PEOPLE : 17,
+     SPORTS : 19,
+     TRAVEL_AND_LOCAL : 18,
  }
- export enum ContextType {
-     MESSAGE = "message",
-     STAGE = "stage",
+ export interface ContextType {
+     MESSAGE : "message",
+     STAGE : "stage",
  }
- export enum DeviceType {
-     OTHER = 0,
-     BOT = 1,
-     IPHONE = 5,
-     IPAD = 6,
-     ANDROID = 7,
-     WEB = 8,
+ export interface DeviceType {
+     OTHER : 0,
+     BOT : 1,
+     IPHONE : 5,
+     IPAD : 6,
+     ANDROID : 7,
+     WEB : 8,
  }
- export enum EmbedType {
-     IMAGE_PREVIEW = "imagePreview",
-     GROUP_PREVIEW = "groupPreview",
-     LINK_PREVIEW = "linkPreview",
+ export interface EmbedType {
+     IMAGE_PREVIEW : "imagePreview",
+     GROUP_PREVIEW : "groupPreview",
+     LINK_PREVIEW : "linkPreview",
  }
- export enum Gender {
-     NOT_SPECIFIED = 0,
-     MALE = 1,
-     FEMALE = 2,
+ export interface Gender {
+     NOT_SPECIFIED : 0,
+     MALE : 1,
+     FEMALE : 2,
  }
- export enum Language {
-     NOT_SPECIFIED = 0,
-     ENGLISH = 1,
-     GERMAN = 3,
-     SPANISH = 4,
-     FRENCH = 6,
-     POLISH = 10,
-     CHINESE_SIMPLIFIED = 11,
-     RUSSIAN = 12,
-     ITALIAN = 13,
-     ARABIC = 14,
-     PERSIAN_FARSI = 15,
-     GREEK = 16,
-     PORTUGUESE = 17,
-     HINDI = 18,
-     JAPANESE = 19,
-     LATIN_SPANISH = 20,
-     SLOVAK = 21,
-     CZECH = 22,
-     DANISH = 24,
-     FINNISH = 25,
-     HUNGARIAN = 27,
-     BAHASA_INDONESIA = 28,
-     MALAY = 29,
-     DUTCH = 30,
-     NORWEGIAN = 31,
-     SWEDISH = 32,
-     THAI = 33,
-     TURKISH = 34,
-     VIETNAMESE = 35,
-     KOREAN = 36,
-     BRAZILIAN_PORTUGUESE = 37,
-     ESTONIAN = 39,
-     KAZAKH = 41,
-     LATVIAN = 42,
-     LITHUANIAN = 43,
-     UKRAINIAN = 44,
-     BULGARIAN = 45,
+ export interface Language {
+     NOT_SPECIFIED : 0,
+     ENGLISH : 1,
+     GERMAN : 3,
+     SPANISH : 4,
+     FRENCH : 6,
+     POLISH : 10,
+     CHINESE_SIMPLIFIED : 11,
+     RUSSIAN : 12,
+     ITALIAN : 13,
+     ARABIC : 14,
+     PERSIAN_FARSI : 15,
+     GREEK : 16,
+     PORTUGUESE : 17,
+     HINDI : 18,
+     JAPANESE : 19,
+     LATIN_SPANISH : 20,
+     SLOVAK : 21,
+     CZECH : 22,
+     DANISH : 24,
+     FINNISH : 25,
+     HUNGARIAN : 27,
+     BAHASA_INDONESIA : 28,
+     MALAY : 29,
+     DUTCH : 30,
+     NORWEGIAN : 31,
+     SWEDISH : 32,
+     THAI : 33,
+     TURKISH : 34,
+     VIETNAMESE : 35,
+     KOREAN : 36,
+     BRAZILIAN_PORTUGUESE : 37,
+     ESTONIAN : 39,
+     KAZAKH : 41,
+     LATVIAN : 42,
+     LITHUANIAN : 43,
+     UKRAINIAN : 44,
+     BULGARIAN : 45,
  }
- export enum LoginDevice {
-     IPHONE = "iphone",
-     IPAD = "ipad",
-     ANDROID = "android",
-     WEB = "web",
+ export interface LoginDevice {
+     IPHONE : "iphone",
+     IPAD : "ipad",
+     ANDROID : "android",
+     WEB : "web",
  }
- export enum LoginType {
-     EMAIL = "email",
-     GOOGLE = "google",
-     FACEBOOK = "facebook",
-     TWITTER = "twitter",
-     SNAPCHAT = "snapchat",
-     APPLE = "apple",
+ export interface LoginType {
+     EMAIL : "email",
+     GOOGLE : "google",
+     FACEBOOK : "facebook",
+     TWITTER : "twitter",
+     SNAPCHAT : "snapchat",
+     APPLE : "apple",
  }
- export enum LookingFor {
-     NOT_SPECIFIED = 0,
-     FRIENDSHIP = 1,
-     DATING = 2,
-     RELATIONSHIP = 4,
-     NETWORKING = 8,
+ export interface LookingFor {
+     NOT_SPECIFIED : 0,
+     FRIENDSHIP : 1,
+     DATING : 2,
+     RELATIONSHIP : 4,
+     NETWORKING : 8,
  }
- export enum MessageFilterTier {
-     OFF = 0,
-     RELAXED = 3,
-     RECOMMENDED = 2,
-     STRICT = 1,
+ export interface MessageFilterTier {
+     OFF : 0,
+     RELAXED : 3,
+     RECOMMENDED : 2,
+     STRICT : 1,
  }
- export enum MessageType {
-     TEXT_PLAIN = "text/plain",
-     TEXT_HTML = "text/html",
-     TEXT_IMAGE = "text/image_link",
-     IMAGE_JPEG = "image/jpeg",
-     IMAGE_GIF = "image/gif",
-     AUDIO_AAC = "audio/aac",
-     TEXT_VOICE = "text/voice_link",
-     AUDIO_SPEEX = "audio/x-speex",
-     IMAGE_JPEGHTML = "image/jpeghtml",
-     APPLICATION_PALRINGO_GROUP_ACTION = "application/palringo-group-action",
-     TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE = "text/palringo-private-request-response",
+ export interface MessageType {
+     TEXT_PLAIN : "text/plain",
+     TEXT_HTML : "text/html",
+     TEXT_IMAGE : "text/image_link",
+     IMAGE_JPEG : "image/jpeg",
+     IMAGE_GIF : "image/gif",
+     AUDIO_AAC : "audio/aac",
+     TEXT_VOICE : "text/voice_link",
+     AUDIO_SPEEX : "audio/x-speex",
+     IMAGE_JPEGHTML : "image/jpeghtml",
+     APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
+     TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
  }
- export enum OnlineState {
-     OFFLINE = 0,
-     ONLINE = 1,
-     AWAY = 2,
-     INVISIBLE = 3,
-     BUSY = 5,
-     IDLE = 9,
+ export interface OnlineState {
+     OFFLINE : 0,
+     ONLINE : 1,
+     AWAY : 2,
+     INVISIBLE : 3,
+     BUSY : 5,
+     IDLE : 9,
  }
- export enum Privilege {
-     SUBSCRIBER = 1,
-     BOT_TESTER = 1 << 1,
-     GAME_TESTER = 1 << 2,
-     CONTENT_SUBMITER = 1 << 3,
-     SELECTCLUB_1 = 1 << 4,
-     ELITECLUB_1 = 1 << 6,
-     VOLUNTEER = 1 << 9,
-     SELECTCLUB_2 = 1 << 10,
-     ALPHA_TESTER = 1 << 11,
-     STAFF = 1 << 12,
-     TRANSLATOR = 1 << 13,
-     DEVELOPER = 1 << 14,
-     ELITECLUB_2 = 1 << 17,
-     PEST = 1 << 18,
-     VALID_EMAIL = 1 << 19,
-     PREMIUM_ACCOUNT = 1 << 20,
-     VIP = 1 << 21,
-     ELITECLUB_3 = 1 << 22,
-     USER_ADMIN = 1 << 24,
-     GROUP_ADMIN = 1 << 25,
-     BOT = 1 << 26,
-     ENTERTAINER = 1 << 29,
-     SHADOW_BANNED = 1 << 30,
+ export interface Privilege {
+     SUBSCRIBER : 1,
+     BOT_TESTER : 2,
+     GAME_TESTER : 4,
+     CONTENT_SUBMITER : 8,
+     SELECTCLUB_1 : 16,
+     ELITECLUB_1 : 64,
+     VOLUNTEER : 512,
+     SELECTCLUB_2 : 1024,
+     ALPHA_TESTER : 2048,
+     STAFF :4096,
+     TRANSLATOR : 8192,
+     DEVELOPER : 16384,
+     ELITECLUB_2 : 131072,
+     PEST : 262144,
+     VALID_EMAIL : 524288,
+     PREMIUM_ACCOUNT : 1048576,
+     VIP : 2097152,
+     ELITECLUB_3 :4194304,
+     USER_ADMIN : 16777216,
+     GROUP_ADMIN : 33554432,
+     BOT : 67108864,
+     ENTERTAINER : 536870912,
+     SHADOW_BANNED : 1073741824,
  }
- export enum Relationship {
-     NOT_SPECIFIED = 0,
-     SINGLE = 1,
-     RELATIONSHIP = 2,
-     ENGAGED = 3,
-     MARRIED = 4,
-     COMPLICATED = 5,
-     OPEN = 6,
+ export interface Relationship {
+     NOT_SPECIFIED : 0,
+     SINGLE : 1,
+     RELATIONSHIP : 2,
+     ENGAGED : 3,
+     MARRIED : 4,
+     COMPLICATED : 5,
+     OPEN : 6,
  }
- export enum RetryMode {
-     ALWAYS_FAIL = 0,
-     ALWAYS_RETRY = 1,
+ export interface RetryMode {
+     ALWAYS_FAIL : 0,
+     ALWAYS_RETRY : 1,
  }
- export enum SearchType {
-     GROUP = "group",
-     SUBSCRIBER = "subscriber",
+ export interface SearchType {
+     GROUP : "group",
+     SUBSCRIBER : "subscriber",
  }
- export enum TipDirection {
-     SENT = "sent",
-     RECEIVED = "received",
+ export interface TipDirection {
+     SENT : "sent",
+     RECEIVED : "received",
  }
- export enum TipPeriod {
-     ALL_TIME = "alltime",
-     DAY = "day",
-     WEEK = "week",
-     MONTH = "month",
+ export interface TipPeriod {
+     ALL_TIME : "alltime",
+     DAY : "day",
+     WEEK : "week",
+     MONTH : "month",
  }
- export enum TipType {
-     CHARM = "charm",
-     SUBSCRIBER = "subscriber",
-     GROUP = "group",
+ export interface TipType {
+     CHARM : "charm",
+     SUBSCRIBER : "subscriber",
+     GROUP : "group",
  }
    
  //#endregion

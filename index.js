@@ -11,6 +11,8 @@ const MessageObject = require('./src/models/MessageObject');
 const ResponseObject = require('./src/models/ResponseObject');
 const SubscriberObject = require('./src/models/SubscriberObject');
 
+const Constants = require('./src/constants');
+
 process.on('unhandledRejection', function (error) {
   console.error(`${error.stack}\ninternalErrorMessage: ${error.internalErrorMessage || 'No Error Provided'}`);
 });
@@ -19,6 +21,7 @@ module.exports = {
   WOLFBot,
   Command,
   Validator,
+  Constants,
 
   CommandObject,
   ContactObject,

@@ -1,5 +1,5 @@
 'use strict';
-const { CommandObject } = require('../..');
+const CommandObject = require('../models/CommandObject');
 const { Events, Privilege, MessageType } = require('../constants');
 const Command = require('./Command');
 
@@ -88,7 +88,7 @@ module.exports = class CommandHandler {
         return false;
       });
 
-      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().Privilege().has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().Privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
+      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
         return Promise.resolve();
       }
 

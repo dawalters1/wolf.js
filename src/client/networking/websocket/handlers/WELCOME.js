@@ -51,7 +51,7 @@ const login = async (api) => {
 
   api.cognito = result.body.cognito;
   api._currentSubscriber = result.body.subscriber;
-  api.currentSubscriber.token = api.config._loginSettings.token;
+  api._currentSubscriber.token = api.config._loginSettings.token;
 
   api.emit(
     Events.LOGIN_SUCCESS,
@@ -70,7 +70,7 @@ module.exports = async (api, body) => {
     return await login(api);
   }
 
-  api._currentSubscriber = new SubscriberObject(body.loggedInUser);
+  api._currentSubscriber = new SubscriberObject(api, body.loggedInUser);
 
   return await onSuccess(api, true);
 };
