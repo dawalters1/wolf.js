@@ -1,49 +1,10 @@
 const Message = require('../../../../models/MessageObject');
 
 const { version } = require('../../../../../package.json');
-const { Events, MessageType, Privilege } = require('../../../../constants');
+const { Events, MessageType, Privilege, ServerEvents } = require('../../../../constants');
 
 const handleAdminAction = async (api, message) => {
-  const [group, subscriber] = await Promise.all([
-    api.group().getById(message.targetGroupId),
-    api.subscriber().getById(message.sourceSubscriberId)
-  ]);
-
-  const adminAction = JSON.parse(message.body);
-
-  if (adminAction.type === 'join') {
-    return Promise.resolve();
-  }
-
-  // Handle all other actions
-  if (adminAction.type === 'leave' && adminAction.instigatorId) {
-    adminAction.type = 'kick';
-  }
-
-  if (adminAction.type === 'leave' || adminAction.type === 'kick') {
-    if (subscriber.id !== api.currentSubscriber.id) {
-      api.emit(
-        subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
-        group,
-        subscriber
-      );
-    }
-  }
-
-  if (adminAction.type === 'leave') {
-    return Promise.resolve();
-  }
-
-  return api.emit(
-    Events.GROUP_MEMBER_UPDATE,
-    group,
-    {
-      groupId: group.id,
-      sourceId: adminAction.instigatorId,
-      targetId: message.sourceSubscriberId,
-      action: adminAction.type
-    }
-  );
+// TODO: stop gap handling incase group members list isnt requested
 };
 
 module.exports = async (api, body) => {
