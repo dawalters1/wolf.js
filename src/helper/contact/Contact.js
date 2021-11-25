@@ -1,124 +1,123 @@
-const Helper = require('../Helper');
+const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
+const { Commands } = require('../../constants');
+const ContactObject = require('../../models/ContactObject');
 
-const request = require('../../constants/request');
-
-/**
- * {@hideconstructor}
- */
-module.exports = class Contact extends Helper {
+class Contact extends BaseHelper {
   constructor (api) {
     super(api);
 
     this._contacts = [];
   }
 
-  /**
-   *
-   * List of contacts for the bot
-   */
-  async list () {
-    if (this._contacts.length > 0) {
+  async list (requestNew = false) {
+    try {
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      if (!requestNew && this._contacts.length > 0) {
+        return this._contacts;
+      }
+
+      const result = await this._websocket.emit(Commands.SUBSCRIBER_CONTACT_LIST,
+        {
+          subscribe: true
+        }
+      );
+
+      if (result.success) {
+        this._contacts = result.body.map((subscriber) => new ContactObject(this._api, subscriber));
+      }
+
       return this._contacts;
+    } catch (error) {
+      error.internalErrorMessage = `api.contact().list(requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
     }
-
-    const result = await this._websocket.emit(request.SUBSCRIBER_CONTACT_LIST,
-      {
-        subscribe: true
-      });
-
-    if (result.success) {
-      this._contacts = result.body;
-    }
-
-    return this._contacts || [];
   }
 
-  /**
-   * Check to see if a subscriber is a contact
-   * @param {Number} subscriberId - The id of the subscriber
-   */
-  async isContact (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+  async isContact (subscriberIds) {
+    try {
+      subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
 
-    return (await this.list()).find((contact) => contact.id === subscriberId) !== null;
+      if (subscriberIds.length === 0) {
+        throw new Error('subscriberIds cannot be an empty array');
+      }
+      for (const subscriberId of subscriberIds) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new Error('subscriberId cannot be null or undefined');
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new Error('subscriberId must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new Error('subscriberId cannot be less than or equal to 0');
+        }
+      }
+
+      const results = subscriberIds.map((subscriberId) => this._contacts.some((subscriber) => subscriber.id === subscriberId));
+
+      return results.length === 1 ? results[0] : results;
+    } catch (error) {
+      error.internalErrorMessage = `api.contact().isContact(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      throw error;
+    }
   }
 
-  /**
-   * Add a subscriber as a contact
-   * @param {Number} subscriberId - The id of the subscriber
-   */
   async add (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
+    try {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new Error('subscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
 
-    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_ADD, {
-      id: subscriberId
-    });
+      return await this._websocket.emit(
+        Commands.SUBSCRIBER_CONTACT_ADD,
+        {
+          id: subscriberId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.contact().add(subscriberId=${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
 
   /**
-   * Delete a subscriber as a contact
-   * @param {Number} subscriberId - The id of the subscriber
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link remove}
    */
   async delete (subscriberId) {
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
-
-    return await this._websocket.emit(request.SUBSCRIBER_CONTACT_DELETE, {
-      id: subscriberId
-    });
+    return await this.remove(subscriberId);
   }
 
-  async _process (id) {
-    const existing = this._contacts.find((contact) => contact.id === id);
-
-    if (existing) {
-      this._contacts = this._contacts.filter((contact) => contact.id !== id);
-
-      return existing;
-    } else {
-      const subscriber = await this._api.subscriber().getById(id);
-
-      const contact = {
-        id,
-        additionalInfo: {
-          hash: subscriber.hash,
-          nickname: subscriber.nickname,
-          onlineState: subscriber.onlineState,
-          privileges: subscriber.privileges
-        }
-      };
-
-      this._contacts.push(contact);
-
-      return contact;
-    }
-  }
-
-  async _patch (subscriber) {
-    const existing = this._contacts.find((contact) => contact.id === subscriber.id);
-
-    if (existing) {
-      for (const key in subscriber) {
-        existing[key] = subscriber[key];
+  async remove (subscriberId) {
+    try {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new Error('subscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
-    }
 
-    return existing;
+      return await this._websocket.emit(
+        Commands.SUBSCRIBER_CONTACT_DELETE,
+        {
+          id: subscriberId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.contact().delete(subscriberId=${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
 
-  _clearCache () {
+  _cleanup () {
     this._contacts = [];
   }
-};
+}
+
+module.exports = Contact;

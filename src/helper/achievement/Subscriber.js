@@ -1,37 +1,35 @@
-const Helper = require('../Helper');
+const BaseHelper = require('../BaseHelper');
+
 const validator = require('../../validator');
+const { Commands } = require('../../constants');
 
-const request = require('../../constants/request');
-
-/**
- * {@hideconstructor}
- */
-module.exports = class Subscriber extends Helper {
-  // eslint-disable-next-line no-useless-constructor
-  constructor (api) {
-    super(api);
-  }
-
-  /**
-   * Get achievements for a subscriber
-   * @param {Number} sourceSubscriberId - The id of the subscriber
-   */
-  async getById (sourceSubscriberId) {
-    if (!validator.isValidNumber(sourceSubscriberId)) {
-      throw new Error('sourceSubscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-      throw new Error('sourceSubscriberId cannot be less than or equal to 0');
-    }
-
-    const result = await this._websocket.emit(request.ACHIEVEMENT_SUBSCRIBER_LIST, {
-      headers: {
-        version: 2
-      },
-      body: {
-        id: sourceSubscriberId
+class Subscriber extends BaseHelper {
+  async getById (subscriberId) {
+    try {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new Error('subscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
       }
-    });
 
-    return result.success ? result.body : [];
+      const result = await this._websocket.emit(Commands.ACHIEVEMENT_SUBSCRIBER_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: subscriberId
+          }
+        });
+
+      return result.success ? result.body : [];
+    } catch (error) {
+      error.internalErrorMessage = `api.achievement().subscriber().getById(targetGroupId=${JSON.stringify(subscriberId)})`;
+      throw error;
+    }
   }
-};
+}
+
+module.exports = Subscriber;

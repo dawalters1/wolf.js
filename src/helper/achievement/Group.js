@@ -1,37 +1,35 @@
-const Helper = require('../Helper');
+const BaseHelper = require('../BaseHelper');
+
 const validator = require('../../validator');
+const { Commands } = require('../../constants');
 
-const request = require('../../constants/request');
-
-/**
- * {@hideconstructor}
- */
-module.exports = class Group extends Helper {
-  // eslint-disable-next-line no-useless-constructor
-  constructor (api) {
-    super(api);
-  }
-
-  /**
-   * Get achievements for a group
-   * @param {Number} targetGroupId - The id of the group
-   */
+class Group extends BaseHelper {
   async getById (targetGroupId) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    const result = await this._websocket.emit(request.ACHIEVEMENT_GROUP_LIST, {
-      headers: {
-        version: 2
-      },
-      body: {
-        id: targetGroupId
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-    });
 
-    return result.success ? result.body : [];
+      const result = await this._websocket.emit(Commands.ACHIEVEMENT_GROUP_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: targetGroupId
+          }
+        });
+
+      return result.success ? result.body : [];
+    } catch (error) {
+      error.internalErrorMessage = `api.achievement().group().getById(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
   }
-};
+}
+
+module.exports = Group;

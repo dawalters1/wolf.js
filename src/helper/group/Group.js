@@ -1,424 +1,514 @@
-const Helper = require('../Helper');
+const BaseHelper = require('../BaseHelper');
+const GroupObject = require('../../models/GroupObject');
+const GroupSubscriber = require('../../models/GroupSubscriberObject');
+const Message = require('../../models/MessageObject');
+const Response = require('../../models/ResponseObject');
+
+const patch = require('../../utils/Patch');
+const { Commands } = require('../../constants');
 const validator = require('../../validator');
-
-const Response = require('../../networking/Response');
-const GroupProfileBuilder = require('./GroupProfileBuilder');
-
-const request = require('../../constants/request');
-const constants = require('@dawalters1/constants');
 const fileType = require('file-type');
 
-const toLanguageKey = require('../../internalUtils/toLanguageKey');
-const toBaseMessage = require('../../internalUtils/toBaseMessage');
+const constants = require('../../constants');
+const toLanguageKey = require('../../utils/ToLanguageKey');
+const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
 
-/**
- * {@hideconstructor}
- */
-module.exports = class Group extends Helper {
+class Group extends BaseHelper {
   constructor (api) {
     super(api);
+
     this._groups = [];
-    this._joinedGroupsRequested = false;
+
+    this._joinedGroupsFetched = false;
   }
 
-  /**
-   * Get a list of all the bots joined groups
-   */
-  list () {
-    return this._groups.filter((group) => group.inGroup || (group.subscribers && group.subscribers.length > 0));
-  }
-
-  /**
-   * Create a group
-   * @returns {GroupProfileBuilder} Group Profile Builder
-   */
-  create () {
-    return new GroupProfileBuilder(this._api)._create();
-  }
-
-  /**
-   * Get a list of groups by IDs
-   * @param {Number} targettargetGroupIds - The ids of the groups
-   * @param {Boolean} requestNew - Request new data from the server
-   */
-  async getByIds (targetGroupIds, requestNew = false) {
-    targetGroupIds = [...new Set(Array.isArray(targetGroupIds) ? targetGroupIds : [targetGroupIds])];
-
-    for (const targetGroupId of targetGroupIds) {
-      if (!validator.isValidNumber(targetGroupId)) {
-        throw new Error('targetGroupId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-        throw new Error('targetGroupId cannot be less than or equal to 0');
-      }
-    }
-
-    const groups = !requestNew ? this._groups.filter((group) => targetGroupIds.includes(group.id)) : [];
-
-    for (const batchTargetGroupIdList of this._api.utility().array().chunk(targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId)), 50)) {
-      const result = await this._websocket.emit(request.GROUP_PROFILE, {
-        headers: {
-          version: 4
-        },
-        body: {
-          idList: batchTargetGroupIdList,
-          subscribe: true,
-          entities: ['base', 'extended', 'audioCounts', 'audioConfig']
-        }
-      });
-      if (result.success) {
-        for (const group of Object.keys(result.body).map((targetGroupId) => {
-          const value = new Response(result.body[targetGroupId.toString()]);
-          if (value.success) {
-            const body = value.body;
-            const base = body.base;
-            base.extended = body.extended;
-            base.language = toLanguageKey(base.extended.language);
-            base.audioConfig = body.audioConfig;
-            base.audioCounts = body.audioCounts;
-            base.exists = true;
-
-            return base;
-          } else {
-            return {
-              id: targetGroupId,
-              exists: false
-            };
-          }
-        })) {
-          groups.push(this._process(group));
-        }
-      } else { groups.push(batchTargetGroupIdList.map((id) => ({ id: id, exists: false }))); }
-    }
-
-    return groups;
-  }
-
-  /**
-   * Get a group by ID
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Boolean} requestNew - Request new data from the server
-   */
-  async getById (targetGroupId, requestNew = false) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    return (await this.getByIds([targetGroupId], requestNew))[0];
-  }
-
-  /**
-   * Get a group by name
-   * @param {String} name - The name of the group
-   * @param {Boolean} requestNew - Request new data from the server
-   */
-  async getByName (name, requestNew = false) {
-    if (validator.isNullOrWhitespace(name)) {
-      throw new Error('name cannot be null or empty');
-    }
-
-    if (!requestNew) {
-      const group = this._groups.find((grp) => grp.name.toLowerCase() === name.toLowerCase().trim());
-
-      if (group) {
-        return group;
-      }
-    }
-
-    const result = await this._websocket.emit(request.GROUP_PROFILE, {
-      headers: {
-        version: 4
-      },
-      body: {
-        name: name.toLowerCase(),
-        subscribe: true,
-        entities: ['base', 'extended', 'audioCounts', 'audioConfig']
-      }
-    });
-
-    if (result.success) {
-      const body = result.body;
-      const group = body.base;
-      group.extended = body.extended;
-      group.audioCounts = body.audioCounts;
-      group.audioConfig = body.audioConfig;
-      group.exists = true;
-
-      return this._process(group);
-    }
-
-    return {
-      id: 0,
-      name: name,
-      exists: false
-    };
-  }
-
-  /**
-   * Join a group by id
-   * @param {Number} targetGroupId - The id of the group
-   * @param {String} password - Request new data from the server (Optional)
-   */
-  async joinById (targetGroupId, password = undefined) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    return await this._websocket.emit(request.GROUP_MEMBER_ADD, {
-      groupId: targetGroupId,
-      password
-    });
-  }
-
-  /**
-   * Join a group by name
-   * @param {String} name - The name of the group
-   * @param {String} password - Request new data from the server (Optional)
-   */
-  async joinByName (targetGroupName, password = undefined) {
-    if (validator.isNullOrWhitespace(targetGroupName)) {
-      throw new Error('targetGroupName cannot be null or empty');
-    }
-    return await this._websocket.emit(request.GROUP_MEMBER_ADD, {
-      name: targetGroupName.toLowerCase(),
-      password
-    });
-  }
-
-  /**
-   * Leave a group by ID
-   * @param {Number} targetGroupId - The Id of the group
-   */
-  async leaveById (targetGroupId) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-    return await this._websocket.emit(request.GROUP_MEMBER_DELETE, {
-      groupId: targetGroupId
-    });
-  }
-
-  /**
-   * Leave a group by name
-   * @param {String} name - The name of the group
-   */
-  async leaveByName (name) {
-    if (validator.isNullOrWhitespace(name)) {
-      throw new Error('name cannot be null or empty');
-    }
-    return await this.leaveById((await this.getByName(name)).id);
-  }
-
-  /**
-   * Get chat history for a group
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Number} timestamp - The last timestamp in the group (0 for last messages sent)
-   * @param {Number} limit - How many messages the request should return (Min 5, Max 100)
-   */
-  async getHistory (targetGroupId, timestamp = 0, limit = 10) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    if (!validator.isValidNumber(timestamp)) {
-      throw new Error('timestamp must be a valid number');
-    } else if (validator.isLessThanZero(timestamp)) {
-      throw new Error('timestamp cannot be less than 0');
-    }
-
-    if (!validator.isValidNumber(limit)) {
-      throw new Error('limit must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new Error('limit cannot be less than or equal to 0');
-    }
-
-    if (limit < 5) {
-      throw new Error('limit cannot be less than 5');
-    } else if (limit > 100) {
-      throw new Error('limit cannot be larger than 100');
-    }
-
-    const result = await this._websocket.emit(request.MESSAGE_GROUP_HISTORY_LIST,
-      {
-        headers: {
-          version: 3
-        },
-        body: {
-          id: targetGroupId,
-          limit,
-          chronological: false,
-          timestampBegin: timestamp === 0,
-          timestampEnd: timestamp === 0 ? undefined : timestamp
-        }
-      });
-
-    return {
-      code: result.code,
-      body: result.success ? result.body.map((message) => toBaseMessage(this._api, message)) : []
-    };
-  }
-
-  /**
-   * Get the members list for a group
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Boolean} requestNew - Request new data from the server
-   */
-  async getSubscriberList (targetGroupId, requestNew = false) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    const group = await this.getById(targetGroupId);
-
-    if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
-      return group.subscribers;
-    }
-
-    const result = await this._websocket.emit(request.GROUP_MEMBER_LIST, {
-      headers: {
-        version: 3
-      },
-      body: {
-        id: targetGroupId,
-        subscribe: true
-      }
-    });
-
-    if (result.success) {
-      group.inGroup = true;
-      group.subscribers = result.body;
-    }
-
-    this._process(group);
-
-    return group.subscribers || [];
-  }
-
-  /**
-   * Get the conversation stats for a group
-   * @param {Number} targetGroupId - The id of the gorup
-   */
-  async getStats (targetGroupId) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-    return await this._websocket.emit(request.GROUP_STATS, {
-      id: targetGroupId
-    });
-  }
-
-  /**
-   * Update a groups avatar
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Buffer} avatar - The new avatar
-   */
-  async updateAvatar (targetGroupId, avatar) {
-    return await this._api._mediaService().uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
-  }
-
-  /**
-   * Update a group subscribers role - Use @dawalters1/constants for capability
-   * @param {Number} targetGroupId - The id of the group
-   * @param {Number} subscriberId - The id of the subscriber to update
-   * @param {Number} capability - The new role for the subscriber
-   */
-  async updateSubscriber (targetGroupId, subscriberId, capability) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
-
-    if (!validator.isValidNumber(capability)) {
-      throw new Error('capability must be a valid number');
-    } else if (!Object.values(constants.adminAction).includes(capability)) {
-      throw new Error('capability is not valid');
-    }
-
-    return await this._websocket.emit(request.GROUP_MEMBER_UPDATE, {
-      groupId: targetGroupId,
-      id: subscriberId,
-      capabilities: capability
-    });
-  }
-
-  /**
-   * Update a group
-   * @returns {GroupProfileBuilder} Group Profile Builder
-   */
-  async update (targetGroupId) {
-    if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
-    }
-
-    const group = await this.getById(targetGroupId);
-
-    if (group.exists) {
-      return new GroupProfileBuilder(this._api)._update(group);
-    } else {
-      throw new Error('group does not exist');
-    }
-  }
-
-  async _getJoinedGroups () {
-    if (this._joinedGroupsRequested) {
+  async _joinedGroups () {
+    if (this._joinedGroupsFetched) {
       return this._groups.filter((group) => group.inGroup);
     }
 
-    const result = await this._websocket.emit(request.SUBSCRIBER_GROUP_LIST, {
-      subscribe: true
-    });
+    const result = await this._websocket.emit(
+      Commands.SUBSCRIBER_GROUP_LIST,
+      {
+        subscribe: true
+      }
+    );
 
     if (result.success) {
-      this._joinedGroupsRequested = true;
+      this._joinedGroupsFetched = true;
+
       const groups = await this.getByIds(result.body.map((group) => group.id));
 
       for (const group of groups) {
         group.inGroup = true;
-        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.capability.REGULAR;
+        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.Capability.REGULAR;
+      }
+    }
+
+    return this._groups.find((group) => group.inGroup);
+  }
+
+  async list () {
+    return this._groups.filter((group) => group.inGroup || (group.subscribers && group.subscribers.length > 0));
+  }
+
+  async getById (targetGroupId, requestNew = false) {
+    return (await this.getByIds(targetGroupId, requestNew))[0];
+  }
+
+  async getByIds (targetGroupIds, requestNew = false) {
+    try {
+      targetGroupIds = Array.isArray(targetGroupIds) ? [...new Set(targetGroupIds)] : [targetGroupIds];
+
+      if (targetGroupIds.length === 0) {
+        throw new Error('targetGroupIds cannot be an empty array');
+      }
+      for (const targetGroupId of targetGroupIds) {
+        if (validator.isNullOrUndefined(targetGroupId)) {
+          throw new Error('targetGroupId cannot be null or undefined');
+        } else if (!validator.isValidNumber(targetGroupId)) {
+          throw new Error('targetGroupId must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+          throw new Error('targetGroupId cannot be less than or equal to 0');
+        }
+      }
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      let groups = [];
+
+      if (!requestNew) {
+        groups = this._groups.filter((group) => targetGroupIds.includes(group.id));
+      }
+
+      if (groups.length !== targetGroupIds.length) {
+        const targetGroupIdsToRequest = targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId));
+
+        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.batch.length)) {
+          const result = await this._websocket.emit(
+            Commands.GROUP_PROFILE,
+            {
+              headers: {
+                version: 4
+              },
+              body: {
+                idList: targetGroupIdBatch,
+                subscribe: true,
+                entities: ['base', 'extended', 'audioCounts', 'audioConfig']
+              }
+            }
+          );
+
+          if (result.success) {
+            const groupResponses = Object.values(result.body).map((groupResponse) => new Response(groupResponse, Commands.GROUP_PROFILE));
+
+            for (const [index, groupResponse] of groupResponses.entries()) {
+              if (groupResponse.success) {
+                const body = groupResponse.body;
+                const base = body.base;
+                base.extended = body.extended;
+                base.audioConfig = body.audioConfig;
+                base.audioCounts = body.audioCounts;
+                base.exists = true;
+
+                groups.push(this._process(base));
+              } else {
+                groups.push(
+                  {
+                    id: targetGroupIdBatch[index],
+                    exists: false
+                  }
+                );
+              }
+            }
+          } else {
+            groups.push(
+              ...targetGroupIdBatch.map((id) =>
+                (
+                  {
+                    id,
+                    exists: false
+                  }
+                )
+              )
+            );
+          }
+        }
       }
 
       return groups;
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getByIds(targetGroupIds=${JSON.stringify(targetGroupIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
     }
-    return [];
+  }
+
+  async getByName (targetGroupName, requestNew = false) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or empty');
+      }
+
+      if (!requestNew && this._groups.find((group) => this._api.utility().string().isEqual(group.name, targetGroupName))) {
+        return this._groups.find((group) => this._api.utility().string().isEqual(group.name, targetGroupName));
+      }
+
+      const result = await this._websocket.emit(
+        Commands.GROUP_PROFILE,
+        {
+          headers: {
+            version: 4
+          },
+          body: {
+            name: targetGroupName.toLowerCase(),
+            subscribe: true,
+            entities: ['base', 'extended', 'audioCounts', 'audioConfig']
+          }
+        }
+      );
+
+      if (result.success) {
+        const body = result.body;
+        const base = body.base;
+        base.extended = body.extended;
+        base.audioConfig = body.audioConfig;
+        base.audioCounts = body.audioCounts;
+        base.exists = true;
+
+        return this._process(base);
+      } else {
+        return {
+          id: 0,
+          name: targetGroupName,
+          exists: false
+        };
+      }
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getByName(targetGroupName=${JSON.stringify(targetGroupName)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
+    }
+  }
+
+  async joinById (targetGroupId, password = undefined) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isNullOrUndefined(password)) {
+        if (validator.isNullOrWhitespace(password)) {
+          throw new Error('password cannot be null or empty');
+        }
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_MEMBER_ADD,
+        {
+          groupId: targetGroupId,
+          password
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.group().joinById(targetGroupId=${JSON.stringify(targetGroupId)}, password=${JSON.stringify(password)})`;
+      throw error;
+    }
+  }
+
+  async joinByName (targetGroupName, password = undefined) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or empty');
+      }
+      if (!validator.isNullOrUndefined(password)) {
+        if (validator.isNullOrWhitespace(password)) {
+          throw new Error('password cannot be null or empty');
+        }
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_MEMBER_ADD,
+        {
+          name: targetGroupName.toLowerCase(),
+          password
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.group().joinByName(targetGroupName=${JSON.stringify(targetGroupName)}, password=${JSON.stringify(password)})`;
+      throw error;
+    }
+  }
+
+  async leaveById (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_MEMBER_DELETE,
+        {
+          groupId: targetGroupId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.group().leaveById(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async leaveByName (targetGroupName) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(targetGroupName)) {
+        throw new Error('targetGroupName cannot be null or empty');
+      }
+
+      return await this.leaveById((await this.getByName(targetGroupName)).id);
+    } catch (error) {
+      error.internalErrorMessage = `api.group().leaveByName(targetGroupName=${JSON.stringify(targetGroupName)})`;
+      throw error;
+    }
+  }
+
+  /**
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link getChatHistory}
+   */
+  async getHistory (targetGroupId, timestamp = 0, limit = 15) {
+    return await this.getChatHistory(targetGroupId, false, timestamp, limit);
+  }
+
+  async getChatHistory (targetGroupId, chronological, timestamp = 0, limit = 15) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidBoolean(chronological)) {
+        throw new Error('chronological must be a valid boolean');
+      }
+      if (validator.isNullOrUndefined(timestamp)) {
+        throw new Error('timestamp cannot be null or undefined');
+      } if (!validator.isValidNumber(timestamp)) {
+        throw new Error('timestamp must be a valid number');
+      } else if (validator.isLessThanZero(timestamp)) {
+        throw new Error('timestamp cannot be less than 0');
+      }
+      if (validator.isNullOrUndefined(limit)) {
+        throw new Error('limit cannot be null or undefined');
+      } if (!validator.isValidNumber(limit)) {
+        throw new Error('limit must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new Error('limit cannot be less than or equal to 0');
+      }
+      if (limit < 5) {
+        throw new Error('limit cannot be less than 5');
+      } else if (limit > 30) {
+        throw new Error('limit cannot be larger than 30');
+      }
+
+      const result = await this._websocket.emit(
+        Commands.MESSAGE_GROUP_HISTORY_LIST,
+        {
+          headers: {
+            version: 3
+          },
+          body: {
+            id: targetGroupId,
+            limit,
+            chronological,
+            timestampEnd: timestamp === 0 ? undefined : timestamp
+          }
+        }
+      );
+
+      return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getChatHistory(targetGroupId=${JSON.stringify(targetGroupId)}, chronological=${JSON.stringify(chronological)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
+      throw error;
+    }
+  }
+
+  async getSubscriberList (targetGroupId, requestNew = false) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      const group = await this.getById(targetGroupId);
+
+      if (!requestNew && group.subscribers.length >= group.members) {
+        return group.subscribers;
+      }
+
+      const result = await this._websocket.emit(
+        Commands.GROUP_MEMBER_LIST,
+        {
+          headers: {
+            version: 3
+          },
+          body: {
+            id: targetGroupId,
+            subscribe: true
+          }
+        }
+      );
+
+      if (result.success) {
+        group.inGroup = true;
+        group.subscribers = result.body.map((subscriber) => new GroupSubscriber(this._api, subscriber));
+      }
+
+      return group.subscribers;
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getSubscriberList(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
+    }
+  }
+
+  async getStats (targetGroupId, requestNew = false) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      const group = await this.getById(targetGroupId);
+
+      if (!requestNew && group.stats) {
+        return group.stats;
+      }
+
+      const result = await this._websocket.emit(
+        Commands.GROUP_STATS,
+        {
+          id: targetGroupId
+        }
+      );
+
+      if (result.success) {
+        group.stats = result.body;
+      }
+
+      return group.stats;
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getStats(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
+    }
+  }
+
+  create () {
+    return new GroupProfileBuilder(this._api);
+  }
+
+  update (group) {
+    return new GroupProfileBuilder(this._api)._update(group);
+  }
+
+  async updateAvatar (targetGroupId, avatar) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrWhitespace(avatar)) {
+        throw new Error('avatar cannot be null or whitespace');
+      } else if (!validator.isBuffer(avatar)) {
+        throw new Error('avatar must be a valid buffer');
+      }
+
+      return this._api.multiMediaService().uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
+    } catch (error) {
+      error.internalErrorMessage = `api.group().updateAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, avatar=${JSON.stringify(avatar ? 'Buffer -- Too long to display' : avatar)})`;
+      throw error;
+    }
+  }
+
+  async updateSubscriber (targetGroupId, targetSubscriberId, capabilities) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetSubscriberId)) {
+        throw new Error('targetSubscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
+        throw new Error('targetSubscriberId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(capabilities)) {
+        throw new Error('capabilities cannot be null or undefined');
+      } else if (!validator.isValidNumber(capabilities)) {
+        throw new Error('capabilities must be a valid number');
+      } else if (!Object.values(constants.AdminAction).includes(capabilities)) {
+        throw new Error('capabilities is not valid');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_MEMBER_UPDATE,
+        {
+          groupId: targetGroupId,
+          id: targetSubscriberId,
+          capabilities
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.group().updateSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, capabilities=${capabilities})`;
+      throw error;
+    }
+  }
+
+  _cleanup () {
+    this._groups = [];
   }
 
   _process (group) {
-    if (group.exists) {
-      const existing = this._groups.find((grp) => grp.id === group.id);
+    group = new GroupObject(this._api, group);
+    group.language = toLanguageKey(group.extended.language);
 
-      if (existing) {
-        for (const key in group) {
-          existing[key] = group[key];
-        }
-      } else {
-        this._groups.push(group);
-      }
+    const existing = this._groups.find((grp) => grp.id === group.id);
+
+    if (existing) {
+      patch(existing, group);
+    } else {
+      this._groups.push(group);
     }
+
     return group;
   }
+}
 
-  _clearCache () {
-    this._groups = [];
-    this._joinedGroupsRequested = false;
-  }
-};
+module.exports = Group;
