@@ -158,7 +158,7 @@ class WOLFBot extends EventEmitter {
   }
 
   stage () {
-    // return this._stage;
+    return this._stage;
   }
 
   store () {

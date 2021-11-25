@@ -39,7 +39,6 @@ class Event extends BaseHelper {
       } else if (validator.isNullOrWhitespace(title)) {
         throw new Error('title cannot be null or whitespace');
       }
-      console.log(new Date(startsAt));
       if (!validator.isValidDate(startsAt)) {
         throw new Error('startsAt is not a valid date');
       } else if (new Date(startsAt) < Date.now()) {

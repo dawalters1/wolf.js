@@ -123,6 +123,10 @@ class Response {
         this.headers.message = `Request ${command} failed with subCode ${this.headers.subCode} (${statusCodes[this.code]})`;
       }
     }
+
+    if (!this.body) {
+      Reflect.deleteProperty(this, 'body');
+    }
   }
 
   get success () {
