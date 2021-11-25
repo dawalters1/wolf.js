@@ -79,114 +79,213 @@ class WOLFBot extends EventEmitter {
     this._currentSubscriber = undefined;
   }
 
+  /**
+   * The current account logged in
+   */
   get currentSubscriber () {
     return this._currentSubscriber;
   }
 
+  /**
+   * The config settings
+   */
   get config () {
     return this._config;
   }
 
+  /**
+   * Simplified config settings
+   */
   get options () {
     return this._options;
   }
 
   // #region Networking Clients
 
+  /**
+   * The websocket client
+   */
   get websocket () {
     return this._websocket;
   }
 
+  /**
+   *  Exposes the multiMediaService methods
+   * @returns {MultiMediaService}
+   */
   multiMediaService () {
     return this._multiMediaService;
   }
 
   // #endregion
 
+  /**
+   * Exposes the commandHandler methods
+   * @returns {CommandHandler}
+   */
   commandHandler () {
     return this._commandHandler;
   }
 
   // #region  Helpers
 
+  /**
+   * Exposes the achievement methods
+   * @returns {Achievement}
+   */
   achievement () {
     return this._achievement;
   }
 
+  /**
+   * Exposes the authorization methods
+   * @returns {Authorization}
+   */
   authorization () {
     return this._authorization;
   }
 
+  /**
+   * Exposes the banned methods
+   * @returns {Banned}
+   */
   banned () {
     return this._banned;
   }
 
+  /**
+   * Exposes the blocked methods
+   * @returns {Blocked}
+   */
   blocked () {
     return this._blocked;
   }
 
+  /**
+   * Exposes the contact methods
+   * @returns {Contact}
+   */
   contact () {
     return this._contact;
   }
 
+  /**
+   * Exposes the charm methods
+   * @returns {Charm}
+   */
   charm () {
     return this._charm;
   }
 
+  /**
+   * Exposes the discovery methods
+   * @returns {Discovery}
+   */
   discovery () {
     return this._discovery;
   }
 
+  /**
+   * Exposes the event methods
+   * @returns {Event}
+   */
   event () {
     return this._event;
   }
 
+  /**
+   * Exposes the group methods
+   * @returns {Group}
+   */
   group () {
     return this._group;
   }
 
+  /**
+   * Exposes the messaging methods
+   * @returns {Messaging}
+   */
   messaging () {
     return this._messaging;
   }
 
+  /**
+   * Exposes the notification methods
+   * @returns {Notification}
+   */
   notification () {
     return this._notification;
   }
 
+  /**
+   * Exposes the phrase methods
+   * @returns {Phrase}
+   */
   phrase () {
     return this._phrase;
   }
 
+  /**
+   * Exposes the stage methods
+   * @returns {Stage}
+   */
   stage () {
     return this._stage;
   }
 
+  /**
+   * Exposes the store methods
+   * @returns {Store}
+   */
   store () {
     return this._store;
   }
 
+  /**
+   * Exposes the subscriber methods
+   * @returns {Subscriber}
+   */
   subscriber () {
     return this._subscriber;
   }
 
   /**
+   * Exposes the tip methods
    * @deprecated Will be removed in 1.0.0
    * @see {@link tipping}
+   * @returns {Tipping}
    */
   tip () {
     return this._tipping;
   }
 
+  /**
+   * Exposes the tipping methods
+   * @returns {Tipping}
+   */
   tipping () {
     return this._tipping;
   }
 
   // #endregion
 
+  /**
+   * Exposes the utility methods
+   * @returns {Utility}
+   */
   utility () {
     return this._utility;
   }
 
+  /**
+   *
+   * @param {String} email - The email belonging to the account
+   * @param {String} password - The password belonging to the account
+   * @param {String} loginDevice - The device to appear as
+   * @param {Number} onlineState - The online state to appear as
+   * @param {String} loginType - The account type
+   * @param {String} token - The token to use to log in (Automatically generated if not provided)
+   */
   login (email, password, loginDevice = constants.LoginDevice.ANDROID, onlineState = constants.OnlineState.ONLINE, loginType = constants.LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
