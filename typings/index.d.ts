@@ -2091,7 +2091,6 @@ export class Utility {
      * Exposes the timer methods
      */
     public timer(): TimerUtility;
-
     /**
      * Convert milliseconds into a display time (EX: 65000 - 1m 5s)
      * @param language - The language of the phrase
@@ -2630,4 +2629,4 @@ export interface ClientEvents {
     welcome: [welcome: WelcomeObject],
 }
 
-  //#endregion
+//#endregion
