@@ -1340,8 +1340,7 @@ export class Messaging extends BaseHelper {
      * @param content - The text, image/audio buffer 
      * @param opts - The sending options (Text Only)
      */
-    public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
-    
+    public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;    
     /**
      * Send a private message
      * @param targetSubscriberId - The id of the subscriber
@@ -1478,7 +1477,6 @@ export class Phrase extends BaseHelper {
     public isRequestedPhrase(name: String, value: String): Boolean;
 }
 
-//TODO: Update to 0.20.0 methods
 export class Stage extends BaseHelper {
     private constructor(api : WOLFBot);
 
@@ -1495,9 +1493,7 @@ export class Stage extends BaseHelper {
      * @param targetGroupId - The id of the grooup
      * @param requestNew - Whether or not to request new data from the server
      */
-    public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
-    
-    
+    public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>; 
     /**
      * Get the list of publicly available stages
      * @deprecated Will be removed in 1.0.0
@@ -1509,9 +1505,7 @@ export class Stage extends BaseHelper {
      * Get the list of publicly available stages
      * @param requestNew  - Whether or not to request new data from the server
      */
-    public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;
-    
-    
+    public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;  
     /**
      * Get the list of stages available to group
      * @deprecated Will be removed in 1.0.0
@@ -1525,8 +1519,7 @@ export class Stage extends BaseHelper {
      * @param targetGroupId - The id of the group
      * @param requestNew - Whether or not to request new data from the server
      */
-    public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
-  
+    public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>; 
     /**
      * Get the slots for a group
      * @deprecated Will be removed in 1.0.0
@@ -1534,15 +1527,13 @@ export class Stage extends BaseHelper {
      * @param targetGroupId - The id of the group
      * @param requestNew - Whether or not to request new data from the server 
      */
-    public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
-    
+    public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;    
      /**
      * Get the slots for a group
      * @param targetGroupId - The id of the group
      * @param requestNew - Whether or not to request new data from the server 
      */
-      public getGroupSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
-       
+    public getGroupSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;       
     /**
      * Update a slots mute state
      * @param targetGroupId - The id of the group
@@ -1569,22 +1560,19 @@ export class Stage extends BaseHelper {
      * @param targetGroupId - The group Id
      * @param slotId - The slot Id
      */
-    public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
-    
+    public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;    
     /**
      * Kick a specific slot in a group
      * @param targetGroupId - The group Id
      * @param slotId - The slot Id
      */
-    public kickSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
-    
+    public kickSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;    
     /**
      * Kick a slot using subscriber id
      * @param targetGroupId - The group Id
      * @param subscriberId - The id of the subscriber
      */
-    public kickSubscriberFromStage(targetGroupId: Number, subscriberId: Number): Promise<ResponseObject>;
-       
+    public kickSubscriberFromStage(targetGroupId: Number, subscriberId: Number): Promise<ResponseObject>;      
     /**
      * Join a slot
      * @param targetGroupId - The id of the group
