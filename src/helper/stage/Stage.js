@@ -831,7 +831,7 @@ module.exports = class Stage extends BaseHelper {
       const result = await this._websocket.emit(
         Commands.GROUP_AUDIO_REQUEST_LIST,
         {
-          groupId: targetGroupId,
+          id: targetGroupId,
           subscribe: true
         }
       );
@@ -879,6 +879,10 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('bot already occupies a slot in requested group');
       }
 
+      if (slots.some((slot) => slot.reservedOccupierId === this._api.currentSubscriber.id)) {
+        throw new Error(`someone has already requested that the bot joins slot ${slots.find((slot) => slot.reservedOccupierId === this._api.currentSubscriber.id).id}`);
+      }
+
       const list = await this.getSlotRequestList(targetGroupId);
 
       if (list.some((request) => request.subscriberId === this._api.currentSubscriber.id)) {
@@ -888,7 +892,7 @@ module.exports = class Stage extends BaseHelper {
       return await this._websocket.emit(
         Commands.GROUP_AUDIO_REQUEST_ADD,
         {
-          groupId: targetGroupId
+          id: targetGroupId
         }
       );
     } catch (error) {
@@ -938,7 +942,7 @@ module.exports = class Stage extends BaseHelper {
       return await this._websocket.emit(
         Commands.GROUP_AUDIO_REQUEST_DELETE,
         {
-          groupId: targetGroupId
+          id: targetGroupId
         }
       );
     } catch (error) {
@@ -976,7 +980,7 @@ module.exports = class Stage extends BaseHelper {
       return await this._websocket.emit(
         Commands.GROUP_AUDIO_REQUEST_CLEAR,
         {
-          groupId: targetGroupId
+          id: targetGroupId
         }
       );
     } catch (error) {
@@ -1113,7 +1117,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().addSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage().removeSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }

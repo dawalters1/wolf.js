@@ -11,23 +11,25 @@ module.exports = async (api, body) => {
 
   group.slots[body.slot.id] = body.slot;
 
-  if (cached.reservedOccupierId && !body.reservedOccupierId) {
+  if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
     api.emit(
-      cached.reservedExpiresAt >= Date.now() ? Events.GROUP_AUDIO_REQUEST_EXPIRE : Events.GROUP_AUDIO_REQUEST_DELETE,
+      new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Events.GROUP_AUDIO_REQUEST_EXPIRE : Events.GROUP_AUDIO_REQUEST_DELETE,
       group,
       {
-        reservedOccupierId: body.reservedOccupierId
+        slotId: body.slot.id,
+        reservedOccupierId: body.slot.reservedOccupierId
       }
     );
   }
 
-  if (!cached.reservedOccupierId && body.reservedOccupierId) {
+  if (!cached.reservedOccupierId && body.slot.reservedOccupierId) {
     api.emit(
       Events.GROUP_AUDIO_REQUEST_ADD,
       group,
       {
-        reservedOccupierId: body.reservedOccupierId,
-        reservedExpiresAt: body.reservedExpiresAt
+        slotId: body.slot.id,
+        reservedOccupierId: body.slot.reservedOccupierId,
+        reservedExpiresAt: new Date(body.slot.reservedExpiresAt)
       }
     );
   }
