@@ -45,14 +45,22 @@ api.event().unsubscribeFromEvent()  ->  api.event().unsubscribe()
 api.group().getHistory()  ->  api.group().getChatHistory()
 api.subscriber().getHistory()  ->  api.subscriber().getChatHistory()
 api.utility().group().member().checkPermissions()  ->  api.utility().group().member().hasCapability()
+api.stage().getStages() -> api.stage().getStageList()
+api.stage().getSettings() -> api.stage().getGroupSettings()
+api.stage().getSlots() -> api.stage().getGroupSlots()
+api.stage().removeSubscriberFromSlot() -> api.stage().kickSlot()
+api.stage().play() -> api.stage().broadcast()
+api.stage().isPlaying() -> api.stage().isBroadcasting();
 
 ```
 ### Whats New?
 - Full typings/intellisense support
 - Bug fixes
-- [Contacts](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/blob/v0.20.0/src/models/MessageObject.js) now contain methods
+- [Contacts](https://github.com/dawalters1/wolf.js/tree/main/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/tree/main/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/tree/main/src/models/MessageObject.js) now contain methods
 - [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API [Constants](https://www.npmjs.com/package/@dawalters1/constants) will be deprecated
   - Constants names now start with a capital letter (EX: messageType is now MessageType) 
+  - 10.14 Raise Hands Support 
+
 ## Introduction
 
 WOLF.js is a community maintained javascript library used to create Unofficial Bots
