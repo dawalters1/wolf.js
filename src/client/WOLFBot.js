@@ -552,8 +552,6 @@ class WOLFBot extends EventEmitter {
     } else {
       this._blacklist = [];
     }
-
-    Reflect.deleteProperty(this, 'currentSubscriber');
   }
 }
 
