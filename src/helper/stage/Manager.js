@@ -2,6 +2,8 @@ const Client = require('../../client/stage/Client');
 const { events } = require('../../client/stage/constants');
 const { Events } = require('../../constants');
 
+const commandExists = require('command-exists-promise');
+
 class Manager {
   constructor (api) {
     this._api = api;
@@ -96,6 +98,10 @@ class Manager {
   }
 
   async getClient (targetGroupId, createIfDoesntExist = false) {
+    if (!await commandExists('ffmpeg')) {
+      throw new Error('ffmpeg must be installed on this device to create or use a stage client');
+    }
+
     const client = this._clients[targetGroupId];
 
     if (client || !createIfDoesntExist) {
