@@ -4,9 +4,7 @@ const Manager = require('./Manager');
 const validator = require('../../validator');
 
 const { Commands } = require('../../constants');
-/**
- * {@hideconstructor}
- */
+
 module.exports = class Stage extends BaseHelper {
   constructor (api) {
     super(api);
@@ -493,6 +491,10 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('a subscriber already occupies this slot');
       }
 
+      if (slot.reservedOccupierId && slot.reservedOccupierId !== this._api.currentSubscriber.id) {
+        throw new Error('slot is reserved for another user');
+      }
+
       // If sdp exists, assume they are using a personal rtc
       if (sdp) {
         return await this._websocket.emit(
@@ -796,5 +798,323 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  // TODO: Raise Hands feature
+  async getSlotRequestList (targetGroupId, requestNew = false) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!requestNew && group.stageRequestList) {
+        return group.stageRequestList;
+      }
+
+      const result = await this._websocket.emit(
+        Commands.GROUP_AUDIO_REQUEST_LIST,
+        {
+          groupId: targetGroupId,
+          subscribe: true
+        }
+      );
+
+      if (result.success) {
+        group.stageRequestList = result.body;
+      }
+
+      return group.stageRequestList || [];
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().getSlotRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async requestSlot (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!group.inGroup) {
+        throw new Error('bot must be in group to request slot');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(targetGroupId);
+
+      if (slots.some((slot) => slot.occupierId === this._api.currentSubscriber.id)) {
+        throw new Error('bot already occupies a slot in requested group');
+      }
+
+      const list = await this.getSlotRequestList(targetGroupId);
+
+      if (list.some((request) => request.subscriberId === this._api.currentSubscriber.id)) {
+        throw new Error('bot has already requested a slot');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_AUDIO_REQUEST_ADD,
+        {
+          groupId: targetGroupId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().requestSlot(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async cancelSlotRequest (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!group.inGroup) {
+        throw new Error('bot must be in group to request slot');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(targetGroupId);
+
+      if (slots.some((slot) => slot.occupierId === this._api.currentSubscriber.id)) {
+        throw new Error('bot is occupying a slot in requested group');
+      }
+
+      const list = await this.getSlotRequestList(targetGroupId);
+
+      if (!list.some((request) => request.subscriberId === this._api.currentSubscriber.id)) {
+        throw new Error('bot is not in the request list');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_AUDIO_REQUEST_DELETE,
+        {
+          groupId: targetGroupId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().cancelSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async clearSlotRequestList (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!group.inGroup) {
+        throw new Error('bot must be in group to request slot');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_AUDIO_REQUEST_CLEAR,
+        {
+          groupId: targetGroupId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().clearSlotRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async addSlotRequest (targetGroupId, slotId, subscriberId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(slotId)) {
+        throw new Error('slotId cannot be null or undefined');
+      } else if (!validator.isValidNumber(slotId)) {
+        throw new Error('slotId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(slotId)) {
+        throw new Error('slotId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new Error('subscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!group.inGroup) {
+        throw new Error('bot must be in group');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(targetGroupId);
+
+      if (slots.some((slot) => slot.occupierId === subscriberId)) {
+        throw new Error('user already occupies a slot in requested group');
+      }
+
+      const slot = slots.some((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (slot.locked) {
+        throw new Error('slot is locked');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_AUDIO_BROADCAST_UPDATE,
+        {
+          id: targetGroupId,
+          slotId,
+          reservedExpiresAt: Date.now() + 30000,
+          reservedOccupierId: subscriberId
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().addSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async removeSlotRequest (targetGroupId, slotId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(slotId)) {
+        throw new Error('slotId cannot be null or undefined');
+      } else if (!validator.isValidNumber(slotId)) {
+        throw new Error('slotId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(slotId)) {
+        throw new Error('slotId cannot be less than or equal to 0');
+      }
+      const group = await this._api.group().getById(targetGroupId);
+
+      if (!group.inGroup) {
+        throw new Error('bot must be in group');
+      }
+
+      const settings = await this.getSettings(targetGroupId);
+
+      if (!settings) {
+        throw new Error('unable to retrieve stage configuration');
+      }
+
+      if (!settings.enabled) {
+        throw new Error('stage is disabled for requested group');
+      }
+
+      const slots = await this.getSlots(targetGroupId);
+
+      const slot = slots.some((slot) => slot.id === slotId);
+
+      if (!slot) {
+        throw new Error('unable to locate slot with this id');
+      }
+
+      if (slot.locked) {
+        throw new Error('slot is locked');
+      }
+
+      if (slot.occupierId) {
+        throw new Error('slot request has already been accepted');
+      }
+
+      return await this._websocket.emit(
+        Commands.GROUP_AUDIO_BROADCAST_UPDATE,
+        {
+          id: targetGroupId,
+          slotId,
+          reservedExpiresAt: undefined,
+          reservedOccupierId: undefined
+        }
+      );
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().addSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
 };

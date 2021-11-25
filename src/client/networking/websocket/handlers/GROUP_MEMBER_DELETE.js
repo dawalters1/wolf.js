@@ -10,7 +10,7 @@ module.exports = async (api, body) => {
     const member = group.subscribers.find((sub) => sub.id === body.subscriberId);
 
     if (member) {
-      group.subscribers.splice(group.subscribers.indexOf(member), 1);
+      group.subscribers.splice(group.subscribers.findIndex((mb) => mb === member), 1);
     }
   }
 
