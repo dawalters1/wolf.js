@@ -113,16 +113,16 @@ module.exports = class MultiMediaServiceClient {
 
       switch (route) {
         case buildRoute(mmsSettings.messaging):
-          console.warn(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient}, retrying...`);
+          console.warn(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.group):
-          console.warn(`[MultiMediaService]: Error updating group ${body.id} avatar, retrying...`);
+          console.warn(`[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.subscriber):
-          console.warn(`[MultiMediaService]: Error updating subscriber ${body.id} avatar, retrying...`);
+          console.warn(`[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.event):
-          console.warn(`[MultiMediaService]: Error updating event ${body.id} thumbnail, retrying...`);
+          console.warn(`[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
           break;
       }
 

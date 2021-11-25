@@ -24,7 +24,6 @@ class Group extends BaseHelper {
 
   async _joinedGroups () {
     if (this._joinedGroupsFetched) {
-      console.log(this._groups);
       return this._groups.filter((group) => group.inGroup);
     }
 

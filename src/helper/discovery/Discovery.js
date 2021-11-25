@@ -84,14 +84,6 @@ module.exports = class Discovery extends BaseHelper {
       this._recipes[language] = {};
     }
 
-    console.log({
-      id,
-      languageId: language,
-      type,
-      offset: 0,
-      minResults: min,
-      maxResults: max
-    });
     const result = await this._websocket.emit(
       Commands.TOPIC_PAGE_RECIPE_LIST,
       {
@@ -104,7 +96,6 @@ module.exports = class Discovery extends BaseHelper {
       }
     );
 
-    console.log(result);
     if (result.success) {
       this._recipes[language][id] = result.body;
     }

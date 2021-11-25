@@ -1960,53 +1960,53 @@ export class Utility {
      */
     public delay(duration: Number): Promise<void>;
 }
-export class Validator {
+export namespace  Validator {
     /**
      * Check whether or not a arg is a specific type
      * @param arg - The arg
      * @param type - The type
      */
-    public isType(arg: any, type: String): Boolean;
+     export function isType(arg: any, type: String): Boolean;
     /**
      * Check to see if arg is null
      * @param arg - The item
      */
-    public isNull(arg: any): Boolean;
+     export function  isNull(arg: any):Boolean;
     /**
      * Check to see if arg is null or undefined
      * @param arg - The item
      */
-    public isNullOrUndefined(arg: any): Boolean;
+     export function  isNullOrUndefined(arg: any):Boolean;
     /**
      * Check to seeif arg is null or empty/whitespace
      * @param arg - The string 
      */
-    public isNullOrWhitespace(arg: String): Boolean;
+     export function  isNullOrWhitespace(arg: String):Boolean;
     /**
      * Check to see if arg is less than or equal to 0
      * @param arg - The number
      */
-    public isLessThanOrEqualZero(arg: Number): Boolean;
+     export function  isLessThanOrEqualZero(arg: Number):Boolean;
     /**
      * Check to see if arg is less than 0
      * @param arg - The number
      */
-    public isLessThanZero(arg: Number): Boolean;
+     export function  isLessThanZero(arg: Number):Boolean;
     /**
      * Check to see if arg is a valid number
      * @param arg - the number or string
      */
-    public isValidNumber(arg: String | Number): Boolean;
+     export function  isValidNumber(arg: String | Number):Boolean;
     /**
      * Check to see if arg is a valid date
      * @param arg - The date or number
      */
-    public isValidDate(arg: Date | Number): Boolean;
+     export function  isValidDate(arg: Date | Number):Boolean;
     /**
      * Check to see if arg is a valid buffer
      * @param arg - The string or buffer
      */
-    public isBuffer(arg: Buffer | String): Boolean
+     export function  isBuffer(arg: Buffer | String):Boolean
 }
 //#endregion
 
@@ -2383,7 +2383,11 @@ export interface ClientEvents {
     /**
      * The bot is attempting to join a slot
      */
-    stageClietnConnecting: [change: StageClientUpdatedObject],
+    stageClientConnecting: [change: StageClientUpdatedObject],
+    /**
+     * The bot began broadcasting
+     */
+    stageClientBroadcastStart: [change: StageClientUpdatedObject],
     /**
      * The bot was disconnected from a slot
      */
