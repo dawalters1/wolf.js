@@ -501,6 +501,7 @@ export class EventObject {
     public category: Number;
     public createdBy: Number;
     public endsAt: Date;
+    public startsAt: Date;
     public groupId: Number;
     public id: Number;
     public imageUrl: String;
