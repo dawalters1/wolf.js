@@ -118,7 +118,11 @@ class Notification extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup (disconnected) {
+    if (!disconnected) {
+      return Promise.resolve();
+    }
+
     this._notifications = {};
 
     for (const language of Object.keys(this._subscriptions)) {

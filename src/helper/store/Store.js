@@ -31,6 +31,14 @@ class Store extends BaseHelper {
       throw error;
     }
   }
+
+  async _cleanup (disconnected) {
+    if (!disconnected && this._balance >= 0) {
+      return await this.getBalance(true);
+    }
+
+    this._balance = -1;
+  }
 }
 
 module.exports = Store;

@@ -153,7 +153,7 @@ class Achievement extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup () {
     this._achievements = {};
   }
 

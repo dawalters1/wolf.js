@@ -33,12 +33,12 @@ module.exports = class Websocket {
     this.socket.on('connect_timeout', error => this._api.emit(Events.CONNECTION_TIMEOUT, error));
 
     this.socket.on('disconnect', reason => {
-      this._api._cleanup();
-
       this._api.emit(Events.DISCONNECTED, reason);
       // Socket doesnt reconnect on io server disconnect, manually reconnect
       if (reason === 'io server disconnect') {
         this.socket.connect();
+      } else {
+        this._api.cleanup(true);
       }
     });
 

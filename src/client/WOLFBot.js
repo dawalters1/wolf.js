@@ -525,19 +525,26 @@ class WOLFBot extends EventEmitter {
 
   // #endregion
 
-  _cleanup () {
-    this._achievement._cleanup();
-    this._blocked._cleanup();
-    this._charm._cleanup();
-    this._contact._cleanup();
-    this._discovery._cleanup();
-    this._event._cleanup();
-    this._group._cleanup();
-    this._notification._cleanup();
-    this._subscriber._cleanup();
-    this._stage._cleanup();
+  async _cleanup (disconnected) {
+    await Promise.all([
+      this._achievement._cleanup(disconnected),
+      this._blocked._cleanup(disconnected),
+      this._charm._cleanup(disconnected),
+      this._contact._cleanup(disconnected),
+      this._discovery._cleanup(disconnected),
+      this._event._cleanup(disconnected),
+      this._group._cleanup(disconnected),
+      this._messaging._cleanup(disconnected),
+      this._notification._cleanup(disconnected),
+      this._subscriber._cleanup(disconnected),
+      this._stage._cleanup(disconnected)
+    ]);
 
-    this._blacklist = [];
+    if (!disconnected && this._blacklist.length > 0) {
+      await this.getLinkBlacklist(true);
+    } else {
+      this._blacklist = [];
+    }
 
     Reflect.deleteProperty(this, 'currentSubscriber');
   }

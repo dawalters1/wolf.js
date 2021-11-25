@@ -469,6 +469,18 @@ class Messaging extends BaseHelper {
       message.sourceSubscriberId === sourceSubscriberId
     , timeout);
   }
+
+  _cleanup (disconnected) {
+    if (!disconnected) {
+      return Promise.resolve();
+    }
+
+    this._subscriptionData = {
+      id: 1,
+      defs: {},
+      subscriptions: []
+    };
+  }
 }
 
 module.exports = Messaging;

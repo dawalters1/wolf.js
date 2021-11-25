@@ -472,9 +472,14 @@ class Event extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup (disconnected) {
     this._events = [];
     this._eventList = {};
+
+    if (!disconnected && this._subscriptions.length > 0) {
+      return await this.getSubscriptionList(true);
+    }
+
     this._subscriptions = [];
   }
 

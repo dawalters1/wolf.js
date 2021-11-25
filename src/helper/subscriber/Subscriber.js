@@ -181,7 +181,7 @@ class Subscriber extends BaseHelper {
     return subscriber;
   }
 
-  _cleanup () {
+  async _cleanup () {
     this._subscribers = [];
   }
 }

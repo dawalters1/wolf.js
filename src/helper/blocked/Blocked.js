@@ -106,7 +106,11 @@ class Blocked extends BaseHelper {
     }
   }
 
-  _cleanup () {
+  async _cleanup (disconnected) {
+    if (!disconnected && this._blocked.length > 0) {
+      return await this.list(true); // resubscribe if subscribed before reconnect
+    }
+
     this._blocked = [];
   }
 }
