@@ -3,6 +3,8 @@
  */
 exports.ServerEvents = {
   GROUP_AUDIO_COUNT_UPDATE: 'group audio count update',
+  GROUP_AUDIO_REQUEST_ADD: 'group audio request add',
+  GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
   GROUP_EVENT_CREATE: 'group event create',
@@ -35,6 +37,9 @@ exports.Events = {
   DISCONNECTED: 'disconnected',
   ERROR: 'error',
   GROUP_AUDIO_COUNT_UPDATE: 'groupAudioCountUpdate',
+  GROUP_AUDIO_SLOT_REQUEST_ADD: 'groupAudioSlotRequestAdd',
+  GROUP_AUDIO_SLOT_REQUEST_DELETE: 'groupAudioSlotRequestDelete',
+  GROUP_AUDIO_SLOT_REQUEST_EXPIRE: 'groupAudioSlotRequestExpire',
   GROUP_AUDIO_SLOT_UPDATE: 'groupAudioSlotUpdate',
   GROUP_AUDIO_UPDATE: 'groupAudioUpdate',
   GROUP_EVENT_CREATE: 'groupEventCreate',
