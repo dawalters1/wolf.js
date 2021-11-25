@@ -23,9 +23,7 @@ module.exports = async (api, body) => {
 
   return api.emit(
     Events.GROUP_EVENT_DELETE,
-    {
-      group,
-      subscriber
-    }
+    group,
+    subscriber
   );
 };
