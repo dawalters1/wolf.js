@@ -1,10 +1,65 @@
 const Message = require('../../../../models/MessageObject');
 
 const { version } = require('../../../../../package.json');
-const { Events, MessageType, Privilege, ServerEvents } = require('../../../../constants');
+const { Events, MessageType, Privilege, Capability } = require('../../../../constants');
 
+// Stop gap join/leave handling incase group members list isnt requested
 const handleAdminAction = async (api, message) => {
-// TODO: stop gap handling incase group members list isnt requested
+  const [group, subscriber] = await Promise.all([
+    api.group().getById(message.targetGroupId),
+    api.subscriber().getById(message.sourceSubscriberId)
+  ]);
+
+  const adminAction = JSON.parse(message.body);
+
+  if (['join', 'leave'].includes(adminAction.type)) {
+    if (group.subscribers && group.subscribers.length === 0) {
+      if (adminAction.type === 'join') {
+        if (subscriber.id === api.currentSubscriber.id) {
+          group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
+          group.inGroup = true;
+        }
+
+        return api.emit(
+          subscriber.id === api.currentSubscriber.id ? Events.JOINED_GROUP : Events.GROUP_MEMBER_ADD,
+          group,
+          subscriber
+        );
+      }
+
+      if (adminAction.type === 'leave' && adminAction.instigatorId) {
+        adminAction.type = 'kick';
+      }
+
+      api.emit(
+        subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
+        group,
+        subscriber
+      );
+    }
+
+    if (adminAction.type !== 'kick') {
+      if (adminAction.type === 'leave') {
+        if (subscriber.id === api.currentSubscriber.id) {
+          group.capability = Capability.NOT_MEMBER;
+          group.inGroup = false;
+          group.subscribers = [];
+        }
+      }
+      return Promise.resolve();
+    }
+  }
+
+  return api.emit(
+    Events.GROUP_MEMBER_UPDATE,
+    group,
+    {
+      groupId: group.id,
+      sourceId: adminAction.instigatorId,
+      targetId: message.sourceSubscriberId,
+      action: adminAction.type
+    }
+  );
 };
 
 module.exports = async (api, body) => {
