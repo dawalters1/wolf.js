@@ -38,7 +38,7 @@ module.exports = class Websocket {
       if (reason === 'io server disconnect') {
         this.socket.connect();
       } else {
-        this._api.cleanup(true);
+        this._api._cleanup(true);
       }
     });
 

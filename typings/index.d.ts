@@ -582,6 +582,16 @@ export class CommandObject {
      public status: String;
      public language: String;
  }
+
+ export class TimerJobObject{
+    public handler: String;
+    public data: Object;
+    public delay: Number;
+    public timestamp: Number;
+    public id: String;
+    public remaining: Number
+ }
+
  export class TipDetailsObject {
      public id: Number;
      public charmList: Array<TipCharmObject>; 
@@ -2046,7 +2056,7 @@ export class CommandObject {
       * @param handlers - The handlers object
       * @param args - The additional paramaters to pass to the handlers
       */
-     public initialise(handlers: Object, ...args: any): Promise<any>;
+     public initialise(handlers: Object, ...args: any): Promise<void>;
      /**
       * Add an event
       * @param name - The name of the event
@@ -2054,23 +2064,23 @@ export class CommandObject {
       * @param data - The data to pass to the handler
       * @param duration - How long until the event is fired
       */
-     public add(name: String, handler: String, data: Object, duration: Number): Promise<Object>
+     public add(name: String, handler: String, data: Object, duration: Number): Promise<TimerJobObject>
      /**
       * Cancel an event
       * @param name The name of the event
       */
-     public cancel(name: String): Promise<any>;
+     public cancel(name: String): Promise<void>;
      /**
       * Get an event
       * @param name The name of the event
       */
-     public get(name: String): Promise<Object>;
+     public get(name: String): Promise<TimerJobObject>;
      /**
       * Delay an event
       * @param name - The name of the vent
       * @param duration - How long until the event should fire
       */
-     public delay(name: String, duration: Number): Promise<Object>
+     public delay(name: String, duration: Number): Promise<TimerJobObject>
  }
  export class Utility {
      private constructor(api: WOLFBot);
