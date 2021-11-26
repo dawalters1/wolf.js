@@ -438,7 +438,7 @@ class Messaging extends BaseHelper {
   }
 
   async subscribeToNextMessage (predicate, timeout = Infinity) {
-    if (this._messageSubscriptions.some((subscription) => subscription.predicate === predicate)) {
+    if (this._subscriptionData.subscriptions.some((subscription) => subscription.predicate === predicate)) {
       return null;
     }
 
