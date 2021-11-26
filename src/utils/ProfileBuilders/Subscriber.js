@@ -1,6 +1,5 @@
 const validator = require('../../validator');
-const constants = require('../../constants');
-const { Commands } = require('../../constants');
+const { Commands, Language, LookingFor, Gender, Relationship } = require('../../constants');
 /**
  * Exposes the methods used to update the bots profiles
  * {@hideconstructor}
@@ -56,7 +55,7 @@ module.exports = class SubscriberProfileBuilder {
   setLanguage (language) {
     if (!validator.isValidNumber(language)) {
       throw new Error('language must be a number');
-    } else if (!Object.values(constants.Language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -68,7 +67,7 @@ module.exports = class SubscriberProfileBuilder {
   setRelationship (relationship) {
     if (!validator.isValidNumber(relationship)) {
       throw new Error('relationship must be a number');
-    } else if (!Object.values(constants.Relationship).includes(relationship)) {
+    } else if (!Object.values(Relationship).includes(relationship)) {
       throw new Error('relationship is not valid');
     }
 
@@ -80,7 +79,7 @@ module.exports = class SubscriberProfileBuilder {
   setGender (gender) {
     if (!validator.isValidNumber(gender)) {
       throw new Error('gender must be a number');
-    } else if (!Object.values(constants.Gender).includes(gender)) {
+    } else if (!Object.values(Gender).includes(gender)) {
       throw new Error('gender is not valid');
     }
 
@@ -92,11 +91,11 @@ module.exports = class SubscriberProfileBuilder {
   setLookingFor (lookingFor) {
     if (!validator.isValidNumber(lookingFor)) {
       throw new Error('lookingFor must be a number');
-    } else if (!Object.values(constants.LookingFor).includes(lookingFor)) {
+    } else if (!Object.values(LookingFor).includes(lookingFor)) {
       throw new Error('lookingFor is not valid');
     }
 
-    this._lookingFor = Object.values(constants.LookingFor).filter((look) => (lookingFor & look) === look).reduce((total, val) => total + (+val), 0);
+    this._lookingFor = Object.values(LookingFor).filter((look) => (lookingFor & look) === look).reduce((total, val) => total + (+val), 0);
 
     return this;
   }

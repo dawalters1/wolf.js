@@ -1,7 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 
-const constants = require('../../constants');
-const { Commands } = require('../../constants');
+const { Commands, Language } = require('../../constants');
 const validator = require('../../validator');
 
 const format = (oldDiscovery) => {
@@ -47,7 +46,7 @@ module.exports = class Discovery extends BaseHelper {
   async getByLanguage (language, requestNew = false) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.Language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -114,7 +113,7 @@ module.exports = class Discovery extends BaseHelper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.Language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -148,7 +147,7 @@ module.exports = class Discovery extends BaseHelper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.Language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 

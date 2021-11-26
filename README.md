@@ -59,7 +59,8 @@ api.stage().isPlaying() -> api.stage().isBroadcasting();
 - [Contacts](https://github.com/dawalters1/wolf.js/tree/main/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/tree/main/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/tree/main/src/models/MessageObject.js) now contain methods
 - [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API... [Constants](https://www.npmjs.com/package/@dawalters1/constants) package will be deprecated
   - Constants names now start with a capital letter (EX: messageType is now MessageType) 
-  - 10.14 Raise Hands Support 
+- 10.14 Raise Hands Support 
+- Added: ```api.group().getRecommendedList()``` - Get recommended groups
 
 ## Introduction
 

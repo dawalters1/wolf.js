@@ -146,6 +146,7 @@ exports.Commands = {
   GROUP_MEMBER_UPDATE: 'group member update',
   GROUP_PROFILE: 'group profile',
   GROUP_PROFILE_UPDATE: 'group profile update',
+  GROUP_RECOMMENDATION_LIST: 'group recommendation list',
   GROUP_STATS: 'group stats',
 
   MESSAGE_CONVERSATION_LIST: 'message conversation list',
@@ -325,7 +326,7 @@ exports.LookingFor = {
   RELATIONSHIP: 4,
   NETWORKING: 8
 };
-exports.MessageFilter = {
+exports.MessageFilterTier = {
   OFF: 0,
   RELAXED: 3,
   RECOMMENDED: 2,

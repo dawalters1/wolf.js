@@ -1,5 +1,5 @@
 const validator = require('../../validator');
-const constants = require('../../constants');
+const { Privilege: Privs } = require('../../constants');
 
 class Privilege {
   constructor (api) {
@@ -28,7 +28,7 @@ class Privilege {
           throw new Error('priv must be a valid number');
         } else if (validator.isLessThanOrEqualZero(priv)) {
           throw new Error('priv cannot be less than or equal to 0');
-        } else if (!Object.values(constants.Privilege).includes(priv)) {
+        } else if (!Object.values(Privs).includes(priv)) {
           throw new Error('privs is not valid');
         }
       }

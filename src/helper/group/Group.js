@@ -5,11 +5,10 @@ const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
 
 const patch = require('../../utils/Patch');
-const { Commands } = require('../../constants');
+const { Commands, Capability, AdminAction } = require('../../constants');
 const validator = require('../../validator');
 const fileType = require('file-type');
 
-const constants = require('../../constants');
 const toLanguageKey = require('../../utils/ToLanguageKey');
 const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
 
@@ -41,7 +40,7 @@ class Group extends BaseHelper {
 
       for (const group of groups) {
         group.inGroup = true;
-        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || constants.Capability.REGULAR;
+        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
       }
     }
 
@@ -473,7 +472,7 @@ class Group extends BaseHelper {
         throw new Error('capabilities cannot be null or undefined');
       } else if (!validator.isValidNumber(capabilities)) {
         throw new Error('capabilities must be a valid number');
-      } else if (!Object.values(constants.AdminAction).includes(capabilities)) {
+      } else if (!Object.values(AdminAction).includes(capabilities)) {
         throw new Error('capabilities is not valid');
       }
 
@@ -491,7 +490,22 @@ class Group extends BaseHelper {
     }
   }
 
-async _cleanup () {
+  async getRecommendedList () {
+    try {
+      const result = await this._websocket.emit(Commands.GROUP_RECOMMENDATION_LIST);
+
+      if (result.success) {
+        return await this.getByIds(result.body.map((idHash) => idHash.id));
+      }
+
+      return [];
+    } catch (error) {
+      error.internalErrorMessage = 'api.group().getRecommendedList()';
+      throw error;
+    }
+  }
+
+  async _cleanup () {
     this._groups = [];
   }
 

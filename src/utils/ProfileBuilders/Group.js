@@ -1,6 +1,5 @@
 const validator = require('../../validator');
-const constants = require('../../constants');
-const { Commands } = require('../../constants');
+const { Commands, Language, Category } = require('../../constants');
 
 /**
  * Exposes the methods used to update or create group profiles
@@ -18,8 +17,8 @@ module.exports = class GroupProfileBuilder {
     this._discoverable = true;
     this._advancedAdmin = false;
     this._entryLevel = 0;
-    this._language = constants.Language.NOT_SPECIFIED;
-    this._category = constants.Category.NOT_SPECIFIED;
+    this._language = Language.NOT_SPECIFIED;
+    this._category = Category.NOT_SPECIFIED;
 
     this._audioConfig = {
       minRepLevel: 0,
@@ -81,7 +80,7 @@ module.exports = class GroupProfileBuilder {
   setCategory (category) {
     if (!validator.isValidNumber(category)) {
       throw new Error('category must be a number');
-    } else if (!Object.values(constants.Category).includes(category)) {
+    } else if (!Object.values(Category).includes(category)) {
       throw new Error('category is not valid');
     }
 
@@ -93,7 +92,7 @@ module.exports = class GroupProfileBuilder {
   setLanguage (language) {
     if (!validator.isValidNumber(language)) {
       throw new Error('language must be a number');
-    } else if (!Object.values(constants.Language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 

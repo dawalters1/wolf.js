@@ -2,8 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('yaml');
 const fileType = require('file-type');
-const { Commands } = require('../constants');
-const constants = require('../constants');
+const { Commands, LoginDevice, LoginType, OnlineState, MessageFilterTier } = require('../constants');
 
 const validator = require('../validator');
 
@@ -288,7 +287,7 @@ class WOLFBot extends EventEmitter {
    * @param {String} loginType - The account type
    * @param {String} token - The token to use to log in (Automatically generated if not provided)
    */
-  login (email, password, loginDevice = constants.LoginDevice.ANDROID, onlineState = constants.OnlineState.ONLINE, loginType = constants.LoginType.EMAIL, token = undefined) {
+  login (email, password, loginDevice = LoginDevice.ANDROID, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
         throw new Error('email cannot be null or empty');
@@ -300,7 +299,7 @@ class WOLFBot extends EventEmitter {
 
       if (validator.isNullOrWhitespace(loginDevice)) {
         throw new Error('loginDevice must be a valid string');
-      } else if (!Object.values(constants.LoginDevice).includes(loginDevice)) {
+      } else if (!Object.values(LoginDevice).includes(loginDevice)) {
         throw new Error('loginDevice is not valid');
       }
 
@@ -310,13 +309,13 @@ class WOLFBot extends EventEmitter {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
-      } else if (!Object.values(constants.OnlineState).includes(onlineState)) {
+      } else if (!Object.values(OnlineState).includes(onlineState)) {
         throw new Error('onlineState is not valid');
       }
 
       if (validator.isNullOrWhitespace(loginType)) {
         throw new Error('loginType must be a valid string');
-      } else if (!Object.values(constants.LoginType).includes(loginType)) {
+      } else if (!Object.values(LoginType).includes(loginType)) {
         throw new Error('loginType is not valid');
       }
 
@@ -375,7 +374,7 @@ class WOLFBot extends EventEmitter {
         throw new Error('onlineState must be a valid number');
       } else if (validator.isLessThanZero(onlineState)) {
         throw new Error('onlineState cannot be less than 0');
-      } else if (!Object.values(constants.OnlineState).includes(onlineState)) {
+      } else if (!Object.values(OnlineState).includes(onlineState)) {
         throw new Error('onlineState is not valid');
       }
 
@@ -462,7 +461,7 @@ class WOLFBot extends EventEmitter {
         throw new Error('messageFilterTier must be a valid number');
       } else if (validator.isLessThanZero(messageFilterTier)) {
         throw new Error('messageFilterTier cannot be less than 0');
-      } else if (!Object.values(constants.MessageFilterTier).includes(messageFilterTier)) {
+      } else if (!Object.values(MessageFilterTier).includes(messageFilterTier)) {
         throw new Error('messageFilterTier is not valid');
       }
 
@@ -470,7 +469,7 @@ class WOLFBot extends EventEmitter {
         Commands.MESSAGE_SETTING_UPDATE,
         {
           spamFilter: {
-            enabled: messageFilterTier !== constants.MessageFilterTier.OFF,
+            enabled: messageFilterTier !== MessageFilterTier.OFF,
             tier: messageFilterTier
           }
         }
