@@ -102,8 +102,8 @@ module.exports = async (api, body) => {
         clearTimeout(messageSubscription.timeoutInterval);
       }
 
-      api.messaging()._subscriptionData.subscriptions = api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.subscriptionId !== messageSubscription.subscriptionId);
-      api.messaging()._subscriptionData.defs[messageSubscription.subscriptionId].resolve(message);
+      api.messaging()._subscriptionData.subscriptions = api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.subId !== messageSubscription.subId);
+      api.messaging()._subscriptionData.defs[messageSubscription.subId].resolve(message);
     }
   }
 
