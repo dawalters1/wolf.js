@@ -1,8 +1,7 @@
 const BaseHelper = require('../BaseHelper');
 
-const { Commands } = require('../../constants');
+const { Commands, ContextType, TipType, TipDirection, TipPeriod } = require('../../constants');
 const validator = require('../../validator');
-const constants = require('../../constants');
 
 class Tipping extends BaseHelper {
   // eslint-disable-next-line no-useless-constructor
@@ -43,11 +42,11 @@ class Tipping extends BaseHelper {
         throw new Error('context must have property type');
       } else if (validator.isNullOrWhitespace(context.type)) {
         throw new Error('type cannot be null or empty');
-      } else if (!Object.values(constants.ContextType).includes(context.type)) {
+      } else if (!Object.values(ContextType).includes(context.type)) {
         throw new Error('type is not valid');
       }
 
-      if (context.type === constants.ContextType.MESSAGE) {
+      if (context.type === ContextType.MESSAGE) {
         if (!Reflect.has(context, 'id')) {
           throw new Error('context must have property id');
         } else if (validator.isNullOrUndefined(context.id)) {
@@ -134,7 +133,7 @@ class Tipping extends BaseHelper {
         {
           groupId: targetGroupId,
           id: timestamp,
-          contextType: constants.ContextType.MESSAGE,
+          contextType: ContextType.MESSAGE,
           limit,
           offset
         }
@@ -180,7 +179,7 @@ class Tipping extends BaseHelper {
         {
           groupId: targetGroupId,
           id: timestamp,
-          contextType: constants.ContextType.MESSAGE,
+          contextType: ContextType.MESSAGE,
           limit,
           offset
         }
@@ -203,20 +202,20 @@ class Tipping extends BaseHelper {
 
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
 
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.TipType).includes(tipType)) {
+      } else if (!Object.values(TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
 
-      if (tipType !== constants.TipType.CHARM) {
+      if (tipType !== TipType.CHARM) {
         if (validator.isNullOrWhitespace(tipDirection)) {
           throw new Error('tipDirection cannot be null or empty');
-        } else if (!Object.values(constants.TipDirection).includes(tipDirection)) {
+        } else if (!Object.values(TipDirection).includes(tipDirection)) {
           throw new Error('tipDirection is not valid');
         }
       }
@@ -227,7 +226,7 @@ class Tipping extends BaseHelper {
           groupId: targetGroupId,
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.TipType.CHARM ? undefined : tipDirection
+          tipDirection: tipType === TipType.CHARM ? undefined : tipDirection
         }
       );
     } catch (error) {
@@ -247,18 +246,18 @@ class Tipping extends BaseHelper {
       }
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.TipType).includes(tipType)) {
+      } else if (!Object.values(TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
-      if (tipType !== constants.TipType.CHARM) {
+      if (tipType !== TipType.CHARM) {
         if (validator.isNullOrWhitespace(tipDirection)) {
           throw new Error('tipDirection cannot be null or empty');
-        } else if (!Object.values(constants.TipDirection).includes(tipDirection)) {
+        } else if (!Object.values(TipDirection).includes(tipDirection)) {
           throw new Error('tipDirection is not valid');
         }
       }
@@ -269,7 +268,7 @@ class Tipping extends BaseHelper {
           id: targetGroupId,
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.TipType.CHARM ? null : tipDirection
+          tipDirection: tipType === TipType.CHARM ? null : tipDirection
         }
       );
     } catch (error) {
@@ -282,15 +281,15 @@ class Tipping extends BaseHelper {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
       if (validator.isNullOrWhitespace(tipType)) {
         throw new Error('tipType cannot be null or empty');
-      } else if (!Object.values(constants.TipType).includes(tipType)) {
+      } else if (!Object.values(TipType).includes(tipType)) {
         throw new Error('tipType is not valid');
       }
-      if (tipType === constants.TipType.CHARM) {
+      if (tipType === TipType.CHARM) {
         throw new Error('tipType is not valid');
       }
 
@@ -299,7 +298,7 @@ class Tipping extends BaseHelper {
         {
           period: tipPeriod,
           type: tipType,
-          tipDirection: tipType === constants.TipType.GROUP ? undefined : tipDirection
+          tipDirection: tipType === TipType.GROUP ? undefined : tipDirection
         }
       );
     } catch (error) {
@@ -312,7 +311,7 @@ class Tipping extends BaseHelper {
     try {
       if (validator.isNullOrWhitespace(tipPeriod)) {
         throw new Error('tipPeriod cannot be null or empty');
-      } else if (!Object.values(constants.TipPeriod).includes(tipPeriod)) {
+      } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
         throw new Error('tipPeriod is not valid');
       }
 

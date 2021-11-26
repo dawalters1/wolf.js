@@ -1,8 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
-const { Commands } = require('../../constants');
-const constants = require('../../constants');
-
+const { Commands, Language } = require('../../constants');
 class Charm extends BaseHelper {
   constructor (api) {
     super(api);
@@ -14,7 +12,7 @@ class Charm extends BaseHelper {
     try {
       if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.Language).includes(language)) {
+      } else if (!Object.values(Language).includes(language)) {
         throw new Error('language is not valid');
       }
       if (!validator.isValidBoolean(requestNew)) {
@@ -68,7 +66,7 @@ class Charm extends BaseHelper {
       }
       if (!validator.isValidNumber(language)) {
         throw new Error('language must be a valid number');
-      } else if (!Object.values(constants.Language).includes(language)) {
+      } else if (!Object.values(Language).includes(language)) {
         throw new Error('language is not valid');
       }
       if (!validator.isValidBoolean(requestNew)) {

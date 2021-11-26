@@ -1383,6 +1383,10 @@ export class CommandObject {
       * @param capabilities - The new capabilities
       */
      public updateSubscriber(targetGroupId: Number, targetSubscriberId: Number, capabilities: AdminAction): Promise<ResponseObject>
+     /**
+      * Get recommended groups
+      */
+     public getRecommendedList(): Promise<Array<GroupObject>>
  }
  export class Messaging extends BaseHelper {
      private constructor(api : WOLFBot);
