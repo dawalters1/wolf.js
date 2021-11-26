@@ -462,7 +462,7 @@ class Messaging extends BaseHelper {
       this._subscriptionData.defs[subId] = { resolve, reject };
     });
 
-    Reflect.deleteProperty(this._deferreds, subId);
+    Reflect.deleteProperty(this._subscriptionData.defs, subId);
 
     return result;
   }
