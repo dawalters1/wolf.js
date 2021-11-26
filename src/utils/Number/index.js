@@ -9,8 +9,8 @@ class Number {
         throw new Error('arg cannot be undefined');
       }
 
-      arg = arg.toString().replace(this._api._botConfig.validation.number.persian.regex, char => char.charCodeAt(0) - '۰'.charCodeAt(0));
-      arg = arg.toString().replace(this._api._botConfig.validation.number.arabic.regex, char => char.charCodeAt(0) - '٠'.charCodeAt(0));
+      arg = arg.toString().replace(this._api._botConfig.validation.numbers.persian.regex, char => char.charCodeAt(0) - '۰'.charCodeAt(0));
+      arg = arg.toString().replace(this._api._botConfig.validation.numbers.arabic.regex, char => char.charCodeAt(0) - '٠'.charCodeAt(0));
 
       return arg;
     } catch (error) {
@@ -25,7 +25,7 @@ class Number {
         throw new Error('arg cannot be undefined');
       }
 
-      return this.toEnglishNumbers(arg).toString().replace(this._api._botConfig.validation.number.english.regex, char => this._api._botConfig.validation.number.arabic.numbers[+char]);
+      return this.toEnglishNumbers(arg).toString().replace(this._api._botConfig.validation.numbers.english.regex, char => this._api._botConfig.validation.numbers.arabic.numbers[+char]);
     } catch (error) {
       error.internalErrorMessage = `api.utility().number().toArabicNumbers(arg=${JSON.stringify(arg)})`;
       throw error;
@@ -38,7 +38,7 @@ class Number {
         throw new Error('arg cannot be undefined');
       }
 
-      return this.toEnglishNumbers(arg).toString().replace(this._api._botConfig.validation.number.english.regex, char => this._api._botConfig.validation.number.persian.numbers[+char]);
+      return this.toEnglishNumbers(arg).toString().replace(this._api._botConfig.validation.numbers.english.regex, char => this._api._botConfig.validation.numbers.persian.numbers[+char]);
     } catch (error) {
       error.internalErrorMessage = `api.utility().number().toPersianNumbers(arg=${JSON.stringify(arg)})`;
       throw error;
