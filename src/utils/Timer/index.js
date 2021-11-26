@@ -1,4 +1,5 @@
 const BullQueue = require('bull');
+const TimerJobObject = require('../../models/TimerJobObject');
 
 const validator = require('../../validator');
 
@@ -85,7 +86,11 @@ class Timer {
         jobId: name
       };
 
-      return await this._timerQueue.add(handler, data, _opts);
+      const job = await this._timerQueue.add(handler, data, _opts);
+
+      job.remaining = (job.timestamp + job.delay) - Date.now();
+
+      return new TimerJobObject(job);
     } catch (error) {
       error.internalErrorMessage = `api.utility().timer().add(name=${JSON.stringify(name)}, handler=${JSON.stringify(handler)}, data=${JSON.stringify(data)}, duration=${JSON.stringify(duration)})`;
       throw error;
@@ -131,7 +136,7 @@ class Timer {
         job.remaining = (job.timestamp + job.delay) - Date.now();
       }
 
-      return job;
+      return new TimerJobObject(job);
     } catch (error) {
       error.internalErrorMessage = `api.utility().timer().get(name=${JSON.stringify(name)})`;
       throw error;
@@ -168,7 +173,11 @@ class Timer {
 
         await this._timerQueue.removeJobs(name);
 
-        return await this._timerQueue.add(existing.name, existing.data, _opts);
+        const job = await this._timerQueue.add(existing.name, existing.data, _opts);
+
+        job.remaining = (job.timestamp + job.delay) - Date.now();
+
+        return new TimerJobObject(job);
       }
 
       return Promise.resolve();
