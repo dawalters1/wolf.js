@@ -460,7 +460,6 @@ class Messaging extends BaseHelper {
       timeoutInterval: timeout === Infinity
         ? undefined
         : setTimeout(() => {
-          this._removeMessageSubscription(subId);
           subscription.def.resolve(null);
         }, timeout)
 
