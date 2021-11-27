@@ -28,7 +28,7 @@ class Subscriber {
         throw new Error('size cannot be less than or equal to 0');
       }
 
-      return await this._api.utility().download().file(this._api.utility().string().replace(`${this._api.endpointConfig.avatarEndpoint}/FileServerSpring/subsriber/avatar/{subscriberId}?size={size}`,
+      return await this._api.utility().download().file(this._api.utility().string().replace(`${this._api.endpointConfig.avatarEndpoint}/FileServerSpring/subscriber/avatar/{subscriberId}?size={size}`,
         {
           subscriberId,
           size
