@@ -52,6 +52,7 @@ const login = async (api) => {
   api.cognito = result.body.cognito;
   api._currentSubscriber = result.body.subscriber;
   api._currentSubscriber.token = api.config._loginSettings.token;
+  api.endpointConfig = result.body.endpointConfig;
 
   api.emit(
     Events.LOGIN_SUCCESS,
