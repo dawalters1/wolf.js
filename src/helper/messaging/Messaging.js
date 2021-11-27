@@ -35,7 +35,6 @@ class Messaging extends BaseHelper {
 
     this._subscriptionData = {
       id: 1,
-      defs: {},
       subscriptions: []
     };
   }
@@ -437,6 +436,16 @@ class Messaging extends BaseHelper {
     }
   }
 
+  _removeMessageSubscription (subId) {
+    const subscription = this._subscriptionData.subscriptions.find((sub) => sub.subId === subId);
+
+    if (subscription.timeoutInterval) {
+      clearInterval(subscription.timeoutInterval);
+    }
+
+    this._subscriptionData.subscriptions = this._subscriptionData.subscriptions.filter((sub) => sub.subId !== subId);
+  }
+
   async subscribeToNextMessage (predicate, timeout = Infinity) {
     if (this._subscriptionData.subscriptions.some((subscription) => subscription.predicate === predicate)) {
       return null;
@@ -445,24 +454,26 @@ class Messaging extends BaseHelper {
     const subId = this._subscriptionData.id;
     this._subscriptionData.id++;
 
-    this._subscriptionData.subscriptions.push(
-      {
-        subId,
-        predicate,
-        timeoutInterval: timeout === Infinity
-          ? undefined
-          : setTimeout(() => {
-            this._subscriptionData.defs[subId].resolve(null);
-          }, timeout)
-      }
-    );
+    const subscription = {
+      subId,
+      predicate,
+      timeoutInterval: timeout === Infinity
+        ? undefined
+        : setTimeout(() => {
+          this._removeMessageSubscription(subId);
+          subscription.def.resolve(null);
+        }, timeout)
+
+    };
+
+    this._subscriptionData.subscriptions.push(subscription);
 
     // eslint-disable-next-line no-new
     const result = await new Promise((resolve, reject) => {
-      this._subscriptionData.defs[subId] = { resolve, reject };
+      subscription.def = { resolve, reject };
     });
 
-    Reflect.deleteProperty(this._subscriptionData.defs, subId);
+    this._removeMessageSubscription(subId);
 
     return result;
   }
@@ -496,7 +507,6 @@ class Messaging extends BaseHelper {
 
     this._subscriptionData = {
       id: 1,
-      defs: {},
       subscriptions: []
     };
   }
