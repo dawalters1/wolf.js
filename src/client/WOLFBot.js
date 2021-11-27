@@ -80,6 +80,10 @@ class WOLFBot extends EventEmitter {
     this._blacklist = [];
   }
 
+  get SPLIT_REGEX () {
+    return /[\n\t,،\s+]/g;
+  }
+
   /**
    * The current account logged in
    */
