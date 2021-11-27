@@ -359,7 +359,7 @@ class Group extends BaseHelper {
 
       const group = await this.getById(targetGroupId);
 
-      if (!requestNew && group.subscribers.length >= group.members) {
+      if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
         return group.subscribers;
       }
 
