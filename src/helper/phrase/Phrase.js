@@ -87,11 +87,11 @@ class Phrase extends BaseHelper {
           keyword: this._api.options.keyword
         });
 
-        if (!this._phrases[phrase.language][phraseName]) {
-          this._phrases[phrase.language][phraseName] = [];
+        if (!this._phrases[phrase.language][phraseName.toLowerCase()]) {
+          this._phrases[phrase.language][phraseName.toLowerCase()] = [];
         }
 
-        this._phrases[phrase.language][phraseName] = this._phrases[phrase.language][phraseName].filter((phr) => !phr.default).concat(phrase.value);
+        this._phrases[phrase.language][phraseName.toLowerCase()] = this._phrases[phrase.language][phraseName.toLowerCase()].filter((phr) => !phr.default).concat(phrase.value);
       }
     } catch (error) {
       error.internalErrorMessage = `api.phrase().load(phrases=${JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''})`;
@@ -147,7 +147,7 @@ class Phrase extends BaseHelper {
 
   getAllByName (name) {
     return Object.entries(this._phrases).reduce((result, value) => {
-      const phrase = value[1][name];
+      const phrase = value[1][name.toLowerCase()];
 
       if (phrase) {
         result.push(...phrase.map((phr) =>
@@ -183,7 +183,7 @@ class Phrase extends BaseHelper {
         return this.getByLanguageAndName(this._defaultLanguage, name);
       }
 
-      const phrase = this._phrases[language][name];
+      const phrase = this._phrases[language][name.toLowerCase()];
 
       if (!phrase) {
         if (language === this._defaultLanguage) {
