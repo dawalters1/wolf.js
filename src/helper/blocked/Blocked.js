@@ -53,7 +53,8 @@ class Blocked extends BaseHelper {
         }
       }
 
-      const results = subscriberIds.map((subscriberId) => this._blocked.some((subscriber) => subscriber.id === subscriberId));
+      const list = await this.list();
+      const results = subscriberIds.map((subscriberId) => list.some((subscriber) => subscriber.id === subscriberId));
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {

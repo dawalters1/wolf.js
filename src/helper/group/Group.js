@@ -423,7 +423,7 @@ class Group extends BaseHelper {
   }
 
   create () {
-    return new GroupProfileBuilder(this._api);
+    return new GroupProfileBuilder(this._api).create();
   }
 
   update (group) {

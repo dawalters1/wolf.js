@@ -16,7 +16,7 @@ module.exports = class Websocket {
   };
 
   _init () {
-    this.socket = io(`${this._api._botConfig.connection.host}:${this._api._botConfig.connection.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}`,
+    this.socket = io(`${this._api._botConfig.connection.host}:${this._api._botConfig.connection.port}/?token=${this._api.config._loginSettings.token}&device=${this._api.config._loginSettings.loginDevice}&state=${this._api.config._loginSettings.onlineState}`,
       {
         transports: ['websocket'],
         reconnection: true,
