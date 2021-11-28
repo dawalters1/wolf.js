@@ -847,7 +847,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async requestSlot (targetGroupId) {
+  async requestMic (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -860,7 +860,7 @@ module.exports = class Stage extends BaseHelper {
       const group = await this._api.group().getById(targetGroupId);
 
       if (!group.inGroup) {
-        throw new Error('bot must be in group to request slot');
+        throw new Error('bot must be in group to request a mic');
       }
 
       const settings = await this.getSettings(targetGroupId);
@@ -886,7 +886,7 @@ module.exports = class Stage extends BaseHelper {
       const list = await this.getSlotRequestList(targetGroupId);
 
       if (list.some((request) => request.subscriberId === this._api.currentSubscriber.id)) {
-        throw new Error('bot has already requested a slot');
+        throw new Error('bot has already requested a mic');
       }
 
       return await this._websocket.emit(
@@ -896,12 +896,12 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().requestSlot(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage().requestMic(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
 
-  async cancelSlotRequest (targetGroupId) {
+  async cancelMicRequest (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -914,7 +914,7 @@ module.exports = class Stage extends BaseHelper {
       const group = await this._api.group().getById(targetGroupId);
 
       if (!group.inGroup) {
-        throw new Error('bot must be in group to request slot');
+        throw new Error('bot is not in group');
       }
 
       const settings = await this.getSettings(targetGroupId);
@@ -936,7 +936,7 @@ module.exports = class Stage extends BaseHelper {
       const list = await this.getSlotRequestList(targetGroupId);
 
       if (!list.some((request) => request.subscriberId === this._api.currentSubscriber.id)) {
-        throw new Error('bot is not in the request list');
+        throw new Error('bot is not in the mic request list');
       }
 
       return await this._websocket.emit(
@@ -946,12 +946,12 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().cancelSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage().cancelMicRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
 
-  async clearSlotRequestList (targetGroupId) {
+  async clearMicRequestList (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -984,7 +984,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().clearSlotRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage().clearMicRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1059,7 +1059,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async removeSlotRequest (targetGroupId, slotId) {
+  async cancelSlotRequest (targetGroupId, slotId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
