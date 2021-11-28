@@ -1776,39 +1776,39 @@ export class Stage extends BaseHelper {
    */
   public slotId(targetGroupId: Number): Promise<Number>;
   /**
-   * Get the slot request list for a group
+   * Get the mic request list for a group (Get the join stage request list)
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getSlotRequestList(targetGroupId: Number, requestNew: Boolean): Promise<Array<StageSlotRequestObject>>
+  public getMicRequestList(targetGroupId: Number, requestNew: Boolean): Promise<Array<StageSlotRequestObject>>
   /**
-   * Request a stage slot in a group (Expires after 5 minutes)
+   * Request a mic in a group (Request to join the stage) (Expires after 5 minutes)
    * @param targetGroupId - The id of the group
    */
-  public requestSlot(targetGroupId: Number): Promise<ResponseObject>
+  public requestMic(targetGroupId: Number): Promise<ResponseObject>
   /**
-   * Cancel a stage slot request in a group
+   * Cancel a mic request (Cancel request to join the stage)
    * @param targetGroupId - The id of the group
    */
-  public cancelSlotRequest(targetGroupId: Number): Promise<ResponseObject>
+  public cancelMicRequest(targetGroupId: Number): Promise<ResponseObject>
   /**
-   * Clear the slot request list for a group
+   * Clear the mic request list for a group (Clear the request list)
    * @param targetGroupId - The id of the group
    */
-  public clearSlotRequestList(targetGroupId: Number): Promise<ResponseObject>
+  public clearMicRequestList(targetGroupId: Number): Promise<ResponseObject>
   /**
    * Request a user to join the stage (Expires after 30 seconds)
    * @param targetGroupId - The id of the group
    * @param slotId - The id of the slot to assign to the user
    * @param subscriberId - The id of the subscriber to assign
    */
-  public addSlotRequrest(targetGroupId: Number, slotId: Number, subscriberId: Number): Promise<ResponseObject>
+  public addSlotRequest(targetGroupId: Number, slotId: Number, subscriberId: Number): Promise<ResponseObject>
   /**
    * Cancel a user slot assign request
    * @param targetGroupId - The id of the group
    * @param slotId - The id of the slot to assign to the user
    */
-  public removeSlotRequest(targetGroupId: Number, slotId: Number): Promise<ResponseObject>
+  public cancelSlotRequest(targetGroupId: Number, slotId: Number): Promise<ResponseObject>
  }
 export class Store extends BaseHelper {
   private constructor(api : WOLFBot);
@@ -2465,143 +2465,143 @@ export interface ClientEvents {
   /**
    * The socket connected to the server
    */
-     connected: [],
+  connected: [],
   /**
    * The socket is connecting to the server
    */
-     connecting: [],
+  connecting: [],
   /**
    * An error occurred while the socket was connecting to the server
    */
-     connectionError: [error: Error],
+  connectionError: [error: Error],
   /**
    * The socket didnt connect to the server in time
    */
-     connectionTimeOut: [error: Error],
+  connectionTimeOut: [error: Error],
   /**
    * The socket was disconnected from the server
    */
-     disconnected: [reason: String],
+  disconnected: [reason: String],
   /**
    * Groups audio count updated (Listener changed or someone joined a slot and is broadcasting)
    */
-     groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
+  groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
  
   /**
    * A slot request was added
    */
-     groupAudioRequestAdd: [group: Group, request: GroupAudioRequestObject],
+  groupAudioRequestAdd: [group: Group, request: GroupAudioRequestObject],
  
   /**
    * A slot request was deleted
    */
-     groupAudioRequestDelete: [group: Group, request: GroupAudioRequestObject],
+  groupAudioRequestDelete: [group: Group, request: GroupAudioRequestObject],
  
   /**
    * A groups request slots list was cleared
    */
-     groupAudioRequestListClear: [group: Group, request: GroupAudioRequestObject],
+  groupAudioRequestListClear: [group: Group],
  
   /**
    * A slot request expired
    */
-     groupAudioRequestExpire: [group: Group, request: GroupAudioRequestObject]
+  groupAudioRequestExpire: [group: Group, request: GroupAudioRequestObject]
   /**
    * A slot was updated (User joined/left, muted or slot was locked)
    */
-     groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
+  groupAudioSlotUpdate: [old: GroupAudioSlotObject, new: GroupAudioSlotObject],
   /**
    * The groups audio configuration was updated
    */
-     groupAudioUpdate: [old: GroupAudioConfigObject, new: GroupAudioConfigObject],
+  groupAudioUpdate: [old: GroupAudioConfigObject, new: GroupAudioConfigObject],
   /**
    * A group event has been created
    */
-     groupEventCreate: [group: GroupObject, event: EventGroupObject],
+  groupEventCreate: [group: GroupObject, event: EventGroupObject],
   /**
    * A group event has been updated
    */
-     groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
+  groupEventUpdate: [group: GroupObject, old: EventGroupObject, new: EventGroupObject],
   /**
    * A group event has been removed/deleted
    */
-     groupEventDelete: [group: GroupObject, event: EventGroupObject]
+  groupEventDelete: [group: GroupObject, event: EventGroupObject]
   /**
    * A subscriber has joined the group
    */
-     groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
+  groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
   /**
    * A subscribers capability has been updated in a group 
    */
-     groupMemberUpdate: [group: GroupObject, action: GroupAdminActionObject],
+  groupMemberUpdate: [group: GroupObject, action: GroupAdminActionObject],
   /**
    * A subscriber left a group
    */
-     groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
+  groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
   /**
    * A group message has been received
    */
-     groupMessage: [message: MessageObject],
+  groupMessage: [message: MessageObject],
   /**
    * A group message has been updated
    */
-     groupMessageUpdate: [message: MessageObject],
+  groupMessageUpdate: [message: MessageObject],
   /**
    * A tip has been added to a group message
    */
-     groupTipAdd: [tip: object],
+  groupTipAdd: [tip: object],
   /**
    * A groups profile has been updated
    */
-     groupUpdate: [old: GroupObject, new: GroupObject],
+  groupUpdate: [old: GroupObject, new: GroupObject],
   /**
    * An error has happened internally
    */
-     internalError: [error: Error],
+  internalError: [error: Error],
   /**
    * The bot joined a group
    */
-     joinedGroup: [group: GroupObject],
+  joinedGroup: [group: GroupObject],
   /**
    * The bot left a group
    */
-     leftGroup: [group: GroupObject],
+  leftGroup: [group: GroupObject],
   /**
    * An item was added to logs
    */
-     log: [log: string],
+  log: [log: string],
   /**
    * The bot failed to login
    */
-     loginFailed: [response: ResponseObject],
+  loginFailed: [response: ResponseObject],
   /**
    * The bot logged in successfully
    */
-     loginSuccess: [subscriber: SubscriberObject],
+  loginSuccess: [subscriber: SubscriberObject],
   /**
    * A new notification was received
    */
-     notificationReceived:[notification: NotificationObject],
+  notificationReceived:[notification: NotificationObject],
   /**
    * A packet was received from the server
    */
-     packetReceived: [command: string, body: object],
+  packetReceived: [command: string, body: object],
   /**
    * A packet was sent to the server
    */
-     packetSent: [command: string, body: object],
+  packetSent: [command: string, body: object],
   /**
    * Ping event
    */
-     ping: [],
+  ping: [],
   /**
    * Pong event
    */
-     pong: [latency: number],
+  pong: [latency: number],
   /**
    * A subscribers device or online state changed
    */
-     presenceUpdate: [presence: PresenceObject],
+  presenceUpdate: [presence: PresenceObject],
   /**
    * A private message was received
    */
@@ -2613,119 +2613,119 @@ export interface ClientEvents {
   /**
    * A private message was updated (NOT IMPLEMENTED/NON-EXISTANT)
    */
-     //privateMessageUpdate: [message: MessageObject],
+  //privateMessageUpdate: [message: MessageObject],
   /**
    * A tip has been added to a private message (NOT IMPLEMENTED/NON-EXISTANT)
    */
-     // privateTipAdd: [tip: object],
+  // privateTipAdd: [tip: object],
   /**
    * The client is ready for use
    */
-     ready: [],
+  ready: [],
   /**
    * The socket reconnected to the server
    */
-     reconnected: [],
+  reconnected: [],
   /**
    * The socket is attempting to reconnect to the server
    */
-     reconnecting: [attempt: Number]
+  reconnecting: [attempt: Number]
   /**
    * The socket failed to reconnect to the server
    */
-     reconnectFailed: [error: object],
+  reconnectFailed: [error: object],
   /**
    * The bot has finished broadcasting in a group
    */
-     stageClientBroadcastEnd: [change: StageClientUpdatedObject],
+  stageClientBroadcastEnd: [change: StageClientUpdatedObject],
   /**
    * The bot has successfully joined a slot
    */
-     stageClientConnected: [change: StageClientUpdatedObject],
+  stageClientConnected: [change: StageClientUpdatedObject],
   /**
    * The bot is attempting to join a slot
    */
-     stageClientConnecting: [change: StageClientUpdatedObject],
+  stageClientConnecting: [change: StageClientUpdatedObject],
   /**
    * The bot began broadcasting
    */
-     stageClientBroadcastStart: [change: StageClientUpdatedObject],
+  stageClientBroadcastStart: [change: StageClientUpdatedObject],
   /**
    * The bot was disconnected from a slot
    */
-     stageClientDisconnected: [change: StageClientUpdatedObject],
+  stageClientDisconnected: [change: StageClientUpdatedObject],
   /**
    * The bots broadcast duration has been updated
    */
-     stageClientDuration: [change: StageClientUpdatedObject],
+  stageClientDuration: [change: StageClientUpdatedObject],
   /**
    * The bot encountered an error while broadcasting
    */
-     stageClientError: [change: StageClientUpdatedObject],
+  stageClientError: [change: StageClientUpdatedObject],
   /**
    * The bot was kicked from a slot
    */
-     stageClientKicked: [change: StageClientUpdatedObject],
+  stageClientKicked: [change: StageClientUpdatedObject],
   /**
    * The bots slot was muted
    */
-     stageClientMuted: [change: StageClientUpdatedObject],
+  stageClientMuted: [change: StageClientUpdatedObject],
   /**
    * The bots broadcast was paused
    */
-     stageClientPaused: [change: StageClientUpdatedObject],
+  stageClientPaused: [change: StageClientUpdatedObject],
   /**
    * The bot is ready to broadcast 
    */
-     stageClientReady: [change: StageClientUpdatedObject],
+  stageClientReady: [change: StageClientUpdatedObject],
   /**
    * The bot broadcast has been stopped
    */
-     stageClientStopped: [change: StageClientUpdatedObject],
+  stageClientStopped: [change: StageClientUpdatedObject],
   /**
    * The bots slot has been unmuted
    */
-     stageClientUnmuted: [change: StageClientUpdatedObject],
+  stageClientUnmuted: [change: StageClientUpdatedObject],
   /**
    * The bots broadcast has been resumed
    */
-     stageClientUnpaused: [change: StageClientUpdatedObject],
+  stageClientUnpaused: [change: StageClientUpdatedObject],
   /**
    * The bots listener count has changed 
    */
-     stageClientViewerCountChanged: [change: StageClientUpdatedObject],
+  stageClientViewerCountChanged: [change: StageClientUpdatedObject],
   /**
    * A subscriber was added to the bots blocked list
    */
-     subscriberBlockAdd: [subscriber: SubscriberObject],
+  subscriberBlockAdd: [subscriber: SubscriberObject],
   /**
    * A subscriber was removed from the bots blocked list
    */
-     subscriberBlockDelete: [subscriber: SubscriberObject],
+  subscriberBlockDelete: [subscriber: SubscriberObject],
   /**
    * A subscriber was added to the bots contact list
    */
-     subscriberContactAdd: [subscriber: SubscriberObject],
+  subscriberContactAdd: [subscriber: SubscriberObject],
   /**
    * A subscriber was removed from the bots contact list
    */
-     subscriberContactDelete: [subscriber: SubscriberObject],
+  subscriberContactDelete: [subscriber: SubscriberObject],
   /**
    * An event was added to the bots subscription list
    */
-     subscriberGroupEventAdd: [event: EventGroupObject],
+  subscriberGroupEventAdd: [event: EventGroupObject],
   /**
    * An event was removed from the bots subscription list
    */
-     subscriberGroupEventDelete: [event: EventGroupObject],
+  subscriberGroupEventDelete: [event: EventGroupObject],
   /**
    * A subscribers profile has been updated
    */
-     subscriberUpdate: [old: SubscriberObject, new: SubscriberObject],
+  subscriberUpdate: [old: SubscriberObject, new: SubscriberObject],
   /**
    * The server welcomed the socket
    */
-     welcome: [welcome: WelcomeObject],
+  welcome: [welcome: WelcomeObject],
  }
  
  //#endregion
