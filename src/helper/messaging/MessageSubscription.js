@@ -75,7 +75,7 @@ class MessageSubscription extends BaseHelper {
 
   async nextGroupMessage (targetGroupId, timeout = Infinity) {
     try {
-      return await this.subscribeToNextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId, timeout);
+      return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
@@ -84,7 +84,7 @@ class MessageSubscription extends BaseHelper {
 
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
     try {
-      return await this.subscribeToNextMessage((message) => !message.isGroup && message.sourceSubscriberId === sourceSubscriberId, timeout);
+      return await this.nextMessage((message) => !message.isGroup && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextPrivateMessage(sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
@@ -93,7 +93,7 @@ class MessageSubscription extends BaseHelper {
 
   async nextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
     try {
-      return await this.subscribeToNextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
+      return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextGroupSubscriberMessage(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
