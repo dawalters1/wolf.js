@@ -544,7 +544,7 @@ class WOLFBot extends EventEmitter {
       this._discovery._cleanup(disconnected),
       this._event._cleanup(disconnected),
       this._group._cleanup(disconnected),
-      this._messaging._cleanup(disconnected),
+      this._messaging._messageSubscription._cleanup(disconnected),
       this._notification._cleanup(disconnected),
       this._subscriber._cleanup(disconnected),
       this._stage._cleanup(disconnected)

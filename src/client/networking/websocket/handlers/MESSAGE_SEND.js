@@ -75,34 +75,22 @@ module.exports = async (api, body) => {
 
     case MessageType.TEXT_PLAIN:
     {
-      if (message.sourceSubscriberId === api.currentSubscriber.id) {
+      if (message.sourceSubscriberId !== api.currentSubscriber.id) {
+        const secret = api._botConfig.secrets.find((secret) => api.utility().string().isEqual(secret.command, message.body) || api.utility().string().isEqual(secret.commandShort, message.body));
+
+        if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) {
+          return await api.messaging().sendMessage(
+            message,
+            api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
+              {
+                version
+              }
+            )
+          );
+        }
+      } else if (!api.options.processOwnMessages) {
         return Promise.resolve();
       }
-
-      const secret = api._botConfig.secrets.find((secret) => api.utility().string().isEqual(secret.command, message.body) || api.utility().string().isEqual(secret.commandShort, message.body));
-
-      if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) {
-        return await api.messaging().sendMessage(
-          message,
-          api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
-            {
-              version
-            }
-          )
-        );
-      }
-    }
-  }
-
-  const messageSubscriptions = api.messaging()._subscriptionData.subscriptions.filter((subscription) => subscription.predicate(message));
-
-  if (messageSubscriptions.length > 0) {
-    for (const messageSubscription of messageSubscriptions) {
-      if (messageSubscription.timeoutInterval) {
-        clearTimeout(messageSubscription.timeoutInterval);
-      }
-
-      messageSubscription.def.resolve(message);
     }
   }
 

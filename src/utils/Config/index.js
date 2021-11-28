@@ -12,6 +12,8 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
+  _opts.app.processOwnMessages = validator.isValidBoolean(_opts.app.processOwnMessages) ? Boolean(_opts.app.processOwnMessages) : false;
+
   _opts.app.commandSettings = typeof (_opts.app.commandSettings) === 'object' ? _opts.app.commandSettings : {};
 
   _opts.app.commandSettings.ignoreOfficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreOfficialBots) ? Boolean(_opts.app.commandSettings.ignoreOfficialBots) : false;
@@ -33,6 +35,7 @@ const validateUserConfig = (api, opts) => {
 
   api._options = {
     keyword: _opts.keyword,
+    processOwnMessages: _opts.app.processOwnMessages,
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
     developerId: _opts.app.developerId,
