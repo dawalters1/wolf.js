@@ -6,6 +6,7 @@ const fileType = require('file-type');
 const { v4: uuidv4 } = require('uuid');
 
 const Message = require('../../models/MessageObject');
+const MessageSubscription = require('./MessageSubscription');
 
 const getDefaultOptions = (api, opts) => {
   const _opts = Object.assign({}, opts);
@@ -33,10 +34,11 @@ class Messaging extends BaseHelper {
   constructor (api) {
     super(api);
 
-    this._subscriptionData = {
-      id: 1,
-      subscriptions: []
-    };
+    this._messageSubscription = new MessageSubscription(this._api);
+  }
+
+  subscribe () {
+    return this._messageSubscription;
   }
 
   async _messageGroupSubscribe () {
@@ -436,78 +438,20 @@ class Messaging extends BaseHelper {
     }
   }
 
-  _removeMessageSubscription (subId) {
-    const subscription = this._subscriptionData.subscriptions.find((sub) => sub.subId === subId);
-
-    if (subscription.timeoutInterval) {
-      clearInterval(subscription.timeoutInterval);
-    }
-
-    this._subscriptionData.subscriptions = this._subscriptionData.subscriptions.filter((sub) => sub.subId !== subId);
-  }
-
   async subscribeToNextMessage (predicate, timeout = Infinity) {
-    if (this._subscriptionData.subscriptions.some((subscription) => subscription.predicate === predicate)) {
-      return null;
-    }
-
-    const subId = this._subscriptionData.id;
-    this._subscriptionData.id++;
-
-    const subscription = {
-      subId,
-      predicate,
-      timeoutInterval: timeout === Infinity
-        ? undefined
-        : setTimeout(() => {
-          subscription.def.resolve(null);
-        }, timeout)
-
-    };
-
-    this._subscriptionData.subscriptions.push(subscription);
-
-    // eslint-disable-next-line no-new
-    const result = await new Promise((resolve, reject) => {
-      subscription.def = { resolve, reject };
-    });
-
-    this._removeMessageSubscription(subId);
-
-    return result;
+    return this._messageSubscription.nextMessage(predicate, timeout);
   }
 
   async subscribeToNextGroupMessage (targetGroupId, timeout = Infinity) {
-    return await this.subscribeToNextMessage((message) =>
-      message.isGroup &&
-      message.targetGroupId === targetGroupId
-    , timeout);
+    return this._messageSubscription.nextGroupMessage(targetGroupId, timeout);
   }
 
   async subscribeToNextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
-    return await this.subscribeToNextMessage((message) =>
-      !message.isGroup &&
-      message.sourceSubscriberId === sourceSubscriberId
-    , timeout);
+    return this._messageSubscription.nextPrivateMessage(sourceSubscriberId, timeout);
   }
 
   async subscribeToNextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
-    return await this.subscribeToNextMessage((message) =>
-      message.isGroup &&
-      message.targetGroupId === targetGroupId &&
-      message.sourceSubscriberId === sourceSubscriberId
-    , timeout);
-  }
-
-  _cleanup (disconnected) {
-    if (!disconnected) {
-      return Promise.resolve();
-    }
-
-    this._subscriptionData = {
-      id: 1,
-      subscriptions: []
-    };
+    return this._messageSubscription.nextGroupSubscriberMessage(targetGroupId, sourceSubscriberId, timeout);
   }
 }
 

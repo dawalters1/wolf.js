@@ -4,6 +4,8 @@ const isType = (arg, type) => {
   switch (type) {
     case 'string':
       return typeOf === 'string';
+    case 'function':
+      return typeOf === 'function';
     case 'object':
       return typeOf === 'object';
     case 'bigint':

@@ -16,48 +16,50 @@
 
 ##  0.20.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
  ###  ❗❗ Breaking Changes ❗❗
-- Events are no longer handled using 
+- **Events** are now handled with manual eventStrings
 ```JS 
-api.on.eventName((... args)=>{})
-``` 
-instead they are now handled using 
-```JS
-api.on('eventName', (... args)=>{})
+api.on.eventName((... args)=>{}) -> api.on('eventName', (... args)=>{})
 ```
 
- ### Deprecations (**OLD** -> **NEW**)
+##
+
+### Deprecations (**OLD** -> **NEW**)
  ```JS
-api.on.eventName((... args) => {})  ->  api.on("eventName", (... args) => {})
-api.tip()  ->  api.tipping()
-api.deleteCharms()  ->  api.charm().remove()
-api.setSelectedCharms()  ->  api.charm().set()
-api.getCrediteBalance()  ->  api.store().getBalance()
-api.getConversationList()  ->  api.messaging().getConversationList();
-api.contact().delete()  ->  api.contact().remove()
-api.event().createEvent()  ->  api.event(). remove()
-api.event().editEvent()  ->  api.event().edit()
-api.event().updateEventThumbnail()  ->  api.event().updateThumbnail()
-api.event().deleteEvent()  ->  api.event().remove()
-api.event().getGroupEvents()  ->  api.event().getGroupEventList()
-api.event().getEventSubscriptions()  ->  api.event().getSubscriptionList()
-api.event().subscribeToEvent()  ->  api.event().subscribe()
-api.event().unsubscribeFromEvent()  ->  api.event().unsubscribe()
-api.group().getHistory()  ->  api.group().getChatHistory()
-api.subscriber().getHistory()  ->  api.subscriber().getChatHistory()
-api.utility().group().member().checkPermissions()  ->  api.utility().group().member().hasCapability()
+api.tip() -> api.tipping()
+api.deleteCharms() -> api.charm().remove()
+api.setSelectedCharms() -> api.charm().set()
+api.getCrediteBalance() -> api.store().getBalance()
+api.getConversationList() -> api.messaging().getConversationList();
+api.contact().delete() -> api.contact().remove()
+api.event().createEvent() -> api.event(). remove()
+api.event().editEvent() -> api.event().edit()
+api.event().updateEventThumbnail() -> api.event().updateThumbnail()
+api.event().deleteEvent() -> api.event().remove()
+api.event().getGroupEvents() -> api.event().getGroupEventList()
+api.event().getEventSubscriptions() -> api.event().getSubscriptionList()
+api.event().subscribeToEvent() -> api.event().subscribe()
+api.event().unsubscribeFromEvent() -> api.event().unsubscribe()
+api.group().getHistory() -> api.group().getChatHistory()
+api.subscriber().getHistory() -> api.subscriber().getChatHistory()
+api.utility().group().member().checkPermissions() -> api.utility().group().member().hasCapability()
 api.stage().getStages() -> api.stage().getStageList()
 api.stage().getSettings() -> api.stage().getGroupSettings()
 api.stage().getSlots() -> api.stage().getGroupSlots()
 api.stage().removeSubscriberFromSlot() -> api.stage().kickSlot()
 api.stage().play() -> api.stage().broadcast()
 api.stage().isPlaying() -> api.stage().isBroadcasting();
-
+api.messaging().subscribeToNextMessage() -> api.messaging().subscribe().nextMessage()
+api.messaging().subscribeToNextGroupMessage() -> api.messaging().subscribe().nextGroupMessage()
+api.messaging().subscribeToNextPrivateMessage() -> api.messaging().subscribe().nextPrivateMessage()
+api.messaging().subscribeToNextGroupSubscriberMessage() -> api.messaging().subscribe().nextGroupSubscriberMessage()
 ```
+##
+
 ### Whats New?
 - Full typings/intellisense support
 - Bug fixes
 - [Contacts](https://github.com/dawalters1/wolf.js/tree/main/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/tree/main/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/tree/main/src/models/MessageObject.js) now contain methods
-- [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API... [Constants](https://www.npmjs.com/package/@dawalters1/constants) package will be deprecated
+- [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API... [Constants Package](https://www.npmjs.com/package/@dawalters1/constants) will be deprecated upon this release
   - Constants names now start with a capital letter (EX: messageType is now MessageType) 
 - 10.14 Raise Hands Support 
 - Added: ```api.group().getRecommendedList()``` - Get recommended groups
