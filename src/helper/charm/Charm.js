@@ -128,12 +128,14 @@ class Charm extends BaseHelper {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
 
-      return await this._websocket.emit(
+      const result = await this._websocket.emit(
         Commands.CHARM_SUBSCRIBER_STATISTICS,
         {
           id: subscriberId
         }
       );
+
+      return result.success ? result.body : undefined;
     } catch (error) {
       error.internalErrorMessage = `api.charm().getSubscriberStatistics(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
@@ -166,7 +168,7 @@ class Charm extends BaseHelper {
         throw new Error('offset cannot be less than 0');
       }
 
-      return await this._websocket.emit(
+      const result = await this._websocket.emit(
         Commands.CHARM_SUBSCRIBER_ACTIVE_LIST,
         {
           id: subscriberId,
@@ -174,6 +176,8 @@ class Charm extends BaseHelper {
           offset
         }
       );
+
+      return result.success ? result.body : [];
     } catch (error) {
       error.internalErrorMessage = `api.charm().getSubscriberActiveList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
       throw error;
@@ -206,7 +210,7 @@ class Charm extends BaseHelper {
         throw new Error('offset cannot be less than 0');
       }
 
-      return await this._websocket.emit(
+      const result = await this._websocket.emit(
         Commands.CHARM_SUBSCRIBER_EXPIRED_LIST,
         {
           id: subscriberId,
@@ -214,6 +218,8 @@ class Charm extends BaseHelper {
           offset
         }
       );
+
+      return result.success ? result.body : [];
     } catch (error) {
       error.internalErrorMessage = `api.charm().getSubscriberExpiredList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
       throw error;
