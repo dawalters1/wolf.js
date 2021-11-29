@@ -391,6 +391,10 @@ exports.RetryMode = {
   ALWAYS_FAIL: 0,
   ALWAYS_RETRY: 1
 };
+exports.SearchType = {
+  GROUP: 'group',
+  SUBSCRIBER: 'subscriber'
+};
 exports.TipDirection = {
   SENT: 'sent',
   RECEIVED: 'received'
