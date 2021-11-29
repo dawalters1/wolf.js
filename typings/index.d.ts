@@ -349,7 +349,7 @@ export class GroupStatsActiveSubscriberObject {
   public subId: Number;
   public swearCount: Number;
   public textCount: Number;
-  public voidCount: Number;
+  public voiceCount: Number;
   public wordCount: Number;
  }
 export class GroupStatsTopSubscriberObject {
@@ -386,7 +386,7 @@ export class GroupStatsObject{
   public topAction: Array<GroupStatsTopSubscriberObject>;
   public topEmoticon: Array<GroupStatsTopSubscriberObject>;
   public topHappy: Array<GroupStatsTopSubscriberObject>;
-  public toImage: Array<GroupStatsTopSubscriberObject>;
+  public topImage: Array<GroupStatsTopSubscriberObject>;
   public topQuestion: Array<GroupStatsTopSubscriberObject>;
   public topSad: Array<GroupStatsTopSubscriberObject>;
   public topSwear: Array<GroupStatsTopSubscriberObject>;
