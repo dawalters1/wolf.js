@@ -1,6 +1,6 @@
 const Message = require('../../../../models/MessageObject');
-
 const { version } = require('../../../../../package.json');
+
 const { Events, MessageType, Privilege, Capability } = require('../../../../constants');
 
 // Stop gap join/leave handling incase group members list isnt requested
@@ -76,17 +76,23 @@ module.exports = async (api, body) => {
     case MessageType.TEXT_PLAIN:
     {
       if (message.sourceSubscriberId !== api.currentSubscriber.id) {
-        const secret = api._botConfig.secrets.find((secret) => api.utility().string().isEqual(secret.command, message.body) || api.utility().string().isEqual(secret.commandShort, message.body));
+        const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
 
-        if (secret && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) {
-          return await api.messaging().sendMessage(
-            message,
-            api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
-              {
-                version
-              }
-            )
-          );
+        if (args.length >= 2 || api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])) {
+          const secret = api._botConfig.secrets.find((secret) => secret.commands.includes(args[0]));
+
+          if (secret) {
+            if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {
+              return await api.messaging().sendMessage(
+                message,
+                api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
+                  {
+                    version
+                  }
+                )
+              );
+            }
+          }
         }
       } else if (!api.options.processOwnMessages) {
         return Promise.resolve();
