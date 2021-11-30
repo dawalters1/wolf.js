@@ -72,36 +72,36 @@ multimedia:
       mimes: ['image/jpeg']  
 
 secrets:
-  - command: ">reveal your secrets"
-    commandShort: ">rys"
+  - language: en
+    commands: ['>rys']
     responses: [
-      "I'd love to stay and chat', 'but I'm lying.\nWJS: {version}",
-      "Hey', 'I found your nose... It was in my Business.\nWJS: {version}",
-      "In my defense', 'I was left unsupervised.\nWJS: {version}",
+      "I'd love to stay and chat, but I'm lying.\nWJS: {version}",
+      "Hey, I found your nose... It was in my Business.\nWJS: {version}",
+      "In my defense, I was left unsupervised.\nWJS: {version}",
       "I am a bot using.\nWJS: {version}",
       "Maybe you should get your own life and stop interfering in mine.\nWJS: {version}",
       "Nothing will bring you greater peace than minding your own business.\nWJS: {version}",
-      "I am who I am', 'your approval isnt needed.\nWJS: {version}",
+      "I am who I am, your approval isnt needed.\nWJS: {version}",
       "Where's your off button?\nWJS: {version}",
-      "Oops! I forgot the world revolves around you', 'how silly of me.\nWJS: {version}",
+      "Oops! I forgot the world revolves around you, how silly of me.\nWJS: {version}",
       "If you listen closely you can hear me not caring.\nWJS: {version}",
-      "I smile', 'just not when you are around.\nWJS: {version}",
-      "If you have a problem with me', 'tell me', 'not anyone else.\nWJS: {version}",
-      "Sorry', 'sarcasm falls out of my mouth like stupidity falls out of yours.\nWJS: {version}",
-      "You're so fake', 'Barbie is jelous.\nWJS: {version}",
+      "I smile, just not when you are around.\nWJS: {version}",
+      "If you have a problem with me, tell me, not anyone else.\nWJS: {version}",
+      "Sorry, sarcasm falls out of my mouth like stupidity falls out of yours.\nWJS: {version}",
+      "You're so fake, Barbie is jelous.\nWJS: {version}",
       "I love the sound you make when you shut up.\nWJS: {version}"
     ]
-  - command: ">sırlarını ifşala"
-    commandShort: ">sırrını ver"
+  - language: tr
+    commands: ['>sırlarını', '>sırrını']
     responses: [
-      "Kalıp sizinle sohbet etmek istiyorum derdim ama', 'yalan olur.\nWJS: {version}",
+      "Kalıp sizinle sohbet etmek istiyorum derdim ama, yalan olur.\nWJS: {version}",
       "Ayy burnunu buldum… Benim işlerimin arasından çıktı.\nWJS: {version}",
-      "Kendimi savunmak için diyorum', 'gözetimsiz bırakılmıştım\nWJS: {version}",
-      "Güzel selfi çekmek için 10 resim çekiyorsan', 'çirkinsin; bunun ötesi berisi yok.\nWJS: {version}",
-      "Gidince arkasından üzüleceğim tek şey', 'internet.\nWJS: {version}"
+      "Kendimi savunmak için diyorum, gözetimsiz bırakılmıştım\nWJS: {version}",
+      "Güzel selfi çekmek için 10 resim çekiyorsan, çirkinsin; bunun ötesi berisi yok.\nWJS: {version}",
+      "Gidince arkasından üzüleceğim tek şey, internet.\nWJS: {version}"
     ]
-  - command: ">اكشف اسرارك"
-    commandShort: ">كشف"
+  - language: en    
+    commands: ['>كشف']
     responses: [
       "اود ان ارغب في الاستمرار بالمحادثه ولكن في الحقيقه لا ارغب بذلك\nWJS: {version}",
       "خذ انفك، وجدته في مكان لا يخصه\nWJS: {version}",

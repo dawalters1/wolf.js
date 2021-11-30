@@ -309,6 +309,7 @@ export class GroupExtendedObject{
 export class GroupObject{
   public exists: Boolean;
   public id: Number;
+  public name: String;
   public icon: Number;
   public hash: String;
   public description: String;
