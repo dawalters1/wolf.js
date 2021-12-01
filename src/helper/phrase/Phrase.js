@@ -45,7 +45,7 @@ class Phrase extends BaseHelper {
 
         const phraseName = this._api.utility().string().replace(phrase.name, {
           keyword: this._api.options.keyword
-        });
+        }).toLowerCase();
 
         if (!this._phrases[language][phraseName]) {
           this._phrases[language][phraseName] = [];

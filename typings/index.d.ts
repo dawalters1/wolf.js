@@ -910,6 +910,9 @@ export class WOLFBot {
    */
   public utility(): Utility;
 
+  /**
+   * Regex used to split a string at spaces, newlines, tabs & commas
+   */
   public SPLIT_REGEX: RegExp;
  }
 export abstract class BaseHelper {
