@@ -1,12 +1,12 @@
 
 class TimerJobObject {
   constructor (data) {
-    this.handler = data.name;
-    this.data = data.data;
-    this.delay = data.delay;
-    this.timestamp = data.timestamp;
-    this.id = data.id;
-    this.remaining = data.remaining;
+    this.handler = data.name || undefined;
+    this.data = data.data || undefined;
+    this.delay = data.delay || undefined;
+    this.timestamp = data.timestamp || undefined;
+    this.id = data.id || undefined;
+    this.remaining = data.remaining || undefined;
   }
 }
 
