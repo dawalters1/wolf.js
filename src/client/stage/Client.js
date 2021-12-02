@@ -217,6 +217,11 @@ class Client extends EventEmitter {
     this.emit(events.BROADCAST_RESUME);
   }
 
+  async disconnect () {
+    await this.stop(true);
+    this.emit(events.DISCONNECTED);
+  }
+
   async stop (stoppedByClient = false) {
     if (this._broadcastState === broadcastState.NOT_BROADCASTING) {
       return Promise.resolve();
