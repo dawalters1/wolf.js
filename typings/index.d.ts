@@ -1765,6 +1765,11 @@ export class Stage extends BaseHelper {
    */
   public isConnected(targetGroupId: Number): Promise<Boolean>;
   /**
+   * Check whether or not the client is paused
+   * @param targetGroupId - The id of the group
+   */
+  public isPaused(targetGroupId: Number): Promise<Boolean>;  
+  /**
    * Get the current broadcast duration
    * @param targetGroupId - The id of the group
    */
@@ -2609,11 +2614,11 @@ export interface ClientEvents {
   /**
    * A private message was received
    */
-    privateMessage: [message: MessageObject],
+  privateMessage: [message: MessageObject],
   /**
    * Someone accepted a private message request
    */
-    privateMessageAcceptResponse: [message: MessageObject],
+  privateMessageAcceptResponse: [message: MessageObject],
   /**
    * A private message was updated (NOT IMPLEMENTED/NON-EXISTANT)
    */
@@ -2661,23 +2666,23 @@ export interface ClientEvents {
   /**
    * The bots broadcast duration has been updated
    */
-  stageClientDuration: [change: StageClientUpdatedObject],
+  stageClientBroadcastDuration: [change: StageClientUpdatedObject],
   /**
    * The bot encountered an error while broadcasting
    */
-  stageClientError: [change: StageClientUpdatedObject],
+  stageClientBroadcastError: [change: StageClientUpdatedObject],
   /**
    * The bot was kicked from a slot
    */
-  stageClientKicked: [change: StageClientUpdatedObject],
+  stageClientBroadcastKicked: [change: StageClientUpdatedObject],
   /**
    * The bots slot was muted
    */
-  stageClientMuted: [change: StageClientUpdatedObject],
+  stageClientBroadcastMuted: [change: StageClientUpdatedObject],
   /**
    * The bots broadcast was paused
    */
-  stageClientPaused: [change: StageClientUpdatedObject],
+  stageClientBroadcastPaused: [change: StageClientUpdatedObject],
   /**
    * The bot is ready to broadcast 
    */
@@ -2685,15 +2690,15 @@ export interface ClientEvents {
   /**
    * The bot broadcast has been stopped
    */
-  stageClientStopped: [change: StageClientUpdatedObject],
+  stageClientBroadcastStopped: [change: StageClientUpdatedObject],
   /**
    * The bots slot has been unmuted
    */
-  stageClientUnmuted: [change: StageClientUpdatedObject],
+  stageClientBroadcastUnmuted: [change: StageClientUpdatedObject],
   /**
    * The bots broadcast has been resumed
    */
-  stageClientUnpaused: [change: StageClientUpdatedObject],
+  stageClientBroadcastUnpaused: [change: StageClientUpdatedObject],
   /**
    * The bots listener count has changed 
    */
