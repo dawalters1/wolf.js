@@ -59,7 +59,7 @@ class Subscriber extends BaseHelper {
               body: {
                 idList: subscriberIdBatch,
                 extended: true,
-                subscriber: true
+                subscribe: true
               }
             }
           );
