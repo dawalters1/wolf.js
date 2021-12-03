@@ -53,7 +53,7 @@ class Member {
    * @use api.utility().group().member().hasCapabilities(targetGroupId, targetSubscriberId, requiredCapability)
    */
   async checkPermissions (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
-    return this.hasCapability(targetGroupId, targetSubscriberId, requiredCapability, checkStaff, includeAuthorizedSubscribers);
+    return await this.hasCapability(targetGroupId, targetSubscriberId, requiredCapability, checkStaff, includeAuthorizedSubscribers);
   }
 
   async hasCapability (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
