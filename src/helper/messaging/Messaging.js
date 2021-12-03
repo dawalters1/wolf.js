@@ -147,7 +147,7 @@ class Messaging extends BaseHelper {
         embeds: undefined
       };
 
-      const ads = [...value.matchAll(/\[(.+?)\]/g)] || [];
+      const ads = [...value.matchAll(/\[(.+?)\]/g)].filter((ad) => ad[1].trim().length > 0) || [];
 
       let index = 0;
       const links = value.split(' ').reduce((result, link) => {
