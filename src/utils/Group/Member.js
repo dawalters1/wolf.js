@@ -108,7 +108,7 @@ class Member {
         }
       }
 
-      if (includeAuthorizedSubscribers && this._api.authorization().isAuthorized(targetSubscriberId)) {
+      if (includeAuthorizedSubscribers && await this._api.authorization().isAuthorized(targetSubscriberId)) {
         return true;
       }
 
