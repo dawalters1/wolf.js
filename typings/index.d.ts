@@ -2735,6 +2735,22 @@ export interface ClientEvents {
    * The server welcomed the socket
    */
   welcome: [welcome: WelcomeObject],
+  /**
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link groupMemberAdd}
+   */
+  subscriberJoined: [group: GroupObject, subscriber: SubscriberObject],
+  /**
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link groupMemberDelete}
+   */
+  subscriberLeft: [group: GroupObject, subscriber: SubscriberObject],
+  /**
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link groupMemberUpdate}
+   */
+  groupSubscriberUpdate: [group: GroupObject, subscriber: SubscriberObject],
+
  }
  
  //#endregion

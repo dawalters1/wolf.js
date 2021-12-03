@@ -19,6 +19,10 @@ const handleAdminAction = async (api, message) => {
           group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
           group.inGroup = true;
         }
+        // Legacy
+        if (subscriber.id !== api.currentSubscriber.id) {
+          api.emit('subscriberJoined', group, subscriber);
+        }
 
         return api.emit(
           subscriber.id === api.currentSubscriber.id ? Events.JOINED_GROUP : Events.GROUP_MEMBER_ADD,
@@ -29,6 +33,11 @@ const handleAdminAction = async (api, message) => {
 
       if (adminAction.type === 'leave' && adminAction.instigatorId) {
         adminAction.type = 'kick';
+      }
+
+      // Legacy
+      if (subscriber.id !== api.currentSubscriber.id) {
+        api.emit('subscriberLeft', group, subscriber);
       }
 
       api.emit(
@@ -48,6 +57,11 @@ const handleAdminAction = async (api, message) => {
       }
       return Promise.resolve();
     }
+  }
+
+  // Legacy
+  if (subscriber.id !== api.currentSubscriber.id) {
+    api.emit('groupSubscriberUpdate', group, subscriber);
   }
 
   return api.emit(

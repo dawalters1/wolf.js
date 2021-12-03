@@ -21,6 +21,9 @@ module.exports = async (api, body) => {
     return api.emit(Events.LEFT_GROUP, group);
   }
 
+  // Legacy
+  api.emit('subscriberLeft', group, subscriber);
+
   return api.emit(
     Events.GROUP_EVENT_DELETE,
     group,
