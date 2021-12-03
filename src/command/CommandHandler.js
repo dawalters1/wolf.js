@@ -99,6 +99,7 @@ module.exports = class CommandHandler {
       Reflect.deleteProperty(command, 'callback');
       return callback.call(this, new CommandObject(command));
     } catch (error) {
+      Reflect.deleteProperty(message, '_api'); // Delete api to prevent circular reference
       error.internalErrorMessage = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.stack}`;
       throw error;
     }

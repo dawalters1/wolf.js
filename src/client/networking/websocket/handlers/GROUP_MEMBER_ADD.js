@@ -28,11 +28,12 @@ module.exports = async (api, body) => {
     return api.emit(Events.JOINED_GROUP, group);
   }
 
+  // Legacy
+  api.emit('subscriberJoined', group, subscriber);
+
   return api.emit(
     Events.GROUP_MEMBER_ADD,
-    {
-      group,
-      subscriber
-    }
+    group,
+    subscriber
   );
 };
