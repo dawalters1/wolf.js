@@ -58,7 +58,8 @@ class Manager {
   _emit (eventString, targetGroupId, data) {
     const obj = {
       targetGroupId,
-      client: this._clients[targetGroupId]
+      client: this._clients[targetGroupId],
+      duration: this._clients[targetGroupId]._duration
     };
     if (data) {
       Object.assign(obj, data);
