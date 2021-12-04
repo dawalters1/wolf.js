@@ -13,7 +13,7 @@
 </div>
 
 
-##  0.20.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
+##  1.0.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
  ###  ❗❗ Breaking Changes ❗❗
 - **Events** are now handled with manual eventStrings
 ```JS 
