@@ -285,6 +285,10 @@ class Client extends EventEmitter {
   get slot () {
     return this._slotId > 0 ? this._slotId : undefined;
   }
+
+  get duration () {
+    return this._duration;
+  }
 }
 
 module.exports = Client;

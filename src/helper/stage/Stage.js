@@ -820,6 +820,29 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
+  async duration (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      const client = await this._manager.getClient(targetGroupId);
+
+      if (!client) {
+        return null;
+      }
+
+      return client.duration;
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().duration(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
   async getSlotRequestList (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
