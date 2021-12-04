@@ -4,14 +4,64 @@
     <img src = https://i.imgur.com/Rrylen8.png/>
   <p>
     <a href="https://wolf.live/unofficial+bots"><img src="https://img.shields.io/badge/WOLF-Chat-blue" alt="WOLF Chat" /></a>
-   <a href="https://www.npmjs.com/package/@dawalters1/wolf.js"><img src="https://img.shields.io/npm/v/@dawalters1/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
-    <a href="https://www.npmjs.com/package/@dawalters1/wolf.js"><img src="https://img.shields.io/npm/dt/@dawalters1/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
- 
+    <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/v/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/dt/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
   </p>
   <p>
-    <a href="https://nodei.co/npm/@dawalters1/wolf.js/"><img src="https://nodei.co/npm/@dawalters1/wolf.js.png?downloads=true&stars=true" alt="NPM info" /></a>
+    <a href="https://nodei.co/npm/wolf.js/"><img src="https://nodei.co/npm/wolf.js.png?downloads=true&stars=true" alt="NPM info" /></a>
   </p>
 </div>
+
+
+##  0.20.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
+ ###  ❗❗ Breaking Changes ❗❗
+- **Events** are now handled with manual eventStrings
+```JS 
+api.on.eventName((... args)=>{}) -> api.on('eventName', (... args)=>{})
+```
+
+##
+
+### Deprecations (**OLD** -> **NEW**)
+ ```JS
+api.tip() -> api.tipping()
+api.deleteCharms() -> api.charm().remove()
+api.setSelectedCharms() -> api.charm().set()
+api.getCrediteBalance() -> api.store().getBalance()
+api.getConversationList() -> api.messaging().getConversationList();
+api.contact().delete() -> api.contact().remove()
+api.event().createEvent() -> api.event(). remove()
+api.event().editEvent() -> api.event().edit()
+api.event().updateEventThumbnail() -> api.event().updateThumbnail()
+api.event().deleteEvent() -> api.event().remove()
+api.event().getGroupEvents() -> api.event().getGroupEventList()
+api.event().getEventSubscriptions() -> api.event().getSubscriptionList()
+api.event().subscribeToEvent() -> api.event().subscribe()
+api.event().unsubscribeFromEvent() -> api.event().unsubscribe()
+api.group().getHistory() -> api.group().getChatHistory()
+api.subscriber().getHistory() -> api.subscriber().getChatHistory()
+api.utility().group().member().checkPermissions() -> api.utility().group().member().hasCapability()
+api.stage().getStages() -> api.stage().getStageList()
+api.stage().getSettings() -> api.stage().getGroupSettings()
+api.stage().getSlots() -> api.stage().getGroupSlots()
+api.stage().removeSubscriberFromSlot() -> api.stage().kickSlot()
+api.stage().play() -> api.stage().broadcast()
+api.stage().isPlaying() -> api.stage().isBroadcasting();
+api.messaging().subscribeToNextMessage() -> api.messaging().subscribe().nextMessage()
+api.messaging().subscribeToNextGroupMessage() -> api.messaging().subscribe().nextGroupMessage()
+api.messaging().subscribeToNextPrivateMessage() -> api.messaging().subscribe().nextPrivateMessage()
+api.messaging().subscribeToNextGroupSubscriberMessage() -> api.messaging().subscribe().nextGroupSubscriberMessage()
+```
+##
+
+### Whats New?
+- Full typings/intellisense support
+- Bug fixes
+- [Contacts](https://github.com/dawalters1/wolf.js/tree/main/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/tree/main/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/tree/main/src/models/MessageObject.js) now contain methods
+- [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API... [Constants Package](https://www.npmjs.com/package/@dawalters1/constants) will be deprecated upon this release
+  - Constants names now start with a capital letter (EX: messageType is now MessageType) 
+- 10.14 Raise Hands Support 
+- Added: ```api.group().getRecommendedList()``` - Get recommended groups
 
 ## Introduction
 
@@ -25,7 +75,6 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 
 #### Optional Packages
 
-- [constants](https://www.npmjs.com/package/@dawalters1/constants) - npm i @dawalters1/constants
 - [ioredis](https://www.npmjs.com/package/ioredis) npm i ioredis
   - Requires a local or remote redis server
     - [Windows](https://github.com/tporadowski/redis/releases/tag/v5.0.10) - Github maintained port, because its no longer supported on windows
@@ -98,13 +147,13 @@ api.commandHandler().register([
   ])
 ]);
 
-api.on.groupMessage(async(message)=>{
+api.on('groupMessage', async(message)=>{
   if(message.body === '!ping'){
     return await api.messaging().sendGroupMessage(message.targetGroupId, 'Pong!');
   }
 });
 
-api.on.privateMessage(async(message)=>{
+api.on('privateMessage', async(message)=>{
   if(message.isCommand){
     return Promise.resolve();
   }
@@ -114,7 +163,7 @@ api.on.privateMessage(async(message)=>{
   return await api.messaging().sendPrivateMessage(message.sourceSubscriberId, api.phrase().getByLanguageAndName(language, `${api.options.keyword}_help_message`));
 });
 
-api.on.ready(()=>{
+api.on('ready', ()=>{
   console.log('Ready');
 });
 
@@ -126,8 +175,9 @@ api.login('email', 'password');
 ```JS
 
 /**
- * Declare the paramater type so that intellisense works in the file
- * @param {import('@dawalters1/wolf.js').WOLFBot } api - The api
+ * Required for intellisense to work with api & command
+ * @param {import('@dawalters1/wolf.js').WOLFBot} api
+ * @param {import('@dawalters1/wolf.js').CommandObject} command
  */
 module.exports = async (api, command) => {
 
@@ -157,7 +207,7 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Lacking Features
 
-- Stage Volume Control 
+- Stage Volume Control - Wont Do
 
 ## Contact
 

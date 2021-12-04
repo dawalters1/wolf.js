@@ -26,7 +26,8 @@
     "inlineSources": false,
     "newLine": "lf",
     "noEmitHelpers": true,
-    "outDir": "dist",
+    "rootDir": "src",
+    "outDir": "typings",
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": false,
@@ -46,5 +47,11 @@
     // Completeness
     "skipLibCheck": false,
     "skipDefaultLibCheck": true
-  }
+  },
+  "include": [
+    "typings"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

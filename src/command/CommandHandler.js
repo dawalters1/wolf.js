@@ -1,62 +1,45 @@
 'use strict';
-const { privilege, messageType } = require('@dawalters1/constants');
-const CommandObject = require('../structures/CommandObject');
+const CommandObject = require('../models/CommandObject');
+const { Events, Privilege, MessageType } = require('../constants');
 const Command = require('./Command');
 
 /**
  * Flags that unofficial bots should never have, check their profile before requesting summary
  */
 const ignoreTagList = [
-  privilege.STAFF,
-  privilege.ENTERTAINER,
-  privilege.SELECTCLUB_1,
-  privilege.SELECTCLUB_2,
-  privilege.VOLUNTEER,
-  privilege.PEST,
-  privilege.GROUP_ADMIN,
-  privilege.ENTERTAINER,
-  privilege.ELITECLUB_1,
-  privilege.ELITECLUB_2,
-  privilege.ELITECLUB_3,
-  privilege.BOT,
-  privilege.BOT_TESTER,
-  privilege.CONTENT_SUBMITER,
-  privilege.ALPHA_TESTER,
-  privilege.TRANSLATOR
+  Privilege.STAFF,
+  Privilege.ENTERTAINER,
+  Privilege.SELECTCLUB_1,
+  Privilege.SELECTCLUB_2,
+  Privilege.VOLUNTEER,
+  Privilege.PEST,
+  Privilege.GROUP_ADMIN,
+  Privilege.ENTERTAINER,
+  Privilege.ELITECLUB_1,
+  Privilege.ELITECLUB_2,
+  Privilege.ELITECLUB_3,
+  Privilege.BOT,
+  Privilege.BOT_TESTER,
+  Privilege.CONTENT_SUBMITER,
+  Privilege.ALPHA_TESTER,
+  Privilege.TRANSLATOR
 ];
 
 /**
  * {@hideconstructor}
  */
 module.exports = class CommandHandler {
-  constructor (api) {
+  constructor (api, cache) {
     this._api = api;
     this._commands = [];
 
-    this._api.on.privateMessage(async message => {
-      try {
-        await this._processMessage(message);
-      } catch (error) {
-        error.message = `Error handling Private Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
-        throw error;
-      }
-    });
-
-    this._api.on.groupMessage(async message => {
-      try {
-        await this._processMessage(message);
-      } catch (error) {
-        error.message = `Error handling Group Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.toString()}`;
-        throw error;
-      }
-    });
+    this._api.on(Events.GROUP_MESSAGE, async message => await this._processMessage(message));
+    this._api.on(Events.PRIVATE_MESSAGE, async message => await this._processMessage(message));
   }
 
   isCommand (message) {
     return this._commands.find((command) => {
-      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === message.body.split(/[\s]+/)[0].toLowerCase());
-
-      if (match) {
+      if (this._api.phrase().isRequestedPhrase(command.trigger, message.body.split(/[\s]+/)[0])) {
         const commandCallbacks = command.commandCallbackTypes;
 
         // Check to see if the command is valid for the message type
@@ -73,49 +56,53 @@ module.exports = class CommandHandler {
   }
 
   async _processMessage (message) {
-    if (!message.body || message.type !== messageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || this._api.banned().isBanned(message.sourceSubscriberId)) {
-      return Promise.resolve();
-    }
-
-    const commandContext = {
-      isGroup: message.isGroup,
-      language: null,
-      argument: message.body,
-      message: message,
-      targetGroupId: message.targetGroupId,
-      sourceSubscriberId: message.sourceSubscriberId,
-      timestamp: message.timestamp,
-      type: message.type
-    };
-
-    const commandCollection = this._commands.find((command) => {
-      const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
-
-      if (match) {
-        if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
-        (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
-        (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
-          commandContext.argument = commandContext.argument.substr(match.value.length).trim();
-          commandContext.language = match.language;
-          commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
-          return command;
-        }
+    try {
+      if (!message.body || message.type !== MessageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || await this._api.banned().isBanned(message.sourceSubscriberId)) {
+        return Promise.resolve();
       }
 
-      return false;
-    });
+      const commandContext = {
+        isGroup: message.isGroup,
+        language: null,
+        argument: message.body,
+        targetGroupId: message.targetGroupId,
+        sourceSubscriberId: message.sourceSubscriberId,
+        timestamp: message.timestamp,
+        type: message.type
+      };
 
-    if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, [813, 814]))) {
-      return Promise.resolve();
+      const commandCollection = this._commands.find((command) => {
+        const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+
+        if (match) {
+          if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
+        (commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) ||
+        (!commandContext.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
+            commandContext.argument = commandContext.argument.substr(match.value.length).trim();
+            commandContext.language = match.language;
+            commandContext.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.commandCallbacks.both : !commandContext.isGroup ? command.commandCallbacks.private : command.commandCallbacks.group;
+            return command;
+          }
+        }
+
+        return false;
+      });
+
+      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.validation.charms.unofficialBots))) {
+        return Promise.resolve();
+      }
+
+      const command = this._getCurrentOrChildCommand(commandCollection, commandContext);
+
+      const callback = command.callback;
+
+      Reflect.deleteProperty(command, 'callback');
+      return callback.call(this, new CommandObject(command));
+    } catch (error) {
+      Reflect.deleteProperty(message, '_api'); // Delete api to prevent circular reference
+      error.internalErrorMessage = `Error handling ${message.isGroup ? 'Group' : 'Private'} Command!\nMessage: ${JSON.stringify(message, null, 4)}\nData: ${error.method}\n${error.stack}`;
+      throw error;
     }
-
-    const command = this._getCurrentOrChildCommand(commandCollection, commandContext);
-
-    const callback = command.callback;
-
-    Reflect.deleteProperty(command, 'callback');
-
-    return callback.call(this, new CommandObject(command));
   }
 
   _getCurrentOrChildCommand (parentCommand, commandContext) {
