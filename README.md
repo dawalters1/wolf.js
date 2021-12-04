@@ -13,7 +13,7 @@
 </div>
 
 
-##  0.20.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
+##  1.0.0 - ⚠️ CONTAINS BREAKING CHANGES ⚠️
  ###  ❗❗ Breaking Changes ❗❗
 - **Events** are now handled with manual eventStrings
 ```JS 
@@ -71,7 +71,7 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 
 - [Node Version: 12+](https://nodejs.org/en/download/)
 - [Visual Code](https://code.visualstudio.com/download)
-- [WOLF.js](https://www.npmjs.com/package/@dawalters1/wolf.js) - npm i @dawalters1/wolf.js
+- [WOLF.js](https://www.npmjs.com/package/wolf.js) - npm i wolf.js
 
 #### Optional Packages
 
@@ -132,7 +132,7 @@ app:
 #### index.js
 ```JS
 
-const WOLF = require('@dawalters1/wolf.js');
+const WOLF = require('wolf.js');
 const api = new WOLF.WOLFBot();
 
 const me = require('./src/me')
@@ -176,8 +176,8 @@ api.login('email', 'password');
 
 /**
  * Required for intellisense to work with api & command
- * @param {import('@dawalters1/wolf.js').WOLFBot} api
- * @param {import('@dawalters1/wolf.js').CommandObject} command
+ * @param {import('wolf.js').WOLFBot} api
+ * @param {import('wolf.js').CommandObject} command
  */
 module.exports = async (api, command) => {
 
