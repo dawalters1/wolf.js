@@ -4,9 +4,8 @@
     <img src = https://i.imgur.com/Rrylen8.png/>
   <p>
     <a href="https://wolf.live/unofficial+bots"><img src="https://img.shields.io/badge/WOLF-Chat-blue" alt="WOLF Chat" /></a>
-   <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/v/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
-    <a href="https://www.npmjs.com/packagewolf.js"><img src="https://img.shields.io/npm/dt/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
- 
+    <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/v/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/dt/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
   </p>
   <p>
     <a href="https://nodei.co/npm/wolf.js/"><img src="https://nodei.co/npm/wolf.js.png?downloads=true&stars=true" alt="NPM info" /></a>
