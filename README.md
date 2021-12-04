@@ -71,7 +71,7 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 
 - [Node Version: 12+](https://nodejs.org/en/download/)
 - [Visual Code](https://code.visualstudio.com/download)
-- [WOLF.js](https://www.npmjs.com/package/@dawalters1/wolf.js) - npm i @dawalters1/wolf.js
+- [WOLF.js](https://www.npmjs.com/package/wolf.js) - npm i wolf.js
 
 #### Optional Packages
 
