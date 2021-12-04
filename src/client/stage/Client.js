@@ -210,7 +210,7 @@ class Client extends EventEmitter {
 
     this.emit(events.BROADCAST_PAUSED);
 
-    return this._duration;
+    return this.duration;
   }
 
   async resume () {
@@ -218,7 +218,7 @@ class Client extends EventEmitter {
 
     this.emit(events.BROADCAST_RESUME);
 
-    return this._duration;
+    return this.duration;
   }
 
   async disconnect () {
