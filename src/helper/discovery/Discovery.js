@@ -1,7 +1,6 @@
-const constants = require('@dawalters1/constants');
-const { request } = require('../../constants');
-const Helper = require('../Helper');
+const BaseHelper = require('../BaseHelper');
 
+const { Commands, Language } = require('../../constants');
 const validator = require('../../validator');
 
 const format = (oldDiscovery) => {
@@ -35,7 +34,7 @@ const format = (oldDiscovery) => {
   return formattedDiscovery;
 };
 
-module.exports = class Discovery extends Helper {
+module.exports = class Discovery extends BaseHelper {
   // eslint-disable-next-line no-useless-constructor
   constructor (api) {
     super(api);
@@ -47,7 +46,7 @@ module.exports = class Discovery extends Helper {
   async getByLanguage (language, requestNew = false) {
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -59,7 +58,7 @@ module.exports = class Discovery extends Helper {
       return this._discovery[language];
     }
 
-    const result = await this._websocket.emit(request.TOPIC_PAGE_LAYOUT,
+    const result = await this._websocket.emit(Commands.TOPIC_PAGE_LAYOUT,
       {
         name: 'discover',
         languageId: language
@@ -84,7 +83,8 @@ module.exports = class Discovery extends Helper {
       this._recipes[language] = {};
     }
 
-    const result = await this._websocket.emit(request.TOPIC_PAGE_RECIPE_LIST,
+    const result = await this._websocket.emit(
+      Commands.TOPIC_PAGE_RECIPE_LIST,
       {
         id,
         languageId: language,
@@ -92,7 +92,8 @@ module.exports = class Discovery extends Helper {
         offset: 0,
         minResults: min,
         maxResults: max
-      });
+      }
+    );
 
     if (result.success) {
       this._recipes[language][id] = result.body;
@@ -112,7 +113,7 @@ module.exports = class Discovery extends Helper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -135,7 +136,7 @@ module.exports = class Discovery extends Helper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, language, type, recipe.min, recipe.max);
   }
 
   async getRecipeBySectionId (id, language, requestNew = false) {
@@ -146,7 +147,7 @@ module.exports = class Discovery extends Helper {
     }
     if (validator.isNullOrWhitespace(language)) {
       throw new Error('language cannot be null or empty');
-    } else if (!Object.values(constants.language).includes(language)) {
+    } else if (!Object.values(Language).includes(language)) {
       throw new Error('language is not valid');
     }
 
@@ -167,10 +168,10 @@ module.exports = class Discovery extends Helper {
     const recipe = element.recipe;
     const type = element.type === 'groupEvent' ? 'event' : element.type;
 
-    return await this._getRecipe(recipe.id, constants.language, type, recipe.min, recipe.max);
+    return await this._getRecipe(recipe.id, language, type, recipe.min, recipe.max);
   }
 
-  _clearCache () {
+  async _cleanup () {
     this._discovery = {};
     this._recipes = {};
   }
