@@ -132,7 +132,7 @@ app:
 #### index.js
 ```JS
 
-const WOLF = require('@dawalters1/wolf.js');
+const WOLF = require('wolf.js');
 const api = new WOLF.WOLFBot();
 
 const me = require('./src/me')
@@ -176,8 +176,8 @@ api.login('email', 'password');
 
 /**
  * Required for intellisense to work with api & command
- * @param {import('@dawalters1/wolf.js').WOLFBot} api
- * @param {import('@dawalters1/wolf.js').CommandObject} command
+ * @param {import('wolf.js').WOLFBot} api
+ * @param {import('wolf.js').CommandObject} command
  */
 module.exports = async (api, command) => {
 
