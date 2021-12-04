@@ -209,12 +209,16 @@ class Client extends EventEmitter {
     this._broadcastState = broadcastState.PAUSED;
 
     this.emit(events.BROADCAST_PAUSED);
+
+    return this._duration;
   }
 
   async resume () {
     this._broadcastState = this._chunks > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
     this.emit(events.BROADCAST_RESUME);
+
+    return this._duration;
   }
 
   async disconnect () {
