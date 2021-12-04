@@ -214,7 +214,7 @@ class Client extends EventEmitter {
   }
 
   async resume () {
-    this._broadcastState = this._chunks > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
+    this._broadcastState = this._chunks.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
     this.emit(events.BROADCAST_RESUME);
 
@@ -291,7 +291,7 @@ class Client extends EventEmitter {
   }
 
   get duration () {
-    return this._duration;
+    return this._duration / 1000;
   }
 }
 
