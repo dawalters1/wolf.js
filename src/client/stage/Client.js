@@ -245,7 +245,7 @@ class Client extends EventEmitter {
 
     this._broadcastState = broadcastState.NOT_BROADCASTING;
 
-    this._reset(true);
+    this._reset(this._connectionState !== connectionState.DISCONNECTED);
 
     this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
