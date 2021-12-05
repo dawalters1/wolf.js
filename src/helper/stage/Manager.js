@@ -55,44 +55,35 @@ class Manager {
     return Promise.resolve();
   }
 
-  _emit (eventString, targetGroupId, data) {
-    const obj = {
-      targetGroupId,
-      client: this._clients[targetGroupId],
-      duration: this._clients[targetGroupId]._duration
-    };
-    if (data) {
-      Object.assign(obj, data);
-    }
-
-    return this._api.emit(eventString, obj);
+  _emit (eventString, targetGroupId, data = {}) {
+    return this._api.emit(eventString, Object.assign(data, { targetGroupId }));
   }
 
   _initClient (targetGroupId) {
     const client = new Client(targetGroupId);
 
-    client.on(events.CONNECTING, () => this._emit(events.CONNECTING, targetGroupId));
-    client.on(events.CONNECTED, () => this._emit(events.CONNECTED, targetGroupId));
-    client.on(events.DISCONNECTED, async () => {
+    client.on(events.CONNECTING, (data) => this._emit(events.CONNECTING, targetGroupId, data));
+    client.on(events.CONNECTED, (data) => this._emit(events.CONNECTED, targetGroupId, data));
+    client.on(events.DISCONNECTED, async (data) => {
       this._clients[targetGroupId].stop();
       Reflect.deleteProperty(this._clients, targetGroupId);
-      this._emit(events.DISCONNECTED, targetGroupId);
+      this._emit(events.DISCONNECTED, targetGroupId, data);
     });
-    client.on(events.KICKED, async () => {
-      this._clients[targetGroupId].stop();
+    client.on(events.KICKED, async (data) => {
+      this._clients[targetGroupId].stop(true);
       Reflect.deleteProperty(this._clients, targetGroupId);
-      this._emit(events.KICKED, targetGroupId);
+      this._emit(events.KICKED, targetGroupId, data);
     });
-    client.on(events.READY, () => this._emit(events.READY, targetGroupId));
-    client.on(events.BROADCAST_ERROR, (err) => this._emit(events.BROADCAST_ERROR, targetGroupId, { error: err }));
-    client.on(events.BROADCAST_END, () => this._emit(events.BROADCAST_END, targetGroupId));
-    client.on(events.BROADCAST_PAUSED, () => this._emit(events.BROADCAST_PAUSED, targetGroupId));
-    client.on(events.BROADCAST_RESUME, () => this._emit(events.BROADCAST_RESUME, targetGroupId));
-    client.on(events.BROADCAST_STOPPED, () => this._emit(events.BROADCAST_STOPPED, targetGroupId));
-    client.on(events.BROADCAST_UNMUTED, (data) => this._emit(events.BROADCAST_UNMUTED, targetGroupId, { sourceSubscriberId: data }));
-    client.on(events.BROADCAST_MUTED, (data) => this._emit(events.BROADCAST_MUTED, targetGroupId, { sourceSubscriberId: data }));
-    client.on(events.BROADCAST_START, () => this._emit(events.BROADCAST_START, targetGroupId));
-    client.on(events.BROADCAST_DURATION, (data) => this._emit(events.BROADCAST_DURATION, targetGroupId, { duration: data }));
+    client.on(events.READY, (data) => this._emit(events.READY, targetGroupId, data));
+    client.on(events.BROADCAST_ERROR, (data) => this._emit(events.BROADCAST_ERROR, targetGroupId, data));
+    client.on(events.BROADCAST_END, (data) => this._emit(events.BROADCAST_END, targetGroupId, data));
+    client.on(events.BROADCAST_PAUSED, (data) => this._emit(events.BROADCAST_PAUSED, targetGroupId, data));
+    client.on(events.BROADCAST_RESUME, (data) => this._emit(events.BROADCAST_RESUME, targetGroupId, data));
+    client.on(events.BROADCAST_STOPPED, (data) => this._emit(events.BROADCAST_STOPPED, targetGroupId, data));
+    client.on(events.BROADCAST_UNMUTED, (data) => this._emit(events.BROADCAST_UNMUTED, targetGroupId, data));
+    client.on(events.BROADCAST_MUTED, (data) => this._emit(events.BROADCAST_MUTED, targetGroupId, data));
+    client.on(events.BROADCAST_START, (data) => this._emit(events.BROADCAST_START, targetGroupId, data));
+    client.on(events.BROADCAST_DURATION, (data) => this._emit(events.BROADCAST_DURATION, targetGroupId, data));
     this._clients[targetGroupId] = client;
 
     return client;
