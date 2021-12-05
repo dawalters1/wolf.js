@@ -2702,7 +2702,7 @@ export interface ClientEvents {
   /**
    * The bots listener count has changed 
    */
-  stageClientViewerCountChanged: [change: StageClientUpdatedObject],
+  stageClientBroadcastViewerCountChanged: [change: StageClientUpdatedObject],
   /**
    * A subscriber was added to the bots blocked list
    */
