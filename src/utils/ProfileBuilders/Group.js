@@ -179,11 +179,11 @@ module.exports = class GroupProfileBuilder {
   }
 
   async create () {
-    return await (!this.isNew ? this.save() : this._doCorrectAction(Commands.GROUP_CREATE));
+    return await (!this._isNew ? this.save() : this._doCorrectAction(Commands.GROUP_CREATE));
   }
 
   async save () {
-    return await (this.isNew ? this.create() : this._doCorrectAction(Commands.GROUP_PROFILE_UPDATE));
+    return await (this._isNew ? this.create() : this._doCorrectAction(Commands.GROUP_PROFILE_UPDATE));
   }
 
   async _doCorrectAction (command) {
