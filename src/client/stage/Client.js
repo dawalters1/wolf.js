@@ -247,6 +247,10 @@ class Client extends EventEmitter {
 
     this._reset(this._connectionState !== connectionState.DISCONNECTED);
 
+    if (this._connectionState === connectionState.DISCONNECTED) {
+      return Promise.resolve();
+    }
+
     this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
 
