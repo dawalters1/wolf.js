@@ -137,7 +137,8 @@ class Client extends EventEmitter {
       Object.assign(data,
         {
           client: this,
-          duration: this.duration
+          duration: this.duration,
+          slotId: this._slotId
         }
       )
     );
@@ -166,7 +167,7 @@ class Client extends EventEmitter {
   }
 
   broadcast (data) {
-    this._reset(true);
+    this._reset(false);
 
     this._downloader = data;
 
@@ -244,7 +245,7 @@ class Client extends EventEmitter {
 
     this._broadcastState = broadcastState.NOT_BROADCASTING;
 
-    this._reset(!stoppedByClient);
+    this._reset(true);
 
     this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
