@@ -64,7 +64,7 @@ class Client extends EventEmitter {
       this._duration += 10;
 
       if (this._duration % 1000 === 0) {
-        this.emit(events.BROADCAST_DURATION, this._duration);
+        this._emit(events.BROADCAST_DURATION, this._duration);
       }
 
       if (this._muted) {
@@ -82,7 +82,7 @@ class Client extends EventEmitter {
       if (this._client.connectionState === 'connected') {
         if (this._connectionState === connectionState.UNINITIALIZED || this._connectionState === connectionState.DISCONNECTED) {
           this._connectionState = connectionState.CONNECTING;
-          this.emit(events.CONNECTING);
+          this._emit(events.CONNECTING);
         } else if (this._connectionState === connectionState.CONNECTING) {
           this._connectionState = connectionState.CONNECTED;
 
@@ -90,87 +90,95 @@ class Client extends EventEmitter {
 
           this._connectionState = connectionState.READY;
 
-          this.emit(events.READY);
+          this._emit(events.READY);
         }
       } else if (this._client.connectionState === 'disconnected') {
         this._connectionState = connectionState.DISCONNECTED;
 
-        if (this._downloader) {
-          this._downloader.destroy();
-        }
-        if (this._ffmpeg) {
-          this._ffmpeg.destroy();
-        }
-
-        this._chunks = [];
-        this._samples = [];
-        this._duration = 0;
+        this._reset();
 
         this._client.close();
 
-        this.emit(events.DISCONNECTED);
+        this._emit(events.DISCONNECTED);
       }
 
       return Promise.resolve();
     };
   }
 
+  _reset (resetTrack = false) {
+    if (this._ffmpeg) {
+      this._ffmpeg.destroy();
+    }
+
+    if (this._downloader) {
+      this._downloader.destroy();
+    }
+
+    this._chunks = [];
+    this._samples = [];
+    this._duration = 0;
+
+    this._downloadComplete = false;
+
+    if (resetTrack) {
+      this._source = new RTCAudioSource();
+      this._track = this._source.createTrack();
+      const mediaStream = new MediaStream();
+      mediaStream.addTrack(this._track);
+
+      this._sender.replaceTrack(this._track);
+    }
+  }
+
+  _emit (command, data = {}) {
+    this.emit(
+      command,
+      Object.assign(data,
+        {
+          client: this,
+          duration: this.duration
+        }
+      )
+    );
+  }
+
   _handleSlotUpdate (slot, sourceSubscriberId) {
     if (slot.occupierId !== null) {
       if (this._muted && !slot.occupierMuted) {
         this._muted = false;
-        this.emit(events.BROADCAST_UNMUTED, sourceSubscriberId);
+        this._emit(events.BROADCAST_UNMUTED, { sourceSubscriberId });
       } else if (!this._muted && slot.occupierMuted) {
         this._muted = true;
-        this.emit(events.BROADCAST_MUTED, sourceSubscriberId);
+        this._emit(events.BROADCAST_MUTED, { sourceSubscriberId });
       } else if (!slot.locked) {
         return Promise.resolve();
       }
     } else {
       this._connectionState = connectionState.DISCONNECTED;
 
-      if (this._downloader) {
-        this._downloader.destroy();
-      }
-      if (this._ffmpeg) {
-        this._ffmpeg.destroy();
-      }
-
-      this._chunks = [];
-      this._samples = [];
-      this._duration = 0;
+      this._reset();
 
       this._client.close();
 
-      this.emit(sourceSubscriberId !== undefined ? events.KICKED : events.DISCONNECTED, sourceSubscriberId);
+      this._emit(sourceSubscriberId !== undefined ? events.KICKED : events.DISCONNECTED, { sourceSubscriberId });
     }
   }
 
   broadcast (data) {
+    this._reset(true);
+
     this._downloader = data;
-
-    this._downloadComplete = false;
-    this._chunks = [];
-    this._samples = [];
-    this._duration = 0;
-
-    this._source = new RTCAudioSource();
-    this._track = this._source.createTrack();
-    const mediaStream = new MediaStream();
-    mediaStream.addTrack(this._track);
-
-    this._sender.replaceTrack(this._track);
 
     if (this._broadcastState !== broadcastState.PAUSED) {
       this._broadcastState = broadcastState.BROADCASTING;
-      this.emit(events.BROADCAST_START);
+      this._emit(events.BROADCAST_START);
     }
 
     this._ffmpeg = ffmpeg(this._downloader)
       .toFormat('wav')
       .native()
       .noVideo()
-      .pipe()
       .on('error', error => {
         this._downloader.destroy();
 
@@ -178,8 +186,9 @@ class Client extends EventEmitter {
           return Promise.resolve();
         }
 
-        this.emit(events.BROADCAST_ERROR, error);
+        this._emit(events.BROADCAST_ERROR, { error });
       })
+      .pipe()
       .on('data', (chunk) => {
         const newSamples = new Int8Array(chunk);
         const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
@@ -208,7 +217,7 @@ class Client extends EventEmitter {
   async pause () {
     this._broadcastState = broadcastState.PAUSED;
 
-    this.emit(events.BROADCAST_PAUSED);
+    this._emit(events.BROADCAST_PAUSED);
 
     return this.duration;
   }
@@ -216,14 +225,16 @@ class Client extends EventEmitter {
   async resume () {
     this._broadcastState = this._chunks.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
-    this.emit(events.BROADCAST_RESUME);
+    this._emit(events.BROADCAST_RESUME);
 
     return this.duration;
   }
 
   async disconnect () {
-    await this.stop(true);
-    this.emit(events.DISCONNECTED);
+    this._reset();
+    this._client.close();
+
+    return Promise.resolve();
   }
 
   async stop (stoppedByClient = false) {
@@ -233,13 +244,9 @@ class Client extends EventEmitter {
 
     this._broadcastState = broadcastState.NOT_BROADCASTING;
 
-    this._downloader.destroy();
-    this._ffmpeg.destroy();
-    this._chunks = [];
-    this._samples = [];
-    this._duration = 0;
+    this._reset(!stoppedByClient);
 
-    this.emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
+    this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
 
   async _createOffer () {
