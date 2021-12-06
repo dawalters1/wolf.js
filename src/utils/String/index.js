@@ -100,7 +100,7 @@ class String {
 
       const lines = string.split(splitChar).filter(Boolean);
 
-      if (lines === 0) {
+      if (lines.length === 0) {
         throw Error(`string is longer than ${max} characters and contains no ${splitChar} characters`);
       }
 
