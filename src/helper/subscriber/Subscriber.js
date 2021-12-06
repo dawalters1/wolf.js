@@ -167,7 +167,7 @@ class Subscriber extends BaseHelper {
     subscriber = new SubscriberObject(this._api, subscriber);
 
     if (subscriber.exists) {
-      subscriber.language = toLanguageKey(subscriber.extended.language);
+      subscriber.language = toLanguageKey(subscriber.extended.language) || 'en';
 
       const existing = this._subscribers.find((sub) => sub.id === subscriber.id);
 
