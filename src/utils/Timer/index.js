@@ -134,9 +134,10 @@ class Timer {
 
       if (job) {
         job.remaining = (job.timestamp + job.delay) - Date.now();
+        return new TimerJobObject(job);
       }
 
-      return new TimerJobObject(job);
+      return job;
     } catch (error) {
       error.internalErrorMessage = `api.utility().timer().get(name=${JSON.stringify(name)})`;
       throw error;
