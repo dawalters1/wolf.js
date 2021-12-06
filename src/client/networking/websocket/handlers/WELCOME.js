@@ -10,7 +10,7 @@ const onSuccess = async (api, reconnect = false) => {
     api.group()._joinedGroups(),
     api.messaging()._messageGroupSubscribe(),
     api.messaging()._messagePrivateSubscribe(),
-    api.tip()._groupSubscribe()
+    api.tipping()._groupSubscribe()
   ]);
 
   api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
