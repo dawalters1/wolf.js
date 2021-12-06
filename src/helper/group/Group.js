@@ -512,7 +512,7 @@ class Group extends BaseHelper {
 
   _process (group) {
     group = new GroupObject(this._api, group);
-    group.language = toLanguageKey(group.extended.language);
+    group.language = toLanguageKey(group.extended.language) || 'en';
 
     const existing = this._groups.find((grp) => grp.id === group.id);
 
