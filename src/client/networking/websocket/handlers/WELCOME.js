@@ -13,7 +13,7 @@ const onSuccess = async (api, reconnect = false) => {
     api.tip()._groupSubscribe()
   ]);
 
-  api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
+  api.currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
   api.emit(reconnect ? Events.RECONNECTED : Events.READY);
 };
@@ -50,12 +50,14 @@ const login = async (api) => {
   }
 
   api.cognito = result.body.cognito;
-  api._currentSubscriber = result.body.subscriber;
-  api._currentSubscriber.token = api.config._loginSettings.token;
+  api.currentSubscriber = result.body.subscriber;
+  api.currentSubscriber
+  api.token = api.config._loginSettings.token;
 
   api.emit(
     Events.LOGIN_SUCCESS,
-    api.currentSubscriber
+    api.currentSubscriber,
+    api.token
   );
 
   return await onSuccess(api, false);
