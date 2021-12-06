@@ -506,6 +506,7 @@ class Group extends BaseHelper {
   }
 
   async _cleanup () {
+    this._joinedGroupsFetched = false;
     this._groups = [];
   }
 
