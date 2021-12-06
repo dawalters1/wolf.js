@@ -2586,7 +2586,7 @@ export interface ClientEvents {
   /**
    * The bot logged in successfully
    */
-  loginSuccess: [subscriber: SubscriberObject],
+  loginSuccess: [subscriber: SubscriberObject, token: String],
   /**
    * A new notification was received
    */
