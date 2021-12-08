@@ -13,7 +13,7 @@ class Authorization extends BaseHelper {
   }
 
   async clear () {
-    this._banned = [];
+    this._authorized = [];
   }
 
   async isAuthorized (subscriberIds) {
