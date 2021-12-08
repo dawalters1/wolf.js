@@ -155,6 +155,7 @@ exports.Commands = {
   MESSAGE_GROUP_UNSUBSCRIBE: 'message group unsubscribe',
   MESSAGE_PRIVATE_HISTORY_LIST: 'message private history list',
   MESSAGE_PRIVATE_SUBSCRIBE: 'message private subscribe',
+  MESSAGE_PRIVATE_UNSUBSCRIBE: 'message private unsubscribe',
   MESSAGE_SEND: 'message send',
   MESSAGE_SETTING: 'message setting',
   MESSAGE_SETTING_UPDATE: 'message setting update',

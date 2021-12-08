@@ -12,6 +12,10 @@ class Phrase extends BaseHelper {
     this._phrases = {};
     this._defaultLanguage = api.config.app.defaultLanguage;
 
+    this._loadLocal();
+  }
+
+  async _loadLocal () {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
       throw new Error('Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
     }

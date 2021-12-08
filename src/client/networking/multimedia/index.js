@@ -36,7 +36,8 @@ module.exports = class MultiMediaServiceClient {
         Logins: {
           'cognito-identity.amazonaws.com': this._api.cognito.token
         }
-      }, {
+      },
+      {
         region: 'eu-west-1'
       });
 
@@ -70,7 +71,7 @@ module.exports = class MultiMediaServiceClient {
         throw error;
       }
 
-      console.log(`[MultiMediaService]: Failed to retrieve AWS credentials ${error.message}... retrying...`);
+      console.warn(`[MultiMediaService]: Failed to retrieve AWS credentials ${error.message}... retrying...`);
 
       return this._getCredentials(attempt + 1);
     };
