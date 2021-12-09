@@ -538,6 +538,10 @@ export class StageClientUpdatedObject{
   public duration: Number;
   public sourceSubscriberId: Number;
  }
+export class StageClientViewerObject{
+  public targetGroupId: Number;
+  public count: Number;
+}
 export class StageSlotRequestObject{
   public subscriberId: Number;
   public hash: String;
@@ -2702,7 +2706,7 @@ export interface ClientEvents {
   /**
    * The bots listener count has changed 
    */
-  stageClientBroadcastViewerCountChanged: [change: StageClientUpdatedObject],
+  stageClientBroadcastViewerCountChanged: [change: StageClientViewerObject],
   /**
    * A subscriber was added to the bots blocked list
    */
