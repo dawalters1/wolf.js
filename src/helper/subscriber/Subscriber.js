@@ -69,13 +69,16 @@ class Subscriber extends BaseHelper {
 
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
               if (subscriberResponse.success) {
+                const subscriber = subscriberResponse.body;
+                subscriber.language = subscriber.extended && subscriber.extended.language ? toLanguageKey(subscriber.extended.language) : this._api.config.app.defaultLanguage;
                 subscribers.push(this._process(subscriberResponse.body));
               } else {
                 subscribers.push(
                   this._process(
                     {
                       id: subscriberIdBatch[index],
-                      exists: false
+                      exists: false,
+                      language: this._api.config.app.defaultLanguage
                     }
                   )
                 );
@@ -87,7 +90,8 @@ class Subscriber extends BaseHelper {
                 this._process(
                   {
                     id,
-                    exists: false
+                    exists: false,
+                    language: this._api.config.app.defaultLanguage
                   }
                 )
               )
@@ -164,6 +168,7 @@ class Subscriber extends BaseHelper {
   _process (subscriber) {
     subscriber.exists = subscriber.exists || true;
     subscriber.language = toLanguageKey(subscriber.extended.language) || 'en';
+
     subscriber = new SubscriberObject(this._api, subscriber);
 
     if (subscriber.exists) {
