@@ -514,7 +514,7 @@ module.exports = class Stage extends BaseHelper {
         client._setAnswer(result.body.sdp);
         client._slotId = slotId;
 
-        return result.body.slot;
+        return result;
       }
 
       return result;

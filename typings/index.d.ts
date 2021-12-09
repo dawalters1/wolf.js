@@ -1700,7 +1700,7 @@ export class Stage extends BaseHelper {
    * @param slotId - The id of the slot
    * @param sdp - The sdp (Leave empty for internal handling)
    */
-  public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String): Promise<ResponseObject>;
+  public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String): Promise<ResponseObject<GroupAudioSlotObject>>;
   /**
    * Listen to a slot
    * @param targetGroupId - The id of the group
