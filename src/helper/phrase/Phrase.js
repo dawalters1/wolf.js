@@ -17,19 +17,30 @@ class Phrase extends BaseHelper {
 
   async _loadLocal () {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
-      throw new Error('Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
+      throw new Error(
+        'Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases'
+      );
     }
 
-    const files = fs.readdirSync(path.resolve(require.main.filename, '../phrases')).filter(file => file.endsWith('.json'));
+    const files = fs
+      .readdirSync(path.resolve(require.main.filename, '../phrases'))
+      .filter((file) => file.endsWith('.json'));
 
     if (files.length === 0) {
-      throw new Error('Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
+      throw new Error(
+        'Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases'
+      );
     }
 
     for (const file of files) {
       const language = path.parse(file).name;
 
-      const phrases = JSON.parse(fs.readFileSync(path.resolve(require.main.filename, `../phrases/${file}`), 'utf8'));
+      const phrases = JSON.parse(
+        fs.readFileSync(
+          path.resolve(require.main.filename, `../phrases/${file}`),
+          'utf8'
+        )
+      );
 
       if (phrases.length === 0) {
         console.log(`[WARNING] Phrase Helper: ${language} json is empty`);
@@ -47,19 +58,21 @@ class Phrase extends BaseHelper {
           throw new Error('value cannot be null or empty');
         }
 
-        const phraseName = this._api.utility().string().replace(phrase.name, {
-          keyword: this._api.options.keyword
-        }).toLowerCase();
+        const phraseName = this._api
+          .utility()
+          .string()
+          .replace(phrase.name, {
+            keyword: this._api.options.keyword
+          })
+          .toLowerCase();
 
         if (!this._phrases[language][phraseName]) {
           this._phrases[language][phraseName] = [];
         }
-        this._phrases[language][phraseName].push(
-          {
-            value: phrase.value,
-            default: true
-          }
-        );
+        this._phrases[language][phraseName].push({
+          value: phrase.value,
+          default: true
+        });
       }
     }
   }
@@ -95,10 +108,15 @@ class Phrase extends BaseHelper {
           this._phrases[phrase.language][phraseName.toLowerCase()] = [];
         }
 
-        this._phrases[phrase.language][phraseName.toLowerCase()] = this._phrases[phrase.language][phraseName.toLowerCase()].filter((phr) => !phr.default).concat(phrase.value);
+        this._phrases[phrase.language][phraseName.toLowerCase()] =
+          this._phrases[phrase.language][phraseName.toLowerCase()]
+            .filter((phr) => !phr.default)
+            .concat(phrase.value);
       }
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().load(phrases=${JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''})`;
+      error.internalErrorMessage = `api.phrase().load(phrases=${
+        JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''
+      })`;
       throw error;
     }
   }
@@ -109,7 +127,13 @@ class Phrase extends BaseHelper {
         const language = value[0];
         const phrases = value[1];
 
-        result.push(...Object.entries(phrases).map((phrase) => ({ name: phrase[0], value: phrase[1], language })));
+        result.push(
+          ...Object.entries(phrases).map((phrase) => ({
+            name: phrase[0],
+            value: phrase[1],
+            language
+          }))
+        );
 
         return result;
       });
@@ -130,18 +154,24 @@ class Phrase extends BaseHelper {
 
   async count () {
     try {
-      const countByLanguage = Object.entries(this._phrases).reduce((result, value) => {
-        const language = value[0];
-        const phrases = value[1];
+      const countByLanguage = Object.entries(this._phrases).reduce(
+        (result, value) => {
+          const language = value[0];
+          const phrases = value[1];
 
-        result[language] = Object.keys(phrases).length;
+          result[language] = Object.keys(phrases).length;
 
-        return result;
-      }, {});
+          return result;
+        },
+        {}
+      );
 
       return {
         countByLanguage,
-        total: Object.values(countByLanguage).reduce((result, value) => value + result, 0)
+        total: Object.values(countByLanguage).reduce(
+          (result, value) => value + result,
+          0
+        )
       };
     } catch (error) {
       error.internalErrorMessage = 'api.phrase().count()';
@@ -154,15 +184,13 @@ class Phrase extends BaseHelper {
       const phrase = value[1][name.toLowerCase()];
 
       if (phrase) {
-        result.push(...phrase.map((phr) =>
-          (
-            {
-              name: name.toLowerCase(),
-              value: phr.value || phr,
-              language: value[0]
-            }
-          )
-        ));
+        result.push(
+          ...phrase.map((phr) => ({
+            name: name.toLowerCase(),
+            value: phr.value || phr,
+            language: value[0]
+          }))
+        );
       }
       return result;
     }, []);
@@ -170,9 +198,15 @@ class Phrase extends BaseHelper {
 
   isRequestedPhrase (name, value) {
     try {
-      return this.getAllByName(name).find((phrase) => this._api.utility().string().isEqual(phrase.value, value)) !== undefined;
+      return (
+        this.getAllByName(name).find((phrase) =>
+          this._api.utility().string().isEqual(phrase.value, value)
+        ) !== undefined
+      );
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
+      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(
+        name
+      )}, value=${JSON.stringify(value)})`;
       throw error;
     }
   }
@@ -205,7 +239,7 @@ class Phrase extends BaseHelper {
 
   getByCommandAndName (command, name) {
     try {
-      if (validator.isType(command, 'object')) {
+      if (!validator.isType(command, 'object')) {
         throw new Error('command must be an object');
       } else if (Reflect.has(command, 'language')) {
         throw new Error('command must contain a language property');
