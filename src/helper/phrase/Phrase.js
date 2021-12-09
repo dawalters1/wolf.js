@@ -1,12 +1,12 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const BaseHelper = require('../BaseHelper');
+const BaseHelper = require("../BaseHelper");
 
-const validator = require('../../validator');
+const validator = require("../../validator");
 
 class Phrase extends BaseHelper {
-  constructor (api) {
+  constructor(api) {
     super(api);
 
     this._phrases = {};
@@ -15,21 +15,32 @@ class Phrase extends BaseHelper {
     this._loadLocal();
   }
 
-  async _loadLocal () {
-    if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
-      throw new Error('Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
+  async _loadLocal() {
+    if (!fs.existsSync(path.resolve(require.main.filename, "../phrases"))) {
+      throw new Error(
+        "Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases"
+      );
     }
 
-    const files = fs.readdirSync(path.resolve(require.main.filename, '../phrases')).filter(file => file.endsWith('.json'));
+    const files = fs
+      .readdirSync(path.resolve(require.main.filename, "../phrases"))
+      .filter((file) => file.endsWith(".json"));
 
     if (files.length === 0) {
-      throw new Error('Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases');
+      throw new Error(
+        "Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases"
+      );
     }
 
     for (const file of files) {
       const language = path.parse(file).name;
 
-      const phrases = JSON.parse(fs.readFileSync(path.resolve(require.main.filename, `../phrases/${file}`), 'utf8'));
+      const phrases = JSON.parse(
+        fs.readFileSync(
+          path.resolve(require.main.filename, `../phrases/${file}`),
+          "utf8"
+        )
+      );
 
       if (phrases.length === 0) {
         console.log(`[WARNING] Phrase Helper: ${language} json is empty`);
@@ -41,46 +52,48 @@ class Phrase extends BaseHelper {
 
       for (const phrase of phrases) {
         if (validator.isNullOrWhitespace(phrase.name)) {
-          throw new Error('name cannot be null or empty');
+          throw new Error("name cannot be null or empty");
         }
         if (validator.isNullOrWhitespace(phrase.value)) {
-          throw new Error('value cannot be null or empty');
+          throw new Error("value cannot be null or empty");
         }
 
-        const phraseName = this._api.utility().string().replace(phrase.name, {
-          keyword: this._api.options.keyword
-        }).toLowerCase();
+        const phraseName = this._api
+          .utility()
+          .string()
+          .replace(phrase.name, {
+            keyword: this._api.options.keyword,
+          })
+          .toLowerCase();
 
         if (!this._phrases[language][phraseName]) {
           this._phrases[language][phraseName] = [];
         }
-        this._phrases[language][phraseName].push(
-          {
-            value: phrase.value,
-            default: true
-          }
-        );
+        this._phrases[language][phraseName].push({
+          value: phrase.value,
+          default: true,
+        });
       }
     }
   }
 
-  async load (phrases) {
+  async load(phrases) {
     try {
       phrases = Array.isArray(phrases) ? phrases : [phrases];
 
       if (phrases.length === 0) {
-        throw new Error('phrases cannot be an empty array');
+        throw new Error("phrases cannot be an empty array");
       }
 
       for (const phrase of phrases) {
         if (validator.isNullOrWhitespace(phrase.name)) {
-          throw new Error('name cannot be null or empty');
+          throw new Error("name cannot be null or empty");
         }
         if (validator.isNullOrWhitespace(phrase.value)) {
-          throw new Error('value cannot be null or empty');
+          throw new Error("value cannot be null or empty");
         }
         if (validator.isNullOrWhitespace(phrase.language)) {
-          throw new Error('language cannot be null or empty');
+          throw new Error("language cannot be null or empty");
         }
 
         if (!this._phrases[phrase.language]) {
@@ -88,100 +101,121 @@ class Phrase extends BaseHelper {
         }
 
         const phraseName = this._api.utility().string().replace(phrase.name, {
-          keyword: this._api.options.keyword
+          keyword: this._api.options.keyword,
         });
 
         if (!this._phrases[phrase.language][phraseName.toLowerCase()]) {
           this._phrases[phrase.language][phraseName.toLowerCase()] = [];
         }
 
-        this._phrases[phrase.language][phraseName.toLowerCase()] = this._phrases[phrase.language][phraseName.toLowerCase()].filter((phr) => !phr.default).concat(phrase.value);
+        this._phrases[phrase.language][phraseName.toLowerCase()] =
+          this._phrases[phrase.language][phraseName.toLowerCase()]
+            .filter((phr) => !phr.default)
+            .concat(phrase.value);
       }
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().load(phrases=${JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''})`;
+      error.internalErrorMessage = `api.phrase().load(phrases=${
+        JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? "..." : ""
+      })`;
       throw error;
     }
   }
 
-  async list () {
+  async list() {
     try {
       return Object.entries(this._phrases).reduce((result, value) => {
         const language = value[0];
         const phrases = value[1];
 
-        result.push(...Object.entries(phrases).map((phrase) => ({ name: phrase[0], value: phrase[1], language })));
+        result.push(
+          ...Object.entries(phrases).map((phrase) => ({
+            name: phrase[0],
+            value: phrase[1],
+            language,
+          }))
+        );
 
         return result;
       });
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().list()';
+      error.internalErrorMessage = "api.phrase().list()";
       throw error;
     }
   }
 
-  async getLanguageList () {
+  async getLanguageList() {
     try {
       return Object.keys(this._phrases);
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().getLanguageList()';
+      error.internalErrorMessage = "api.phrase().getLanguageList()";
       throw error;
     }
   }
 
-  async count () {
+  async count() {
     try {
-      const countByLanguage = Object.entries(this._phrases).reduce((result, value) => {
-        const language = value[0];
-        const phrases = value[1];
+      const countByLanguage = Object.entries(this._phrases).reduce(
+        (result, value) => {
+          const language = value[0];
+          const phrases = value[1];
 
-        result[language] = Object.keys(phrases).length;
+          result[language] = Object.keys(phrases).length;
 
-        return result;
-      }, {});
+          return result;
+        },
+        {}
+      );
 
       return {
         countByLanguage,
-        total: Object.values(countByLanguage).reduce((result, value) => value + result, 0)
+        total: Object.values(countByLanguage).reduce(
+          (result, value) => value + result,
+          0
+        ),
       };
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().count()';
+      error.internalErrorMessage = "api.phrase().count()";
       throw error;
     }
   }
 
-  getAllByName (name) {
+  getAllByName(name) {
     return Object.entries(this._phrases).reduce((result, value) => {
       const phrase = value[1][name.toLowerCase()];
 
       if (phrase) {
-        result.push(...phrase.map((phr) =>
-          (
-            {
-              name: name.toLowerCase(),
-              value: phr.value || phr,
-              language: value[0]
-            }
-          )
-        ));
+        result.push(
+          ...phrase.map((phr) => ({
+            name: name.toLowerCase(),
+            value: phr.value || phr,
+            language: value[0],
+          }))
+        );
       }
       return result;
     }, []);
   }
 
-  isRequestedPhrase (name, value) {
+  isRequestedPhrase(name, value) {
     try {
-      return this.getAllByName(name).find((phrase) => this._api.utility().string().isEqual(phrase.value, value)) !== undefined;
+      return (
+        this.getAllByName(name).find((phrase) =>
+          this._api.utility().string().isEqual(phrase.value, value)
+        ) !== undefined
+      );
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
+      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(
+        name
+      )}, value=${JSON.stringify(value)})`;
       throw error;
     }
   }
 
-  getByLanguageAndName (language, name) {
+  getByLanguageAndName(language, name) {
     try {
       if (!this._phrases[language]) {
         if (language === this._defaultLanguage) {
-          throw new Error('No value found for phrase');
+          throw new Error("No value found for phrase");
         }
 
         return this.getByLanguageAndName(this._defaultLanguage, name);
@@ -191,7 +225,7 @@ class Phrase extends BaseHelper {
 
       if (!phrase) {
         if (language === this._defaultLanguage) {
-          throw new Error('No value found for phrase');
+          throw new Error("No value found for phrase");
         }
         return this.getByLanguageAndName(this._defaultLanguage, name);
       }
@@ -203,14 +237,14 @@ class Phrase extends BaseHelper {
     }
   }
 
-  getByCommandAndName (command, name) {
+  getByCommandAndName(command, name) {
     try {
-      if (validator.isType(command, 'object')) {
-        throw new Error('command must be an object');
-      } else if (Reflect.has(command, 'language')) {
-        throw new Error('command must contain a language property');
+      if (!validator.isType(command, "object")) {
+        throw new Error("command must be an object");
+      } else if (Reflect.has(command, "language")) {
+        throw new Error("command must contain a language property");
       } else if (validator.isNullOrWhitespace(command.language)) {
-        throw new Error('language cannot be null or empty');
+        throw new Error("language cannot be null or empty");
       }
 
       return this.getByLanguageAndName(command.language, name);
