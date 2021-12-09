@@ -80,7 +80,7 @@ exports.Events = {
   STAGE_CLIENT_DISCONNECTED: 'stageClientDisconnected',
   STAGE_CLIENT_DURATION_UPDATE: 'stageClientBroadcastDuration',
   STAGE_CLIENT_ERROR: 'stageClientBroadcastError',
-  STAGE_CLIENT_KICKED: 'stageClientBroadcastKicked',
+  STAGE_CLIENT_KICKED: 'stageClientKicked',
   STAGE_CLIENT_MUTED: 'stageClientBroadcastMuted',
   STAGE_CLIENT_PAUSED: 'stageClientBroadcastPaused',
   STAGE_CLIENT_READY: 'stageClientReady',

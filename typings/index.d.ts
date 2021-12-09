@@ -2679,7 +2679,7 @@ export interface ClientEvents {
   /**
    * The bot was kicked from a slot
    */
-  stageClientBroadcastKicked: [change: StageClientUpdatedObject],
+  stageClientKicked: [change: StageClientUpdatedObject],
   /**
    * The bots slot was muted
    */

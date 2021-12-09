@@ -7,9 +7,9 @@ module.exports = async (api, body) => {
     return Promise.resolve();
   }
 
-  const cached = Object.assign({}, group.slots[body.slot.id]);
+  const cached = Object.assign({}, group.slots[body.slot.id - 1]);
 
-  group.slots[body.slot.id] = body.slot;
+  group.slots[body.slot.id - 1] = body.slot;
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
     api.emit(
