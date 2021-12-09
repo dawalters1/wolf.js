@@ -790,7 +790,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-      return await this._manager.getClient(targetGroupId) !== null;
+      return await this._manager.getClient(targetGroupId) !== undefined;
     } catch (error) {
       error.internalErrorMessage = `api.stage().hasClient(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;

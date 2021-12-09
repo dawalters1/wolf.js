@@ -163,12 +163,10 @@ class Subscriber extends BaseHelper {
 
   _process (subscriber) {
     subscriber.exists = subscriber.exists || true;
-
+    subscriber.language = toLanguageKey(subscriber.extended.language) || 'en';
     subscriber = new SubscriberObject(this._api, subscriber);
 
     if (subscriber.exists) {
-      subscriber.language = toLanguageKey(subscriber.extended.language) || 'en';
-
       const existing = this._subscribers.find((sub) => sub.id === subscriber.id);
 
       if (existing) {
