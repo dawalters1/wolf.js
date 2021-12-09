@@ -65,12 +65,12 @@ class Manager {
     client.on(events.CONNECTING, (data) => this._emit(events.CONNECTING, targetGroupId, data));
     client.on(events.CONNECTED, (data) => this._emit(events.CONNECTED, targetGroupId, data));
     client.on(events.DISCONNECTED, async (data) => {
-      this._clients[targetGroupId].stop();
+      client.stop();
       Reflect.deleteProperty(this._clients, targetGroupId);
       this._emit(events.DISCONNECTED, targetGroupId, data);
     });
     client.on(events.KICKED, async (data) => {
-      this._clients[targetGroupId].stop(true);
+      client.stop();
       Reflect.deleteProperty(this._clients, targetGroupId);
       this._emit(events.KICKED, targetGroupId, data);
     });
@@ -84,6 +84,7 @@ class Manager {
     client.on(events.BROADCAST_MUTED, (data) => this._emit(events.BROADCAST_MUTED, targetGroupId, data));
     client.on(events.BROADCAST_START, (data) => this._emit(events.BROADCAST_START, targetGroupId, data));
     client.on(events.BROADCAST_DURATION, (data) => this._emit(events.BROADCAST_DURATION, targetGroupId, data));
+
     this._clients[targetGroupId] = client;
 
     return client;
