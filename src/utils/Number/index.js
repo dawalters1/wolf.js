@@ -1,8 +1,4 @@
 class Number {
-  constructor (api) {
-    this._api = api;
-  }
-
   toEnglishNumbers (arg) {
     try {
       if (arg === undefined || arg === null) {

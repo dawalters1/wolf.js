@@ -2,10 +2,6 @@ const validator = require('../../validator');
 const superagent = require('superagent');
 
 class Download {
-  constructor (api) {
-    this._api = api;
-  }
-
   async file (url) {
     try {
       if (typeof (url) !== 'string') {
