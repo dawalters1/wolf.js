@@ -537,6 +537,7 @@ export class StageClientUpdatedObject{
   public slotId: Number;
   public duration: Number;
   public sourceSubscriberId: Number;
+  public targetGroupId: Number;
  }
 export class StageClientViewerObject{
   public targetGroupId: Number;
