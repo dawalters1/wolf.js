@@ -75,8 +75,12 @@ class Utility {
         throw new Error('milliseconds cannot be null or undefined');
       } else if (!validator.isValidNumber(milliseconds)) {
         throw new Error('milliseconds must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(milliseconds)) {
-        throw new Error('milliseconds cannot be less than or equal to 0');
+      } else if (validator.isLessThanZero(milliseconds)) {
+        throw new Error('milliseconds cannot be less than 0');
+      }
+
+      if (milliseconds === 0) {
+        return `0${this._api.phrase().getByLanguageAndName(language, `${this._api.config.keyword}_time_type_seconds`)}`;
       }
 
       const info = moment.duration(milliseconds, 'milliseconds')._data;
