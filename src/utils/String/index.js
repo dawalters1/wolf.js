@@ -35,7 +35,7 @@ class String {
       if (mapped.length === 0 || Object.entries(mapped).some((value) => value.length !== 2)) {
         throw new Error('replacements object is invalid');
       }
-      return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), value[1].toString()), string);
+      return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), (value[1] || '').toString()), string);
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().replace(string=${JSON.stringify(string)}, replacements=${JSON.stringify(replacements)})`;
       throw error;

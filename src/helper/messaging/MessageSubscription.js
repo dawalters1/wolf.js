@@ -1,12 +1,12 @@
 const BaseHelper = require('../BaseHelper');
 
-const { v4: uuidv4 } = require('uuid');
 const { isType } = require('../../validator');
 
 class MessageSubscription extends BaseHelper {
   constructor (api) {
     super(api);
 
+    this._subscriptionId = 1;
     this._subscriptions = {};
 
     this._api.on('privateMessage', (message) => this._processMessage(message));
@@ -25,11 +25,15 @@ class MessageSubscription extends BaseHelper {
   _removeSubscription (id) {
     const subscription = this._subscriptions[id];
 
-    if (subscription.timeout) {
-      clearTimeout(subscription.timeout);
+    if (subscription) {
+      if (subscription.timeout) {
+        clearTimeout(subscription.timeout);
+      }
+
+      Reflect.deleteProperty(this._subscriptions, id);
     }
 
-    Reflect.deleteProperty(this._subscriptions, id);
+    return Promise.resolve();
   };
 
   async _createSubscription (predicate, timeout = Infinity) {
@@ -38,10 +42,13 @@ class MessageSubscription extends BaseHelper {
     }
 
     const subscription = {
-      id: uuidv4(),
+      id: this._subscriptionId,
       predicate,
-      def: undefined
+      def: undefined,
+      timeout: undefined
     };
+
+    this._subscriptionId += 1;
 
     this._subscriptions[subscription.id] = subscription;
 
@@ -104,6 +111,7 @@ class MessageSubscription extends BaseHelper {
     if (!disconnected) {
       return Promise.resolve();
     }
+    this._subscriptionId = 1;
     this._subscriptions = [];
   }
 }
