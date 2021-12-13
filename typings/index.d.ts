@@ -1941,6 +1941,18 @@ export class ArrayUtility {
    * @param length - How long each array should be
    */
   public chunk(array: Array<any>, length: Number): Array<Array<any>>;
+
+  /**
+   * Shuffle an array
+   * @param array - The array
+   */
+  public shuffle(array: Array<any>): Array<any>;
+
+  /**
+   * Get a random item from an array
+   * @param array - The array
+   */
+  public getRandomIndex(array: Array<any>): any; 
  }
 export class DiscoveryUtility {
   private constructor(api: WOLFBot);
