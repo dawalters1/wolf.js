@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "1.0.0-beta.29",
+  "version": "1.0.0-beta.30",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "typings": "typings/index.d.ts",
@@ -33,6 +33,7 @@
     "aws-sdk": "^2.1028.0",
     "bull": "^4.1.0",
     "command-exists-promise": "^2.0.2",
+    "config": "^3.3.6",
     "file-type": "^16.5.3",
     "fluent-ffmpeg": "^2.1.2",
     "http-status-codes": "^2.1.4",

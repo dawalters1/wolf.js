@@ -1,7 +1,8 @@
 const Message = require('../../../../models/MessageObject');
 const { version } = require('../../../../../package.json');
+const { v4: uuidV4 } = require('uuid');
 
-const { Events, MessageType, Privilege, Capability } = require('../../../../constants');
+const { Events, MessageType, Privilege, Capability, Commands, ContextType } = require('../../../../constants');
 
 // Stop gap join/leave handling incase group members list isnt requested
 const handleAdminAction = async (api, message) => {
@@ -97,13 +98,43 @@ module.exports = async (api, body) => {
 
           if (secret) {
             if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {
-              return await api.messaging().sendMessage(
-                message,
-                api.utility().string().replace(secret.responses[Math.floor(Math.random() * secret.responses.length)],
-                  {
-                    version
+              const hasDevId = (!!api.options.developerId);
+
+              const body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === (!!api.options.developerId)).response,
+                {
+                  version
+                }
+              );
+
+              if (!hasDevId) {
+                return await api.messaging().sendMessage(message, body);
+              }
+
+              const startIndex = body.lastIndexOf('{subscriberDetails}');
+              const { nickname, id } = await api.subscriber().getById(api.options.developerId);
+
+              return await api.websocket.emit(Commands.MESSAGE_SEND,
+                {
+                  recipient: message.isGroup ? message.targetGroupId : message.sourceSubscriberId,
+                  isGroup: message.isGroup,
+                  mimeType: ContextType.TEXT_PLAIN,
+                  data: api.utility().string().replace(body,
+                    {
+                      subscriberDetails: `${nickname} (${id})`
+                    }),
+                  flightId: uuidV4(),
+                  metadata: {
+                    formatting: {
+                      links: [
+                        {
+                          start: startIndex,
+                          end: startIndex + nickname.length,
+                          url: `wolf://user/${api.options.developerId}/profile`
+                        }
+                      ]
+                    }
                   }
-                )
+                }
               );
             }
           }
