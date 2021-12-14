@@ -32,7 +32,7 @@ const isLessThanOrEqualZero = arg => isValidNumber(arg) && !(parseInt(arg) > 0);
 
 const isLessThanZero = arg => isValidNumber(arg) && !(parseInt(arg) >= 0);
 
-const isValidNumber = arg => /^-?\d+$/.test(arg);
+const isValidNumber = (arg, acceptDecimals = false) => (acceptDecimals ? /^-?\d+(\.\d+)?$/ : /^-?\d+$/).test(arg);
 
 const isValidArray = arg => Array.isArray(arg);
 
