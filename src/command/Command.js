@@ -23,7 +23,7 @@ const validateCommand = command => {
 
   const commandCallbacks = command.commandCallbacks;
 
-  if (commandCallbacks === undefined || commandCallbacks === null) {
+  if (validator.isNullOrUndefined(commandCallbacks)) {
     throw new Error('callbacks cannot be null or undefined');
   } else if (typeof commandCallbacks !== 'object') {
     throw new Error('callbacks must be an object');
