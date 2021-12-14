@@ -8,7 +8,7 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app = typeof (_opts.app) === 'object' ? _opts.app : {};
 
-  _opts.app.developerId = typeof _opts.app.developerId === 'number' ? parseInt(_opts.app.developerId) : undefined;
+  _opts.app.developerId = typeof _opts.app.developerId === 'number' && parseInt(_opts.app.developerId) > 0 ? parseInt(_opts.app.developerId) : undefined;
 
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 

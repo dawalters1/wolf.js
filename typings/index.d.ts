@@ -233,6 +233,12 @@ export class EventObject {
   public shortDescription: String;
   public title: String;
  }
+
+export class FormattedUrlObject {
+  public url: String;
+  public hostname: String;
+}
+
 export class GroupAdminActionObject{
   public groupId: Number;
   public sourceId: Number;
@@ -2078,8 +2084,23 @@ export class StringUtility{
   /**
    * Check whether or not a url is valid
    * @param url - The url to check
+   * @deprecated Will be removed in 1.0.0
+   * @use {@link validator.isValidUrl}
    */
-  public isValudUrl(url: String): Boolean;
+  public isValidUrl(url: String): Boolean;
+
+  /**
+   * Format a link to a valid format 
+   * @param url - The url to format
+   */
+  public getValidUrl(url: String): FormattedUrlObject;
+  /**
+   * Get all ads from a string
+   * @param url - The string
+   */
+  public getAds(arg: String): Array<string>;
+
+
  }
 export class PrivilegeUtility{
   private constructor(api: WOLFBot);
@@ -2210,277 +2231,289 @@ export namespace  Validator {
    * @param arg - The arg
    * @param type - The type
    */
-     export function isType(arg: any, type: 'String' | 'Undefined'| 'Null'| 'Boolean'| 'Number'|'BigInt'|'Function'|'Object'): Boolean;
+  export function isType(arg: any, type: 'String' | 'Undefined'| 'Null'| 'Boolean'| 'Number'|'BigInt'|'Function'|'Object'): Boolean;
   /**
    * Check to see if arg is null
    * @param arg - The item
    */
-     export function  isNull(arg: any):Boolean;
+  export function isNull(arg: any):Boolean;
   /**
    * Check to see if arg is null or undefined
    * @param arg - The item
    */
-     export function  isNullOrUndefined(arg: any):Boolean;
+  export function isNullOrUndefined(arg: any):Boolean;
   /**
    * Check to seeif arg is null or empty/whitespace
    * @param arg - The string 
    */
-     export function  isNullOrWhitespace(arg: String):Boolean;
+  export function isNullOrWhitespace(arg: String):Boolean;
   /**
    * Check to see if arg is less than or equal to 0
    * @param arg - The number
    */
-     export function  isLessThanOrEqualZero(arg: Number):Boolean;
+  export function isLessThanOrEqualZero(arg: Number):Boolean;
   /**
    * Check to see if arg is less than 0
    * @param arg - The number
    */
-     export function  isLessThanZero(arg: Number):Boolean;
+  export function isLessThanZero(arg: Number):Boolean;
   /**
    * Check to see if arg is a valid number
    * @param arg - the number or string
    */
-     export function  isValidNumber(arg: String | Number, acceptDecimals: Boolean):Boolean;
+  export function isValidNumber(arg: String | Number, acceptDecimals: Boolean):Boolean;
   /**
    * Check to see if arg is a valid date
    * @param arg - The date or number
    */
-     export function  isValidDate(arg: Date | Number):Boolean;
+  export function isValidDate(arg: Date | Number):Boolean;
   /**
    * Check to see if arg is a valid buffer
    * @param arg - The string or buffer
    */
-     export function  isBuffer(arg: Buffer | String):Boolean
+  export function isBuffer(arg: Buffer | String):Boolean
+  /**
+   * Check to see if arg is a valid url
+   * @param api - The bot instance
+   * @param arg - The string or buffer
+   */
+   export function isValidUrl(api: WOLFBot, arg: String):Boolean
+  /**
+   * Check to see if arg is a valid ad
+   * @param arg - The string or buffer
+   */
+   export function isValidAd(arg: String):Boolean
  }
+
  //#endregion
  
  //#region enums
  
 export const Constants: {
-    AdminAction: AdminAction;
-    Capability:Capability;
-    Category: Category;
-    ContextType:ContextType;
-    DeviceType: DeviceType;
-    EmbedType: EmbedType;
-    Gender: Gender;
-    Language: Language;
-    LoginDevice: LoginDevice;
-    LoginType: LoginType;
-    LookingFor: LookingFor;
-    MessageFilterTier: MessageFilterTier;
-    MessageType: MessageType;
-    OnlineState: OnlineState;
-    Privilege: Privilege;
-    Relationship: Relationship;
-    RetryMode: RetryMode;
-    SearchType: SearchType;
-    TipDirection: TipDirection;
-    TipPeriod: TipPeriod;
-    TipType: TipType;
+  AdminAction: AdminAction;
+  Capability:Capability;
+  Category: Category;
+  ContextType:ContextType;
+  DeviceType: DeviceType;
+  EmbedType: EmbedType;
+  Gender: Gender;
+  Language: Language;
+  LoginDevice: LoginDevice;
+  LoginType: LoginType;
+  LookingFor: LookingFor;
+  MessageFilterTier: MessageFilterTier;
+  MessageType: MessageType;
+  OnlineState: OnlineState;
+  Privilege: Privilege;
+  Relationship: Relationship;
+  RetryMode: RetryMode;
+  SearchType: SearchType;
+  TipDirection: TipDirection;
+  TipPeriod: TipPeriod;
+  TipType: TipType;
 }
 
 export interface AdminAction {
-     REGULAR : 0,
-     ADMIN : 1,
-     MOD : 2,
-     BAN : 4,
-     SILENCE : 8,
-     KICK : 16,
-     JOIN : 17,
-     LEAVE : 18,
-     OWNER : 32,
- }
+  REGULAR : 0,
+  ADMIN : 1,
+  MOD : 2,
+  BAN : 4,
+  SILENCE : 8,
+  KICK : 16,
+  JOIN : 17,
+  LEAVE : 18,
+  OWNER : 32,
+}
 export interface Capability {
-     NOT_MEMBER : -1,
-     REGULAR : 0,
-     ADMIN : 1,
-     MOD : 2,
-     BANNED : 4,
-     SILENCED : 8,
-     OWNER : 32,
- }
+  NOT_MEMBER : -1,
+  REGULAR : 0,
+  ADMIN : 1,
+  MOD : 2,
+  BANNED : 4,
+  SILENCED : 8,
+  OWNER : 32,
+}
 export interface Category {
-     NOT_SPECIFIED : 0,
-     BUSINESS : 8,
-     EDUCATION : 10,
-     ENTERTAINMENT : 26,
-     GAMING : 12,
-     LIFESTYLE : 13,
-     MUSIC : 14,
-     NEWS_AND_POLITICS : 15,
-     PHOTOGRAPHY : 16,
-     SCIENCE_AND_TECH : 25,
-     SOCIAL_AND_PEOPLE : 17,
-     SPORTS : 19,
-     TRAVEL_AND_LOCAL : 18,
+  NOT_SPECIFIED : 0,
+  BUSINESS : 8,
+  EDUCATION : 10,
+  ENTERTAINMENT : 26,
+  GAMING : 12,
+  LIFESTYLE : 13,
+  MUSIC : 14,
+  NEWS_AND_POLITICS : 15,
+  PHOTOGRAPHY : 16,
+  SCIENCE_AND_TECH : 25,
+  SOCIAL_AND_PEOPLE : 17,
+  SPORTS : 19,
+  TRAVEL_AND_LOCAL : 18,
  }
 export interface ContextType {
-     MESSAGE : "message",
-     STAGE : "stage",
- }
+  MESSAGE : "message",
+  STAGE : "stage",
+}
 export interface DeviceType {
-     OTHER : 0,
-     BOT : 1,
-     IPHONE : 5,
-     IPAD : 6,
-     ANDROID : 7,
-     WEB : 8,
- }
+  OTHER : 0,
+  BOT : 1,
+  IPHONE : 5,
+  IPAD : 6,
+  ANDROID : 7,
+  WEB : 8,
+}
 export interface EmbedType {
-     IMAGE_PREVIEW : "imagePreview",
-     GROUP_PREVIEW : "groupPreview",
-     LINK_PREVIEW : "linkPreview",
- }
+  IMAGE_PREVIEW : "imagePreview",
+  GROUP_PREVIEW : "groupPreview",
+  LINK_PREVIEW : "linkPreview",
+}
 export interface Gender {
-     NOT_SPECIFIED : 0,
-     MALE : 1,
-     FEMALE : 2,
- }
+  NOT_SPECIFIED : 0,
+  MALE : 1,
+  FEMALE : 2,
+}
 export interface Language {
-     NOT_SPECIFIED : 0,
-     ENGLISH : 1,
-     GERMAN : 3,
-     SPANISH : 4,
-     FRENCH : 6,
-     POLISH : 10,
-     CHINESE_SIMPLIFIED : 11,
-     RUSSIAN : 12,
-     ITALIAN : 13,
-     ARABIC : 14,
-     PERSIAN_FARSI : 15,
-     GREEK : 16,
-     PORTUGUESE : 17,
-     HINDI : 18,
-     JAPANESE : 19,
-     LATIN_SPANISH : 20,
-     SLOVAK : 21,
-     CZECH : 22,
-     DANISH : 24,
-     FINNISH : 25,
-     HUNGARIAN : 27,
-     BAHASA_INDONESIA : 28,
-     MALAY : 29,
-     DUTCH : 30,
-     NORWEGIAN : 31,
-     SWEDISH : 32,
-     THAI : 33,
-     TURKISH : 34,
-     VIETNAMESE : 35,
-     KOREAN : 36,
-     BRAZILIAN_PORTUGUESE : 37,
-     ESTONIAN : 39,
-     KAZAKH : 41,
-     LATVIAN : 42,
-     LITHUANIAN : 43,
-     UKRAINIAN : 44,
-     BULGARIAN : 45,
- }
+  NOT_SPECIFIED : 0,
+  ENGLISH : 1,
+  GERMAN : 3,
+  SPANISH : 4,
+  FRENCH : 6,
+  POLISH : 10,
+  CHINESE_SIMPLIFIED : 11,
+  RUSSIAN : 12,
+  ITALIAN : 13,
+  ARABIC : 14,
+  PERSIAN_FARSI : 15,
+  GREEK : 16,
+  PORTUGUESE : 17,
+  HINDI : 18,
+  JAPANESE : 19,
+  LATIN_SPANISH : 20,
+  SLOVAK : 21,
+  CZECH : 22,
+  DANISH : 24,
+  FINNISH : 25,
+  HUNGARIAN : 27,
+  BAHASA_INDONESIA : 28,
+  MALAY : 29,
+  DUTCH : 30,
+  NORWEGIAN : 31,
+  SWEDISH : 32,
+  THAI : 33,
+  TURKISH : 34,
+  VIETNAMESE : 35,
+  KOREAN : 36,
+  BRAZILIAN_PORTUGUESE : 37,
+  ESTONIAN : 39,
+  KAZAKH : 41,
+  LATVIAN : 42,
+  LITHUANIAN : 43,
+  UKRAINIAN : 44,
+  BULGARIAN : 45,
+}
 export interface LoginDevice {
-     IPHONE : "iphone",
-     IPAD : "ipad",
-     ANDROID : "android",
-     WEB : "web",
- }
+  IPHONE : "iphone",
+  IPAD : "ipad",
+  ANDROID : "android",
+  WEB : "web",
+}
 export interface LoginType {
-     EMAIL : "email",
-     GOOGLE : "google",
-     FACEBOOK : "facebook",
-     TWITTER : "twitter",
-     SNAPCHAT : "snapchat",
-     APPLE : "apple",
- }
+  EMAIL : "email",
+  GOOGLE : "google",
+  FACEBOOK : "facebook",
+  TWITTER : "twitter",
+  SNAPCHAT : "snapchat",
+  APPLE : "apple",
+}
 export interface LookingFor {
-     NOT_SPECIFIED : 0,
-     FRIENDSHIP : 1,
-     DATING : 2,
-     RELATIONSHIP : 4,
-     NETWORKING : 8,
- }
+  NOT_SPECIFIED : 0,
+  FRIENDSHIP : 1,
+  DATING : 2,
+  RELATIONSHIP : 4,
+  NETWORKING : 8,
+}
 export interface MessageFilterTier {
-     OFF : 0,
-     RELAXED : 3,
-     RECOMMENDED : 2,
-     STRICT : 1,
- }
+  OFF : 0,
+  RELAXED : 3,
+  RECOMMENDED : 2,
+  STRICT : 1,
+}
 export interface MessageType {
-     TEXT_PLAIN : "text/plain",
-     TEXT_HTML : "text/html",
-     TEXT_IMAGE : "text/image_link",
-     IMAGE_JPEG : "image/jpeg",
-     IMAGE_GIF : "image/gif",
-     AUDIO_AAC : "audio/aac",
-     TEXT_VOICE : "text/voice_link",
-     AUDIO_SPEEX : "audio/x-speex",
-     IMAGE_JPEGHTML : "image/jpeghtml",
-     APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
-     TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
- }
+  TEXT_PLAIN : "text/plain",
+  TEXT_HTML : "text/html",
+  TEXT_IMAGE : "text/image_link",
+  IMAGE_JPEG : "image/jpeg",
+  IMAGE_GIF : "image/gif",
+  AUDIO_AAC : "audio/aac",
+  TEXT_VOICE : "text/voice_link",
+  AUDIO_SPEEX : "audio/x-speex",
+  IMAGE_JPEGHTML : "image/jpeghtml",
+  APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
+  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
+}
 export interface OnlineState {
-     OFFLINE : 0,
-     ONLINE : 1,
-     AWAY : 2,
-     INVISIBLE : 3,
-     BUSY : 5,
-     IDLE : 9,
- }
+  OFFLINE : 0,
+  ONLINE : 1,
+  AWAY : 2,
+  INVISIBLE : 3,
+  BUSY : 5,
+  IDLE : 9,
+}
 export interface Privilege {
-     SUBSCRIBER : 1,
-     BOT_TESTER : 2,
-     GAME_TESTER : 4,
-     CONTENT_SUBMITER : 8,
-     SELECTCLUB_1 : 16,
-     ELITECLUB_1 : 64,
-     VOLUNTEER : 512,
-     SELECTCLUB_2 : 1024,
-     ALPHA_TESTER : 2048,
-     STAFF :4096,
-     TRANSLATOR : 8192,
-     DEVELOPER : 16384,
-     ELITECLUB_2 : 131072,
-     PEST : 262144,
-     VALID_EMAIL : 524288,
-     PREMIUM_ACCOUNT : 1048576,
-     VIP : 2097152,
-     ELITECLUB_3 :4194304,
-     USER_ADMIN : 16777216,
-     GROUP_ADMIN : 33554432,
-     BOT : 67108864,
-     ENTERTAINER : 536870912,
-     SHADOW_BANNED : 1073741824,
- }
+  SUBSCRIBER : 1,
+  BOT_TESTER : 2,
+  GAME_TESTER : 4,
+  CONTENT_SUBMITER : 8,
+  SELECTCLUB_1 : 16,
+  ELITECLUB_1 : 64,
+  VOLUNTEER : 512,
+  SELECTCLUB_2 : 1024,
+  ALPHA_TESTER : 2048,
+  STAFF :4096,
+  TRANSLATOR : 8192,
+  DEVELOPER : 16384,
+  ELITECLUB_2 : 131072,
+  PEST : 262144,
+  VALID_EMAIL : 524288,
+  PREMIUM_ACCOUNT : 1048576,
+  VIP : 2097152,
+  ELITECLUB_3 :4194304,
+  USER_ADMIN : 16777216,
+  GROUP_ADMIN : 33554432,
+  BOT : 67108864,
+  ENTERTAINER : 536870912,
+  SHADOW_BANNED : 1073741824,
+}
 export interface Relationship {
-     NOT_SPECIFIED : 0,
-     SINGLE : 1,
-     RELATIONSHIP : 2,
-     ENGAGED : 3,
-     MARRIED : 4,
-     COMPLICATED : 5,
-     OPEN : 6,
- }
+  NOT_SPECIFIED : 0,
+  SINGLE : 1,
+  RELATIONSHIP : 2,
+  ENGAGED : 3,
+  MARRIED : 4,
+  COMPLICATED : 5,
+  OPEN : 6,
+}
 export interface RetryMode {
-     ALWAYS_FAIL : 0,
-     ALWAYS_RETRY : 1,
- }
+  ALWAYS_FAIL : 0,
+  ALWAYS_RETRY : 1,
+}
 export interface SearchType {
-     GROUP : "group",
-     SUBSCRIBER : "subscriber",
- }
+  GROUP : "group",
+  SUBSCRIBER : "subscriber",
+}
 export interface TipDirection {
-     SENT : "sent",
-     RECEIVED : "received",
- }
+  SENT : "sent",
+  RECEIVED : "received",
+}
 export interface TipPeriod {
-     ALL_TIME : "alltime",
-     DAY : "day",
-     WEEK : "week",
-     MONTH : "month",
- }
+  ALL_TIME : "alltime",
+  DAY : "day",
+  WEEK : "week",
+  MONTH : "month",
+}
 export interface TipType {
-     CHARM : "charm",
-     SUBSCRIBER : "subscriber",
-     GROUP : "group",
- }
+  CHARM : "charm",
+  SUBSCRIBER : "subscriber",
+  GROUP : "group",
+}
    
  //#endregion
  

@@ -15,6 +15,8 @@ const validateCommand = command => {
 
   if (typeof (trigger) !== 'string') {
     throw new Error('trigger must be a string');
+  } else if (validator.isNullOrUndefined(trigger)) {
+    throw new Error('trigger cannot be null or undefined');
   } else if (validator.isNullOrWhitespace(trigger)) {
     throw new Error('trigger cannot be null or empty');
   }

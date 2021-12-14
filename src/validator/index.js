@@ -1,3 +1,16 @@
+const tlds = require('tldts');
+
+// eslint-disable-next-line prefer-regex-literals
+const START_REGEX = new RegExp(/^([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s+)/, 'g');
+// eslint-disable-next-line prefer-regex-literals
+const END_REGEX = new RegExp(/([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s)+$/, 'g');
+
+const trimPunctuation = (string) => {
+  if (string) {
+    return string.replace(START_REGEX, '').replace(END_REGEX, '');
+  }
+  return string;
+};
 
 const isType = (arg, type) => {
   const typeOf = typeof arg;
@@ -42,6 +55,39 @@ const isValidDate = arg => !isNaN(new Date(arg).getDate());
 
 const isBuffer = arg => Buffer.isBuffer(arg);
 
+const isValidUrl = (api, arg) => {
+  if (arg && !(arg.startsWith('[') && arg.endsWith(']'))) {
+    if ((arg.includes('.') || arg.includes(':'))) {
+      let link = trimPunctuation(arg.toLowerCase());
+
+      const protocol = api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => arg.toLowerCase().startsWith(proto));
+
+      if (protocol) {
+        link = link.slice(protocol ? protocol.length : 0);
+      }
+
+      const split = link.split(/[.:]/g).filter(Boolean);
+
+      if (split.length >= 2) {
+        try {
+          const data = new URL(`${protocol || 'http://'}${link.trim()}`);
+
+          const parsed = tlds.parse(data.host);
+
+          if (parsed && parsed.publicSuffix.split('.').every((tld) => api._botConfig.validation.link.tld.includes(tld))) {
+            return true;
+          }
+        } catch (error) {
+          return false;
+        }
+      }
+    }
+  }
+  return false;
+};
+
+const isValidAd = arg => arg.startsWith('[') && arg.endsWith(']');
+
 module.exports = {
   isNull,
   isNullOrUndefined,
@@ -53,5 +99,7 @@ module.exports = {
   isValidBoolean,
   isValidDate,
   isBuffer,
-  isType
+  isType,
+  isValidAd,
+  isValidUrl
 };

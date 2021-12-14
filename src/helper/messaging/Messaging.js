@@ -147,11 +147,11 @@ class Messaging extends BaseHelper {
         embeds: undefined
       };
 
-      const ads = [...value.matchAll(/\[(.+?)\]/g)].filter((ad) => ad[1].trim().length > 0) || [];
+      const ads = this._api.utility().string().getAds(value);
 
       let index = 0;
-      const links = value.split(' ').reduce((result, link) => {
-        const url = this._api.utility().string().isValidUrl(link);
+      const links = value.split(' ').filter((arg) => validator.isValidUrl(this._api, arg)).reduce((result, link) => {
+        const url = this._api.utility().string().getValidUrl(link);
         if (url) {
           url.startsAt = value.indexOf(link, index);
           url.endsAt = value.indexOf(link, index) + link.length;

@@ -152,37 +152,71 @@ class String {
   }
 
   isValidUrl (url) {
-    if (url && !(url.startsWith('[') && url.endsWith(']'))) {
-      if ((url.includes('.') || url.includes(':'))) {
-        let link = trimPunctuation(url.toLowerCase());
+    console.warn('[WARNING] api.utility().string().isValidUrl(...) is deprecated use validator.isValidUrl(...) instead');
+    return validator.isValidUrl(this._api, url);
+  }
 
-        const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
+  getValidUrl (url) {
+    try {
+      if (typeof (url) !== 'string') {
+        throw new Error('url must be a string');
+      } else if (validator.isNullOrUndefined(url)) {
+        throw new Error('url cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(url)) {
+        throw new Error('url cannot be null or empty');
+      }
+      if (url && !(url.startsWith('[') && url.endsWith(']'))) {
+        if ((url.includes('.') || url.includes(':'))) {
+          let link = trimPunctuation(url.toLowerCase());
 
-        if (protocol) {
-          link = link.slice(protocol ? protocol.length : 0);
-        }
+          const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
 
-        const split = link.split(/[.:]/g).filter(Boolean);
+          if (protocol) {
+            link = link.slice(protocol ? protocol.length : 0);
+          }
 
-        if (split.length >= 2) {
-          try {
-            const data = new URL(`${protocol || 'http://'}${link.trim()}`);
+          const split = link.split(/[.:]/g).filter(Boolean);
 
-            const parsed = tlds.parse(data.host);
+          if (split.length >= 2) {
+            try {
+              const data = new URL(`${protocol || 'http://'}${link.trim()}`);
 
-            if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.validation.link.tld.includes(tld))) {
-              return {
-                url,
-                hostname: parsed.hostname
-              };
+              const parsed = tlds.parse(data.host);
+
+              if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.validation.link.tld.includes(tld))) {
+                return {
+                  url,
+                  hostname: parsed.hostname
+                };
+              }
+            } catch (error) {
+              return null;
             }
-          } catch (error) {
-            //
           }
         }
       }
+      return null;
+    } catch (error) {
+      error.internalErrorMessage = `api.utility().string().getValidUrl(string=${JSON.stringify(url)})`;
+      throw error;
     }
-    return false;
+  }
+
+  getAds (arg) {
+    try {
+      if (typeof (arg) !== 'string') {
+        throw new Error('url must be a string');
+      } else if (validator.isNullOrUndefined(arg)) {
+        throw new Error('url cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(arg)) {
+        throw new Error('url cannot be null or empty');
+      }
+
+      return [...arg.matchAll(/\[(.+?)\]/g)].filter((ad) => ad[1].trim().length > 0) || [];
+    } catch (error) {
+      error.internalErrorMessage = `api.utility().string().getAds(string=${JSON.stringify(arg)})`;
+      throw error;
+    }
   }
 }
 
