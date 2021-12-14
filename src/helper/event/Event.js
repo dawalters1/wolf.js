@@ -36,6 +36,8 @@ class Event extends BaseHelper {
       }
       if (!validator.isType(title, 'string')) {
         throw new Error('title must be a valid string');
+      } else if (validator.isNullOrUndefined(title)) {
+        throw new Error('title cannot be null or undefined');
       } else if (validator.isNullOrWhitespace(title)) {
         throw new Error('title cannot be null or whitespace');
       }
@@ -118,6 +120,8 @@ class Event extends BaseHelper {
       }
       if (!validator.isType(title, 'string')) {
         throw new Error('title must be a valid string');
+      } else if (validator.isNullOrUndefined(title)) {
+        throw new Error('title cannot be null or undefined');
       } else if (validator.isNullOrWhitespace(title)) {
         throw new Error('title cannot be null or whitespace');
       }
