@@ -2240,7 +2240,7 @@ export namespace  Validator {
    * Check to see if arg is a valid number
    * @param arg - the number or string
    */
-     export function  isValidNumber(arg: String | Number):Boolean;
+     export function  isValidNumber(arg: String | Number, acceptDecimals: Boolean):Boolean;
   /**
    * Check to see if arg is a valid date
    * @param arg - The date or number
