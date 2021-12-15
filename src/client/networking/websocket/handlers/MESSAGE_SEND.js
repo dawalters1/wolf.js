@@ -110,6 +110,7 @@ module.exports = async (api, body) => {
                 return await api.messaging().sendMessage(message, body);
               }
 
+              // JANK
               const startIndex = body.lastIndexOf('{subscriberDetails}');
               const { nickname, id } = await api.subscriber().getById(api.options.developerId);
 
