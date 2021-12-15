@@ -36,11 +36,13 @@ class Group extends BaseHelper {
     if (result.success) {
       this._joinedGroupsFetched = true;
 
-      const groups = await this.getByIds(result.body.map((group) => group.id));
+      if (result.body.length > 0) {
+        const groups = await this.getByIds(result.body.map((group) => group.id));
 
-      for (const group of groups) {
-        group.inGroup = true;
-        group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
+        for (const group of groups) {
+          group.inGroup = true;
+          group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
+        }
       }
     }
 
