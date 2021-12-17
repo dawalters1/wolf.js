@@ -223,7 +223,19 @@ class String {
         throw new Error('url cannot be null or empty');
       }
 
-      return [...arg.matchAll(/\[(.+?)\]/g)].filter((ad) => ad[1].trim().length > 0) || [];
+      return [...arg.matchAll(/\[(.+?)\]/g)]([...arg.matchAll(/\[(.+?)\]/g)] || []).map((ad) => {
+        if (ad[1].trim().length === 0) {
+          return null;
+        }
+
+        const charBefore = ad.input[ad.index];
+        const charAfter = ad.input[ad.index + ad[0].length];
+
+        if (!(charBefore && charAfter) || ((charBefore && charBefore.match(START_REGEX)) && (charAfter && charAfter.match(END_REGEX)))) {
+          return ad;
+        }
+        return null;
+      }).filter(Boolean);
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().getAds(string=${JSON.stringify(arg)})`;
       throw error;

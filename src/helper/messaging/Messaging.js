@@ -8,6 +8,8 @@ const { v4: uuidv4 } = require('uuid');
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
 
+const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
+
 const getDefaultOptions = (api, opts) => {
   const _opts = Object.assign({}, opts);
 
@@ -196,7 +198,7 @@ class Messaging extends BaseHelper {
       const ads = this._api.utility().string().getAds(value);
 
       const links = value.split(' ').reduce((result, link, index) => {
-        const links = _opts.links.filter((link) => !ads.some((ad) => ad.index >= link.start && ((ad.index + ad[0].length) <= link.end || (ad.index + ad[0].length) >= link.end)) && link.start >= currentStartIndex && link.end <= currentStartIndex + value.length);
+        const links = _opts.links.filter((link) => !ads.some((ad) => inRange(ad.index, ad.index + ad[0].length, link.start) && inRange(ad.index, ad.index + ad[0].length, link.end)) && link.start >= currentStartIndex && link.end <= currentStartIndex + value.length);
 
         if (links.length > 0) {
           links.forEach((link) => {
