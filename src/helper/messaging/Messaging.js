@@ -1,4 +1,4 @@
-const { Commands, MessageTypes, EmbedType } = require('../../constants');
+const { Commands, MessageTypes, EmbedType, MessageLinkingType } = require('../../constants');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
@@ -16,6 +16,48 @@ const getDefaultOptions = (api, opts) => {
   _opts.chunk = typeof _opts.chunk === 'boolean' ? _opts.chunk : true;
 
   _opts.includeEmbeds = typeof _opts.includeEmbeds === 'boolean' ? _opts.includeEmbeds : false;
+
+  _opts.links = _opts.links && Array.isArray(_opts.links) ? _opts.links : [];
+
+  _opts.links.forEach(link => {
+    if (validator.isNullOrUndefined(link.start)) {
+      throw new Error('start cannot be null or undefined');
+    } else if (!validator.isValidNumber(link.start)) {
+      throw new Error('start must be a valid number');
+    } else if (validator.isLessThanZero(link.start)) {
+      throw new Error('start cannot be less than 0');
+    }
+    if (validator.isNullOrUndefined(link.end)) {
+      throw new Error('end cannot be null or undefined');
+    } else if (!validator.isValidNumber(link.end)) {
+      throw new Error('end must be a valid number');
+    } else if (validator.isLessThanZero(link.end)) {
+      throw new Error('end cannot be less than 0');
+    } else if (link.end < link.start) {
+      throw new Error('end must be larger than start');
+    }
+
+    if (validator.isNullOrUndefined(link.type)) {
+      throw new Error('type cannot be null or undefined');
+    } else if (validator.isNullOrWhitespace(link.type)) {
+      throw new Error('type cannot be null or empty');
+    } else if (!Object.values(MessageLinkingType).includes(link.type)) {
+      throw new Error('type is not valid');
+    }
+
+    if (link.type === MessageLinkingType.EXTERNAL) {
+      if (validator.isNullOrUndefined(link.url)) {
+        throw new Error('url cannot be null or undefined');
+      } else if (validator.isNullOrWhitespace(link.url)) {
+        throw new Error('url cannot be null or empty');
+      }
+    }
+    if (validator.isNullOrUndefined(link.value)) {
+      throw new Error('value cannot be null or undefined');
+    } else if (validator.isNullOrWhitespace(link.value)) {
+      throw new Error('value cannot be null or empty');
+    }
+  });
 
   const lengthValidation = api._botConfig.validation.messaging.length;
 
@@ -136,7 +178,13 @@ class Messaging extends BaseHelper {
 
     let previewAdded = false;
 
-    const bodies = await this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ').reduce(async (result, value) => {
+    const chunks = this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
+
+    let startIndex = 0;
+
+    const bodies = await chunks.reduce(async (result, value, index) => {
+      startIndex = index > 0 ? startIndex + chunks[index - 1].length : 0; // Required to allow custom linking
+
       const body = {
         recipient: targetId,
         isGroup: targetType === MessageTypes.GROUP,
@@ -149,15 +197,38 @@ class Messaging extends BaseHelper {
 
       const ads = this._api.utility().string().getAds(value);
 
-      let index = 0;
-      const links = value.split(' ').filter((arg) => validator.isValidUrl(this._api, arg)).reduce((result, link) => {
-        const url = this._api.utility().string().getValidUrl(link);
-        if (url) {
-          url.startsAt = value.indexOf(link, index);
-          url.endsAt = value.indexOf(link, index) + link.length;
-          result.push(url);
-        }
+      const links = value.split(' ').reduce((result, link, index) => {
+        const links = _opts.links.filter((link) => !ads.some((ad) => ad.index >= link.start && ((ad.index + ad[0].length) <= link.end || (ad.index + ad[0].length) >= link.end)) && link.start >= startIndex && link.end <= startIndex + value.length);
 
+        if (links.length > 0) {
+          links.forEach((link) => {
+            if (result.some((linkObj) => linkObj.startsAt === link.start - startIndex && linkObj.endsAt === link.end - startIndex)) {
+              return result;
+            }
+
+            result.push(({
+              startsAt: link.start - startIndex,
+              endsAt: link.end - startIndex,
+              url: link.type !== MessageLinkingType.EXTERNAL
+                ? this._api.utility().string().replace(this._api._botConfig.deeplinks[link.type],
+                  {
+                    value: link.value
+                  }
+                )
+                : link.url
+            })
+            );
+          });
+        } else {
+          if (validator.isValidUrl(this._api, link)) {
+            const url = this._api.utility().string().getValidUrl(link);
+            if (url) {
+              url.startsAt = value.indexOf(link, index);
+              url.endsAt = value.indexOf(link, index) + link.length;
+              result.push(url);
+            }
+          }
+        }
         index++;
 
         return result;
@@ -216,6 +287,10 @@ class Messaging extends BaseHelper {
             }
 
             if (Reflect.has(item, 'url')) {
+              if (item.url.startsWith('wolf://')) {
+                return await result;
+              }
+
               const metadata = await this._api.getLinkMetadata(item.url);
 
               if (metadata.success && !metadata.body.isBlacklisted) {
@@ -259,12 +334,14 @@ class Messaging extends BaseHelper {
       return result;
     }, Promise.resolve([]));
 
+    console.log(bodies.map((body) => JSON.stringify(body)));
     const responses = [];
 
     for (const body of bodies) {
       responses.push(await this._websocket.emit(Commands.MESSAGE_SEND, body));
     };
 
+    console.log(responses);
     return responses.length > 1
       ? {
           code: 207,
