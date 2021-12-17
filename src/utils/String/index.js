@@ -223,7 +223,7 @@ class String {
         throw new Error('url cannot be null or empty');
       }
 
-      return [...arg.matchAll(/\[(.+?)\]/g)]([...arg.matchAll(/\[(.+?)\]/g)] || []).map((ad) => {
+      return ([...arg.matchAll(/\[(.+?)\]/g)] || []).map((ad) => {
         if (ad[1].trim().length === 0) {
           return null;
         }
