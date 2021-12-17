@@ -255,7 +255,6 @@ exports.MessageLinkingType = {
   SUBSCRIBER_CHAT: 'subscriberChat', // wolf://user/{subscriberId}
   GROUP_PROFILE: 'groupProfile', // wolf://group/{groupId}/profile,
   GROUP_CHAT: 'groupChat' // wolf://group/{groupid}
-  // TODO
 };
 exports.DeviceType = {
   OTHER: 0,

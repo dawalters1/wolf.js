@@ -178,13 +178,9 @@ class Messaging extends BaseHelper {
 
     let previewAdded = false;
 
-    const chunks = this._api.utility().string().chunk(content, _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
-
-    let startIndex = 0;
+    const chunks = this._api.utility().string().chunk(content.split(' ').filter(Boolean).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
 
     const bodies = await chunks.reduce(async (result, value, index) => {
-      startIndex = index > 0 ? startIndex + chunks[index - 1].length : 0; // Required to allow custom linking
-
       const body = {
         recipient: targetId,
         isGroup: targetType === MessageTypes.GROUP,
@@ -195,28 +191,31 @@ class Messaging extends BaseHelper {
         embeds: undefined
       };
 
+      const currentStartIndex = chunks.slice(0, index).join(' ').length + index;
+
       const ads = this._api.utility().string().getAds(value);
 
       const links = value.split(' ').reduce((result, link, index) => {
-        const links = _opts.links.filter((link) => !ads.some((ad) => ad.index >= link.start && ((ad.index + ad[0].length) <= link.end || (ad.index + ad[0].length) >= link.end)) && link.start >= startIndex && link.end <= startIndex + value.length);
+        const links = _opts.links.filter((link) => !ads.some((ad) => ad.index >= link.start && ((ad.index + ad[0].length) <= link.end || (ad.index + ad[0].length) >= link.end)) && link.start >= currentStartIndex && link.end <= currentStartIndex + value.length);
 
         if (links.length > 0) {
           links.forEach((link) => {
-            if (result.some((linkObj) => linkObj.startsAt === link.start - startIndex && linkObj.endsAt === link.end - startIndex)) {
+            if (result.some((linkObj) => linkObj.startsAt === link.start - currentStartIndex && linkObj.endsAt === link.end - currentStartIndex)) {
               return result;
             }
 
-            result.push(({
-              startsAt: link.start - startIndex,
-              endsAt: link.end - startIndex,
-              url: link.type !== MessageLinkingType.EXTERNAL
-                ? this._api.utility().string().replace(this._api._botConfig.deeplinks[link.type],
-                  {
-                    value: link.value
-                  }
-                )
-                : link.url
-            })
+            result.push(
+              {
+                startsAt: link.start - currentStartIndex,
+                endsAt: link.end - currentStartIndex,
+                url: link.type !== MessageLinkingType.EXTERNAL
+                  ? this._api.utility().string().replace(this._api._botConfig.deeplinks[link.type],
+                    {
+                      value: link.value
+                    }
+                  )
+                  : link.url
+              }
             );
           });
         } else {
@@ -334,14 +333,12 @@ class Messaging extends BaseHelper {
       return result;
     }, Promise.resolve([]));
 
-    console.log(bodies.map((body) => JSON.stringify(body)));
     const responses = [];
 
     for (const body of bodies) {
       responses.push(await this._websocket.emit(Commands.MESSAGE_SEND, body));
     };
 
-    console.log(responses);
     return responses.length > 1
       ? {
           code: 207,
