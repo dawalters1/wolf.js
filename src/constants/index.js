@@ -249,6 +249,13 @@ exports.ContextType = {
   MESSAGE: 'message',
   STAGE: 'stage'
 };
+exports.MessageLinkingType = {
+  EXTERNAL: 'external',
+  SUBSCRIBER_PROFILE: 'subscriberProfile', // wolf://user/{subscriberId}/profile
+  SUBSCRIBER_CHAT: 'subscriberChat', // wolf://user/{subscriberId}
+  GROUP_PROFILE: 'groupProfile', // wolf://group/{groupId}/profile,
+  GROUP_CHAT: 'groupChat' // wolf://group/{groupid}
+};
 exports.DeviceType = {
   OTHER: 0,
   BOT: 1,

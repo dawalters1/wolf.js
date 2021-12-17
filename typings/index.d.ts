@@ -419,6 +419,13 @@ export class LinkMetadataObject{
   public isOfficial: Boolean; 
   public title: String
  }
+
+export class MessageLinkingObject{
+  public start: Number;
+  public end: Number;
+  public value: String | Number;
+  public MessageLinkingType: MessageLinkingType
+} 
 export class MessageSettingsObject{
   public spamFilter: 
      {
@@ -430,6 +437,7 @@ export class MessageOptionsObject {
   public chunk: Boolean;
   public chunkSize: Number;
   public includeEmbeds: Boolean;
+  public links: Array<MessageLinkingObject>
  }
 export class MessageResponseObject {
   public uuid: String;
@@ -1705,8 +1713,9 @@ export class Stage extends BaseHelper {
    * @param targetGroupId - The id of the group
    * @param slotId - The id of the slot
    * @param sdp - The sdp (Leave empty for internal handling)
+   * @param opts - The ffmpeg settings
    */
-  public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String): Promise<ResponseObject<GroupAudioSlotObject>>;
+  public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String, opts?: Array<string> ): Promise<ResponseObject<GroupAudioSlotObject>>;
   /**
    * Listen to a slot
    * @param targetGroupId - The id of the group
@@ -1760,6 +1769,20 @@ export class Stage extends BaseHelper {
    * @param targetGroupId - The id of the group
    */
   public isPlaying(targetGroupId: Number): Promise<Boolean>;
+
+  /**
+   * Update the groups stage client ffmpeg settings
+   * @param targetGroupId - THe id of the group
+   * @param opts - The array of options
+   */
+  public setClientOptions(targetGroupId: Number, opts: Array<string>): Promise<void>;
+
+  /**
+   * Get the groups stage client ffmpeg settings
+   * @param targetGroupId - The id of the group
+   */
+  public getClientOptions(targetGroupId: Number): Promise<Array<string>>;
+
   /**
    * Check whether or not the client is playing
    * @param targetGroupId - The id of the group
@@ -2302,6 +2325,7 @@ export const Constants: {
   LoginType: LoginType;
   LookingFor: LookingFor;
   MessageFilterTier: MessageFilterTier;
+  MessageLinkingType: MessageLinkingType
   MessageType: MessageType;
   OnlineState: OnlineState;
   Privilege: Privilege;
@@ -2435,6 +2459,13 @@ export interface MessageFilterTier {
   RELAXED : 3,
   RECOMMENDED : 2,
   STRICT : 1,
+}
+export interface MessageLinkingType {
+  EXTERNAL: 'external',
+  SUBSCRIBER_PROFILE: 'subscriberProfile',
+  SUBSCRIBER_CHAT: 'subscriberChat',
+  GROUP_PROFILE: 'groupProfile',
+  GROUP_CHAT: 'groupChat' 
 }
 export interface MessageType {
   TEXT_PLAIN : "text/plain",

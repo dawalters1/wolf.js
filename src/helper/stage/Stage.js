@@ -439,7 +439,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async joinSlot (targetGroupId, slotId, sdp = undefined) {
+  async joinSlot (targetGroupId, slotId, sdp = undefined, opts = undefined) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -455,6 +455,20 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId must be a valid number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
+      }
+
+      if (opts) {
+        opts = Array.isArray(opts) ? opts : [opts];
+
+        for (const option of opts) {
+          if (!validator.isType(option, 'string')) {
+            throw new Error('option must be a valid string');
+          } else if (validator.isNullOrUndefined(option)) {
+            throw new Error('option cannot be null or undefined');
+          } else if (validator.isNullOrWhitespace(option)) {
+            throw new Error('option cannot be null or whitespace');
+          }
+        }
       }
 
       const settings = await this.getSettings(targetGroupId);
@@ -507,7 +521,7 @@ module.exports = class Stage extends BaseHelper {
         );
       }
 
-      const client = await this._manager.getClient(targetGroupId, true);
+      const client = await this._manager.getClient(targetGroupId, true, opts || []);
       const result = await this.joinSlot(targetGroupId, slotId, await client._createOffer());
 
       if (result.success) {
@@ -793,6 +807,69 @@ module.exports = class Stage extends BaseHelper {
       return await this._manager.getClient(targetGroupId) !== undefined;
     } catch (error) {
       error.internalErrorMessage = `api.stage().hasClient(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      throw error;
+    }
+  }
+
+  async setClientOptions (targetGroupId, opts) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      if (validator.isNullOrUndefined(opts)) {
+        throw new Error('opts cannot be null or undefined');
+      }
+
+      opts = Array.isArray(opts) ? opts : [opts];
+
+      for (const option of opts) {
+        if (!validator.isType(option, 'string')) {
+          throw new Error('option must be a valid string');
+        } else if (validator.isNullOrUndefined(option)) {
+          throw new Error('option cannot be null or undefined');
+        } else if (validator.isNullOrWhitespace(option)) {
+          throw new Error('option cannot be null or whitespace');
+        }
+      }
+
+      const client = await this._manager.getClient(targetGroupId);
+
+      if (!client) {
+        return false;
+      }
+
+      client._opts = opts;
+
+      return Promise.resolve();
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().updateClientOptions(targetGroupId=${JSON.stringify(targetGroupId)}, opts=${JSON.stringify(opts)})`;
+      throw error;
+    }
+  }
+
+  async getClientOptions (targetGroupId) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      const client = await this._manager.getClient(targetGroupId);
+
+      if (!client) {
+        return false;
+      }
+
+      return client.opts;
+    } catch (error) {
+      error.internalErrorMessage = `api.stage().getClientOptions(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
