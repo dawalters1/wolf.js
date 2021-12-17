@@ -59,8 +59,8 @@ class Manager {
     return this._api.emit(eventString, Object.assign(data, { targetGroupId }));
   }
 
-  _initClient (targetGroupId) {
-    const client = new Client(targetGroupId);
+  _initClient (targetGroupId, opts) {
+    const client = new Client(targetGroupId, opts);
 
     client.on(events.CONNECTING, (data) => this._emit(events.CONNECTING, targetGroupId, data));
     client.on(events.CONNECTED, (data) => this._emit(events.CONNECTED, targetGroupId, data));
@@ -90,7 +90,7 @@ class Manager {
     return client;
   }
 
-  async getClient (targetGroupId, createIfDoesntExist = false) {
+  async getClient (targetGroupId, createIfDoesntExist = false, opts = []) {
     if (!await commandExists('ffmpeg')) {
       throw new Error('ffmpeg must be installed on this device to create or use a stage client');
     }
@@ -101,7 +101,7 @@ class Manager {
       return client;
     }
 
-    return this._initClient(targetGroupId);
+    return this._initClient(targetGroupId, opts);
   }
 
   async removeClient (targetGroupId) {

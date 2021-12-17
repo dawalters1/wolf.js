@@ -14,6 +14,12 @@ notificationSettings:
 batch:
   length: 50
 
+deeplinks:
+  subscriberProfile:  wolf://user/{value}/profile
+  subscriberChat:  wolf://user/{value}
+  groupProfile:  wolf://group/{value}/profile
+  groupChat:  wolf://group/{value}
+
 validation:
   charms:
     unofficialBots: [813, 814]

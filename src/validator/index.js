@@ -66,9 +66,13 @@ const isValidUrl = (api, arg) => {
         link = link.slice(protocol ? protocol.length : 0);
       }
 
-      const split = link.split(/[.:]/g).filter(Boolean);
+      const args = link.split(protocol === 'wolf://' ? '/' : /[.:]/g).filter(Boolean);
 
-      if (split.length >= 2) {
+      if (protocol === 'wolf://') {
+        return args.length > 0;
+      }
+
+      if (args.length >= 2) {
         try {
           const data = new URL(`${protocol || 'http://'}${link.trim()}`);
 
