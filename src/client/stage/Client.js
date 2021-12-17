@@ -1,4 +1,5 @@
 const EventEmitter = require('events').EventEmitter;
+const config = require('config');
 
 const wrtc = require('wrtc');
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
@@ -180,6 +181,7 @@ class Client extends EventEmitter {
       .toFormat('wav')
       .native()
       .noVideo()
+      .withOptions(config.app.stageClient && config.app.stageClient.settings ? config.app.stageClient.settings : [])
       .on('error', error => {
         this._downloader.destroy();
 
