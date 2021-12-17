@@ -1,5 +1,4 @@
 const EventEmitter = require('events').EventEmitter;
-const config = require('config');
 const wrtc = require('wrtc');
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
 const { RTCAudioSource } = require('wrtc').nonstandard;
@@ -25,7 +24,7 @@ const delay = async (duration) => new Promise(resolve => {
 });
 
 class Client extends EventEmitter {
-  constructor (targetGroupId) {
+  constructor (targetGroupId, opts) {
     super();
     this._slotId = -1;
 
@@ -33,7 +32,7 @@ class Client extends EventEmitter {
     this._connectionState = connectionState.UNINITIALIZED;
     this._broadcastState = broadcastState.NOT_BROADCASTING;
     this._muted = false;
-
+    this._opts = opts;
     this._client = new RTCPeerConnection();
 
     this._chunks = [];
@@ -180,7 +179,7 @@ class Client extends EventEmitter {
       .toFormat('wav')
       .native()
       .noVideo()
-      .withOptions(config.app.stageClient && config.app.stageClient.settings ? config.app.stageClient.settings : [])
+      .withOptions(this._opts)
       .on('error', error => {
         this._downloader.destroy();
 
@@ -305,6 +304,10 @@ class Client extends EventEmitter {
 
   get duration () {
     return this._duration / 1000;
+  }
+
+  get opts () {
+    return this._opts;
   }
 }
 
