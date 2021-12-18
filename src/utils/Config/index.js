@@ -1,4 +1,3 @@
-const { RetryMode } = require('../../constants');
 const validator = require('../../validator');
 
 const validateUserConfig = (api, opts) => {
@@ -20,29 +19,12 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
 
-  _opts.app.networkSettings = typeof (_opts.app.networkSettings) === 'object' ? _opts.app.networkSettings : {};
-
-  _opts.app.networkSettings.retryMode = typeof _opts.app.networkSettings.retryMode === 'number' && Object.values(RetryMode).includes(parseInt(_opts.app.networkSettings.retryMode)) ? parseInt(_opts.app.networkSettings.retryMode) : RetryMode.ALWAYS_RETRY;
-  _opts.app.networkSettings.retryAttempts = typeof _opts.app.networkSettings.retryAttempts === 'number' ? parseInt(_opts.app.networkSettings.retryAttempts) : 1;
-
-  if (_opts.app.networkSettings.retryAttempts <= 0) {
-    console.warn('[WARNING]: minimum retryAttempts is 1');
-    _opts.app.networkSettings.retryAttempts = 1;
-  } else if (_opts.app.networkSettings.retryAttempts >= 4) {
-    console.warn('[WARNING]: maximum retryAttempts is 3');
-    _opts.app.networkSettings.retryAttempts = 3;
-  }
-
   api._options = {
     keyword: _opts.keyword,
     processOwnMessages: _opts.app.processOwnMessages,
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
-    developerId: _opts.app.developerId,
-    networking: {
-      retryMode: _opts.app.networkSettings.retryMode,
-      retryAttempts: _opts.app.networkSettings.retryAttempts
-    }
+    developerId: _opts.app.developerId
   };
 
   api._config = _opts;

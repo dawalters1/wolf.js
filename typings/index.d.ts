@@ -121,10 +121,6 @@ export class CharmSubscriberSummaryObject{
   public giftCount: Number;
   public total: Number;
  }
-export class ConfigNetworkSettingsObject {
-  public retryMode: Number;
-  public retryAttempts: Number;
- }
 export class ConfigCommandSettingsObject {
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
@@ -134,7 +130,6 @@ export class ConfigAppObject {
   public processOwnMessages: Boolean;
   public defaultLanguage: String;
   public commandSettings: ConfigCommandSettingsObject;
-  public networkSettings: ConfigNetworkSettingsObject;
  }
 export class ConfigObject {
   public keyword: String;
@@ -146,7 +141,6 @@ export class ConfigOptionsObject {
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
   public developerId: Number;
-  public networking: ConfigNetworkSettingsObject;
  }
 export class CognitoObject{
   public token: String;
@@ -2330,7 +2324,6 @@ export const Constants: {
   OnlineState: OnlineState;
   Privilege: Privilege;
   Relationship: Relationship;
-  RetryMode: RetryMode;
   SearchType: SearchType;
   TipDirection: TipDirection;
   TipPeriod: TipPeriod;
@@ -2521,10 +2514,6 @@ export interface Relationship {
   MARRIED : 4,
   COMPLICATED : 5,
   OPEN : 6,
-}
-export interface RetryMode {
-  ALWAYS_FAIL : 0,
-  ALWAYS_RETRY : 1,
 }
 export interface SearchType {
   GROUP : "group",

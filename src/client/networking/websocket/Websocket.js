@@ -2,7 +2,7 @@ const Handler = require('./handlers');
 const Response = require('../../../models/ResponseObject');
 
 const io = require('socket.io-client');
-const { Events, RetryMode } = require('../../../constants');
+const { Events } = require('../../../constants');
 
 /**
  * {@hideconstructor}
@@ -12,7 +12,8 @@ module.exports = class Websocket {
     this._api = api;
     this._handler = new Handler(this._api);
 
-    // TODO: prevent duplicate requests with the use of defs
+    this._requestId = 1;
+    this._requests = [];
   };
 
   _init () {
@@ -61,14 +62,32 @@ module.exports = class Websocket {
     });
   }
 
-  async _emit (command, data, attempt = 1) {
+  async _emit (command, data) {
     if (data && !data.body && !data.headers) {
       data = {
         body: data
       };
     }
 
+    const duplicateRequest = this._requests.find((request) => request.command === command && JSON.stringify(request.data) === JSON.stringify(data));
+
+    if (duplicateRequest) {
+      return await duplicateRequest.def;
+    }
+
+    const request = {
+      requestId: this._requestId,
+      command,
+      data,
+      def: undefined
+    };
+
+    this._requests.push(request);
+
+    this._requestId += 1;
+
     const response = await new Promise((resolve, reject) => {
+      request.def = { resolve, reject };
       this._api.emit(Events.PACKET_SENT,
         command,
         data
@@ -79,9 +98,7 @@ module.exports = class Websocket {
       });
     });
 
-    if (this._api._botConfig.networking.retryOn.includes(response.code) && this._api.options.networking.RetryMode === RetryMode.ALWAYS_RETRY && attempt <= this._api.options.networking.retryAttempts) {
-      return await this._emit(command, data, attempt + 1);
-    }
+    this._requests = this._requests.filter((req) => req.id !== request.id);
 
     return response;
   }

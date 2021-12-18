@@ -5,7 +5,6 @@ connection:
   port: 3051
 
 networking:
-  retryOn: [500, 502, 503, 504, 408]
   events:
     ignore: []
 notificationSettings:
