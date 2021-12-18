@@ -47,13 +47,6 @@ const getDefaultOptions = (api, opts) => {
       throw new Error('type is not valid');
     }
 
-    if (link.type === MessageLinkingType.EXTERNAL) {
-      if (validator.isNullOrUndefined(link.url)) {
-        throw new Error('url cannot be null or undefined');
-      } else if (validator.isNullOrWhitespace(link.url)) {
-        throw new Error('url cannot be null or empty');
-      }
-    }
     if (validator.isNullOrUndefined(link.value)) {
       throw new Error('value cannot be null or undefined');
     } else if (validator.isNullOrWhitespace(link.value)) {
@@ -216,7 +209,7 @@ class Messaging extends BaseHelper {
                       value: link.value
                     }
                   )
-                  : link.url
+                  : link.value
               }
             );
           });

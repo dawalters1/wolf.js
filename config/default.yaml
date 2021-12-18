@@ -72,20 +72,20 @@ secrets:
     commands: ['>rys']
     responses: 
       - hasDevId: true
-        response: "I am an Unofficial Bot using {version}\n\nOwned By: {subscriberDetails}"
+        response: "I am an Unofficial Bot using WOLF.js {version}\n\nOwned By: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "I am an Unofficial Bot using {version}"        
+        response: "I am an Unofficial Bot using WOLF.js {version}"        
   - language: tr
     commands: ['>sırlarını', '>sırrını']
     responses: 
       - hasDevId: true
-        response: "Ben {version} kullanan resmi olmayan bir botum.\n\nSahibim: {subscriberDetails}"
+        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum.\n\nSahibim: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "Ben {version} kullanan resmi olmayan bir botum."       
+        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum."       
   - language: en    
     commands: ['>كشف']
     responses:
       - hasDevId: true
-        response: "انا بوت غير رسمي نسخة {version}\n\nمالك البوت: {subscriberDetails}"
+        response: "انا بوت غير رسمي نسخة WOLF.js {version}\n\nمالك البوت: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "انا بوت غير رسمي نسخة {version}"  
+        response: "انا بوت غير رسمي نسخة WOLF.js {version}"  
