@@ -99,34 +99,49 @@ module.exports = async (api, body) => {
             if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {
               const hasDevId = (!!api.options.developerId);
 
-              const body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
+              const links = [];
+
+              let body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
                 {
                   version
                 }
               );
 
-              if (!hasDevId) {
-                return await api.messaging().sendMessage(message, body);
-              }
+              const apiNameIndex = body.indexOf('WOLF.js');
 
-              const startIndex = body.lastIndexOf('{subscriberDetails}');
-              const { nickname, id } = await api.subscriber().getById(api.options.developerId);
+              links.push(
+                {
+                  start: apiNameIndex,
+                  end: apiNameIndex + 7,
+                  value: 'https://github.com/dawalters1/wolf.js',
+                  type: MessageLinkingType.EXTERNAL
+                }
+              );
+
+              if (hasDevId) {
+                const nicknameIndex = body.lastIndexOf('{nickname}');
+                const { nickname, id } = await api.subscriber().getById(api.options.developerId);
+
+                body = api.utility().string().replace(body,
+                  {
+                    nickname,
+                    subscriberId: id
+                  }
+                );
+
+                links.push({
+                  start: nicknameIndex,
+                  end: nicknameIndex + nickname.length,
+                  value: id,
+                  type: MessageLinkingType.SUBSCRIBER_PROFILE
+                });
+              }
 
               return await api.messaging().sendMessage(
                 message,
-                api.utility().string().replace(body,
-                  {
-                    subscriberDetails: `${nickname} (${id})`
-                  }),
+                body,
                 {
-                  links: [
-                    {
-                      start: startIndex,
-                      end: startIndex + nickname.length,
-                      value: id,
-                      type: MessageLinkingType.SUBSCRIBER_PROFILE
-                    }
-                  ]
+                  links
                 }
               );
             }
