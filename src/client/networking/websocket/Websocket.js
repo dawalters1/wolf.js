@@ -72,31 +72,35 @@ module.exports = class Websocket {
     const duplicateRequest = this._requests.find((request) => request.command === command && JSON.stringify(request.data) === JSON.stringify(data));
 
     if (duplicateRequest) {
-      return await duplicateRequest.def;
+      return await duplicateRequest.promise;
     }
 
     const request = {
       requestId: this._requestId,
       command,
       data,
-      def: undefined
+      def: undefined,
+      promise: undefined
     };
 
     this._requests.push(request);
 
     this._requestId += 1;
 
-    const response = await new Promise((resolve, reject) => {
+    request.promise = new Promise((resolve, reject) => {
       request.def = { resolve, reject };
-      this._api.emit(Events.PACKET_SENT,
-        command,
-        data
-      );
-
-      this.socket.emit(command, data, resp => {
-        resolve(new Response(resp, command));
-      });
     });
+
+    this._api.emit(Events.PACKET_SENT,
+      command,
+      data
+    );
+
+    this.socket.emit(command, data, resp => {
+      request.def.resolve(new Response(resp, command));
+    });
+
+    const response = await request.promise;
 
     this._requests = this._requests.filter((req) => req.id !== request.id);
 
