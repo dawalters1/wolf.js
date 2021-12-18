@@ -2156,7 +2156,7 @@ export class SubscriberUtility {
    * @param charmIds - The id or ids of the charms to check
    * @param requiresAll - Whether or not a subscriber should have all charms provided
    */
-  public hasCharms(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
+  public hasCharm(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
  }
 export class TimerUtility{
   private constructor(api: WOLFBot);
