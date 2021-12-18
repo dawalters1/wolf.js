@@ -395,10 +395,6 @@ exports.Relationship = {
   COMPLICATED: 5,
   OPEN: 6
 };
-exports.RetryMode = {
-  ALWAYS_FAIL: 0,
-  ALWAYS_RETRY: 1
-};
 exports.SearchType = {
   GROUP: 'group',
   SUBSCRIBER: 'subscriber'
