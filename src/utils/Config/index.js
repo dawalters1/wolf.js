@@ -1,4 +1,33 @@
 const validator = require('../../validator');
+const config = require('config');
+
+const get = (path) => {
+  if (validator.isNullOrUndefined(path)) {
+    throw new Error('path cannot be null or undefined');
+  } else if (validator.isNullOrWhitespace(path)) {
+    throw new Error('path cannot be null or whitespace');
+  }
+
+  if (path === 'get') {
+    throw new Error('cannot get getter method');
+  }
+
+  const route = [];
+
+  return path.split('.').filter(Boolean).map((route) => route.trim()).reduce((result, value) => {
+    const target = result[value];
+
+    if (target === undefined) {
+      throw new Error(`${route.length === 0 ? 'config' : route.join('.')} does not contain property ${value}`);
+    };
+
+    route.push(value);
+
+    return target;
+  },
+  config
+  );
+};
 
 const validateUserConfig = (api, opts) => {
   const _opts = Object.assign({}, opts);
@@ -26,6 +55,8 @@ const validateUserConfig = (api, opts) => {
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
     developerId: _opts.app.developerId
   };
+
+  _opts.get = (args) => get(args);
 
   api._config = _opts;
 };

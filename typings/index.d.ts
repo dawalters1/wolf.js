@@ -134,7 +134,14 @@ export class ConfigAppObject {
 export class ConfigObject {
   public keyword: String;
   public app: ConfigAppObject;
+
+  /**
+   * Get a property from config
+   * @param path - The path to the property in the config to get
+   */
+  public get(path: String): any;
  }
+ 
 export class ConfigOptionsObject {
   public keyword: String;
   public processOwnMessages: Boolean;
