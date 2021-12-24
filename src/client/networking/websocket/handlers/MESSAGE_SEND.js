@@ -93,7 +93,7 @@ module.exports = async (api, body) => {
         const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
 
         if (args.length >= 2 || api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])) {
-          const secret = api._botConfig.secrets.find((secret) => secret.commands.includes(args[0]));
+          const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
 
           if (secret) {
             if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {

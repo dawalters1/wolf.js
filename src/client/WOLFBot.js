@@ -35,7 +35,7 @@ const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 
 const Utility = require('../utils');
-const { validateUserConfig } = require('../utils/Config');
+const { validateUserConfig, validateBotConfig } = require('../utils/Config');
 
 class WOLFBot extends EventEmitter {
   constructor () {
@@ -50,7 +50,7 @@ class WOLFBot extends EventEmitter {
       console.warn(!fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
-    this._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+    validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));
 
     this._utility = new Utility(this);
 

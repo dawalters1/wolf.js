@@ -1,32 +1,35 @@
 const validator = require('../../validator');
-const config = require('config');
 
-const get = (path) => {
-  if (validator.isNullOrUndefined(path)) {
-    throw new Error('path cannot be null or undefined');
-  } else if (validator.isNullOrWhitespace(path)) {
-    throw new Error('path cannot be null or whitespace');
+const get = (configType, config, path) => {
+  try {
+    if (validator.isNullOrUndefined(path)) {
+      throw new Error('path cannot be null or undefined');
+    } else if (validator.isNullOrWhitespace(path)) {
+      throw new Error('path cannot be null or whitespace');
+    }
+
+    if (path === 'get') {
+      throw new Error('cannot get getter method');
+    }
+
+    const route = [];
+
+    return path.split('.').filter(Boolean).map((route) => route.trim()).reduce((result, value) => {
+      const target = result[value];
+
+      if (target === undefined) {
+        throw new Error(`${route.length === 0 ? 'config' : route.join('.')} does not contain property ${value}`);
+      };
+
+      route.push(value);
+
+      return target;
+    },
+    config);
+  } catch (error) {
+    error.internalErrorMessage = `api.${configType}.get(path=${JSON.stringify(path)})`;
+    throw error;
   }
-
-  if (path === 'get') {
-    throw new Error('cannot get getter method');
-  }
-
-  const route = [];
-
-  return path.split('.').filter(Boolean).map((route) => route.trim()).reduce((result, value) => {
-    const target = result[value];
-
-    if (target === undefined) {
-      throw new Error(`${route.length === 0 ? 'config' : route.join('.')} does not contain property ${value}`);
-    };
-
-    route.push(value);
-
-    return target;
-  },
-  config
-  );
 };
 
 const validateUserConfig = (api, opts) => {
@@ -56,11 +59,20 @@ const validateUserConfig = (api, opts) => {
     developerId: _opts.app.developerId
   };
 
-  _opts.get = (args) => get(args);
+  _opts.get = (args) => get('config', _opts, args);
 
   api._config = _opts;
 };
 
+const validateBotConfig = (api, opts) => {
+  const _opts = Object.assign({}, opts);
+
+  _opts.get = (args) => get('_botConfig', _opts, args);
+
+  api._botConfig = _opts;
+};
+
 module.exports = {
-  validateUserConfig
+  validateUserConfig,
+  validateBotConfig
 };

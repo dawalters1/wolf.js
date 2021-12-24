@@ -243,7 +243,7 @@ class Charm extends BaseHelper {
         }
       }
       const results = [];
-      for (const charmIdBatch of this._api.utility().array().chunk(charmIds, this._api._botConfig.batch.length)) {
+      for (const charmIdBatch of this._api.utility().array().chunk(charmIds, this._api._botConfig.get('batch.length'))) {
         results.push(await this._websocket.emit(
           Commands.CHARM_SUBSCRIBER_DELETE,
           {

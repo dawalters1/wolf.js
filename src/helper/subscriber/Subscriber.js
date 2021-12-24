@@ -49,7 +49,7 @@ class Subscriber extends BaseHelper {
       if (subscribers.length !== subscriberIds) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId));
 
-        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.batch.length)) {
+        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.SUBSCRIBER_PROFILE,
             {
@@ -70,7 +70,7 @@ class Subscriber extends BaseHelper {
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
               if (subscriberResponse.success) {
                 const subscriber = subscriberResponse.body;
-                subscriber.language = subscriber.extended && subscriber.extended.language ? toLanguageKey(subscriber.extended.language) : this._api.config.app.defaultLanguage;
+                subscriber.language = subscriber.extended && subscriber.extended.language ? toLanguageKey(subscriber.extended.language) : this._api.config.get('app.defaultLanguage');
                 subscribers.push(this._process(subscriberResponse.body));
               } else {
                 subscribers.push(
@@ -78,7 +78,7 @@ class Subscriber extends BaseHelper {
                     {
                       id: subscriberIdBatch[index],
                       exists: false,
-                      language: this._api.config.app.defaultLanguage
+                      language: this._api.config.get('app.defaultLanguage')
                     }
                   )
                 );
@@ -91,7 +91,7 @@ class Subscriber extends BaseHelper {
                   {
                     id,
                     exists: false,
-                    language: this._api.config.app.defaultLanguage
+                    language: this._api.config.get('app.defaultLanguage')
                   }
                 )
               )

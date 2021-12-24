@@ -101,7 +101,7 @@ class Achievement extends BaseHelper {
       if (achievements.length !== achievementIds) {
         const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId));
 
-        for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.batch.length)) {
+        for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.ACHIEVEMENT,
             {

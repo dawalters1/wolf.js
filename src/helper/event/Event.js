@@ -290,7 +290,7 @@ class Event extends BaseHelper {
       if (events.length !== eventIds) {
         const eventIdsToRequest = eventIds.filter((eventId) => !events.some((event) => event.id === eventId));
 
-        for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api._botConfig.batch.length)) {
+        for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.GROUP_EVENT,
             {

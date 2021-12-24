@@ -17,8 +17,8 @@ class Timer {
       this._handlers = handlers;
 
       this._timerQueue = new BullQueue('{bull-timer}', {
-        redis: this._api.config.redis,
-        prefix: this._api.options.keyword || this._api.config.keyword
+        redis: this._api.config.get('redis'),
+        prefix: this._api.options.keyword
       });
 
       this._timerQueue.process('*', (job) => {
