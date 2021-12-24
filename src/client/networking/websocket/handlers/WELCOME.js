@@ -19,7 +19,7 @@ const onSuccess = async (api, reconnect = false) => {
 };
 
 const login = async (api) => {
-  const loginSettings = api.config._loginSettings;
+  const loginSettings = api.config.get('_loginSettings');
 
   const result = await api.websocket.emit(
     Commands.SECURITY_LOGIN,
@@ -51,7 +51,7 @@ const login = async (api) => {
 
   api.cognito = result.body.cognito;
   api._currentSubscriber = result.body.subscriber;
-  api._currentSubscriber.token = api.config._loginSettings.token;
+  api._currentSubscriber.token = api.config.get('_loginSettings.token');
 
   api.emit(
     Events.LOGIN_SUCCESS,

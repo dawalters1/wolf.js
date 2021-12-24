@@ -54,7 +54,7 @@ const getDefaultOptions = (api, opts) => {
     }
   });
 
-  const lengthValidation = api._botConfig.validation.messaging.length;
+  const lengthValidation = api._botConfig.get('validation.messaging.length');
 
   if (_opts.chunkSize < lengthValidation.min) {
     console.warn(`[WARNING]: Message Helper - Minimum chunk size is ${lengthValidation.min}`);
@@ -152,24 +152,24 @@ class Messaging extends BaseHelper {
   async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-    const multiMediaMimes = this._api._botConfig.multimedia.messaging.validation.mimes;
+    const multiMediaMimes = this._api._botConfig.get('multimedia.messaging.validation.mimes');
 
     if (multiMediaMimes.includes(mimeType)) {
       return await this._api.multiMediaService().sendMessage(targetType, targetId, content, mimeType);
     }
 
-    if (!this._api._botConfig.validation.messaging.mimes.includes(mimeType)) {
+    if (!this._api._botConfig.get('validation.messaging.mimes').includes(mimeType)) {
       throw new Error('mimeType is not supported');
     }
 
-    const lengthValidation = this._api._botConfig.validation.messaging.length;
+    const lengthValidation = this._api._botConfig.get('validation.messaging.length');
     const _opts = getDefaultOptions(this._api, opts);
 
     if (!_opts.chunk && content.length > lengthValidation.max) {
       console.warn(`[WARNING]: Message Helper - Maximum message length is ${lengthValidation.max}`);
     }
 
-    const protocols = this._api._botConfig.validation.link.protocols;
+    const protocols = this._api._botConfig.get('validation.link.protocols');
 
     let previewAdded = false;
 
@@ -204,7 +204,7 @@ class Messaging extends BaseHelper {
                 startsAt: link.start - currentStartIndex,
                 endsAt: link.end - currentStartIndex,
                 url: link.type !== MessageLinkingType.EXTERNAL
-                  ? this._api.utility().string().replace(this._api._botConfig.deeplinks[link.type],
+                  ? this._api.utility().string().replace(this._api._botConfig.get('deeplinks')[link.type],
                     {
                       value: link.value
                     }

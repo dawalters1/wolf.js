@@ -86,7 +86,7 @@ class Group extends BaseHelper {
       if (groups.length !== targetGroupIds.length) {
         const targetGroupIdsToRequest = targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId));
 
-        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.batch.length)) {
+        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.GROUP_PROFILE,
             {
@@ -514,7 +514,7 @@ class Group extends BaseHelper {
 
   _process (group) {
     group = new GroupObject(this._api, group);
-    group.language = group.extended && group.extended.language ? toLanguageKey(group.extended.language) : this._api.config.app.defaultLanguage;
+    group.language = group.extended && group.extended.language ? toLanguageKey(group.extended.language) : this._api.config.get('app.defaultLanguage');
 
     const existing = this._groups.find((grp) => grp.id === group.id);
 

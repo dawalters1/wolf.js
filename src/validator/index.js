@@ -60,7 +60,7 @@ const isValidUrl = (api, arg) => {
     if ((arg.includes('.') || arg.includes(':'))) {
       let link = trimPunctuation(arg.toLowerCase());
 
-      const protocol = api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => arg.toLowerCase().startsWith(proto));
+      const protocol = api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => arg.toLowerCase().startsWith(proto));
 
       if (protocol) {
         link = link.slice(protocol ? protocol.length : 0);
@@ -78,7 +78,7 @@ const isValidUrl = (api, arg) => {
 
           const parsed = tlds.parse(data.host);
 
-          if (parsed && parsed.publicSuffix.split('.').every((tld) => api._botConfig.validation.link.tld.includes(tld))) {
+          if (parsed && parsed.publicSuffix.split('.').every((tld) => api._botConfig.get('validation.link.tld').includes(tld))) {
             return true;
           }
         } catch (error) {

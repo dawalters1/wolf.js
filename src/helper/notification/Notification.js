@@ -88,7 +88,7 @@ class Notification extends BaseHelper {
             }
           }
         }
-      }, this._api._botConfig.notificationSettings.duration);
+      }, this._api._botConfig.get('notificationSettings.duration'));
 
       return Promise.resolve(true);
     } catch (error) {

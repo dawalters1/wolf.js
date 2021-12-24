@@ -169,7 +169,7 @@ class String {
         if ((url.includes('.') || url.includes(':'))) {
           let link = trimPunctuation(url.toLowerCase());
 
-          const protocol = this._api._botConfig.validation.link.protocols.sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
+          const protocol = this._api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
 
           if (protocol) {
             link = link.slice(protocol ? protocol.length : 0);
@@ -194,7 +194,7 @@ class String {
 
               const parsed = tlds.parse(data.host);
 
-              if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.validation.link.tld.includes(tld))) {
+              if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
                 return {
                   url,
                   hostname: parsed.hostname

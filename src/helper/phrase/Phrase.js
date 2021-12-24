@@ -10,7 +10,7 @@ class Phrase extends BaseHelper {
     super(api);
 
     this._phrases = {};
-    this._defaultLanguage = api.config.app.defaultLanguage;
+    this._defaultLanguage = api.config.get('app.defaultLanguage');
 
     this._loadLocal();
   }
@@ -204,9 +204,7 @@ class Phrase extends BaseHelper {
         ) !== undefined
       );
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(
-        name
-      )}, value=${JSON.stringify(value)})`;
+      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
       throw error;
     }
   }
@@ -232,7 +230,7 @@ class Phrase extends BaseHelper {
 
       return phrase[0].value || phrase[0];
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().getByLanguageAndName(language=${language}, name=${name})`;
+      error.internalErrorMessage = `api.phrase().getByLanguageAndName(language=${JSON.stringify(language)}, name=${JSON.stringify(name)})`;
       throw error;
     }
   }
@@ -241,7 +239,7 @@ class Phrase extends BaseHelper {
     try {
       if (!validator.isType(command, 'object')) {
         throw new Error('command must be an object');
-      } else if (Reflect.has(command, 'language')) {
+      } else if (!Reflect.has(command, 'language')) {
         throw new Error('command must contain a language property');
       } else if (validator.isNullOrWhitespace(command.language)) {
         throw new Error('language cannot be null or empty');
@@ -249,7 +247,7 @@ class Phrase extends BaseHelper {
 
       return this.getByLanguageAndName(command.language, name);
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().getByCommandAndName(command=${command}, name=${name})`;
+      error.internalErrorMessage = `api.phrase().getByCommandAndName(command=${JSON.stringify(command)}, name=${JSON.stringify(name)})`;
       throw error;
     }
   }

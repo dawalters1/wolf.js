@@ -13,6 +13,10 @@ module.exports = async (api, body) => {
 
   subscriber = await api.subscriber().getById(body.id, true);
 
+  if (subscriber.id === api.currentSubscriber.id) {
+    api._currentSubscriber = subscriber;
+  }
+
   const groups = await api.group()._groups.filter((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === body.id));
 
   groups.forEach(group => {

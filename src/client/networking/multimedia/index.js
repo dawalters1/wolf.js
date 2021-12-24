@@ -150,7 +150,7 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('content must be a buffer');
     }
 
-    const messagingSettings = this._api._botConfig.multimedia.messaging;
+    const messagingSettings = this._api._botConfig.get('multimedia.messaging');
 
     if (!messagingSettings.validation.mimes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
@@ -184,7 +184,7 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('avatar must be a buffer');
     }
 
-    const groupAvatarSettings = this._api._botConfig.multimedia.avatar.group;
+    const groupAvatarSettings = this._api._botConfig.get('multimedia.avatar.group');
 
     if (!groupAvatarSettings.validation.mimes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
@@ -216,7 +216,7 @@ module.exports = class MultiMediaServiceClient {
     if (!Buffer.isBuffer(avatar)) {
       throw new Error('avatar must be a buffer');
     }
-    const subscriberAvatarSettings = this._api._botConfig.multimedia.avatar.subscriber;
+    const subscriberAvatarSettings = this._api._botConfig.get('multimedia.avatar.subscriber');
 
     if (!subscriberAvatarSettings.validation.mimes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
@@ -247,7 +247,7 @@ module.exports = class MultiMediaServiceClient {
       throw new Error('thumbnail must be a buffer');
     }
 
-    const eventThumbnailSettings = this._api._botConfig.multimedia.event;
+    const eventThumbnailSettings = this._api._botConfig.get('multimedia.event');
 
     if (!eventThumbnailSettings.validation.mimes.includes(mimeType)) {
       throw new Error('mimeType is unsupported');
