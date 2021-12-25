@@ -30,7 +30,7 @@ module.exports = async (api, body) => {
     patch(subscriber, body);
   }
 
-  Reflect.deleteProperty(body, 'id');
+  api.subscriber()._processPresence(body, true);
 
   return await api.emit(
     Events.PRESENCE_UPDATE,

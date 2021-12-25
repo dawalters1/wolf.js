@@ -13,6 +13,93 @@ class Subscriber extends BaseHelper {
     super(api);
 
     this._subscribers = [];
+    this._presence = [];
+  }
+
+  async getPresenceById (subscriberId, requestNew = false) {
+    return (await this.getPresenceByIds(subscriberId, requestNew))[0];
+  }
+
+  async getPresenceByIds (subscriberIds, requestNew = false) {
+    try {
+      subscriberIds = Array.isArray(subscriberIds) ? [...new Set(subscriberIds)] : [subscriberIds];
+
+      if (subscriberIds.length === 0) {
+        throw new Error('subscriberIds cannot be an empty array');
+      }
+      for (const subscriberId of subscriberIds) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new Error('subscriberId cannot be null or undefined');
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new Error('subscriberId must be a valid number');
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new Error('subscriberId cannot be less than or equal to 0');
+        }
+      }
+
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      let presence = [];
+
+      if (!requestNew) {
+        presence = this._presence.filter((subscriber) => subscriberIds.includes(subscriber.id));
+      }
+
+      if (presence.length !== subscriberIds) {
+        const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId));
+
+        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
+          const result = await this._websocket.emit(
+            Commands.SUBSCRIBER_PRESENCE,
+            {
+              idList: subscriberIdBatch,
+              subscribe: true
+            }
+          );
+
+          if (result.success) {
+            const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, Commands.SUBSCRIBER_PROFILE));
+
+            for (const [index, presenceResponse] of subscriberResponses.entries()) {
+              if (presenceResponse.success) {
+                presence.push(this._processPresence(presenceResponse.body));
+              } else {
+                presence.push(
+                  this._process(
+                    {
+                      id: subscriberIdBatch[index],
+                      deviceType: 0,
+                      onlineState: 0,
+                      lastActive: null
+                    }
+                  )
+                );
+              }
+            }
+          } else {
+            presence.push(
+              ...subscriberIdBatch.map((id) =>
+                (
+                  {
+                    id,
+                    deviceType: 0,
+                    onlineState: 0,
+                    lastActive: null
+                  }
+                )
+              )
+            );
+          }
+        }
+      }
+
+      return presence;
+    } catch (error) {
+      error.internalErrorMessage = `api.subscriber().getPresenceByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
+    }
   }
 
   async getById (subscriberId, requestNew = false) {
@@ -71,7 +158,7 @@ class Subscriber extends BaseHelper {
               if (subscriberResponse.success) {
                 const subscriber = subscriberResponse.body;
                 subscriber.language = subscriber.extended && subscriber.extended.language ? toLanguageKey(subscriber.extended.language) : this._api.config.get('app.defaultLanguage');
-                subscribers.push(this._process(subscriberResponse.body));
+                subscribers.push(this._process(subscriber));
               } else {
                 subscribers.push(
                   this._process(
@@ -183,8 +270,21 @@ class Subscriber extends BaseHelper {
     return subscriber;
   }
 
+  _processPresence (presence, requireExisting = false) {
+    const existing = this._presence.find((pre) => pre.id === presence.id);
+
+    if (existing) {
+      patch(existing, presence);
+    } else if (!requireExisting) { // if presence is not from getPresenceById methods, ignore it else this will never update correctly
+      this._presence.push(presence);
+    }
+
+    return presence;
+  }
+
   async _cleanup () {
     this._subscribers = [];
+    this._presence = [];
   }
 }
 

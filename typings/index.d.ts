@@ -124,12 +124,22 @@ export class CharmSubscriberSummaryObject{
 export class ConfigCommandSettingsObject {
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
+  public processOwnMessages: Boolean;
  }
+
+ export class ConfigMessageSettingsObject {
+  public processOwnMessages: Boolean;
+ } 
 export class ConfigAppObject {
   public developerId: Number;
+  /**
+   * @deprecated
+   * @use {commandSettings.processOwnMessages or messageSettings.processOwnMessages}
+   */
   public processOwnMessages: Boolean;
   public defaultLanguage: String;
   public commandSettings: ConfigCommandSettingsObject;
+  public messageSettings: ConfigMessageSettingsObject;
  }
 export class ConfigObject {
   public keyword: String;
@@ -656,7 +666,8 @@ export class PresenceObject{
   public id: Number;
   public deviceType: DeviceType;
   public onlineState: OnlineState;
- }
+  public lastActive: Number;
+}
 export class WelcomeBannerObject{
   public notification:  {[key:string]: Object};
   public promotion:  {[key:string]: Object};
@@ -1866,6 +1877,18 @@ export class Store extends BaseHelper {
 export class Subscriber extends BaseHelper {
   private constructor(api : WOLFBot);
  
+  /**
+   * Get the online state and device type for a subscriber
+   * @param subscriberId - The id of the subscriber
+   * @param requestNew - Whether or not to request new data from the server
+   */
+  public getPresenceById(subscriberId: Number, requestNew?: Boolean): Promise<PresenceObject>;
+  /**
+   * Get the online state and device type for multiple subscribers
+   * @param subscriberIds - The id or ids of the subscriber
+   * @param requestNew - Whether or not to request new data from the server
+   */
+  public getPresenceByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<PresenceObject>>; 
   /**
    * Get a subscriber
    * @param subscriberId - The id of the subscriber
