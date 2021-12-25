@@ -43,6 +43,9 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
+  if (_opts.app.processOwnMessages) {
+    console.warn('[WARNING] CONFIG: app.processOwnMessages is deprecated, please use messageSettings.processOwnMessages or commandSettings.processOwnMessages instead');
+  }
   _opts.app.processOwnMessages = validator.isValidBoolean(_opts.app.processOwnMessages) ? Boolean(_opts.app.processOwnMessages) : false;
 
   _opts.app.commandSettings = typeof (_opts.app.commandSettings) === 'object' ? _opts.app.commandSettings : {};
@@ -51,9 +54,23 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app.commandSettings.ignoreUnofficialBots = validator.isValidBoolean(_opts.app.commandSettings.ignoreUnofficialBots) ? Boolean(_opts.app.commandSettings.ignoreUnofficialBots) : false;
 
+  _opts.app.commandSettings.processOwnMessages = validator.isValidBoolean(_opts.app.commandSettings.processOwnMessages) ? Boolean(_opts.app.commandSettings.processOwnMessages) : false;
+
+  _opts.app.messageSettings = typeof (_opts.app.messageSettings) === 'object' ? _opts.app.messageSettings : {};
+
+  _opts.app.messageSettings.processOwnMessages = validator.isValidBoolean(_opts.app.messageSettings.processOwnMessages) ? Boolean(_opts.app.messageSettings.processOwnMessages) : false;
+
+  if (_opts.app.commandSettings.processOwnMessages && !_opts.app.messageSettings.processOwnMessages) {
+    console.warn('[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
+  }
   api._options = {
     keyword: _opts.keyword,
-    processOwnMessages: _opts.app.processOwnMessages,
+    commandHandling: {
+      processOwnMessages: opts.app.commandSettings.processOwnMessages
+    },
+    messageHandling: {
+      processOwnMessages: opts.app.messageSettings.processOwnMessages
+    },
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
     developerId: _opts.app.developerId

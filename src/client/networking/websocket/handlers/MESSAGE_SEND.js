@@ -147,7 +147,7 @@ module.exports = async (api, body) => {
             }
           }
         }
-      } else if (!api.options.processOwnMessages) {
+      } else if (!api.options.messageHandling.processOwnMessages) {
         return Promise.resolve();
       }
     }

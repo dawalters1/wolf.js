@@ -57,7 +57,7 @@ module.exports = class CommandHandler {
 
   async _processMessage (message) {
     try {
-      if (!message.body || message.type !== MessageType.TEXT_PLAIN || message.sourceSubscriberId === this._api.currentSubscriber.id || await this._api.banned().isBanned(message.sourceSubscriberId)) {
+      if (!message.body || message.type !== MessageType.TEXT_PLAIN || (message.sourceSubscriberId === this._api.currentSubscriber.id && !this._api.options.commandHandling.processOwnMessages) || await this._api.banned().isBanned(message.sourceSubscriberId)) {
         return Promise.resolve();
       }
 

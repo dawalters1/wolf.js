@@ -191,6 +191,7 @@ exports.Commands = {
   SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriber group event delete',
   SUBSCRIBER_GROUP_EVENT_LIST: 'subscriber group event list',
   SUBSCRIBER_GROUP_LIST: 'subscriber group list',
+  SUBSCRIBER_PRESENCE: 'subscriber presence',
   SUBSCRIBER_PROFILE: 'subscriber profile',
   SUBSCRIBER_PROFILE_UPDATE: 'subscriber profile update',
   SUBSCRIBER_SETTINGS_UPDATE: 'subscriber settings update',

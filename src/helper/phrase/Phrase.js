@@ -43,7 +43,7 @@ class Phrase extends BaseHelper {
       );
 
       if (phrases.length === 0) {
-        console.log(`[WARNING] Phrase Helper: ${language} json is empty`);
+        console.warn(`[WARNING] Phrase Helper: ${language} json is empty`);
       }
 
       if (!this._phrases[language]) {
