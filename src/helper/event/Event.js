@@ -18,7 +18,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link create}
    */
   async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
@@ -31,6 +31,8 @@ class Event extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -95,7 +97,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link edit}
    */
   async editEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
@@ -108,6 +110,8 @@ class Event extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -189,7 +193,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link updateThumbnail}
    */
   async updateEventThumbnail (eventId, thumbnail) {
@@ -202,6 +206,8 @@ class Event extends BaseHelper {
         throw new Error('eventId cannot be null or undefined');
       } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
+      } else if (!validator.isType(eventId, 'number')) {
+        throw new Error('eventId must be type of number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
@@ -219,7 +225,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link remove}
    */
   async deleteEvent (targetGroupId, eventId) {
@@ -232,6 +238,8 @@ class Event extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -239,6 +247,8 @@ class Event extends BaseHelper {
         throw new Error('eventId cannot be null or undefined');
       } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
+      } else if (!validator.isType(eventId, 'number')) {
+        throw new Error('eventId must be type of number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
@@ -273,6 +283,8 @@ class Event extends BaseHelper {
           throw new Error('eventId cannot be null or undefined');
         } else if (!validator.isValidNumber(eventId)) {
           throw new Error('eventId must be a valid number');
+        } else if (!validator.isType(eventId, 'number')) {
+          throw new Error('eventId must be type of number');
         } else if (validator.isLessThanOrEqualZero(eventId)) {
           throw new Error('eventId cannot be less than or equal to 0');
         }
@@ -341,7 +353,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getGroupEventList}
    */
   async getGroupEvents (targetGroupId, requestNew = false) {
@@ -354,6 +366,8 @@ class Event extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -381,7 +395,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getSubscriptionList}
    */
   async getEventSubscriptions (requestNew = false) {
@@ -417,7 +431,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link subscribe}
    */
   async subscribeToEvent (eventId) {
@@ -430,6 +444,8 @@ class Event extends BaseHelper {
         throw new Error('eventId cannot be null or undefined');
       } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
+      } else if (!validator.isType(eventId, 'number')) {
+        throw new Error('eventId must be type of number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }
@@ -447,7 +463,7 @@ class Event extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link unsubscribe}
    */
   async unsubscribeFromEvent (eventId) {
@@ -460,6 +476,8 @@ class Event extends BaseHelper {
         throw new Error('eventId cannot be null or undefined');
       } else if (!validator.isValidNumber(eventId)) {
         throw new Error('eventId must be a valid number');
+      } else if (!validator.isType(eventId, 'number')) {
+        throw new Error('eventId must be type of number');
       } else if (validator.isLessThanOrEqualZero(eventId)) {
         throw new Error('eventId cannot be less than or equal to 0');
       }

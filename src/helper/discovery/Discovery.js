@@ -108,6 +108,8 @@ module.exports = class Discovery extends BaseHelper {
   async getRecipe (id, language, requestNew = false) {
     if (!validator.isValidNumber(id)) {
       throw new Error('id must be a valid number');
+    } else if (!validator.isType(id, 'number')) {
+      throw new Error('id must be type of number');
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new Error('id cannot be less than or equal to 0');
     }
@@ -142,6 +144,8 @@ module.exports = class Discovery extends BaseHelper {
   async getRecipeBySectionId (id, language, requestNew = false) {
     if (!validator.isValidNumber(id)) {
       throw new Error('id must be a valid number');
+    } else if (!validator.isType(id, 'number')) {
+      throw new Error('id must be type of number');
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new Error('id cannot be less than or equal to 0');
     }

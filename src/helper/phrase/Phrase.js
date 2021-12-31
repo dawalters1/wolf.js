@@ -58,13 +58,9 @@ class Phrase extends BaseHelper {
           throw new Error('value cannot be null or empty');
         }
 
-        const phraseName = this._api
-          .utility()
-          .string()
-          .replace(phrase.name, {
-            keyword: this._api.options.keyword
-          })
-          .toLowerCase();
+        const phraseName = this._api.utility().string().replace(phrase.name, {
+          keyword: this._api.options.keyword
+        }).toLowerCase();
 
         if (!this._phrases[language][phraseName]) {
           this._phrases[language][phraseName] = [];

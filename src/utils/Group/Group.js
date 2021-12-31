@@ -18,6 +18,8 @@ class Group {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -61,6 +63,8 @@ class Group {
         throw new Error('id cannot be null or undefined');
       } else if (!validator.isValidNumber(group.id)) {
         throw new Error('id must be a valid number');
+      } else if (!validator.isType(group.id, 'number')) {
+        throw new Error('id must be type of number');
       } else if (validator.isLessThanOrEqualZero(group.id)) {
         throw new Error('id cannot be less than or equal to 0');
       }

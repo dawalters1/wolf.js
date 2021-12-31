@@ -24,6 +24,8 @@ class Member {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -31,6 +33,8 @@ class Member {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
@@ -49,7 +53,7 @@ class Member {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.utility().group().member().hasCapabilities(targetGroupId, targetSubscriberId, requiredCapability)
    */
   async checkPermissions (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
@@ -62,6 +66,8 @@ class Member {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -69,6 +75,8 @@ class Member {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }

@@ -69,6 +69,8 @@ class Group extends BaseHelper {
           throw new Error('targetGroupId cannot be null or undefined');
         } else if (!validator.isValidNumber(targetGroupId)) {
           throw new Error('targetGroupId must be a valid number');
+        } else if (!validator.isType(targetGroupId, 'number')) {
+          throw new Error('targetGroupId must be type of number');
         } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
           throw new Error('targetGroupId cannot be less than or equal to 0');
         }
@@ -199,6 +201,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -253,6 +257,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -285,7 +291,7 @@ class Group extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getChatHistory}
    */
   async getHistory (targetGroupId, timestamp = 0, limit = 15) {
@@ -298,6 +304,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -308,6 +316,8 @@ class Group extends BaseHelper {
         throw new Error('timestamp cannot be null or undefined');
       } if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
+      } else if (!validator.isType(timestamp, 'number')) {
+        throw new Error('timestamp must be type of number');
       } else if (validator.isLessThanZero(timestamp)) {
         throw new Error('timestamp cannot be less than 0');
       }
@@ -315,6 +325,8 @@ class Group extends BaseHelper {
         throw new Error('limit cannot be null or undefined');
       } if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
+      } else if (!validator.isType(limit, 'number')) {
+        throw new Error('limit must be type of number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
       }
@@ -352,6 +364,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -396,6 +410,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -438,6 +454,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -460,6 +478,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -467,6 +487,8 @@ class Group extends BaseHelper {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }

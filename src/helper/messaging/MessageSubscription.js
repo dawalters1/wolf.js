@@ -1,6 +1,6 @@
 const BaseHelper = require('../BaseHelper');
 
-const { isType } = require('../../validator');
+const validator = require('../../validator');
 
 class MessageSubscription extends BaseHelper {
   constructor (api) {
@@ -69,7 +69,7 @@ class MessageSubscription extends BaseHelper {
 
   async nextMessage (predicate, timeout = Infinity) {
     try {
-      if (!isType(predicate, 'function')) {
+      if (!validator.isType(predicate, 'function')) {
         throw new Error('predicate must be function');
       }
 
@@ -82,6 +82,15 @@ class MessageSubscription extends BaseHelper {
 
   async nextGroupMessage (targetGroupId, timeout = Infinity) {
     try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
       return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timeout=${JSON.stringify(timeout)})`;
@@ -91,6 +100,15 @@ class MessageSubscription extends BaseHelper {
 
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
     try {
+      if (validator.isNullOrUndefined(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId must be a valid number');
+      } else if (!validator.isType(sourceSubscriberId, 'number')) {
+        throw new Error('sourceSubscriberId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      }
       return await this.nextMessage((message) => !message.isGroup && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextPrivateMessage(sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
@@ -100,6 +118,24 @@ class MessageSubscription extends BaseHelper {
 
   async nextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
     try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+      if (validator.isNullOrUndefined(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId must be a valid number');
+      } else if (!validator.isType(sourceSubscriberId, 'number')) {
+        throw new Error('sourceSubscriberId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+        throw new Error('sourceSubscriberId cannot be less than or equal to 0');
+      }
       return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().subscribe().nextGroupSubscriberMessage(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;

@@ -23,6 +23,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -73,6 +75,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -122,6 +126,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -168,6 +174,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -175,6 +183,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
@@ -230,6 +240,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -237,6 +249,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
@@ -289,6 +303,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -340,6 +356,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -348,6 +366,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
@@ -398,6 +418,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -406,6 +428,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -445,6 +469,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -453,6 +479,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
@@ -544,6 +572,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -572,6 +602,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -598,6 +630,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -620,6 +654,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -642,6 +678,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -664,6 +702,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -690,6 +730,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -712,6 +754,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -734,6 +778,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -756,6 +802,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -778,6 +826,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -800,6 +850,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -817,6 +869,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -858,6 +912,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -880,6 +936,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -903,6 +961,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -926,6 +986,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -975,6 +1037,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -1029,6 +1093,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -1079,6 +1145,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -1117,6 +1185,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -1124,6 +1194,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
@@ -1131,6 +1203,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -1187,6 +1261,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -1194,6 +1270,8 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('slotId cannot be null or undefined');
       } else if (!validator.isValidNumber(slotId)) {
         throw new Error('slotId must be a valid number');
+      } else if (!validator.isType(slotId, 'number')) {
+        throw new Error('slotId must be type of number');
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }

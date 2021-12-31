@@ -28,6 +28,8 @@ class Authorization extends BaseHelper {
           throw new Error('subscriberId cannot be null or undefined');
         } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
+        } else if (!validator.isType(subscriberId, 'number')) {
+          throw new Error('subscriberId must be type of number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
         }
@@ -54,6 +56,8 @@ class Authorization extends BaseHelper {
           throw new Error('subscriberId cannot be null or undefined');
         } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
+        } else if (!validator.isType(subscriberId, 'number')) {
+          throw new Error('subscriberId must be type of number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
         }
@@ -89,6 +93,8 @@ class Authorization extends BaseHelper {
           throw new Error('subscriberId cannot be null or undefined');
         } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
+        } else if (!validator.isType(subscriberId, 'number')) {
+          throw new Error('subscriberId must be type of number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
         }
