@@ -17,6 +17,8 @@ class Subscriber {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -57,6 +59,8 @@ class Subscriber {
         throw new Error('id cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriber.id)) {
         throw new Error('id must be a valid number');
+      } else if (!validator.isType(subscriber.id, 'number')) {
+        throw new Error('id must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriber.id)) {
         throw new Error('id cannot be less than or equal to 0');
       }
@@ -83,6 +87,8 @@ class Subscriber {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -94,6 +100,8 @@ class Subscriber {
           throw new Error('charmId cannot be null or undefined');
         } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
+        } else if (!validator.isType(charmId, 'number')) {
+          throw new Error('charmId must be type of number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
         }

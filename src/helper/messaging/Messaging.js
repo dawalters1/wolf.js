@@ -26,6 +26,8 @@ const getDefaultOptions = (api, opts) => {
       throw new Error('start cannot be null or undefined');
     } else if (!validator.isValidNumber(link.start)) {
       throw new Error('start must be a valid number');
+    } else if (!validator.isType(link.start, 'number')) {
+      throw new Error('start must be type of number');
     } else if (validator.isLessThanZero(link.start)) {
       throw new Error('start cannot be less than 0');
     }
@@ -33,6 +35,8 @@ const getDefaultOptions = (api, opts) => {
       throw new Error('end cannot be null or undefined');
     } else if (!validator.isValidNumber(link.end)) {
       throw new Error('end must be a valid number');
+    } else if (!validator.isType(link.end, 'number')) {
+      throw new Error('end must be type of number');
     } else if (validator.isLessThanZero(link.end)) {
       throw new Error('end cannot be less than 0');
     } else if (link.end < link.start) {
@@ -127,6 +131,8 @@ class Messaging extends BaseHelper {
         throw new Error('timestamp cannot be null or undefined');
       } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
+      } else if (!validator.isType(timestamp, 'number')) {
+        throw new Error('timestamp must be type of number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
@@ -348,6 +354,8 @@ class Messaging extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -370,6 +378,8 @@ class Messaging extends BaseHelper {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
@@ -414,6 +424,8 @@ class Messaging extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -421,6 +433,8 @@ class Messaging extends BaseHelper {
         throw new Error('timestamp cannot be null or undefined');
       } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
+      } else if (!validator.isType(timestamp, 'number')) {
+        throw new Error('timestamp must be type of number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
@@ -448,6 +462,8 @@ class Messaging extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -455,6 +471,8 @@ class Messaging extends BaseHelper {
         throw new Error('timestamp cannot be null or undefined');
       } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
+      } else if (!validator.isType(timestamp, 'number')) {
+        throw new Error('timestamp must be type of number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }
@@ -482,6 +500,8 @@ class Messaging extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -489,6 +509,8 @@ class Messaging extends BaseHelper {
         throw new Error('timestamp cannot be null or undefined');
       } else if (!validator.isValidNumber(timestamp)) {
         throw new Error('timestamp must be a valid number');
+      } else if (!validator.isType(timestamp, 'number')) {
+        throw new Error('timestamp must be type of number');
       } else if (validator.isLessThanOrEqualZero(timestamp)) {
         throw new Error('timestamp cannot be less than or equal to 0');
       }

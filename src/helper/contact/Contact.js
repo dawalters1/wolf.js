@@ -49,6 +49,8 @@ class Contact extends BaseHelper {
           throw new Error('subscriberId cannot be null or undefined');
         } else if (!validator.isValidNumber(subscriberId)) {
           throw new Error('subscriberId must be a valid number');
+        } else if (!validator.isType(subscriberId, 'number')) {
+          throw new Error('subscriberId must be type of number');
         } else if (validator.isLessThanOrEqualZero(subscriberId)) {
           throw new Error('subscriberId cannot be less than or equal to 0');
         }
@@ -69,6 +71,8 @@ class Contact extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -86,7 +90,7 @@ class Contact extends BaseHelper {
   }
 
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link remove}
    */
   async delete (subscriberId) {
@@ -99,6 +103,8 @@ class Contact extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }

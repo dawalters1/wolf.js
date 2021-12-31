@@ -60,6 +60,8 @@ class Charm extends BaseHelper {
           throw new Error('charmId cannot be null or undefined');
         } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
+        } else if (!validator.isType(charmId, 'number')) {
+          throw new Error('charmId must be type of number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
         }
@@ -102,6 +104,8 @@ class Charm extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -124,6 +128,8 @@ class Charm extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -148,6 +154,8 @@ class Charm extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -156,6 +164,8 @@ class Charm extends BaseHelper {
         throw new Error('limit cannot be null or undefined');
       } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
+      } else if (!validator.isType(limit, 'number')) {
+        throw new Error('limit must be type of number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
       }
@@ -164,6 +174,8 @@ class Charm extends BaseHelper {
         throw new Error('offset cannot be null or undefined');
       } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
+      } else if (!validator.isType(offset, 'number')) {
+        throw new Error('offset must be type of number');
       } else if (validator.isLessThanZero(offset)) {
         throw new Error('offset cannot be less than 0');
       }
@@ -190,6 +202,8 @@ class Charm extends BaseHelper {
         throw new Error('subscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(subscriberId)) {
         throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
@@ -198,6 +212,8 @@ class Charm extends BaseHelper {
         throw new Error('limit cannot be null or undefined');
       } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
+      } else if (!validator.isType(limit, 'number')) {
+        throw new Error('limit must be type of number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
       }
@@ -206,6 +222,8 @@ class Charm extends BaseHelper {
         throw new Error('offset cannot be null or undefined');
       } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
+      } else if (!validator.isType(offset, 'number')) {
+        throw new Error('offset must be type of number');
       } else if (validator.isLessThanZero(offset)) {
         throw new Error('offset cannot be less than 0');
       }
@@ -238,6 +256,8 @@ class Charm extends BaseHelper {
           throw new Error('charmId cannot be null or undefined');
         } else if (!validator.isValidNumber(charmId)) {
           throw new Error('charmId must be a valid number');
+        } else if (!validator.isType(charmId, 'number')) {
+          throw new Error('charmId must be type of number');
         } else if (validator.isLessThanOrEqualZero(charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
         }
@@ -279,6 +299,8 @@ class Charm extends BaseHelper {
           throw new Error('position cannot be null or undefined');
         } else if (!validator.isValidNumber(charm.position)) {
           throw new Error('position must be a valid number');
+        } else if (!validator.isType(charm.position, 'number')) {
+          throw new Error('position must be type of number');
         } else if (validator.isLessThanZero(charm.position)) {
           throw new Error('position cannot be less than 0');
         }
@@ -289,6 +311,8 @@ class Charm extends BaseHelper {
           throw new Error('charmId cannot be null or undefined');
         } else if (!validator.isValidNumber(charm.charmId)) {
           throw new Error('charmId must be a valid number');
+        } else if (!validator.isType(charm.charmId, 'number')) {
+          throw new Error('charmId must be type of number');
         } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
           throw new Error('charmId cannot be less than or equal to 0');
         }

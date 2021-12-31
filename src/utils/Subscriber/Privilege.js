@@ -14,6 +14,8 @@ class Privilege {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }

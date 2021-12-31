@@ -79,6 +79,8 @@ class Achievement extends BaseHelper {
           throw new Error('achievementId cannot be null or undefined');
         } else if (!validator.isValidNumber(achievementId)) {
           throw new Error('achievementId must be a valid number');
+        } else if (!validator.isType(achievementId, 'number')) {
+          throw new Error('achievementId must be type of number');
         } else if (validator.isLessThanOrEqualZero(achievementId)) {
           throw new Error('achievementId cannot be less than or equal to 0');
         }

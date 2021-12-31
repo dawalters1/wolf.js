@@ -1,7 +1,7 @@
 /**
- * Typings support for 0.20.0
+ * Typings support for 1.00.0
  * Created: 8/11/21
- * Updated: 25/11/21
+ * Updated: 31/12/21
  */
 
  import type { Readable } from "stream";
@@ -28,7 +28,7 @@ export class CommandObject {
   public language: String;
   public argument: String;
     /**
-     * @deprecated Will be removed in 1.0.0
+     * @deprecated Will be removed in 1.2.0
      */
   public message: MessageObject;
   public targetGroupId: Number;
@@ -823,7 +823,7 @@ export class WOLFBot {
   public subscriber(): Subscriber;
   /**
    * Exposes the tipping methods
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link tipping}
    */
   public tip(): Tipping;
@@ -892,25 +892,25 @@ export class WOLFBot {
   public updateProfile(): SubscriberProfileBuilder;
   /**
    * Set the charms that appear over the bots avatar
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.charm().set(charms)
    */
   public setSelectedCharms(charms: Array<CharmSelectedObject>): Promise<ResponseObject>;
   /**
    * Delete charms from your active or expired list
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.charm().remove(charmIds)
    */
   public deleteCharms(charmIds: Number | Array<Number>): Promise<ResponseObject>;
   /**
    * Get the bots credit balance
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.store().getBalance()
    */
   public getCreditBalance(): Number;    
   /**
    * Get the bots chat list
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.messaging().getConversationList(timestamp)
    */
   public getConversationList(timestamp: Number): Promise<Array<MessageObject>>;
@@ -1191,7 +1191,7 @@ export class Event extends BaseHelper {
  
   /**
    * Create an event for a group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link create}
    * @param targetGroupId - The id of the group
    * @param title - The name of the event
@@ -1215,7 +1215,7 @@ export class Event extends BaseHelper {
   public create(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
   /**
    * Edit an event belonging to a group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link edit}
    * @param targetGroupId - The id of the group the event belongs too
    * @param eventId - The id of the event
@@ -1243,7 +1243,7 @@ export class Event extends BaseHelper {
   public edit(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
   /**
    * Update an events thumbnail
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link updateThumbnail}
    * @param eventId - The id of the event to delete
    * @param thumbnail - The new thumbnail of the event
@@ -1251,7 +1251,7 @@ export class Event extends BaseHelper {
   public updateEventThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
   /**
    * Update an events thumbnail
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link updateThumbnail}
    * @param eventId - The id of the event to delete
    * @param thumbnail - The new thumbnail of the event
@@ -1259,7 +1259,7 @@ export class Event extends BaseHelper {
   public updateThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
   /**
    * Delete an event 
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link remove}
    * @param targetGroupId - The id of the group the event belongs too
    * @param eventId - The id of the event
@@ -1285,7 +1285,7 @@ export class Event extends BaseHelper {
   public getByIds(eventIds: Number|Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
   /**
    * Get the events list for a group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getGroupEventList}
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server
@@ -1299,7 +1299,7 @@ export class Event extends BaseHelper {
   public getGroupEventList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
   /**
    * Get the bots event subscription list
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getSubscriptionList}
    * @param requestNew - Whether or not to request new data from the server
    */
@@ -1311,7 +1311,7 @@ export class Event extends BaseHelper {
   public getSubscriptionList(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
   /**
    * Subscribe to an event
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getGroupEventList}
    * @param eventId - The id of the event
    */
@@ -1323,7 +1323,7 @@ export class Event extends BaseHelper {
   public subscribe(eventId: Number): Promise<ResponseObject>;
   /**
    * Unsubscribe to an event
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link unsubscribe}
    * @param eventId - The id of the event
    */
@@ -1383,7 +1383,7 @@ export class Group extends BaseHelper {
   public leaveByName(targetGroupName: String): Promise<ResponseObject>
   /**
    * Get the chat history of a group 
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getChatHistory}
    * @param targetGroupId - The id of the group
    * @param timestamp - The timestamp of the last message
@@ -1519,7 +1519,7 @@ export class Messaging extends BaseHelper {
   public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;
   /**
    * Watch for a message using specific paramaters
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.messaging().subscribe().nextMessage()
    * @param predict - The paramaters ((message)=>message.isGroup && message.sourceSubscriberId === 80280172)
    * @param timeout - How long until the subscription ends (Default: Infinite)
@@ -1527,7 +1527,7 @@ export class Messaging extends BaseHelper {
   public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<MessageObject>;
   /**
    * Watch for a message from a specific group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.messaging().subscribe().nextGroupMessage()
    * @param targetGroupId - The id of the group
    * @param timeout - How long until the subscription ends (Default: Infinite)
@@ -1535,7 +1535,7 @@ export class Messaging extends BaseHelper {
   public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
   /**
    * Watch for a message from a specific subscriber
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.messaging().subscribe().nextPrivateMessage()
    * @param sourceSubscriberId - The id of the subscriber
    * @param timeout - How long until the subscription ends (Default: Infinite)
@@ -1543,7 +1543,7 @@ export class Messaging extends BaseHelper {
   public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
   /**
    * Watch for a message from a specific group and subscriber
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use api.messaging().subscribe().nextGroupSubscriberMessage()
    * @param targetGroupId - The id of the group
    * @param sourceSubscriberId - The id of the subscriber
@@ -1629,7 +1629,7 @@ export class Stage extends BaseHelper {
  
   /**
    * Get group audio settings
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getGroupSettings}
    * @param targetGroupId - The id of the grooup
    * @param requestNew - Whether or not to request new data from the server
@@ -1643,7 +1643,7 @@ export class Stage extends BaseHelper {
   public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>; 
   /**
    * Get the list of publicly available stages
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getStageList}
    * @param requestNew - Whether or not to request new data from the server
    */
@@ -1655,7 +1655,7 @@ export class Stage extends BaseHelper {
   public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;  
   /**
    * Get the list of stages available to group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getStageListForGroup}
    * @param targetGroupId - The id of the group
    * @param requestNew 
@@ -1669,7 +1669,7 @@ export class Stage extends BaseHelper {
   public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>; 
   /**
    * Get the slots for a group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getGroupSlots}
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server 
@@ -1702,7 +1702,7 @@ export class Stage extends BaseHelper {
   public leaveSlot(targetGroupId: Number): Promise<ResponseObject>;
   /**
    * Kick a subscriber from a slot
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link kickSlot}
    * @param targetGroupId - The group Id
    * @param slotId - The slot Id
@@ -1737,7 +1737,7 @@ export class Stage extends BaseHelper {
   public consumeSlot(targetGroupId: Number, slotId: Number, sdp: String): Promise<ResponseObject>;
   /**
    * Broadcast in a group
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link broadcast}
    * @param targetGroupId - The id of the group
    * @param data - The audio stream
@@ -1776,7 +1776,7 @@ export class Stage extends BaseHelper {
   public isPaused(targetGroupId: Number): Promise<Boolean>;
   /**
    * Check whether or not the client is playing
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link isBroadcasting}
    * @param targetGroupId - The id of the group
    */
@@ -1903,7 +1903,7 @@ export class Subscriber extends BaseHelper {
   public getByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
   /**
    * Get the chat history of a subscriber 
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link getChatHistory}
    * @param subscriberId - The id of the subscriber
    * @param timestamp - The timestamp of the last message
@@ -2037,7 +2037,7 @@ export class MemberUtility {
   public get(targetGroupId: Number, targetSubscriberId: Number): GroupSubscriberObject;
   /**     
    * Check whether or not a subscriber has the capability to use a command
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link hasCapability}
    * @param targetGroupId - The id of the group
    * @param targetSubscriberId - The id of the subscriber
@@ -2131,7 +2131,7 @@ export class StringUtility{
   /**
    * Check whether or not a url is valid
    * @param url - The url to check
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link validator.isValidUrl}
    */
   public isValidUrl(url: String): Boolean;
@@ -2836,17 +2836,17 @@ export interface ClientEvents {
    */
   welcome: [welcome: WelcomeObject],
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link groupMemberAdd}
    */
   subscriberJoined: [group: GroupObject, subscriber: SubscriberObject],
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link groupMemberDelete}
    */
   subscriberLeft: [group: GroupObject, subscriber: SubscriberObject],
   /**
-   * @deprecated Will be removed in 1.0.0
+   * @deprecated Will be removed in 1.2.0
    * @use {@link groupMemberUpdate}
    */
   groupSubscriberUpdate: [group: GroupObject, subscriber: SubscriberObject],

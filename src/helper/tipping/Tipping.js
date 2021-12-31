@@ -25,15 +25,19 @@ class Tipping extends BaseHelper {
         throw new Error('targetSubscriberId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetSubscriberId)) {
         throw new Error('targetSubscriberId must be a valid number');
+      } else if (!validator.isType(targetSubscriberId, 'number')) {
+        throw new Error('targetSubscriberId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
-      if (validator.isNullOrUndefined(targetSubscriberId)) {
-        throw new Error('targetSubscriberId cannot be null or undefined');
-      } else if (!validator.isValidNumber(targetSubscriberId)) {
-        throw new Error('targetSubscriberId must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
-        throw new Error('targetSubscriberId cannot be less than or equal to 0');
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
       if (validator.isNullOrUndefined(context)) {
@@ -53,6 +57,8 @@ class Tipping extends BaseHelper {
           throw new Error('id cannot be null or undefined');
         } else if (!validator.isValidNumber(context.id)) {
           throw new Error('id must be a valid number');
+        } else if (!validator.isType(context.id, 'number')) {
+          throw new Error('id must be type of number');
         } else if (validator.isLessThanOrEqualZero(context.id)) {
           throw new Error('id cannot be less than or equal to 0');
         }
@@ -65,18 +71,22 @@ class Tipping extends BaseHelper {
 
         if (!Reflect.has(charm, 'quantity')) {
           throw new Error('charm must have quantity');
-        } else if (validator.isNullOrUndefined(targetSubscriberId)) {
-          throw new Error('targetSubscriberId cannot be null or undefined');
-        } else if (!validator.isValidNumber(targetSubscriberId)) {
-          throw new Error('targetSubscriberId must be a valid number');
-        } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
-          throw new Error('targetSubscriberId cannot be less than or equal to 0');
+        } else if (validator.isNullOrUndefined(charm.quantity)) {
+          throw new Error('quantity cannot be null or undefined');
+        } else if (!validator.isValidNumber(charm.quantity)) {
+          throw new Error('quantity must be a valid number');
+        } else if (!validator.isType(charm.quantity, 'number')) {
+          throw new Error('quantity must be type of number');
+        } else if (validator.isLessThanOrEqualZero(charm.quantity)) {
+          throw new Error('quantity cannot be less than or equal to 0');
         }
 
         if (!Reflect.has(charm, 'id')) {
           throw new Error('charm must have property id');
         } else if (!validator.isValidNumber(charm.id)) {
           throw new Error('id must be a valid number');
+        } else if (!validator.isType(charm.id, 'number')) {
+          throw new Error('id must be type of number');
         } else if (validator.isLessThanOrEqualZero(charm.id)) {
           throw new Error('id cannot be less than or equal to 0');
         }
@@ -103,29 +113,30 @@ class Tipping extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (validator.isNullOrUndefined(timestamp)) {
-        throw new Error('timestamp cannot be null or undefined');
-      } else if (!validator.isValidNumber(timestamp)) {
-        throw new Error('timestamp must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new Error('timestamp cannot be less than or equal to 0');
-      }
+
       if (validator.isNullOrUndefined(limit)) {
         throw new Error('limit cannot be null or undefined');
       } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
+      } else if (!validator.isType(limit, 'number')) {
+        throw new Error('limit must be type of number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
       }
+
       if (validator.isNullOrUndefined(offset)) {
         throw new Error('offset cannot be null or undefined');
       } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
+      } else if (!validator.isType(offset, 'number')) {
+        throw new Error('offset must be type of number');
       } else if (validator.isLessThanZero(offset)) {
-        throw new Error('targetSubscriberId cannot be less than 0');
+        throw new Error('offset cannot be less than 0');
       }
 
       return await this._websocket.emit(
@@ -149,29 +160,30 @@ class Tipping extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
-      if (validator.isNullOrUndefined(timestamp)) {
-        throw new Error('timestamp cannot be null or undefined');
-      } else if (!validator.isValidNumber(timestamp)) {
-        throw new Error('timestamp must be a valid number');
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new Error('timestamp cannot be less than or equal to 0');
-      }
+
       if (validator.isNullOrUndefined(limit)) {
         throw new Error('limit cannot be null or undefined');
       } else if (!validator.isValidNumber(limit)) {
         throw new Error('limit must be a valid number');
+      } else if (!validator.isType(limit, 'number')) {
+        throw new Error('limit must be type of number');
       } else if (validator.isLessThanOrEqualZero(limit)) {
         throw new Error('limit cannot be less than or equal to 0');
       }
+
       if (validator.isNullOrUndefined(offset)) {
         throw new Error('offset cannot be null or undefined');
       } else if (!validator.isValidNumber(offset)) {
         throw new Error('offset must be a valid number');
+      } else if (!validator.isType(offset, 'number')) {
+        throw new Error('offset must be type of number');
       } else if (validator.isLessThanZero(offset)) {
-        throw new Error('targetSubscriberId cannot be less than 0');
+        throw new Error('offset cannot be less than 0');
       }
 
       return await this._websocket.emit(
@@ -196,6 +208,8 @@ class Tipping extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
@@ -241,6 +255,8 @@ class Tipping extends BaseHelper {
         throw new Error('targetGroupId cannot be null or undefined');
       } else if (!validator.isValidNumber(targetGroupId)) {
         throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
       } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }

@@ -22,6 +22,8 @@ class Achievement {
           throw new Error('id cannot be null or undefined');
         } else if (!validator.isValidNumber(achievement.id)) {
           throw new Error('id must be a valid number');
+        } else if (!validator.isType(achievement.id, 'number')) {
+          throw new Error('id must be type of number');
         } else if (validator.isLessThanOrEqualZero(achievement.id)) {
           throw new Error('id cannot be less than or equal to 0');
         }
@@ -34,6 +36,8 @@ class Achievement {
             throw new Error('categoryId cannot be null or undefined');
           } else if (!validator.isValidNumber(additionalInfo.categoryId)) {
             throw new Error('categoryId must be a valid number');
+          } else if (!validator.isType(achievement.categoryId, 'number')) {
+            throw new Error('categoryId must be type of number');
           } else if (validator.isLessThanOrEqualZero(additionalInfo.categoryId)) {
             throw new Error('categoryId cannot be less than or equal to 0');
           }
