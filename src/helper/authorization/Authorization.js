@@ -1,19 +1,19 @@
 const BaseHelper = require('../BaseHelper');
 const validator = require('../../validator');
 
+const AUTHORIZATION_LIST_PREFIX = 'authorization.list';
+
 class Authorization extends BaseHelper {
   constructor (api) {
-    super(api);
-
-    this._authorized = [];
+    super(api, true);
   }
 
   async list () {
-    return this._authorized;
+    return this._cache.getItem(AUTHORIZATION_LIST_PREFIX) || [];
   }
 
   async clear () {
-    this._authorized = [];
+    return this._cache.delItem(AUTHORIZATION_LIST_PREFIX);
   }
 
   async isAuthorized (subscriberIds) {
@@ -35,7 +35,9 @@ class Authorization extends BaseHelper {
         }
       }
 
-      const results = subscriberIds.map((subscriberId) => this._authorized.includes(subscriberId));
+      const authorizationList = await this._cache.getItem(AUTHORIZATION_LIST_PREFIX) || [];
+
+      const results = subscriberIds.map((subscriberId) => authorizationList.includes(subscriberId));
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
@@ -63,9 +65,11 @@ class Authorization extends BaseHelper {
         }
       }
 
+      const authorizationList = await this._cache.getItem(AUTHORIZATION_LIST_PREFIX) || [];
+
       const results = subscriberIds.reduce((result, value) => {
-        if (!this._authorized.includes(value)) {
-          this._authorized.push(value);
+        if (!authorizationList.includes(value)) {
+          authorizationList.push(value);
           result.push(true);
         } else {
           result.push(false);
@@ -73,6 +77,8 @@ class Authorization extends BaseHelper {
 
         return result;
       }, []);
+
+      await this._cache.setItem(AUTHORIZATION_LIST_PREFIX, authorizationList);
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
@@ -100,9 +106,11 @@ class Authorization extends BaseHelper {
         }
       }
 
+      const authorizationList = await this._cache.getItem(AUTHORIZATION_LIST_PREFIX) || [];
+
       const results = subscriberIds.reduce((result, value) => {
-        if (this._authorized.includes(value)) {
-          this._authorized.splice(this._authorized.indexOf(value), 1);
+        if (authorizationList.includes(value)) {
+          authorizationList.splice(authorizationList.indexOf(value), 1);
           result.push(true);
         } else {
           result.push(false);
@@ -110,6 +118,8 @@ class Authorization extends BaseHelper {
 
         return result;
       }, []);
+
+      await this._cache.setItem(AUTHORIZATION_LIST_PREFIX, authorizationList);
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
