@@ -39,7 +39,7 @@ module.exports = class CommandHandler {
 
   isCommand (message) {
     return this._commands.find((command) => {
-      if (this._api.phrase().isRequestedPhrase(command.trigger, message.body.split(/[\s]+/)[0])) {
+      if (this._api.phrase().isRequestedPhrase(command.phraseName, message.body.split(/[\s]+/)[0])) {
         const commandCallbacks = command.commandCallbackTypes;
 
         // Check to see if the command is valid for the message type
@@ -72,7 +72,7 @@ module.exports = class CommandHandler {
       };
 
       const commandCollection = this._commands.find((command) => {
-        const match = this._api.phrase().getAllByName(command.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+        const match = this._api.phrase().getAllByName(command.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
         if (match) {
           if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
@@ -111,7 +111,7 @@ module.exports = class CommandHandler {
     }
 
     const command = parentCommand.children.find((child) => {
-      const match = this._api.phrase().getAllByName(child.trigger).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+      const match = this._api.phrase().getAllByName(child.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
       if (match) {
         if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {
