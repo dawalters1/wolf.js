@@ -4,8 +4,8 @@
 exports.ServerEvents = {
   GROUP_AUDIO_COUNT_UPDATE: 'group audio count update',
   GROUP_AUDIO_REQUEST_ADD: 'group audio request add',
-  GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
   GROUP_AUDIO_REQUEST_CLEAR: 'group audio request clear',
+  GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
   GROUP_EVENT_CREATE: 'group event create',
@@ -14,19 +14,25 @@ exports.ServerEvents = {
   GROUP_MEMBER_DELETE: 'group member delete',
   GROUP_MEMBER_UPDATE: 'group member update',
   GROUP_UPDATE: 'group update',
+
   MESSAGE_SEND: 'message send',
   MESSAGE_UPDATE: 'message update',
+
   PRESENCE_UPDATE: 'presence update',
+
   SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete',
   SUBSCRIBER_CONTACT_ADD: 'subscriber contact add',
   SUBSCRIBER_CONTACT_DELETE: 'subscriber contact delete',
   SUBSCRIBER_GROUP_EVENT_ADD: 'subscriber group event add',
   SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriber group event delete',
+
   SUBSCRIBER_UPDATE: 'subscriber update',
   TIP_ADD: 'tip add',
+
   WELCOME: 'welcome'
 };
+
 /**
  * @private
  */
@@ -35,18 +41,21 @@ exports.Events = {
   CONNECTING: 'connecting',
   CONNECTION_ERROR: 'connectError',
   CONNECTION_TIMEOUT: 'connectTimeout',
+
   DISCONNECTED: 'disconnected',
+
   ERROR: 'error',
+
   GROUP_AUDIO_COUNT_UPDATE: 'groupAudioCountUpdate',
   GROUP_AUDIO_REQUEST_ADD: 'groupAudioRequestAdd',
+  GROUP_AUDIO_REQUEST_CLEAR: 'groupAudioRequestListClear',
   GROUP_AUDIO_REQUEST_DELETE: 'groupAudioRequestDelete',
   GROUP_AUDIO_REQUEST_EXPIRE: 'groupAudioRequestExpire',
-  GROUP_AUDIO_REQUEST_CLEAR: 'groupAudioRequestListClear',
   GROUP_AUDIO_SLOT_UPDATE: 'groupAudioSlotUpdate',
   GROUP_AUDIO_UPDATE: 'groupAudioUpdate',
   GROUP_EVENT_CREATE: 'groupEventCreate',
-  GROUP_EVENT_UPDATE: 'groupEventUpdate',
   GROUP_EVENT_DELETE: 'groupEventDelete',
+  GROUP_EVENT_UPDATE: 'groupEventUpdate',
   GROUP_MEMBER_ADD: 'groupMemberAdd',
   GROUP_MEMBER_DELETE: 'groupMemberDelete',
   GROUP_MEMBER_UPDATE: 'groupMemberUpdate',
@@ -54,26 +63,40 @@ exports.Events = {
   GROUP_MESSAGE_UPDATE: 'groupMessageUpdate',
   GROUP_TIP_ADD: 'groupTipAdd',
   GROUP_UPDATE: 'groupUpdate',
+
   INTERNAL_ERROR: 'internalError',
+
   JOINED_GROUP: 'joinedGroup',
+
   LEFT_GROUP: 'leftGroup',
+
   LOG: 'log',
+
   LOGIN_FAILED: 'loginFailed',
   LOGIN_SUCCESS: 'loginSuccess',
+
   NOTIFICATION_RECEIVED: 'notificationReceived',
+
   PACKET_RECEIVED: 'packetReceived',
   PACKET_SENT: 'packetSent',
+
   PING: 'ping',
+
   PONG: 'pong',
+
   PRESENCE_UPDATE: 'presenceUpdate',
+
   PRIVATE_MESSAGE: 'privateMessage',
   PRIVATE_MESSAGE_ACCEPT_RESPONSE: 'privateMessageAcceptResponse',
   PRIVATE_MESSAGE_UPDATE: 'privateMessageUpdate',
   PRIVATE_TIP_ADD: 'privateTipAdd',
+
   READY: 'ready',
+
   RECONNECTED: 'reconnected',
   RECONNECTING: 'reconnecting',
   RECONNECT_FAILED: 'reconnectFailed',
+
   STAGE_CLIENT_BROADCAST_END: 'stageClientBroadcastEnd',
   STAGE_CLIENT_CONNECTED: 'stageClientConnected',
   STAGE_CLIENT_CONNECTING: 'stageClientConnecting',
@@ -88,6 +111,7 @@ exports.Events = {
   STAGE_CLIENT_UNMUTED: 'stageClientBroadcastUnmuted',
   STAGE_CLIENT_UNPAUSED: 'stageClientBroadcastUnpaused',
   STAGE_CLIENT_VIEWER_COUNT_CHANGED: 'stageClientBroadcastViewerCountChanged',
+
   SUBSCRIBER_BLOCK_ADD: 'subscriberBlockAdd',
   SUBSCRIBER_BLOCK_DELETE: 'subscriberBlockDelete',
   SUBSCRIBER_CONTACT_ADD: 'subscriberContactAdd',
@@ -95,15 +119,19 @@ exports.Events = {
   SUBSCRIBER_GROUP_EVENT_ADD: 'subscriberGroupEventAdd',
   SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriberGroupEventDelete',
   SUBSCRIBER_UPDATE: 'subscriberUpdate',
+
   WELCOME: 'welcome'
 };
+
 /**
  * @private
  */
+
 exports.MessageTypes = {
   GROUP: 'group',
   PRIVATE: 'private'
 };
+
 /**
  * @private
  */
@@ -125,15 +153,13 @@ exports.Commands = {
   GROUP_AUDIO_BROADCAST_DISCONNECT: 'group audio broadcast disconnect',
   GROUP_AUDIO_BROADCAST_UPDATE: 'group audio broadcast update',
   GROUP_AUDIO_CONSUME: 'group audio consume',
+  GROUP_AUDIO_REQUEST_ADD: 'group audio request add',
+  GROUP_AUDIO_REQUEST_CLEAR: 'group audio request clear',
+  GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
+  GROUP_AUDIO_REQUEST_LIST: 'group audio request list',
   GROUP_AUDIO_SLOT_LIST: 'group audio slot list',
   GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
   GROUP_AUDIO_UPDATE: 'group audio update',
-
-  GROUP_AUDIO_REQUEST_LIST: 'group audio request list',
-  GROUP_AUDIO_REQUEST_ADD: 'group audio request add',
-  GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
-  GROUP_AUDIO_REQUEST_CLEAR: 'group audio request clear',
-
   GROUP_CREATE: 'group create',
   GROUP_EVENT: 'group event',
   GROUP_EVENT_CREATE: 'group event create',
@@ -178,8 +204,6 @@ exports.Commands = {
   STAGE_LIST: 'stage list',
 
   STORE_CREDIT_BALANCE: 'store credit balance',
-
-  // TODO: Support store when released
 
   SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete',
@@ -231,6 +255,7 @@ exports.Capability = {
   SILENCED: 8,
   OWNER: 32
 };
+
 exports.Category = {
   NOT_SPECIFIED: 0,
   BUSINESS: 8,
@@ -246,17 +271,22 @@ exports.Category = {
   SPORTS: 19,
   TRAVEL_AND_LOCAL: 18
 };
+
 exports.ContextType = {
   MESSAGE: 'message',
   STAGE: 'stage'
 };
+
 exports.MessageLinkingType = {
   EXTERNAL: 'external',
-  SUBSCRIBER_PROFILE: 'subscriberProfile', // wolf://user/{subscriberId}/profile
-  SUBSCRIBER_CHAT: 'subscriberChat', // wolf://user/{subscriberId}
+
+  GROUP_CHAT: 'groupChat', // wolf://group/{groupid}
   GROUP_PROFILE: 'groupProfile', // wolf://group/{groupId}/profile,
-  GROUP_CHAT: 'groupChat' // wolf://group/{groupid}
+
+  SUBSCRIBER_CHAT: 'subscriberChat', // wolf://user/{subscriberId}
+  SUBSCRIBER_PROFILE: 'subscriberProfile' // wolf://user/{subscriberId}/profile
 };
+
 exports.DeviceType = {
   OTHER: 0,
   BOT: 1,
@@ -265,16 +295,21 @@ exports.DeviceType = {
   ANDROID: 7,
   WEB: 8
 };
+
 exports.EmbedType = {
-  IMAGE_PREVIEW: 'imagePreview',
   GROUP_PREVIEW: 'groupPreview',
+
+  IMAGE_PREVIEW: 'imagePreview',
+
   LINK_PREVIEW: 'linkPreview'
 };
+
 exports.Gender = {
   NOT_SPECIFIED: 0,
   MALE: 1,
   FEMALE: 2
 };
+
 exports.Language = {
   NOT_SPECIFIED: 0,
   ENGLISH: 1,
@@ -314,20 +349,23 @@ exports.Language = {
   UKRAINIAN: 44,
   BULGARIAN: 45
 };
+
 exports.LoginDevice = {
-  IPHONE: 'iphone',
-  IPAD: 'ipad',
   ANDROID: 'android',
+  IPAD: 'ipad',
+  IPHONE: 'iphone',
   WEB: 'web'
 };
+
 exports.LoginType = {
+  APPLE: 'apple',
   EMAIL: 'email',
-  GOOGLE: 'google',
   FACEBOOK: 'facebook',
-  TWITTER: 'twitter',
+  GOOGLE: 'google',
   SNAPCHAT: 'snapchat',
-  APPLE: 'apple'
+  TWITTER: 'twitter'
 };
+
 exports.LookingFor = {
   NOT_SPECIFIED: 0,
   FRIENDSHIP: 1,
@@ -335,25 +373,31 @@ exports.LookingFor = {
   RELATIONSHIP: 4,
   NETWORKING: 8
 };
+
 exports.MessageFilterTier = {
   OFF: 0,
   RELAXED: 3,
   RECOMMENDED: 2,
   STRICT: 1
 };
+
 exports.MessageType = {
-  TEXT_PLAIN: 'text/plain',
+  APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
+
+  AUDIO_AAC: 'audio/aac',
+  AUDIO_SPEEX: 'audio/x-speex',
+
+  IMAGE_GIF: 'image/gif',
+  IMAGE_JPEG: 'image/jpeg',
+  IMAGE_JPEGHTML: 'image/jpeghtml',
+
   TEXT_HTML: 'text/html',
   TEXT_IMAGE: 'text/image_link',
-  IMAGE_JPEG: 'image/jpeg',
-  IMAGE_GIF: 'image/gif',
-  AUDIO_AAC: 'audio/aac',
-  TEXT_VOICE: 'text/voice_link',
-  AUDIO_SPEEX: 'audio/x-speex',
-  IMAGE_JPEGHTML: 'image/jpeghtml',
-  APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
-  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: 'text/palringo-private-request-response'
+  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: 'text/palringo-private-request-response',
+  TEXT_PLAIN: 'text/plain',
+  TEXT_VOICE: 'text/voice_link'
 };
+
 exports.OnlineState = {
   OFFLINE: 0,
   ONLINE: 1,
@@ -362,6 +406,7 @@ exports.OnlineState = {
   BUSY: 5,
   IDLE: 9
 };
+
 exports.Privilege = {
   SUBSCRIBER: 1,
   BOT_TESTER: 1 << 1,
@@ -369,6 +414,7 @@ exports.Privilege = {
   CONTENT_SUBMITER: 1 << 3,
   SELECTCLUB_1: 1 << 4,
   ELITECLUB_1: 1 << 6,
+  RANK_1: 1 << 7,
   VOLUNTEER: 1 << 9,
   SELECTCLUB_2: 1 << 10,
   ALPHA_TESTER: 1 << 11,
@@ -387,6 +433,7 @@ exports.Privilege = {
   ENTERTAINER: 1 << 29,
   SHADOW_BANNED: 1 << 30
 };
+
 exports.Relationship = {
   NOT_SPECIFIED: 0,
   SINGLE: 1,
@@ -396,20 +443,24 @@ exports.Relationship = {
   COMPLICATED: 5,
   OPEN: 6
 };
+
 exports.SearchType = {
   GROUP: 'group',
   SUBSCRIBER: 'subscriber'
 };
+
 exports.TipDirection = {
   SENT: 'sent',
   RECEIVED: 'received'
 };
+
 exports.TipPeriod = {
   ALL_TIME: 'alltime',
   DAY: 'day',
   WEEK: 'week',
   MONTH: 'month'
 };
+
 exports.TipType = {
   CHARM: 'charm',
   SUBSCRIBER: 'subscriber',

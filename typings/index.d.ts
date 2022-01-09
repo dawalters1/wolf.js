@@ -1,10 +1,10 @@
 /**
- * Typings support for 1.00.0
+ * Typings support for 1.0.0
  * Created: 8/11/21
- * Updated: 31/12/21
+ * Updated: 9/1/22
  */
 
- import type { Readable } from "stream";
+import type { Readable } from "stream";
   
 export class ResponseObject<T = undefined> {
   private constructor();
@@ -14,7 +14,7 @@ export class ResponseObject<T = undefined> {
   public headers: Object;
  
   public success: Boolean;
- }
+}
  
  //#region Command
 export class Command {
@@ -36,6 +36,7 @@ export class CommandObject {
   public timestamp: Number;
   public type: String;
 }
+
 export class CommandHandler{
   private constructor();
   /**
@@ -44,7 +45,8 @@ export class CommandHandler{
    */
   public isCommand(message: MessageObject) : Boolean;
   public register(Commands: Command): void;
- }
+}
+
 export class CommandContextObject{
   public isGroup: Boolean;
   public language: String;
@@ -54,7 +56,7 @@ export class CommandContextObject{
   public sourceSubscriberId: Number;
   public timestamp: Number;
   public type: MessageType;
- }
+}
  
  //#endregion
  
@@ -70,7 +72,8 @@ export class AchievementObject{
   public name: String;
   public parentId: Number;
   public typeId: Number;
- }
+}
+
 export class AchievementUnlockableObject{
   public id: Number;
   public additionalInfo: 
@@ -79,19 +82,23 @@ export class AchievementUnlockableObject{
          awardedAt: Date,  
          categoryId: Number 
      }
- }
+}
+
 export class AchievementCategoryObject {
   public id: Number;
   public name: String;
- }
+}
+
 export class BlacklistItemObject{
   public id: Number;
   public regex: String
- }
+}
+
 export class CharmSelectedObject{
   public position: Number;
   public charmId: Number;
- }
+}
+
 export class CharmObject{
   public cost: Number;
   public description: String;
@@ -99,14 +106,16 @@ export class CharmObject{
   public imageUrl: String;
   public name: String;
   public productId: Number;
- }
+}
+
 export class CharmSubscriberObject {
   public charmId: Number;
   public expireTime: Date;
   public id: Number;
   public sourceSubscriberId: Number;
   public subscriberId: Number;
- }
+}
+
 export class CharmSubscriberStatisticsObject {
   public subscriberId: Number;
   public totalActive: Number;
@@ -114,22 +123,25 @@ export class CharmSubscriberStatisticsObject {
   public totalGiftedReceived: Number;
   public totalGiftedSent: Number;
   public totalLifeTime: Number;
- }
+}
+
 export class CharmSubscriberSummaryObject{
   public charmId: Number;
   public expireTime: Date;
   public giftCount: Number;
   public total: Number;
- }
+}
+
 export class ConfigCommandSettingsObject {
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
   public processOwnMessages: Boolean;
- }
+}
 
- export class ConfigMessageSettingsObject {
+export class ConfigMessageSettingsObject {
   public processOwnMessages: Boolean;
- } 
+} 
+
 export class ConfigAppObject {
   public developerId: Number;
   /**
@@ -140,7 +152,8 @@ export class ConfigAppObject {
   public defaultLanguage: String;
   public commandSettings: ConfigCommandSettingsObject;
   public messageSettings: ConfigMessageSettingsObject;
- }
+}
+
 export class ConfigObject {
   public keyword: String;
   public app: ConfigAppObject;
@@ -150,7 +163,7 @@ export class ConfigObject {
    * @param path - The path to the property in the config to get
    */
   public get(path: String): any;
- }
+}
  
 export class ConfigOptionsObject {
   public keyword: String;
@@ -158,15 +171,18 @@ export class ConfigOptionsObject {
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
   public developerId: Number;
- }
+}
+
 export class CognitoObject{
   public token: String;
   public identity: String;
- }
+}
+
 export class DiscoveryRecipeObject{
   public type: String;
   public idList: Number;
- }
+}
+
 export class DiscoverySectionElementObject{
   public onInvalid: String;
   public aspect: 
@@ -196,7 +212,8 @@ export class DiscoverySectionElementObject{
   public foregroundColour: String;
   public backgroundColour: String;
  
- }
+}
+
 export class DiscoverySectionObject{
   public id: Number;
   public validity :
@@ -209,12 +226,13 @@ export class DiscoverySectionObject{
    * Refer to elementType enum
    */
   public elements: { [key:string]: DiscoverySectionElementObject}
- }
+}
+
 export class DiscoveryObject{
   public title: String;
   public name: String;
   public section: Array<DiscoverySectionObject>;
- }
+}
  
 export class EventGroupObject {
   public id: Number;
@@ -229,7 +247,8 @@ export class EventGroupObject {
    * Only available when creating, updating events
    */
   public thumbnailUpload: ResponseObject;
- }
+}
+
 export class EventObject {
   public attendanceCount: Number;
   public category: Number;
@@ -243,7 +262,7 @@ export class EventObject {
   public longDescription: String;
   public shortDescription: String;
   public title: String;
- }
+}
 
 export class FormattedUrlObject {
   public url: String;
@@ -255,7 +274,8 @@ export class GroupAdminActionObject{
   public sourceId: Number;
   public targetId: Number;
   public action: String;
- }
+}
+
 export class GroupProfileBuilder {
   public setName(name: String): GroupProfileBuilder;
   public setTagLine(tagLine: String): GroupProfileBuilder;
@@ -270,37 +290,41 @@ export class GroupProfileBuilder {
   public setStageLevel(level: Number): GroupProfileBuilder;
   public create() : Promise<ResponseObject>;
   public save(): Promise<ResponseObject>;
- }
+}
+
 export class GroupSubscriberAdditionalInfoObject{
   public hash: String;
   public nickname: String;
   public privileges: Number;
   public onlineState: OnlineState;
- }
+}
+
 export class GroupSubscriberObject{
   public id: Number;
   public groupId: Number;
   public additionalInfo: GroupSubscriberAdditionalInfoObject;
   public capabilities: Capability;
- }
+}
+
 export class GroupAudioConfigObject{
   public id: Number;
   public enabled: Boolean;
   public minRepLevel: Number;
   public stageId: Number;
   public sourceSubscriberId: Number;
- }
+}
+
 export class GroupAudioCountObject{
   public id: Number;
   public consumerCount: Number;
   public broadcasterCount: Number;
- }
+}
  
 export class GroupAudioRequestObject{
   public slotId: Number;
   public reservedOccupierId: Number;
   public reservedExpiresAt: Date;
- }
+}
  
 export class GroupAudioSlotObject{
   public id: Number;
@@ -311,7 +335,8 @@ export class GroupAudioSlotObject{
   public connectionState: String;
   public reservedExpiresAt: Date;
   public reservedOccupierId: Number;
- }
+}
+
 export class GroupExtendedObject{
   public discoverable: Boolean;
   public advancedAdmin: Boolean;
@@ -322,7 +347,8 @@ export class GroupExtendedObject{
   public language: Language;
   public longDescription: String
   public id: Number;
- }
+}
+
 export class GroupObject{
   public exists: Boolean;
   public id: Number;
@@ -350,7 +376,8 @@ export class GroupObject{
   public leave(): Promise<ResponseObject>;
   public getAvatar(size: Number): Promise<Buffer>
   public updateAvatar(avatar: Buffer): Promise<ResponseObject>
- }
+}
+
 export class GroupStatsActiveSubscriberObject {
   public actionCount: Number;
   public emoticonCount: Number;
@@ -369,14 +396,16 @@ export class GroupStatsActiveSubscriberObject {
   public textCount: Number;
   public voiceCount: Number;
   public wordCount: Number;
- }
+}
+
 export class GroupStatsTopSubscriberObject {
   public nickname: String;
   public percentage: Number;
   public subId: Number; 
   public value: Number;
   public randomQoute: String;
- }
+}
+
 export class GroupStatsObject{
   public details : 
      {
@@ -413,7 +442,8 @@ export class GroupStatsObject{
   public trends:  Array<{ day: number, lineCount: Number}>
   public trendsDay:  Array<{ day: number, lineCount: Number}>
   public trendsHour: Array<{ hour: number, lineCount: Number}>
- }
+}
+
 export class IdHashObject{
   public id: Number;
   public hash: String;
@@ -421,7 +451,8 @@ export class IdHashObject{
    * Not always provided
    */
   public nickname: String;
- }
+}
+
 export class LinkMetadataObject{
   public description: String; 
   public domain: String; 
@@ -429,7 +460,7 @@ export class LinkMetadataObject{
   public imageUrl: String; 
   public isOfficial: Boolean; 
   public title: String
- }
+}
 
 export class MessageLinkingObject{
   public start: Number;
@@ -437,23 +468,27 @@ export class MessageLinkingObject{
   public value: String | Number;
   public MessageLinkingType: MessageLinkingType
 } 
+
 export class MessageSettingsObject{
   public spamFilter: 
      {
          enabled: Boolean;
          tier: MessageFilterTier
      }
- }
+}
+
 export class MessageOptionsObject {
   public chunk: Boolean;
   public chunkSize: Number;
   public includeEmbeds: Boolean;
   public links: Array<MessageLinkingObject>
- }
+}
+
 export class MessageResponseObject {
   public uuid: String;
   public timestamp: Number;
- }
+}
+
 export class MessageEmbedObject{
   public type: EmbedType;
   public groupId: Number;
@@ -461,31 +496,37 @@ export class MessageEmbedObject{
   public title: String;
   public image: Buffer;
   public body: String;
- }
+}
+
 export class MessageFormattingGroupLinkObject{
   public start: Number;
   public end: Number;
   public groupId: String;
- }
+}
+
 export class MessageFormattingLinkObject{
   public start: Number;
   public end: Number;
   public url: String;
- }
+}
+
 export class MessageFormattingObject {
   public groupLinks: Array<MessageFormattingGroupLinkObject>;
   public links: Array<MessageFormattingLinkObject>;
- }
+}
+
 export class MessageMetadataObject{
   public formatting: MessageFormattingObject;
   public isDeleted: Boolean;
   public isSpam: Boolean;
   public isTipped: Boolean;
- }
+}
+
 export class MessageEditObject{
   public subscriberId: Number;
   public timestamp: Number;
- }
+}
+
 export class MessageObject {
   public id: string;
   public body: String;
@@ -498,7 +539,8 @@ export class MessageObject {
   public edited: MessageEditObject;
   public type: MessageType;
   public isCommand: Boolean;
- }
+}
+
 export class NotificationObject {
   public actions: 
      Array<
@@ -527,52 +569,61 @@ export class NotificationObject {
   public startsAt: Date;
   public title: String;
   public type: Number;
- }
+}
+
 export class PhraseObject {
   public name: String;
   public value: String;
   public language: String;
- }
+}
+
 export class PhraseCountObject {
   /**
    * example: {"en": 15, "ar": 4}
    */
   public countByLanguage: { [key: string]: number}
   public total: Number;
- }
+}
+
 export class SearchObject
  {
   public type: SearchType;
   public id: Number; 
   public hash: String;
   public reason: String
- }
+}
+
 export class StageGroupObject{
   public id: Number;
   public expireTime: Date;
- }
+}
+
 export class StageObject{
   public id: Number;
   public name: String;
   public schemaUrl: String;
   public imageUrl: String;
   public productId: Number;
- }
+}
+
 export class StageClientUpdatedObject{
   public slotId: Number;
   public duration: Number;
   public sourceSubscriberId: Number;
   public targetGroupId: Number;
- }
+}
+
 export class StageClientViewerObject{
   public targetGroupId: Number;
   public count: Number;
 }
+
 export class StageSlotRequestObject{
   public subscriberId: Number;
   public hash: String;
   public expiresAt: Date;
- }    
+}  
+
 export class SubscriberProfileBuilder {
   private constructor(api: WOLFBot, subscriber: SubscriberObject);
   public setNickname(nickname: String): SubscriberProfileBuilder;
@@ -587,7 +638,8 @@ export class SubscriberProfileBuilder {
   public addUrl(url: String): SubscriberProfileBuilder;
   public removeUrl(url: string): SubscriberProfileBuilder;
   public save(): Promise<ResponseObject>;
- }
+}
+
 export class SubscriberObject {
   private constructor(api: WOLFBot, subscriber: SubscriberObject);
  
@@ -614,7 +666,7 @@ export class SubscriberObject {
   public reputation: Number;
   public status: String;
   public language: String;
- }
+}
 
 export class TimerJobObject{
   public handler: String;
@@ -623,29 +675,33 @@ export class TimerJobObject{
   public timestamp: Number;
   public id: String;
   public remaining: Number
- }
+}
 
 export class TipDetailsObject {
   public id: Number;
   public charmList: Array<TipCharmObject>; 
   public version: Number;
- }
+}
+
 export class TipSummaryObject {
   public id: Number;
   public list: Array<TipCharmObject>;
   public version: Number;
- }
+}
+
 export class TipContextObject{
   public type: String;
   public id: Number;
- }
+}
+
 export class TipCharmObject {
   public id: Number;
   public quantity: Number;
   public credits: Number;
   public magnitude: Number;
   public subscriber: IdHashObject
- }
+}
+
 export class TipLeaderboardItemObject{
   public rank: Number;
   public charmId: Number;
@@ -653,37 +709,43 @@ export class TipLeaderboardItemObject{
   public credits: Number;
   public group: IdHashObject;
   public subscriber: IdHashObject;
- }
+}
+
 export class TipLeaderboardSumamryObject{
   public topGifters: Array<IdHashObject>;
   public topGroups: Array<IdHashObject>;
   public topSpenders: Array<IdHashObject>;
- }
+}
+
 export class TipLeaderboardObject{
   public leaderboard: Array<TipLeaderboardItemObject>
- }
+}
+
 export class PresenceObject{
   public id: Number;
   public deviceType: DeviceType;
   public onlineState: OnlineState;
   public lastActive: Number;
 }
+
 export class WelcomeBannerObject{
   public notification:  {[key:string]: Object};
   public promotion:  {[key:string]: Object};
- }
+}
+
 export class WelcomeEndpointConfigObject{  
   public avatarEndpoint: String;
   public mmsUploadEndpoint: String;
   public banner: WelcomeBannerObject;
- }
+}
+
 export class WelcomeObject{
   public ip: String;
   public country: String;
   public token: String;
   public endpointConfig: WelcomeEndpointConfigObject;
   public loggedInUser: SubscriberObject;
- }
+}
  //#endregion
  
  //#region Client Typings
@@ -696,7 +758,8 @@ export class Handler {
    * @param packet [ string, object ]
    */
   public handle(packet: Object): void;
- }
+}
+
 export class Websocket {
   private constructor();
   /**
@@ -714,7 +777,8 @@ export class Websocket {
    * @param data - The body
    */
   public emit(command: String, data: Object): Promise<ResponseObject>
- }
+}
+
 export class MultiMediaService {
   private constructor();
  
@@ -748,7 +812,8 @@ export class MultiMediaService {
    * @param mimeType - The buffer mimeType
    */
   public uploadEventThumbnail(eventId: Number, thumbnail: Buffer, mimeType: 'image/jpeg'): Promise<ResponseObject>;
- }
+}
+
 export class WOLFBot {
   public constructor();
  
@@ -945,7 +1010,8 @@ export class WOLFBot {
    * Regex used to split a string at spaces, newlines, tabs & commas
    */
   public SPLIT_REGEX: RegExp;
- }
+}
+
 export abstract class BaseHelper {
   public constructor(api: WOLFBot);
  
@@ -955,7 +1021,8 @@ export abstract class BaseHelper {
   private _cleanup(): void;
   private _process(...args: any): void;
  
- }
+}
+
 export class AchievementSubscriber{
   private constructor(api: WOLFBot);
  
@@ -964,7 +1031,8 @@ export class AchievementSubscriber{
    * @param subscriberId - The id of the subscriber
    */
   public getById(subscriberId: Number): Promise<Array<AchievementUnlockableObject>>
- }
+}
+
 export class AchievementGroup{
   private constructor(api: WOLFBot);
  
@@ -973,7 +1041,8 @@ export class AchievementGroup{
    * @param targetGroupId - The id of the group
    */
   public getById(targetGroupId: Number): Promise<Array<AchievementUnlockableObject>>
- }
+}
+
 export class Achievement extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1005,7 +1074,8 @@ export class Achievement extends BaseHelper {
    * @param requestNew - Whether or not to request new data from the server
    */
   public getByIds(achievementIds: Array<Number>, language: Language, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
- }
+}
+
 export class Authorization extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1032,7 +1102,8 @@ export class Authorization extends BaseHelper {
    * @param subscriberIds - The id or ids of the subscribers to unauthorize
    */
   public unauthorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
- }
+}
+
 export class Banned extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1059,7 +1130,8 @@ export class Banned extends BaseHelper {
    * @param subscriberIds - The id or ids of the subscribers to unauthorize
    */    
   public unban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
- }
+}
+
 export class Blocked extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1082,7 +1154,8 @@ export class Blocked extends BaseHelper {
    * @param subscriberId - The id of the subscriber to block
    */
   public unblock(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
- }
+}
+
 export class Charm extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1138,7 +1211,8 @@ export class Charm extends BaseHelper {
    * Set the charms that appear over the bots avatar
    */    
   public set(charms: CharmSelectedObject | Array<CharmSelectedObject>): Promise<ResponseObject>;
- }
+}
+
 export class Contact extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1161,7 +1235,8 @@ export class Contact extends BaseHelper {
    * @param subscriberId - The id of the subscriber
    */    
   public remove(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
- }
+}
+
 export class Discovery extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1185,7 +1260,8 @@ export class Discovery extends BaseHelper {
    * @param requestNew - Whether or not to request new data from the server
    */
   public getRecipeBySectionId(id: Number, language: Language, requestNew?: Boolean): Promise<DiscoverySectionObject>;
- }
+}
+
 export class Event extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1333,7 +1409,8 @@ export class Event extends BaseHelper {
    * @param eventId - The id of the event
    */
   public unsubscribe(eventId: Number): Promise<ResponseObject>;              
- }
+}
+
 export class Group extends BaseHelper {
   private constructor(api: WOLFBot);
  
@@ -1436,7 +1513,7 @@ export class Group extends BaseHelper {
    * Get recommended groups
    */
   public getRecommendedList(): Promise<Array<GroupObject>>
- }
+}
 
 export class MessageSubscription extends BaseHelper{
   private constructor(api : WOLFBot);
@@ -1466,6 +1543,7 @@ export class MessageSubscription extends BaseHelper{
    */  
   public nextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
 }
+
 export class Messaging extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1551,6 +1629,7 @@ export class Messaging extends BaseHelper {
    */  
   public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
 }
+
 export class Notification extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1574,7 +1653,8 @@ export class Notification extends BaseHelper {
    * @param language - The id of the notifications
    */
   public unsubscribe(language: Language): Promise<void>;
- }
+}
+
 export class Phrase extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1622,7 +1702,7 @@ export class Phrase extends BaseHelper {
    * @param value - The user input string
    */
   public isRequestedPhrase(name: String, value: String): Boolean;
- }
+}
  
 export class Stage extends BaseHelper {
   private constructor(api : WOLFBot);
@@ -1864,7 +1944,8 @@ export class Stage extends BaseHelper {
    * @param slotId - The id of the slot to assign to the user
    */
   public cancelSlotRequest(targetGroupId: Number, slotId: Number): Promise<ResponseObject>
- }
+}
+
 export class Store extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1873,7 +1954,8 @@ export class Store extends BaseHelper {
    * @param requestNew - Whether or not to request new data from the server
    */
   public getBalance(requestNew?: Boolean) : Number;
- }
+}
+
 export class Subscriber extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1918,7 +2000,8 @@ export class Subscriber extends BaseHelper {
    * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
    */
   public getChatHistory(subscriberId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
- }
+}
+
 export class Tipping extends BaseHelper {
   private constructor(api : WOLFBot);
      
@@ -1974,7 +2057,8 @@ export class Tipping extends BaseHelper {
    * @param tipPeriod - The tipping period
    */    
   public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSumamryObject>
- }
+}
+
 export class AchievementUtility {
   private constructor(api: WOLFBot);
  
@@ -1984,7 +2068,8 @@ export class AchievementUtility {
    * @param language - The language of the achievements
    */
   public mapToCategories(achievements: Array<AchievementObject>, language: Language): Promise<Array<{id: Number, name: String, achievements: Array<AchievementObject>}>>;
- }
+}
+
 export class ArrayUtility {
   private constructor(api: WOLFBot);
  
@@ -2006,7 +2091,8 @@ export class ArrayUtility {
    * @param array - The array
    */
   public getRandomIndex(array: Array<any>): any; 
- }
+}
+
 export class DiscoveryUtility {
   private constructor(api: WOLFBot);
  
@@ -2016,7 +2102,8 @@ export class DiscoveryUtility {
    * @param requestNew - Whether or not to request new data from the server
    */
   public getRecipeSections(language: Language, requestNew?: Boolean): Promise<Array<DiscoverySectionObject>>;
- }
+}
+
 export class DownloadUtility {
   private constructor(api: WOLFBot);
  
@@ -2025,7 +2112,8 @@ export class DownloadUtility {
    * @param url - The url
    */
   public file(url: String): Promise<Buffer>;
- }
+}
+
 export class MemberUtility {
   private constructor(api: WOLFBot);
  
@@ -2055,7 +2143,8 @@ export class MemberUtility {
    * @param includeAuthorizedSubscribers - Whether or not to allow authorized users to bypass check
    */
   public hasCapability(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
- }
+}
+
 export class GroupUtility{
   private constructor(api: WOLFBot);
  
@@ -2075,7 +2164,8 @@ export class GroupUtility{
    * @param excludeId - Whether or not to include the groups ID
    */
   public toDisplayName(group: GroupObject, excludeId?: Boolean): String;
- }
+}
+
 export class NumberUtility {
   private constructor(api: WOLFBot);
  
@@ -2099,7 +2189,8 @@ export class NumberUtility {
    * @param arg The string or number
    */
   public addCommas(arg: Number | String) : Number | String;
- }
+}
+
 export class StringUtility{
   private constructor(api: WOLFBot);
  
@@ -2146,9 +2237,8 @@ export class StringUtility{
    * @param url - The string
    */
   public getAds(arg: String): Array<string>;
+}
 
-
- }
 export class PrivilegeUtility{
   private constructor(api: WOLFBot);
  
@@ -2159,7 +2249,8 @@ export class PrivilegeUtility{
    * @param requiresAll - Whether or not a subscriber should have all privileges provided
    */
   public has(targetSubscriberId: Number, privs: Array<Number>|Number, requiresAll?: Boolean): Promise<Boolean>
- }
+}
+
 export class SubscriberUtility {
   private constructor(api: WOLFBot);
  
@@ -2187,7 +2278,8 @@ export class SubscriberUtility {
    * @param requiresAll - Whether or not a subscriber should have all charms provided
    */
   public hasCharm(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
- }
+}
+
 export class TimerUtility{
   private constructor(api: WOLFBot);
   /**
@@ -2220,7 +2312,8 @@ export class TimerUtility{
    * @param duration - How long until the event should fire
    */
   public delay(name: String, duration: Number): Promise<TimerJobObject>
- }
+}
+
 export class Utility {
   private constructor(api: WOLFBot);
  
@@ -2271,7 +2364,8 @@ export class Utility {
    * @param duration - The time to delay
    */
   public delay(duration: Number): Promise<void>;
- }
+}
+
 export namespace  Validator {
   /**
    * Check whether or not a arg is a specific type
@@ -2324,17 +2418,17 @@ export namespace  Validator {
    * @param api - The bot instance
    * @param arg - The string or buffer
    */
-   export function isValidUrl(api: WOLFBot, arg: String):Boolean
+  export function isValidUrl(api: WOLFBot, arg: String):Boolean
   /**
    * Check to see if arg is a valid ad
    * @param arg - The string or buffer
    */
-   export function isValidAd(arg: String):Boolean
- }
+  export function isValidAd(arg: String):Boolean
+}
 
- //#endregion
+//#endregion
  
- //#region enums
+//#region enums
  
 export const Constants: {
   AdminAction: AdminAction;
@@ -2371,6 +2465,7 @@ export interface AdminAction {
   LEAVE : 18,
   OWNER : 32,
 }
+
 export interface Capability {
   NOT_MEMBER : -1,
   REGULAR : 0,
@@ -2380,6 +2475,7 @@ export interface Capability {
   SILENCED : 8,
   OWNER : 32,
 }
+
 export interface Category {
   NOT_SPECIFIED : 0,
   BUSINESS : 8,
@@ -2394,11 +2490,13 @@ export interface Category {
   SOCIAL_AND_PEOPLE : 17,
   SPORTS : 19,
   TRAVEL_AND_LOCAL : 18,
- }
+}
+
 export interface ContextType {
   MESSAGE : "message",
   STAGE : "stage",
 }
+
 export interface DeviceType {
   OTHER : 0,
   BOT : 1,
@@ -2407,16 +2505,19 @@ export interface DeviceType {
   ANDROID : 7,
   WEB : 8,
 }
+
 export interface EmbedType {
   IMAGE_PREVIEW : "imagePreview",
   GROUP_PREVIEW : "groupPreview",
   LINK_PREVIEW : "linkPreview",
 }
+
 export interface Gender {
   NOT_SPECIFIED : 0,
   MALE : 1,
   FEMALE : 2,
 }
+
 export interface Language {
   NOT_SPECIFIED : 0,
   ENGLISH : 1,
@@ -2456,12 +2557,14 @@ export interface Language {
   UKRAINIAN : 44,
   BULGARIAN : 45,
 }
+
 export interface LoginDevice {
   IPHONE : "iphone",
   IPAD : "ipad",
   ANDROID : "android",
   WEB : "web",
 }
+
 export interface LoginType {
   EMAIL : "email",
   GOOGLE : "google",
@@ -2470,6 +2573,7 @@ export interface LoginType {
   SNAPCHAT : "snapchat",
   APPLE : "apple",
 }
+
 export interface LookingFor {
   NOT_SPECIFIED : 0,
   FRIENDSHIP : 1,
@@ -2477,12 +2581,14 @@ export interface LookingFor {
   RELATIONSHIP : 4,
   NETWORKING : 8,
 }
+
 export interface MessageFilterTier {
   OFF : 0,
   RELAXED : 3,
   RECOMMENDED : 2,
   STRICT : 1,
 }
+
 export interface MessageLinkingType {
   EXTERNAL: 'external',
   SUBSCRIBER_PROFILE: 'subscriberProfile',
@@ -2490,6 +2596,7 @@ export interface MessageLinkingType {
   GROUP_PROFILE: 'groupProfile',
   GROUP_CHAT: 'groupChat' 
 }
+
 export interface MessageType {
   TEXT_PLAIN : "text/plain",
   TEXT_HTML : "text/html",
@@ -2503,6 +2610,7 @@ export interface MessageType {
   APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
   TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
 }
+
 export interface OnlineState {
   OFFLINE : 0,
   ONLINE : 1,
@@ -2511,6 +2619,7 @@ export interface OnlineState {
   BUSY : 5,
   IDLE : 9,
 }
+
 export interface Privilege {
   SUBSCRIBER : 1,
   BOT_TESTER : 2,
@@ -2518,6 +2627,7 @@ export interface Privilege {
   CONTENT_SUBMITER : 8,
   SELECTCLUB_1 : 16,
   ELITECLUB_1 : 64,
+  RANK_1: 128,
   VOLUNTEER : 512,
   SELECTCLUB_2 : 1024,
   ALPHA_TESTER : 2048,
@@ -2536,6 +2646,7 @@ export interface Privilege {
   ENTERTAINER : 536870912,
   SHADOW_BANNED : 1073741824,
 }
+
 export interface Relationship {
   NOT_SPECIFIED : 0,
   SINGLE : 1,
@@ -2545,30 +2656,34 @@ export interface Relationship {
   COMPLICATED : 5,
   OPEN : 6,
 }
+
 export interface SearchType {
   GROUP : "group",
   SUBSCRIBER : "subscriber",
 }
+
 export interface TipDirection {
   SENT : "sent",
   RECEIVED : "received",
 }
+
 export interface TipPeriod {
   ALL_TIME : "alltime",
   DAY : "day",
   WEEK : "week",
   MONTH : "month",
 }
+
 export interface TipType {
   CHARM : "charm",
   SUBSCRIBER : "subscriber",
   GROUP : "group",
 }
    
- //#endregion
+//#endregion
  
- //#region interfaces - Borrowed from Discord.JS setup - https=//github.com/discordjs/discord.js
- // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
+//#region interfaces - Borrowed from Discord.JS setup - https=//github.com/discordjs/discord.js
+// https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
  
 export interface ClientEvents {
   /**
@@ -2850,7 +2965,6 @@ export interface ClientEvents {
    * @use {@link groupMemberUpdate}
    */
   groupSubscriberUpdate: [group: GroupObject, subscriber: SubscriberObject],
-
- }
+}
  
- //#endregion
+//#endregion
