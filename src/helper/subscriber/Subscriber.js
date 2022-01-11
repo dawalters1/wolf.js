@@ -161,6 +161,7 @@ class Subscriber extends BaseHelper {
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
               if (subscriberResponse.success) {
                 const subscriber = subscriberResponse.body;
+                subscriber.exists = true;
                 subscriber.language = subscriber.extended && subscriber.extended.language ? toLanguageKey(subscriber.extended.language) : this._api.config.get('app.defaultLanguage');
                 subscribers.push(this._process(subscriber));
               } else {
@@ -263,8 +264,6 @@ class Subscriber extends BaseHelper {
   }
 
   _process (subscriber) {
-    subscriber.exists = subscriber.exists || true;
-
     subscriber = new SubscriberObject(this._api, subscriber);
 
     if (subscriber.exists) {
