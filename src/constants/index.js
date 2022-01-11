@@ -369,6 +369,7 @@ exports.Privilege = {
   CONTENT_SUBMITER: 1 << 3,
   SELECTCLUB_1: 1 << 4,
   ELITECLUB_1: 1 << 6,
+  RANK_1: 1 << 7,
   VOLUNTEER: 1 << 9,
   SELECTCLUB_2: 1 << 10,
   ALPHA_TESTER: 1 << 11,

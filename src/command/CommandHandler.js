@@ -15,6 +15,7 @@ const ignoreTagList = [
   Privilege.PEST,
   Privilege.GROUP_ADMIN,
   Privilege.ENTERTAINER,
+  Privilege.RANK_1,
   Privilege.ELITECLUB_1,
   Privilege.ELITECLUB_2,
   Privilege.ELITECLUB_3,
