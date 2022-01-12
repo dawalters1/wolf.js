@@ -255,16 +255,6 @@ class WOLFBot extends EventEmitter {
   }
 
   /**
-   * Exposes the tip methods
-   * @deprecated Will be removed in 1.2.0
-   * @see {@link tipping}
-   * @returns {Tipping}
-   */
-  tip () {
-    return this._tipping;
-  }
-
-  /**
    * Exposes the tipping methods
    * @returns {Tipping}
    */
@@ -496,43 +486,6 @@ class WOLFBot extends EventEmitter {
   updateProfile () {
     return new SubscriberProfileBuilder(this, this.currentSubscriber);
   }
-
-  // #endregion
-
-  // #region Deprecated methods
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use api.charm().set(charms)
-   */
-  async setSelectedCharms (charms) {
-    return this._charm.set(charms);
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use api.charm().remove(charmIds)
-   */
-  async deleteCharms (charmIds) {
-    return this._charm.delete(charmIds);
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use api.store().getBalance()
-   */
-  async getCreditBalance () {
-    return await this._store.getBalance();
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().getConversationList(timestamp)
-   */
-  async getConversationList (timestamp = undefined) {
-    return await this._messaging.getConversationList(timestamp);
-  }
-
   // #endregion
 
   async _cleanup (disconnected) {

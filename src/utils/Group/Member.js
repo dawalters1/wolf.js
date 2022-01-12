@@ -52,14 +52,6 @@ class Member {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use api.utility().group().member().hasCapabilities(targetGroupId, targetSubscriberId, requiredCapability)
-   */
-  async checkPermissions (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
-    return await this.hasCapability(targetGroupId, targetSubscriberId, requiredCapability, checkStaff, includeAuthorizedSubscribers);
-  }
-
   async hasCapability (targetGroupId, targetSubscriberId, requiredCapability, checkStaff = true, includeAuthorizedSubscribers = true) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
