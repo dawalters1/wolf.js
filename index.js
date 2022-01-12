@@ -14,7 +14,7 @@ const SubscriberObject = require('./src/models/SubscriberObject');
 const Constants = require('./src/constants');
 
 process.on('unhandledRejection', function (error) {
-  console.error(`${error.stack}\ninternalErrorMessage: ${error.internalErrorMessage || 'No Error Provided'}`);
+  console.error(`${error.stack}${error.internalErrorMessage ? `\ninternalErrorMessage: ${error.internalErrorMessage}` : ''}`);
 });
 
 module.exports = {
