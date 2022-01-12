@@ -528,22 +528,6 @@ class Messaging extends BaseHelper {
       throw error;
     }
   }
-
-  async subscribeToNextMessage (predicate, timeout = Infinity) {
-    return this._messageSubscription.nextMessage(predicate, timeout);
-  }
-
-  async subscribeToNextGroupMessage (targetGroupId, timeout = Infinity) {
-    return this._messageSubscription.nextGroupMessage(targetGroupId, timeout);
-  }
-
-  async subscribeToNextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
-    return this._messageSubscription.nextPrivateMessage(sourceSubscriberId, timeout);
-  }
-
-  async subscribeToNextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
-    return this._messageSubscription.nextGroupSubscriberMessage(targetGroupId, sourceSubscriberId, timeout);
-  }
 }
 
 module.exports = Messaging;

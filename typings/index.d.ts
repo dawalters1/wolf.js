@@ -27,9 +27,6 @@ export class CommandObject {
   public isGroup: Boolean;
   public language: String;
   public argument: String;
-    /**
-     * @deprecated Will be removed in 1.2.0
-     */
   public message: MessageObject;
   public targetGroupId: Number;
   public sourceSubscriberId: Number;
@@ -888,12 +885,6 @@ export class WOLFBot {
   public subscriber(): Subscriber;
   /**
    * Exposes the tipping methods
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link tipping}
-   */
-  public tip(): Tipping;
-  /**
-   * Exposes the tipping methods
    */    
   public tipping(): Tipping;
  
@@ -955,30 +946,6 @@ export class WOLFBot {
    * Update the bots profile
    */
   public updateProfile(): SubscriberProfileBuilder;
-  /**
-   * Set the charms that appear over the bots avatar
-   * @deprecated Will be removed in 1.2.0
-   * @use api.charm().set(charms)
-   */
-  public setSelectedCharms(charms: Array<CharmSelectedObject>): Promise<ResponseObject>;
-  /**
-   * Delete charms from your active or expired list
-   * @deprecated Will be removed in 1.2.0
-   * @use api.charm().remove(charmIds)
-   */
-  public deleteCharms(charmIds: Number | Array<Number>): Promise<ResponseObject>;
-  /**
-   * Get the bots credit balance
-   * @deprecated Will be removed in 1.2.0
-   * @use api.store().getBalance()
-   */
-  public getCreditBalance(): Number;    
-  /**
-   * Get the bots chat list
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().getConversationList(timestamp)
-   */
-  public getConversationList(timestamp: Number): Promise<Array<MessageObject>>;
   /**
    * Handle an event 
    * @param event - The event string
@@ -1264,20 +1231,6 @@ export class Discovery extends BaseHelper {
 
 export class Event extends BaseHelper {
   private constructor(api: WOLFBot);
- 
-  /**
-   * Create an event for a group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link create}
-   * @param targetGroupId - The id of the group
-   * @param title - The name of the event
-   * @param startsAt - The time the event starts
-   * @param endsAt - The time the event ends
-   * @param shortDescription - A short description about the event
-   * @param longDescription - A longer description about the event
-   * @param thumbnail - The thumbnail of the event
-   */
-  public createEvent(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
   /**
    * Create an event for a group
    * @param targetGroupId - The id of the group
@@ -1289,21 +1242,6 @@ export class Event extends BaseHelper {
    * @param thumbnail - The thumbnail of the event
    */
   public create(targetGroupId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
-  /**
-   * Edit an event belonging to a group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link edit}
-   * @param targetGroupId - The id of the group the event belongs too
-   * @param eventId - The id of the event
-   * @param title - The name of the event
-   * @param startsAt - The time the event starts
-   * @param endsAt - The time the event ends
-   * @param shortDescription - A short description about the event
-   * @param longDescription - A longer description about the event
-   * @param imageUrl - The existing URL for the event thumbnail
-   * @param thumbnail - The new thumbnail of the event
-   */
-  public editEvent(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
   /**
    * Edit an event belonging to a group
    * @param targetGroupId - The id of the group the event belongs too
@@ -1319,28 +1257,10 @@ export class Event extends BaseHelper {
   public edit(targetGroupId: Number, eventId: Number, title: String, startsAt: Date, endsAt: Date, shortDescription?: String, longDescription?: String, imageUrl?: String, thumbnail?: Buffer): Promise<ResponseObject<EventGroupObject>>
   /**
    * Update an events thumbnail
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link updateThumbnail}
-   * @param eventId - The id of the event to delete
-   * @param thumbnail - The new thumbnail of the event
-   */
-  public updateEventThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
-  /**
-   * Update an events thumbnail
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link updateThumbnail}
    * @param eventId - The id of the event to delete
    * @param thumbnail - The new thumbnail of the event
    */    
   public updateThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
-  /**
-   * Delete an event 
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link remove}
-   * @param targetGroupId - The id of the group the event belongs too
-   * @param eventId - The id of the event
-   */
-  public deleteEvent(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
   /**
    * Delete an event 
    * @param targetGroupId - The id of the group the event belongs too
@@ -1361,25 +1281,10 @@ export class Event extends BaseHelper {
   public getByIds(eventIds: Number|Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
   /**
    * Get the events list for a group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getGroupEventList}
-   * @param targetGroupId - The id of the group
-   * @param requestNew - Whether or not to request new data from the server
-   */
-  public getGroupEvents(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
-  /**
-   * Get the events list for a group
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server
    */
   public getGroupEventList(targetGroupId: Number, requestNew?: Boolean): Promise<Array<EventGroupObject>>;
-  /**
-   * Get the bots event subscription list
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getSubscriptionList}
-   * @param requestNew - Whether or not to request new data from the server
-   */
-  public getEventSubscriptions(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
   /**
    * Get the bots event subscription list
    * @param requestNew - Whether or not to request new data from the server
@@ -1387,24 +1292,10 @@ export class Event extends BaseHelper {
   public getSubscriptionList(requestNew?: Boolean): Promise<Array<EventGroupObject>>;
   /**
    * Subscribe to an event
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getGroupEventList}
-   * @param eventId - The id of the event
-   */
-  public subscribeToEvent(eventId: Number): Promise<ResponseObject>;
-  /**
-   * Subscribe to an event
    * @param eventId - The id of the event
    */
   public subscribe(eventId: Number): Promise<ResponseObject>;
-  /**
-   * Unsubscribe to an event
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link unsubscribe}
-   * @param eventId - The id of the event
-   */
-  public unsubscribeFromEvent(eventId: Number): Promise<ResponseObject>;
-  /**
+ /**
    * Unsubscribe to an event
    * @param eventId - The id of the event
    */
@@ -1458,15 +1349,6 @@ export class Group extends BaseHelper {
    * @param targetGroupName - The name of the group
    */       
   public leaveByName(targetGroupName: String): Promise<ResponseObject>
-  /**
-   * Get the chat history of a group 
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getChatHistory}
-   * @param targetGroupId - The id of the group
-   * @param timestamp - The timestamp of the last message
-   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
-   */
-  public getHistory(targetGroupId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
   /**
    * Get the chat history of a group 
    * @param targetGroupId - The id of the group
@@ -1594,40 +1476,7 @@ export class Messaging extends BaseHelper {
    * @param targetGroupId - The id of the group
    * @param timestamp - The timestamp belonging to the message
    */
-  public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;
-  /**
-   * Watch for a message using specific paramaters
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().subscribe().nextMessage()
-   * @param predict - The paramaters ((message)=>message.isGroup && message.sourceSubscriberId === 80280172)
-   * @param timeout - How long until the subscription ends (Default: Infinite)
-   */
-  public subscribeToNextMessage(predict: any, timeout?: Number ) : Promise<MessageObject>;
-  /**
-   * Watch for a message from a specific group
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().subscribe().nextGroupMessage()
-   * @param targetGroupId - The id of the group
-   * @param timeout - How long until the subscription ends (Default: Infinite)
-   */
-  public subscribeToNextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
-  /**
-   * Watch for a message from a specific subscriber
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().subscribe().nextPrivateMessage()
-   * @param sourceSubscriberId - The id of the subscriber
-   * @param timeout - How long until the subscription ends (Default: Infinite)
-   */    
-  public subscribeToNextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
-  /**
-   * Watch for a message from a specific group and subscriber
-   * @deprecated Will be removed in 1.2.0
-   * @use api.messaging().subscribe().nextGroupSubscriberMessage()
-   * @param targetGroupId - The id of the group
-   * @param sourceSubscriberId - The id of the subscriber
-   * @param timeout - How long until the subscription ends (Default: Infinite)
-   */  
-  public subscribeToNextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+  public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;  
 }
 
 export class Notification extends BaseHelper {
@@ -1709,25 +1558,10 @@ export class Stage extends BaseHelper {
  
   /**
    * Get group audio settings
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getGroupSettings}
-   * @param targetGroupId - The id of the grooup
-   * @param requestNew - Whether or not to request new data from the server
-   */
-  public getSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
-  /**
-   * Get group audio settings
    * @param targetGroupId - The id of the grooup
    * @param requestNew - Whether or not to request new data from the server
    */
   public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>; 
-  /**
-   * Get the list of publicly available stages
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getStageList}
-   * @param requestNew - Whether or not to request new data from the server
-   */
-  public getStages(requestNew?: Boolean): Promise<Array<StageObject>>;
   /**
    * Get the list of publicly available stages
    * @param requestNew  - Whether or not to request new data from the server
@@ -1735,26 +1569,10 @@ export class Stage extends BaseHelper {
   public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;  
   /**
    * Get the list of stages available to group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getStageListForGroup}
-   * @param targetGroupId - The id of the group
-   * @param requestNew 
-   */
-  public getStagesForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
-  /**
-   * Get the list of stages available to group
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server
    */
   public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>; 
-  /**
-   * Get the slots for a group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getGroupSlots}
-   * @param targetGroupId - The id of the group
-   * @param requestNew - Whether or not to request new data from the server 
-   */
-  public getSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;    
    /**
    * Get the slots for a group
    * @param targetGroupId - The id of the group
@@ -1780,14 +1598,6 @@ export class Stage extends BaseHelper {
    * @param targetGroupId - The id of the group
    */
   public leaveSlot(targetGroupId: Number): Promise<ResponseObject>;
-  /**
-   * Kick a subscriber from a slot
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link kickSlot}
-   * @param targetGroupId - The group Id
-   * @param slotId - The slot Id
-   */
-  public removeSubscriberFromSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;    
   /**
    * Kick a specific slot in a group
    * @param targetGroupId - The group Id
@@ -1815,14 +1625,6 @@ export class Stage extends BaseHelper {
    * @param sdp - The sdp belonging to the slot
    */
   public consumeSlot(targetGroupId: Number, slotId: Number, sdp: String): Promise<ResponseObject>;
-  /**
-   * Broadcast in a group
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link broadcast}
-   * @param targetGroupId - The id of the group
-   * @param data - The audio stream
-   */
-  public play(targetGroupId: Number, data: Readable): void;
   /**
    * Broadcast in a group
    * @param targetGroupId - The id of the group
@@ -1854,14 +1656,6 @@ export class Stage extends BaseHelper {
    * @param targetGroupId - The id of the group
    */
   public isPaused(targetGroupId: Number): Promise<Boolean>;
-  /**
-   * Check whether or not the client is playing
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link isBroadcasting}
-   * @param targetGroupId - The id of the group
-   */
-  public isPlaying(targetGroupId: Number): Promise<Boolean>;
-
   /**
    * Update the groups stage client ffmpeg settings
    * @param targetGroupId - THe id of the group
@@ -1983,15 +1777,6 @@ export class Subscriber extends BaseHelper {
    * @param requestNew - Whether or not to request new data from the server
    */
   public getByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
-  /**
-   * Get the chat history of a subscriber 
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getChatHistory}
-   * @param subscriberId - The id of the subscriber
-   * @param timestamp - The timestamp of the last message
-   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
-   */
-  public getHistory(subscriberId: Number, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
   /**
    * Get the chat history of a subscriberId 
    * @param subscriberId - The id of the subscriberId
@@ -2123,17 +1908,6 @@ export class MemberUtility {
    * @param targetSubscriberId - The id of the subscriber
    */
   public get(targetGroupId: Number, targetSubscriberId: Number): GroupSubscriberObject;
-  /**     
-   * Check whether or not a subscriber has the capability to use a command
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link hasCapability}
-   * @param targetGroupId - The id of the group
-   * @param targetSubscriberId - The id of the subscriber
-   * @param requiredCapability - The capability required
-   * @param checkStaff - Whether or not to allow staff to bypass check
-   * @param includeAuthorizedSubscribers - Whether or not to allow authorized users to bypass check
-     */
-  public checkPermissions(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
   /**
    * Check whether or not a subscriber has the capability to use a command
    * @param targetGroupId - The id of the group
@@ -2219,14 +1993,6 @@ export class StringUtility{
    * @param string - The string
    */
   public trimAds(string: String): String;
-  /**
-   * Check whether or not a url is valid
-   * @param url - The url to check
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link validator.isValidUrl}
-   */
-  public isValidUrl(url: String): Boolean;
-
   /**
    * Format a link to a valid format 
    * @param url - The url to format
@@ -2950,21 +2716,6 @@ export interface ClientEvents {
    * The server welcomed the socket
    */
   welcome: [welcome: WelcomeObject],
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link groupMemberAdd}
-   */
-  subscriberJoined: [group: GroupObject, subscriber: SubscriberObject],
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link groupMemberDelete}
-   */
-  subscriberLeft: [group: GroupObject, subscriber: SubscriberObject],
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link groupMemberUpdate}
-   */
-  groupSubscriberUpdate: [group: GroupObject, subscriber: SubscriberObject],
 }
  
 //#endregion

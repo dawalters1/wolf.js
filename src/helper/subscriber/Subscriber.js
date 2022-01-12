@@ -200,14 +200,6 @@ class Subscriber extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getChatHistory}
-   */
-  async getHistory (subscriberId, timestamp = 0, limit = 15) {
-    return await this.getChatHistory(subscriberId, timestamp, limit);
-  }
-
   async getChatHistory (targetSubscriberId, timestamp = 0, limit = 15) {
     try {
       if (validator.isNullOrUndefined(targetSubscriberId)) {

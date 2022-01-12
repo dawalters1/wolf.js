@@ -89,14 +89,6 @@ class Contact extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link remove}
-   */
-  async delete (subscriberId) {
-    return await this.remove(subscriberId);
-  }
-
   async remove (subscriberId) {
     try {
       if (validator.isNullOrUndefined(subscriberId)) {
