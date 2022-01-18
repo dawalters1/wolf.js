@@ -19,7 +19,7 @@ module.exports = class Websocket {
   _init () {
     const connectionSettings = this._api._botConfig.get('connection');
     const loginSettings = this._api.config.get('_loginSettings');
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=${loginSettings.device}&state=${loginSettings.onlineState}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=wolfjsframework&state=${loginSettings.onlineState}`,
       {
         transports: ['websocket'],
         reconnection: true,
