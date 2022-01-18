@@ -290,14 +290,6 @@ class Group extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getChatHistory}
-   */
-  async getHistory (targetGroupId, timestamp = 0, limit = 15) {
-    return await this.getChatHistory(targetGroupId, false, timestamp, limit);
-  }
-
   async getChatHistory (targetGroupId, chronological, timestamp = 0, limit = 15) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {

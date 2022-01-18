@@ -159,6 +159,7 @@ class Subscriber extends BaseHelper {
             const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, Commands.SUBSCRIBER_PROFILE));
 
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
+              console.log(subscriberResponse);
               if (subscriberResponse.success) {
                 const subscriber = subscriberResponse.body;
                 subscriber.exists = true;
@@ -197,14 +198,6 @@ class Subscriber extends BaseHelper {
       error.internalErrorMessage = `api.subscriber().getByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getChatHistory}
-   */
-  async getHistory (subscriberId, timestamp = 0, limit = 15) {
-    return await this.getChatHistory(subscriberId, timestamp, limit);
   }
 
   async getChatHistory (targetSubscriberId, timestamp = 0, limit = 15) {

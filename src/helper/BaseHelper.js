@@ -1,5 +1,5 @@
 class BaseHelper {
-  constructor (api) {
+  constructor (api, useCache = false) {
     this._api = api;
 
     this._websocket = api.websocket;
