@@ -276,12 +276,11 @@ class WOLFBot extends EventEmitter {
    *
    * @param {String} email - The email belonging to the account
    * @param {String} password - The password belonging to the account
-   * @param {String} loginDevice - The device to appear as
    * @param {Number} onlineState - The online state to appear as
    * @param {String} loginType - The account type
    * @param {String} token - The token to use to log in (Automatically generated if not provided)
    */
-  login (email, password, loginDevice = LoginDevice.ANDROID, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
+  login (email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
         throw new Error('email cannot be null or empty');
@@ -291,10 +290,8 @@ class WOLFBot extends EventEmitter {
         throw new Error('password cannot be null or empty');
       }
 
-      if (validator.isNullOrWhitespace(loginDevice)) {
-        throw new Error('loginDevice must be a valid string');
-      } else if (!Object.values(LoginDevice).includes(loginDevice)) {
-        throw new Error('loginDevice is not valid');
+      if (Object.values(LoginDevice).includes(onlineState)) {
+        throw new Error('parameter loginDevice is deprecated');
       }
 
       if (validator.isNullOrUndefined(onlineState)) {
@@ -316,7 +313,6 @@ class WOLFBot extends EventEmitter {
       this.config._loginSettings = {
         email,
         password,
-        loginDevice,
         onlineState,
         loginType,
         token: token && !validator.isNullOrWhitespace(token) ? token : crypto.randomBytes(32).toString('hex')
@@ -324,7 +320,7 @@ class WOLFBot extends EventEmitter {
 
       this.websocket._init();
     } catch (error) {
-      error.internalErrorMessage = `api.login(email=${JSON.stringify(email)}, password=${JSON.stringify(password)}, loginDevice=${JSON.stringify(loginDevice)}, onlineState=${JSON.stringify(onlineState)}, loginType=${JSON.stringify(loginType)}, token=${JSON.stringify(token)})`;
+      error.internalErrorMessage = `api.login(email=${JSON.stringify(email)}, password=${JSON.stringify(password)}, onlineState=${JSON.stringify(onlineState)}, loginType=${JSON.stringify(loginType)}, token=${JSON.stringify(token)})`;
       throw error;
     }
   }

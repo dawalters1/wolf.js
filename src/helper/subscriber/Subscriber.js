@@ -159,7 +159,6 @@ class Subscriber extends BaseHelper {
             const subscriberResponses = Object.values(result.body).map((subscriberResponse) => new Response(subscriberResponse, Commands.SUBSCRIBER_PROFILE));
 
             for (const [index, subscriberResponse] of subscriberResponses.entries()) {
-              console.log(subscriberResponse);
               if (subscriberResponse.success) {
                 const subscriber = subscriberResponse.body;
                 subscriber.exists = true;

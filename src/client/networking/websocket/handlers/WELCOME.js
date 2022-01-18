@@ -1,7 +1,7 @@
 const SubscriberObject = require('../../../../models/SubscriberObject');
 
 const crypto = require('crypto');
-const { Events, Commands, DeviceType, LoginType } = require('../../../../constants');
+const { Events, Commands, LoginType } = require('../../../../constants');
 
 const onSuccess = async (api, reconnect = false) => {
   await api._cleanup(false);
@@ -29,7 +29,6 @@ const login = async (api) => {
       },
       body: {
         type: loginSettings.LoginType,
-        deviceTypeId: Object.entries(DeviceType).find((device) => device[0].toLowerCase() === loginSettings.loginDevice.toLowerCase())[1],
         onlineState: loginSettings.onlineState,
         username: loginSettings.email,
         password: loginSettings.LoginType === LoginType.EMAIL ? crypto.createHash('md5').update(loginSettings.password).digest('hex') : loginSettings.password,
