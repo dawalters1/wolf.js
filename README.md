@@ -58,7 +58,6 @@ api.messaging().subscribeToNextGroupSubscriberMessage() -> api.messaging().subsc
 - Full typings/intellisense support
 - Bug fixes
 - [Contacts](https://github.com/dawalters1/wolf.js/tree/main/src/models/ContactObject.js), [Events](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupEventObject.js), [Groups](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupObject.js), [Group Members](https://github.com/dawalters1/wolf.js/tree/main/src/models/GroupSubscriberObject.js), [Subscribers](https://github.com/dawalters1/wolf.js/tree/main/src/models/SubscriberObject.js) & [Messages](https://github.com/dawalters1/wolf.js/tree/main/src/models/MessageObject.js) now contain methods
-- [Constants](https://www.npmjs.com/package/@dawalters1/constants) are now integrated into the API... [Constants Package](https://www.npmjs.com/package/@dawalters1/constants) will be deprecated upon this release
   - Constants names now start with a capital letter (EX: messageType is now MessageType) 
 - 10.14 Raise Hands Support 
 - Added: ```api.group().getRecommendedList()``` - Get recommended groups

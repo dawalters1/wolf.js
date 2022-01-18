@@ -17,14 +17,6 @@ class Event extends BaseHelper {
     this._subscriptions = [];
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link create}
-   */
-  async createEvent (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
-    return await this.create(targetGroupId, title, startsAt, endsAt, shortDescription, longDescription, thumbnail);
-  }
-
   async create (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
@@ -94,14 +86,6 @@ class Event extends BaseHelper {
       error.internalErrorMessage = `api.event().create(targetGroupId=${JSON.stringify(targetGroupId)}, title=${JSON.stringify(title)}, startsAt=${JSON.stringify(startsAt)}, endsAt=${JSON.stringify(endsAt)}, shortDescription=${JSON.stringify(shortDescription)}, longDescription=${JSON.stringify(longDescription)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
     }
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link edit}
-   */
-  async editEvent (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
-    return await this.edit(targetGroupId, eventId, title, startsAt, endsAt, shortDescription, longDescription, imageUrl, thumbnail);
   }
 
   async edit (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
@@ -192,14 +176,6 @@ class Event extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link updateThumbnail}
-   */
-  async updateEventThumbnail (eventId, thumbnail) {
-    return await this.updateThumbnail(eventId, thumbnail);
-  }
-
   async updateThumbnail (eventId, thumbnail) {
     try {
       if (validator.isNullOrUndefined(eventId)) {
@@ -222,14 +198,6 @@ class Event extends BaseHelper {
       error.internalErrorMessage = `api.event().create(eventId=${JSON.stringify(eventId)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
     }
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link remove}
-   */
-  async deleteEvent (targetGroupId, eventId) {
-    return await this.remove(targetGroupId, eventId);
   }
 
   async remove (targetGroupId, eventId) {
@@ -352,14 +320,6 @@ class Event extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getGroupEventList}
-   */
-  async getGroupEvents (targetGroupId, requestNew = false) {
-    return await this.getGroupEventList(targetGroupId, requestNew);
-  }
-
   async getGroupEventList (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
@@ -394,14 +354,6 @@ class Event extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link getSubscriptionList}
-   */
-  async getEventSubscriptions (requestNew = false) {
-    return await this.getSubscriptionList(requestNew);
-  }
-
   async getSubscriptionList (requestNew = false) {
     try {
       if (!validator.isValidBoolean(requestNew)) {
@@ -430,14 +382,6 @@ class Event extends BaseHelper {
     }
   }
 
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link subscribe}
-   */
-  async subscribeToEvent (eventId) {
-    return await this.subscribe(eventId);
-  }
-
   async subscribe (eventId) {
     try {
       if (validator.isNullOrUndefined(eventId)) {
@@ -460,14 +404,6 @@ class Event extends BaseHelper {
       error.internalErrorMessage = `api.event().subscribe(eventId=${JSON.stringify(eventId)})`;
       throw error;
     }
-  }
-
-  /**
-   * @deprecated Will be removed in 1.2.0
-   * @use {@link unsubscribe}
-   */
-  async unsubscribeFromEvent (eventId) {
-    return await this.subscribe(eventId);
   }
 
   async unsubscribe (eventId) {

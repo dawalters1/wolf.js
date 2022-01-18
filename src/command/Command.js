@@ -11,14 +11,14 @@ const validateCommand = command => {
     throw new Error('object must be an instance of command');
   }
 
-  const trigger = command.trigger;
+  const phraseName = command.phraseName;
 
-  if (typeof (trigger) !== 'string') {
-    throw new Error('trigger must be a string');
-  } else if (validator.isNullOrUndefined(trigger)) {
-    throw new Error('trigger cannot be null or undefined');
-  } else if (validator.isNullOrWhitespace(trigger)) {
-    throw new Error('trigger cannot be null or empty');
+  if (typeof (phraseName) !== 'string') {
+    throw new Error('phraseName must be a string');
+  } else if (validator.isNullOrUndefined(phraseName)) {
+    throw new Error('phraseName cannot be null or undefined');
+  } else if (validator.isNullOrWhitespace(phraseName)) {
+    throw new Error('phraseName cannot be null or empty');
   }
 
   const commandCallbacks = command.commandCallbacks;
@@ -47,8 +47,8 @@ module.exports = class Command {
     return callbacks;
   }
 
-  constructor (trigger, commandCallbacks, children = []) {
-    this.trigger = trigger;
+  constructor (phraseName, commandCallbacks, children = []) {
+    this.phraseName = phraseName;
     this.commandCallbacks = commandCallbacks;
     this.commandCallbackTypes = Object.keys(commandCallbacks);
     this.children = children || [];

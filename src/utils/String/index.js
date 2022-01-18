@@ -151,11 +151,6 @@ class String {
     }
   }
 
-  isValidUrl (url) {
-    console.warn('[WARNING] api.utility().string().isValidUrl(...) is deprecated use validator.isValidUrl(...) instead');
-    return validator.isValidUrl(this._api, url);
-  }
-
   getValidUrl (url) {
     try {
       if (typeof (url) !== 'string') {
