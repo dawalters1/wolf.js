@@ -4,6 +4,8 @@ const Response = require('../../../models/ResponseObject');
 const io = require('socket.io-client');
 const { Events } = require('../../../constants');
 
+const crypto = require('crypto');
+
 /**
  * {@hideconstructor}
  */
@@ -12,14 +14,17 @@ module.exports = class Websocket {
     this._api = api;
     this._handler = new Handler(this._api);
 
-    this._requestId = 1;
-    this._requests = [];
+    this._requestDefs = {};
   };
+
+  _createMD5Key (command, data) {
+    return crypto.createHash('md5').update(data ? `${command}${JSON.stringify(data)}` : command).digest('hex');
+  }
 
   _init () {
     const connectionSettings = this._api._botConfig.get('connection');
     const loginSettings = this._api.config.get('_loginSettings');
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=${loginSettings.device}&state=${loginSettings.onlineState}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=wolfjsframework&state=${loginSettings.onlineState}`,
       {
         transports: ['websocket'],
         reconnection: true,
@@ -64,6 +69,21 @@ module.exports = class Websocket {
     });
   }
 
+  async _send (command, data, attempt = 0) {
+    const response = await new Promise((resolve, reject) => {
+      this.socket.emit(command, data, resp =>
+        resolve(resp));
+    });
+
+    if (this._api._botConfig.get('networking.retryOn').includes(response.code)) {
+      if (attempt < 2) {
+        return await this._send(command, data, attempt + 1);
+      }
+    }
+
+    return response;
+  }
+
   async _emit (command, data) {
     if (data && !data.body && !data.headers) {
       data = {
@@ -71,23 +91,20 @@ module.exports = class Websocket {
       };
     }
 
-    const duplicateRequest = this._requests.find((request) => request.command === command && JSON.stringify(request.data) === JSON.stringify(data));
+    const md5Key = this._createMD5Key(command, data);
+
+    const duplicateRequest = this._requestDefs[md5Key];
 
     if (duplicateRequest) {
       return await duplicateRequest.promise;
     }
 
     const request = {
-      requestId: this._requestId,
-      command,
-      data,
       def: undefined,
       promise: undefined
     };
 
-    this._requests.push(request);
-
-    this._requestId += 1;
+    this._requestDefs[md5Key] = request;
 
     request.promise = new Promise((resolve, reject) => {
       request.def = { resolve, reject };
@@ -98,13 +115,11 @@ module.exports = class Websocket {
       data
     );
 
-    this.socket.emit(command, data, resp => {
-      request.def.resolve(new Response(resp, command));
-    });
+    const response = new Response(await this._send(command, data));
 
-    const response = await request.promise;
+    request.def.resolve(response);
 
-    this._requests = this._requests.filter((req) => req.id !== request.id);
+    Reflect.deleteProperty(this._requestDefs, md5Key);
 
     return response;
   }
