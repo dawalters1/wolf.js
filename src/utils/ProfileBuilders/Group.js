@@ -207,6 +207,9 @@ module.exports = class GroupProfileBuilder {
     );
 
     if (result.success) {
+
+      this._audioConfig.id = this._id; // Set the group ID else server wont know what to do and return bad request.
+
       await this._api.websocket.emit(
         Commands.GROUP_AUDIO_UPDATE,
         this._audioConfig

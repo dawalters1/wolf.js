@@ -28,6 +28,7 @@ exports.ServerEvents = {
   SUBSCRIBER_GROUP_EVENT_DELETE: 'subscriber group event delete',
 
   SUBSCRIBER_UPDATE: 'subscriber update',
+
   TIP_ADD: 'tip add',
 
   WELCOME: 'welcome'
@@ -81,7 +82,6 @@ exports.Events = {
   PACKET_SENT: 'packetSent',
 
   PING: 'ping',
-
   PONG: 'pong',
 
   PRESENCE_UPDATE: 'presenceUpdate',
