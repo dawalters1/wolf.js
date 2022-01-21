@@ -892,12 +892,11 @@ export class WOLFBot {
    * Login to an account
    * @param email - The email belonging to the account
    * @param password - The password belonging to the account 
-   * @param loginDevice - The device to appear as 
    * @param onlineState - The online state to appear as 
    * @param loginType - The account type 
    * @param token - The token to use to log in (Automatically generated if not provided)
    */
-  public login(email: String, password: String, loginDevice: LoginDevice, onlineState: OnlineState, loginType: LoginType, token: String): void;
+  public login(email: String, password: String, onlineState: OnlineState, loginType: LoginType, token: String): void;
  
   /**
    * Logout of the current account
@@ -2205,7 +2204,6 @@ export const Constants: {
   EmbedType: EmbedType;
   Gender: Gender;
   Language: Language;
-  LoginDevice: LoginDevice;
   LoginType: LoginType;
   LookingFor: LookingFor;
   MessageFilterTier: MessageFilterTier;
@@ -2322,13 +2320,6 @@ export interface Language {
   LITHUANIAN : 43,
   UKRAINIAN : 44,
   BULGARIAN : 45,
-}
-
-export interface LoginDevice {
-  IPHONE : "iphone",
-  IPAD : "ipad",
-  ANDROID : "android",
-  WEB : "web",
 }
 
 export interface LoginType {
