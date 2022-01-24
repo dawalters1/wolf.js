@@ -90,7 +90,7 @@ const isValidUrl = (api, arg) => {
   return false;
 };
 
-const isValidAd = arg => arg.startsWith('[') && arg.endsWith(']');
+const isValidAd = arg => arg.startsWith('[') && arg.endsWith(']') && arg.split('\n').length === 1;
 
 module.exports = {
   isNull,
