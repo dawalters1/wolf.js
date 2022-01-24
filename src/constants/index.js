@@ -80,7 +80,9 @@ exports.Events = {
 
   PACKET_RECEIVED: 'packetReceived',
   PACKET_SENT: 'packetSent',
-
+  PACKET_FAILED: 'packetFailed',
+  PACKET_RETRY: 'packetRetry',
+  
   PING: 'ping',
   PONG: 'pong',
 

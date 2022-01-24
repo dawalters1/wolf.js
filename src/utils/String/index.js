@@ -133,7 +133,7 @@ class String {
         return string;
       }
 
-      const matches = [...string.matchAll(/\[([^\][]*)]/g)];
+      const matches = [...string.matchAll(/\[([^\][]*)]/g)].filter((Boolean)).filter((match)=>match[0].split('\n').length === 1);
 
       if (matches.length === 0) {
         return string;
@@ -219,7 +219,7 @@ class String {
       }
 
       return ([...arg.matchAll(/\[(.+?)\]/g)] || []).map((ad) => {
-        if (ad[1].trim().length === 0) {
+        if (ad[1].trim().length === 0 || ad[0].split('\n').length > 1) {
           return null;
         }
 
