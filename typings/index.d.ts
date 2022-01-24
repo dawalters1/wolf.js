@@ -2570,7 +2570,15 @@ export interface ClientEvents {
   /**
    * A packet was sent to the server
    */
-  packetSent: [command: string, body: object],
+  packetSent: [command: string, body: object, response: ResponseObject],
+  /**
+   * The packet received an error code and is retrying
+   */
+  packetRetry: [command: string, body: object, retryAttempt: number],
+  /**
+   * The request failed multiple times
+   */
+  packetFailed: [command: string, body: object],
   /**
    * Ping event
    */
