@@ -6,12 +6,24 @@ const { Events, Commands, LoginType } = require('../../../../constants');
 const onSuccess = async (api, reconnect = false) => {
   await api._cleanup(false);
 
-  await Promise.all([
-    api.group()._joinedGroups(),
-    api.messaging()._messageGroupSubscribe(),
-    api.messaging()._messagePrivateSubscribe(),
-    api.tipping()._groupSubscribe()
-  ]);
+  await api.group()._joinedGroups();
+
+  const subscribe = async () => {
+    const resps = await Promise.all([
+      api.messaging()._messageGroupSubscribe(),
+      api.messaging()._messagePrivateSubscribe(),
+      api.tipping()._groupSubscribe()
+    ]);
+
+    if (resps.some((resp) => !resp.success)) {
+      console.warn('[Subscriptions Failed]: Retrying');
+      return await subscribe();
+    };
+
+    return Promise.resolve();
+  };
+
+  await subscribe();
 
   api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
@@ -28,7 +40,7 @@ const login = async (api) => {
         version: 2
       },
       body: {
-        type: loginSettings.LoginType,
+        type: loginSettings.loginType,
         onlineState: loginSettings.onlineState,
         username: loginSettings.email,
         password: loginSettings.LoginType === LoginType.EMAIL ? crypto.createHash('md5').update(loginSettings.password).digest('hex') : loginSettings.password,

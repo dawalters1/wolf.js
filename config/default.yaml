@@ -3,11 +3,15 @@ app: wjs
 connection:
   host: https://v3-rc.palringo.com
   port: 3051
+  query:
+    device: wjsframework
+    
 
 networking:
   events:
     ignore: []
   retryOn: [500, 502, 503, 504, 408]
+
 notificationSettings:
   duration: 600000
   
