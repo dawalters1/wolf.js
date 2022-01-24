@@ -77,6 +77,12 @@ module.exports = class Websocket {
 
     if (this._api._botConfig.get('networking.retryOn').includes(response.code)) {
       if (attempt < 2) {
+        this._api.emit(Events.PACKET_RETRY,
+          command,
+          data,
+          attempt
+        );
+
         return await this._send(command, data, attempt + 1);
       }
     }
@@ -110,12 +116,14 @@ module.exports = class Websocket {
       request.def = { resolve, reject };
     });
 
-    this._api.emit(Events.PACKET_SENT,
-      command,
-      data
-    );
-
     const response = new Response(await this._send(command, data));
+
+    this._api.emit(
+      response.success ? Events.PACKET_SENT : Events.PACKET_FAILED,
+      command,
+      data,
+      response
+    );
 
     request.def.resolve(response);
 

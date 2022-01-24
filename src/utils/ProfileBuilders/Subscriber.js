@@ -151,6 +151,7 @@ module.exports = class SubscriberProfileBuilder {
         },
         nickname: this._nickname,
         status: this._status
-      });
+      }
+    );
   }
 };
