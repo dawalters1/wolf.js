@@ -120,7 +120,7 @@ module.exports = class Websocket {
     const response = new Response(await this._send(command, data));
 
     this._api.emit(
-      response.code >= 200 && response.code <= 299 ? Events.PACKET_SENT : Events.PACKET_FAILED,
+      response.success ? Events.PACKET_SENT : Events.PACKET_FAILED,
       command,
       data,
       response
