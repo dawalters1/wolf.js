@@ -70,7 +70,6 @@ module.exports = class Websocket {
   }
 
   async _send (command, data, attempt = 0) {
-
     const response = await new Promise((resolve, reject) => {
       this.socket.emit(command, data, resp =>
         resolve(resp));
@@ -125,7 +124,6 @@ module.exports = class Websocket {
       data,
       response
     );
-    
 
     request.def.resolve(response);
 

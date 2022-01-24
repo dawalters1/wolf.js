@@ -34,7 +34,8 @@ class Subscriber {
         {
           subscriberId,
           size
-        }));
+        }
+      ));
     } catch (error) {
       error.internalErrorMessage = `api.utility().subscriber().getAvatar(subscriberId=${JSON.stringify(subscriberId)}, size=${JSON.stringify(size)})`;
       throw error;

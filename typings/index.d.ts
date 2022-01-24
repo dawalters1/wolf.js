@@ -2578,7 +2578,7 @@ export interface ClientEvents {
   /**
    * The request failed multiple times
    */
-  packetFailed: [command: string, body: object],
+  packetFailed: [command: string, body: object, response: ResponseObject],
   /**
    * Ping event
    */
