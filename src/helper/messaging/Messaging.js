@@ -158,11 +158,11 @@ class Messaging extends BaseHelper {
   async _sendMessage (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
-    if (this._api._botConfig.get('multimedia.messaging.validation.mimes').include(mimeType)) {
+    if (this._api._botConfig.get('multimedia.messaging.validation.mimes').includes(mimeType)) {
       return await this._api.multiMediaService().sendMessage(targetType, targetId, content, mimeType);
     }
 
-    if (!this._api._botConfig.get('validation.messaging.mimes').include(mimeType)) {
+    if (!this._api._botConfig.get('validation.messaging.mimes').includes(mimeType)) {
       throw new Error(`${mimeType} is not a supported mimetype`);
     }
 
@@ -174,11 +174,11 @@ class Messaging extends BaseHelper {
       throw new Error(`Maximum allowed message length with chunking disabled is 1,000, provided message is ${this._api.utility().number().addCommas(content.length)}`);
     }
 
-    const supportedLinkProtocols = this._api._botConfig.get('validation.links.protocols');
+    const supportedLinkProtocols = this._api._botConfig.get('validation.link.protocols');
 
     const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
 
-    const messagesToSend = await chunkedMessage.reduce(async (result, chunk, index) => {
+    const messagesToSend = (await chunkedMessage.reduce(async (result, chunk, index) => {
       const body = {
         recipient: targetId,
         isGroup: targetType === MessageTypes.GROUP,
@@ -190,19 +190,198 @@ class Messaging extends BaseHelper {
       };
 
       const chunkStartIndex = chunkedMessage.slice(0, index).join(' ').length + index;
+      const chunkEndIndex = chunkStartIndex + chunkedMessage[index].length;
 
-      const adsInChunk = this._api.utility().string().getAds(chunk);
+      const adsInChunk = this._api.utility().string().getAds(chunk) || [];
 
-      // TODO: Clean up existing mess, fix mishandled deeplinks
+      const linksInChunk = chunk.split(' ').reduce((result, value, index) => {
+        if (validator.isValidUrl(this._api, value)) {
+          const linkStartLocation = chunk.indexOf(value, index);
+          const linkEndLocation = linkStartLocation + value.length;
+          if (!adsInChunk.some((ad) => inRange(ad.index, ad.index + ad[0].length, linkStartLocation) && inRange(ad.index, ad.index + ad[0].length, linkEndLocation))) {
+            const url = this._api.utility().string().getValidUrl(value);
+            url.startsAt = linkStartLocation;
+            url.endsAt = linkEndLocation;
+            result.push(url);
+          }
+        }
 
-      /**
-       * How to handle deep links that get halved by a chunk split???
-       */
+        return result;
+      }, []);
+
+      if (_opts.links) {
+        const deepLinksInChunk = _opts.links.filter((link) => link.start >= chunkStartIndex && link.start <= chunkEndIndex);
+
+        if (deepLinksInChunk.some((link) => link.end > chunkEndIndex)) {
+          const deepLinksLargerThanChunk = deepLinksInChunk.filter((link) => link.end > chunkEndIndex);
+
+          for (const deepLink of deepLinksLargerThanChunk) {
+            const clonedLink = Object.assign({}, deepLink);
+
+            deepLink.end = chunkEndIndex;
+
+            clonedLink.start = chunkEndIndex + 1;
+
+            _opts.links.push(clonedLink);
+          }
+        }
+
+        // All links have been fixed, continue
+
+        deepLinksInChunk.forEach((link) => {
+          const linkStartLocation = link.start - chunkStartIndex;
+          const linkEndLocation = link.end - chunkStartIndex;
+          if (adsInChunk.some((ad) => inRange(ad.index, ad.index + ad[0].length, linkStartLocation) && inRange(ad.index, ad.index + ad[0].length, linkEndLocation))) {
+            throw new Error('you cannot deeplink an index range containing an ad');
+          }
+
+          if (linksInChunk.some((linkObj) => linkObj.startsAt === linkStartLocation && linkObj.endsAt === linkEndLocation)) {
+            throw new Error('you cannot deeplink an index range containing an url');
+          }
+          linksInChunk.push(
+            {
+              startsAt: linkStartLocation,
+              endsAt: linkEndLocation,
+              url: link.type !== MessageLinkingType.EXTERNAL
+                ? this._api.utility().string().replace(this._api._botConfig.get('deeplinks')[link.type],
+                  {
+                    value: link.value
+                  }
+                )
+                : link.value
+            }
+          );
+        });
+      }
+
+      if (linksInChunk.length > 0 || adsInChunk.length > 0) {
+        body.metadata = {
+          formatting: {}
+        };
+
+        if (adsInChunk.length > 0) {
+          body.metadata.formatting.groupLinks = await adsInChunk.reduce(async (result, value) => {
+            const group = await this._api.group().getByName(value[1]);
+
+            (await result).push(
+              {
+                start: value.index,
+                end: value.index + value[0].length,
+                groupId: group.exists ? group.id : undefined
+              }
+            );
+
+            return result;
+          }, Promise.resolve([]));
+        }
+
+        if (linksInChunk.length > 0) {
+          body.metadata.formatting.links = linksInChunk.reduce((result, value) => {
+            result.push(
+              {
+                start: value.startsAt,
+                end: value.endsAt,
+                url: value.url
+              }
+            );
+
+            return result;
+          }, []);
+        }
+
+        if (!result.previewAdded && _opts.includeEmbeds) {
+          const data = [];
+
+          if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
+            data.push(...body.metadata.formatting.groupLinks);
+          }
+
+          if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
+            data.push(...body.metadata.formatting.links);
+          }
+
+          const embed = (await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
+            // Only 1 embed per message, else the server will throw an error.
+            if ((await result).embed) {
+              return result;
+            }
+
+            if (Reflect.has(item, 'url')) {
+              if (item.url.startsWith('wolf://')) {
+                return await result;
+              }
+
+              const metadata = await this._api.getLinkMetadata(item.url);
+
+              if (metadata.success && !metadata.body.isBlacklisted) {
+                const preview = {
+                  type: !metadata.body.title && metadata.body.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
+                  url: supportedLinkProtocols.some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
+                };
+
+                if (preview.type === EmbedType.LINK_PREVIEW) {
+                  if (!metadata.body.title) {
+                    return result;
+                  }
+
+                  preview.title = metadata.body.title || '-';
+                  preview.body = metadata.body.description || '-';
+                }
+
+                (await result).embed = preview;
+              }
+            } else if (Reflect.has(item, 'groupId')) {
+              (await result).embed =
+                {
+                  type: EmbedType.GROUP_PREVIEW,
+                  groupId: item.groupId
+                };
+            }
+
+            return result;
+          },
+          {
+            embed: undefined
+          })).embed;
+
+          if (embed) {
+            body.embeds = [embed];
+            result.previewAdded = true;
+          }
+        }
+      }
+
+      (await result).messages.push(body);
+
+      return result;
     },
     {
       previewAdded: false,
       messages: []
-    });
+    })).messages;
+
+    const responses = await messagesToSend.reduce(async (result, body) => {
+      if (!body.embeds) {
+        Reflect.deleteProperty(body, 'embeds');
+      }
+
+      if (!body.metadata) {
+        Reflect.deleteProperty(body, 'metadata');
+      }
+
+      console.log(body);
+
+      (await result).push(await this._websocket.emit(Commands.MESSAGE_SEND, body));
+
+      return result;
+    }, []);
+
+    return responses.length > 1
+      ? {
+          code: 207,
+          body: responses
+        }
+      : responses[0];
   }
 
   async sendGroupMessage (targetGroupId, content, opts = {}) {
