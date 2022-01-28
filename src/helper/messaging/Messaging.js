@@ -262,7 +262,6 @@ class Messaging extends BaseHelper {
         if (adsInChunk.length > 0) {
           body.metadata.formatting.groupLinks = await adsInChunk.reduce(async (result, value) => {
             const group = await this._api.group().getByName(value[1]);
-
             (await result).push(
               {
                 start: value.index,
@@ -330,7 +329,7 @@ class Messaging extends BaseHelper {
 
                 (await result).embed = preview;
               }
-            } else if (Reflect.has(item, 'groupId')) {
+            } else if (Reflect.has(item, 'groupId') && item.groupId !== undefined) {
               (await result).embed =
                 {
                   type: EmbedType.GROUP_PREVIEW,
@@ -368,8 +367,6 @@ class Messaging extends BaseHelper {
       if (!body.metadata) {
         Reflect.deleteProperty(body, 'metadata');
       }
-
-      console.log(body);
 
       (await result).push(await this._websocket.emit(Commands.MESSAGE_SEND, body));
 
