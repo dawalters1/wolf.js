@@ -31,7 +31,6 @@ const handleAdminAction = async (api, message) => {
         adminAction.type = 'kick';
       }
 
-
       api.emit(
         subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
         group,

@@ -1,4 +1,5 @@
 const { Events } = require('../../../../constants');
+const GroupSubscriber = require('../../../../models/GroupSubscriberObject');
 
 module.exports = async (api, body) => {
   const [group, subscriber] = await Promise.all([
@@ -7,10 +8,9 @@ module.exports = async (api, body) => {
   ]);
 
   if (group.subscribers && group.subscribers.length > 0) {
-    group.subscribers.push(
+    group.subscribers.push(new GroupSubscriber(api,
       {
         id: subscriber.id,
-        groupId: group.id,
         capabilities: body.capabilities,
         additionalInfo: {
           hash: subscriber.hash,
@@ -18,8 +18,9 @@ module.exports = async (api, body) => {
           privileges: subscriber.privileges,
           onlineState: subscriber.onlineState
         }
-      }
-    );
+      },
+      group.id
+    ));
   }
 
   if (body.subscriberId === api.currentSubscriber.id) {
