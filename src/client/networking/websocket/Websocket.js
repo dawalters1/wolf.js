@@ -116,7 +116,7 @@ module.exports = class Websocket {
       request.def = { resolve, reject };
     });
 
-    const response = new Response(await this._send(command, data));
+    const response = new Response(await this._send(command, data), command);
 
     this._api.emit(
       response.success || this._api._botConfig.get('networking.ignoreFailed').includes(response.code) ? Events.PACKET_SENT : Events.PACKET_FAILED,
