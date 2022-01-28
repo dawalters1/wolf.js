@@ -386,7 +386,7 @@ class Group extends BaseHelper {
 
       if (result.success) {
         group.inGroup = true;
-        group.subscribers = result.body.map((subscriber) => new GroupSubscriber(this._api, subscriber));
+        group.subscribers = result.body.map((subscriber) => new GroupSubscriber(this._api, subscriber, targetGroupId));
       }
 
       return group.subscribers;

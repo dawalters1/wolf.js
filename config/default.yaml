@@ -11,6 +11,7 @@ networking:
   events:
     ignore: []
   retryOn: [500, 502, 503, 504, 408]
+  ignoreFailed: [404, 401, 403]
 
 notificationSettings:
   duration: 600000
