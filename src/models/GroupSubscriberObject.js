@@ -2,8 +2,9 @@ const { AdminAction } = require('../constants');
 const patch = require('../utils/Patch');
 
 class GroupSubscriber {
-  constructor (api, groupSubscriber) {
+  constructor (api, groupSubscriber, groupId) {
     this._api = api;
+    this.groupId = groupId;
     patch(this, groupSubscriber);
   }
 
