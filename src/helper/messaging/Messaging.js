@@ -174,9 +174,12 @@ class Messaging extends BaseHelper {
       throw new Error(`Maximum allowed message length with chunking disabled is 1,000, provided message is ${this._api.utility().number().addCommas(content.length)}`);
     }
 
+    if (_opts.links && _opts.links.some((link) => link.start > content.length || link.end > content.length)) {
+      throw new Error('deeplinks start index and end index must be less than or equal to the contents length');
+    }
     const supportedLinkProtocols = this._api._botConfig.get('validation.link.protocols');
 
-    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
+    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).map((item) => item.replace(/^[^\S\r\n]+|[^\S\r\n]+$/g, '')).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
 
     const messagesToSend = (await chunkedMessage.reduce(async (result, chunk, index) => {
       const body = {
@@ -225,7 +228,6 @@ class Messaging extends BaseHelper {
             _opts.links.push(clonedLink);
           }
         }
-
         // All links have been fixed, continue
 
         deepLinksInChunk.forEach((link) => {
