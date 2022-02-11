@@ -179,7 +179,7 @@ class Messaging extends BaseHelper {
     }
     const supportedLinkProtocols = this._api._botConfig.get('validation.link.protocols');
 
-    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).map((item) => item.replace(/^[^\S\r\n]+|[^\S\r\n]+$/g, '')).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
+    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
 
     const messagesToSend = (await chunkedMessage.reduce(async (result, chunk, index) => {
       const body = {
