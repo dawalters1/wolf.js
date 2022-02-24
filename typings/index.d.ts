@@ -141,11 +141,6 @@ export class ConfigMessageSettingsObject {
 
 export class ConfigAppObject {
   public developerId: Number;
-  /**
-   * @deprecated
-   * @use {commandSettings.processOwnMessages or messageSettings.processOwnMessages}
-   */
-  public processOwnMessages: Boolean;
   public defaultLanguage: String;
   public commandSettings: ConfigCommandSettingsObject;
   public messageSettings: ConfigMessageSettingsObject;
@@ -474,11 +469,27 @@ export class MessageSettingsObject{
      }
 }
 
+export class MessageOptionsMessageFormattingObject{
+  public includeEmbeds: boolean;
+  /**
+   * Append /me
+   */
+  public me: boolean;
+  /**
+   * Append /alert
+   */
+  public alert: boolean;
+}
+
 export class MessageOptionsObject {
   public chunk: Boolean;
   public chunkSize: Number;
+  /**
+   * @deprecated
+   */
   public includeEmbeds: Boolean;
   public links: Array<MessageLinkingObject>
+  public formatting: MessageOptionsMessageFormattingObject;
 }
 
 export class MessageResponseObject {
@@ -2189,6 +2200,12 @@ export namespace  Validator {
    * @param arg - The string or buffer
    */
   export function isValidAd(arg: String):Boolean
+
+  /**
+   * Check to see if an arg is a valid boolean
+   * @param arg - The number of boolean
+   */
+  export function isValidBoolean(arg: Number| Boolean): Boolean
 }
 
 //#endregion
