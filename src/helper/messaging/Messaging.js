@@ -21,6 +21,18 @@ const getDefaultOptions = (api, opts) => {
 
   _opts.links = _opts.links && Array.isArray(_opts.links) ? _opts.links : [];
 
+  _opts.formatting = typeof _opts.formatting === 'object' ? _opts.formatting : {};
+
+  _opts.formatting.includeEmbeds = typeof _opts.formatting.includeEmbeds === 'boolean' ? _opts.formatting.includeEmbeds : false;
+
+  _opts.formatting.me = typeof _opts.formatting.me === 'boolean' ? _opts.formatting.me : false;
+
+  _opts.formatting.alert = typeof _opts.formatting.alert === 'boolean' ? _opts.formatting.alert : false;
+
+  if (_opts.formatting.me && _opts.formatting.alert) {
+    throw new Error('you cannot /me and /alert the same message');
+  }
+
   _opts.links.forEach(link => {
     if (validator.isNullOrUndefined(link.start)) {
       throw new Error('start cannot be null or undefined');
@@ -179,14 +191,14 @@ class Messaging extends BaseHelper {
     }
     const supportedLinkProtocols = this._api._botConfig.get('validation.link.protocols');
 
-    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).map((item) => item.replace(/^[^\S\r\n]+|[^\S\r\n]+$/g, '')).join(' '), _opts.chunk ? _opts.chunkSize : content.length, ' ', ' ');
+    const chunkedMessage = this._api.utility().string().chunk(content.split(' ').filter(Boolean).join(' '), (_opts.chunk ? _opts.chunkSize : content.length) - (!_opts.formatting.alert && !_opts.formatting.me ? 0 : _opts.formatting.alert ? 6 : 3), ' ', ' ');
 
     const messagesToSend = (await chunkedMessage.reduce(async (result, chunk, index) => {
       const body = {
         recipient: targetId,
         isGroup: targetType === MessageTypes.GROUP,
         mimeType,
-        data: Buffer.from(chunk, 'utf8'),
+        data: Buffer.from(!_opts.formatting.alert && !_opts.formatting.me ? chunk : _opts.formatting.alert ? `/alert ${chunk}` : `/me ${chunk}`, 'utf8'),
         flightId: uuidv4(),
         metadata: undefined,
         embeds: undefined
@@ -215,19 +227,24 @@ class Messaging extends BaseHelper {
       if (_opts.links) {
         const deepLinksInChunk = _opts.links.filter((link) => link.start >= chunkStartIndex && link.start <= chunkEndIndex);
 
-        if (deepLinksInChunk.some((link) => link.end > chunkEndIndex)) {
-          const deepLinksLargerThanChunk = deepLinksInChunk.filter((link) => link.end > chunkEndIndex);
+        for (const deepLink of deepLinksInChunk) {
+          const offset = !_opts.formatting.alert && !_opts.formatting.me ? 0 : _opts.formatting.alert ? 7 : 4;
 
-          for (const deepLink of deepLinksLargerThanChunk) {
+          if (deepLink.end > chunkEndIndex) {
             const clonedLink = Object.assign({}, deepLink);
 
             deepLink.end = chunkEndIndex;
 
-            clonedLink.start = chunkEndIndex + 1;
+            clonedLink.start = (chunkEndIndex + 1) + offset;
+            // clonedLink.end = clonedLink.start + deepLink.end - deepLink.start;
 
             _opts.links.push(clonedLink);
+          } else {
+            deepLink.start += offset + (index > 0 ? index - 1 : 0);
+            deepLink.end += offset + (index > 0 ? index - 1 : 0);
           }
         }
+
         // All links have been fixed, continue
 
         deepLinksInChunk.forEach((link) => {
