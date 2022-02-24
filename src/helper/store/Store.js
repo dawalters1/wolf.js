@@ -38,6 +38,9 @@ class Store extends BaseHelper {
     }
 
     this._balance = -1;
+    this._store = {};
+    this._products = {};
+    this._sectionProductIds = {};
   }
 }
 

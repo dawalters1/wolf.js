@@ -82,7 +82,7 @@ exports.Events = {
   PACKET_SENT: 'packetSent',
   PACKET_FAILED: 'packetFailed',
   PACKET_RETRY: 'packetRetry',
-  
+
   PING: 'ping',
   PONG: 'pong',
 
@@ -206,6 +206,7 @@ exports.Commands = {
   STAGE_LIST: 'stage list',
 
   STORE_CREDIT_BALANCE: 'store credit balance',
+  STORE_PRODUCT: 'store product',
 
   SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete',
