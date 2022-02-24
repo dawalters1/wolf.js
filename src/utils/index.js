@@ -67,6 +67,10 @@ class Utility {
     return this._timer;
   }
 
+  getUTCTimestamp () {
+    return new Date(new Date().toUTCString()).getTime();
+  }
+
   toLanguageKey (language) {
     try {
       if (validator.isNullOrUndefined(language)) {
