@@ -1,7 +1,7 @@
 /**
  * Typings support for 1.0.0
  * Created: 8/11/21
- * Updated: 9/1/22
+ * Updated: 2/3/22
  */
 
 import type { Readable } from "stream";
@@ -9,76 +9,142 @@ import type { Readable } from "stream";
 export class ResponseObject<T = undefined> {
   private constructor();
  
+  /**
+   * The status response code of the request
+   */
   public code: Number;
+  /**
+   * The requested data (If any)
+   */
   public body: T;
+  /**
+   * Headers provided by the server
+   */
   public headers: Object;
  
+  /**
+   * Whether or not the request was successful
+   */
   public success: Boolean;
 }
  
  //#region Command
 export class Command {
+  /**
+   * @param trigger - The phrase name of the command
+   * @param commandCallBacks - The callback object belonging to the command
+   * @param children - The children of the command
+   */
   public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
 }
 
 export class CommandObject {
   private constructor(commandContext: Object);
-
+  /**
+   * The command originated from a group
+   */
   public isGroup: Boolean;
+  /**
+   * The language of the group used
+   */
   public language: String;
+  /**
+   * Anything a user provided after command
+   */
   public argument: String;
+  /**
+   * The message object of the command
+   */
   public message: MessageObject;
+  /**
+   * The ID of the group the command was used in (If isGroup is true)
+   */
   public targetGroupId: Number;
+  /**
+   * The ID of the subscriber who used the command
+   */
   public sourceSubscriberId: Number;
+  /**
+   * The time the command was called
+   */
   public timestamp: Number;
+  /**
+   * The mimeType of the message
+   */
   public type: String;
 }
 
-export class CommandHandler{
+export class CommandHandler {
   private constructor();
   /**
    * Determine whether or not the message starts with a command
    * @param message - The message
    */
   public isCommand(message: MessageObject) : Boolean;
+  /**
+   * Register all the commands for the bot
+   * @param Commands - Array of commands
+   */
   public register(Commands: Command): void;
-}
-
-export class CommandContextObject{
-  public isGroup: Boolean;
-  public language: String;
-  public argument: String;
-  public message: MessageObject;
-  public targetGroupId: Number;
-  public sourceSubscriberId: Number;
-  public timestamp: Number;
-  public type: MessageType;
 }
  
  //#endregion
  
  //#region Objects
-export class AchievementObject{
+export class AchievementObject {
+  /**
+   * The percentage of users who earned the achievement
+   */
   public acquisitionPercentage: Number;
+  /**
+   * The category the achievement ID belongs too
+   */
   public category: Number;
   public description: String;
+  /**
+   * The achievement ID
+   */
   public id: Number;
+  /**
+   * The achievement image
+   */
   public imageUrl: String;
+  /**
+   * The achievement level type
+   */
   public levelId: Number;
+  /**
+   * The achievement level name type
+   */
   public levelName: String;
+  /**
+   * The name of the achievement
+   */
   public name: String;
+  /**
+   * The parent achievement ID
+   */
   public parentId: Number;
+  /**
+   * The achievement type ID
+   */
   public typeId: Number;
 }
 
-export class AchievementUnlockableObject{
+export class AchievementUnlockableObject {
   public id: Number;
   public additionalInfo: 
-     {
-         eTag: String,  
-         awardedAt: Date,  
-         categoryId: Number 
-     }
+  {
+    eTag: String,  
+    /**
+     * 
+     */
+    awardedAt: Date,  
+    /**
+     * 
+     */
+    categoryId: Number 
+  }
 }
 
 export class AchievementCategoryObject {
@@ -86,17 +152,18 @@ export class AchievementCategoryObject {
   public name: String;
 }
 
-export class BlacklistItemObject{
+export class BlacklistItemObject {
   public id: Number;
   public regex: String
 }
 
-export class CharmSelectedObject{
+export class CharmSelectedObject {
+
   public position: Number;
   public charmId: Number;
 }
 
-export class CharmObject{
+export class CharmObject {
   public cost: Number;
   public description: String;
   public id: Number;
@@ -149,7 +216,6 @@ export class ConfigAppObject {
 export class ConfigObject {
   public keyword: String;
   public app: ConfigAppObject;
-
   /**
    * Get a property from config
    * @param path - The path to the property in the config to get
@@ -165,62 +231,61 @@ export class ConfigOptionsObject {
   public developerId: Number;
 }
 
-export class CognitoObject{
+export class CognitoObject {
   public token: String;
   public identity: String;
 }
 
-export class DiscoveryRecipeObject{
+export class DiscoveryRecipeObject {
   public type: String;
   public idList: Number;
 }
 
-export class DiscoverySectionElementObject{
+export class DiscoverySectionElementObject {
   public onInvalid: String;
   public aspect: 
-     {
-         width: Number;
-         height: Number,
-       };
+  {
+    width: Number;
+    height: Number,
+  };
   public link: 
-     {
-         url: String,
-         text: String,
-     }
+  {
+    url: String,
+    text: String,
+  }
   public autoplay: Boolean;
   public muted: Boolean;
   public loop: Boolean;
   public context: String;
   public url: String;
   public recipe: 
-     {
-         id: Number,
-         min: Number;
-         max: Number;
-     }
+  {
+    id: Number,
+    min: Number;
+    max: Number;
+  }
   public size: String;
   public style: String;
   public type: String;
   public foregroundColour: String;
   public backgroundColour: String;
- 
 }
 
-export class DiscoverySectionObject{
+export class DiscoverySectionObject {
   public id: Number;
   public validity :
-     {
-         fromTime: Date;
-         endTime: Date,
-     }
+  {
+    fromTime: Date;
+    endTime: Date,
+  }
   /**
    * Key Value pairs
    * Refer to elementType enum
    */
-  public elements: { [key:string]: DiscoverySectionElementObject}
+  public elements: { [key:string]: DiscoverySectionElementObject }
 }
 
-export class DiscoveryObject{
+export class DiscoveryObject {
   public title: String;
   public name: String;
   public section: Array<DiscoverySectionObject>;
@@ -229,11 +294,11 @@ export class DiscoveryObject{
 export class EventGroupObject {
   public id: Number;
   public additionalInfo :
-     {
-         eTag: String;
-         startsAt: Date;
-         endsAt: Date
-     }
+  {
+    eTag: String;
+    startsAt: Date;
+    endsAt: Date
+  }
  
   /**
    * Only available when creating, updating events
@@ -261,7 +326,7 @@ export class FormattedUrlObject {
   public hostname: String;
 }
 
-export class GroupAdminActionObject{
+export class GroupAdminActionObject {
   public groupId: Number;
   public sourceId: Number;
   public targetId: Number;
@@ -284,21 +349,21 @@ export class GroupProfileBuilder {
   public save(): Promise<ResponseObject>;
 }
 
-export class GroupSubscriberAdditionalInfoObject{
+export class GroupSubscriberAdditionalInfoObject {
   public hash: String;
   public nickname: String;
   public privileges: Number;
   public onlineState: OnlineState;
 }
 
-export class GroupSubscriberObject{
+export class GroupSubscriberObject {
   public id: Number;
   public groupId: Number;
   public additionalInfo: GroupSubscriberAdditionalInfoObject;
   public capabilities: Capability;
 }
 
-export class GroupAudioConfigObject{
+export class GroupAudioConfigObject {
   public id: Number;
   public enabled: Boolean;
   public minRepLevel: Number;
@@ -306,19 +371,19 @@ export class GroupAudioConfigObject{
   public sourceSubscriberId: Number;
 }
 
-export class GroupAudioCountObject{
+export class GroupAudioCountObject {
   public id: Number;
   public consumerCount: Number;
   public broadcasterCount: Number;
 }
  
-export class GroupAudioRequestObject{
+export class GroupAudioRequestObject {
   public slotId: Number;
   public reservedOccupierId: Number;
   public reservedExpiresAt: Date;
 }
  
-export class GroupAudioSlotObject{
+export class GroupAudioSlotObject {
   public id: Number;
   public locked: Number;
   public occupierId: Number;
@@ -329,7 +394,7 @@ export class GroupAudioSlotObject{
   public reservedOccupierId: Number;
 }
 
-export class GroupExtendedObject{
+export class GroupExtendedObject {
   public discoverable: Boolean;
   public advancedAdmin: Boolean;
   public locked: Boolean;
@@ -341,7 +406,7 @@ export class GroupExtendedObject{
   public id: Number;
 }
 
-export class GroupObject{
+export class GroupObject {
   public exists: Boolean;
   public id: Number;
   public name: String;
@@ -398,28 +463,28 @@ export class GroupStatsTopSubscriberObject {
   public randomQoute: String;
 }
 
-export class GroupStatsObject{
+export class GroupStatsObject {
   public details : 
-     {
-         actionCount: Number;
-         emoticonCount: Number;
-         happyCount: Number;
-         id: Number;
-         imageCount: Number;
-         lineCount: Number;
-         memberCount: Number;
-         name: String;
-         owner: {subId: Number, level: Number, nickname: String}
-         packCount: Number;
-         questionCount: Number;
-         sadCount: Number;
-         spokenCount: Number;
-         swearCount: Number;
-         textCount: Number;
-         timestamp: Number;
-         voiceCount: Number;
-         wordCount: Number;
-       };
+  {
+    actionCount: Number;
+    emoticonCount: Number;
+    happyCount: Number;
+    id: Number;
+    imageCount: Number;
+    lineCount: Number;
+    memberCount: Number;
+    name: String;
+    owner: {subId: Number, level: Number, nickname: String}
+    packCount: Number;
+    questionCount: Number;
+    sadCount: Number;
+    spokenCount: Number;
+    swearCount: Number;
+    textCount: Number;
+    timestamp: Number;
+    voiceCount: Number;
+    wordCount: Number;
+  };
   public next30: Array<GroupStatsActiveSubscriberObject>;
   public top25: Array<GroupStatsActiveSubscriberObject>;
   public topAction: Array<GroupStatsTopSubscriberObject>;
@@ -436,7 +501,7 @@ export class GroupStatsObject{
   public trendsHour: Array<{ hour: number, lineCount: Number}>
 }
 
-export class IdHashObject{
+export class IdHashObject {
   public id: Number;
   public hash: String;
   /**
@@ -445,7 +510,7 @@ export class IdHashObject{
   public nickname: String;
 }
 
-export class LinkMetadataObject{
+export class LinkMetadataObject {
   public description: String; 
   public domain: String; 
   public imageSize: String; 
@@ -454,22 +519,22 @@ export class LinkMetadataObject{
   public title: String
 }
 
-export class MessageLinkingObject{
+export class MessageLinkingObject {
   public start: Number;
   public end: Number;
   public value: String | Number;
   public MessageLinkingType: MessageLinkingType
 } 
 
-export class MessageSettingsObject{
+export class MessageSettingsObject {
   public spamFilter: 
-     {
-         enabled: Boolean;
-         tier: MessageFilterTier
-     }
+  {
+    enabled: Boolean;
+    tier: MessageFilterTier
+  }
 }
 
-export class MessageOptionsMessageFormattingObject{
+export class MessageOptionsMessageFormattingObject {
   public includeEmbeds: boolean;
   /**
    * Append /me
@@ -497,7 +562,7 @@ export class MessageResponseObject {
   public timestamp: Number;
 }
 
-export class MessageEmbedObject{
+export class MessageEmbedObject {
   public type: EmbedType;
   public groupId: Number;
   public url: String;
@@ -506,13 +571,13 @@ export class MessageEmbedObject{
   public body: String;
 }
 
-export class MessageFormattingGroupLinkObject{
+export class MessageFormattingGroupLinkObject {
   public start: Number;
   public end: Number;
   public groupId: String;
 }
 
-export class MessageFormattingLinkObject{
+export class MessageFormattingLinkObject {
   public start: Number;
   public end: Number;
   public url: String;
@@ -523,14 +588,14 @@ export class MessageFormattingObject {
   public links: Array<MessageFormattingLinkObject>;
 }
 
-export class MessageMetadataObject{
+export class MessageMetadataObject {
   public formatting: MessageFormattingObject;
   public isDeleted: Boolean;
   public isSpam: Boolean;
   public isTipped: Boolean;
 }
 
-export class MessageEditObject{
+export class MessageEditObject {
   public subscriberId: Number;
   public timestamp: Number;
 }
@@ -551,15 +616,15 @@ export class MessageObject {
 
 export class NotificationObject {
   public actions: 
-     Array<
-         {
-             id: Number,
-             titleText: String;
-             actionUrl: String;
-             external: Boolean;
-             imageUrl: String
-         }
-     >;
+  Array<
+    {
+      id: Number,
+      titleText: String;
+      actionUrl: String;
+      external: Boolean;
+      imageUrl: String
+    }
+  >;
   public endAt: Date;
   public favourite: Boolean;
   public global: Boolean;
@@ -593,15 +658,14 @@ export class PhraseCountObject {
   public total: Number;
 }
 
-export class SearchObject
- {
+export class SearchObject {
   public type: SearchType;
   public id: Number; 
   public hash: String;
   public reason: String
 }
 
-export class StageGroupObject{
+export class StageGroupObject {
   public id: Number;
   public expireTime: Date;
 }
@@ -614,19 +678,19 @@ export class StageObject{
   public productId: Number;
 }
 
-export class StageClientUpdatedObject{
+export class StageClientUpdatedObject {
   public slotId: Number;
   public duration: Number;
   public sourceSubscriberId: Number;
   public targetGroupId: Number;
 }
 
-export class StageClientViewerObject{
+export class StageClientViewerObject {
   public targetGroupId: Number;
   public count: Number;
 }
 
-export class StageSlotRequestObject{
+export class StageSlotRequestObject {
   public subscriberId: Number;
   public hash: String;
   public expiresAt: Date;
@@ -655,16 +719,16 @@ export class SubscriberObject {
   public charms: { selectedList: Array<CharmSelectedObject> };
   public deviceType: DeviceType;
   public extended : 
-     {  
-         about: String;  
-         gender: Gender;   
-         language: Language; 
-         lookingFor: LookingFor;  
-         name: String; 
-         relationship: Relationship; 
-         urls: Array<String>; 
-         utcOffset: Number;
-       };
+  {  
+    about: String;  
+    gender: Gender;   
+    language: Language; 
+    lookingFor: LookingFor;  
+    name: String; 
+    relationship: Relationship; 
+    urls: Array<String>; 
+    utcOffset: Number;
+  };
   public hash: String;
   public icon: Number;
   public id: Number;
@@ -676,7 +740,7 @@ export class SubscriberObject {
   public language: String;
 }
 
-export class TimerJobObject{
+export class TimerJobObject {
   public handler: String;
   public data: Object;
   public delay: Number;
@@ -710,7 +774,7 @@ export class TipCharmObject {
   public subscriber: IdHashObject
 }
 
-export class TipLeaderboardItemObject{
+export class TipLeaderboardItemObject {
   public rank: Number;
   public charmId: Number;
   public quantity: Number;
@@ -719,35 +783,35 @@ export class TipLeaderboardItemObject{
   public subscriber: IdHashObject;
 }
 
-export class TipLeaderboardSumamryObject{
+export class TipLeaderboardSumamryObject {
   public topGifters: Array<IdHashObject>;
   public topGroups: Array<IdHashObject>;
   public topSpenders: Array<IdHashObject>;
 }
 
-export class TipLeaderboardObject{
+export class TipLeaderboardObject {
   public leaderboard: Array<TipLeaderboardItemObject>
 }
 
-export class PresenceObject{
+export class PresenceObject {
   public id: Number;
   public deviceType: DeviceType;
   public onlineState: OnlineState;
   public lastActive: Number;
 }
 
-export class WelcomeBannerObject{
-  public notification:  {[key:string]: Object};
-  public promotion:  {[key:string]: Object};
+export class WelcomeBannerObject {
+  public notification:  { [key:string]: Object };
+  public promotion:  { [key:string]: Object };
 }
 
-export class WelcomeEndpointConfigObject{  
+export class WelcomeEndpointConfigObject {  
   public avatarEndpoint: String;
   public mmsUploadEndpoint: String;
   public banner: WelcomeBannerObject;
 }
 
-export class WelcomeObject{
+export class WelcomeObject {
   public ip: String;
   public country: String;
   public token: String;
@@ -763,9 +827,10 @@ export class Handler {
  
   private _handlers: Object;
   /**
-   * @param packet [ string, object ]
+   * @param eventName - The eventString name
+   * @param body - The body of the packet
    */
-  public handle(packet: Object): void;
+  public process(eventName: String, body: Object): void;
 }
 
 export class Websocket {
@@ -973,16 +1038,15 @@ export class WOLFBot {
    */
   public options: ConfigOptionsObject;
  
-    /**
-     * The current account logged in
-     */
+  /**
+   * The current account logged in
+   */
   public currentSubscriber: SubscriberObject;
  
   /**
    * Exposes the utility methods
    */
   public utility(): Utility;
-
   /**
    * Regex used to split a string at spaces, newlines, tabs & commas
    */
@@ -1000,7 +1064,7 @@ export abstract class BaseHelper {
  
 }
 
-export class AchievementSubscriber{
+export class AchievementSubscriber {
   private constructor(api: WOLFBot);
  
   /**
@@ -1010,7 +1074,7 @@ export class AchievementSubscriber{
   public getById(subscriberId: Number): Promise<Array<AchievementUnlockableObject>>
 }
 
-export class AchievementGroup{
+export class AchievementGroup {
   private constructor(api: WOLFBot);
  
   /**
@@ -1407,7 +1471,7 @@ export class Group extends BaseHelper {
   public getRecommendedList(): Promise<Array<GroupObject>>
 }
 
-export class MessageSubscription extends BaseHelper{
+export class MessageSubscription extends BaseHelper {
   private constructor(api : WOLFBot);
   /**
    * Watch for a message using specific paramaters
@@ -1672,13 +1736,11 @@ export class Stage extends BaseHelper {
    * @param opts - The array of options
    */
   public setClientOptions(targetGroupId: Number, opts: Array<string>): Promise<void>;
-
   /**
    * Get the groups stage client ffmpeg settings
    * @param targetGroupId - The id of the group
    */
   public getClientOptions(targetGroupId: Number): Promise<Array<string>>;
-
   /**
    * Check whether or not the client is playing
    * @param targetGroupId - The id of the group
@@ -1874,13 +1936,11 @@ export class ArrayUtility {
    * @param length - How long each array should be
    */
   public chunk(array: Array<any>, length: Number): Array<Array<any>>;
-
   /**
    * Shuffle an array
    * @param array - The array
    */
   public shuffle(array: Array<any>): Array<any>;
-
   /**
    * Get a random item from an array
    * @param array - The array
@@ -1929,7 +1989,7 @@ export class MemberUtility {
   public hasCapability(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
 }
 
-export class GroupUtility{
+export class GroupUtility {
   private constructor(api: WOLFBot);
  
   /**
@@ -1975,7 +2035,7 @@ export class NumberUtility {
   public addCommas(arg: Number | String) : Number | String;
 }
 
-export class StringUtility{
+export class StringUtility {
   private constructor(api: WOLFBot);
  
   /**
@@ -2015,7 +2075,7 @@ export class StringUtility{
   public getAds(arg: String): Array<string>;
 }
 
-export class PrivilegeUtility{
+export class PrivilegeUtility {
   private constructor(api: WOLFBot);
  
   /**
@@ -2056,7 +2116,7 @@ export class SubscriberUtility {
   public hasCharm(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
 }
 
-export class TimerUtility{
+export class TimerUtility {
   private constructor(api: WOLFBot);
   /**
    * Initialise the timer util
@@ -2200,7 +2260,6 @@ export namespace  Validator {
    * @param arg - The string or buffer
    */
   export function isValidAd(arg: String):Boolean
-
   /**
    * Check to see if an arg is a valid boolean
    * @param arg - The number of boolean
@@ -2484,22 +2543,18 @@ export interface ClientEvents {
    * Groups audio count updated (Listener changed or someone joined a slot and is broadcasting)
    */
   groupAudioCountUpdate: [old: GroupAudioCountObject, new: GroupAudioCountObject],
- 
   /**
    * A slot request was added
    */
   groupAudioRequestAdd: [group: Group, request: GroupAudioRequestObject],
- 
   /**
    * A slot request was deleted
    */
   groupAudioRequestDelete: [group: Group, request: GroupAudioRequestObject],
- 
   /**
    * A groups request slots list was cleared
    */
   groupAudioRequestListClear: [group: Group],
- 
   /**
    * A slot request expired
    */
@@ -2628,6 +2683,10 @@ export interface ClientEvents {
    * The client is ready for use
    */
   ready: [],
+  /**
+   * The bot was disconnected, has reconnected and is ready for use again
+   */
+  resume: [],
   /**
    * The socket reconnected to the server
    */

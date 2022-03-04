@@ -78,18 +78,18 @@ app:
 #### index.js
 ```JS
 
-const WOLF = require('wolf.js');
-const api = new WOLF.WOLFBot();
+const { WOLFBot, Command } = require('wolf.js');
+const api = new WOLFBot();
 
 const me = require('./src/me')
 
 const keyword = api.options.keyword;
 
 api.commandHandler().register([
-  new WOLF.Command(`${keyword}_command_${keyword}`, { both: async (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) },
+  new Command(`${keyword}_command_${keyword}`, { both: async (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) },
   [
-      new WOLF.Command(`${keyword}_command_help`, { both: (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) }),
-      new WOLF.Command(`${keyword}_command_me`, { both: (command) => me(api, command) })
+      new Command(`${keyword}_command_help`, { both: (command) => api.messaging().sendMessage(command, api.phrase().getByLanguageAndName(command.language, `${keyword}_help_message`)) }),
+      new Command(`${keyword}_command_me`, { both: (command) => me(api, command) })
   ])
 ]);
 
@@ -153,7 +153,7 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Lacking Features
 
-- Nothing at all ᴺᵒᵗʰᶦⁿᵍ ᵃᵗ ᵃˡˡ
+- V3 Store
 
 ## Contact
 

@@ -148,6 +148,10 @@ class Phrase extends BaseHelper {
     }
   }
 
+  async clear () {
+    this._phrases = {};
+  }
+
   async count () {
     try {
       const countByLanguage = Object.entries(this._phrases).reduce(

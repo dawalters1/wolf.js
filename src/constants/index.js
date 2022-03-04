@@ -94,6 +94,7 @@ exports.Events = {
   PRIVATE_TIP_ADD: 'privateTipAdd',
 
   READY: 'ready',
+  RESUME: 'resume',
 
   RECONNECTED: 'reconnected',
   RECONNECTING: 'reconnecting',
