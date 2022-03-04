@@ -7,6 +7,8 @@ class Store extends BaseHelper {
     super(api);
 
     this._balance = -1;
+    this._store = {};
+    this._productTypes = {};
   }
 
   async getBalance (requestNew = false) {
@@ -38,9 +40,6 @@ class Store extends BaseHelper {
     }
 
     this._balance = -1;
-    this._store = {};
-    this._products = {};
-    this._sectionProductIds = {};
   }
 }
 

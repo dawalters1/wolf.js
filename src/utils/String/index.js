@@ -17,6 +17,10 @@ function escapeRegExp (string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+function replaceRange (string, start, end, substitute) {
+  return string.substring(0, start) + substitute + string.substring(end);
+}
+
 class String {
   constructor (api) {
     this._api = api;
@@ -35,7 +39,16 @@ class String {
       if (mapped.length === 0 || Object.entries(mapped).some((value) => value.length !== 2)) {
         throw new Error('replacements object is invalid');
       }
-      return Object.entries(mapped).reduce((result, value) => result.replace(new RegExp(escapeRegExp(`{${value[0]}}`), 'g'), (value[1] || '').toString()), string);
+
+      const replacementLocations = Object.entries(replacements).map((replacement) => [...string.matchAll(new RegExp(escapeRegExp(`{${replacement[0]}}`), 'g'))].map((match) => (
+        {
+          startsAt: match.index,
+          endsAt: match.index + match[0].length,
+          replaceWith: replacement[1] || ''
+        }
+      ))).flat();
+
+      return replacementLocations.sort((a, b) => b.startsAt - a.startsAt).reduce((result, value) => replaceRange(result, value.startsAt, value.endsAt, value.replaceWith), string);
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().replace(string=${JSON.stringify(string)}, replacements=${JSON.stringify(replacements)})`;
       throw error;
@@ -133,7 +146,7 @@ class String {
         return string;
       }
 
-      const matches = [...string.matchAll(/\[([^\][]*)]/g)].filter((Boolean)).filter((match)=>match[0].split('\n').length === 1);
+      const matches = [...string.matchAll(/\[([^\][]*)]/g)].filter((Boolean)).filter((match) => match[0].split('\n').length === 1);
 
       if (matches.length === 0) {
         return string;
@@ -218,19 +231,7 @@ class String {
         throw new Error('url cannot be null or empty');
       }
 
-      return ([...arg.matchAll(/\[(.+?)\]/g)] || []).map((ad) => {
-        if (ad[1].trim().length === 0 || ad[0].split('\n').length > 1) {
-          return null;
-        }
-
-        const charBefore = ad.input[ad.index];
-        const charAfter = ad.input[ad.index + ad[0].length];
-
-        if (!(charBefore && charAfter) || ((charBefore && charBefore.match(START_REGEX)) && (charAfter && charAfter.match(END_REGEX)))) {
-          return ad;
-        }
-        return null;
-      }).filter(Boolean);
+      return ([...arg.matchAll(/(^|\s+|\p{Punctuation}|\p{Extended_Pictographic})\[(.+?)\](\s+|\p{Punctuation}|\p{Extended_Pictographic}|$)/gu)] || []).map((ad) => `[${ad[2]}]`);
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().getAds(string=${JSON.stringify(arg)})`;
       throw error;

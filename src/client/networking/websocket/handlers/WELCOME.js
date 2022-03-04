@@ -25,7 +25,7 @@ const onSuccess = async (api, reconnect = false) => {
 
   api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
-  api.emit(reconnect ? Events.RECONNECTED : Events.READY);
+  api.emit(reconnect ? Events.RESUME : Events.READY);
 };
 
 const login = async (api) => {
