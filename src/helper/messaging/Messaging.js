@@ -207,7 +207,7 @@ class Messaging extends BaseHelper {
       const chunkStartIndex = chunkedMessage.slice(0, index).join(' ').length + index;
       const chunkEndIndex = chunkStartIndex + chunkedMessage[index].length;
 
-      const adsInChunk = this._api.utility().string().getAds(chunk) || [];
+      const adsInChunk = this._api.utility().string().getAds(chunk);
 
       const linksInChunk = chunk.split(' ').reduce((result, value, index) => {
         if (validator.isValidUrl(this._api, value)) {
