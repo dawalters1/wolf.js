@@ -14,28 +14,25 @@ class Handler {
     }
   }
 
-  async handle (packet) {
-    const command = packet[0];
-    const body = packet[1];
-
-    if (this._api._botConfig.get('networking.events.ignore').includes(command)) {
+  async process (eventName, body) {
+    if (this._api._botConfig.get('networking.events.ignore').includes(eventName)) {
       return Promise.resolve();
     }
 
     this._api.emit(
       Events.PACKET_RECEIVED,
-      command,
+      eventName,
       body
     );
 
-    if (!Object.keys(this._handlers).includes(command)) {
+    if (!Object.keys(this._handlers).includes(eventName)) {
       return this._api.emit(
         Events.INTERNAL_ERROR,
-          `Unhandled socket event: ${command}`
+          `Unhandled socket event: ${eventName}`
       );
     }
 
-    return await this._handlers[command](this._api, body.body ? body.body : body);
+    return await this._handlers[eventName](this._api, body.body ? body.body : body);
   }
 }
 

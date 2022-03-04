@@ -54,23 +54,18 @@ module.exports = class Websocket {
 
     this.socket.on('reconnecting', reconnectNumber => this._api.emit(Events.RECONNECTING, reconnectNumber));
 
-    this.socket.on('reconnect', () => this._api.emit(Events.RECONNECTED));
+    this.socket.on('reconnected', () => this._api.emit(Events.RECONNECTED));
 
     this.socket.on('reconnect_failed', error => this._api.emit(Events.RECONNECT_FAILED, error));
 
     this.socket.on('ping', () => this._api.emit(Events.PING));
     this.socket.on('pong', (latency) => this._api.emit(Events.PONG, latency));
 
-    const patch = require('socketio-wildcard')(io.Manager);
-    patch(this.socket);
-
-    this.socket.on('*', packet => {
-      this._handler.handle(packet.data);
-    });
+    this.socket.onAny((eventName, data) => this._handler.process(eventName, data));
   }
 
   async _send (command, data, attempt = 0) {
-    const response = await new Promise((resolve, reject) => {
+    const response = await new Promise((resolve) => {
       this.socket.emit(command, data, resp =>
         resolve(resp));
     });
