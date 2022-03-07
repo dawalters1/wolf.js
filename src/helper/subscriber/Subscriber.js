@@ -49,7 +49,7 @@ class Subscriber extends BaseHelper {
         presence = this._presence.filter((subscriber) => subscriberIds.includes(subscriber.id));
       }
 
-      if (presence.length !== subscriberIds) {
+      if (presence.length !== subscriberIds.length) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId));
 
         for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
@@ -137,7 +137,7 @@ class Subscriber extends BaseHelper {
         subscribers = this._subscribers.filter((subscriber) => subscriberIds.includes(subscriber.id));
       }
 
-      if (subscribers.length !== subscriberIds) {
+      if (subscribers.length !== subscriberIds.length) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId));
 
         for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {

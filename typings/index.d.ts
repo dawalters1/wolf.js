@@ -783,7 +783,7 @@ export class TipLeaderboardItemObject {
   public subscriber: IdHashObject;
 }
 
-export class TipLeaderboardSumamryObject {
+export class TipLeaderboardSummmaryObject {
   public topGifters: Array<IdHashObject>;
   public topGroups: Array<IdHashObject>;
   public topSpenders: Array<IdHashObject>;
@@ -1901,7 +1901,7 @@ export class Tipping extends BaseHelper {
    * @param tipType - The type of tips
    * @param tipDirection - The direction of tips sent/received
    */    
-  public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSumamryObject>
+  public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummmaryObject>
   /**
    * Get global tipping leaderboard
    * @param tipPeriod - The tipping period
@@ -1913,7 +1913,7 @@ export class Tipping extends BaseHelper {
    * Get global tipping leaderboard summary
    * @param tipPeriod - The tipping period
    */    
-  public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSumamryObject>
+  public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSummmaryObject>
 }
 
 export class AchievementUtility {

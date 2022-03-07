@@ -100,7 +100,7 @@ class Achievement extends BaseHelper {
         achievements = this._achievements[language].filter((achievement) => achievementIds.includes(achievement.id));
       }
 
-      if (achievements.length !== achievementIds) {
+      if (achievements.length !== achievementIds.length) {
         const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId));
 
         for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.get('batch.length'))) {
@@ -122,7 +122,7 @@ class Achievement extends BaseHelper {
 
             for (const [index, achievementResponse] of achievementResponses.entries()) {
               if (achievementResponse.success) {
-                achievements.push(this._process(achievementResponse.body));
+                achievements.push(this._process(achievementResponse.body, language));
               } else {
                 achievements.push(
                   {
