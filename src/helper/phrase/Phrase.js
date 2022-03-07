@@ -107,7 +107,7 @@ class Phrase extends BaseHelper {
         this._phrases[phrase.language][phraseName.toLowerCase()] =
           this._phrases[phrase.language][phraseName.toLowerCase()]
             .filter((phr) => !phr.default)
-            .concat(phrase.value);
+            .concat(phrase.value.trim());
       }
     } catch (error) {
       error.internalErrorMessage = `api.phrase().load(phrases=${
