@@ -169,6 +169,7 @@ exports.Commands = {
   GROUP_EVENT_DELETE: 'group event delete',
   GROUP_EVENT_LIST: 'group event list',
   GROUP_EVENT_UPDATE: 'group event update',
+  GROUP_MEMBER: 'group member',
   GROUP_MEMBER_ADD: 'group member add',
   GROUP_MEMBER_DELETE: 'group member delete',
   GROUP_MEMBER_LIST: 'group member list',

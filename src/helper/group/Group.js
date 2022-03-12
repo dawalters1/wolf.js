@@ -114,6 +114,7 @@ class Group extends BaseHelper {
                 base.audioConfig = body.audioConfig;
                 base.audioCounts = body.audioCounts;
                 base.exists = true;
+                base._requestedMembersList = false;
 
                 groups.push(this._process(base));
               } else {
@@ -180,6 +181,7 @@ class Group extends BaseHelper {
         base.audioConfig = body.audioConfig;
         base.audioCounts = body.audioCounts;
         base.exists = true;
+        base._requestedMembersList = false;
 
         return this._process(base);
       } else {
@@ -350,6 +352,86 @@ class Group extends BaseHelper {
     }
   }
 
+  async getSubscriber (targetGroupId, subscriberId, requestNew = false) {
+    try {
+      if (validator.isNullOrUndefined(targetGroupId)) {
+        throw new Error('targetGroupId cannot be null or undefined');
+      } else if (!validator.isValidNumber(targetGroupId)) {
+        throw new Error('targetGroupId must be a valid number');
+      } else if (!validator.isType(targetGroupId, 'number')) {
+        throw new Error('targetGroupId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+        throw new Error('targetGroupId cannot be less than or equal to 0');
+      }
+
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new Error('subscriberId cannot be null or undefined');
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new Error('subscriberId must be a valid number');
+      } else if (!validator.isType(subscriberId, 'number')) {
+        throw new Error('subscriberId must be type of number');
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new Error('subscriberId cannot be less than or equal to 0');
+      }
+
+      if (!validator.isValidBoolean(requestNew)) {
+        throw new Error('requestNew must be a valid boolean');
+      }
+
+      const group = await this.getById(targetGroupId);
+
+      if (!requestNew && group.subscribers && group.subscribers.length > 0) {
+        const subscriber = group.subscribers.find((groupSubscriber) => groupSubscriber.id === subscriberId);
+
+        if (subscriber) {
+          return subscriber;
+        }
+
+        if (group._requestedMembersList) {
+          return null;
+        }
+      }
+
+      const result = await this._websocket.emit(Commands.GROUP_MEMBER,
+        {
+          groupId: targetGroupId,
+          subscriberId
+        }
+      );
+
+      if (result.success) {
+        const subscriber = await this._api.subscriber().getById(subscriberId);
+
+        const groupSubscriber = new GroupSubscriber(this._api,
+          {
+            id: subscriberId,
+            capabilities: result.body.capabilities,
+            additionalInfo: {
+              hash: subscriber.hash,
+              nickname: subscriber.nickname,
+              privileges: subscriber.privileges,
+              onlineState: subscriber.onlineState
+            }
+          }, targetGroupId);
+
+        const existing = group.subscribers.find((sub) => sub.id === subscriberId);
+
+        if (existing) {
+          patch(existing, groupSubscriber);
+        } else {
+          group.subscribers.push(groupSubscriber);
+        }
+
+        return groupSubscriber;
+      }
+
+      return null;
+    } catch (error) {
+      error.internalErrorMessage = `api.group().getSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      throw error;
+    }
+  }
+
   async getSubscriberList (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
@@ -367,7 +449,7 @@ class Group extends BaseHelper {
 
       const group = await this.getById(targetGroupId);
 
-      if (!requestNew && group.subscribers && group.subscribers.length >= group.members) {
+      if (!requestNew && group._requestedMembersList) {
         return group.subscribers;
       }
 
@@ -386,6 +468,7 @@ class Group extends BaseHelper {
 
       if (result.success) {
         group.inGroup = true;
+        group._requestedMembersList = true;
         group.subscribers = result.body.map((subscriber) => new GroupSubscriber(this._api, subscriber, targetGroupId));
       }
 
