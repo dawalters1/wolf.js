@@ -60,6 +60,14 @@ const validateUserConfig = (api, opts) => {
 
   _opts.app.messageSettings.processOwnMessages = validator.isValidBoolean(_opts.app.messageSettings.processOwnMessages) ? Boolean(_opts.app.messageSettings.processOwnMessages) : false;
 
+  _opts.app.messageSettings.subscriptions = typeof (_opts.app.messageSettings.subscriptions) === 'object' ? _opts.app.messageSettings.subscriptions : {};
+
+  _opts.app.messageSettings.subscriptions.groupTipping = validator.isValidBoolean(_opts.app.messageSettings.subscriptions.groupTipping) ? Boolean(_opts.app.messageSettings.subscriptions.groupTipping) : true;
+
+  _opts.app.messageSettings.subscriptions.groupMessages = validator.isValidBoolean(_opts.app.messageSettings.subscriptions.groupMessages) ? Boolean(_opts.app.messageSettings.subscriptions.groupMessages) : true;
+
+  _opts.app.messageSettings.subscriptions.privateMessages = validator.isValidBoolean(_opts.app.messageSettings.subscriptions.privateMessages) ? Boolean(_opts.app.messageSettings.subscriptions.privateMessages) : true;
+
   if (_opts.app.commandSettings.processOwnMessages && !_opts.app.messageSettings.processOwnMessages) {
     console.warn('[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
   }
