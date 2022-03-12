@@ -50,7 +50,7 @@ class Privilege {
         privileges = (await this._api.subscriber().getById(targetSubscriberId)).privileges;
       }
 
-      return requireAll ? privs.every((priv) => (privileges & priv) === priv) : privs.some((priv) => (privileges & privs) === priv);
+      return requireAll ? privs.every((priv) => (privileges & priv) === priv) : privs.some((priv) => (privileges & priv) === priv);
     } catch (error) {
       error.internalErrorMessage = `api.utility().subscriber().privilege().has(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, privs=${JSON.stringify(privs)}, requireAll=${JSON.stringify(requireAll)})`;
       throw error;
