@@ -71,13 +71,15 @@ const validateUserConfig = (api, opts) => {
   if (_opts.app.commandSettings.processOwnMessages && !_opts.app.messageSettings.processOwnMessages) {
     console.warn('[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
   }
+
   api._options = {
     keyword: _opts.keyword,
     commandHandling: {
       processOwnMessages: opts.app.commandSettings.processOwnMessages
     },
     messageHandling: {
-      processOwnMessages: opts.app.messageSettings.processOwnMessages
+      processOwnMessages: opts.app.messageSettings.processOwnMessages,
+      subscriptions: opts.app.messageSettings.subscriptions
     },
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,

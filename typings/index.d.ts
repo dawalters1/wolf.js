@@ -242,7 +242,13 @@ export class ConfigObject {
  
 export class ConfigOptionsObject {
   public keyword: String;
-  public processOwnMessages: Boolean;
+  public commandHandling: {
+    processOwnMessages: Boolean;
+  }
+  public messageHandling: {
+    processOwnMessages: Boolean;
+    subscriptions: ConfigSubscriptionsObject
+  }
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
   public developerId: Number;

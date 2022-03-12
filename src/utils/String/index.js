@@ -173,6 +173,7 @@ class String {
       } else if (validator.isNullOrWhitespace(url)) {
         throw new Error('url cannot be null or empty');
       }
+
       if (url && !(url.startsWith('[') && url.endsWith(']'))) {
         if ((url.includes('.') || url.includes(':'))) {
           let link = trimPunctuation(url.toLowerCase());
@@ -202,12 +203,22 @@ class String {
 
               const parsed = tlds.parse(data.host);
 
-              if (parsed && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
-                return {
-                  url,
-                  hostname: parsed.hostname
-                };
+              if (parsed) {
+                if (parsed.isIp) {
+                  return {
+                    url,
+                    hostname: parsed.hostname
+                  };
+                }
+
+                if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
+                  return {
+                    url,
+                    hostname: parsed.hostname
+                  };
+                }
               }
+              return null;
             } catch (error) {
               return null;
             }
