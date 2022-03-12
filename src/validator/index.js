@@ -78,9 +78,17 @@ const isValidUrl = (api, arg) => {
 
           const parsed = tlds.parse(data.host);
 
-          if (parsed && parsed.publicSuffix.split('.').every((tld) => api._botConfig.get('validation.link.tld').includes(tld))) {
-            return true;
+          if (parsed) {
+            if (parsed.isIp) {
+              return true;
+            }
+
+            if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
+              return true;
+            }
           }
+
+          return false;
         } catch (error) {
           return false;
         }
