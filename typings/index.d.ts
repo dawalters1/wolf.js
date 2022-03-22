@@ -202,8 +202,25 @@ export class ConfigCommandSettingsObject {
   public processOwnMessages: Boolean;
 }
 
+export class ConfigSubscriptionsObject{
+  /**
+   * subscribe to tipping messages
+   */
+  public groupTipping: Boolean;
+    /**
+   * subscribe to group messages
+   */
+  public groupMessages: Boolean;
+  /**
+   * subscribe to private messages
+   */
+  public privateMessages: Boolean;
+
+}
 export class ConfigMessageSettingsObject {
   public processOwnMessages: Boolean;
+
+  public subscriptions: ConfigSubscriptionsObject;
 } 
 
 export class ConfigAppObject {
@@ -225,7 +242,13 @@ export class ConfigObject {
  
 export class ConfigOptionsObject {
   public keyword: String;
-  public processOwnMessages: Boolean;
+  public commandHandling: {
+    processOwnMessages: Boolean;
+  }
+  public messageHandling: {
+    processOwnMessages: Boolean;
+    subscriptions: ConfigSubscriptionsObject
+  }
   public ignoreOfficialBots: Boolean;
   public ignoreUnofficialBots: Boolean;
   public developerId: Number;
