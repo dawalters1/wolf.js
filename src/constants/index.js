@@ -209,6 +209,8 @@ exports.Commands = {
 
   STORE_CREDIT_BALANCE: 'store credit balance',
   STORE_PRODUCT: 'store product',
+  STORE_PRODUCT_PROFILE: 'store product profile',
+  STORE_PRODUCT_CREDIT_LIST: 'store product credit list',
 
   SUBSCRIBER_BLOCK_ADD: 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE: 'subscriber block delete',
