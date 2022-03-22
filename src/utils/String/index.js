@@ -242,7 +242,7 @@ class String {
         throw new Error('url cannot be null or empty');
       }
 
-      return ([...arg.matchAll(/(?:(?<=^|\s+|\p{Punctuation}|\p{Extended_Pictographic}))(\[(.+?)\])(?:(?=$|\s+|\p{Punctuation}|\p{Extended_Pictographic}))/gu)] || []);
+      return ([...arg.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?<!\d|\p{Letter}))/gu)] || []);
     } catch (error) {
       error.internalErrorMessage = `api.utility().string().getAds(string=${JSON.stringify(arg)})`;
       throw error;
