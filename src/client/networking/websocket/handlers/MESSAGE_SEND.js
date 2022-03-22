@@ -13,7 +13,7 @@ const handleAdminAction = async (api, message) => {
   const adminAction = JSON.parse(message.body);
 
   if (['join', 'leave'].includes(adminAction.type)) {
-    if (group.subscribers && group.subscribers.length === 0) {
+    if (!group._requestedMembersList) {
       if (adminAction.type === 'join') {
         if (subscriber.id === api.currentSubscriber.id) {
           group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;

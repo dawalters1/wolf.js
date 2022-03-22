@@ -39,13 +39,21 @@ class Member {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
-      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
+      const group = await this._api.group().getById(targetGroupId);
 
-      if (groupSubscriberList.length === 0) {
-        return null;
+      if (group.subscribers && group.subscribers.length > 0) {
+        const subscriber = group.subscribers.find((groupSubscriber) => groupSubscriber.id === targetSubscriberId);
+
+        if (subscriber) {
+          return subscriber;
+        }
+
+        if (group._requestedMembersList) {
+          return null;
+        }
       }
 
-      return groupSubscriberList.find((groupSubscriber) => groupSubscriber.id === targetSubscriberId);
+      return await this._api.group().getSubscriber(targetGroupId, targetSubscriberId);
     } catch (error) {
       error.internalErrorMessage = `api.utility().group().member().get(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)})`;
       throw error;
@@ -118,13 +126,7 @@ class Member {
         return true;
       }
 
-      const groupSubscriberList = await this._api.group().getSubscriberList(targetGroupId);
-
-      if (groupSubscriberList.length === 0) {
-        return false;
-      }
-
-      const groupSubscriber = groupSubscriberList.find((subscriber) => subscriber.id === targetSubscriberId);
+      const groupSubscriber = await this.get(targetGroupId, targetSubscriberId);
 
       if (!groupSubscriber) {
         return false;

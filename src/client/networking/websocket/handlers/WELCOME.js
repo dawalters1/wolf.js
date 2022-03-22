@@ -1,31 +1,33 @@
 const SubscriberObject = require('../../../../models/SubscriberObject');
 const { Events, Commands } = require('../../../../constants');
 
-const onSuccess = async (api, reconnect = false) => {
+const subscribeToSubscriptionType = async (api, type) => {
+  switch (type) {
+    case 'groupMessages':
+      return await api.messaging()._messageGroupSubscribe();
+    case 'privateMessages':
+      return await api.messaging()._messagePrivateSubscribe();
+    case 'groupTipping':
+      return await api.tipping()._groupSubscribe();
+    default:
+      throw new Error('invalid subscription type');
+  }
+};
+
+const onSuccess = async (api, resume = false) => {
   await api._cleanup(false);
 
   await api.group()._joinedGroups();
 
-  const subscribe = async () => {
-    const resps = await Promise.all([
-      api.messaging()._messageGroupSubscribe(),
-      api.messaging()._messagePrivateSubscribe(),
-      api.tipping()._groupSubscribe()
-    ]);
+  const subscriptions = Object.entries(api.config.get('app.messageSettings.subscriptions')).filter((entry) => entry[1]).map((entry) => entry[0]);
 
-    if (resps.some((resp) => !resp.success)) {
-      console.warn('[Subscriptions Failed]: Retrying');
-      return await subscribe();
-    };
-
-    return Promise.resolve();
-  };
-
-  await subscribe();
+  for (const subscription of subscriptions) {
+    await subscribeToSubscriptionType(api, subscription);
+  }
 
   api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
-  api.emit(reconnect ? Events.RESUME : Events.READY);
+  api.emit(resume ? Events.RESUME : Events.READY);
 };
 
 const login = async (api) => {
