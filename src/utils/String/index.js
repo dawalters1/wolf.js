@@ -205,10 +205,7 @@ class String {
 
               if (parsed) {
                 if (parsed.isIp) {
-                  return {
-                    url,
-                    hostname: parsed.hostname
-                  };
+                  return null;
                 }
 
                 if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
