@@ -80,7 +80,7 @@ const isValidUrl = (api, arg) => {
 
           if (parsed) {
             if (parsed.isIp) {
-              return true;
+              return false;
             }
 
             if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
