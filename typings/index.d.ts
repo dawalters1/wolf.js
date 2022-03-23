@@ -242,10 +242,10 @@ export class ConfigObject {
  
 export class ConfigOptionsObject {
   public keyword: String;
-  public commandHandling: {
+  public commandSettings: {
     processOwnMessages: Boolean;
   }
-  public messageHandling: {
+  public messageSettings: {
     processOwnMessages: Boolean;
     subscriptions: ConfigSubscriptionsObject
   }
