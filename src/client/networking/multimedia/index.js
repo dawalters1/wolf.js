@@ -55,7 +55,7 @@ module.exports = class MultiMediaServiceClient {
       });
     });
 
-    if (!credentials.params.IdentityId) {
+    if (!credentials.params.IdentityPoolId) {
       setAWSCredentials(await this._api.getSecurityToken(true));
       return await this._getCredentials();
     }
