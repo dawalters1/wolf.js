@@ -41,7 +41,7 @@ module.exports = class MultiMediaServiceClient {
 
     this._api.on('loginSuccess', async () => setAWSCredentials(this._api.cognito));
 
-    this._api.on('resume', async () => setAWSCredentials(await this._api.getSecurityToken(true)));
+    this._api.on('resume', async () => setAWSCredentials(this._api.cognito));
   }
 
   async _getCredentials () {
@@ -54,6 +54,11 @@ module.exports = class MultiMediaServiceClient {
         }
       });
     });
+
+    if (!credentials.params.IdentityId) {
+      setAWSCredentials(await this._api.getSecurityToken(true));
+      return await this._getCredentials();
+    }
 
     if (credentials.needsRefresh() ||
       credentials.expired ||
