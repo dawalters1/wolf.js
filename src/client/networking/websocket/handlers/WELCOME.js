@@ -84,6 +84,5 @@ module.exports = async (api, body) => {
   api._currentSubscriber = new SubscriberObject(api, body.loggedInUser);
 
   await api.getSecurityToken(true);
-
   return await onSuccess(api, true);
 };
