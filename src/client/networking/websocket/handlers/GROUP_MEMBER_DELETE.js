@@ -15,7 +15,7 @@ module.exports = async (api, body) => {
   }
 
   if (body.subscriberId === api.currentSubscriber.id) {
-    group.capability = Capability.NOT_MEMBER;
+    group.capabilities = Capability.NOT_MEMBER;
     group.inGroup = false;
     group.subscribers = [];
     return api.emit(Events.LEFT_GROUP, group);
