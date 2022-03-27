@@ -13,24 +13,6 @@ const buildRoute = (route) => {
   return `/v${route.version}/${route.route}`;
 };
 
-const setAWSCredentials = (cognito) => {
-  if (!AWS.config.credentials) {
-    AWS.config.credentials = new AWS.CognitoIdentityCredentials(
-      {
-        IdentityId: cognito.identity,
-        Logins: {
-          'cognito-identity.amazonaws.com': cognito.token
-        }
-      },
-      {
-        region: 'eu-west-1'
-      }
-    );
-  } else {
-    AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
-  }
-};
-
 /**
  * {@hideconstructor}
  */
@@ -39,33 +21,45 @@ module.exports = class MultiMediaServiceClient {
     this._api = api;
     this._client = new AWS.HttpClient();
 
-    this._api.on('loginSuccess', async () => setAWSCredentials(this._api.cognito));
+    this._api.on('loginSuccess', async () => this.setAWSCredentials());
 
-    this._api.on('resume', async () => setAWSCredentials(this._api.cognito));
+    this._api.on('resume', async () => this.setAWSCredentials());
   }
 
-  async _getCredentials () {
-    const credentials = await new Promise((resolve, reject) => {
-      AWS.config.getCredentials(function (err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(AWS.config.credentials);
+  async setAWSCredentials () {
+    if (!AWS.config.credentials) {
+      AWS.config.credentials = new AWS.CognitoIdentityCredentials(
+        {
+          IdentityId: this._api.cognito.identity,
+          Logins: {
+            'cognito-identity.amazonaws.com': this._api.cognito.token
+          }
+        },
+        {
+          region: 'eu-west-1'
         }
-      });
-    });
+      );
+    } else {
+      AWS.config.credentials.params.IdentityId = this._api.cognito.identity;
+      AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = this._api.cognito.token;
+    }
+  };
 
-    if (!credentials.params.IdentityPoolId) {
-      setAWSCredentials(await this._api.getSecurityToken(true));
-      return await this._getCredentials();
+  async _getCredentials () {
+    if (!this._credentials) {
+      this._credentials = await new Promise((resolve, reject) => {
+        AWS.config.getCredentials(function (err) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(AWS.config.credentials);
+          }
+        });
+      });
     }
 
-    if (credentials.needsRefresh() ||
-      credentials.expired ||
-      credentials.accessKeyId === undefined ||
-      credentials.secretAccessKey === undefined ||
-      credentials.sessionToken === undefined) {
-      return await new Promise((resolve, reject) => {
+    if (this._credentials.needsRefresh() || this._credentials.expired || this._credentials.accessKeyId === undefined || this._credentials.secretAccessKey === undefined || this._credentials.sessionToken === undefined) {
+      this._credentials = await new Promise((resolve, reject) => {
         AWS.config.credentials.refresh(function (error) {
           if (error) {
             reject(error);
@@ -74,9 +68,11 @@ module.exports = class MultiMediaServiceClient {
           }
         });
       });
+
+      return await this._getCredentials();
     }
 
-    return credentials;
+    return this._credentials;
   }
 
   async _sendRequest (route, body, attempt = 1) {
@@ -129,7 +125,7 @@ module.exports = class MultiMediaServiceClient {
           break;
       }
 
-      await this._getCredentials(true);
+      await this._getCredentials();
 
       return await this._sendRequest(route, body, attempt + 1);
     }

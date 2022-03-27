@@ -15,7 +15,7 @@ module.exports = async (api, body) => {
   }
 
   if (body.subscriberId === api.currentSubscriber.id) {
-    group.capability = body.capabilities;
+    group.capabilities = body.capabilities;
   }
 
   if (body.capabilities === Capability.OWNER) {
