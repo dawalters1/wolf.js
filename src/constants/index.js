@@ -390,6 +390,7 @@ exports.MessageFilterTier = {
 
 exports.MessageType = {
   APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
+  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK : "application/palringo-interactive-message-pack",
 
   AUDIO_AAC: 'audio/aac',
   AUDIO_SPEEX: 'audio/x-speex',
