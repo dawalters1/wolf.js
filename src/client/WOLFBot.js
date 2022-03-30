@@ -337,7 +337,7 @@ class WOLFBot extends EventEmitter {
 
   async getSecurityToken (requestNew = false) {
     try {
-      if (this.cognito && !requestNew) {
+      if (!requestNew && this.cognito) {
         return this.cognito;
       }
 

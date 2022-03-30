@@ -29,7 +29,7 @@ module.exports = class MultiMediaServiceClient {
   }
 
   async setAWSCredentials () {
-    if (!AWS.config.credentials) {
+    if (!AWS.config.credentials || AWS.config.credentials.params.IdentityId !== this._api.cognito.identity) {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials(
         {
           IdentityId: this._api.cognito.identity,
@@ -42,7 +42,6 @@ module.exports = class MultiMediaServiceClient {
         }
       );
     } else {
-      AWS.config.credentials.params.IdentityId = this._api.cognito.identity;
       AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = this._api.cognito.token;
     }
   };
