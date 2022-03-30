@@ -62,7 +62,26 @@ module.exports = class MultiMediaServiceClient {
   };
 
   async _getCredentials () {
-    const credentials = await new Promise((resolve, reject) => {
+    if (AWS.config.credentials) {
+      if (AWS.config.credentials.needsRefresh()) {
+        await Promise.all([
+          await this._api.getSecurityToken(true),
+          this.setAWSCredentials()
+        ]);
+
+        return await new Promise((resolve, reject) => {
+          AWS.config.credentials.refresh(function (error) {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(AWS.config.credentials);
+            }
+          });
+        });
+      }
+    }
+
+    return await new Promise((resolve, reject) => {
       AWS.config.getCredentials(function (error) {
         if (error) {
           console.log('getError', error, AWS.config.credentials.params);
@@ -72,23 +91,6 @@ module.exports = class MultiMediaServiceClient {
         }
       });
     });
-
-    if (credentials.needsRefresh() || credentials.expired || credentials.accessKeyId === undefined || credentials.secretAccessKey === undefined || credentials.sessionToken === undefined) {
-      await new Promise((resolve, reject) => {
-        AWS.config.credentials.refresh(function (error) {
-          if (error) {
-            console.log('refreshError', error, AWS.config.credentials.params);
-            reject(error);
-          } else {
-            resolve(AWS.config.credentials);
-          }
-        });
-      });
-
-      return await this._getCredentials();
-    }
-
-    return credentials;
   }
 
   async _sendRequest (route, body, attempt = 1) {
