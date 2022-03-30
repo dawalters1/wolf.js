@@ -4,6 +4,7 @@ const path = require('path');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
+const { Events } = require('../../constants');
 
 class Phrase extends BaseHelper {
   constructor (api) {
@@ -43,7 +44,7 @@ class Phrase extends BaseHelper {
       );
 
       if (phrases.length === 0) {
-        console.warn(`[WARNING] Phrase Helper: ${language} json is empty`);
+        this._api.emit(Events.INTERNAL_ERROR, `[WARNING] Phrase Helper: ${language} json is empty`);
       }
 
       if (!this._phrases[language]) {
