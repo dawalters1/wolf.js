@@ -9,25 +9,11 @@ const fileType = require('file-type');
 
 const { v4: uuidv4 } = require('uuid');
 
+const { Events } = require('../../../constants');
+
 const buildRoute = (route) => {
   return `/v${route.version}/${route.route}`;
 };
-
-/**
- * [MultiMediaService]: Error sending message to group message to: 2241764 with error CredentialsError: Could not load credentials from CognitoIdentityCredentials, retrying...
-MissingRequiredParameter: Missing required key 'IdentityPoolId' in params
-at ParamValidator.fail (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\param_validator.js:50:37)
-at ParamValidator.validateStructure (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\param_validator.js:62:14)
-at ParamValidator.validateMember (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\param_validator.js:89:21)
-at ParamValidator.validate (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\param_validator.js:34:10)
-at Request.VALIDATE_PARAMETERS (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\event_listeners.js:132:42)
-at Request.callListeners (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\sequential_executor.js:106:20)
-at Request.emit (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\sequential_executor.js:78:10)
-at Request.emit (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\request.js:686:14)
-at Request.transition (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\request.js:22:10)
-at AcceptorStateMachine.runTo (C:\Users\WOLF Bots\Desktop\Bots\Bot-Tag\node_modules\aws-sdk\lib\state_machine.js:14:12)
-internalErrorMessage: api.messaging().sendMessage(commandOrMessage=[object Object], content="Buffer -- Too long to display", opts={})
- */
 
 /**
  * {@hideconstructor}
@@ -63,11 +49,10 @@ module.exports = class MultiMediaServiceClient {
 
   async _getCredentials () {
     if (AWS.config.credentials.needsRefresh()) {
-      console.log('credentials needed refreshed, refreshing');
       return await new Promise((resolve, reject) => {
         AWS.config.credentials.refresh(function (error) {
           if (error) {
-            console.log('refreshError', error, AWS.config.credentials.params);
+            this._api.emit(Events.INTERNAL_ERROR, error);
             reject(error);
           } else {
             resolve(AWS.config.credentials);
@@ -76,11 +61,10 @@ module.exports = class MultiMediaServiceClient {
       });
     }
 
-    console.log('credentials didnt need refreshed, returning');
     return await new Promise((resolve, reject) => {
       AWS.config.getCredentials(function (error) {
         if (error) {
-          console.log('getError', error, AWS.config.credentials.params);
+          this._api.emit(Events.INTERNAL_ERROR, error);
           reject(error);
         } else {
           resolve(AWS.config.credentials);
@@ -126,16 +110,16 @@ module.exports = class MultiMediaServiceClient {
 
       switch (route) {
         case buildRoute(mmsSettings.messaging):
-          console.warn(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.group):
-          console.warn(`[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.subscriber):
-          console.warn(`[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.event):
-          console.warn(`[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
           break;
       }
 
