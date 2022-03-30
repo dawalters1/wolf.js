@@ -65,7 +65,7 @@ module.exports = class MultiMediaServiceClient {
     const credentials = await new Promise((resolve, reject) => {
       AWS.config.getCredentials(function (error) {
         if (error) {
-          console.log('getError', error);
+          console.log('getError', error, AWS.config.credentials.params);
           reject(error);
         } else {
           resolve(AWS.config.credentials);
@@ -77,7 +77,7 @@ module.exports = class MultiMediaServiceClient {
       await new Promise((resolve, reject) => {
         AWS.config.credentials.refresh(function (error) {
           if (error) {
-            console.log('refreshError', error);
+            console.log('refreshError', error, AWS.config.credentials.params);
             reject(error);
           } else {
             resolve(AWS.config.credentials);
