@@ -62,25 +62,20 @@ module.exports = class MultiMediaServiceClient {
   };
 
   async _getCredentials () {
-    if (AWS.config.credentials) {
-      if (AWS.config.credentials.needsRefresh()) {
-        await Promise.all([
-          await this._api.getSecurityToken(true),
-          this.setAWSCredentials()
-        ]);
-
-        return await new Promise((resolve, reject) => {
-          AWS.config.credentials.refresh(function (error) {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(AWS.config.credentials);
-            }
-          });
+    if (AWS.config.credentials.needsRefresh()) {
+      console.log('credentials needed refreshed, refreshing');
+      return await new Promise((resolve, reject) => {
+        AWS.config.credentials.refresh(function (error) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(AWS.config.credentials);
+          }
         });
-      }
+      });
     }
 
+    console.log('credentials didnt need refreshed, returning');
     return await new Promise((resolve, reject) => {
       AWS.config.getCredentials(function (error) {
         if (error) {
