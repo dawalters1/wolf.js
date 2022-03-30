@@ -611,8 +611,18 @@ export class MessageFormattingObject {
   public links: Array<MessageFormattingLinkObject>;
 }
 
+export class ImpAspectRatioObject {
+  public decimal: Number;
+  public string: String;
+}
+
+export class ImpObject {
+  public aspectRatio: ImpAspectRatioObject;
+}
+
 export class MessageMetadataObject {
   public formatting: MessageFormattingObject;
+  public imp: ImpObject;
   public isDeleted: Boolean;
   public isSpam: Boolean;
   public isTipped: Boolean;
@@ -2464,6 +2474,7 @@ export interface MessageType {
   AUDIO_SPEEX : "audio/x-speex",
   IMAGE_JPEGHTML : "image/jpeghtml",
   APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
+  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK : "application/palringo-interactive-message-pack",
   TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
 }
 
