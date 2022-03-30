@@ -16,7 +16,7 @@ const handleAdminAction = async (api, message) => {
     if (!group._requestedMembersList) {
       if (adminAction.type === 'join') {
         if (subscriber.id === api.currentSubscriber.id) {
-          group.capability = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
+          group.capabilities = group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
           group.inGroup = true;
         }
 
@@ -41,7 +41,7 @@ const handleAdminAction = async (api, message) => {
     if (adminAction.type !== 'kick') {
       if (adminAction.type === 'leave') {
         if (subscriber.id === api.currentSubscriber.id) {
-          group.capability = Capability.NOT_MEMBER;
+          group.capabilities = Capability.NOT_MEMBER;
           group.inGroup = false;
           group.subscribers = [];
         }
