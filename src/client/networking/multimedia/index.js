@@ -67,6 +67,7 @@ module.exports = class MultiMediaServiceClient {
       return await new Promise((resolve, reject) => {
         AWS.config.credentials.refresh(function (error) {
           if (error) {
+            console.log('refreshError', error, AWS.config.credentials.params);
             reject(error);
           } else {
             resolve(AWS.config.credentials);
