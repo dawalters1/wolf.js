@@ -1,3 +1,4 @@
+const { Events } = require('../../constants');
 const validator = require('../../validator');
 
 const get = (configType, config, path) => {
@@ -44,7 +45,7 @@ const validateUserConfig = (api, opts) => {
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
   if (_opts.app.processOwnMessages) {
-    console.warn('[WARNING] CONFIG: app.processOwnMessages is deprecated, please use messageSettings.processOwnMessages or commandSettings.processOwnMessages instead');
+    this._api.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: app.processOwnMessages is deprecated, please use messageSettings.processOwnMessages or commandSettings.processOwnMessages instead');
   }
   _opts.app.processOwnMessages = validator.isValidBoolean(_opts.app.processOwnMessages) ? Boolean(_opts.app.processOwnMessages) : false;
 
@@ -69,7 +70,7 @@ const validateUserConfig = (api, opts) => {
   _opts.app.messageSettings.subscriptions.privateMessages = validator.isValidBoolean(_opts.app.messageSettings.subscriptions.privateMessages) ? Boolean(_opts.app.messageSettings.subscriptions.privateMessages) : true;
 
   if (_opts.app.commandSettings.processOwnMessages && !_opts.app.messageSettings.processOwnMessages) {
-    console.warn('[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
+    this._api.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
   }
 
   api._options = {

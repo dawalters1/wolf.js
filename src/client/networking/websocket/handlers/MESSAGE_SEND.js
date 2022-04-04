@@ -72,7 +72,11 @@ module.exports = async (api, body) => {
     case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
       api.emit(Events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
       break;
-
+    case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
+      message.body = message.body.replace('token=TOKEN', `token=${api.config.get('_loginSettings').token}`)
+        .replace('language=LANGUAGE', `language=${api.currentSubscriber.extended.language}`)
+        .replace('deviceType=DEVICETYPE', 'deviceType=0');
+      break;
     case MessageType.TEXT_PLAIN:
     {
       if (message.sourceSubscriberId !== api.currentSubscriber.id) {

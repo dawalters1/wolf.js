@@ -1,4 +1,4 @@
-const { Commands, MessageTypes, EmbedType, MessageLinkingType } = require('../../constants');
+const { Commands, MessageTypes, EmbedType, MessageLinkingType, Events } = require('../../constants');
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
@@ -73,10 +73,10 @@ const getDefaultOptions = (api, opts) => {
   const lengthValidation = api._botConfig.get('validation.messaging.length');
 
   if (_opts.chunkSize < lengthValidation.min) {
-    console.warn(`[WARNING]: Message Helper - Minimum chunk size is ${lengthValidation.min}`);
+    this._api.emit(Events.INTERNAL_ERROR, `[WARNING]: Message Helper - Minimum chunk size is ${lengthValidation.min}`);
     _opts.chunkSize = lengthValidation.min;
   } else if (_opts.chunkSize > lengthValidation.max) {
-    console.warn(`[WARNING]: Message Helper - Maximum chunk size is  ${lengthValidation.min}`);
+    this._api.emit(Events.INTERNAL_ERROR, `[WARNING]: Message Helper - Maximum chunk size is  ${lengthValidation.min}`);
     _opts.chunkSize = lengthValidation.max;
   }
 
