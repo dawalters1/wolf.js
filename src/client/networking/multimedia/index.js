@@ -9,6 +9,8 @@ const fileType = require('file-type');
 
 const { v4: uuidv4 } = require('uuid');
 
+const { Events } = require('../../../constants');
+
 const buildRoute = (route) => {
   return `/v${route.version}/${route.route}`;
 };
@@ -20,59 +22,52 @@ module.exports = class MultiMediaServiceClient {
   constructor (api) {
     this._api = api;
     this._client = new AWS.HttpClient();
-
-    this._api.on('loginSuccess', async () => this.setAWSCredentials());
-
-    this._api.on('resume', async () => this.setAWSCredentials());
   }
 
-  async setAWSCredentials () {
+  async _getCredentials () {
+    if (AWS.config.credentials && !AWS.config.credentials.needsRefresh()) {
+      return AWS.config.credentials;
+    }
+
+    const cognito = await this._api.getSecurityToken(true);
+
     if (!AWS.config.credentials) {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials(
         {
-          IdentityId: this._api.cognito.identity,
+          IdentityId: cognito.identity,
           Logins: {
-            'cognito-identity.amazonaws.com': this._api.cognito.token
+            'cognito-identity.amazonaws.com': cognito.token
           }
         },
         {
           region: 'eu-west-1'
         }
       );
-    } else {
-      AWS.config.credentials.params.IdentityId = this._api.cognito.identity;
-      AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = this._api.cognito.token;
-    }
-  };
 
-  async _getCredentials () {
-    if (!this._credentials) {
-      this._credentials = await new Promise((resolve, reject) => {
-        AWS.config.getCredentials(function (err) {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(AWS.config.credentials);
-          }
-        });
-      });
-    }
-
-    if (this._credentials.needsRefresh() || this._credentials.expired || this._credentials.accessKeyId === undefined || this._credentials.secretAccessKey === undefined || this._credentials.sessionToken === undefined) {
-      this._credentials = await new Promise((resolve, reject) => {
-        AWS.config.credentials.refresh(function (error) {
+      return await new Promise((resolve, reject) => {
+        AWS.config.getCredentials(function (error) {
           if (error) {
+            this._api.emit(Events.INTERNAL_ERROR, error);
             reject(error);
           } else {
             resolve(AWS.config.credentials);
           }
         });
       });
-
-      return await this._getCredentials();
     }
 
-    return this._credentials;
+    AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
+
+    return await new Promise((resolve, reject) => {
+      AWS.config.credentials.refresh(function (error) {
+        if (error) {
+          this._api.emit(Events.INTERNAL_ERROR, error);
+          reject(error);
+        } else {
+          resolve(AWS.config.credentials);
+        }
+      });
+    });
   }
 
   async _sendRequest (route, body, attempt = 1) {
@@ -112,16 +107,16 @@ module.exports = class MultiMediaServiceClient {
 
       switch (route) {
         case buildRoute(mmsSettings.messaging):
-          console.warn(`[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.group):
-          console.warn(`[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.avatar.subscriber):
-          console.warn(`[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
           break;
         case buildRoute(mmsSettings.event):
-          console.warn(`[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
+          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
           break;
       }
 
