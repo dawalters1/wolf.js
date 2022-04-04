@@ -22,34 +22,30 @@ module.exports = class MultiMediaServiceClient {
   constructor (api) {
     this._api = api;
     this._client = new AWS.HttpClient();
-
-    this._api.on('loginSuccess', async () => this.setAWSCredentials());
-
-    this._api.on('resume', async () => this.setAWSCredentials());
   }
 
-  async setAWSCredentials () {
-    if (!AWS.config.credentials || AWS.config.credentials.params.IdentityId !== this._api.cognito.identity) {
+  async _getCredentials () {
+    if (AWS.config.credentials && !AWS.config.credentials.needsRefresh()) {
+      return AWS.config.credentials;
+    }
+
+    const cognito = await this._api.getSecurityToken(true);
+
+    if (!AWS.config.credentials) {
       AWS.config.credentials = new AWS.CognitoIdentityCredentials(
         {
-          IdentityId: this._api.cognito.identity,
+          IdentityId: cognito.identity,
           Logins: {
-            'cognito-identity.amazonaws.com': this._api.cognito.token
+            'cognito-identity.amazonaws.com': cognito.token
           }
         },
         {
           region: 'eu-west-1'
         }
       );
-    } else {
-      AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = this._api.cognito.token;
-    }
-  };
 
-  async _getCredentials () {
-    if (AWS.config.credentials.needsRefresh()) {
       return await new Promise((resolve, reject) => {
-        AWS.config.credentials.refresh(function (error) {
+        AWS.config.getCredentials(function (error) {
           if (error) {
             this._api.emit(Events.INTERNAL_ERROR, error);
             reject(error);
@@ -60,8 +56,10 @@ module.exports = class MultiMediaServiceClient {
       });
     }
 
+    AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
+
     return await new Promise((resolve, reject) => {
-      AWS.config.getCredentials(function (error) {
+      AWS.config.credentials.refresh(function (error) {
         if (error) {
           this._api.emit(Events.INTERNAL_ERROR, error);
           reject(error);
