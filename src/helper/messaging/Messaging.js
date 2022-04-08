@@ -290,7 +290,7 @@ class Messaging extends BaseHelper {
             );
 
             return result;
-          }, Promise.resolve([]));
+          }, Promise.resolve([])).slice(0, 25);
         }
 
         if (linksInChunk.length > 0) {
@@ -304,18 +304,18 @@ class Messaging extends BaseHelper {
             );
 
             return result;
-          }, []);
+          }, []).slice(0, 25);
         }
 
         if (!result.previewAdded && _opts.includeEmbeds) {
           const data = [];
 
           if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
-            data.push(...body.metadata.formatting.groupLinks.slice(0, 25));
+            data.push(...body.metadata.formatting.groupLinks);
           }
 
           if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
-            data.push(...body.metadata.formatting.links.slice(0, 25));
+            data.push(...body.metadata.formatting.links);
           }
 
           const embed = (await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
