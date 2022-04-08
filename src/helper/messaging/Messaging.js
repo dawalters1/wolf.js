@@ -280,7 +280,7 @@ class Messaging extends BaseHelper {
 
         if (adsInChunk.length > 0) {
           body.metadata.formatting.groupLinks = await adsInChunk.reduce(async (result, value) => {
-            if ((await result).length > 25) {
+            if ((await result).length >= 25) {
               return result;
             }
             const group = await this._api.group().getByName(value[1]);
@@ -298,7 +298,7 @@ class Messaging extends BaseHelper {
 
         if (linksInChunk.length > 0) {
           body.metadata.formatting.links = linksInChunk.reduce((result, value) => {
-            if (result.length > 25) {
+            if (result.length >= 25) {
               return result;
             }
             result.push(
