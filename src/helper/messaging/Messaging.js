@@ -311,11 +311,11 @@ class Messaging extends BaseHelper {
           const data = [];
 
           if (body.metadata.formatting.groupLinks && body.metadata.formatting.groupLinks.length > 0) {
-            data.push(...body.metadata.formatting.groupLinks);
+            data.push(...body.metadata.formatting.groupLinks.slice(0, 25));
           }
 
           if (body.metadata.formatting.links && body.metadata.formatting.links.length > 0) {
-            data.push(...body.metadata.formatting.links);
+            data.push(...body.metadata.formatting.links.slice(0, 25));
           }
 
           const embed = (await data.filter(Boolean).sort((a, b) => a.start - b.start).reduce(async (result, item) => {
