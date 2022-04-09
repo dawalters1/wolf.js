@@ -37,7 +37,7 @@
     "file-type": "16.5.3",
     "fluent-ffmpeg": "2.1.2",
     "image-size": "1.0.1",
-    "moment": "^2.29.2",
+    "moment": "2.29.2",
     "socket.io-client": "^4.4.1",
     "superagent": "7.1.1",
     "tldts": "5.7.67",
