@@ -76,6 +76,8 @@ module.exports = {
   STAGE_CLIENT_UNPAUSED: 'stageClientBroadcastUnpaused',
   STAGE_CLIENT_VIEWER_COUNT_CHANGED: 'stageClientBroadcastViewerCountChanged',
 
+  STORE_CREDIT_BALANCE_UPDATE: 'storeCreditBalanceUpdate',
+
   SUBSCRIBER_BLOCK_ADD: 'subscriberBlockAdd',
   SUBSCRIBER_BLOCK_DELETE: 'subscriberBlockDelete',
   SUBSCRIBER_CONTACT_ADD: 'subscriberContactAdd',

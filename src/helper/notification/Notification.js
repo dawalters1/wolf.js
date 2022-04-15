@@ -1,14 +1,14 @@
 const BaseHelper = require('../BaseHelper');
 
 const validator = require('../../validator');
-const { Commands, Events, Language } = require('../../constants');
+const { Commands, Language } = require('../../constants');
 
 class Notification extends BaseHelper {
   constructor (api) {
     super(api);
 
-    this._notifications = {};
-    this._subscriptions = {};
+    this._notifications = [];
+    this._fetchedNotifications = false;
   }
 
   async list (language, requestNew = false) {
@@ -22,10 +22,9 @@ class Notification extends BaseHelper {
         throw new Error('requestNew must be a valid boolean');
       }
 
-      if (!requestNew && this._notifications[language]) {
-        return this._notifications[language];
+      if (!requestNew && this._language && this._language === language && this._fetchedNotifications) {
+        return this._notifications;
       }
-
       const result = await this._websocket.emit(
         Commands.NOTIFICATION_LIST,
         {
@@ -34,10 +33,12 @@ class Notification extends BaseHelper {
       );
 
       if (result.success) {
-        this._notifications[language] = result.body;
+        this._language = language;
+        this._fetchedNotifications = true;
+        this._notifications = result.body;
       }
 
-      return this._notifications[language] || [];
+      return this._notifications;
     } catch (error) {
       error.internalErrorMessage = `api.notification().list(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
@@ -49,7 +50,8 @@ class Notification extends BaseHelper {
       const result = await this._websocket.emit(Commands.NOTIFICATION_LIST_CLEAR);
 
       if (result.success) {
-        this._notifications = {};
+        this._fetchedNotifications = false;
+        this._notifications = [];
       }
 
       return result;
@@ -60,75 +62,21 @@ class Notification extends BaseHelper {
   }
 
   async subscribe (language) {
-    try {
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(Language).includes(language)) {
-        throw new Error('language is not valid');
-      }
-
-      if (this._subscriptions[language] !== undefined) {
-        throw new Error(`already subscribed to ${language} notifications`);
-      }
-
-      this._subscriptions[language] = setInterval(async () => {
-        const cached = this._notifications[language] || [];
-        const newData = await this.list(language, true);
-
-        if (newData.length > 0) {
-          for (const notification of newData) {
-            if (!cached.find((notif) => notif.id === notification.id)) {
-              this._api.emit(
-                Events.NOTIFICATION_RECEIVED,
-                {
-                  language,
-                  notification
-                }
-              );
-            }
-          }
-        }
-      }, this._api._botConfig.get('notificationSettings.duration'));
-
-      return Promise.resolve(true);
-    } catch (error) {
-      error.internalErrorMessage = `api.notification().subscribe(language=${JSON.stringify(language)})`;
-      throw error;
-    }
+    console.log('Notification subscriptions are now deprecated and will no longer work');
   }
 
   async unsubscribe (language) {
-    try {
-      if (!validator.isValidNumber(language)) {
-        throw new Error('language must be a valid number');
-      } else if (!Object.values(Language).includes(language)) {
-        throw new Error('language is not valid');
-      }
-
-      if (this._subscriptions[language]) {
-        Reflect.deleteProperty(this._subscriptions, language);
-
-        return Promise.resolve(true);
-      }
-      return Promise.resolve(false);
-    } catch (error) {
-      error.internalErrorMessage = `api.notification().unsubscribe(language=${JSON.stringify(language)})`;
-      throw error;
-    }
+    console.log('Notification subscriptions are now deprecated and will no longer work');
   }
 
   async _cleanup (disconnected) {
-    if (!disconnected) {
-      return Promise.resolve();
+    if (!disconnected && this._fetchedNotifications) {
+      return await this.list(this._language, true);
     }
 
-    this._notifications = {};
-
-    for (const language of Object.keys(this._subscriptions)) {
-      clearInterval(this._subscriptions[language]);
-    }
-
-    this._subscriptions = {};
+    this._language = undefined;
+    this._fetchedNotifications = false;
+    this._notifications = [];
   }
 };
 

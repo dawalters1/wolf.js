@@ -1,4 +1,4 @@
-const { ServerEvents, Events } = require('../../../../constants');
+const { ServerEvents, Events } = require('../../../../../constants');
 
 class Processor {
   constructor (api) {
@@ -8,7 +8,6 @@ class Processor {
 
     for (const group of Object.entries(ServerEvents)) {
       for (const evt of Object.entries(group[1])) {
-        console.log('loading', group[0], `./${group[0].toLowerCase()}/${evt[0]}.js`);
         if (this._api._botConfig.get('networking.events.ignore').includes(evt[1])) {
           continue;
         }

@@ -2798,6 +2798,10 @@ export interface ClientEvents {
    */
   stageClientBroadcastViewerCountChanged: [change: StageClientViewerObject],
   /**
+   * The bots credit balance was updated
+   */
+  storeCreditBalanceUpdate: [oldBalance: Number, newBalance: Number],
+  /**
    * A subscriber was added to the bots blocked list
    */
   subscriberBlockAdd: [subscriber: SubscriberObject],
