@@ -11,7 +11,7 @@ class Timer {
   async initialise (handlers, ...args) {
     try {
       if (this._initialised) {
-        return Promise.resolve();
+        throw new Error('timer queue has already been initialised');
       }
 
       this._handlers = handlers;
@@ -140,6 +140,22 @@ class Timer {
       return job;
     } catch (error) {
       error.internalErrorMessage = `api.utility().timer().get(name=${JSON.stringify(name)})`;
+      throw error;
+    }
+  }
+
+  async getAll () {
+    try {
+      if (!this._initialised) {
+        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+      }
+
+      return (await this._timerQueue.getJobs('waiting')).map((job) => {
+        job.remaining = (job.timestamp + job.delay) - Date.now();
+        return new TimerJobObject(job);
+      });
+    } catch (error) {
+      error.internalErrorMessage = 'api.utility().timer().getAll()';
       throw error;
     }
   }

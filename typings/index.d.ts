@@ -2158,7 +2158,7 @@ export class TimerUtility {
    */
   public initialise(handlers: Object, ...args: any): Promise<void>;
   /**
-   * Add an event
+   * Add an timer 
    * @param name - The name of the event
    * @param handler - The handler that should handle the event
    * @param data - The data to pass to the handler
@@ -2166,17 +2166,21 @@ export class TimerUtility {
    */
   public add(name: String, handler: String, data: Object, duration: Number): Promise<TimerJobObject>
   /**
-   * Cancel an event
+   * Cancel a timer
    * @param name The name of the event
    */
   public cancel(name: String): Promise<void>;
   /**
-   * Get an event
+   * Get a timer
    * @param name The name of the event
    */
   public get(name: String): Promise<TimerJobObject>;
   /**
-   * Delay an event
+   * Get all timers
+   */
+  public getAll(): Promise<Array<TimerJobObject>>;
+  /**
+   * Delay a timer
    * @param name - The name of the vent
    * @param duration - How long until the event should fire
    */

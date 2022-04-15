@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const yaml = require('yaml');
 const fileType = require('file-type');
-const { Commands, LoginDevice, LoginType, OnlineState, MessageFilterTier, Events } = require('../constants');
+const { Commands, LoginType, OnlineState, MessageFilterTier, Events } = require('../constants');
 
 const validator = require('../validator');
 
@@ -288,10 +288,6 @@ class WOLFBot extends EventEmitter {
 
       if (validator.isNullOrWhitespace(password)) {
         throw new Error('password cannot be null or empty');
-      }
-
-      if (Object.values(LoginDevice).includes(onlineState)) {
-        throw new Error('parameter loginDevice is deprecated');
       }
 
       if (validator.isNullOrUndefined(onlineState)) {

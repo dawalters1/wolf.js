@@ -1,4 +1,4 @@
-const Handler = require('./handlers');
+const Processor = require('./events/Processor');
 const Response = require('../../../models/ResponseObject');
 
 const io = require('socket.io-client');
@@ -12,7 +12,7 @@ const crypto = require('crypto');
 module.exports = class Websocket {
   constructor (api) {
     this._api = api;
-    this._handler = new Handler(this._api);
+    this._processor = new Processor(this._api);
 
     this._requestDefs = {};
   };
@@ -61,7 +61,7 @@ module.exports = class Websocket {
     this.socket.on('ping', () => this._api.emit(Events.PING));
     this.socket.on('pong', (latency) => this._api.emit(Events.PONG, latency));
 
-    this.socket.onAny((eventName, data) => this._handler.process(eventName, data));
+    this.socket.onAny((eventName, data) => this._processor.process(eventName, data));
   }
 
   async _send (command, data, attempt = 0) {
