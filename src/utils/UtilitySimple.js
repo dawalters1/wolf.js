@@ -16,7 +16,7 @@ const _toLanguageKey = require('./ToLanguageKey');
 
 const { Language } = require('../constants');
 
-class Utility {
+class UtilitySimple {
   constructor (api) {
     this._api = api;
 
@@ -173,4 +173,4 @@ class Utility {
   }
 }
 
-module.exports = Utility;
+module.exports = UtilitySimple;
