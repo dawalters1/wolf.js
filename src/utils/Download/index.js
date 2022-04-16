@@ -15,7 +15,7 @@ class Download {
         .parse(superagent.parse.image)
         .then(res => res.body);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().download().file(url=${JSON.stringify(url)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.download${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.file(url=${JSON.stringify(url)})`;
       throw error;
     }
   }

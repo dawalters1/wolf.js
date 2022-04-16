@@ -88,7 +88,7 @@ class Group extends BaseHelper {
       if (groups.length !== targetGroupIds.length) {
         const targetGroupIdsToRequest = targetGroupIds.filter((targetGroupId) => !groups.some((group) => group.id === targetGroupId));
 
-        for (const targetGroupIdBatch of this._api.utility().array().chunk(targetGroupIdsToRequest, this._api._botConfig.get('batch.length'))) {
+        for (const targetGroupIdBatch of this._api._utility._array.chunk(targetGroupIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.GROUP_PROFILE,
             {
@@ -143,7 +143,7 @@ class Group extends BaseHelper {
 
       return groups;
     } catch (error) {
-      error.internalErrorMessage = `api.group().getByIds(targetGroupIds=${JSON.stringify(targetGroupIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByIds(targetGroupIds=${JSON.stringify(targetGroupIds)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -156,8 +156,8 @@ class Group extends BaseHelper {
         throw new Error('targetGroupName cannot be null or empty');
       }
 
-      if (!requestNew && this._groups.find((group) => this._api.utility().string().isEqual(group.name, targetGroupName))) {
-        return this._groups.find((group) => this._api.utility().string().isEqual(group.name, targetGroupName));
+      if (!requestNew && this._groups.find((group) => this._api._utility._string.isEqual(group.name, targetGroupName))) {
+        return this._groups.find((group) => this._api._utility._string.isEqual(group.name, targetGroupName));
       }
 
       const result = await this._websocket.emit(
@@ -192,7 +192,7 @@ class Group extends BaseHelper {
         };
       }
     } catch (error) {
-      error.internalErrorMessage = `api.group().getByName(targetGroupName=${JSON.stringify(targetGroupName)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByName(targetGroupName=${JSON.stringify(targetGroupName)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -222,7 +222,7 @@ class Group extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.group().joinById(targetGroupId=${JSON.stringify(targetGroupId)}, password=${JSON.stringify(password)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.joinById(targetGroupId=${JSON.stringify(targetGroupId)}, password=${JSON.stringify(password)})`;
       throw error;
     }
   }
@@ -248,7 +248,7 @@ class Group extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.group().joinByName(targetGroupName=${JSON.stringify(targetGroupName)}, password=${JSON.stringify(password)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.joinByName(targetGroupName=${JSON.stringify(targetGroupName)}, password=${JSON.stringify(password)})`;
       throw error;
     }
   }
@@ -272,7 +272,7 @@ class Group extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.group().leaveById(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.leaveById(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -287,7 +287,7 @@ class Group extends BaseHelper {
 
       return await this.leaveById((await this.getByName(targetGroupName)).id);
     } catch (error) {
-      error.internalErrorMessage = `api.group().leaveByName(targetGroupName=${JSON.stringify(targetGroupName)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.leaveByName(targetGroupName=${JSON.stringify(targetGroupName)})`;
       throw error;
     }
   }
@@ -347,7 +347,7 @@ class Group extends BaseHelper {
 
       return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {
-      error.internalErrorMessage = `api.group().getChatHistory(targetGroupId=${JSON.stringify(targetGroupId)}, chronological=${JSON.stringify(chronological)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getChatHistory(targetGroupId=${JSON.stringify(targetGroupId)}, chronological=${JSON.stringify(chronological)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
       throw error;
     }
   }
@@ -400,7 +400,7 @@ class Group extends BaseHelper {
       );
 
       if (result.success) {
-        const subscriber = await this._api.subscriber().getById(subscriberId);
+        const subscriber = await this._api._subscriber.getById(subscriberId);
 
         const groupSubscriber = new GroupSubscriber(this._api,
           {
@@ -427,7 +427,7 @@ class Group extends BaseHelper {
 
       return null;
     } catch (error) {
-      error.internalErrorMessage = `api.group().getSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -474,7 +474,7 @@ class Group extends BaseHelper {
 
       return group.subscribers;
     } catch (error) {
-      error.internalErrorMessage = `api.group().getSubscriberList(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriberList(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -510,7 +510,7 @@ class Group extends BaseHelper {
 
       return group.stats;
     } catch (error) {
-      error.internalErrorMessage = `api.group().getStats(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getStats(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -540,9 +540,9 @@ class Group extends BaseHelper {
         throw new Error('avatar must be a valid buffer');
       }
 
-      return this._api.multiMediaService().uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
+      return this._api._multiMediaService.uploadGroupAvatar(targetGroupId, avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
-      error.internalErrorMessage = `api.group().updateAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, avatar=${JSON.stringify(avatar ? 'Buffer -- Too long to display' : avatar)})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.updateAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, avatar=${JSON.stringify(avatar ? 'Buffer -- Too long to display' : avatar)})`;
       throw error;
     }
   }
@@ -584,7 +584,7 @@ class Group extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.group().updateSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, capabilities=${capabilities})`;
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.updateSubscriber(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, capabilities=${capabilities})`;
       throw error;
     }
   }
@@ -599,7 +599,7 @@ class Group extends BaseHelper {
 
       return [];
     } catch (error) {
-      error.internalErrorMessage = 'api.group().getRecommendedList()';
+      error.internalErrorMessage = `api.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getRecommendedList()`;
       throw error;
     }
   }

@@ -39,7 +39,7 @@ class Privilege {
         throw new Error('requireAll must be a valid boolean');
       }
 
-      const groupWithSubscriber = (await this._api.group().list()).find((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === targetSubscriberId));
+      const groupWithSubscriber = (await this._api._group.list()).find((group) => group.subscribers && group.subscribers.some((subscriber) => subscriber.id === targetSubscriberId));
 
       let privileges = 0;
 
@@ -47,12 +47,12 @@ class Privilege {
         const subscriber = groupWithSubscriber.subscribers.find((subscriber) => subscriber.id === targetSubscriberId);
         privileges = subscriber.additionalInfo.privileges;
       } else {
-        privileges = (await this._api.subscriber().getById(targetSubscriberId)).privileges;
+        privileges = (await this._api._subscriber.getById(targetSubscriberId)).privileges;
       }
 
       return requireAll ? privs.every((priv) => (privileges & priv) === priv) : privs.some((priv) => (privileges & priv) === priv);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().subscriber().privilege().has(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, privs=${JSON.stringify(privs)}, requireAll=${JSON.stringify(requireAll)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscriber${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.privilege${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.has(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, privs=${JSON.stringify(privs)}, requireAll=${JSON.stringify(requireAll)})`;
       throw error;
     }
   }

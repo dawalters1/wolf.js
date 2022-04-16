@@ -1,13 +1,13 @@
 const validator = require('../../validator');
 const Privilege = require('./Privilege');
 
-class Subscriber {
+class SubscriberSimple {
   constructor (api) {
     this._api = api;
     this._privilege = new Privilege(this._api);
   }
 
-  privilege () {
+  get privilege () {
     return this._privilege;
   }
 
@@ -37,7 +37,7 @@ class Subscriber {
         }
       ));
     } catch (error) {
-      error.internalErrorMessage = `api.utility().subscriber().getAvatar(subscriberId=${JSON.stringify(subscriberId)}, size=${JSON.stringify(size)})`;
+      error.internalErrorMessage = `api.utility.subscriber.getAvatar(subscriberId=${JSON.stringify(subscriberId)}, size=${JSON.stringify(size)})`;
       throw error;
     }
   }
@@ -77,7 +77,7 @@ class Subscriber {
       return `${trimAds ? this._api._utility._string.trimAds(subscriber.nickname) : subscriber.nickname}${excludeId ? '' : ` (${subscriber.id})`}`;
     } catch (error) {
       Reflect.deleteProperty(subscriber, '_api');
-      error.internalErrorMessage = `api.utility().subscriber().toDisplayName(subscriber=${JSON.stringify(subscriber)}, trimAds=${JSON.stringify(trimAds)}, excludeId=${JSON.stringify(excludeId)})`;
+      error.internalErrorMessage = `api.utility.subscriber.toDisplayName(subscriber=${JSON.stringify(subscriber)}, trimAds=${JSON.stringify(trimAds)}, excludeId=${JSON.stringify(excludeId)})`;
       throw error;
     }
   }
@@ -132,10 +132,10 @@ class Subscriber {
 
       return requireAll ? charmIds.every((id) => summary.includes(id)) : charmIds.some((id) => summary.includes(id));
     } catch (error) {
-      error.internalErrorMessage = `api.utility().subscriber().hasCharm(subscriberId=${JSON.stringify(subscriberId)}, charmIds=${JSON.stringify(charmIds)}, requireAll=${JSON.stringify(requireAll)})`;
+      error.internalErrorMessage = `api.utility.subscriber.hasCharm(subscriberId=${JSON.stringify(subscriberId)}, charmIds=${JSON.stringify(charmIds)}, requireAll=${JSON.stringify(requireAll)})`;
       throw error;
     }
   }
 }
 
-module.exports = Subscriber;
+module.exports = SubscriberSimple;

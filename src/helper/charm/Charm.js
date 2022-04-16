@@ -39,7 +39,7 @@ class Charm extends BaseHelper {
 
       return this._charms[language] || [];
     } catch (error) {
-      error.internalErrorMessage = `api.charm().list(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.list(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -93,7 +93,7 @@ class Charm extends BaseHelper {
         return result;
       }, []);
     } catch (error) {
-      error.internalErrorMessage = `api.charm().getByIds(charmIds=${JSON.stringify(charmIds)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByIds(charmIds=${JSON.stringify(charmIds)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -117,7 +117,7 @@ class Charm extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.charm().getSubscriberSummary(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriberSummary(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -143,7 +143,7 @@ class Charm extends BaseHelper {
 
       return result.success ? result.body : undefined;
     } catch (error) {
-      error.internalErrorMessage = `api.charm().getSubscriberStatistics(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriberStatistics(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -191,7 +191,7 @@ class Charm extends BaseHelper {
 
       return result.success ? result.body : [];
     } catch (error) {
-      error.internalErrorMessage = `api.charm().getSubscriberActiveList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriberActiveList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
       throw error;
     }
   }
@@ -239,7 +239,7 @@ class Charm extends BaseHelper {
 
       return result.success ? result.body : [];
     } catch (error) {
-      error.internalErrorMessage = `api.charm().getSubscriberExpiredList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriberExpiredList(subscriberId=${JSON.stringify(subscriberId)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
       throw error;
     }
   }
@@ -263,7 +263,7 @@ class Charm extends BaseHelper {
         }
       }
       const results = [];
-      for (const charmIdBatch of this._api.utility().array().chunk(charmIds, this._api._botConfig.get('batch.length'))) {
+      for (const charmIdBatch of this._api._utility._array.chunk(charmIds, this._api._botConfig.get('batch.length'))) {
         results.push(await this._websocket.emit(
           Commands.CHARM_SUBSCRIBER_DELETE,
           {
@@ -279,7 +279,7 @@ class Charm extends BaseHelper {
             body: results
           };
     } catch (error) {
-      error.internalErrorMessage = `api.charm().delete(charmIds=${JSON.stringify(charmIds)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.delete(charmIds=${JSON.stringify(charmIds)})`;
       throw error;
     }
   }
@@ -325,7 +325,7 @@ class Charm extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.charm().set(charms=${JSON.stringify(charms)})`;
+      error.internalErrorMessage = `api.charm${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.set(charms=${JSON.stringify(charms)})`;
       throw error;
     }
   }

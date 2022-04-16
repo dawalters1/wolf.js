@@ -27,7 +27,7 @@ class Store extends BaseHelper {
 
       return this._balance >= 0 ? this._balance : 0;
     } catch (error) {
-      error.internalErrorMessage = `api.store().getBalance(requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.store${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getBalance(requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }

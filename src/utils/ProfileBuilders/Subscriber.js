@@ -123,7 +123,7 @@ module.exports = class SubscriberProfileBuilder {
       throw new Error('url cannot be null or empty');
     }
 
-    this._urls = this._urls.filter((_url) => !this._api.utility().string().isEqual(_url, url));
+    this._urls = this._urls.filter((_url) => !this._api._utility._string.isEqual(_url, url));
 
     return this;
   }

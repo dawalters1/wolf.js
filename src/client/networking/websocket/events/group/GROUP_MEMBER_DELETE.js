@@ -2,8 +2,8 @@ const { Events, Capability } = require('../../../../../constants');
 
 module.exports = async (api, body) => {
   const [group, subscriber] = await Promise.all([
-    api.group().getById(body.groupId),
-    api.subscriber().getById(body.subscriberId)
+    api._group.getById(body.groupId),
+    api._subscriber.getById(body.subscriberId)
   ]);
 
   if (group.subscribers && group.subscribers.length > 0) {
@@ -20,6 +20,8 @@ module.exports = async (api, body) => {
     group.subscribers = [];
     return api.emit(Events.LEFT_GROUP, group);
   }
+
+  group.members--;
 
   return api.emit(
     Events.GROUP_EVENT_DELETE,

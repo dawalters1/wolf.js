@@ -39,7 +39,7 @@ class Member {
         throw new Error('targetSubscriberId cannot be less than or equal to 0');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (group.subscribers && group.subscribers.length > 0) {
         const subscriber = group.subscribers.find((groupSubscriber) => groupSubscriber.id === targetSubscriberId);
@@ -53,9 +53,9 @@ class Member {
         }
       }
 
-      return await this._api.group().getSubscriber(targetGroupId, targetSubscriberId);
+      return await this._api._group.getSubscriber(targetGroupId, targetSubscriberId);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().get(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.member${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.get(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)})`;
       throw error;
     }
   }
@@ -97,7 +97,7 @@ class Member {
       }
 
       if (this._api.currentSubscriber.id === targetSubscriberId) {
-        const group = await this._api.group().getById(targetGroupId);
+        const group = await this._api._group.getById(targetGroupId);
 
         if (group.owner.id === targetSubscriberId) {
           return true;
@@ -109,18 +109,18 @@ class Member {
       }
 
       if (checkStaff) {
-        const subscriber = await this._api.subscriber().getById(targetSubscriberId);
+        const subscriber = await this._api._subscriber.getById(targetSubscriberId);
 
         if ((subscriber.privileges & Privilege.STAFF) === Privilege.STAFF) {
           return true;
         }
       }
 
-      if (includeAuthorizedSubscribers && await this._api.authorization().isAuthorized(targetSubscriberId)) {
+      if (includeAuthorizedSubscribers && await this._api._authorization.isAuthorized(targetSubscriberId)) {
         return true;
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (group.owner.id === targetSubscriberId) {
         return true;
@@ -134,7 +134,7 @@ class Member {
 
       return checkCapability(requiredCapability, groupSubscriber.capabilities);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().member().hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, requiredCapability=${JSON.stringify(requiredCapability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.member${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.hasCapability(targetGroupId=${JSON.stringify(targetGroupId)}, targetSubscriberId=${JSON.stringify(targetSubscriberId)}, requiredCapability=${JSON.stringify(requiredCapability)}, checkStaff=${JSON.stringify(checkStaff)}, includeAuthorizedSubscribers=${JSON.stringify(includeAuthorizedSubscribers)})`;
       throw error;
     }
   }

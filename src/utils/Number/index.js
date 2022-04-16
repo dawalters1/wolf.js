@@ -10,7 +10,7 @@ class Number {
 
       return typeof arg === 'number' ? parseInt(arg) : arg;
     } catch (error) {
-      error.internalErrorMessage = `api.utility().number().toEnglishNumbers(arg=${JSON.stringify(arg)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.number${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.toEnglishNumbers(arg=${JSON.stringify(arg)})`;
       throw error;
     }
   }
@@ -23,7 +23,7 @@ class Number {
 
       return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '٠١٢٣٤٥٦٧٨٩'[char]);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().number().toArabicNumbers(arg=${JSON.stringify(arg)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.number${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.toArabicNumbers(arg=${JSON.stringify(arg)})`;
       throw error;
     }
   }
@@ -36,7 +36,7 @@ class Number {
 
       return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '۰۱۲۳۴۵۶۷۸۹'[char]);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().number().toPersianNumbers(arg=${JSON.stringify(arg)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.number${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.toPersianNumbers(arg=${JSON.stringify(arg)})`;
       throw error;
     }
   }
@@ -51,7 +51,7 @@ class Number {
 
       return `${args[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}${args[1] ? args[1] : ''}`;
     } catch (error) {
-      error.internalErrorMessage = `api.utility().number().addCommas(arg=${JSON.stringify(arg)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.number${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.addCommas(arg=${JSON.stringify(arg)})`;
       throw error;
     }
   }

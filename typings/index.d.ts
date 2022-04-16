@@ -730,7 +730,7 @@ export class StageSlotRequestObject {
 }  
 
 export class SubscriberProfileBuilder {
-  private constructor(api: WOLFBot, subscriber: SubscriberObject);
+  private constructor(api: WOLFBot|WOLFBotSimple,  subscriber: SubscriberObject);
   public setNickname(nickname: String): SubscriberProfileBuilder;
   public setAbout(about: String) : SubscriberProfileBuilder;
   public setName(name: String): SubscriberProfileBuilder;
@@ -746,7 +746,7 @@ export class SubscriberProfileBuilder {
 }
 
 export class SubscriberObject {
-  private constructor(api: WOLFBot, subscriber: SubscriberObject);
+  private constructor(api: WOLFBot|WOLFBotSimple,  subscriber: SubscriberObject);
  
   public exists: Boolean;
   public charms: { selectedList: Array<CharmSelectedObject> };
@@ -946,6 +946,7 @@ export class WOLFBot {
   public banned(): Banned;
   /**
    * Exposes the blocked methods
+   * @deprecated use api.contact().blocked() instead
    */    
   public blocked(): Blocked;
   /**
@@ -1064,17 +1065,17 @@ export class WOLFBot {
   /**
    * The bots yaml configuration 
    */
-  public config: ConfigObject;
+  get config(): ConfigObject;
  
   /**
    * Config Settings
    */
-  public options: ConfigOptionsObject;
+  get options(): ConfigOptionsObject;
  
   /**
    * The current account logged in
    */
-  public currentSubscriber: SubscriberObject;
+  get currentSubscriber(): SubscriberObject;
  
   /**
    * Exposes the utility methods
@@ -1083,11 +1084,181 @@ export class WOLFBot {
   /**
    * Regex used to split a string at spaces, newlines, tabs & commas
    */
-  public SPLIT_REGEX: RegExp;
+  get SPLIT_REGEX(): RegExp;
+}
+
+/**
+ * Helpers are chained together as getters instead of methods (EX: api.group.getById(...) instead of api.group().getById(...))
+ */
+export class WOLFBotSimple {
+  public constructor();
+ 
+  get websocket(): Websocket;
+  /**
+   * @ignore
+   */
+   get multiMediaService(): MultiMediaService; 
+  /**
+   * Exposes the commandHandler methods
+   */
+  get commandHandler(): CommandHandler;
+  /**
+   * Exposes the achievement methods
+   */
+   get achievement(): Achievement;
+  /**
+   * Exposes the authorization methods
+   */    
+   get authorization(): Authorization;
+  /**
+   * Exposes the banned methods
+   */    
+   get banned(): Banned;
+  /**
+   * Exposes the blocked methods
+   * @deprecated use api.contact().blocked() instead
+   */    
+   get blocked(): Blocked;
+  /**
+   * Exposes the charm methods
+   */        
+   get charm(): Charm;
+  /**
+   * Exposes the contact methods
+   */  
+   get contact(): ContactSimple;
+  /**
+   * Exposes the discovery methods
+   */      
+   get discovery(): Discovery;
+  /**
+   * Exposes the event methods
+   */          
+   get event(): Event;
+  /**
+   * Exposes the group methods
+   */       
+   get group(): Group;
+  /**
+   * Exposes the messaging methods
+   */          
+   get messaging(): MessagingSimple;
+  /**
+   * Exposes the notification methods
+   */     
+   get notification(): Notification;
+  /**
+   * Exposes the phrase methods
+   */ 
+   get phrase(): Phrase;
+  /**
+   * Exposes the stage methods
+   */ 
+   get stage(): Stage;
+  /**
+   * Exposes the store methods
+   */     
+   get store(): Store;
+  /**
+   * Exposes the subscriber methods
+   */ 
+   get subscriber(): Subscriber;
+  /**
+   * Exposes the tipping methods
+   */    
+   get tipping(): Tipping;
+ 
+  /**
+   * Login to an account
+   * @param email - The email belonging to the account
+   * @param password - The password belonging to the account 
+   * @param onlineState - The online state to appear as 
+   * @param loginType - The account type 
+   * @param token - The token to use to log in (Automatically generated if not provided)
+   */
+  public login(email: String, password: String, onlineState: OnlineState, loginType: LoginType, token: String): void;
+ 
+  /**
+   * Logout of the current account
+   */
+  public logout(): void;
+  /**
+   * Get the AWS congito token
+   * @param requestNew - Whether or not to request new information from server
+   */
+  public getSecurityToken(requestNew: Boolean): Promise<CognitoObject>
+  /**
+   * Change the bots online state
+   * @param onlineState - The online state
+   */
+  public setOnlineState(onlineState: OnlineState): Promise<ResponseObject>
+  /**
+   * Search group a group or user
+   * @param query - The term to look for
+   */
+  public search(query: String): Promise<ResponseObject<Array<SearchObject>>>
+  /**
+   * Get information about a link
+   * @param link - The link to look up
+   */
+  public getLinkMetadata(link: String): Promise<ResponseObject<LinkMetadataObject>>;
+  /**
+   * Get the link blacklist
+   * @param requestNew (Default: False)- Whether or not to request new information from server
+   */
+  public getLinkBlackList(requestNew?: Boolean): Promise<Array<BlacklistItemObject>>;
+  /**
+   * Get the bots message filter settings
+   */
+  public getMessageSettings(): Promise<ResponseObject<MessageSettingsObject>>;
+  /**
+   * Set the bots message filtering settings
+   * @param messageFilterTier - The tier to set
+   */
+  public setMessageSettings(messageFilterTier: MessageFilterTier): Promise<ResponseObject>;
+  /**
+   * Update the bots avatar
+   * @param avatar - The avatar 
+   */
+  public updateAvatar(avatar: Buffer): Promise<ResponseObject>;
+  /**
+   * Update the bots profile
+   */
+  public updateProfile(): SubscriberProfileBuilder;
+  /**
+   * Handle an event 
+   * @param event - The event string
+   * @param listener - The event handler
+   */
+  public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
+ 
+  /**
+   * The bots yaml configuration 
+   */
+  get config(): ConfigObject;
+ 
+  /**
+   * Config Settings
+   */
+  get options(): ConfigOptionsObject;
+ 
+  /**
+   * The current account logged in
+   */
+  get currentSubscriber(): SubscriberObject;
+ 
+  /**
+   * Exposes the utility methods
+   */
+   get utility(): UtilitySimple;
+  /**
+   * Regex used to split a string at spaces, newlines, tabs & commas
+   */
+  get SPLIT_REGEX(): RegExp;
 }
 
 export abstract class BaseHelper {
-  public constructor(api: WOLFBot);
+  public constructor(api: WOLFBot|WOLFBotSimple);
  
   private _api: WOLFBot;
   private _websocket: Websocket;
@@ -1098,7 +1269,7 @@ export abstract class BaseHelper {
 }
 
 export class AchievementSubscriber {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get achievements belonging to a subscriber
@@ -1108,7 +1279,7 @@ export class AchievementSubscriber {
 }
 
 export class AchievementGroup {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get achievements belonging to a group
@@ -1118,7 +1289,7 @@ export class AchievementGroup {
 }
 
 export class Achievement extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Exposes the group achievement methods
@@ -1151,7 +1322,7 @@ export class Achievement extends BaseHelper {
 }
 
 export class Authorization extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get the list of authorized users
@@ -1179,7 +1350,7 @@ export class Authorization extends BaseHelper {
 }
 
 export class Banned extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get the list of banned users
@@ -1207,7 +1378,7 @@ export class Banned extends BaseHelper {
 }
 
 export class Blocked extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get the bots blocked list
@@ -1231,7 +1402,7 @@ export class Blocked extends BaseHelper {
 }
 
 export class Charm extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get the list of charms
@@ -1288,8 +1459,40 @@ export class Charm extends BaseHelper {
 }
 
 export class Contact extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
+  /**
+   * Exposes the blocked helper
+   */
+  public blocked(): Blocked;
+  /**
+   * Get the bots contact list
+   */
+  public list(): Promise<Array<GroupSubscriberObject>>;
+  /**
+   * Check whether or not a subscriber is a contact
+   * @param subscriberIds - The id or ids of the subscribers to check
+   */
+  public isContact(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  /**
+   * Add a subscriber as a contact
+   * @param subscriberId - The id of the subscriber
+   */
+  public add(subscriberId: Number) :  Promise<ResponseObject>
+  /**
+   * Remove a subscriber as a contact
+   * @param subscriberId - The id of the subscriber
+   */    
+  public remove(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+}
+
+export class ContactSimple extends BaseHelper {
+  private constructor(api: WOLFBotSimple);
+ 
+  /**
+   * Exposes the blocked helper
+   */
+  get blocked(): Blocked;
   /**
    * Get the bots contact list
    */
@@ -1337,7 +1540,7 @@ export class Discovery extends BaseHelper {
 }
 
 export class Event extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
   /**
    * Create an event for a group
    * @param targetGroupId - The id of the group
@@ -1410,7 +1613,7 @@ export class Event extends BaseHelper {
 }
 
 export class Group extends BaseHelper {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get the list of groups the bot is in
@@ -1586,6 +1789,59 @@ export class Messaging extends BaseHelper {
   public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;  
 }
 
+export class MessagingSimple extends BaseHelper {
+  private constructor(api : WOLFBot);
+ 
+  /**
+   * Exposes the message subscription methods
+   */
+  get subscribe(): MessageSubscription;
+  /**
+   * Send a group message
+   * @param targetGroupId - The id of the group
+   * @param content - The text, image/audio buffer 
+   * @param opts - The sending options (Text Only)
+   */
+  public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;    
+  /**
+   * Send a private message
+   * @param targetSubscriberId - The id of the subscriber
+   * @param content - The text, image/audio buffer 
+   * @param opts - The sending options (Text Only)
+   */   
+  public sendPrivateMessage(targetSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+  /**
+   * Send a message using command or message
+   * @param commandOrMessage - The command or message to respond too
+   * @param content - The text, image/audio buffer 
+   * @param opts - The sending options (Text Only)
+   */
+  public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+  /**
+   * Accept a chat request
+   * @param subscriberId - The id of the subscriber
+   */
+  public acceptPrivateMessageRequest(subscriberId: Number): Promise<ResponseObject<MessageResponseObject>>;
+  /**
+   * Delete a group message
+   * @param targetGroupId - The id of the group
+   * @param timestamp - The timestamp belonging to the message
+   */
+  public deleteGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+  /**
+   * Restore a deleted message
+   * @param targetGroupId - The id of the group
+   * @param timestamp - The timestamp belonging to the message
+   */
+  public restoreGroupMessage(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageObject>>;
+  /**
+   * Get the last 10 actions done on a message
+   * @param targetGroupId - The id of the group
+   * @param timestamp - The timestamp belonging to the message
+   */
+  public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;  
+}
+
 export class Notification extends BaseHelper {
   private constructor(api : WOLFBot);
  
@@ -1602,11 +1858,13 @@ export class Notification extends BaseHelper {
   /**
    * Subscribe to new notifications (10 minute checks)
    * @param language - The id of the notifications
+   * @deprecated
    */
   public subscribe(language: Language): Promise<void>;
   /**
    * Unsubscribe from new notifications
    * @param language - The id of the notifications
+   * @deprecated
    */
   public unsubscribe(language: Language): Promise<void>;
 }
@@ -1950,7 +2208,7 @@ export class Tipping extends BaseHelper {
 }
 
 export class AchievementUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Map achievements to their correct category
@@ -1961,7 +2219,7 @@ export class AchievementUtility {
 }
 
 export class ArrayUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Chunk an array into smaller arrays
@@ -1982,7 +2240,7 @@ export class ArrayUtility {
 }
 
 export class DiscoveryUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get all sections from the discovery page that contain a recipe id
@@ -1993,7 +2251,7 @@ export class DiscoveryUtility {
 }
 
 export class DownloadUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Download a file from url
@@ -2003,7 +2261,7 @@ export class DownloadUtility {
 }
 
 export class MemberUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Get a group member
@@ -2023,7 +2281,7 @@ export class MemberUtility {
 }
 
 export class GroupUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Exposes the member methods
@@ -2042,9 +2300,29 @@ export class GroupUtility {
    */
   public toDisplayName(group: GroupObject, excludeId?: Boolean): String;
 }
+export class GroupSimpleUtility {
+  private constructor(api: WOLFBotSimple);
+ 
+  /**
+   * Exposes the member methods
+   */
+  get member(): MemberUtility;
+  /**
+   * Get a groups avatar
+   * @param targetGroupId - The id of the group
+   * @param size - The size of the image
+   */
+  public getAvatar(targetGroupId: Number, size: Number): Promise<Buffer>;
+  /**
+   * Convert group details into [groupName] (groupId) or [groupName]
+   * @param group - The group
+   * @param excludeId - Whether or not to include the groups ID
+   */
+  public toDisplayName(group: GroupObject, excludeId?: Boolean): String;
+}
 
 export class NumberUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Convert all numbers to english
@@ -2069,7 +2347,7 @@ export class NumberUtility {
 }
 
 export class StringUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Replace placeholders with appropriate data
@@ -2109,7 +2387,7 @@ export class StringUtility {
 }
 
 export class PrivilegeUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Check whether or not a subscriber has a privilege or privileges
@@ -2121,7 +2399,7 @@ export class PrivilegeUtility {
 }
 
 export class SubscriberUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Exposes the privilege methods
@@ -2148,9 +2426,36 @@ export class SubscriberUtility {
    */
   public hasCharm(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
 }
-
+export class SubscriberSimpleUtility {
+  private constructor(api: WOLFBotSimple);
+ 
+  /**
+   * Exposes the privilege methods
+   */
+  get privilege(): PrivilegeUtility;
+  /**
+   * Get a subscriber avatar
+   * @param subscriberId - The id of the group
+   * @param size - The size of the image
+   */    
+  public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
+  /**
+      Convert group details into nickname (id) or nickname
+   * @param subscriber - The subscriber
+   * @param trimAds - Whether or not to trim ads from the nickname
+   * @param excludeId - Whether or not to show the subscribers id
+   */    
+  public toDisplayName(subscriber: SubscriberObject, trimAds?: Boolean, excludeId?: Boolean): String;
+  /**
+   * Check whether or not a subscriber has a charm or charms
+   * @param targetSubscriberId - The id of the subscriber
+   * @param charmIds - The id or ids of the charms to check
+   * @param requiresAll - Whether or not a subscriber should have all charms provided
+   */
+  public hasCharm(targetSubscriberId: Number, charmIds: Array<Number>, requiresAll?: Boolean): Promise<Boolean>
+}
 export class TimerUtility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
   /**
    * Initialise the timer util
    * @param handlers - The handlers object
@@ -2188,7 +2493,7 @@ export class TimerUtility {
 }
 
 export class Utility {
-  private constructor(api: WOLFBot);
+  private constructor(api: WOLFBot|WOLFBotSimple);
  
   /**
    * Exposes the achievement methods
@@ -2226,6 +2531,58 @@ export class Utility {
    * Exposes the timer methods
    */
   public timer(): TimerUtility;
+  /**
+   * Convert milliseconds into a display time (EX: 65000 - 1m 5s)
+   * @param language - The language of the phrase
+   * @param milliseconds - The time to convert
+   */
+  public toReadableTime(language: String, milliseconds: Number): String;
+  /**
+   * Sleep a method
+   * @param duration - The time to delay
+   */
+  public delay(duration: Number): Promise<void>;
+}
+
+export class UtilitySimple {
+  private constructor(api: WOLFBotSimple);
+ 
+  /**
+   * Exposes the achievement methods
+   */
+  get achievement(): AchievementUtility;
+  /**
+   * Exposes the array methods
+   */
+   get array(): ArrayUtility;
+  /**
+   * Exposes the discovery methods
+   */
+   get discovery(): DiscoveryUtility;
+  /**
+   * Exposes the download methods
+   */
+   get download(): DownloadUtility;
+  /**
+   * Exposes the group methods
+   */
+   get group(): GroupSimpleUtility;
+  /**
+   * Exposes the number methods
+   */
+   get number(): NumberUtility;
+  /**
+   * Exposes the string methods
+   */
+   get string(): StringUtility;
+  /**
+   * Exposes the subscriber methods
+   */
+   get subscriber(): SubscriberSimpleUtility;
+  /**
+   * Exposes the timer methods
+   */
+   get timer(): TimerUtility;
   /**
    * Convert milliseconds into a display time (EX: 65000 - 1m 5s)
    * @param language - The language of the phrase
@@ -2291,7 +2648,7 @@ export namespace  Validator {
    * @param api - The bot instance
    * @param arg - The string or buffer
    */
-  export function isValidUrl(api: WOLFBot, arg: String):Boolean
+  export function isValidUrl(api: WOLFBot|WOLFBotSimple,  arg: String):Boolean
   /**
    * Check to see if arg is a valid ad
    * @param arg - The string or buffer

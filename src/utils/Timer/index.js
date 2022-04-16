@@ -39,7 +39,7 @@ class Timer {
 
       return Promise.resolve();
     } catch (error) {
-      error.internalErrorMessage = `api.utility().timer().initialise(handlers=${JSON.stringify(handlers)}, args=${JSON.stringify(args)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(handlers=${JSON.stringify(handlers)}, args=${JSON.stringify(args)})`;
       throw error;
     }
   }
@@ -47,7 +47,7 @@ class Timer {
   async add (name, handler, data, duration) {
     try {
       if (!this._initialised) {
-        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+        throw new Error(`timer queue has not been initialised using api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(...)`);
       }
 
       if (typeof name !== 'string') {
@@ -92,7 +92,7 @@ class Timer {
 
       return new TimerJobObject(job);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().timer().add(name=${JSON.stringify(name)}, handler=${JSON.stringify(handler)}, data=${JSON.stringify(data)}, duration=${JSON.stringify(duration)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.add(name=${JSON.stringify(name)}, handler=${JSON.stringify(handler)}, data=${JSON.stringify(data)}, duration=${JSON.stringify(duration)})`;
       throw error;
     }
   }
@@ -100,7 +100,7 @@ class Timer {
   async cancel (name) {
     try {
       if (!this._initialised) {
-        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+        throw new Error(`timer queue has not been initialised using api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(...)`);
       }
 
       if (typeof name !== 'string') {
@@ -113,7 +113,7 @@ class Timer {
 
       return Promise.resolve();
     } catch (error) {
-      error.internalErrorMessage = `api.utility().timer().cancel(name=${JSON.stringify(name)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.cancel(name=${JSON.stringify(name)})`;
       throw error;
     }
   }
@@ -121,7 +121,7 @@ class Timer {
   async get (name) {
     try {
       if (!this._initialised) {
-        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+        throw new Error(`timer queue has not been initialised using api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(...)`);
       }
 
       if (typeof name !== 'string') {
@@ -139,7 +139,7 @@ class Timer {
 
       return job;
     } catch (error) {
-      error.internalErrorMessage = `api.utility().timer().get(name=${JSON.stringify(name)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.get(name=${JSON.stringify(name)})`;
       throw error;
     }
   }
@@ -147,7 +147,7 @@ class Timer {
   async getAll () {
     try {
       if (!this._initialised) {
-        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+        throw new Error(`timer queue has not been initialised using api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(...)`);
       }
 
       return (await this._timerQueue.getJobs('waiting')).map((job) => {
@@ -155,7 +155,7 @@ class Timer {
         return new TimerJobObject(job);
       });
     } catch (error) {
-      error.internalErrorMessage = 'api.utility().timer().getAll()';
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getAll()`;
       throw error;
     }
   }
@@ -163,7 +163,7 @@ class Timer {
   async delay (name, duration) {
     try {
       if (!this._initialised) {
-        throw new Error('timer queue has not been initialised using api.utility().timer().initialise(...)');
+        throw new Error(`timer queue has not been initialised using api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.initialise(...)`);
       }
 
       if (typeof name !== 'string') {
@@ -199,7 +199,7 @@ class Timer {
 
       return Promise.resolve();
     } catch (error) {
-      error.internalErrorMessage = `api.utility().timer().delay(name=${JSON.stringify(name)}, duration=${JSON.stringify(duration)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.timer${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.delay(name=${JSON.stringify(name)}, duration=${JSON.stringify(duration)})`;
       throw error;
     }
   }

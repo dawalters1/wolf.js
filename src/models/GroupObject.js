@@ -13,27 +13,27 @@ class Group {
   }
 
   async sendMessage (content, opts = null) {
-    return await this._api.messaging().sendGroupMessage(this.id, content, opts);
+    return await this._api._messaging.sendGroupMessage(this.id, content, opts);
   }
 
   async update () {
-    return await this._api.group().update(this);
+    return await this._api._group.update(this);
   }
 
   async join (password = undefined) {
-    return await this._api.group().joinById(this.id, password);
+    return await this._api._group.joinById(this.id, password);
   }
 
   async leave () {
-    return await this._api.group().leaveById(this.id);
+    return await this._api._group.leaveById(this.id);
   }
 
   async getAvatar (size = 640) {
-    return await this._api.utility().group().getAvatar(this.id, size);
+    return await this._api._utility._group.getAvatar(this.id, size);
   }
 
   async updateAvatar (buffer) {
-    return await this._api.group().updateAvatar(this.id, buffer);
+    return await this._api._group.updateAvatar(this.id, buffer);
   }
 }
 

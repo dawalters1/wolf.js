@@ -28,7 +28,7 @@ class Group extends BaseHelper {
 
       return result.success ? result.body : [];
     } catch (error) {
-      error.internalErrorMessage = `api.achievement().group().getById(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.achivement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.group${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getById(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }

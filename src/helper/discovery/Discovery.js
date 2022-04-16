@@ -123,7 +123,7 @@ module.exports = class Discovery extends BaseHelper {
       throw new Error('requestNew must be a valid boolean');
     }
 
-    const sections = await this._api.utility().discovery().getRecipeSections(language, requestNew);
+    const sections = await this._api._utility._discovery.getRecipeSections(language, requestNew);
 
     const requestedSection = sections.find((section) => {
       return section.elements.collection.recipe.id === id;
@@ -159,7 +159,7 @@ module.exports = class Discovery extends BaseHelper {
       throw new Error('requestNew must be a valid boolean');
     }
 
-    const sections = await this._api.utility().discovery().getRecipeSections(language, requestNew);
+    const sections = await this._api._utility._discovery.getRecipeSections(language, requestNew);
 
     const requestedSection = sections.find((section) => section.id === id);
 

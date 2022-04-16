@@ -83,7 +83,7 @@ class Event extends BaseHelper {
 
       return result;
     } catch (error) {
-      error.internalErrorMessage = `api.event().create(targetGroupId=${JSON.stringify(targetGroupId)}, title=${JSON.stringify(title)}, startsAt=${JSON.stringify(startsAt)}, endsAt=${JSON.stringify(endsAt)}, shortDescription=${JSON.stringify(shortDescription)}, longDescription=${JSON.stringify(longDescription)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.create(targetGroupId=${JSON.stringify(targetGroupId)}, title=${JSON.stringify(title)}, startsAt=${JSON.stringify(startsAt)}, endsAt=${JSON.stringify(endsAt)}, shortDescription=${JSON.stringify(shortDescription)}, longDescription=${JSON.stringify(longDescription)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
     }
   }
@@ -171,7 +171,7 @@ class Event extends BaseHelper {
 
       return result;
     } catch (error) {
-      error.internalErrorMessage = `api.event().edit(targetGroupId=${JSON.stringify(targetGroupId)}, eventId=${JSON.stringify(eventId)} title=${JSON.stringify(title)}, startsAt=${JSON.stringify(startsAt)}, endsAt=${JSON.stringify(endsAt)}, shortDescription=${JSON.stringify(shortDescription)}, longDescription=${JSON.stringify(longDescription)}, imageUrl=${JSON.stringify(imageUrl)} thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.edit(targetGroupId=${JSON.stringify(targetGroupId)}, eventId=${JSON.stringify(eventId)} title=${JSON.stringify(title)}, startsAt=${JSON.stringify(startsAt)}, endsAt=${JSON.stringify(endsAt)}, shortDescription=${JSON.stringify(shortDescription)}, longDescription=${JSON.stringify(longDescription)}, imageUrl=${JSON.stringify(imageUrl)} thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
     }
   }
@@ -193,9 +193,9 @@ class Event extends BaseHelper {
         throw new Error('thumbnail must be a valid buffer');
       }
 
-      return this._api.multiMediaService().uploadEventThumbnail(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
+      return this._api._multiMediaService.uploadEventThumbnail(eventId, thumbnail, (await fileType.fromBuffer(thumbnail)).mime);
     } catch (error) {
-      error.internalErrorMessage = `api.event().create(eventId=${JSON.stringify(eventId)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.create(eventId=${JSON.stringify(eventId)}, thumbnail=${JSON.stringify(thumbnail ? 'Buffer -- Too long to display' : thumbnail)})`;
       throw error;
     }
   }
@@ -230,7 +230,7 @@ class Event extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.event().remove(targetGroupId=${JSON.stringify(targetGroupId)}, eventId=${JSON.stringify(eventId)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.remove(targetGroupId=${JSON.stringify(targetGroupId)}, eventId=${JSON.stringify(eventId)})`;
       throw error;
     }
   }
@@ -270,7 +270,7 @@ class Event extends BaseHelper {
       if (events.length !== eventIds) {
         const eventIdsToRequest = eventIds.filter((eventId) => !events.some((event) => event.id === eventId));
 
-        for (const eventIdBatch of this._api.utility().array().chunk(eventIdsToRequest, this._api._botConfig.get('batch.length'))) {
+        for (const eventIdBatch of this._api._utility._array.chunk(eventIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.GROUP_EVENT,
             {
@@ -315,7 +315,8 @@ class Event extends BaseHelper {
 
       return events;
     } catch (error) {
-      error.internalErrorMessage = `api.event().getByIds(eventIds=${JSON.stringify(eventIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      Reflect.deleteProperty(error, '_api');
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByIds(eventIds=${JSON.stringify(eventIds)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -349,7 +350,7 @@ class Event extends BaseHelper {
 
       return this._eventList[targetGroupId] || [];
     } catch (error) {
-      error.internalErrorMessage = `api.event().getGroupEventList(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGroupEventList(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -377,7 +378,7 @@ class Event extends BaseHelper {
 
       return this._subscriptions;
     } catch (error) {
-      error.internalErrorMessage = `api.event().getSubscriptionList(requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSubscriptionList(requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -401,7 +402,7 @@ class Event extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.event().subscribe(eventId=${JSON.stringify(eventId)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscribe(eventId=${JSON.stringify(eventId)})`;
       throw error;
     }
   }
@@ -425,7 +426,7 @@ class Event extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.event().unsubscribe(eventId=${JSON.stringify(eventId)})`;
+      error.internalErrorMessage = `api.event${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.unsubscribe(eventId=${JSON.stringify(eventId)})`;
       throw error;
     }
   }

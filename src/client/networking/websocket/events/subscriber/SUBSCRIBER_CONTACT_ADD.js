@@ -1,7 +1,7 @@
 const { Events } = require('../../../../../constants');
 
 module.exports = async (api, body) => {
-  const subscriber = await api.subscriber().getById(body.targetId);
+  const subscriber = await api._subscriber.getById(body.targetId);
 
   const contact = {
     id: subscriber.id,
@@ -13,7 +13,7 @@ module.exports = async (api, body) => {
     }
   };
 
-  api.contact()._contacts.push(contact);
+  api._contact._contacts.push(contact);
 
   return await api.emit(
     Events.SUBSCRIBER_CONTACT_ADD,

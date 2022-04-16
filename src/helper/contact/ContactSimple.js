@@ -4,14 +4,14 @@ const { Commands } = require('../../constants');
 const ContactObject = require('../../models/ContactObject');
 const Blocked = require('./Blocked');
 
-class Contact extends BaseHelper {
+class ContactSimple extends BaseHelper {
   constructor (api) {
     super(api);
     this._blocked = new Blocked(this._api);
     this._contacts = [];
   }
 
-  blocked () {
+  get blocked () {
     return this._blocked;
   }
 
@@ -37,7 +37,7 @@ class Contact extends BaseHelper {
 
       return this._contacts;
     } catch (error) {
-      error.internalErrorMessage = `api.contact().list(requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.contact.list(requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -65,7 +65,7 @@ class Contact extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.contact().isContact(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.contact.isContact(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -89,7 +89,7 @@ class Contact extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.contact().add(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.contact.add(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -113,7 +113,7 @@ class Contact extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.contact().delete(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.contact.delete(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -126,4 +126,4 @@ class Contact extends BaseHelper {
   }
 }
 
-module.exports = Contact;
+module.exports = ContactSimple;

@@ -39,7 +39,7 @@ class Authorization extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.authorization().isAuthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isAuthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -76,7 +76,7 @@ class Authorization extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.authorization().authorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.authorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -113,7 +113,7 @@ class Authorization extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.authorization().unauthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.authorization${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.unauthorize(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }

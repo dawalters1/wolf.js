@@ -14,7 +14,7 @@ class _Array {
 
       return [array.slice(0, length)].concat(this.chunk(array.slice(length), length));
     } catch (error) {
-      error.internalErrorMessage = `api.utility().array().chunk(array=${JSON.stringify(array)}, length=${JSON.stringify(length)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.array${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}chunk(array=${JSON.stringify(array)}, length=${JSON.stringify(length)})`;
       throw error;
     }
   }
@@ -32,7 +32,7 @@ class _Array {
       }
       return array;
     } catch (error) {
-      error.internalErrorMessage = `api.utility().array().shuffle(array=${JSON.stringify(array)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.array${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}shuffle(array=${JSON.stringify(array)})`;
       throw error;
     }
   }
@@ -46,7 +46,7 @@ class _Array {
       }
       return array[Math.floor(Math.random() * array.length)];
     } catch (error) {
-      error.internalErrorMessage = `api.utility().array().getRandomIndex(array=${JSON.stringify(array)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.array${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}getRandomIndex(array=${JSON.stringify(array)})`;
       throw error;
     }
   }

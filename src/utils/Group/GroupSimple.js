@@ -1,14 +1,14 @@
 const Member = require('./Member');
 const validator = require('../../validator');
 
-class Group {
+class GroupSimple {
   constructor (api) {
     this._api = api;
 
     this._member = new Member(this._api);
   }
 
-  member () {
+  get member () {
     return this._member;
   }
 
@@ -40,7 +40,7 @@ class Group {
         )
       );
     } catch (error) {
-      error.internalErrorMessage = `api.utility().group().getAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, size=${JSON.stringify(size)})`;
+      error.internalErrorMessage = `api.utility.group.getAvatar(targetGroupId=${JSON.stringify(targetGroupId)}, size=${JSON.stringify(size)})`;
       throw error;
     }
   }
@@ -76,10 +76,10 @@ class Group {
       return `${group.name}${excludeId ? '' : ` (${group.id})`}`;
     } catch (error) {
       Reflect.deleteProperty(group, '_api');
-      error.internalErrorMessage = `api.utility().group().toDisplayName(group=${JSON.stringify(group)}, excludeId=${JSON.stringify(excludeId)})`;
+      error.internalErrorMessage = `api.utility.group.toDisplayName(group=${JSON.stringify(group)}, excludeId=${JSON.stringify(excludeId)})`;
       throw error;
     }
   }
 }
 
-module.exports = Group;
+module.exports = GroupSimple;

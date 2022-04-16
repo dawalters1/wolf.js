@@ -75,7 +75,7 @@ class MessageSubscription extends BaseHelper {
 
       return await this._createSubscription(predicate, timeout);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().subscribe().nextMessage(predicate=${JSON.stringify(predicate)}, timeout=${JSON.stringify(timeout)})`;
+      error.internalErrorMessage = `api.messaging${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscribe${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.nextMessage(predicate=${JSON.stringify(predicate)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
     }
   }
@@ -93,7 +93,7 @@ class MessageSubscription extends BaseHelper {
       }
       return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId, timeout);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().subscribe().nextGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timeout=${JSON.stringify(timeout)})`;
+      error.internalErrorMessage = `api.messaging${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscribe${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.nextGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
     }
   }
@@ -111,7 +111,7 @@ class MessageSubscription extends BaseHelper {
       }
       return await this.nextMessage((message) => !message.isGroup && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().subscribe().nextPrivateMessage(sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
+      error.internalErrorMessage = `api.messaging${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscribe${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.nextPrivateMessage(sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
     }
   }
@@ -138,7 +138,7 @@ class MessageSubscription extends BaseHelper {
       }
       return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().subscribe().nextGroupSubscriberMessage(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
+      error.internalErrorMessage = `api.messaging${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscribe${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.nextGroupSubscriberMessage(targetGroupId=${JSON.stringify(targetGroupId)}, sourceSubscriberId=${JSON.stringify(sourceSubscriberId)}, timeout=${JSON.stringify(timeout)})`;
       throw error;
     }
   }

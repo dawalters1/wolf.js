@@ -50,7 +50,7 @@ class String {
 
       return replacementLocations.sort((a, b) => b.startsAt - a.startsAt).reduce((result, value) => replaceRange(result, value.startsAt, value.endsAt, value.replaceWith), string);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().string().replace(string=${JSON.stringify(string)}, replacements=${JSON.stringify(replacements)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.string${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.replace(string=${JSON.stringify(string)}, replacements=${JSON.stringify(replacements)})`;
       throw error;
     }
   }
@@ -129,7 +129,7 @@ class String {
         return result;
       }, []);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().string().chunk(string=${JSON.stringify(string)}, max=${JSON.stringify(max)}, splitChar=${JSON.stringify(splitChar)}, joinChar=${JSON.stringify(joinChar)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.string${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.chunk(string=${JSON.stringify(string)}, max=${JSON.stringify(max)}, splitChar=${JSON.stringify(splitChar)}, joinChar=${JSON.stringify(joinChar)})`;
       throw error;
     }
   };
@@ -159,7 +159,7 @@ class String {
       // Loop check to prevent [[[]]]
       return this.trimAds(string);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().string().trimAds(string=${JSON.stringify(string)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.string${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.trimAds(string=${JSON.stringify(string)})`;
       throw error;
     }
   }
@@ -224,7 +224,7 @@ class String {
       }
       return null;
     } catch (error) {
-      error.internalErrorMessage = `api.utility().string().getValidUrl(string=${JSON.stringify(url)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.string${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getValidUrl(string=${JSON.stringify(url)})`;
       throw error;
     }
   }
@@ -241,7 +241,7 @@ class String {
 
       return ([...arg.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?<!\d|\p{Letter}))/gu)] || []);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().string().getAds(string=${JSON.stringify(arg)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.string${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getAds(string=${JSON.stringify(arg)})`;
       throw error;
     }
   }

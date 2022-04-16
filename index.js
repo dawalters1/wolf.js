@@ -1,4 +1,6 @@
 const WOLFBot = require('./src/client/WOLFBot');
+const WOLFBotSimple = require('./src/client/WOLFBotSimple');
+
 const Command = require('./src/command/Command');
 const Validator = require('./src/validator');
 
@@ -19,6 +21,8 @@ process.on('unhandledRejection', function (error) {
 
 module.exports = {
   WOLFBot,
+  WOLFBotSimple,
+
   Command,
   Validator,
   Constants,

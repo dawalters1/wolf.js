@@ -1,7 +1,7 @@
 const { Events } = require('../../../../../constants');
 
 module.exports = async (api, body) => {
-  const group = api.group()._groups.find((group) => group.id === body.groupId);
+  const group = api._group._groups.find((group) => group.id === body.groupId);
 
   if (!group || !group.stageRequestList) {
     return Promise.resolve();

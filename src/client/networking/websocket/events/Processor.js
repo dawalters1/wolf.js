@@ -1,4 +1,4 @@
-const { ServerEvents, Events } = require('../../../../../constants');
+const { ServerEvents, Events } = require('../../../../constants');
 
 class Processor {
   constructor (api) {

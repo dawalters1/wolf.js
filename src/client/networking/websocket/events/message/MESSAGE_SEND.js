@@ -6,8 +6,8 @@ const { Events, MessageType, Privilege, Capability, MessageLinkingType } = requi
 // Stop gap join/leave handling incase group members list isnt requested
 const handleAdminAction = async (api, message) => {
   const [group, subscriber] = await Promise.all([
-    api.group().getById(message.targetGroupId),
-    api.subscriber().getById(message.sourceSubscriberId)
+    api._group.getById(message.targetGroupId),
+    api._subscriber.getById(message.sourceSubscriberId)
   ]);
 
   const adminAction = JSON.parse(message.body);
@@ -20,6 +20,8 @@ const handleAdminAction = async (api, message) => {
           group.inGroup = true;
         }
 
+        group.members++;
+
         return api.emit(
           subscriber.id === api.currentSubscriber.id ? Events.JOINED_GROUP : Events.GROUP_MEMBER_ADD,
           group,
@@ -30,6 +32,8 @@ const handleAdminAction = async (api, message) => {
       if (adminAction.type === 'leave' && adminAction.instigatorId) {
         adminAction.type = 'kick';
       }
+
+      group.members--;
 
       api.emit(
         subscriber.id === api.currentSubscriber.id ? Events.LEFT_GROUP : Events.GROUP_MEMBER_DELETE,
@@ -70,7 +74,7 @@ module.exports = async (api, body) => {
       await handleAdminAction(api, message);
       break;
     case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
-      api.emit(Events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api.subscriber().getById(message.sourceSubscriberId));
+      api.emit(Events.PRIVATE_MESSAGE_ACCEPT_RESPONSE, await api._subscriber.getById(message.sourceSubscriberId));
       break;
     case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
       message.body = message.body.replace('token=TOKEN', `token=${api.config.get('_loginSettings').token}`)
@@ -81,60 +85,57 @@ module.exports = async (api, body) => {
     {
       if (message.sourceSubscriberId !== api.currentSubscriber.id) {
         const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
+        const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
 
-        if (args.length >= 2 || api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])) {
-          const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
+        if (secret) {
+          if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api._utility._subscriber._privilege.has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api._utility._subscriber._privilege.has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api._utility._number.toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {
+            const hasDevId = (!!api.options.developerId);
 
-          if (secret) {
-            if ((args.length === 1 && (api.options.developerId === message.sourceSubscriberId || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF]))) || (await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]) && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString())) {
-              const hasDevId = (!!api.options.developerId);
+            const links = [];
 
-              const links = [];
-
-              let body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
-                {
-                  version
-                }
-              );
-
-              const apiNameIndex = body.indexOf('WOLF.js');
-
-              links.push(
-                {
-                  start: apiNameIndex,
-                  end: apiNameIndex + 7,
-                  value: 'https://github.com/dawalters1/wolf.js',
-                  type: MessageLinkingType.EXTERNAL
-                }
-              );
-
-              if (hasDevId) {
-                const nicknameIndex = body.lastIndexOf('{nickname}');
-                const { nickname, id } = await api.subscriber().getById(api.options.developerId);
-
-                body = api.utility().string().replace(body,
-                  {
-                    nickname,
-                    subscriberId: id
-                  }
-                );
-
-                links.push({
-                  start: nicknameIndex,
-                  end: nicknameIndex + nickname.length,
-                  value: id,
-                  type: MessageLinkingType.SUBSCRIBER_PROFILE
-                });
+            let body = api._utility._string.replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
+              {
+                version
               }
+            );
 
-              return await api.messaging().sendMessage(
-                message,
-                body,
+            const apiNameIndex = body.indexOf('WOLF.js');
+
+            links.push(
+              {
+                start: apiNameIndex,
+                end: apiNameIndex + 7,
+                value: 'https://github.com/dawalters1/wolf.js',
+                type: MessageLinkingType.EXTERNAL
+              }
+            );
+
+            if (hasDevId) {
+              const nicknameIndex = body.lastIndexOf('{nickname}');
+              const { nickname, id } = await api._subscriber.getById(api.options.developerId);
+
+              body = api._utility._string.replace(body,
                 {
-                  links
+                  nickname,
+                  subscriberId: id
                 }
               );
+
+              links.push({
+                start: nicknameIndex,
+                end: nicknameIndex + nickname.length,
+                value: id,
+                type: MessageLinkingType.SUBSCRIBER_PROFILE
+              });
             }
+
+            return await api._messaging.sendMessage(
+              message,
+              body,
+              {
+                links
+              }
+            );
           }
         }
       } else if (!api.options.messageHandling.processOwnMessages) {

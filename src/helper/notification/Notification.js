@@ -40,7 +40,7 @@ class Notification extends BaseHelper {
 
       return this._notifications;
     } catch (error) {
-      error.internalErrorMessage = `api.notification().list(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.notification${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.list(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -56,7 +56,7 @@ class Notification extends BaseHelper {
 
       return result;
     } catch (error) {
-      error.internalErrorMessage = 'api.notification().clear()';
+      error.internalErrorMessage = `api.notification${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.clear()`;
       throw error;
     }
   }

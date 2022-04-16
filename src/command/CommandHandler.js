@@ -30,7 +30,7 @@ const ignoreTagList = [
  * {@hideconstructor}
  */
 module.exports = class CommandHandler {
-  constructor (api, cache) {
+  constructor (api) {
     this._api = api;
     this._commands = [];
 
@@ -40,7 +40,7 @@ module.exports = class CommandHandler {
 
   isCommand (message) {
     return this._commands.find((command) => {
-      if (this._api.phrase().isRequestedPhrase(command.phraseName, message.body.split(/[\s]+/).filter(Boolean)[0])) {
+      if (this._api._phrase.isRequestedPhrase(command.phraseName, message.body.split(/[\s]+/).filter(Boolean)[0])) {
         const commandCallbacks = command.commandCallbackTypes;
 
         // Check to see if the command is valid for the message type
@@ -58,7 +58,7 @@ module.exports = class CommandHandler {
 
   async _processMessage (message) {
     try {
-      if (!message.body || message.type !== MessageType.TEXT_PLAIN || (message.sourceSubscriberId === this._api.currentSubscriber.id && !this._api.options.commandHandling.processOwnMessages) || await this._api.banned().isBanned(message.sourceSubscriberId)) {
+      if (!message.body || message.type !== MessageType.TEXT_PLAIN || (message.sourceSubscriberId === this._api.currentSubscriber.id && !this._api.options.commandHandling.processOwnMessages) || await this._api._banned.isBanned(message.sourceSubscriberId)) {
         return Promise.resolve();
       }
 
@@ -73,7 +73,7 @@ module.exports = class CommandHandler {
       };
 
       const commandCollection = this._commands.find((command) => {
-        const match = this._api.phrase().getAllByName(command.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
+        const match = this._api._phrase.getAllByName(command.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/)[0].toLowerCase());
 
         if (match) {
           if (command.commandCallbackTypes.includes(Command.getCallback.BOTH) ||
@@ -89,7 +89,7 @@ module.exports = class CommandHandler {
         return false;
       });
 
-      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api.utility().subscriber().privilege().has(message.sourceSubscriberId, ignoreTagList) && await this._api.utility().subscriber().hasCharm(message.sourceSubscriberId, this._api._botConfig.get('validation.charms.unofficialBots')))) {
+      if (!commandCollection || (this._api.options.ignoreOfficialBots && await this._api._utility._subscriber._privilege.has(message.sourceSubscriberId, Privilege.BOT)) || (this._api.options.ignoreUnofficialBots && !await this._api._utility._subscriber._privilege.has(message.sourceSubscriberId, ignoreTagList) && await this._api._utility._subscriber.hasCharm(message.sourceSubscriberId, this._api._botConfig.get('validation.charms.unofficialBots')))) {
         return Promise.resolve();
       }
 
@@ -112,7 +112,7 @@ module.exports = class CommandHandler {
     }
 
     const command = parentCommand.children.find((child) => {
-      const match = this._api.phrase().getAllByName(child.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/).filter(Boolean)[0].toLowerCase());
+      const match = this._api._phrase.getAllByName(child.phraseName).find(phrase => phrase.value.toLowerCase() === commandContext.argument.split(/[\s]+/).filter(Boolean)[0].toLowerCase());
 
       if (match) {
         if (child.commandCallbackTypes.includes(Command.getCallback.BOTH) || (commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!commandContext.isGroup && child.commandCallbackTypes.includes(Command.getCallback.PRIVATE))) {

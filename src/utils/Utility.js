@@ -107,11 +107,11 @@ class Utility {
       }
 
       if (milliseconds === 0) {
-        return `0${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`;
+        return `0${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`;
       }
 
       if (milliseconds < 1000) {
-        return `${(milliseconds / 1000).toFixed(2)}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`;
+        return `${(milliseconds / 1000).toFixed(2)}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`;
       }
 
       const info = moment.duration(milliseconds, 'milliseconds')._data;
@@ -119,31 +119,31 @@ class Utility {
       const time = [];
 
       if (info.years > 0) {
-        time.push(`${info.years}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_years`)}`);
+        time.push(`${info.years}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_years`)}`);
       }
 
       if (info.months > 0) {
-        time.push(`${info.months}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_months`)}`);
+        time.push(`${info.months}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_months`)}`);
       }
 
       if (info.weeks > 0) {
-        time.push(`${info.weeks}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_weeks`)}`);
+        time.push(`${info.weeks}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_weeks`)}`);
       }
 
       if (info.days > 0) {
-        time.push(`${info.days}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_days`)}`);
+        time.push(`${info.days}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_days`)}`);
       }
 
       if (info.hours > 0) {
-        time.push(`${info.hours}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_hours`)}`);
+        time.push(`${info.hours}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_hours`)}`);
       }
 
       if (info.minutes > 0) {
-        time.push(`${info.minutes}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_minutes`)}`);
+        time.push(`${info.minutes}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_minutes`)}`);
       }
 
       if (info.seconds > 0) {
-        time.push(`${info.seconds}${this._api.phrase().getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`);
+        time.push(`${info.seconds}${this._api._phrase.getByLanguageAndName(language, `${this._api.options.keyword}_time_type_seconds`)}`);
       }
 
       return time.join(' ');

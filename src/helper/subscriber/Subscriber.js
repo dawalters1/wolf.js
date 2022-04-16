@@ -52,7 +52,7 @@ class Subscriber extends BaseHelper {
       if (presence.length !== subscriberIds.length) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId));
 
-        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
+        for (const subscriberIdBatch of this._api._utility._array.chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.SUBSCRIBER_PRESENCE,
             {
@@ -99,7 +99,7 @@ class Subscriber extends BaseHelper {
 
       return presence;
     } catch (error) {
-      error.internalErrorMessage = `api.subscriber().getPresenceByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.subscriber${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getPresenceByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -140,7 +140,7 @@ class Subscriber extends BaseHelper {
       if (subscribers.length !== subscriberIds.length) {
         const subscriberIdsToRequest = subscriberIds.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId));
 
-        for (const subscriberIdBatch of this._api.utility().array().chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
+        for (const subscriberIdBatch of this._api._utility._array.chunk(subscriberIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.SUBSCRIBER_PROFILE,
             {
@@ -194,7 +194,7 @@ class Subscriber extends BaseHelper {
 
       return subscribers;
     } catch (error) {
-      error.internalErrorMessage = `api.subscriber().getByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.subscriber${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByIds(subscriberIds=${JSON.stringify(subscriberIds)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -250,7 +250,7 @@ class Subscriber extends BaseHelper {
 
       return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {
-      error.internalErrorMessage = `api.group().getChatHistory(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
+      error.internalErrorMessage = `api.subscriber${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getChatHistory(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)})`;
       throw error;
     }
   }

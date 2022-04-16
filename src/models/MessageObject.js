@@ -16,7 +16,7 @@ const toBaseMessage = (api, messageData) => {
     type: messageData.mimeType
   };
 
-  message.isCommand = api.commandHandler().isCommand(message);
+  message.isCommand = api._commandHandler.isCommand(message);
 
   return message;
 };
@@ -29,12 +29,12 @@ class Message {
   }
 
   async sendMessage (content, opts = null) {
-    return await this._api.messaging().sendMessage(this, content, opts);
+    return await this._api._messaging.sendMessage(this, content, opts);
   }
 
   async delete () {
     if (this.isGroup) {
-      return await this._api.messaging().deleteGroupMessage(this.targetGroupId, this.timestamp);
+      return await this._api._messaging.deleteGroupMessage(this.targetGroupId, this.timestamp);
     }
 
     throw new Error('private message deletion is unsupported');
@@ -42,7 +42,7 @@ class Message {
 
   async restore () {
     if (this.isGroup) {
-      return await this._api.messaging().restoreGroupMessage(this.targetGroupId, this.timestamp);
+      return await this._api._messaging.restoreGroupMessage(this.targetGroupId, this.timestamp);
     }
 
     throw new Error('private message deletion is unsupported');

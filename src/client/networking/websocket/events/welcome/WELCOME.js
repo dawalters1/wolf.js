@@ -4,11 +4,11 @@ const { Events, Commands } = require('../../../../../constants');
 const subscribeToSubscriptionType = async (api, type) => {
   switch (type) {
     case 'groupMessages':
-      return await api.messaging()._messageGroupSubscribe();
+      return await api._messaging._messageGroupSubscribe();
     case 'privateMessages':
-      return await api.messaging()._messagePrivateSubscribe();
+      return await api._messaging._messagePrivateSubscribe();
     case 'groupTipping':
-      return await api.tipping()._groupSubscribe();
+      return await api._tipping._groupSubscribe();
     default:
       throw new Error('invalid subscription type');
   }
@@ -17,7 +17,7 @@ const subscribeToSubscriptionType = async (api, type) => {
 const onSuccess = async (api, resume = false) => {
   await api._cleanup(false);
 
-  await api.group()._joinedGroups();
+  await api._group._joinedGroups();
 
   const subscriptions = Object.entries(api.config.get('app.messageSettings.subscriptions')).filter((entry) => entry[1]).map((entry) => entry[0]);
 
@@ -25,7 +25,7 @@ const onSuccess = async (api, resume = false) => {
     await subscribeToSubscriptionType(api, subscription);
   }
 
-  api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
+  api._currentSubscriber = await api._subscriber.getById(api.currentSubscriber.id);
 
   api.emit(resume ? Events.RESUME : Events.READY);
 };
@@ -53,7 +53,7 @@ const login = async (api) => {
     api.emit(Events.LOGIN_FAILED, result);
 
     if (result.headers && result.headers.subCode && result.headers.subCode > 1) {
-      await api.utility().delay(90000); // Attempt to reconnect after 90 seconds regardless of expiry given (Typically too many requests were sent and bot was barred)
+      await api._utility.delay(90000); // Attempt to reconnect after 90 seconds regardless of expiry given (Typically too many requests were sent and bot was barred)
       await login(api);
     }
 

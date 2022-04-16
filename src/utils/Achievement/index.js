@@ -60,7 +60,7 @@ class Achievement {
         }
       }
 
-      const categories = await this._api.achievement().getCategoryList(language);
+      const categories = await this._api._achievement.getCategoryList(language);
 
       return categories.reduce((result, category) => {
         const achivementForCategory = achievements.filter((achievement) => achievement.additionalInfo.categoryId === category.id);
@@ -76,7 +76,7 @@ class Achievement {
         return result;
       }, []);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().achievement().mapToCategories(achievements=${JSON.stringify(achievements)}, language=${JSON.stringify(language)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.achievement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.mapToCategories(achievements=${JSON.stringify(achievements)}, language=${JSON.stringify(language)})`;
       throw error;
     }
   }

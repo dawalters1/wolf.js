@@ -2,8 +2,8 @@ const { Capability } = require('../../../../../constants');
 
 module.exports = async (api, body) => {
   const [group, subscriber] = await Promise.all([
-    api.group().getById(body.groupId),
-    api.subscriber().getById(body.subscriberId)
+    api._group.getById(body.groupId),
+    api._subscriber.getById(body.subscriberId)
   ]);
 
   if (group.subscribers && group.subscribers.length > 0) {

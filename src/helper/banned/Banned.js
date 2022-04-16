@@ -39,7 +39,7 @@ class Banned extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().isBanned(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.banned${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isBanned(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -76,7 +76,7 @@ class Banned extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().ban(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.banned${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.ban(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -113,7 +113,7 @@ class Banned extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.banned().unban(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.banned${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.unban(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }

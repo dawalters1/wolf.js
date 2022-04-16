@@ -53,7 +53,7 @@ class Achievement extends BaseHelper {
 
       return this._categories[language] || [];
     } catch (error) {
-      error.internalErrorMessage = `api.achievement().getCategoryList(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.achivement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getCategoryList(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -62,7 +62,7 @@ class Achievement extends BaseHelper {
     try {
       return (await this.getByIds([achievementId], language, requestNew))[0];
     } catch (error) {
-      error.internalErrorMessage = `api.achievement().getById(achievementId=${JSON.stringify(achievementId)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.achivement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getById(achievementId=${JSON.stringify(achievementId)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -103,7 +103,7 @@ class Achievement extends BaseHelper {
       if (achievements.length !== achievementIds.length) {
         const achievementIdsToRequest = achievementIds.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId));
 
-        for (const achievementIdBatch of this._api.utility().array().chunk(achievementIdsToRequest, this._api._botConfig.get('batch.length'))) {
+        for (const achievementIdBatch of this._api._utility._array.chunk(achievementIdsToRequest, this._api._botConfig.get('batch.length'))) {
           const result = await this._websocket.emit(
             Commands.ACHIEVEMENT,
             {
@@ -149,7 +149,7 @@ class Achievement extends BaseHelper {
 
       return achievements;
     } catch (error) {
-      error.internalErrorMessage = `api.achievement().getByIds(achievementIds=${JSON.stringify(achievementIds)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.achivement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByIds(achievementIds=${JSON.stringify(achievementIds)}, language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }

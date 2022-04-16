@@ -102,7 +102,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().tip(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, targetGroupId=${JSON.stringify(targetGroupId)}, context=${JSON.stringify(context)}, charms=${JSON.stringify(charms)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.tip(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, targetGroupId=${JSON.stringify(targetGroupId)}, context=${JSON.stringify(context)}, charms=${JSON.stringify(charms)})`;
       throw error;
     }
   }
@@ -150,7 +150,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getDetails(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`; throw error;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getDetails(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`; throw error;
     }
   }
 
@@ -197,7 +197,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getSummary(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSummary(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)}, limit=${JSON.stringify(limit)}, offset=${JSON.stringify(offset)})`;
       throw error;
     }
   }
@@ -244,7 +244,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getGroupLeaderboard(targetGroupId=${JSON.stringify(targetGroupId)}, tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGroupLeaderboard(targetGroupId=${JSON.stringify(targetGroupId)}, tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
       throw error;
     }
   }
@@ -288,7 +288,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getGroupLeaderboardSummary(targetGroupId=${JSON.stringify(targetGroupId)}, tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGroupLeaderboardSummary(targetGroupId=${JSON.stringify(targetGroupId)}, tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
       throw error;
     }
   }
@@ -318,7 +318,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getGlobalLeaderboard(tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGlobalLeaderboard(tipPeriod=${JSON.stringify(tipPeriod)}, tipType=${JSON.stringify(tipType)}, tipDirection=${JSON.stringify(tipDirection)})`;
       throw error;
     }
   }
@@ -338,7 +338,7 @@ class Tipping extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.tipping().getGlobalLeaderboardSummary(tipPeriod=${JSON.stringify(tipPeriod)})`;
+      error.internalErrorMessage = `api.tipping${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGlobalLeaderboardSummary(tipPeriod=${JSON.stringify(tipPeriod)})`;
       throw error;
     }
   }

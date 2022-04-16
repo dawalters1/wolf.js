@@ -59,7 +59,7 @@ class Phrase extends BaseHelper {
           throw new Error('value cannot be null or empty');
         }
 
-        const phraseName = this._api.utility().string().replace(phrase.name, {
+        const phraseName = this._api._utility._string.replace(phrase.name, {
           keyword: this._api.options.keyword
         }).toLowerCase();
 
@@ -97,7 +97,7 @@ class Phrase extends BaseHelper {
           this._phrases[phrase.language] = {};
         }
 
-        const phraseName = this._api.utility().string().replace(phrase.name, {
+        const phraseName = this._api._utility._string.replace(phrase.name, {
           keyword: this._api.options.keyword
         });
 
@@ -111,7 +111,7 @@ class Phrase extends BaseHelper {
             .concat(phrase.value.trim());
       }
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().load(phrases=${
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.load(phrases=${
         JSON.stringify(phrases.slice(0, 15)) + phrases.length > 15 ? '...' : ''
       })`;
       throw error;
@@ -135,7 +135,7 @@ class Phrase extends BaseHelper {
         return result;
       });
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().list()';
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.list()`;
       throw error;
     }
   }
@@ -144,7 +144,7 @@ class Phrase extends BaseHelper {
     try {
       return Object.keys(this._phrases);
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().getLanguageList()';
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getLanguageList()`;
       throw error;
     }
   }
@@ -175,7 +175,7 @@ class Phrase extends BaseHelper {
         )
       };
     } catch (error) {
-      error.internalErrorMessage = 'api.phrase().count()';
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.count()`;
       throw error;
     }
   }
@@ -201,11 +201,11 @@ class Phrase extends BaseHelper {
     try {
       return (
         this.getAllByName(name).find((phrase) =>
-          this._api.utility().string().isEqual(phrase.value, value)
+          this._api._utility._string.isEqual(phrase.value, value)
         ) !== undefined
       );
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isRequestedPhrase(name=${JSON.stringify(name)}, value=${JSON.stringify(value)})`;
       throw error;
     }
   }
@@ -231,7 +231,7 @@ class Phrase extends BaseHelper {
 
       return phrase[0].value || phrase[0];
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().getByLanguageAndName(language=${JSON.stringify(language)}, name=${JSON.stringify(name)})`;
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByLanguageAndName(language=${JSON.stringify(language)}, name=${JSON.stringify(name)})`;
       throw error;
     }
   }
@@ -248,7 +248,7 @@ class Phrase extends BaseHelper {
 
       return this.getByLanguageAndName(command.language, name);
     } catch (error) {
-      error.internalErrorMessage = `api.phrase().getByCommandAndName(command=${JSON.stringify(command)}, name=${JSON.stringify(name)})`;
+      error.internalErrorMessage = `api.phrase${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getByCommandAndName(command=${JSON.stringify(command)}, name=${JSON.stringify(name)})`;
       throw error;
     }
   }

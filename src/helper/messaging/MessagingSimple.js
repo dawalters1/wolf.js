@@ -83,14 +83,14 @@ const getDefaultOptions = (api, opts) => {
   return _opts;
 };
 
-class Messaging extends BaseHelper {
+class MessagingSimple extends BaseHelper {
   constructor (api) {
     super(api);
 
     this._messageSubscription = new MessageSubscription(this._api);
   }
 
-  subscribe () {
+  get subscribe () {
     return this._messageSubscription;
   }
 
@@ -162,7 +162,7 @@ class Messaging extends BaseHelper {
 
       return result.success ? result.body.map((message) => new Message(this._api, message)) : [];
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().getConversationList(timestamp=${JSON.stringify(timestamp)})`;
+      error.internalErrorMessage = `api.messaging.getConversationList(timestamp=${JSON.stringify(timestamp)})`;
       throw error;
     }
   }
@@ -425,7 +425,7 @@ class Messaging extends BaseHelper {
 
       return await this._sendMessage(MessageTypes.GROUP, targetGroupId, content, opts);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().sendGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
+      error.internalErrorMessage = `api.messaging.sendGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
     }
   }
@@ -449,7 +449,7 @@ class Messaging extends BaseHelper {
 
       return await this._sendMessage(MessageTypes.PRIVATE, targetSubscriberId, content, opts);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().sendPrivateMessage(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
+      error.internalErrorMessage = `api.messaging.sendPrivateMessage(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
     }
   }
@@ -471,7 +471,7 @@ class Messaging extends BaseHelper {
 
       return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().sendMessage(commandOrMessage=${commandOrMessage}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
+      error.internalErrorMessage = `api.messaging.sendMessage(commandOrMessage=${commandOrMessage}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
     }
   }
@@ -509,7 +509,7 @@ class Messaging extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().deleteGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
+      error.internalErrorMessage = `api.messaging.deleteGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
       throw error;
     }
   }
@@ -547,7 +547,7 @@ class Messaging extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().restoreGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
+      error.internalErrorMessage = `api.messaging.restoreGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
       throw error;
     }
   }
@@ -582,10 +582,10 @@ class Messaging extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.messaging().getGroupMessageEditHistory(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
+      error.internalErrorMessage = `api.messaging.getGroupMessageEditHistory(targetGroupId=${JSON.stringify(targetGroupId)}, timestamp=${JSON.stringify(timestamp)})`;
       throw error;
     }
   }
 }
 
-module.exports = Messaging;
+module.exports = MessagingSimple;

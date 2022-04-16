@@ -22,11 +22,11 @@ const Authorization = require('../helper/authorization/Authorization');
 const Banned = require('../helper/banned/Banned');
 const Blocked = require('../helper/contact/Blocked');
 const Charm = require('../helper/charm/Charm');
-const Contact = require('../helper/contact/Contact');
+const Contact = require('../helper/contact/ContactSimple');
 const Discovery = require('../helper/discovery/Discovery');
 const Event = require('../helper/event/Event');
 const Group = require('../helper/group/Group');
-const Messaging = require('../helper/messaging/Messaging');
+const Messaging = require('../helper/messaging/MessagingSimple');
 const Notification = require('../helper/notification/Notification');
 const Phrase = require('../helper/phrase/Phrase');
 const Stage = require('../helper/stage/Stage');
@@ -34,7 +34,7 @@ const Store = require('../helper/store/Store');
 const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 
-const Utility = require('../utils/Utility');
+const Utility = require('../utils/UtilitySimple');
 const { validateUserConfig, validateBotConfig } = require('../utils/Config');
 
 class WOLFBot extends EventEmitter {
@@ -118,7 +118,7 @@ class WOLFBot extends EventEmitter {
    *  Exposes the multiMediaService methods
    * @returns {MultiMediaService}
    */
-  multiMediaService () {
+  get multiMediaService () {
     return this._multiMediaService;
   }
 
@@ -128,7 +128,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the commandHandler methods
    * @returns {CommandHandler}
    */
-  commandHandler () {
+  get commandHandler () {
     return this._commandHandler;
   }
 
@@ -138,7 +138,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the achievement methods
    * @returns {Achievement}
    */
-  achievement () {
+  get achievement () {
     return this._achievement;
   }
 
@@ -146,7 +146,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the authorization methods
    * @returns {Authorization}
    */
-  authorization () {
+  get authorization () {
     return this._authorization;
   }
 
@@ -154,7 +154,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the banned methods
    * @returns {Banned}
    */
-  banned () {
+  get banned () {
     return this._banned;
   }
 
@@ -163,8 +163,8 @@ class WOLFBot extends EventEmitter {
    * @deprecated
    * @returns {Blocked}
    */
-  blocked () {
-    console.warn('[DEPRECATED]: api.blocked() is deprecated, use api.contact().blocked() instead');
+  get blocked () {
+    console.warn('[DEPRECATED]: api.contact is deprecated, use api.contact.blocked instead');
     return this._blocked;
   }
 
@@ -172,7 +172,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the contact methods
    * @returns {Contact}
    */
-  contact () {
+  get contact () {
     return this._contact;
   }
 
@@ -180,7 +180,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the charm methods
    * @returns {Charm}
    */
-  charm () {
+  get charm () {
     return this._charm;
   }
 
@@ -188,7 +188,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the discovery methods
    * @returns {Discovery}
    */
-  discovery () {
+  get discovery () {
     return this._discovery;
   }
 
@@ -196,7 +196,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the event methods
    * @returns {Event}
    */
-  event () {
+  get event () {
     return this._event;
   }
 
@@ -204,7 +204,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the group methods
    * @returns {Group}
    */
-  group () {
+  get group () {
     return this._group;
   }
 
@@ -212,7 +212,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the messaging methods
    * @returns {Messaging}
    */
-  messaging () {
+  get messaging () {
     return this._messaging;
   }
 
@@ -220,7 +220,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the notification methods
    * @returns {Notification}
    */
-  notification () {
+  get notification () {
     return this._notification;
   }
 
@@ -228,7 +228,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the phrase methods
    * @returns {Phrase}
    */
-  phrase () {
+  get phrase () {
     return this._phrase;
   }
 
@@ -236,7 +236,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the stage methods
    * @returns {Stage}
    */
-  stage () {
+  get stage () {
     return this._stage;
   }
 
@@ -244,7 +244,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the store methods
    * @returns {Store}
    */
-  store () {
+  get store () {
     return this._store;
   }
 
@@ -252,7 +252,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the subscriber methods
    * @returns {Subscriber}
    */
-  subscriber () {
+  get subscriber () {
     return this._subscriber;
   }
 
@@ -260,7 +260,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the tipping methods
    * @returns {Tipping}
    */
-  tipping () {
+  get tipping () {
     return this._tipping;
   }
 
@@ -270,7 +270,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the utility methods
    * @returns {Utility}
    */
-  utility () {
+  get utility () {
     return this._utility;
   }
 

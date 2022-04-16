@@ -31,7 +31,7 @@ class Blocked extends BaseHelper {
 
       return this._blocked;
     } catch (error) {
-      error.internalErrorMessage = `api.blocked().list(requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.contact${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.blocked${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.list(requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -60,7 +60,7 @@ class Blocked extends BaseHelper {
 
       return results.length === 1 ? results[0] : results;
     } catch (error) {
-      error.internalErrorMessage = `api.blocked().isBlocked(subscriberIds=${JSON.stringify(subscriberIds)})`;
+      error.internalErrorMessage = `api.contact${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.blocked${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isBlocked(subscriberIds=${JSON.stringify(subscriberIds)})`;
       throw error;
     }
   }
@@ -84,7 +84,7 @@ class Blocked extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.blocked().block(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.contact${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.blocked${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.block(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -108,7 +108,7 @@ class Blocked extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.blocked().unblock(subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.contact${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.blocked${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.unblock(subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }

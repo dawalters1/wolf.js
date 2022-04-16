@@ -32,9 +32,9 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('requestNew must be a valid boolean');
       }
 
-      return (await this._api.group().getById(targetGroupId, requestNew)).audioConfig;
+      return (await this._api._group.getById(targetGroupId, requestNew)).audioConfig;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getGroupSettings(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGroupSettings(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -60,7 +60,7 @@ module.exports = class Stage extends BaseHelper {
 
       return this._stageList;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getStageListForGroup(requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getStageListForGroup(requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -93,7 +93,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('stage is disabled for requested group');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!requestNew && group.availableStages && group.availableStages.length > 0) {
         return group.availableStages;
@@ -111,7 +111,7 @@ module.exports = class Stage extends BaseHelper {
 
       return group.availableStages || [];
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getStageListForGroup(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getStageListForGroup(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -144,7 +144,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('stage is disabled for requested group');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!requestNew && group.slots && group.slots.length > 0) {
         return group.slots;
@@ -163,7 +163,7 @@ module.exports = class Stage extends BaseHelper {
 
       return group.slots || [];
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getGroupSlots(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getGroupSlots(targetGroupId=${JSON.stringify(targetGroupId)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
@@ -229,7 +229,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().updateSlotMuteState(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, isMuted=${JSON.stringify(isMuted)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.updateSlotMuteState(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, isMuted=${JSON.stringify(isMuted)})`;
       throw error;
     }
   }
@@ -292,7 +292,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().updateSlotLockState(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, isLocked=${JSON.stringify(isLocked)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.updateSlotLockState(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, isLocked=${JSON.stringify(isLocked)})`;
       throw error;
     }
   }
@@ -341,7 +341,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().leaveSlot(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.leaveSlot(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -407,7 +407,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().kickSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.kickSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)})`;
       throw error;
     }
   }
@@ -458,7 +458,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await this.kickSlot(targetGroupId, slot.id);
     } catch (error) {
-      error.internalErrorMessage = `api.stage().kickSubscriberFromStage(targetGroupId=${JSON.stringify(targetGroupId)}, subscriberId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.kickSubscriberFromStage(targetGroupId=${JSON.stringify(targetGroupId)}, subscriberId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }
@@ -561,7 +561,7 @@ module.exports = class Stage extends BaseHelper {
 
       return result;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().joinSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, sdp=${JSON.stringify(sdp)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.joinSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, sdp=${JSON.stringify(sdp)})`;
       throw error;
     }
   }
@@ -587,7 +587,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('stage client is not ready to consume in this group');
       }
     } catch (error) {
-      error.internalErrorMessage = `api.stage().consumeSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, sdp=${JSON.stringify(sdp)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.consumeSlot(targetGroupId=${JSON.stringify(targetGroupId)}, slotId=${JSON.stringify(slotId)}, sdp=${JSON.stringify(sdp)})`;
       throw error;
     }
   }
@@ -619,7 +619,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await client.broadcast(data);
     } catch (error) {
-      error.internalErrorMessage = `api.stage().broadcast(targetGroupId=${JSON.stringify(targetGroupId)}, data=${JSON.stringify('unable to display data')})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.broadcast(targetGroupId=${JSON.stringify(targetGroupId)}, data=${JSON.stringify('unable to display data')})`;
       throw error;
     }
   }
@@ -643,7 +643,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await client.pause();
     } catch (error) {
-      error.internalErrorMessage = `api.stage().pause(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.pause(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -667,7 +667,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await client.resume();
     } catch (error) {
-      error.internalErrorMessage = `api.stage().resume(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.resume(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -691,7 +691,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await client.stop();
     } catch (error) {
-      error.internalErrorMessage = `api.stage().stop(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.stop(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -715,7 +715,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isMuted;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isMuted(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isMuted(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -743,7 +743,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isBroadcasting;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isBroadcasting(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isBroadcasting(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -767,7 +767,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isConnected;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isConnected(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isConnected(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -791,7 +791,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isConnecting;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isConnecting(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isConnecting(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -815,7 +815,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isReady;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isReady(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isReady(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -839,7 +839,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.isPaused;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().isPaused(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.isPaused(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -858,7 +858,7 @@ module.exports = class Stage extends BaseHelper {
 
       return await this._manager.getClient(targetGroupId) !== undefined;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().hasClient(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.hasClient(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -901,7 +901,7 @@ module.exports = class Stage extends BaseHelper {
 
       return Promise.resolve();
     } catch (error) {
-      error.internalErrorMessage = `api.stage().updateClientOptions(targetGroupId=${JSON.stringify(targetGroupId)}, opts=${JSON.stringify(opts)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.updateClientOptions(targetGroupId=${JSON.stringify(targetGroupId)}, opts=${JSON.stringify(opts)})`;
       throw error;
     }
   }
@@ -925,7 +925,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.opts;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getClientOptions(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getClientOptions(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -950,7 +950,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.slotId;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().slotId(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.slotId(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -975,7 +975,7 @@ module.exports = class Stage extends BaseHelper {
 
       return client.duration;
     } catch (error) {
-      error.internalErrorMessage = `api.stage().duration(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.duration(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1006,7 +1006,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('stage is disabled for requested group');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!requestNew && group.stageRequestList) {
         return group.stageRequestList;
@@ -1026,7 +1026,7 @@ module.exports = class Stage extends BaseHelper {
 
       return group.stageRequestList || [];
     } catch (error) {
-      error.internalErrorMessage = `api.stage().getSlotRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getSlotRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1043,7 +1043,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!group.inGroup) {
         throw new Error('bot must be in group to request a mic');
@@ -1082,7 +1082,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().requestMic(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.requestMic(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1099,7 +1099,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!group.inGroup) {
         throw new Error('bot is not in group');
@@ -1134,7 +1134,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().cancelMicRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.cancelMicRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1151,7 +1151,7 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!group.inGroup) {
         throw new Error('bot must be in group to request slot');
@@ -1174,7 +1174,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().clearMicRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.clearMicRequestList(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1208,7 +1208,7 @@ module.exports = class Stage extends BaseHelper {
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
         throw new Error('subscriberId cannot be less than or equal to 0');
       }
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!group.inGroup) {
         throw new Error('bot must be in group');
@@ -1250,7 +1250,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().addSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.addSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }
@@ -1275,7 +1275,7 @@ module.exports = class Stage extends BaseHelper {
       } else if (validator.isLessThanOrEqualZero(slotId)) {
         throw new Error('slotId cannot be less than or equal to 0');
       }
-      const group = await this._api.group().getById(targetGroupId);
+      const group = await this._api._group.getById(targetGroupId);
 
       if (!group.inGroup) {
         throw new Error('bot must be in group');
@@ -1317,7 +1317,7 @@ module.exports = class Stage extends BaseHelper {
         }
       );
     } catch (error) {
-      error.internalErrorMessage = `api.stage().removeSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
+      error.internalErrorMessage = `api.stage${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.removeSlotRequest(targetGroupId=${JSON.stringify(targetGroupId)})`;
       throw error;
     }
   }

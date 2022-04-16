@@ -28,7 +28,7 @@ class Subscriber extends BaseHelper {
 
       return result.success ? result.body : [];
     } catch (error) {
-      error.internalErrorMessage = `api.achievement().subscriber().getById(targetGroupId=${JSON.stringify(subscriberId)})`;
+      error.internalErrorMessage = `api.achivement${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.subscriber${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getById(targetGroupId=${JSON.stringify(subscriberId)})`;
       throw error;
     }
   }

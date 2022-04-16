@@ -9,53 +9,53 @@ class GroupSubscriber {
   }
 
   toDisplayName (withId = true, trimAds = false) {
-    const nickname = trimAds ? this._api.utility().string().trimAds(this.nickname) : this.nickname;
+    const nickname = trimAds ? this._api._utility._string.trimAds(this.nickname) : this.nickname;
 
     return `${nickname}${withId ? ` (${this.id})` : ''}`;
   }
 
   async sendMessage (content, opts = null) {
-    return await this._api.messaging().sendPrivateMessage(this.id, content, opts);
+    return await this._api._messaging.sendPrivateMessage(this.id, content, opts);
   }
 
   async add () {
-    return await this._api.contact().add(this.id);
+    return await this._api._contact.add(this.id);
   }
 
   async remove () {
-    return await this._api.contact().remove(this.id);
+    return await this._api._contact.remove(this.id);
   }
 
   async block () {
-    return await this._api.blocked().block(this.id);
+    return await this._api._contact._blocked.block(this.id);
   }
 
   async unblock () {
-    return await this._api.blocked().unblock(this.id);
+    return await this._api._contact._blocked.unblock(this.id);
   }
 
   async getAvatar (size = 640) {
-    return await this._api.utility().subscriber().getAvatar(this.id, size);
+    return await this._api._utility._subscriber.getAvatar(this.id, size);
   }
 
   async admin () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.ADMIN);
+    return await this._api._group.updateSubscriber(this.groupId, this.id, AdminAction.ADMIN);
   }
 
   async mod () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.MOD);
+    return await this._api._group.updateSubscriber(this.groupId, this.id, AdminAction.MOD);
   }
 
   async regular () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.REGULAR);
+    return await this._api._group.updateSubscriber(this.groupId, this.id, AdminAction.REGULAR);
   }
 
   async silence () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.SILENCE);
+    return await this._api._group.updateSubscriber(this.groupId, this.id, AdminAction.SILENCE);
   }
 
   async ban () {
-    return await this._api.group().updateSubscriber(this.groupId, this.id, AdminAction.BAN);
+    return await this._api._group.updateSubscriber(this.groupId, this.id, AdminAction.BAN);
   }
 }
 

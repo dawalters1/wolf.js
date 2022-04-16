@@ -8,7 +8,7 @@ class GroupEvent {
   }
 
   async update (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
-    return await this._api.event().update(
+    return await this._api._event.update(
       targetGroupId,
       eventId,
       title,
@@ -22,19 +22,19 @@ class GroupEvent {
   }
 
   async updateThumbnail (thumbnail) {
-    return await this._api.event().updateThumbnail(this.eventId, thumbnail);
+    return await this._api._event.updateThumbnail(this.eventId, thumbnail);
   }
 
   async remove () {
-    return await this._api.event().remove(this.eventId);
+    return await this._api._event.remove(this.eventId);
   }
 
   async subscribe () {
-    return await this._api.event().subscribe(this.eventId);
+    return await this._api._event.subscribe(this.eventId);
   }
 
   async unsubscribe () {
-    return await this._api.event().unsubscribe(this.eventId);
+    return await this._api._event.unsubscribe(this.eventId);
   }
 }
 

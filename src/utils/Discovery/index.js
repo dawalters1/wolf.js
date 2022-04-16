@@ -21,7 +21,7 @@ class Discovery {
         throw new Error('requestNew must be a valid boolean');
       }
 
-      const discovery = await this._api.discovery().getByLanguage(language, requestNew);
+      const discovery = await this._api._discovery.getByLanguage(language, requestNew);
 
       if (!discovery) {
         return [];
@@ -29,7 +29,7 @@ class Discovery {
 
       return discovery.sections.filter((section) => section.elements.collection !== undefined);
     } catch (error) {
-      error.internalErrorMessage = `api.utility().discovery().getRecipeSections(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
+      error.internalErrorMessage = `api.utility${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.discovery${this._api instanceof require('../../client/WOLFBot') ? '()' : ''}.getRecipeSections(language=${JSON.stringify(language)}, requestNew=${JSON.stringify(requestNew)})`;
       throw error;
     }
   }
