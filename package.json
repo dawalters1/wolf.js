@@ -31,7 +31,7 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
     "aws-sdk": "2.1086.0",
-    "bull": "4.7.0",
+    "bull": "4.8.1",
     "command-exists-promise": "2.0.2",
     "config": "3.3.7",
     "file-type": "16.5.3",
