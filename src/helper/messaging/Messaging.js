@@ -7,6 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
+const ResponseObject = require('../../models/ResponseObject');
 
 const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
 
@@ -399,10 +400,10 @@ class Messaging extends BaseHelper {
     }, []);
 
     return responses.length > 1
-      ? {
+      ? new ResponseObject({
           code: 207,
           body: responses
-        }
+        })
       : responses[0];
   }
 
