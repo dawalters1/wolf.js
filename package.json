@@ -29,22 +29,6 @@
     "wolfringo"
   ],
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
-  "dependencies": {
-    "aws-sdk": "2.1086.0",
-    "bull": "4.8.1",
-    "command-exists-promise": "2.0.2",
-    "config": "3.3.7",
-    "file-type": "16.5.3",
-    "fluent-ffmpeg": "2.1.2",
-    "image-size": "1.0.1",
-    "moment": "2.29.2",
-    "socket.io-client": "^4.4.1",
-    "superagent": "7.1.1",
-    "tldts": "5.7.67",
-    "uuid": "8.3.2",
-    "wrtc": "0.4.7",
-    "yaml": "1.10.2"
-  },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^17.0.21",
@@ -55,7 +39,7 @@
     "eslint-plugin-promise": "^6.0.0"
   },
   "engines": {
-    "node": ">=12.0.0",
-    "npm": ">=6.0.0"
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
   }
 }
