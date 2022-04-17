@@ -1,3 +1,4 @@
+const CommandContext = require('../models/CommandContext');
 const Command = require('./Command');
 
 class CommandHandler {
@@ -21,21 +22,31 @@ class CommandHandler {
   }
 
   _onMessage (message) {
+    if (!message.body) {
+      return Promise.resolve();
+    }
     // TODO: validate
 
     const context = {
-
+      isGroup: message.isGroup,
+      argument: message.body,
+      targetGroupId: message.targetGroupId,
+      sourceSubscriberId: message.sourceSubscriberId,
+      timestamp: message.timestamp,
+      type: message.type
     };
 
     const command = this._getCommand(this._commands, context);
 
-    if (!command.callback) {
+    if (!command.callback /** TODO */) {
       return Promise.resolve();
     }
 
     const callback = command.callback;
 
     Reflect.deleteProperty(command, 'callback');
+
+    return callback.call(this, new CommandContext(command));
   }
 
   _getCommand (commands, context) {
@@ -52,7 +63,7 @@ class CommandHandler {
       return false;
     });
 
-    if (command || command.children.length === 0) {
+    if (!command || command.children.length === 0) {
       return context;
     }
 
