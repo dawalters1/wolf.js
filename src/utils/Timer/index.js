@@ -8,17 +8,28 @@ class Timer {
     this._api = api;
   }
 
+  async _reset () {
+    this._initialised = false;
+    this._handlers = {};
+    this._timerQueue.close();
+    this._timerQueue = null;
+  }
+
   async initialise (handlers, ...args) {
     try {
       if (this._initialised) {
         return Promise.resolve();
       }
 
+      if (!this._api._currentSubscriber) {
+        throw new Error('client must be logged in');
+      }
+
       this._handlers = handlers;
 
       this._timerQueue = new BullQueue('bull-timer', {
         redis: this._api.config.get('redis'),
-        prefix: `${this._api.options.keyword}`
+        prefix: `{${this._api.options.keyword}:${this._api._currentSubscriber.id}}`
       });
 
       this._timerQueue.process('*', (job) => {

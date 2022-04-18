@@ -188,8 +188,6 @@ class Client extends EventEmitter {
         }
 
         this._emit(events.BROADCAST_ERROR, error);
-
-        throw error;
       })
       .pipe()
       .on('data', (chunk) => {
