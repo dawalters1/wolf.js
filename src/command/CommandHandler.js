@@ -1,16 +1,39 @@
 const CommandContext = require('../models/CommandContext');
 const Command = require('./Command');
 
+const CHARM_IDS = [813, 814];
+
+const checkForPrivilege = async (api, subscriber, privileges) => {
+  privileges = Array.isArray(privileges) ? privileges : [privileges];
+
+  return privileges.some((privilege) => (subscriber.privileges & privilege) === privilege);
+};
+
+const checkForBotCharm = async (api, subscriber) => {
+  if (subscriber.charms && subscriber.charms.selectedList.some((charm) => CHARM_IDS.includes(charm.charmId))) {
+    return true;
+  }
+
+  if (subscriber.charmSummary) {
+    return subscriber.charmSummary.some((charm) => CHARM_IDS.includes(charm.charmId));
+  }
+
+  subscriber.charmSummary = await api.charm.getSubscriberSummary(subscriber.id);
+
+  return await checkForBotCharm(api, subscriber);
+};
+
 class CommandHandler {
   constructor (api) {
     this.api = api;
-
-    this.api.on('groupMessage', (message) => {});
-    this.api.on('privateMessage', (message) => {});
   }
 
   register (commands) {
-    // TODO: validate
+    commands = Array.isArray(commands) ? commands : [commands];
+
+    if (commands.length === 0) {
+      throw new Error('commands cannot be empty');
+    }
 
     this._commands = commands;
   }
@@ -21,11 +44,12 @@ class CommandHandler {
     return this._commands.some((command) => this.api.phrase.getAllByName(command.phraseName).some((phrase) => this.api.utility.string.isEqual(phrase, args[0])));
   }
 
-  _onMessage (message) {
-    if (!message.body) {
+  async _onMessage (message) {
+    const commandHandling = this.api.options.commandHandling;
+
+    if (!message.body || await this.api.banned.isBanned(message.sourceSubscriberId) || (!commandHandling.processOwnMessages && message.sourceSubscriberId === this.api.currentSubscriber.id)) {
       return Promise.resolve();
     }
-    // TODO: validate
 
     const context = {
       isGroup: message.isGroup,
@@ -38,8 +62,20 @@ class CommandHandler {
 
     const command = this._getCommand(this._commands, context);
 
-    if (!command.callback /** TODO */) {
+    if (!command.callback) {
       return Promise.resolve();
+    }
+
+    if (commandHandling.ignoreOfficialBots || commandHandling.ignoreUnofficialBots) {
+      const subscriber = await this.api.subscriber.getById(context.sourceSubscriberId);
+
+      if (commandHandling.ignoreOfficialBots && await checkForPrivilege(this.api, subscriber, Privilege.BOT)) {
+        return Promise.resolve();
+      }
+
+      if (command.ignoreUnofficialBots && !await checkForPrivilege(this.api, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.api, subscriber)) {
+        return Promise.resolve();
+      }
     }
 
     const callback = command.callback;
