@@ -21,6 +21,10 @@ class GroupSubscriberManager {
     return [this.owner, ...this.admins, ...this.mods, ...this.regular, ...this.silenced, ...this.banned];
   }
 
+  async isInGroup (subscriberId) {
+    return this._all.some((subscriber) => subscriber.id === subscriberId);
+  }
+
   async get (subscriberId) {
     const requested = this._all.find((member) => member.id === subscriberId);
 
