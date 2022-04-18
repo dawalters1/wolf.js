@@ -187,7 +187,7 @@ class Client extends EventEmitter {
           return Promise.resolve();
         }
 
-        this._emit(events.BROADCAST_ERROR, { error });
+        this._emit(events.BROADCAST_ERROR, error);
       })
       .pipe()
       .on('data', (chunk) => {

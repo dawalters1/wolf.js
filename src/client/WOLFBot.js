@@ -499,6 +499,11 @@ class WOLFBot extends EventEmitter {
       this._stage._cleanup(disconnected)
     ]);
 
+    if (disconnected) {
+      this._currentSubscriber = null;
+      this._utility._timer._reset();
+    }
+
     if (!disconnected && this._blacklist.length > 0) {
       await this.getLinkBlacklist(true);
     } else {
