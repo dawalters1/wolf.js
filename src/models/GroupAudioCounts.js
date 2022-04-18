@@ -1,6 +1,6 @@
 const Base = require('./Base');
 
-class Charm extends Base {
+class GroupAudioCounts extends Base {
   constructor (api, data) {
     super(api);
 
@@ -8,4 +8,4 @@ class Charm extends Base {
   }
 }
 
-module.exports = Charm;
+module.exports = GroupAudioCounts;
