@@ -6,8 +6,6 @@ class GroupAudioSlot extends Base {
 
     this._patch(data);
   }
-
-  // TODO: Methods
 }
 
 module.exports = GroupAudioSlot;
