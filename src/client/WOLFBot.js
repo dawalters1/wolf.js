@@ -484,7 +484,7 @@ class WOLFBot extends EventEmitter {
   }
   // #endregion
 
-  async _cleanup (disconnected) {
+  async _cleanup (disconnected = false) {
     await Promise.all([
       this._achievement._cleanup(disconnected),
       this._blocked._cleanup(disconnected),
