@@ -330,7 +330,7 @@ class WOLFBot extends EventEmitter {
 
     this.websocket.socket.disconnect();
 
-    this._cleanup();
+    this._cleanup(true);
   }
 
   // #region Methods
@@ -484,7 +484,7 @@ class WOLFBot extends EventEmitter {
   }
   // #endregion
 
-  async _cleanup (disconnected) {
+  async _cleanup (disconnected = false) {
     await Promise.all([
       this._achievement._cleanup(disconnected),
       this._blocked._cleanup(disconnected),
@@ -502,12 +502,9 @@ class WOLFBot extends EventEmitter {
     if (disconnected) {
       this._currentSubscriber = null;
       this._utility._timer._reset();
-    }
-
-    if (!disconnected && this._blacklist.length > 0) {
-      await this.getLinkBlacklist(true);
-    } else {
       this._blacklist = [];
+    } else if (this._blacklist.length > 0) {
+      await this.getLinkBlacklist(true);
     }
   }
 }
