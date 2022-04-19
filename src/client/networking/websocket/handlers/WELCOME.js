@@ -15,8 +15,6 @@ const subscribeToSubscriptionType = async (api, type) => {
 };
 
 const onSuccess = async (api, resume = false) => {
-  await api._cleanup(false);
-
   await api.group()._joinedGroups();
 
   const subscriptions = Object.entries(api.config.get('app.messageSettings.subscriptions')).filter((entry) => entry[1]).map((entry) => entry[0]);
@@ -75,6 +73,8 @@ module.exports = async (api, body) => {
   api.endpointConfig = body.endpointConfig;
 
   await api.emit(Events.WELCOME, body);
+
+  await api._cleanup(body.loggedInUser === undefined);
 
   if (!body.loggedInUser) {
     return await login(api);

@@ -11,7 +11,6 @@ class Timer {
   async _reset () {
     this._initialised = false;
     this._handlers = {};
-    this._timerQueue.close();
     this._timerQueue = null;
   }
 
