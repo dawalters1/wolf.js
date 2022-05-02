@@ -1,3 +1,10 @@
+/* eslint-disable no-unused-vars */
+
+const callbacks = {
+  GROUP: 'group',
+  PRIVATE: 'private',
+  BOTH: 'both'
+};
 
 const validation = (command) => {
   const { phraseName, callbackObject, children } = command;
@@ -8,6 +15,10 @@ const validation = (command) => {
 };
 
 class Command {
+  static get getCallback () {
+    return callbacks;
+  }
+
   constructor (phraseName, callbackObject, children = []) {
     this.phraseName = phraseName;
     this.callbackObject = callbackObject;

@@ -1,7 +1,7 @@
 
 class Processor {
-  constructor (api) {
-    this.api = api;
+  constructor (client) {
+    this.client = client;
 
     // TODO: load handlers
   }
@@ -12,7 +12,7 @@ class Processor {
     const body = data?.body ?? data;
 
     if (handler) {
-      return handler(this.api, body);
+      return handler(this.client, body);
     }
 
     // TODO: emit unhandled server event

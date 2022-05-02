@@ -1,7 +1,7 @@
 
 class Base {
-  constructor (api) {
-    this.api = api;
+  constructor (client) {
+    this.client = client;
   }
 }
 
