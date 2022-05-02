@@ -4,8 +4,8 @@ const sendRequest = () => {
 };
 
 class MultimediaClient {
-  constructor (api) {
-    this.api = api;
+  constructor (client) {
+    this.client = client;
   }
 }
 
