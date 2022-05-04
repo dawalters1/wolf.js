@@ -41,5 +41,8 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
+  },
+  "dependencies": {
+    "http-status-codes": "^2.2.0"
   }
 }
