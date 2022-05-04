@@ -1,13 +1,11 @@
-const { Commands } = require('../../constants');
+const { Command } = require('../../constants');
 const Base = require('../Base');
 
 const models = require('../../models');
 
 const validator = require('../../validator');
+const WOLFAPIError = require('../../models/WOLFAPIError');
 
-/**
- * TODO: Paramater validation
- */
 class Blocked extends Base {
   constructor (client) {
     super(client);
@@ -21,7 +19,7 @@ class Blocked extends Base {
     }
 
     const response = await this.client.websocket.emit(
-      Commands.SUBSCRIBER_BLOCK_LIST,
+      Command.SUBSCRIBER_BLOCK_LIST,
       {
         subscribe: true
       }
@@ -38,20 +36,20 @@ class Blocked extends Base {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!subscriberIds.length) {
-      throw new Error('subscriberIds cannot be null or empty');
+      throw new WOLFAPIError('subscriberIds cannot be null or empty', subscriberIds);
     }
 
     if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
-      throw new Error('subscriberIds cannot contain duplicates');
+      throw new WOLFAPIError('subscriberIds cannot contain duplicates', subscriberIds);
     }
 
     for (const subscriberId of subscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new Error('subscriberId cannot be null or undefined');
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new Error('subscriberId must be a valid number');
+        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new Error('subscriberId cannot be less than or equal to 0');
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
       }
     }
 
@@ -67,19 +65,35 @@ class Blocked extends Base {
   }
 
   async block (subscriberId) {
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+    }
+
     return await this.client.websocket.emit(
-      Commands.SUBSCRIBER_BLOCK_ADD,
+      Command.SUBSCRIBER_BLOCK_ADD,
       {
-        id: subscriberId
+        id: parseInt(subscriberId)
       }
     );
   }
 
   async unblock (subscriberId) {
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+    }
+
     return await this.client.websocket.emit(
-      Commands.SUBSCRIBER_BLOCK_DELETE,
+      Command.SUBSCRIBER_BLOCK_DELETE,
       {
-        id: subscriberId
+        id: parseInt(subscriberId)
       }
     );
   }

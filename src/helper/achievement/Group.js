@@ -1,7 +1,33 @@
 const Base = require('../Base');
+const { Command } = require('../../constants');
+
+const validator = require('../../validator');
+const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Group extends Base {
+  async getById (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
+    }
 
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT_GROUP_LIST,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          id: parseInt(targetGroupId)
+        }
+      }
+    );
+
+    return response?.body ?? [];
+  }
 }
 
 module.exports = Group;

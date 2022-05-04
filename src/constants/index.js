@@ -1,11 +1,11 @@
 const AdminAction = require('./AdminAction');
 const Capability = require('./Capability');
 const Category = require('./Category');
-const Commands = require('./Commands');
+const Command = require('./Command');
 const ContextType = require('./ContextType');
 const DeviceType = require('./DeviceType');
 const EmbedType = require('./EmbedType');
-const Events = require('./Events');
+const Event = require('./Event');
 const Gender = require('./Gender');
 const Language = require('./Language');
 const LoginType = require('./LoginType');
@@ -30,11 +30,11 @@ module.exports = {
   /**
   * @private
   */
-  Commands,
+  Command,
   ContextType,
   DeviceType,
   EmbedType,
-  Events,
+  Event,
   Gender,
   Language,
   LoginType,

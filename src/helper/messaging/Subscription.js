@@ -4,7 +4,7 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this._groups = [];
+    this._subscriptions = { };
   }
 }
 

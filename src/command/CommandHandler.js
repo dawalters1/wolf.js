@@ -2,6 +2,7 @@ const CommandContext = require('../models/CommandContext');
 const Command = require('./Command');
 
 const { Privilege } = require('../constants');
+const WOLFAPIError = require('../models/WOLFAPIError');
 
 const CHARM_IDS = [813, 814];
 
@@ -34,7 +35,7 @@ class CommandHandler {
     commands = Array.isArray(commands) ? commands : [commands];
 
     if (commands.length === 0) {
-      throw new Error('commands cannot be empty');
+      throw new WOLFAPIError('commands cannot be empty', commands);
     }
 
     this._commands = commands;

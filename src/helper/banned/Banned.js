@@ -1,29 +1,6 @@
 const Base = require('../Base');
 const validator = require('../../validator');
-
-const validateData = (targetSubscriberId) => {
-  const targetSubscriberIds = Array.isArray(targetSubscriberId) ? targetSubscriberId : [targetSubscriberId];
-
-  if (!targetSubscriberIds.length) {
-    throw new Error('targetSubscriberIds cannot be null or empty');
-  }
-
-  if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-    throw new Error('targetSubscriberIds cannot contain duplicates');
-  }
-
-  for (const subscriberId of targetSubscriberIds) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new Error('subscriberId cannot be null or undefined');
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new Error('subscriberId must be a valid number');
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new Error('subscriberId cannot be less than or equal to 0');
-    }
-  }
-
-  return targetSubscriberIds.map((targetSubscriberId) => parseInt(targetSubscriberId));
-};
+const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Banned extends Base {
   constructor (client) {
@@ -44,40 +21,100 @@ class Banned extends Base {
    * Check to see if a single user or multiple users are banned by ID
    * @returns {Promise<Array.<Boolean>|Boolean>}
    */
-  async isBanned (targetSubscriberId) {
-    const results = validateData(targetSubscriberId).reduce((result, subscriberId) => {
-      result.push(this._banned.includes(parseInt(subscriberId)));
+  async isBanned (targetSubscriberIds) {
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
+
+    if (!targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+    }
+
+    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+    }
+
+    for (const subscriberId of targetSubscriberIds) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      }
+    }
+
+    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+      result.push(this._banned.includes(subscriberId));
       return result;
     }, []);
 
-    return Array.isArray(targetSubscriberId) ? results : results[0];
+    return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
   /**
    * Ban a single user or multiple users by ID
    * @returns {Promise<Array.<Boolean>|Boolean>}
    */
-  async ban (targetSubscriberId) {
-    const results = validateData(targetSubscriberId).reduce((result, subscriberId) => {
-      if (this._banned.includes(parseInt(subscriberId))) {
+  async ban (targetSubscriberIds) {
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
+
+    if (!targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+    }
+
+    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+    }
+
+    for (const subscriberId of targetSubscriberIds) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      }
+    }
+
+    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+      if (this._banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this._banned.push(parseInt(subscriberId));
+        this._banned.push(subscriberId);
         result.push(true);
       }
       return result;
     }, []);
 
-    return Array.isArray(targetSubscriberId) ? results : results[0];
+    return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
   /**
    * Unban a single user or multiple users by ID
    * @returns {Promise<Array.<Boolean>|Boolean>}
    */
-  async unban (targetSubscriberId) {
-    const results = validateData(targetSubscriberId).reduce((result, subscriberId) => {
-      if (!this._banned.includes(parseInt(subscriberId))) {
+  async unban (targetSubscriberIds) {
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
+
+    if (!targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+    }
+
+    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+    }
+
+    for (const subscriberId of targetSubscriberIds) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      }
+    }
+
+    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+      if (!this._banned.includes(subscriberId)) {
         result.push(false);
       } else {
         this._authorized.splice(this._authorized.indexOf(subscriberId), 1);
@@ -86,7 +123,7 @@ class Banned extends Base {
       return result;
     }, []);
 
-    return Array.isArray(targetSubscriberId) ? results : results[0];
+    return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 }
 
