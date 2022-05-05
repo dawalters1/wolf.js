@@ -3,6 +3,7 @@ const { Command } = require('../../constants');
 
 const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
+const models = require('../../models');
 
 class Group extends Base {
   async getById (targetGroupId) {
@@ -26,7 +27,7 @@ class Group extends Base {
       }
     );
 
-    return response?.body ?? [];
+    return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
   }
 }
 
