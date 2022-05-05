@@ -4,6 +4,8 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 const { Command, TipPeriod, TipType, TipDirection, ContextType } = require('../../constants');
 
+const models = require('../../models');
+
 class Tipping extends Base {
   async _subscribeToGroup () {
     return await this.client.websocket.emit(Command.TIP_GROUP_SUBSCRIBE);
@@ -114,7 +116,7 @@ class Tipping extends Base {
       throw new WOLFAPIError('offset cannot be less than 0', offset);
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_DETAIL,
       {
         groupId: parseInt(targetGroupId),
@@ -124,6 +126,8 @@ class Tipping extends Base {
         offset: parseInt(offset)
       }
     );
+
+    return response.success ? new models.TipDetail(this.client, response.body) : undefined;
   }
 
   async getSummary (targetGroupId, timestamp, limit = 20, offset = 0) {
@@ -151,7 +155,7 @@ class Tipping extends Base {
       throw new WOLFAPIError('offset cannot be less than 0', offset);
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_SUMMARY,
       {
         groupId: parseInt(targetGroupId),
@@ -161,6 +165,8 @@ class Tipping extends Base {
         offset
       }
     );
+
+    return response.success ? new models.TipSummary(this.client, response.body) : undefined;
   }
 
   async getGroupLeaderboard (targetGroupId, tipPeriod, tipType, tipDirection) {
@@ -192,7 +198,7 @@ class Tipping extends Base {
       }
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_LEADERBOARD_GROUP,
       {
         groupId: parseInt(targetGroupId),
@@ -201,6 +207,8 @@ class Tipping extends Base {
         tipDirection: tipType === TipType.CHARM ? undefined : tipDirection
       }
     );
+
+    return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
   async getGroupLeaderboardSummary (targetGroupId, tipPeriod, tipType, tipDirection) {
@@ -229,7 +237,7 @@ class Tipping extends Base {
       }
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_LEADERBOARD_GROUP_SUMMARY,
       {
         id: parseInt(targetGroupId),
@@ -238,6 +246,8 @@ class Tipping extends Base {
         tipDirection: tipType === TipType.CHARM ? null : tipDirection
       }
     );
+
+    return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 
   async getGlobalLeaderboard (tipPeriod, tipType, tipDirection = undefined) {
@@ -255,7 +265,7 @@ class Tipping extends Base {
       throw new WOLFAPIError('tipType is not valid', tipType);
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_LEADERBOARD_GLOBAL,
       {
         period: tipPeriod,
@@ -263,6 +273,8 @@ class Tipping extends Base {
         tipDirection: tipType === TipType.GROUP ? undefined : tipDirection
       }
     );
+
+    return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
   async getGlobalLeaderboardSummary (tipPeriod) {
@@ -272,12 +284,14 @@ class Tipping extends Base {
       throw new WOLFAPIError('tipPeriod is not valid', tipPeriod);
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.TIP_LEADERBOARD_GLOBAL_SUMMARY,
       {
         period: tipPeriod
       }
     );
+
+    return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 }
 

@@ -9,16 +9,14 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Contact extends Base {
   constructor (client) {
-    super(client);
+    super(client, 'id');
 
     this.blocked = new Blocked(client);
-
-    this._contacts = [];
   }
 
   async list () {
-    if (this._contacts.length) {
-      return this._contacts;
+    if (this.cache.any()) {
+      return this.cache.list();
     }
 
     const response = await this.client.websocket.emit(
@@ -28,11 +26,9 @@ class Contact extends Base {
       }
     );
 
-    if (response.success) {
-      this._contacts = response.body.map((contact) => new models.Contact(this.client, contact));
-    }
+    this.cache.add(response.body?.map((contact) => new models.Contact(this.client, contact)) ?? []);
 
-    return this._contacts;
+    return this.cache.list();
   }
 
   async isContact (subscriberIds) {
@@ -59,7 +55,7 @@ class Contact extends Base {
     await this.list();
 
     const results = subscriberIds.reduce((result, subscriberId) => {
-      result.push(this._contacts.find((contact) => contact.id === subscriberId));
+      result.push(this.cache.exists(subscriberId));
 
       return result;
     }, []);

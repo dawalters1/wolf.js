@@ -3,6 +3,7 @@ const Base = require('../Base');
 
 const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
+const models = require('../../models');
 
 class Subscriber extends Base {
   async getById (subscriberId) {
@@ -26,7 +27,7 @@ class Subscriber extends Base {
       }
     );
 
-    return response?.body ?? [];
+    return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
   }
 }
 

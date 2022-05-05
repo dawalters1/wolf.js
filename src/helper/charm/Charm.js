@@ -8,21 +8,17 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Charm extends Base {
   constructor (client) {
-    super(client);
-
-    this._charms = [];
+    super(client, 'id');
   }
 
   async list () {
-    if (this._charms.length) {
-      return this._charms;
+    if (this.cache.any()) {
+      return this.cache.list();
     }
 
     const response = await this.client.websocket.emit(Command.CHARM_LIST);
 
-    if (response.success) {
-      this._charms = response.body.map((charm) => new models.Charm(this.client, charm));
-    }
+    this.cache.add(response.body?.map((charm) => new models.Charm(this.client, charm)) ?? []);
 
     return this._charms;
   }

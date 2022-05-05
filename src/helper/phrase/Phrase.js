@@ -48,13 +48,13 @@ class Phrase extends Base {
 
     for (const phrase of phrases) {
       if (validator.isNullOrWhitespace(phrase.name)) {
-        throw new Error('name cannot be null or empty', phrase);
+        throw new WOLFAPIError('name cannot be null or empty', phrase);
       }
       if (validator.isNullOrWhitespace(phrase.value)) {
-        throw new Error('value cannot be null or empty', phrase);
+        throw new WOLFAPIError('value cannot be null or empty', phrase);
       }
       if (validator.isNullOrWhitespace(phrase.language)) {
-        throw new Error('language cannot be null or empty', phrase);
+        throw new WOLFAPIError('language cannot be null or empty', phrase);
       }
 
       phrase.name = this.client.utility.string.replace(

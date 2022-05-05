@@ -43,6 +43,7 @@
     "npm": ">=7.0.0"
   },
   "dependencies": {
-    "http-status-codes": "^2.2.0"
+    "http-status-codes": "^2.2.0",
+    "lodash": "^4.17.21"
   }
 }
