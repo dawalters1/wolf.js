@@ -1,6 +1,5 @@
 const { Commands, Capability, Command } = require('../../constants');
 const Base = require('../Base');
-const Event = require('./Event');
 
 const validator = require('../../validator');
 const { result } = require('lodash');
@@ -22,9 +21,7 @@ const buildGroupFromModule = (groupModule) => {
 
 class Group extends Base {
   constructor (client) {
-    super(client);
-
-    this.event = new Event(this);
+    super(client, 'id');
   }
 
   async list () {

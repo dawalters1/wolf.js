@@ -133,7 +133,8 @@ class Messaging extends Base {
       Command.MESSAGE_UPDATE,
       {
         isGroup: true,
-        metadata: {
+        metadata:
+        {
           isDeleted: true
         },
         recipientId: targetGroupId,
@@ -163,7 +164,8 @@ class Messaging extends Base {
       Command.MESSAGE_UPDATE,
       {
         isGroup: true,
-        metadata: {
+        metadata:
+        {
           isDeleted: false
         },
         recipientId: targetGroupId,

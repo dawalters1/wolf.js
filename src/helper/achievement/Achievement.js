@@ -1,4 +1,5 @@
 const Base = require('../Base');
+const Category = require('./Category');
 const Group = require('./Group');
 const Subscriber = require('./Subscriber');
 
@@ -7,9 +8,10 @@ class Achievement extends Base {
   constructor (client) {
     super(client);
 
+    this.category = new Category(this.client);
+
     this.group = new Group(client);
     this.subscriber = new Subscriber(client);
-    // this._achievements = [];
   }
 }
 
