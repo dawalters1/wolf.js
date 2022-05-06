@@ -5,9 +5,7 @@ const { NOTIFICATION_LIST_CLEAR } = require('../../constants/Command');
 
 class Notification extends Base {
   constructor (client) {
-    super(client);
-
-    this._notifications = [];
+    super(client, 'id');
   }
 
   async list (forceNew = false) {
@@ -22,11 +20,7 @@ class Notification extends Base {
       }
     );
 
-    if (response.success) {
-      this._notifications = response.body.map((notification) => new models.Notification(this.client, notification));
-    }
-
-    return this._notifications;
+    return response.success ? this.cache.add(response.body.map((notification) => new models.Notification(this.client, notification))) : [];
   }
 
   async clear () {

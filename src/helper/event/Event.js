@@ -7,48 +7,15 @@ const { Command } = require('../../constants');
 const models = require('../../models');
 
 const _ = require('lodash');
+const Group = require('./Group');
+const Subscriber = require('./Subscriber');
 
 class Event extends Base {
   constructor (client) {
     super(client, 'id');
-  }
 
-  async getGroupEvents (targetGroupId, forceNew = false) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
-    }
-
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
-    }
-
-    const group = await this.client.group.getById(targetGroupId);
-
-    if (!group.exists) {
-      throw new WOLFAPIError('Unknown Group', targetGroupId);
-    }
-
-    if (!forceNew && group.events.length) {
-      return group.events;
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_EVENT_LIST,
-      {
-        id: targetGroupId,
-        subscribe: true
-      }
-    );
-
-    if (response.success) {
-      group.events = response.body.length ? await this.getByIds(response.body.map((event) => event.id)) : [];
-    }
-
-    return group.events;
+    this.group = new Group(this.client);
+    this.subscriber = new Subscriber(this.client);
   }
 
   async getById (id, forceNew = false) {
