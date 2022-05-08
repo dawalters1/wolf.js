@@ -1,23 +1,18 @@
 const Base = require('../Base');
+const { Command } = require('../../constants');
 
 const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
-const { Command } = require('../../constants');
 
 const models = require('../../models');
 
 const _ = require('lodash');
-const Group = require('./Group');
-const Subscription = require('./Subscription');
 
-class Event extends Base {
+class Presence extends Base {
   constructor (client) {
     super(client);
 
-    this.events = [];
-
-    this.group = new Group(this.client);
-    this.subscription = new Subscription(this.client);
+    this.presence = [];
   }
 
   async getById (id, forceNew = false) {
@@ -33,7 +28,7 @@ class Event extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    return (await this.getByIds([id], forceNew))[0];
+    return (await this.getByIds([id]))[0];
   }
 
   async getByIds (ids, forceNew = false) {
@@ -61,38 +56,46 @@ class Event extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const events = !forceNew ? this.events.filter((event) => ids.includes(event.id)) : [];
+    const presence = !forceNew ? this.presence.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
-    if (events.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId), this.client.config.get('batching.length')));
+    if (presence.length !== ids.length) {
+      const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId), this.client.config.get('batching.length')));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
-          Command.GROUP_EVENT,
+          Command.SUBSCRIBER_PRESENCE,
           {
-            headers: {
-              version: 1
-            },
-            body: {
-              idList
-            }
+            idList,
+            subscribe: true
           }
         );
 
         if (response.success) {
-          const eventResponses = Object.values(response.body).map((eventResponse) => new Response(eventResponse));
+          const presenceResponses = Object.values(response.body).map((presenceResponse) => new Response(presenceResponse));
 
-          for (const [index, eventResponse] of eventResponses.entries()) {
-            events.push(eventResponse.success ? this._process(new models.Event(this.client, eventResponse.body)) : new models.Event(this.client, { id: idList[index] }));
+          for (const [index, presenceResponse] of presenceResponses.entries()) {
+            presence.push(presenceResponse.success ? this._process(new models.Presence(this.client, presenceResponse.body)) : new models.Presence(this.client, { id: idList[index] }));
           }
         } else {
-          events.push(...idList.map((id) => new models.Event(this.client, { id })));
+          presence.push(...idList.map((id) => new models.Presence(this.client, { id })));
         }
       }
     }
 
-    return events;
+    return presence;
+  }
+
+  _process (value) {
+    const existing = this.presence.find((subscriber) => subscriber.id === value);
+
+    if (existing) {
+      this._patch(existing, value);
+    } else {
+      this.presence.push(value);
+    }
+
+    return value;
   }
 }
 
-module.exports = Event;
+module.exports = Presence;

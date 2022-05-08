@@ -3,16 +3,22 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Banned extends Base {
+  constructor (client) {
+    super(client);
+
+    this.banned = [];
+  }
+
   /**
    * Retrieve the list of banned users for the bot
    * @returns {Promise<Array.<Number>>}
    */
   async list () {
-    return this.cache.list();
+    return this.banned;
   }
 
   async clear () {
-    return this.cache.clear();
+    this.banned = [];
   }
 
   /**
@@ -41,7 +47,7 @@ class Banned extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      result.push(this.cache.exists(subscriberId));
+      result.push(this.banned.includes(subscriberId));
       return result;
     }, []);
 
@@ -74,10 +80,10 @@ class Banned extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      if (this.cache.exists(subscriberId)) {
+      if (this.banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.add(subscriberId);
+        this.banned.push(subscriberId);
         result.push(true);
       }
       return result;
@@ -112,10 +118,10 @@ class Banned extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      if (!this.cache.exists(subscriberId)) {
+      if (!this.banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.remove(subscriberId);
+        this.banned.splice(this.banned.findIndex((id) => id === subscriberId), 1);
         result.push(true);
       }
       return result;

@@ -8,6 +8,10 @@ const callbacks = {
 };
 
 const validation = (command) => {
+  if (!(command instanceof require('./Command'))) {
+    throw new WOLFAPIError('object must be an instance of command', command);
+  }
+
   const { phraseName, callbackObject, children } = command;
 
   if (typeof (phraseName) !== 'string') {

@@ -1,8 +1,7 @@
-const { Commands, Capability, Command } = require('../../constants');
+const { Capability, Command } = require('../../constants');
 const Base = require('../Base');
 
 const validator = require('../../validator');
-const { result } = require('lodash');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 const models = require('../../models');
@@ -21,11 +20,14 @@ const buildGroupFromModule = (groupModule) => {
 
 class Group extends Base {
   constructor (client) {
-    super(client, 'id');
+    super(client);
+
+    this.fetched = false;
+    this.groups = [];
   }
 
   async list () {
-    if (!this.cache.fetched) {
+    if (!this.fetched) {
       const response = await this.client.websocket.emit(
         Command.SUBSCRIBER_GROUP_LIST,
         {
@@ -34,20 +36,20 @@ class Group extends Base {
       );
 
       if (response.success) {
-        this.cache.fetched = true;
+        this.fetched = true;
 
-        if (result.body.length > 0) {
-          const groups = await this.getByIds(result.body.map((group) => group.id));
+        if (response.body.length > 0) {
+          const groups = await this.getByIds(response.body.map((group) => group.id), true);
 
           for (const group of groups) {
             group.inGroup = true;
-            group.capabilities = result.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
+            group.capabilities = response.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
           }
         }
       }
     }
 
-    return this.cache.list().filter((group) => group.InGroup);
+    return this.groups.filter((group) => group.InGroup);
   }
 
   async getById (id, forceNew = false) {
@@ -91,14 +93,14 @@ class Group extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const groups = !forceNew ? this.cache.get(ids) : [];
+    const groups = !forceNew ? this.groups.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((eventId) => !groups.some((group) => group.id === eventId), this.client.config.get('batching.length')));
+      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client.config.get('batching.length')));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
-          Commands.GROUP_PROFILE,
+          Command.GROUP_PROFILE,
           {
             headers: {
               version: 4
@@ -112,10 +114,10 @@ class Group extends Base {
         );
 
         if (response.success) {
-          const groupResponses = Object.values(response.body).map((eventResponse) => new Response(eventResponse));
+          const groupResponses = Object.values(response.body).map((groupResponse) => new Response(groupResponse));
 
           for (const [index, groupResponse] of groupResponses.entries()) {
-            groups.push(groupResponse.success ? this.cache.add(new models.Group(this.client, buildGroupFromModule(groupResponse.body))) : new models.Group(this.client, { id: idList[index] }));
+            groups.push(groupResponse.success ? this._process(new models.Group(this.client, buildGroupFromModule(groupResponse.body))) : new models.Group(this.client, { id: idList[index] }));
           }
         } else {
           groups.push(...idList.map((id) => new models.Group(this.client, { id })));
@@ -134,7 +136,7 @@ class Group extends Base {
     }
 
     const response = await this.client.websocket.emit(
-      Commands.GROUP_PROFILE,
+      Command.GROUP_PROFILE,
       {
         headers: {
           version: 4
@@ -147,7 +149,7 @@ class Group extends Base {
       }
     );
 
-    return response.success ? this.cache.add(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
+    return response.success ? this._process(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
   }
 
   async joinById (id, password = undefined) {
@@ -295,6 +297,18 @@ class Group extends Base {
     const response = await this.client.websocket.emit(Command.GROUP_RECOMMENDATION_LIST);
 
     return response.success ? await this.getByIds(response.body.map((idHash) => idHash.id)) : [];
+  }
+
+  _process (value) {
+    const existing = this.groups.find((group) => group.id === value);
+
+    if (existing) {
+      this._patch(existing, value);
+    } else {
+      this.groups.push(value);
+    }
+
+    return value;
   }
 }
 

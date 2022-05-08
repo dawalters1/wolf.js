@@ -6,10 +6,7 @@ const Base = require('../Base');
 
 // const models = require('../../models');
 
-class Subscriber extends Base {
-  constructor (client) {
-    super(client, 'id');
-  }
+class Subscription extends Base {
 }
 
-module.exports = Subscriber;
+module.exports = Subscription;
