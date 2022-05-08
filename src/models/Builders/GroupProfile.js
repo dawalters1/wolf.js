@@ -1,6 +1,9 @@
 // TODO: VALIDATION
 
 const { Command, Language, Category } = require('../../constants');
+const WOLFAPIError = require('../WOLFAPIError');
+const imageSize = require('image-size');
+const fileType = require('file-type');
 
 class GroupProfile {
   constructor (client, groupData) {
@@ -101,16 +104,15 @@ class GroupProfile {
     return this;
   }
 
-  save () {
-    return Promise.resolve((resolve) => {
-      const response = this.client.emit(
-        this.isNew ? Command.GROUP_CREATE : Command.GROUP_PROFILE_UPDATE,
-        {
-          id: this.id,
-          name: this.name,
-          description: this.description,
-          peekable: this.peekable,
-          extended:
+  async save () {
+    const response = await this.client.emit(
+      this.isNew ? Command.GROUP_CREATE : Command.GROUP_PROFILE_UPDATE,
+      {
+        id: this.id,
+        name: this.name,
+        description: this.description,
+        peekable: this.peekable,
+        extended:
           {
             language: this.language,
             advancedAdmin: this.advancedAdmin,
@@ -119,25 +121,49 @@ class GroupProfile {
             entryLevel: this.entryLevel,
             discoverable: this.discoverable
           },
-          messageConfig: this.messageConfig
+        messageConfig: this.messageConfig
+      }
+    );
+
+    if (response.success) {
+      if (this.avatar) {
+        const avatarConfig = this.client._botConfig.get('multimedia.avatar.group');
+
+        const fileTypeResult = await fileType.fromBuffer(this.avatar);
+
+        if (!avatarConfig.mimeTypes.includes(fileTypeResult.mime)) {
+          throw new WOLFAPIError('mimeType is unsupported', fileTypeResult.mime);
         }
-      );
 
-      if (response.success) {
-        if (this.avatar) {
-        // TODO: upload thumbnail
+        if (Buffer.byteLength(this.avatar) > avatarConfig.sizes[fileTypeResult.ext]) {
+          throw new WOLFAPIError('Avatar too large', { current: Buffer.byteLength(this.avatar), max: avatarConfig.sizes[fileTypeResult.ext] });
         }
 
-        this.audioConfig.id = response.body.id;
+        const size = imageSize(this.avatar);
 
-        this.client.websocket.emit(
-          Command.GROUP_AUDIO_UPDATE,
-          this.audioConfig
+        if (size.width !== size.height) {
+          throw new WOLFAPIError('avatar must be square', { width: size.width, height: size.height });
+        }
+
+        response.avatarUpload = await this.client.multimedia.upload(avatarConfig.route,
+          {
+            data: this.avatar.toString('base64'),
+            mimeType: fileTypeResult.mime,
+            id: parseInt(this.id),
+            source: this.client.currentSubscriber.id
+          }
         );
       }
 
-      resolve(response);
-    });
+      this.audioConfig.id = response.body.id;
+
+      this.client.websocket.emit(
+        Command.GROUP_AUDIO_UPDATE,
+        this.audioConfig
+      );
+    }
+
+    return response;
   }
 }
 

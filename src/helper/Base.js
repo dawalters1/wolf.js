@@ -1,10 +1,13 @@
-const Cache = require('../cache');
 
 class Base {
-  constructor (client, key = undefined) {
+  constructor (client) {
     this.client = client;
+  }
 
-    this.cache = new Cache(key);
+  _patch (oldData, newData) {
+    for (const key in newData) {
+      oldData[key] = newData[key];
+    }
   }
 }
 

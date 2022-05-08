@@ -8,12 +8,14 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Blocked extends Base {
   constructor (client) {
-    super(client, 'id');
+    super(client);
+
+    this.blocked = [];
   }
 
   async list () {
-    if (this.cache.any()) {
-      return this.cache.list();
+    if (this.blocked.length) {
+      return this.blocked;
     }
 
     const response = await this.client.websocket.emit(
@@ -23,9 +25,9 @@ class Blocked extends Base {
       }
     );
 
-    this.cache.add(response.body?.map((contact) => new models.Contact(this.client, contact)) ?? []);
+    this.blocked = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
-    return this.cache.list();
+    return this.blocked;
   }
 
   async isBlocked (subscriberIds) {
@@ -52,7 +54,7 @@ class Blocked extends Base {
     await this.list();
 
     const results = subscriberIds.reduce((result, subscriberId) => {
-      result.push(this.cache.exists(subscriberId));
+      result.push(this.blocked.some((blocked) => blocked.id === subscriberId));
 
       return result;
     }, []);

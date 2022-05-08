@@ -3,16 +3,22 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Authorization extends Base {
+  constructor (client) {
+    super(client);
+
+    this.authorized = [];
+  }
+
   /**
    * Retrieve the list of authorized users for the bot
    * @returns {Promise<Array.<Number>>}
    */
   async list () {
-    return this.cache.list();
+    return this.authorized;
   }
 
   async clear () {
-    return this.cache.clear();
+    this.authorized = [];
   }
 
   /**
@@ -41,7 +47,7 @@ class Authorization extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      result.push(this.cache.exists(subscriberId));
+      result.push(this.authorized.includes(subscriberId));
       return result;
     }, []);
 
@@ -74,10 +80,10 @@ class Authorization extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      if (this.cache.exists(subscriberId)) {
+      if (this.authorized.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.add(subscriberId);
+        this.authorized.push(subscriberId);
         result.push(true);
       }
       return result;
@@ -112,10 +118,10 @@ class Authorization extends Base {
     }
 
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
-      if (!this.cache.exists(subscriberId)) {
+      if (!this.authorized.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.remove(subscriberId);
+        this.authorized.splice(this.authorized.findIndex((id) => id === subscriberId), 1);
         result.push(true);
       }
       return result;

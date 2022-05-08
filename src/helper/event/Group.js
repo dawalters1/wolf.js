@@ -7,10 +7,6 @@ const { Command } = require('../../constants');
 // const models = require('../../models');
 
 class Group extends Base {
-  constructor (client) {
-    super(client, 'id');
-  }
-
   async getGroupEvents (targetGroupId, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
