@@ -13,6 +13,10 @@ class Phrase extends Base {
 
     this._phrases = [];
 
+    this.loadLocal();
+  }
+
+  async loadLocal() {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
       throw new WOLFAPIError('Phrases folder missing in base folder');
     }
