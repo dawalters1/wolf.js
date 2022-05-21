@@ -1,4 +1,5 @@
 const { Event } = require('../../../../../constants');
+const models = require('../../../../../models');
 
 /**
  * @param {import('../../../../WOLF')} client
@@ -10,11 +11,12 @@ module.exports = async (client, body) => {
     return Promise.resolve();
   }
 
-  group.audioRequests = [];
+  const oldAudioConfig = new models.GroupAudioCount(client, group.audioConfig);
+  group.audioConfig = new models.GroupAudioCount(client, body);
 
   return client.emit(
-    Event.GROUP_AUDIO_REQUEST_CLEAR,
-    group,
-    body.subscriberId
+    Event.GROUP_AUDIO_UPDATE,
+    oldAudioConfig,
+    group.audioConfig
   );
 };

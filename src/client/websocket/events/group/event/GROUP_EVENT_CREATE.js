@@ -10,11 +10,13 @@ module.exports = async (client, body) => {
     return Promise.resolve();
   }
 
-  group.audioRequests = [];
+  const event = await client.event.getById(body.id);
+
+  group.events.push(event);
 
   return client.emit(
-    Event.GROUP_AUDIO_REQUEST_CLEAR,
+    Event.GROUP_EVENT_CREATE,
     group,
-    body.subscriberId
+    event
   );
 };

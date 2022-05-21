@@ -14,6 +14,7 @@ const Notification = require('../helper/notification/Notification');
 // const Phrase = require('../helper/phrase/Phrase');
 const Stage = require('../helper/stage/Stage');
 const Store = require('../helper/store/Store');
+const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 const Utility = require('../utility/Utility');
 
@@ -34,6 +35,7 @@ class WOLF extends EventEmitter {
     // this.phrase = new Phrase(this);
     this.stage = new Stage(this);
     this.store = new Store(this);
+    this.subscriber = new Subscriber(this);
     this.tipping = new Tipping(this);
 
     this.utility = new Utility(this);
