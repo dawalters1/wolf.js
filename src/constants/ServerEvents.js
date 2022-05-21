@@ -11,6 +11,10 @@ module.exports = {
       GROUP_EVENT_CREATE: 'group event create',
       GROUP_EVENT_UPDATE: 'group event update'
     },
+    EVENT: {
+      GROUP_EVENT_CREATE: 'group event create',
+      GROUP_EVENT_UPDATE: 'group event update'
+    },
     MEMBER: {
       GROUP_MEMBER_ADD: 'group member add',
       GROUP_MEMBER_DELETE: 'group member delete',
