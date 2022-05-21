@@ -9,12 +9,6 @@ const models = require('../../models');
 const _ = require('lodash');
 
 class Presence extends Base {
-  constructor (client) {
-    super(client);
-
-    this.presence = [];
-  }
-
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new WOLFAPIError('id cannot be null or undefined', id);
@@ -56,7 +50,7 @@ class Presence extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const presence = !forceNew ? this.presence.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const presence = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (presence.length !== ids.length) {
       const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId), this.client.config.get('batching.length')));
@@ -86,12 +80,12 @@ class Presence extends Base {
   }
 
   _process (value) {
-    const existing = this.presence.find((subscriber) => subscriber.id === value);
+    const existing = this.cache.find((subscriber) => subscriber.id === value);
 
     if (existing) {
       this._patch(existing, value);
     } else {
-      this.presence.push(value);
+      this.cache.push(value);
     }
 
     return value;

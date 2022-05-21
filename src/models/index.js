@@ -1,5 +1,7 @@
-const builders = require('./builders');
+const Response = require('./Response');
+const WOLFAPIError = require('./WOLFAPIError');
 
 module.exports = {
-  builders
+  Response,
+  WOLFAPIError
 };

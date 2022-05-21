@@ -14,8 +14,6 @@ class Subscriber extends Base {
   constructor (client) {
     super(client);
 
-    this.subscribers = [];
-
     this.presence = new Presence(this.client);
   }
 
@@ -60,7 +58,7 @@ class Subscriber extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const subscribers = !forceNew ? this.subscribers.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const subscribers = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (subscribers.length !== ids.length) {
       const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId), this.client.config.get('batching.length')));
@@ -138,12 +136,12 @@ class Subscriber extends Base {
   }
 
   _process (value) {
-    const existing = this.subscribers.find((subscriber) => subscriber.id === value);
+    const existing = this.cache.find((subscriber) => subscriber.id === value);
 
     if (existing) {
       this._patch(existing, value);
     } else {
-      this.subscribers.push(value);
+      this.cache.push(value);
     }
 
     return value;

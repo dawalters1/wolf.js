@@ -1,3 +1,4 @@
+const { WOLFAPIError } = require('../models');
 
 // eslint-disable-next-line prefer-regex-literals
 const TRIM_START_PUNC = new RegExp(/^\p{Punctuation}+/, 'gui');
@@ -27,7 +28,7 @@ const isType = (arg, type) => {
       return typeOf === undefined;
   }
 
-  throw new WOLFAPIError('type is not a valid typeof');
+  throw new WOLFAPIError('type is not a valid typeof', arg);
 };
 
 const isNull = arg => arg === null;

@@ -23,7 +23,6 @@ class Group extends Base {
     super(client);
 
     this.fetched = false;
-    this.groups = [];
   }
 
   async list () {
@@ -49,7 +48,7 @@ class Group extends Base {
       }
     }
 
-    return this.groups.filter((group) => group.InGroup);
+    return this.cache.filter((group) => group.InGroup);
   }
 
   async getById (id, forceNew = false) {
@@ -93,7 +92,7 @@ class Group extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const groups = !forceNew ? this.groups.filter((group) => ids.includes(group.id)) : [];
+    const groups = !forceNew ? this.cache.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
       const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client.config.get('batching.length')));
@@ -300,12 +299,12 @@ class Group extends Base {
   }
 
   _process (value) {
-    const existing = this.groups.find((group) => group.id === value);
+    const existing = this.cache.find((group) => group.id === value);
 
     if (existing) {
       this._patch(existing, value);
     } else {
-      this.groups.push(value);
+      this.cache.push(value);
     }
 
     return value;

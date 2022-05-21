@@ -11,12 +11,10 @@ class Phrase extends Base {
   constructor (client) {
     super(client);
 
-    this._phrases = [];
-
     this.loadLocal();
   }
 
-  async loadLocal() {
+  async loadLocal () {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
       throw new WOLFAPIError('Phrases folder missing in base folder');
     }
@@ -68,24 +66,24 @@ class Phrase extends Base {
         }
       );
 
-      const existing = this._phrases.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name));
+      const existing = this.cache.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name));
 
       if (existing) {
         this.patch(existing, phrase);
       } else {
-        this._phrases.push(phrase);
+        this.cache.push(phrase);
       }
     }
   }
 
   count () {
-    const languageCounts = this._phrases.reduce((result, value) => {
+    const languageCounts = this.cache.reduce((result, value) => {
       result[value.language] = result[value.language] ? result[value.language]++ : 1;
 
       return result;
     }, {});
 
-    return new models.PhraseCount(this._phrases.length, languageCounts);
+    return new models.PhraseCount(this.cache.length, languageCounts);
   }
 
   getAllByName (name) {
@@ -93,7 +91,7 @@ class Phrase extends Base {
       throw new WOLFAPIError('name cannot be null or empty', name);
     }
 
-    return this._phrases.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'gmiu').test(phrase.name));
+    return this.cache.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'gmiu').test(phrase.name));
   }
 
   getByLanguageAndName (language, name) {
@@ -101,7 +99,7 @@ class Phrase extends Base {
       throw new WOLFAPIError('name cannot be null or empty', name);
     }
 
-    const requested = this._phrases.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
+    const requested = this.cache.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
 
     if (requested) {
       return requested.value;

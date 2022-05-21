@@ -54,6 +54,8 @@ module.exports = {
   PRIVATE_MESSAGE_UPDATE: 'privateMessageUpdate',
   PRIVATE_TIP_ADD: 'privateTipAdd',
 
+  RATE_LIMIT: 'rateLimit',
+
   READY: 'ready',
   RESUME: 'resume',
 

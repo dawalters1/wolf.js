@@ -6,12 +6,6 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Notification extends Base {
-  constructor (client) {
-    super(client);
-
-    this.notifications = [];
-  }
-
   async list (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
@@ -36,12 +30,12 @@ class Notification extends Base {
   }
 
   _process (value) {
-    const existing = this.notifications.find((group) => group.id === value);
+    const existing = this.cache.find((group) => group.id === value);
 
     if (existing) {
       this._patch(existing, value);
     } else {
-      this.notifications.push(value);
+      this.cache.push(value);
     }
 
     return value;
