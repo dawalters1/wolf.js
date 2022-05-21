@@ -11,7 +11,6 @@ const codes = {
     112: 'New users only',
     115: 'Group Locked',
     116: 'Too many accounts',
-    117: 'Game join only',
     110: 'Already Joined'
   },
   'group create': {

@@ -14,8 +14,6 @@ class Event extends Base {
   constructor (client) {
     super(client);
 
-    this.events = [];
-
     this.group = new Group(this.client);
     this.subscription = new Subscription(this.client);
   }
@@ -61,7 +59,7 @@ class Event extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const events = !forceNew ? this.events.filter((event) => ids.includes(event.id)) : [];
+    const events = !forceNew ? this.cache.filter((event) => ids.includes(event.id)) : [];
 
     if (events.length !== ids.length) {
       const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId), this.client.config.get('batching.length')));

@@ -7,15 +7,9 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Blocked extends Base {
-  constructor (client) {
-    super(client);
-
-    this.blocked = [];
-  }
-
   async list () {
-    if (this.blocked.length) {
-      return this.blocked;
+    if (this.cache.length) {
+      return this.cache;
     }
 
     const response = await this.client.websocket.emit(
@@ -25,9 +19,9 @@ class Blocked extends Base {
       }
     );
 
-    this.blocked = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
+    this.cache = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
-    return this.blocked;
+    return this.cache;
   }
 
   async isBlocked (subscriberIds) {
@@ -54,7 +48,7 @@ class Blocked extends Base {
     await this.list();
 
     const results = subscriberIds.reduce((result, subscriberId) => {
-      result.push(this.blocked.some((blocked) => blocked.id === subscriberId));
+      result.push(this.cache.some((blocked) => blocked.id === subscriberId));
 
       return result;
     }, []);

@@ -19,6 +19,7 @@ const Privilege = require('./Privilege');
 const Relationship = require('./Relationship');
 const SearchType = require('./SearchType');
 const ServerEvents = require('./ServerEvents');
+const SocketEvent = require('./SocketEvent');
 const TipDirection = require('./TipDirection');
 const TipPeriod = require('./TipPeriod');
 const TipType = require('./TipType');
@@ -54,6 +55,7 @@ module.exports = {
   * @private
   */
   ServerEvents,
+  SocketEvent,
   TipDirection,
   TipPeriod,
   TipType

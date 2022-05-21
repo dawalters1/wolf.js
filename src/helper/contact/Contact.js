@@ -11,13 +11,12 @@ class Contact extends Base {
   constructor (client) {
     super(client);
 
-    this.contacts = [];
     this.blocked = new Blocked(client);
   }
 
   async list () {
-    if (this.contacts.length) {
-      return this.contacts;
+    if (this.cache.length) {
+      return this.cache;
     }
 
     const response = await this.client.websocket.emit(
@@ -27,9 +26,9 @@ class Contact extends Base {
       }
     );
 
-    this.contacts = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
+    this.cache = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
-    return this.contacts;
+    return this.cache;
   }
 
   async isContact (subscriberIds) {
@@ -56,7 +55,7 @@ class Contact extends Base {
     await this.list();
 
     const results = subscriberIds.reduce((result, subscriberId) => {
-      result.push(this.contacts.some((contact) => contact.id === subscriberId));
+      result.push(this.cache.some((contact) => contact.id === subscriberId));
 
       return result;
     }, []);

@@ -14,11 +14,8 @@ const { Language, Command } = Constants;
 const _ = require('lodash');
 
 class Achievement extends Base {
-  // eslint-disable-next-line no-useless-constructor
   constructor (client) {
-    super(client);
-
-    this.achievements = {};
+    super(client, {});
 
     this.category = new Category(this.client);
 
@@ -79,7 +76,7 @@ class Achievement extends Base {
       throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
     }
 
-    const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
+    const achievements = !forceNew ? this.cache[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
 
     if (achievements.length !== ids.length) {
       const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId), this.client.config.get('batching.length')));
@@ -114,16 +111,16 @@ class Achievement extends Base {
   }
 
   _process (value, language) {
-    if (!this.achievements[language]) {
-      this.achievements[language] = [];
+    if (!this.cache[language]) {
+      this.cache[language] = [];
     }
 
-    const existing = this.achievements[language].find((achievement) => achievement.id === value);
+    const existing = this.cache[language].find((achievement) => achievement.id === value);
 
     if (existing) {
       this._patch(existing, value);
     } else {
-      this.achievements[language].push(value);
+      this.cache[language].push(value);
     }
 
     return value;

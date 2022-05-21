@@ -7,20 +7,14 @@ const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
 
 class Charm extends Base {
-  constructor (client) {
-    super(client);
-
-    this.charms = [];
-  }
-
   async list () {
-    if (this.charms.length) {
-      return this.charms;
+    if (this.cache.length) {
+      return this.cache;
     }
 
     const response = await this.client.websocket.emit(Command.CHARM_LIST);
 
-    this.charms = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
+    this.cache = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
 
     return this._charms;
   }
@@ -78,14 +72,14 @@ class Charm extends Base {
       throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
         id: parseInt(subscriberId)
       }
     );
 
-    return result.success ? new models.CharmSubscriberSummary(this.client, result.body) : undefined;
+    return response.success ? new models.CharmSubscriberSummary(this.client, response.body) : undefined;
   }
 
   async getSubscriberStatistics (subscriberId) {
@@ -97,14 +91,14 @@ class Charm extends Base {
       throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.CHARM_SUBSCRIBER_STATISTICS,
       {
         id: parseInt(subscriberId)
       }
     );
 
-    return result.success ? new models.CharmSubscriberStatistics(this.client, result.body) : undefined;
+    return response.success ? new models.CharmSubscriberStatistics(this.client, response.body) : undefined;
   }
 
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
@@ -132,7 +126,7 @@ class Charm extends Base {
       throw new WOLFAPIError('offset cannot be less than 0', offset);
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.CHARM_SUBSCRIBER_ACTIVE_LIST,
       {
         id: parseInt(subscriberId),
@@ -141,7 +135,7 @@ class Charm extends Base {
       }
     );
 
-    return result.success ? result.body.map((charm) => new models.CharmActive(this.client, charm)) : [];
+    return response.success ? response.body.map((charm) => new models.CharmActive(this.client, charm)) : [];
   }
 
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
@@ -169,7 +163,7 @@ class Charm extends Base {
       throw new WOLFAPIError('offset cannot be less than 0', offset);
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.CHARM_SUBSCRIBER_EXPIRED_LIST,
       {
         id: parseInt(subscriberId),
@@ -178,7 +172,7 @@ class Charm extends Base {
       }
     );
 
-    return result.success ? result.body.map((charm) => new models.CharmExpired(this.client, charm)) : [];
+    return response.success ? response.body.map((charm) => new models.CharmExpired(this.client, charm)) : [];
   }
 
   async delete (charmIds) {
