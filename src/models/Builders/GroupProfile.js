@@ -132,7 +132,7 @@ class GroupProfile {
         const fileTypeResult = await fileType.fromBuffer(this.avatar);
 
         if (!avatarConfig.mimeTypes.includes(fileTypeResult.mime)) {
-          throw new WOLFAPIError('mimeType is unsupported', fileTypeResult.mime);
+          throw new WOLFAPIError('mimeType is unsupported', { mime: fileTypeResult.mime });
         }
 
         if (Buffer.byteLength(this.avatar) > avatarConfig.sizes[fileTypeResult.ext]) {

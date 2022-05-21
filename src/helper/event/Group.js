@@ -9,21 +9,21 @@ const { Command } = require('../../constants');
 class Group extends Base {
   async getGroupEvents (targetGroupId, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
+      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const group = await this.client.group.getById(targetGroupId);
 
     if (!group.exists) {
-      throw new WOLFAPIError('Unknown Group', targetGroupId);
+      throw new WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
     if (!forceNew && group.events.length) {

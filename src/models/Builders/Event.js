@@ -76,7 +76,7 @@ class Event {
       const fileTypeResult = await fileType.fromBuffer(this.thumbnail);
 
       if (!eventConfig.mimeTypes.includes(fileTypeResult.mime)) {
-        throw new WOLFAPIError('mimeType is unsupported', fileTypeResult.mime);
+        throw new WOLFAPIError('mimeType is unsupported', { mime: fileTypeResult.mime });
       }
 
       if (Buffer.byteLength(this.thumbnail) > eventConfig.sizes[fileTypeResult.ext]) {

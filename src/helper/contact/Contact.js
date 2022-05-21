@@ -35,20 +35,20 @@ class Contact extends Base {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!subscriberIds.length) {
-      throw new WOLFAPIError('subscriberIds cannot be null or empty', subscriberIds);
+      throw new WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
     }
 
     if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
-      throw new WOLFAPIError('subscriberIds cannot contain duplicates', subscriberIds);
+      throw new WOLFAPIError('subscriberIds cannot contain duplicates', { subscriberIds });
     }
 
     for (const subscriberId of subscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -65,11 +65,11 @@ class Contact extends Base {
 
   async add (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     return await this.client.websocket.emit(
@@ -82,11 +82,11 @@ class Contact extends Base {
 
   async delete (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     return await this.client.websocket.emit(

@@ -8,7 +8,7 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 class Notification extends Base {
   async list (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this._notifications.length) {

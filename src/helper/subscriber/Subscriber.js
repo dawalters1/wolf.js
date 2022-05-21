@@ -19,15 +19,15 @@ class Subscriber extends Base {
 
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
-      throw new WOLFAPIError('id cannot be null or undefined', id);
+      throw new WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
-      throw new WOLFAPIError('id must be a valid number', id);
+      throw new WOLFAPIError('id must be a valid number', { id });
     } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     return (await this.getByIds([id]))[0];
@@ -37,25 +37,25 @@ class Subscriber extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new WOLFAPIError('ids cannot be null or empty', ids);
+      throw new WOLFAPIError('ids cannot be null or empty', { ids });
     }
 
     if ([...new Set(ids)].length !== ids.length) {
-      throw new WOLFAPIError('ids cannot contain duplicates', ids);
+      throw new WOLFAPIError('ids cannot contain duplicates', { ids });
     }
 
     for (const id of ids) {
       if (validator.isNullOrUndefined(id)) {
-        throw new WOLFAPIError('id cannot be null or undefined', id);
+        throw new WOLFAPIError('id cannot be null or undefined', { id });
       } else if (!validator.isValidNumber(id)) {
-        throw new WOLFAPIError('id must be a valid number', id);
+        throw new WOLFAPIError('id must be a valid number', { id });
       } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+        throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const subscribers = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
@@ -95,27 +95,27 @@ class Subscriber extends Base {
 
   async getChatHistory (id, timestamp = 0, limit = 15) {
     if (validator.isNullOrUndefined(id)) {
-      throw new WOLFAPIError('id cannot be null or undefined', id);
+      throw new WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
-      throw new WOLFAPIError('id must be a valid number', id);
+      throw new WOLFAPIError('id must be a valid number', { id });
     } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
     if (validator.isNullOrUndefined(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be null or undefined', timestamp);
+      throw new WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
-      throw new WOLFAPIError('timestamp must be a valid number', timestamp);
+      throw new WOLFAPIError('timestamp must be a valid number', { timestamp });
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', timestamp);
+      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     if (validator.isNullOrUndefined(limit)) {
-      throw new WOLFAPIError('limit cannot be null or undefined', limit);
+      throw new WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(limit)) {
-      throw new WOLFAPIError('limit must be a valid number', limit);
+      throw new WOLFAPIError('limit must be a valid number', { limit });
     } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new WOLFAPIError('limit cannot be less than or equal to 0', limit);
+      throw new WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
     const response = await this.client.websocket.emit(

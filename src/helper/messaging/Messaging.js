@@ -68,19 +68,19 @@ class Messaging extends Base {
 
   async _sendMessage (targetType, targetId, content, options = undefined) {
     if (!Object.values(MessageTypes).includes(targetType)) {
-      throw new WOLFAPIError('Unknown Message Target', targetType);
+      throw new WOLFAPIError('Unknown Message Target', { targetType });
     }
 
     if (validator.isNullOrUndefined(targetId)) {
-      throw new WOLFAPIError('targetId cannot be null or undefined', targetId);
+      throw new WOLFAPIError('targetId cannot be null or undefined', { targetId });
     } else if (!validator.isValidNumber(targetId)) {
-      throw new WOLFAPIError('targetId must be a valid number', targetId);
+      throw new WOLFAPIError('targetId must be a valid number', { targetId });
     } else if (validator.isLessThanOrEqualZero(targetId)) {
-      throw new WOLFAPIError('targetId cannot be less than or equal to 0', targetId);
+      throw new WOLFAPIError('targetId cannot be less than or equal to 0', { targetId });
     }
 
     if (validator.isNullOrUndefined(content)) {
-      throw new WOLFAPIError('content cannot be null or undefined', content);
+      throw new WOLFAPIError('content cannot be null or undefined', { content });
     }
 
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : MessageType.TEXT_PLAIN;
@@ -102,7 +102,7 @@ class Messaging extends Base {
       );
     }
 
-    const _options = validateOptions(options);
+    // const _options = validateOptions(options);
 
     // TODO:
   }
@@ -117,26 +117,26 @@ class Messaging extends Base {
 
   async sendMessage (commandOrMessage, content, options = undefined) {
     if (!(commandOrMessage instanceof require('../../models/CommandContext')) && !(commandOrMessage instanceof require('../../models/Message'))) {
-      throw new WOLFAPIError('commandOrMessage must be an instance of command or message', commandOrMessage);
+      throw new WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
     return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, options);
   }
 
   async getGroupMessageEditHistory (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
+      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
     if (validator.isNullOrUndefined(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be null or undefined', timestamp);
+      throw new WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
-      throw new WOLFAPIError('timestamp must be a valid number', timestamp);
+      throw new WOLFAPIError('timestamp must be a valid number', { timestamp });
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', timestamp);
+      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     const response = await this.client.websocket.emit(
@@ -153,19 +153,19 @@ class Messaging extends Base {
 
   async deleteGroupMessage (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
+      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
     if (validator.isNullOrUndefined(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be null or undefined', timestamp);
+      throw new WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
-      throw new WOLFAPIError('timestamp must be a valid number', timestamp);
+      throw new WOLFAPIError('timestamp must be a valid number', { timestamp });
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', timestamp);
+      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     return await this.client.websocket.emit(
@@ -184,19 +184,19 @@ class Messaging extends Base {
 
   async restoreGroupMessage (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', targetGroupId);
+      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', targetGroupId);
+      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
     if (validator.isNullOrUndefined(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be null or undefined', timestamp);
+      throw new WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
-      throw new WOLFAPIError('timestamp must be a valid number', timestamp);
+      throw new WOLFAPIError('timestamp must be a valid number', { timestamp });
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', timestamp);
+      throw new WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     return await this.client.websocket.emit(

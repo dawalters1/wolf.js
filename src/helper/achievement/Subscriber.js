@@ -8,11 +8,11 @@ const models = require('../../models');
 class Subscriber extends Base {
   async getById (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('targetSubscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('targetSubscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('targetSubscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('targetSubscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('targetSubscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('targetSubscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     const response = await this.client.websocket.emit(

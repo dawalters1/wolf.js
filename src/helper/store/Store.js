@@ -13,7 +13,7 @@ class Store extends Base {
 
   async getCreditBalance (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this._balance >= 0) {

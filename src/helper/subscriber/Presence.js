@@ -11,15 +11,15 @@ const _ = require('lodash');
 class Presence extends Base {
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
-      throw new WOLFAPIError('id cannot be null or undefined', id);
+      throw new WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
-      throw new WOLFAPIError('id must be a valid number', id);
+      throw new WOLFAPIError('id must be a valid number', { id });
     } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     return (await this.getByIds([id]))[0];
@@ -29,25 +29,25 @@ class Presence extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new WOLFAPIError('ids cannot be null or empty', ids);
+      throw new WOLFAPIError('ids cannot be null or empty', { ids });
     }
 
     if ([...new Set(ids)].length !== ids.length) {
-      throw new WOLFAPIError('ids cannot contain duplicates', ids);
+      throw new WOLFAPIError('ids cannot contain duplicates', { ids });
     }
 
     for (const id of ids) {
       if (validator.isNullOrUndefined(id)) {
-        throw new WOLFAPIError('id cannot be null or undefined', id);
+        throw new WOLFAPIError('id cannot be null or undefined', { id });
       } else if (!validator.isValidNumber(id)) {
-        throw new WOLFAPIError('id must be a valid number', id);
+        throw new WOLFAPIError('id must be a valid number', { id });
       } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+        throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 
     if (!validator.isValidBoolean(forceNew)) {
-      throw new WOLFAPIError('forceNew must be a valid boolean', forceNew);
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const presence = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
