@@ -28,7 +28,7 @@ const isType = (arg, type) => {
       return typeOf === undefined;
   }
 
-  throw new WOLFAPIError('type is not a valid typeof', arg);
+  throw new WOLFAPIError('type is not a valid typeof', { arg, type });
 };
 
 const isNull = arg => arg === null;

@@ -23,20 +23,20 @@ class Authorization extends Base {
     targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
 
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
 
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
 
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -56,20 +56,20 @@ class Authorization extends Base {
     targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
 
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
 
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
 
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -94,20 +94,20 @@ class Authorization extends Base {
     targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
 
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
 
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', targetSubscriberIds);
+      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
 
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 

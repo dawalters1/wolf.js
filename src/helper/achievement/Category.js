@@ -14,9 +14,9 @@ class Category extends Base {
 
   async getList (language, forceNew = false) {
     if (!validator.isValidNumber(language)) {
-      throw new WOLFAPIError('language must be a valid number', language);
+      throw new WOLFAPIError('language must be a valid number', { language });
     } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new Error('language is not valid', language);
+      throw new Error('language is not valid', { language });
     }
 
     if (!forceNew && this.cache[language]) {

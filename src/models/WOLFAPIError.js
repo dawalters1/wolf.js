@@ -5,7 +5,7 @@ class WOLFAPIError extends Error {
     super(error);
 
     if (param) {
-      this.param = param;
+      this.params = param;
     }
   }
 }

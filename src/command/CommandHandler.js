@@ -29,13 +29,54 @@ const checkForBotCharm = async (client, subscriber) => {
 class CommandHandler {
   constructor (client) {
     this.client = client;
+
+    this.client.on('message', async (message) => {
+      const commandHandling = this.client.options.commandHandling;
+
+      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (!commandHandling.processOwnMessages && message.sourceSubscriberId === this.client.currentSubscriber.id)) {
+        return Promise.resolve();
+      }
+
+      const context = {
+        isGroup: message.isGroup,
+        argument: message.body,
+        targetGroupId: message.targetGroupId,
+        sourceSubscriberId: message.sourceSubscriberId,
+        timestamp: message.timestamp,
+        type: message.type
+      };
+
+      const command = this._getCommand(this._commands, context);
+
+      if (!command.callback) {
+        return Promise.resolve();
+      }
+
+      if (commandHandling.ignoreOfficialBots || commandHandling.ignoreUnofficialBots) {
+        const subscriber = await this.client.subscriber.getById(context.sourceSubscriberId);
+
+        if (commandHandling.ignoreOfficialBots && await checkForPrivilege(this.client, subscriber, Privilege.BOT)) {
+          return Promise.resolve();
+        }
+
+        if (command.ignoreUnofficialBots && !await checkForPrivilege(this.client, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
+          return Promise.resolve();
+        }
+      }
+
+      const callback = command.callback;
+
+      Reflect.deleteProperty(command, 'callback');
+
+      return callback.call(this, new CommandContext(command));
+    });
   }
 
   register (commands) {
     commands = Array.isArray(commands) ? commands : [commands];
 
     if (commands.length === 0) {
-      throw new WOLFAPIError('commands cannot be empty', commands);
+      throw new WOLFAPIError('commands cannot be empty', { commands });
     }
 
     this._commands = commands;
@@ -45,47 +86,6 @@ class CommandHandler {
     const args = message.split(this.client.SPLIT_REGEX).filter(Boolean);
 
     return this._commands.some((command) => this.client.phrase.getAllByName(command.phraseName).some((phrase) => this.client.utility.string.isEqual(phrase, args[0])));
-  }
-
-  async _onMessage (message) {
-    const commandHandling = this.client.options.commandHandling;
-
-    if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (!commandHandling.processOwnMessages && message.sourceSubscriberId === this.client.currentSubscriber.id)) {
-      return Promise.resolve();
-    }
-
-    const context = {
-      isGroup: message.isGroup,
-      argument: message.body,
-      targetGroupId: message.targetGroupId,
-      sourceSubscriberId: message.sourceSubscriberId,
-      timestamp: message.timestamp,
-      type: message.type
-    };
-
-    const command = this._getCommand(this._commands, context);
-
-    if (!command.callback) {
-      return Promise.resolve();
-    }
-
-    if (commandHandling.ignoreOfficialBots || commandHandling.ignoreUnofficialBots) {
-      const subscriber = await this.client.subscriber.getById(context.sourceSubscriberId);
-
-      if (commandHandling.ignoreOfficialBots && await checkForPrivilege(this.client, subscriber, Privilege.BOT)) {
-        return Promise.resolve();
-      }
-
-      if (command.ignoreUnofficialBots && !await checkForPrivilege(this.client, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
-        return Promise.resolve();
-      }
-    }
-
-    const callback = command.callback;
-
-    Reflect.deleteProperty(command, 'callback');
-
-    return callback.call(this, new CommandContext(command));
   }
 
   _getCommand (commands, context) {

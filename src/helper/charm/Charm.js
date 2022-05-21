@@ -21,11 +21,11 @@ class Charm extends Base {
 
   async getById (id) {
     if (validator.isNullOrUndefined(id)) {
-      throw new WOLFAPIError('id cannot be null or undefined', id);
+      throw new WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
-      throw new WOLFAPIError('id must be a valid number', id);
+      throw new WOLFAPIError('id must be a valid number', { id });
     } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
     return (await this.getByIds([id]))[0];
@@ -35,20 +35,20 @@ class Charm extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new WOLFAPIError('ids cannot be null or empty', ids);
+      throw new WOLFAPIError('ids cannot be null or empty', { ids });
     }
 
     if ([...new Set(ids)].length !== ids.length) {
-      throw new WOLFAPIError('ids cannot contain duplicates', ids);
+      throw new WOLFAPIError('ids cannot contain duplicates', { ids });
     }
 
     for (const id of ids) {
       if (validator.isNullOrUndefined(id)) {
-        throw new WOLFAPIError('id cannot be null or undefined', id);
+        throw new WOLFAPIError('id cannot be null or undefined', { id });
       } else if (!validator.isValidNumber(id)) {
-        throw new WOLFAPIError('id must be a valid number', id);
+        throw new WOLFAPIError('id must be a valid number', { id });
       } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new WOLFAPIError('id cannot be less than or equal to 0', id);
+        throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 
@@ -65,11 +65,11 @@ class Charm extends Base {
 
   async getSubscriberSummary (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     const response = await this.client.websocket.emit(
@@ -84,11 +84,11 @@ class Charm extends Base {
 
   async getSubscriberStatistics (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     const response = await this.client.websocket.emit(
@@ -103,27 +103,27 @@ class Charm extends Base {
 
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     if (validator.isNullOrUndefined(limit)) {
-      throw new WOLFAPIError('limit cannot be null or undefined', limit);
+      throw new WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('limit must be a valid number', limit);
+      throw new WOLFAPIError('limit must be a valid number', { limit });
     } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new WOLFAPIError('limit cannot be less than or equal to 0', limit);
+      throw new WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
     if (validator.isNullOrUndefined(offset)) {
-      throw new WOLFAPIError('offset cannot be null or undefined', offset);
+      throw new WOLFAPIError('offset cannot be null or undefined', { offset });
     } else if (!validator.isValidNumber(offset)) {
-      throw new WOLFAPIError('offset must be a valid number', offset);
+      throw new WOLFAPIError('offset must be a valid number', { offset });
     } else if (validator.isLessThanZero(offset)) {
-      throw new WOLFAPIError('offset cannot be less than 0', offset);
+      throw new WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
     const response = await this.client.websocket.emit(
@@ -140,27 +140,27 @@ class Charm extends Base {
 
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+      throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+      throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     if (validator.isNullOrUndefined(limit)) {
-      throw new WOLFAPIError('limit cannot be null or undefined', limit);
+      throw new WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new WOLFAPIError('limit must be a valid number', limit);
+      throw new WOLFAPIError('limit must be a valid number', { limit });
     } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new WOLFAPIError('limit cannot be less than or equal to 0', limit);
+      throw new WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
     if (validator.isNullOrUndefined(offset)) {
-      throw new WOLFAPIError('offset cannot be null or undefined', offset);
+      throw new WOLFAPIError('offset cannot be null or undefined', { offset });
     } else if (!validator.isValidNumber(offset)) {
-      throw new WOLFAPIError('offset must be a valid number', offset);
+      throw new WOLFAPIError('offset must be a valid number', { offset });
     } else if (validator.isLessThanZero(offset)) {
-      throw new WOLFAPIError('offset cannot be less than 0', offset);
+      throw new WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
     const response = await this.client.websocket.emit(
@@ -179,20 +179,20 @@ class Charm extends Base {
     charmIds = (Array.isArray(charmIds) ? charmIds : [charmIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
 
     if (!charmIds.length) {
-      throw new WOLFAPIError('charmIds cannot be null or empty', charmIds);
+      throw new WOLFAPIError('charmIds cannot be null or empty', { charmIds });
     }
 
     if ([...new Set(charmIds)].length !== charmIds.length) {
-      throw new WOLFAPIError('charmIds cannot contain duplicates', charmIds);
+      throw new WOLFAPIError('charmIds cannot contain duplicates', { charmIds });
     }
 
     for (const subscriberId of charmIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', subscriberId);
+        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', subscriberId);
+        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
     return await this.client.websocket.emit(
@@ -207,36 +207,36 @@ class Charm extends Base {
     charms = Array.isArray(charms) ? charms : [charms];
 
     if (!charms.length) {
-      throw new WOLFAPIError('charms cannot be null or empty', charms);
+      throw new WOLFAPIError('charms cannot be null or empty', { charms });
     }
 
     if ([...new Set(charms.map((charm) => JSON.stringify(charm)))].length !== charms.length) {
-      throw new WOLFAPIError('charms cannot contain duplicates', charms);
+      throw new WOLFAPIError('charms cannot contain duplicates', { charms });
     }
 
     for (const charm of charms) {
       if (validator.isNullOrUndefined(charm)) {
-        throw new WOLFAPIError('charm cannot be null or undefined', charm);
+        throw new WOLFAPIError('charm cannot be null or undefined', { charm });
       }
 
       if (!Reflect.has(charm, 'position')) {
-        throw new WOLFAPIError('charm must have property position', charm);
+        throw new WOLFAPIError('charm must have property position', { charm });
       } else if (validator.isNullOrUndefined(charm.position)) {
-        throw new WOLFAPIError('position cannot be null or undefined', charm);
+        throw new WOLFAPIError('position cannot be null or undefined', { charm });
       } else if (!validator.isValidNumber(charm.position)) {
-        throw new WOLFAPIError('position must be a valid number', charm);
+        throw new WOLFAPIError('position must be a valid number', { charm });
       } else if (validator.isLessThanZero(charm.position)) {
-        throw new WOLFAPIError('position cannot be less than 0', charm);
+        throw new WOLFAPIError('position cannot be less than 0', { charm });
       }
 
       if (!Reflect.has(charm, 'charmId')) {
-        throw new WOLFAPIError('charm must have property charmId', charm);
+        throw new WOLFAPIError('charm must have property charmId', { charm });
       } else if (validator.isNullOrUndefined(charm.charmId)) {
-        throw new WOLFAPIError('charmId cannot be null or undefined', charm);
+        throw new WOLFAPIError('charmId cannot be null or undefined', { charm });
       } else if (!validator.isValidNumber(charm.charmId)) {
-        throw new WOLFAPIError('charmId must be a valid number', charm);
+        throw new WOLFAPIError('charmId must be a valid number', { charm });
       } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
-        throw new WOLFAPIError('charmId cannot be less than or equal to 0', charm);
+        throw new WOLFAPIError('charmId cannot be less than or equal to 0', { charm });
       }
     }
 

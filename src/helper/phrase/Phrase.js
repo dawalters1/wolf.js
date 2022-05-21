@@ -16,13 +16,13 @@ class Phrase extends Base {
 
   async loadLocal () {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
-      throw new WOLFAPIError('Phrases folder missing in base folder');
+      throw new Error('Phrases folder missing in base folder');
     }
 
     const files = fs.readdirSync(path.resolve(require.main.filename, '../phrases')).filter((file) => file.endsWith('.json'));
 
     if (files.length === 0) {
-      throw new WOLFAPIError('Missing phrase json in phrases folder');
+      throw new Error('Missing phrase json in phrases folder');
     }
 
     for (const file of files) {
@@ -45,18 +45,18 @@ class Phrase extends Base {
     phrases = Array.isArray(phrases) ? phrases : [phrases];
 
     if (phrases.length === 0) {
-      throw new WOLFAPIError('phrases cannot be an empty array', phrases);
+      throw new WOLFAPIError('phrases cannot be an empty array', { phrases });
     }
 
     for (const phrase of phrases) {
       if (validator.isNullOrWhitespace(phrase.name)) {
-        throw new WOLFAPIError('name cannot be null or empty', phrase);
+        throw new WOLFAPIError('name cannot be null or empty', { phrase });
       }
       if (validator.isNullOrWhitespace(phrase.value)) {
-        throw new WOLFAPIError('value cannot be null or empty', phrase);
+        throw new WOLFAPIError('value cannot be null or empty', { phrase });
       }
       if (validator.isNullOrWhitespace(phrase.language)) {
-        throw new WOLFAPIError('language cannot be null or empty', phrase);
+        throw new WOLFAPIError('language cannot be null or empty', { phrase });
       }
 
       phrase.name = this.client.utility.string.replace(
@@ -88,7 +88,7 @@ class Phrase extends Base {
 
   getAllByName (name) {
     if (validator.isNullOrWhitespace(name)) {
-      throw new WOLFAPIError('name cannot be null or empty', name);
+      throw new WOLFAPIError('name cannot be null or empty', { name });
     }
 
     return this.cache.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'gmiu').test(phrase.name));
@@ -96,7 +96,7 @@ class Phrase extends Base {
 
   getByLanguageAndName (language, name) {
     if (validator.isNullOrWhitespace(name)) {
-      throw new WOLFAPIError('name cannot be null or empty', name);
+      throw new WOLFAPIError('name cannot be null or empty', { name });
     }
 
     const requested = this.cache.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
@@ -106,7 +106,7 @@ class Phrase extends Base {
     }
 
     if (this.client.utility.string.isEqual(language, this.client.options.language.iso)) {
-      throw new WOLFAPIError('no phrase located', name);
+      throw new WOLFAPIError('no phrase located', { name });
     }
 
     return this.getByLanguageAndName(this.client.options.language.iso, name);
@@ -114,11 +114,11 @@ class Phrase extends Base {
 
   getByCommandAndName (command, name) {
     if (!(command instanceof models.CommandContext)) {
-      throw new WOLFAPIError('command must be type CommandContext', command);
+      throw new WOLFAPIError('command must be type CommandContext', { command });
     } else if (!Reflect.has(command, 'language')) {
-      throw new WOLFAPIError('command must contain a language property', command);
+      throw new WOLFAPIError('command must contain a language property', { command });
     } else if (validator.isNullOrWhitespace(command.language)) {
-      throw new WOLFAPIError('language cannot be null or empty', command);
+      throw new WOLFAPIError('language cannot be null or empty', { command });
     }
 
     return this.getByCommandAndName(command.language, name);
@@ -126,10 +126,10 @@ class Phrase extends Base {
 
   isRequestedPhrase (name, input) {
     if (validator.isNullOrWhitespace(name)) {
-      throw new WOLFAPIError('name cannot be null or empty', name);
+      throw new WOLFAPIError('name cannot be null or empty', { name });
     }
     if (validator.isNullOrWhitespace(input)) {
-      throw new WOLFAPIError('input cannot be null or empty', input);
+      throw new WOLFAPIError('input cannot be null or empty', { input });
     }
 
     return this.getAllByName(name).find((phrase) => this.client.utility.string.isEqual(phrase.value, input)) !== undefined;
