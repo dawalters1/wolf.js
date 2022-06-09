@@ -8,6 +8,7 @@ const fileType = require('file-type');
 
 const nanoid = require('nanoid');
 
+// eslint-disable-next-line no-unused-vars
 const validateOptions = (options) => {
   const _options = Object.assign({}, options);
 

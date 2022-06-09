@@ -1,0 +1,11 @@
+app: wjs
+
+connection:
+  host: https://v3-rc.palringo.com
+  port: 3051
+  query:
+    device: wjsframework
+
+batching:
+  members: 5000
+  length: 50
