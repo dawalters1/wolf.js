@@ -1,4 +1,9 @@
+const path = require('path');
+const fs = require('fs');
+const yaml = require('yaml');
 const EventEmitter = require('events');
+
+const Websocket = require('./websocket/Websocket');
 
 // #region Helpers
 
@@ -17,11 +22,16 @@ const Store = require('../helper/store/Store');
 const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
 const Utility = require('../utility/Utility');
+const { validateBotConfig } = require('../utils/config');
 
 // #endregion
 class WOLF extends EventEmitter {
   constructor () {
     super();
+
+    validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));
+
+    this.websocket = new Websocket(this);
 
     this.achievement = new Achievement(this);
     this.banned = new Banned(this);

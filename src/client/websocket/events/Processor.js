@@ -10,7 +10,7 @@ class Processor {
       const processGroup = (route, group) => {
         // There are no more subGroups in the grouping
         if (typeof (group[1]) === 'string') {
-          result[group[1]] = require(`./${route.toLowerCase()}/${group[0]}.js`);
+          result[`${group[1]}`] = require(`./${route.toLowerCase()}/${group[0]}.js`);
         } else { // There are more subGroups in the grouping, process them
           Object.entries(group[1]).forEach((subGroup) => processGroup(`${route}/${group[0]}`, subGroup));
         }
@@ -24,6 +24,7 @@ class Processor {
   }
 
   async process (eventString, data) {
+    return;
     this.client.emit(
       Event.PACKET_RECEIVED,
       eventString,

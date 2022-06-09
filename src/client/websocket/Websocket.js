@@ -29,9 +29,9 @@ class Websocket {
 
   _create () {
     const connectionSettings = this.client._botConfig.get('connection');
-    const loginDetails = this.client.config.get('loginDetails');
+    const loginDetails = undefined;// this.client.config.get('loginDetails');
 
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginDetails.token}&device=${connectionSettings.device}&state=${loginDetails.onlineState}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginDetails?.token ?? 'WE7ea290a4a1be9049118affa8d70b60e7'}&device=${connectionSettings.device ?? 'wjsframework'}&state=${loginDetails?.onlineState ?? '1'}`,
       {
         transports: ['websocket'],
         reconnection: true,
@@ -66,7 +66,7 @@ class Websocket {
   async emit (command, body) {
     const request = {
       command,
-      body: body ? { body } : undefined
+      body: body && !body.headers && !body.body ? { body } : body
     };
 
     if (command === ServerEvents.MESSAGE.MESSAGE_SEND) {

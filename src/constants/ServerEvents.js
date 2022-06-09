@@ -7,9 +7,7 @@ module.exports = {
       GROUP_AUDIO_REQUEST_CLEAR: 'group audio request clear',
       GROUP_AUDIO_REQUEST_DELETE: 'group audio request delete',
       GROUP_AUDIO_SLOT_UPDATE: 'group audio slot update',
-      GROUP_AUDIO_UPDATE: 'group audio update',
-      GROUP_EVENT_CREATE: 'group event create',
-      GROUP_EVENT_UPDATE: 'group event update'
+      GROUP_AUDIO_UPDATE: 'group audio update'
     },
     EVENT: {
       GROUP_EVENT_CREATE: 'group event create',

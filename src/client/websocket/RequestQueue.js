@@ -17,6 +17,7 @@ class RequestQueue {
     setInterval(() => {
       if (this.available < this.capacity) {
         this.available++;
+        this.tokenLastAdded = Date.now();
       }
     }, this.regenerationPeriod);
   }
@@ -39,20 +40,18 @@ class RequestQueue {
 
     this.processing = true;
 
-    try {
-      setTimeout(async () => {
-        this.available--;
+    setTimeout(async () => {
+      this.available--;
 
-        const item = this.queue.shift();
+      const item = this.queue.shift();
+      this.client.websocket.socket.emit(item.request.command, item.request.body, response => {
+        item.resolve(response);
+        this.processing = false;
+        this.dequeue();
+      });
+    }, this.getWaitTime());
 
-        this.client.websocket.socket.emit(item.request.command, item.request.body, response => item.resolve(response));
-      }, this.getWaitTime());
-    } catch (error) {
-      console.log('Request error occurred', error);
-    } finally {
-      this.processing = false;
-      this.dequeue();
-    }
+    return Promise.resolve();
   }
 
   getWaitTime () {
@@ -60,7 +59,7 @@ class RequestQueue {
       return 0;
     }
 
-    const until = this.regenerationPeriod - Date.now();
+    const until = this.tokenLastAdded + this.regenerationPeriod - Date.now();
 
     this.client.emit(
       Event.RATE_LIMIT,

@@ -7,9 +7,15 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 const models = require('../../models');
 
 const _ = require('lodash');
+const Member = require('./Member');
 
 const buildGroupFromModule = (groupModule) => {
   const base = groupModule.base;
+
+  base.memberCount = base.members;
+
+  Reflect.deleteProperty(base, 'members');
+
   base.extended = groupModule.extended;
   base.audioConfig = groupModule.audioConfig;
   base.audioCounts = groupModule.audioCounts;
@@ -23,6 +29,8 @@ class Group extends Base {
     super(client);
 
     this.fetched = false;
+
+    this.member = new Member(this.client);
   }
 
   async list () {
@@ -95,7 +103,7 @@ class Group extends Base {
     const groups = !forceNew ? this.cache.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client.config.get('batching.length')));
+      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client._botConfig.get('batching.length')));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
@@ -113,7 +121,7 @@ class Group extends Base {
         );
 
         if (response.success) {
-          const groupResponses = Object.values(response.body).map((groupResponse) => new Response(groupResponse));
+          const groupResponses = Object.values(response.body).map((groupResponse) => new models.Response(groupResponse));
 
           for (const [index, groupResponse] of groupResponses.entries()) {
             groups.push(groupResponse.success ? this._process(new models.Group(this.client, buildGroupFromModule(groupResponse.body))) : new models.Group(this.client, { id: idList[index] }));
@@ -272,14 +280,6 @@ class Group extends Base {
 
     return response.success ? response.body.map((message) => new models.Message(this.client, message)) : [];
   }
-
-  // TODO: Large group handling, not V1 (current) handling
-  /*
-    - Get Subscriber
-    - Get Privileged (mod, admin, owner),
-    - Get Regular (regular, silenced??),
-    - Get Banned
-  */
 
   async getStats (id) {
     if (validator.isNullOrUndefined(id)) {
