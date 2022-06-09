@@ -17,13 +17,13 @@ const subscribeToSubscriptionType = async (api, type) => {
 const onSuccess = async (api, resume = false) => {
   await api.group()._joinedGroups();
 
+  api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
+
   const subscriptions = Object.entries(api.config.get('app.messageSettings.subscriptions')).filter((entry) => entry[1]).map((entry) => entry[0]);
 
   for (const subscription of subscriptions) {
     await subscribeToSubscriptionType(api, subscription);
   }
-
-  api._currentSubscriber = await api.subscriber().getById(api.currentSubscriber.id);
 
   api.emit(resume ? Events.RESUME : Events.READY);
 };
