@@ -1,6 +1,6 @@
+const Base = require('../../models/Base');
 
-class Download {
-
+class Member extends Base {
 }
 
-module.exports = Download;
+module.exports = Member;

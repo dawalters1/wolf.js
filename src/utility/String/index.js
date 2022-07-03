@@ -1,4 +1,7 @@
 const _ = require('lodash');
+const validator = require('../../validator');
+
+const WOLFAPIError = require('../../models/WOLFAPIError');
 
 const tlds = require('tldts');
 // eslint-disable-next-line prefer-regex-literals
@@ -19,6 +22,18 @@ function replaceRange (string, start, end, substitute) {
 
 class StringUtility {
   replace (string, replacements) {
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
+    }
+
+    if (validator.isNullOrUndefined(replacements)) {
+      throw new WOLFAPIError('amount cannot be null or undefined', { replacements });
+    } else if (typeof object !== 'object') {
+      throw new WOLFAPIError('replacements must be an object', { replacements });
+    } else if (!Object.keys(replacements).length) {
+      throw new WOLFAPIError('replacements contain at least 1 property', { replacements });
+    }
+
     return Object.entries(replacements)
       .map((replacement) => [...string.matchAll(new RegExp(_.escapeRegExp(`{${replacement[0]}}`), 'g'))]
         .map((match) => (
@@ -61,20 +76,40 @@ class StringUtility {
     return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
   }
 
-  chunk (string, max = 1000, splitChar = '\n', joinChar = '\n') {
-    if (string.length <= max) {
+  chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
+    }
+
+    if (validator.isNullOrUndefined(length)) {
+      throw new WOLFAPIError('length cannot be null or undefined', { length });
+    } else if (!validator.isValidNumber(length)) {
+      throw new WOLFAPIError('length must be a valid number', { length });
+    } else if (validator.isLessThanOrEqualZero(length)) {
+      throw new WOLFAPIError('length cannot be less than or equal to 0', { length });
+    }
+
+    if (validator.isNullOrUndefined(splitChar)) {
+      throw new WOLFAPIError('splitChar cannot be null or undefined', { splitChar });
+    }
+
+    if (validator.isNullOrUndefined(joinChar)) {
+      throw new WOLFAPIError('joinChar cannot be null or undefined', { joinChar });
+    }
+
+    if (string.length <= length) {
       return [string];
     }
 
     const lines = string.split(splitChar).filter(Boolean);
 
     if (lines.length === 0) {
-      throw new Error(`string is longer than ${max} characters and contains no ${splitChar} characters`);
+      throw new Error(`string is longer than ${length} characters and contains no ${splitChar} characters`);
     }
 
     return lines.reduce((result, value) => {
       if (result.length > 0) {
-        if (result.slice(-1)[0].length + value.length + 1 <= max) {
+        if (result.slice(-1)[0].length + value.length + 1 <= length) {
           result[result.length - 1] = `${result.slice(-1)[0]}${joinChar}${value}`;
           return result;
         }
@@ -86,8 +121,8 @@ class StringUtility {
   };
 
   trimAds (string) {
-    if (!string) {
-      return string;
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
     const matches = [...string.matchAll(/\[([^\][]*)]/g)].filter((Boolean)).filter((match) => match[0].split('\n').length === 1);
@@ -104,12 +139,16 @@ class StringUtility {
     return this.trimAds(string);
   }
 
-  getValidUrl (url) {
-    if (url && !(url.startsWith('[') && url.endsWith(']'))) {
-      if ((url.includes('.') || url.includes(':'))) {
-        let link = trimPunctuation(url.toLowerCase());
+  getValidUrl (string) {
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
+    }
 
-        const protocol = this._api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => url.toLowerCase().startsWith(proto));
+    if (string && !(string.startsWith('[') && string.endsWith(']'))) {
+      if ((string.includes('.') || string.includes(':'))) {
+        let link = trimPunctuation(string.toLowerCase());
+
+        const protocol = this._api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => string.toLowerCase().startsWith(proto));
 
         if (protocol) {
           link = link.slice(protocol ? protocol.length : 0);
@@ -120,7 +159,7 @@ class StringUtility {
         if (protocol === 'wolf://') {
           if (args.length > 0) {
             return {
-              url,
+              url: string,
               hostname: undefined
             };
           }
@@ -141,7 +180,7 @@ class StringUtility {
 
               if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
                 return {
-                  url,
+                  url: string,
                   hostname: parsed.hostname
                 };
               }
@@ -156,12 +195,19 @@ class StringUtility {
     return null;
   }
 
-  getAds (arg) {
-    return ([...arg.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\d|\p{Letter}))/gu)] || []);
+  getAds (string) {
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
+    }
+    return ([...string.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\d|\p{Letter}))/gu)] || []);
   }
 
-  sanitise (arg) {
-    return _.deburr(arg);
+  sanitise (string) {
+    if (validator.isNullOrUndefined(string)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
+    }
+
+    return _.deburr(string);
   }
 }
 
