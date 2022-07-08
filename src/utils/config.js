@@ -28,12 +28,12 @@ const get = (configType, config, path) => {
     },
     config);
   } catch (error) {
-    error.internalErrorMessage = `api.${configType}.get(path=${JSON.stringify(path)})`;
+    error.internalErrorMessage = `client.${configType}.get(path=${JSON.stringify(path)})`;
     throw error;
   }
 };
 
-const validateUserConfig = (api, opts) => {
+const validateUserConfig = (client, opts) => {
   const _opts = Object.assign({}, opts);
 
   _opts.keyword = validator.isNullOrWhitespace(_opts.keyword) ? 'default' : _opts.keyword;
@@ -45,7 +45,7 @@ const validateUserConfig = (api, opts) => {
   _opts.app.defaultLanguage = validator.isNullOrWhitespace(_opts.app.defaultLanguage) ? 'en' : _opts.app.defaultLanguage;
 
   if (_opts.app.processOwnMessages) {
-    this._api.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: app.processOwnMessages is deprecated, please use messageSettings.processOwnMessages or commandSettings.processOwnMessages instead');
+    this.client.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: app.processOwnMessages is deprecated, please use messageSettings.processOwnMessages or commandSettings.processOwnMessages instead');
   }
   _opts.app.processOwnMessages = validator.isValidBoolean(_opts.app.processOwnMessages) ? Boolean(_opts.app.processOwnMessages) : false;
 
@@ -70,10 +70,10 @@ const validateUserConfig = (api, opts) => {
   _opts.app.messageSettings.subscriptions.privateMessages = validator.isValidBoolean(_opts.app.messageSettings.subscriptions.privateMessages) ? Boolean(_opts.app.messageSettings.subscriptions.privateMessages) : true;
 
   if (_opts.app.commandSettings.processOwnMessages && !_opts.app.messageSettings.processOwnMessages) {
-    this._api.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
+    this.client.emit(Events.INTERNAL_ERROR, '[WARNING] CONFIG: messageSettings.processOwnMessages must be true in order for commandSettings.processOwnMessages to work');
   }
 
-  api._options = {
+  client._options = {
     keyword: _opts.keyword,
     commandHandling: {
       processOwnMessages: opts.app.commandSettings.processOwnMessages
@@ -89,15 +89,15 @@ const validateUserConfig = (api, opts) => {
 
   _opts.get = (args) => get('config', _opts, args);
 
-  api._config = _opts;
+  client._config = _opts;
 };
 
-const validateBotConfig = (api, opts) => {
+const validateBotConfig = (client, opts) => {
   const _opts = Object.assign({}, opts);
 
   _opts.get = (args) => get('_botConfig', _opts, args);
 
-  api._botConfig = _opts;
+  client._botConfig = _opts;
 };
 
 module.exports = {

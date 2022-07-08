@@ -24,7 +24,6 @@ class Processor {
   }
 
   async process (eventString, data) {
-    return;
     this.client.emit(
       Event.PACKET_RECEIVED,
       eventString,

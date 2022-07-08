@@ -1,5 +1,6 @@
 const Base = require('../Base');
 const Request = require('./Request');
+const Slot = require('./Slot');
 
 class Stage extends Base {
   // eslint-disable-next-line no-useless-constructor
@@ -7,6 +8,7 @@ class Stage extends Base {
     super(client);
 
     this.request = new Request(this.client);
+    this.slot = new Slot(this.client);
   }
 }
 

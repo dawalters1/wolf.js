@@ -53,11 +53,11 @@ class NumberUtility {
       throw new WOLFAPIError('max must be a valid number', { max });
     }
 
-    if (max < min) {
+    if (parseInt(max) < parseInt(min)) {
       throw new WOLFAPIError('Max must be larger than min', { min, max });
     }
 
-    return _.random(min, max);
+    return _.random(parseInt(min), parseInt(max));
   }
 
   clamp (number, lower, upper) {
@@ -79,15 +79,15 @@ class NumberUtility {
       throw new WOLFAPIError('upper must be a valid number', { upper });
     }
 
-    if (upper < lower) {
+    if (parseInt(upper) < parseInt(lower)) {
       throw new WOLFAPIError('Upper must be larger than lower', { lower, upper });
     }
 
-    if (_.inRange(number, lower, upper)) {
+    if (_.inRange(parseInt(number), parseInt(lower), parseInt(upper))) {
       throw new WOLFAPIError('Number must be in range of lower and upper', { number, lower, upper });
     }
 
-    return _.clamp(number, lower, upper);
+    return _.clamp(parseInt(number), parseInt(lower), parseInt(upper));
   }
 }
 

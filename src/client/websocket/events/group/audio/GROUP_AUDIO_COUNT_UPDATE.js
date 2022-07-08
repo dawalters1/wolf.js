@@ -11,8 +11,8 @@ module.exports = async (client, body) => {
     return Promise.resolve();
   }
 
-  const oldAudioCount = new models.GroupAudioCount(client, group.audioCounts);
-  group.audioCounts = new models.GroupAudioCount(client, body);
+  const oldAudioCount = new models.GroupAudioCounts(client, group.audioCounts);
+  group.audioCounts = new models.GroupAudioCounts(client, body);
 
   return client.emit(
     Event.GROUP_AUDIO_COUNT_UPDATE,

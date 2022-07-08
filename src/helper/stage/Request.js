@@ -27,14 +27,14 @@ class Request extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
-        id: targetGroupId,
+        id: parseInt(targetGroupId),
         subscribe: true
       }
     );
 
     if (response.success) {
       group._requestListFetched = true;
-      group.audioRequests = response.body.map((request) => new models.GroupAudioRequest(this.client, request));
+      group.audioRequests = response.body.map((request) => new models.GroupAudioSlotRequest(this.client, request));
     }
 
     return group.audioRequests || [];
@@ -125,8 +125,8 @@ class Request extends Base {
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_BROADCAST_UPDATE,
         {
-          id: targetGroupId,
-          slotId,
+          id: parseInt(targetGroupId),
+          slotId: parseInt(slotId),
           reservedExpiresAt: Date.now() + 30000,
           reservedOccupierId: subscriberId
         }
@@ -144,7 +144,7 @@ class Request extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_ADD,
       {
-        id: targetGroupId
+        id: parseInt(targetGroupId)
       }
     );
   }
@@ -217,8 +217,8 @@ class Request extends Base {
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_BROADCAST_UPDATE,
         {
-          id: targetGroupId,
-          slotId,
+          id: parseInt(targetGroupId),
+          slotId: parseInt(slotId),
           reservedExpiresAt: undefined,
           reservedOccupierId: undefined
         }
@@ -234,7 +234,7 @@ class Request extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_DELETE,
       {
-        id: targetGroupId
+        id: parseInt(targetGroupId)
       }
     );
   }
@@ -273,7 +273,7 @@ class Request extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_CLEAR,
       {
-        id: targetGroupId
+        id: parseInt(targetGroupId)
       }
     );
   }

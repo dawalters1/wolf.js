@@ -1,6 +1,7 @@
 const { Command, MessageTypes, MessageType } = require('../../constants');
 const Base = require('../Base');
 const Subscription = require('./Subscription');
+const models = require('../../models');
 
 const validator = require('../../validator');
 const WOLFAPIError = require('../../models/WOLFAPIError');
@@ -149,7 +150,7 @@ class Messaging extends Base {
       }
     );
 
-    return response?.body ?? [];
+    return (response?.body ?? []).map((message) => new models.Message(this.client, message));
   }
 
   async deleteGroupMessage (targetGroupId, timestamp) {

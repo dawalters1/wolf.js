@@ -11,7 +11,7 @@ module.exports = async (client, body) => {
     return Promise.resolve();
   }
 
-  const request = new models.GroupAudioRequest(client, body);
+  const request = new models.GroupAudioSlotRequest(client, body);
 
   group.audioRequests.push(request);
 
