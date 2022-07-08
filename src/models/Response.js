@@ -1,3 +1,4 @@
+const { StatusCodes } = require('http-status-codes');
 
 class Response {
   constructor ({ code, body, headers }) {
@@ -7,7 +8,7 @@ class Response {
   }
 
   get success () {
-    return this.code >= 200 && this.code < 300;
+    return this.code >= StatusCodes.OK && this.code < StatusCodes.MULTIPLE_CHOICES;
   }
 }
 

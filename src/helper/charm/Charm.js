@@ -79,7 +79,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? new models.CharmSubscriberSummary(this.client, response.body) : undefined;
+    return response.success ? new models.CharmSummary(this.client, response.body) : undefined;
   }
 
   async getSubscriberStatistics (subscriberId) {
@@ -98,7 +98,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? new models.CharmSubscriberStatistics(this.client, response.body) : undefined;
+    return response.success ? new models.CharmStatistics(this.client, response.body) : undefined;
   }
 
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
@@ -135,7 +135,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? response.body.map((charm) => new models.CharmActive(this.client, charm)) : [];
+    return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
   }
 
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
@@ -172,7 +172,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? response.body.map((charm) => new models.CharmExpired(this.client, charm)) : [];
+    return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
   }
 
   async delete (charmIds) {
@@ -243,14 +243,7 @@ class Charm extends Base {
     return await this.client.websocket.emit(
       Command.CHARM_SUBSCRIBER_SET_SELECTED,
       {
-        selectedList: charms.map((charm) =>
-          (
-            {
-              charmId: parseInt(charm.charmId),
-              position: parseInt(charm.position)
-            }
-          )
-        )
+        selectedList: charms.map((charm) => new models.CharmSelected(this.client, charm).toJSON())
       }
     );
   }

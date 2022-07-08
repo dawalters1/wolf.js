@@ -144,6 +144,10 @@ class Subscriber extends Base {
       this.cache.push(value);
     }
 
+    if (value.id === this.client.currentSubscriber.id) {
+      this.client.currentSubscriber = this.cache.find((subscriber) => subscriber.id === this.client.currentSubscriber.id);
+    }
+
     return value;
   }
 }

@@ -1,10 +1,18 @@
 const Base = require('./Base');
 
 class Charm extends Base {
-  constructor (api, data) {
-    super(api);
+  constructor (client, data) {
+    super(client);
 
-    this._patch(data);
+    this.id = data.id;
+    this.name = data.name;
+    this.productId = data.productId;
+    this.imageUrl = data.imageUrl;
+    this.descriptionPhraseId = data.descriptionPhraseId;
+    this.descriptionList = data.descriptionList;
+    this.nameTranslationList = data.nameList;
+    this.weight = data.weight;
+    this.cost = data.cost;
   }
 }
 

@@ -30,7 +30,7 @@ class Category extends Base {
       }
     );
 
-    this.cache[language] = response.success ? response.body.map((category) => models.AchievementUnlockable(this.client, category)) : undefined;
+    this.cache[language] = response.success ? response.body.map((category) => models.AchievementCategory(this.client, category)) : undefined;
 
     return this.cache[language];
   }

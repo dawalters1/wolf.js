@@ -29,9 +29,9 @@ class Websocket {
 
   _create () {
     const connectionSettings = this.client._botConfig.get('connection');
-    const loginDetails = undefined;// this.client.config.get('loginDetails');
+    const { onlineState, token } = this.client.config.get('app.login');
 
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginDetails?.token ?? ''}&device=${connectionSettings.device ?? 'wjsframework'}&state=${loginDetails?.onlineState ?? '1'}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${token}&device=wjsframework&state=${onlineState}`,
       {
         transports: ['websocket'],
         reconnection: true,

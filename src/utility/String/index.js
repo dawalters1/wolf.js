@@ -5,13 +5,13 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 
 const tlds = require('tldts');
 // eslint-disable-next-line prefer-regex-literals
-const START_REGEX = new RegExp(/^([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s+)/, 'g');
+const TRIM_START_PUNC = new RegExp(/^\p{Punctuation}+/, 'gui');
 // eslint-disable-next-line prefer-regex-literals
-const END_REGEX = new RegExp(/([!"#$%&'()*+,-./:؛;<=>?@[\]^_`{|}~،]|\s)+$/, 'g');
+const TRIM_END_PUNC = new RegExp(/\p{Punctuation}+$/, 'gui');
 
 const trimPunctuation = (string) => {
   if (string) {
-    return string.replace(START_REGEX, '').replace(END_REGEX, '');
+    return string.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '');
   }
   return string;
 };
@@ -139,6 +139,7 @@ class StringUtility {
     return this.trimAds(string);
   }
 
+  /* Cancer */
   getValidUrl (string) {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
@@ -148,7 +149,7 @@ class StringUtility {
       if ((string.includes('.') || string.includes(':'))) {
         let link = trimPunctuation(string.toLowerCase());
 
-        const protocol = this._api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => string.toLowerCase().startsWith(proto));
+        const protocol = this.client._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => string.toLowerCase().startsWith(proto));
 
         if (protocol) {
           link = link.slice(protocol ? protocol.length : 0);
@@ -178,7 +179,7 @@ class StringUtility {
                 return null;
               }
 
-              if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
+              if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this.client._botConfig.get('validation.link.tld').includes(tld))) {
                 return {
                   url: string,
                   hostname: parsed.hostname

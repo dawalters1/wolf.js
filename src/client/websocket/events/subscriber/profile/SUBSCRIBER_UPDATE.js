@@ -17,9 +17,8 @@ module.exports = async (client, body) => {
   const oldSubscriber = new models.Subscriber(client, cached);
   const newSubscriber = await client.subscriber.getById(body.id, true);
 
-  if (newSubscriber.id === client.currentSubscriber.id) {
-    client.currentSubscriber = newSubscriber;
-  }
+  client.contact._patchIfExists('id', newSubscriber.toContact());
+  client.contact.blocked._patchIfExists('id', newSubscriber.toContact());
 
   // TODO: update lists (blocked, contacts, group members list) where required
 

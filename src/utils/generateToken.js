@@ -5,4 +5,4 @@ const CryptoJS = require('crypto-js/sha256');
  * @param {import('../client/WOLF')} client
  * @returns Token generated using email and password
  */
-module.exports = async (client) => `WJS${CryptoJS.HmacSHA1(client.config.get('app.login.email'), client.config.get('app.login.password').toString(CryptoJS.enc.Hex))}`;
+module.exports = (email, password) => `WJS${CryptoJS.HmacSHA1(email, password).toString(CryptoJS.enc.Hex)}`;

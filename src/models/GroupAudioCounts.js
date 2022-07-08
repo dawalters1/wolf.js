@@ -1,10 +1,12 @@
 const Base = require('./Base');
 
 class GroupAudioCounts extends Base {
-  constructor (api, data) {
-    super(api);
+  constructor (client, data) {
+    super(client);
 
-    this._patch(data);
+    this.broadcasterCount = data.broadcasterCount;
+    this.consumerCount = data.consumerCount;
+    this.id = data.id;
   }
 }
 

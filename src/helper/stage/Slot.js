@@ -29,7 +29,7 @@ class Slot extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_AUDIO_SLOT_LIST,
       {
-        id: targetGroupId,
+        id: parseInt(targetGroupId),
         subscribe: true
       }
     );
@@ -89,9 +89,9 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_SLOT_UPDATE,
       {
-        id: targetGroupId,
+        id: parseInt(targetGroupId),
         slot: {
-          id: slotId,
+          id: parseInt(slotId),
           locked: true
         }
       }
@@ -120,9 +120,9 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_SLOT_UPDATE,
       {
-        id: targetGroupId,
+        id: parseInt(targetGroupId),
         slot: {
-          id: slotId,
+          id: parseInt(slotId),
           locked: false
         }
       }
@@ -151,8 +151,8 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_UPDATE,
       {
-        id: targetGroupId,
-        slotId,
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
         occupierId: slot.occupierId,
         occupierMuted: true
       }
@@ -185,8 +185,8 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_UPDATE,
       {
-        id: targetGroupId,
-        slotId,
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
         occupierId: slot.occupierId,
         occupierMuted: false
       }
@@ -219,8 +219,8 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,
       {
-        id: targetGroupId,
-        slotId,
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
         occupierId: slot.occupierId
       }
     );
@@ -278,8 +278,8 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST,
       {
-        id: targetGroupId,
-        slotId,
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
         sdp
       }
     );
@@ -345,9 +345,9 @@ class Slot extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,
       {
-        id: targetGroupId,
+        id: parseInt(targetGroupId),
         slotId: slot.id,
-        occupierId: this._api.currentSubscriber.id
+        occupierId: this.client.currentSubscriber.id
       }
     );
   }

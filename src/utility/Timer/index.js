@@ -78,7 +78,7 @@ class Timer {
         handler,
         data,
         {
-          delay: duration,
+          delay: parseInt(duration),
           attempts: 8,
           removeOnComplete: true,
           removeOnFail: true,
@@ -158,7 +158,7 @@ class Timer {
           existing.data,
           {
             ...existing.opts,
-            delay: duration
+            delay: parseInt(duration)
           }
         )
       );

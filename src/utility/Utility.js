@@ -1,5 +1,6 @@
 const validator = require('../validator');
 const WOLFAPIError = require('../models/WOLFAPIError');
+const { Language } = require('../constants');
 
 const moment = require('moment');
 
@@ -16,10 +17,60 @@ class Utility {
 
     this.array = new ArrayUtility();
     this.download = new Download();
-    this.group = new Group();
+    this.group = new Group(client);
     this.number = new NumberUtility();
     this.string = new StringUtility();
     this.timer = new Timer(client);
+  }
+
+  toLanguageKey (languageId) {
+    if (validator.isNullOrUndefined(length)) {
+      throw new WOLFAPIError('languageId cannot be null or undefined', { languageId });
+    } else if (!validator.languageId(length)) {
+      throw new WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(languageId)) {
+      throw new Error('languageId is invalid');
+    }
+
+    switch (languageId) {
+      case Language.ARABIC : return 'ar';
+      case Language.BAHASA_INDONESIA : return 'in';
+      case Language.BRAZILIAN_PORTUGUESE : return 'br';
+      case Language.BULGARIAN : return 'bu';
+      case Language.CHINESE_SIMPLIFIED : return 'ch';
+      case Language.CZECH : return 'cz';
+      case Language.DANISH : return 'da';
+      case Language.DUTCH : return 'du';
+      case Language.ENGLISH : return 'en';
+      case Language.ESTONIAN : return 'et';
+      case Language.FINNISH : return 'fi';
+      case Language.FRENCH : return 'fr';
+      case Language.GERMAN : return 'ge';
+      case Language.GREEK : return 'gr';
+      case Language.HINDI : return 'hi';
+      case Language.HUNGARIAN : return 'hu';
+      case Language.ITALIAN : return 'it';
+      case Language.JAPANESE : return 'ja';
+      case Language.KAZAKH : return 'ka';
+      case Language.KOREAN : return 'ko';
+      case Language.LATIN_SPANISH : return 'ls';
+      case Language.LATVIAN : return 'la';
+      case Language.LITHUANIAN : return 'li';
+      case Language.MALAY : return 'ma';
+      case Language.NORWEGIAN : return 'no';
+      case Language.PERSIAN_FARSI : return 'fa';
+      case Language.POLISH : return 'po';
+      case Language.PORTUGUESE : return 'pt';
+      case Language.RUSSIAN : return 'ru';
+      case Language.SLOVAK : return 'sl';
+      case Language.SPANISH : return 'es';
+      case Language.SWEDISH : return 'sv';
+      case Language.THAI : return 'th';
+      case Language.TURKISH : return 'tr';
+      case Language.UKRAINIAN : return 'uk';
+      case Language.VIETNAMESE : return 'vi';
+      default: return 'en';
+    }
   }
 
   delay (time, type = 'milliseconds') {
@@ -63,37 +114,37 @@ class Utility {
 
     const info = moment.duration(time, type)._data;
 
-    const part = [];
+    const parts = [];
 
     if (info.years > 0) {
-      part.push(`${info.years}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_years`)}`);
+      parts.push(`${info.years}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_years`)}`);
     }
 
     if (info.months > 0) {
-      part.push(`${info.months}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_months`)}`);
+      parts.push(`${info.months}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_months`)}`);
     }
 
     if (info.weeks > 0) {
-      part.push(`${info.weeks}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_weeks`)}`);
+      parts.push(`${info.weeks}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_weeks`)}`);
     }
 
     if (info.days > 0) {
-      part.push(`${info.days}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_days`)}`);
+      parts.push(`${info.days}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_days`)}`);
     }
 
     if (info.hours > 0) {
-      part.push(`${info.hours}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_hours`)}`);
+      parts.push(`${info.hours}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_hours`)}`);
     }
 
     if (info.minutes > 0) {
-      part.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_minutes`)}`);
+      parts.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_minutes`)}`);
     }
 
     if (info.seconds > 0) {
-      part.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_seconds`)}`);
+      parts.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_seconds`)}`);
     }
 
-    return part.join(' ');
+    return parts.join(' ');
   }
 }
 
