@@ -1,12 +1,13 @@
 const Base = require('./Base');
 
-class AchievementCategory extends Base {
+class Phrase extends Base {
   constructor (client, data) {
     super(client);
 
-    this.id = data.id;
     this.name = data.name;
+    this.value = data.value;
+    this.language = data.language;
   }
 }
 
-module.exports = AchievementCategory;
+module.exports = Phrase;

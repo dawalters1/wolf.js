@@ -3,7 +3,7 @@ const fs = require('fs');
 const yaml = require('yaml');
 const EventEmitter = require('events');
 
-const { LoginType, OnlineState } = require('../constants');
+const { LoginType, OnlineState, Command } = require('../constants');
 
 const Websocket = require('./websocket/Websocket');
 const Multimedia = require('./multimedia/Client');
@@ -94,6 +94,12 @@ class WOLF extends EventEmitter {
     }
 
     this.websocket._init();
+  }
+
+  async logout () {
+    this.websocket.emit(Command.SECURITY_LOGOUT);
+
+    // TODO: cache handling
   }
 }
 

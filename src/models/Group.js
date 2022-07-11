@@ -12,13 +12,12 @@ class Group extends Base {
     this.hash = data.hash;
     this.name = data.name;
     this.description = data.description;
-    this.reputation = data.description;
+    this.reputation = data.reputation;
     this.owner = data.owner;
     this.membersCount = data.members;
     this.official = data.official;
     this.peekable = data.peekable;
     this.premium = data.premium;
-    this.reputation = data.reputation;
     this.icon = data.icon;
 
     this.extended = new GroupExtended(client, data.extended);
