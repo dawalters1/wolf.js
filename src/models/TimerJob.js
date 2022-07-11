@@ -4,7 +4,7 @@ class TimerJob {
     this.client = client;
     this.handler = job?.name ?? undefined;
     this.data = job.data ?? undefined;
-    this.delay = job.delay ?? undefined;
+    this.duration = job.delay ?? undefined;
     this.timestamp = job.timestamp ?? undefined;
     this.id = job?.id ?? undefined;
 

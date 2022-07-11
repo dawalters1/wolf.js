@@ -57,6 +57,7 @@ const TipLeaderboard = require('./TipLeaderboard');
 const TipLeaderboardItem = require('./TipLeaderboardItem');
 const TipLeaderboardSummary = require('./TipLeaderboardSummary');
 const TipSummary = require('./TipSummary');
+const Translation = require('./Translation');
 const Welcome = require('./Welcome');
 const WelcomeEndpoint = require('./WelcomeEndpoint');
 const WOLFAPIError = require('./WOLFAPIError');
@@ -117,6 +118,7 @@ module.exports = {
   TipLeaderboardItem,
   TipLeaderboardSummary,
   TipSummary,
+  Translation,
   Welcome,
   WelcomeEndpoint,
   WOLFAPIError

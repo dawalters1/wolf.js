@@ -8,7 +8,7 @@ const WOLFAPIError = require('../../models/WOLFAPIError');
 // const models = require('../../models');
 
 class Subscription extends Base {
-  async getSubscriptionList () {
+  async getList () {
     if (this.cache.length) {
       return this.cache;
     }

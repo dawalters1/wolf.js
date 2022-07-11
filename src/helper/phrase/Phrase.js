@@ -14,7 +14,7 @@ class Phrase extends Base {
     this.loadLocal();
   }
 
-  async loadLocal () {
+  loadLocal () {
     if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
       throw new Error('Phrases folder missing in base folder');
     }
@@ -41,7 +41,7 @@ class Phrase extends Base {
     }
   }
 
-  async load (phrases) {
+  load (phrases) {
     phrases = Array.isArray(phrases) ? phrases : [phrases];
 
     if (phrases.length === 0) {
