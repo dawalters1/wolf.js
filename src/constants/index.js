@@ -20,6 +20,9 @@ const Relationship = require('./Relationship');
 const SearchType = require('./SearchType');
 const ServerEvents = require('./ServerEvents');
 const SocketEvent = require('./SocketEvent');
+const StageBroadcastState = require('./StageBroadcastState');
+const StageClientEvent = require('./StageClientEvent');
+const StageConnectionState = require('./StageConnectionState');
 const TipDirection = require('./TipDirection');
 const TipPeriod = require('./TipPeriod');
 const TipType = require('./TipType');
@@ -56,6 +59,18 @@ module.exports = {
   */
   ServerEvents,
   SocketEvent,
+  /**
+  * @private
+  */
+  StageBroadcastState,
+  /**
+  * @private
+  */
+  StageClientEvent,
+  /**
+  * @private
+  */
+  StageConnectionState,
   TipDirection,
   TipPeriod,
   TipType

@@ -1,4 +1,4 @@
-const CryptoJS = require('crypto-js/sha256');
+const CryptoJS = require('crypto-js');
 
 /**
  * Generate a "UNIQUE" connection token using email and password SHA1 hashing
