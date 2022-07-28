@@ -43,9 +43,11 @@
     "npm": ">=7.0.0"
   },
   "dependencies": {
+    "@sapphire/shapeshift": "^3.5.0",
     "aws-sdk": "^2.1130.0",
     "aws4-axios": "^2.4.9",
     "axios": "^0.27.2",
+    "crypto-js": "^4.1.1",
     "file-type": "^16.5.3",
     "http-status-codes": "^2.2.0",
     "image-size": "^1.0.1",
