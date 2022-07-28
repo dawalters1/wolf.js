@@ -110,7 +110,7 @@ class Client extends EventEmitter {
       this._ffmpeg.destroy();
     }
 
-    if (this._downloader) {
+    if (this._downloader && typeof this._downloader === 'object') {
       this._downloader.destroy();
     }
 
@@ -181,7 +181,9 @@ class Client extends EventEmitter {
       .noVideo()
       .withOptions(this._opts)
       .on('error', error => {
-        this._downloader.destroy();
+        if (this._downloader && typeof this._downloader === 'object') {
+          this._downloader.destroy();
+        }
 
         if (this._broadcastState !== broadcastState.BROADCASTING) {
           return Promise.resolve();
