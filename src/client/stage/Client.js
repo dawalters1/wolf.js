@@ -1,11 +1,13 @@
-const { StageBroadcastState, StageConnectionState } = require('../../constants');
+/* eslint-disable no-unused-vars */
+import { StageBroadcastState, StageConnectionState } from '../../constants/index.js';
+import events from 'events';
+import wrtc from 'wrtc';
+import ffmpeg from 'fluent-ffmpeg';
 
-const EventEmitter = require('events').EventEmitter;
-const wrtc = require('wrtc');
+const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
-const { RTCAudioSource } = require('wrtc').nonstandard;
-const MediaStream = require('wrtc').MediaStream;
-const ffmpeg = require('fluent-ffmpeg');
+const { RTCAudioSource } = wrtc.nonstandard;
+const MediaStream = wrtc.MediaStream;
 
 const SAMPLE_RATE = 48000;
 const SLICE_COUNT = 1920;
@@ -22,26 +24,20 @@ const setIntervalAsync = (fn) => {
 class Client {
   constructor (client) {
     this.client = client;
-
     this.broadcastState = StageBroadcastState.IDLE;
     this.connectionState = StageConnectionState.DISCONNECTED;
-
     this.client = new RTCPeerConnection();
     this.source = new RTCAudioSource();
     const stream = new MediaStream();
     this.track = this.source.createTrack();
     stream.addTrack(this.track);
-
     this.sender = this.client.addTrack(this.track, stream);
   }
 
   play (stream) {
-
   }
 
   stop () {
-
   }
 }
-
-module.exports = Client;
+export default Client;

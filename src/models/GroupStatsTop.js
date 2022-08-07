@@ -1,15 +1,12 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class GroupStatsTop extends Base {
   constructor (client, data) {
     super(client);
-
-    this.nickname = data.nickname;
-    this.randomQoute = data.randomQoute;
-    this.subId = data.subId;
-    this.value = data.value;
-    this.percentage = data.percentage;
+    this.nickname = data?.nickname;
+    this.randomQoute = data?.randomQoute;
+    this.subId = data?.subId;
+    this.value = data?.value;
+    this.percentage = data?.percentage;
   }
 }
-
-module.exports = GroupStatsTop;
+export default GroupStatsTop;

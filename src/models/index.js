@@ -1,68 +1,130 @@
-/**
- * WORK IN PROGRESS
- */
-
-const Achievement = require('./Achievement');
-const AchievementCategory = require('./AchievementCategory');
-const AchievementUnlockable = require('./AchievementUnlockable');
-const AchievementUnlockableAdditionalInfo = require('./AchievementUnlockableAdditionalInfo');
-const Charm = require('./Charm');
-const CharmExpiry = require('./CharmExpiry');
-const CharmSelected = require('./CharmSelected');
-const CharmStatistics = require('./CharmStatistics');
-const CharmSummary = require('./CharmSummary');
-const Contact = require('./Contact');
-const ContactAdditionalInfo = require('./ContactAdditionalInfo');
-const Event = require('./Event');
-const Group = require('./Group');
-const GroupExtended = require('./GroupExtended');
-const GroupAudioConfig = require('./GroupAudioConfig');
-const GroupAudioCounts = require('./GroupAudioCounts');
-const GroupAudioSlot = require('./GroupAudioSlot');
-const GroupAudioSlotRequest = require('./GroupAudioSlotRequest');
-const GroupAudioSlotUpdate = require('./GroupAudioSlotUpdate');
-const GroupMember = require('./GroupMember');
-const GroupStats = require('./GroupStats');
-const GroupStatsActive = require('./GroupStatsActive');
-const GroupStatsDetail = require('./GroupStatsDetail');
-const GroupStatsTop = require('./GroupStatsTop');
-const GroupStatsTrend = require('./GroupStatsTrend');
-const IdHash = require('./IdHash');
-const LinkMetadata = require('./LinkMetadata');
-const Message = require('./Message');
-const MessageEdit = require('./MessageEdit');
-const MessageMetadata = require('./MessageMetadata');
-const MessageMetadataFormatting = require('./MessageMetadataFormatting');
-const MessageMetadataFormattingGroupLink = require('./MessageMetadataFormattingGroupLink');
-const MessageMetadataFormattingUrl = require('./MessageMetadataFormattingUrl');
-const MessageResponse = require('./MessageResponse');
-const MessageSetting = require('./MessageSetting');
-const MessageSettingFilter = require('./MessageSettingFilter');
-const Notification = require('./Notification');
-const NotificationAction = require('./NotificationAction');
-const Presence = require('./Presence');
-const Response = require('./Response');
-const Search = require('./Search');
-const Subscriber = require('./Subscriber');
-const SubscriberEvent = require('./SubscriberEvent');
-const SubscriberEventAdditionalInfo = require('./SubscriberEventAdditionalInfo');
-const SubscriberExtended = require('./SubscriberExtended');
-const SubscriberSelectedCharm = require('./SubscriberSelectedCharm');
-const TimerJob = require('./TimerJob');
-const Tip = require('./Tip');
-const TipCharm = require('./TipCharm');
-const TipContext = require('./TipContext');
-const TipDetail = require('./TipDetail');
-const TipLeaderboard = require('./TipLeaderboard');
-const TipLeaderboardItem = require('./TipLeaderboardItem');
-const TipLeaderboardSummary = require('./TipLeaderboardSummary');
-const TipSummary = require('./TipSummary');
-const Translation = require('./Translation');
-const Welcome = require('./Welcome');
-const WelcomeEndpoint = require('./WelcomeEndpoint');
-const WOLFAPIError = require('./WOLFAPIError');
-
-module.exports = {
+import Achievement from './Achievement.js';
+import AchievementCategory from './AchievementCategory.js';
+import AchievementUnlockable from './AchievementUnlockable.js';
+import AchievementUnlockableAdditionalInfo from './AchievementUnlockableAdditionalInfo.js';
+import Charm from './Charm.js';
+import CharmExpiry from './CharmExpiry.js';
+import CharmSelected from './CharmSelected.js';
+import CharmStatistics from './CharmStatistics.js';
+import CharmSummary from './CharmSummary.js';
+import CommandContext from './CommandContext.js';
+import Contact from './Contact.js';
+import ContactAdditionalInfo from './ContactAdditionalInfo.js';
+import Event from './Event.js';
+import Group from './Group.js';
+import GroupExtended from './GroupExtended.js';
+import GroupAudioConfig from './GroupAudioConfig.js';
+import GroupAudioCounts from './GroupAudioCounts.js';
+import GroupAudioSlot from './GroupAudioSlot.js';
+import GroupAudioSlotRequest from './GroupAudioSlotRequest.js';
+import GroupAudioSlotUpdate from './GroupAudioSlotUpdate.js';
+import GroupMember from './GroupMember.js';
+import GroupStats from './GroupStats.js';
+import GroupStatsActive from './GroupStatsActive.js';
+import GroupStatsDetail from './GroupStatsDetail.js';
+import GroupStatsTop from './GroupStatsTop.js';
+import GroupStatsTrend from './GroupStatsTrend.js';
+import IdHash from './IdHash.js';
+import LinkMetadata from './LinkMetadata.js';
+import Message from './Message.js';
+import MessageEdit from './MessageEdit.js';
+import MessageMetadata from './MessageMetadata.js';
+import MessageMetadataFormatting from './MessageMetadataFormatting.js';
+import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
+import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
+import MessageResponse from './MessageResponse.js';
+import MessageSetting from './MessageSetting.js';
+import MessageSettingFilter from './MessageSettingFilter.js';
+import Notification from './Notification.js';
+import NotificationAction from './NotificationAction.js';
+import Presence from './Presence.js';
+import Response from './Response.js';
+import Search from './Search.js';
+import StoreProduct from './StoreProduct.js';
+import StoreSection from './StoreSection.js';
+import Subscriber from './Subscriber.js';
+import SubscriberEvent from './SubscriberEvent.js';
+import SubscriberEventAdditionalInfo from './SubscriberEventAdditionalInfo.js';
+import SubscriberExtended from './SubscriberExtended.js';
+import SubscriberSelectedCharm from './SubscriberSelectedCharm.js';
+import TimerJob from './TimerJob.js';
+import Tip from './Tip.js';
+import TipCharm from './TipCharm.js';
+import TipContext from './TipContext.js';
+import TipDetail from './TipDetail.js';
+import TipLeaderboard from './TipLeaderboard.js';
+import TipLeaderboardItem from './TipLeaderboardItem.js';
+import TipLeaderboardSummary from './TipLeaderboardSummary.js';
+import TipSummary from './TipSummary.js';
+import Translation from './Translation.js';
+import ValidUrl from './ValidUrl.js';
+import Welcome from './Welcome.js';
+import WelcomeEndpoint from './WelcomeEndpoint.js';
+import WOLFAPIError from './WOLFAPIError.js';
+export { Achievement };
+export { AchievementCategory };
+export { AchievementUnlockable };
+export { AchievementUnlockableAdditionalInfo };
+export { Charm };
+export { CharmExpiry };
+export { CharmSelected };
+export { CharmStatistics };
+export { CharmSummary };
+export { CommandContext };
+export { Contact };
+export { ContactAdditionalInfo };
+export { Event };
+export { Group };
+export { GroupAudioConfig };
+export { GroupAudioCounts };
+export { GroupAudioSlot };
+export { GroupAudioSlotRequest };
+export { GroupAudioSlotUpdate };
+export { GroupExtended };
+export { GroupMember };
+export { GroupStats };
+export { GroupStatsActive };
+export { GroupStatsDetail };
+export { GroupStatsTop };
+export { GroupStatsTrend };
+export { IdHash };
+export { LinkMetadata };
+export { Message };
+export { MessageEdit };
+export { MessageMetadata };
+export { MessageMetadataFormatting };
+export { MessageMetadataFormattingGroupLink };
+export { MessageMetadataFormattingUrl };
+export { MessageResponse };
+export { MessageSetting };
+export { MessageSettingFilter };
+export { Notification };
+export { NotificationAction };
+export { Presence };
+export { Response };
+export { Search };
+export { StoreProduct };
+export { StoreSection };
+export { Subscriber };
+export { SubscriberEvent };
+export { SubscriberEventAdditionalInfo };
+export { SubscriberExtended };
+export { SubscriberSelectedCharm };
+export { TimerJob };
+export { Tip };
+export { TipCharm };
+export { TipContext };
+export { TipDetail };
+export { TipLeaderboard };
+export { TipLeaderboardItem };
+export { TipLeaderboardSummary };
+export { TipSummary };
+export { Translation };
+export { ValidUrl };
+export { Welcome };
+export { WelcomeEndpoint };
+export { WOLFAPIError };
+export default {
   Achievement,
   AchievementCategory,
   AchievementUnlockable,
@@ -72,6 +134,7 @@ module.exports = {
   CharmSelected,
   CharmStatistics,
   CharmSummary,
+  CommandContext,
   Contact,
   ContactAdditionalInfo,
   Event,
@@ -104,6 +167,8 @@ module.exports = {
   Presence,
   Response,
   Search,
+  StoreProduct,
+  StoreSection,
   Subscriber,
   SubscriberEvent,
   SubscriberEventAdditionalInfo,
@@ -119,6 +184,7 @@ module.exports = {
   TipLeaderboardSummary,
   TipSummary,
   Translation,
+  ValidUrl,
   Welcome,
   WelcomeEndpoint,
   WOLFAPIError

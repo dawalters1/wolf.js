@@ -1,14 +1,10 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class MessageMetadataFormattingGroupLink extends Base {
   constructor (client, data) {
     super(client);
-
-    this.start = data.start;
-    this.end = data.end;
-    this.groupId = data.groupId;
+    this.start = data?.start;
+    this.end = data?.end;
+    this.groupId = data?.groupId;
   }
-  // TODO: Methods
 }
-
-module.exports = MessageMetadataFormattingGroupLink;
+export default MessageMetadataFormattingGroupLink;

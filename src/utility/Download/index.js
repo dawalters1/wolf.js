@@ -1,6 +1,3 @@
-
 class Download {
-
 }
-
-module.exports = Download;
+export default Download;

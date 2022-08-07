@@ -1,78 +1,75 @@
-const Base = require('../Base');
-const validator = require('../../validator');
-const WOLFAPIError = require('../../models/WOLFAPIError');
-
+import Base from '../Base.js';
+import validator from '../../validator/index.js';
+import models from '../../models/index.js';
 class Authorization extends Base {
   /**
-   * Retrieve the list of authorized users for the bot
-   * @returns {Promise<Array.<Number>>}
-   */
+     * Retrieve the list of authorized subscribers for the bot
+     * @returns {Promise<Array.<Number>>}
+     */
   async list () {
     return this.cache;
   }
 
+  /**
+     * Clear the list of authorized subscribers
+     */
   async clear () {
     this.cache = [];
   }
 
   /**
-   * Check to see if a single user or multiple users are authorized by ID
-   * @returns {Promise<Array.<Boolean>|Boolean>}
-   */
+     * Check to see if a single user or multiple subscribers are authorized by ID
+     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+     * @returns {Promise<Array.<Boolean>|Boolean>}
+     */
   async isAuthorized (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
-
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+    ;
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
       result.push(this.cache.includes(subscriberId));
       return result;
     }, []);
-
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
   /**
-   * Authorize a single user or multiple users by ID
-   * @returns {Promise<Array.<Boolean>|Boolean>}
-   */
+     * Authorize a single user or multiple subscribers by ID
+     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+     * @returns {Promise<Array.<Boolean>|Boolean>}
+     */
   async authorize (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
-
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+    ;
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
       if (this.cache.includes(subscriberId)) {
         result.push(false);
@@ -82,35 +79,32 @@ class Authorization extends Base {
       }
       return result;
     }, []);
-
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
   /**
-   * Unauthorize a single user or multiple users by ID
-   * @returns {Promise<Array.<Boolean>|Boolean>}
-   */
+     * Unauthorize a single user or multiple subscribers by ID
+     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+     * @returns {Promise<Array.<Boolean>|Boolean>}
+     */
   async unauthorize (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id); ;
-
+    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+    ;
     if (!targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-
     if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
-      throw new WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-
     for (const subscriberId of targetSubscriberIds) {
       if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
       } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-
     const results = targetSubscriberIds.reduce((result, subscriberId) => {
       if (!this.cache.includes(subscriberId)) {
         result.push(false);
@@ -120,9 +114,7 @@ class Authorization extends Base {
       }
       return result;
     }, []);
-
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 }
-
-module.exports = Authorization;
+export default Authorization;

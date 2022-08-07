@@ -1,13 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class MessageEdit extends Base {
   constructor (client, data) {
     super(client);
-
-    this.subscriberId = data.subscriberId;
-    this.timestamp = data.timestamp;
+    this.subscriberId = data?.subscriberId;
+    this.timestamp = data?.timestamp;
   }
-  // TODO: Methods
 }
-
-module.exports = MessageEdit;
+export default MessageEdit;

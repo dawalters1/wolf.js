@@ -10,7 +10,6 @@ class Base {
   _patchIfExists (key, data) {
     if (Array.isArray(this.cache)) {
       const existing = this.cache.find((item) => item[key] === data[key]);
-
       if (existing) {
         this._patch(existing, data);
       }
@@ -29,5 +28,4 @@ class Base {
     this.cache = Array.isArray(this.cache) ? [] : {};
   }
 }
-
-module.exports = Base;
+export default Base;

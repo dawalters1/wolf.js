@@ -1,13 +1,10 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class MessageMetadataFormattingUrl extends Base {
   constructor (client, data) {
     super(client);
-
-    this.start = data.start;
-    this.end = data.end;
-    this.url = data.url;
+    this.start = data?.start;
+    this.end = data?.end;
+    this.url = data?.url;
   }
 }
-
-module.exports = MessageMetadataFormattingUrl;
+export default MessageMetadataFormattingUrl;

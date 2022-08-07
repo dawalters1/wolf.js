@@ -1,13 +1,10 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class Phrase extends Base {
   constructor (client, data) {
     super(client);
-
-    this.name = data.name;
-    this.value = data.value;
-    this.language = data.language;
+    this.name = data?.name;
+    this.value = data?.value;
+    this.language = data?.language;
   }
 }
-
-module.exports = Phrase;
+export default Phrase;

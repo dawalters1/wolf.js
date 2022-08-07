@@ -1,10 +1,8 @@
-const Base = require('../Base');
-
+import Base from '../Base.js';
 class Discovery extends Base {
   // eslint-disable-next-line no-useless-constructor
   constructor (client) {
     super(client);
   }
 }
-
-module.exports = Discovery;
+export default Discovery;

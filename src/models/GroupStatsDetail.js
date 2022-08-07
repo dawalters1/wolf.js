@@ -1,28 +1,25 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class GroupStatsDetail extends Base {
   constructor (client, data) {
     super(client);
-
-    this.actionCount = data.acountCount;
-    this.emoticonCount = data.emoticonCount;
-    this.id = data.id;
-    this.happyCount = data.happyCount;
-    this.imageCount = data.imageCount;
-    this.lineCount = data.lineCount;
-    this.memberCount = data.memberCount;
-    this.name = data.name;
-    this.owner = data.owner;
-    this.packCount = data.packCount;
-    this.questionCount = data.questionCount;
-    this.spokenCount = data.spokenCount;
-    this.sadCount = data.sadCount;
-    this.swearCount = data.swearCount;
-    this.textCount = data.textCount;
-    this.voiceCount = data.voiceCount;
-    this.wordCount = data.wordCount;
-    this.timestamp = data.timestamp;
+    this.actionCount = data?.acountCount;
+    this.emoticonCount = data?.emoticonCount;
+    this.id = data?.id;
+    this.happyCount = data?.happyCount;
+    this.imageCount = data?.imageCount;
+    this.lineCount = data?.lineCount;
+    this.memberCount = data?.memberCount;
+    this.name = data?.name;
+    this.owner = data?.owner;
+    this.packCount = data?.packCount;
+    this.questionCount = data?.questionCount;
+    this.spokenCount = data?.spokenCount;
+    this.sadCount = data?.sadCount;
+    this.swearCount = data?.swearCount;
+    this.textCount = data?.textCount;
+    this.voiceCount = data?.voiceCount;
+    this.wordCount = data?.wordCount;
+    this.timestamp = data?.timestamp;
   }
 }
-
-module.exports = GroupStatsDetail;
+export default GroupStatsDetail;

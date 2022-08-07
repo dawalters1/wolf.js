@@ -1,13 +1,10 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class SubscriberEventAdditionalInfo extends Base {
   constructor (client, data) {
     super(client);
-
-    this.eTag = data.eTag;
-    this.endsAt = data.endsAt;
-    this.startsAt = data.startsAt;
+    this.eTag = data?.eTag;
+    this.endsAt = data?.endsAt;
+    this.startsAt = data?.startsAt;
   }
 }
-
-module.exports = SubscriberEventAdditionalInfo;
+export default SubscriberEventAdditionalInfo;

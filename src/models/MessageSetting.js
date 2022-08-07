@@ -1,12 +1,9 @@
-const Base = require('./Base');
-const MessageSettingFilter = require('./MessageSettingFilter');
-
+import Base from './Base.js';
+import MessageSettingFilter from './MessageSettingFilter.js';
 class MessageSetting extends Base {
   constructor (client, data) {
     super(client);
-
-    this.spamFilter = new MessageSettingFilter(data.spamFilter);
+    this.spamFilter = new MessageSettingFilter(data?.spamFilter);
   }
 }
-
-module.exports = MessageSetting;
+export default MessageSetting;

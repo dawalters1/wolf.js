@@ -1,12 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class MessageResponse extends Base {
   constructor (client, data) {
     super(client);
-
-    this.uuid = data.uuid;
-    this.timestamp = data.timestamp;
+    this.uuid = data?.uuid;
+    this.timestamp = data?.timestamp;
   }
 }
-
-module.exports = MessageResponse;
+export default MessageResponse;

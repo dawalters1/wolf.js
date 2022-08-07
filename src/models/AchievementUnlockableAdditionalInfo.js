@@ -1,12 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class AchievementUnlockableAdditionalInfo extends Base {
   constructor (client, data) {
     super(client);
-
-    this.awardedAt = data.awardedAt;
-    this.eTag = data.eTag;
+    this.awardedAt = data?.awardedAt;
+    this.eTag = data?.eTag;
   }
 }
-
-module.exports = AchievementUnlockableAdditionalInfo;
+export default AchievementUnlockableAdditionalInfo;

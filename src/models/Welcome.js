@@ -1,18 +1,14 @@
-
-const Base = require('./Base');
-const Subscriber = require('./Subscriber');
-const WelcomeEndpoint = require('./WelcomeEndpoint');
-
+import Base from './Base.js';
+import Subscriber from './Subscriber.js';
+import WelcomeEndpoint from './WelcomeEndpoint.js';
 class Welcome extends Base {
   constructor (client, data) {
     super(client);
-
-    this.ip = data.ip;
-    this.token = data.token;
-    this.country = data.country;
-    this.endpointConfig = new WelcomeEndpoint(client, data.endpointConfig);
-    this.subscriber = data.subscriber ? new Subscriber(client, data.subscriber) : null;
+    this.ip = data?.ip;
+    this.token = data?.token;
+    this.country = data?.country;
+    this.endpointConfig = new WelcomeEndpoint(client, data?.endpointConfig);
+    this.subscriber = data?.subscriber ? new Subscriber(client, data?.subscriber) : null;
   }
 }
-
-module.exports = Welcome;
+export default Welcome;

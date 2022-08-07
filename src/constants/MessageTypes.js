@@ -1,4 +1,6 @@
-module.exports = {
-  GROUP: 'group',
-  PRIVATE: 'private'
+export const GROUP = 'group';
+export const PRIVATE = 'private';
+export default {
+  GROUP,
+  PRIVATE
 };
