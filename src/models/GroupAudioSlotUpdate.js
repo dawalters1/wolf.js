@@ -1,13 +1,10 @@
-const Base = require('./Base');
-const GroupAudioSlot = require('./GroupAudioSlot');
-
+import Base from './Base.js';
+import GroupAudioSlot from './GroupAudioSlot.js';
 class GroupAudioSlotUpdate extends Base {
   constructor (client, data) {
     super(client);
-
-    this.id = data.id;
-    this.slot = new GroupAudioSlot(client, data.slot);
+    this.id = data?.id;
+    this.slot = new GroupAudioSlot(client, data?.slot);
   }
 }
-
-module.exports = GroupAudioSlotUpdate;
+export default GroupAudioSlotUpdate;

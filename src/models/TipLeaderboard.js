@@ -1,12 +1,9 @@
-const Base = require('./Base');
-const TipLeaderboardItem = require('./TipLeaderboardItem');
-
+import Base from './Base.js';
+import TipLeaderboardItem from './TipLeaderboardItem.js';
 class TipLeaderboard extends Base {
   constructor (client, data) {
     super(client);
-
-    this.leaderboard = data.leaderboard.map((leaderboard) => new TipLeaderboardItem(client, leaderboard));
+    this.leaderboard = data?.leaderboard.map((leaderboard) => new TipLeaderboardItem(client, leaderboard));
   }
 }
-
-module.exports = TipLeaderboard;
+export default TipLeaderboard;

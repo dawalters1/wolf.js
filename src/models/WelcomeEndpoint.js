@@ -1,12 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class WelcomeEndpoint extends Base {
   constructor (client, data) {
     super(client);
-
-    this.avatarEndpoint = data.avatarEndpoint;
-    this.mmsUploadEndpoint = data.mmsUploadEndpoint;
+    this.avatarEndpoint = data?.avatarEndpoint;
+    this.mmsUploadEndpoint = data?.mmsUploadEndpoint;
   }
 }
-
-module.exports = WelcomeEndpoint;
+export default WelcomeEndpoint;

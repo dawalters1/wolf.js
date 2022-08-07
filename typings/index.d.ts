@@ -14,7 +14,7 @@ export class WOLF {
 
     public websocket: Websocket;
     public multimedia: Multimedia;
-
+    public commandHandler: CommandHandler;
     public achievement: AchievementHelper;
     public banned: BannedHelper;
     public charm: CharmHelper;

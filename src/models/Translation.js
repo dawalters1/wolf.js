@@ -1,12 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class Translation extends Base {
   constructor (client, data) {
     super(client);
-
-    this.languageId = data.languageId;
-    this.text = data.text;
+    this.languageId = data?.languageId;
+    this.text = data?.text;
   }
 }
-
-module.exports = Translation;
+export default Translation;

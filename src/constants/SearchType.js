@@ -1,4 +1,6 @@
-module.exports = {
-  GROUP: 'group',
-  SUBSCRIBER: 'subscriber'
+export const GROUP = 'group';
+export const SUBSCRIBER = 'subscriber';
+export default {
+  GROUP,
+  SUBSCRIBER
 };

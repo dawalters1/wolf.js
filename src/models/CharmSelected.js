@@ -1,19 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class CharmSelected extends Base {
   constructor (client, data) {
     super(client);
-
-    this.charmId = data.charmId;
-    this.position = data.position;
-  }
-
-  toJSON () {
-    return {
-      charmId: this.charmId,
-      position: this.position
-    };
+    this.charmId = data?.charmId;
+    this.position = data?.position;
   }
 }
-
-module.exports = CharmSelected;
+export default CharmSelected;

@@ -1,45 +1,46 @@
-const path = require('path');
-const fs = require('fs');
-const yaml = require('yaml');
-const EventEmitter = require('events');
+import path, { dirname } from 'path';
+import fs from 'fs';
+import yaml from 'yaml';
+import EventEmitter from 'events';
+import { LoginType, OnlineState, Command } from '../constants/index.js';
+import Websocket from './websocket/Websocket.js';
+import Multimedia from './multimedia/Client.js';
+import CommandHandler from '../command/CommandHandler.js';
+import Achievement from '../helper/achievement/Achievement.js';
+import Banned from '../helper/banned/Banned.js';
+import Charm from '../helper/charm/Charm.js';
+import Contact from '../helper/contact/Contact.js';
+import Discovery from '../helper/discovery/Discovery.js';
+import Event from '../helper/event/Event.js';
+import Group from '../helper/group/Group.js';
+import Messaging from '../helper/messaging/Messaging.js';
+import Notification from '../helper/notification/Notification.js';
+import Phrase from '../helper/phrase/Phrase.js';
+import Stage from '../helper/stage/Stage.js';
+import Store from '../helper/store/Store.js';
+import Subscriber from '../helper/subscriber/Subscriber.js';
+import Tipping from '../helper/tipping/Tipping.js';
+import Utility from '../utility/Utility.js';
+import { config, generateToken } from '../utils/index.js';
+import validator from '../validator/index.js';
+import { WOLFAPIError } from '../models/index.js';
+import { fileURLToPath } from 'url';
 
-const { LoginType, OnlineState, Command } = require('../constants');
-
-const Websocket = require('./websocket/Websocket');
-const Multimedia = require('./multimedia/Client');
-
-// #region Helpers
-
-const Achievement = require('../helper/achievement/Achievement');
-const Banned = require('../helper/banned/Banned');
-const Charm = require('../helper/charm/Charm');
-const Contact = require('../helper/contact/Contact');
-const Discovery = require('../helper/discovery/Discovery');
-const Event = require('../helper/event/Event');
-const Group = require('../helper/group/Group');
-const Messaging = require('../helper/messaging/Messaging');
-const Notification = require('../helper/notification/Notification');
-const Phrase = require('../helper/phrase/Phrase');
-const Stage = require('../helper/stage/Stage');
-const Store = require('../helper/store/Store');
-const Subscriber = require('../helper/subscriber/Subscriber');
-const Tipping = require('../helper/tipping/Tipping');
-const Utility = require('../utility/Utility');
-const { validateBotConfig, generateToken } = require('../utils');
-
-const validator = require('../validator');
-const { WOLFAPIError } = require('../models');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // #endregion
 class WOLF extends EventEmitter {
   constructor () {
     super();
 
-    validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));
+    config.validateUserConfig(this, yaml.parse(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8')));
+    config.validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));
 
     this.websocket = new Websocket(this);
     this.multimedia = new Multimedia(this);
-
+    this.utility = new Utility(this);
+    this.commandHandler = new CommandHandler(this);
     this.achievement = new Achievement(this);
     this.banned = new Banned(this);
     this.charm = new Charm(this);
@@ -54,29 +55,22 @@ class WOLF extends EventEmitter {
     this.store = new Store(this);
     this.subscriber = new Subscriber(this);
     this.tipping = new Tipping(this);
-
-    this.utility = new Utility(this);
   }
 
   login () {
     const loginDetails = this.config.get('app.login');
-
     if (!loginDetails) {
       throw new WOLFAPIError('loginDetails must be set in config');
     }
-
     const { email, password, onlineState, token } = loginDetails;
-
     if (validator.isNullOrWhitespace(email)) {
       throw new WOLFAPIError('email cannot be null or empty', { email });
     }
-
     if (validator.isNullOrWhitespace(password)) {
       throw new Error('password cannot be null or empty');
     }
-
     if (validator.isNullOrUndefined(onlineState)) {
-      loginDetails.onlineState = OnlineState.ONLINE;
+      this.config.app.login.onlineState = OnlineState.ONLINE;
     } else {
       if (!validator.isValidNumber(onlineState)) {
         throw new Error('onlineState must be a valid number');
@@ -86,21 +80,31 @@ class WOLF extends EventEmitter {
         throw new Error('onlineState is not valid');
       }
     }
-
-    loginDetails.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
-
+    this.config.app.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
     if (!token) {
-      loginDetails.token = generateToken(email, password);
+      this.config.app.login.token = generateToken(email, password);
     }
-
-    this.websocket._init();
+    this.websocket._create();
   }
 
   async logout () {
     this.websocket.emit(Command.SECURITY_LOGOUT);
-
     // TODO: cache handling
   }
-}
 
-module.exports = WOLF;
+  async meatdata (url) {
+    if (validator.isNullOrUndefined(url)) {
+      throw new WOLFAPIError('url cannot be null or empty', { url });
+    } else if (typeof url !== 'string') {
+      throw new WOLFAPIError('url must be type string', { url });
+    }
+
+    return await this.websocket.emit(Command.METADATA_URL, {
+      headers: {
+        version: 2
+      },
+      body: { url }
+    });
+  }
+}
+export default WOLF;

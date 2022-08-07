@@ -1,39 +1,76 @@
-module.exports = {
-  NOT_SPECIFIED: 0,
-  ENGLISH: 1,
-  GERMAN: 3,
-  SPANISH: 4,
-  FRENCH: 6,
-  POLISH: 10,
-  CHINESE_SIMPLIFIED: 11,
-  RUSSIAN: 12,
-  ITALIAN: 13,
-  ARABIC: 14,
-  PERSIAN_FARSI: 15,
-  GREEK: 16,
-  PORTUGUESE: 17,
-  HINDI: 18,
-  JAPANESE: 19,
-  LATIN_SPANISH: 20,
-  SLOVAK: 21,
-  CZECH: 22,
-  DANISH: 24,
-  FINNISH: 25,
-  HUNGARIAN: 27,
-  BAHASA_INDONESIA: 28,
-  MALAY: 29,
-  DUTCH: 30,
-  NORWEGIAN: 31,
-  SWEDISH: 32,
-  THAI: 33,
-  TURKISH: 34,
-  VIETNAMESE: 35,
-  KOREAN: 36,
-  BRAZILIAN_PORTUGUESE: 37,
-  ESTONIAN: 39,
-  KAZAKH: 41,
-  LATVIAN: 42,
-  LITHUANIAN: 43,
-  UKRAINIAN: 44,
-  BULGARIAN: 45
+export const NOT_SPECIFIED = 0;
+export const ENGLISH = 1;
+export const GERMAN = 3;
+export const SPANISH = 4;
+export const FRENCH = 6;
+export const POLISH = 10;
+export const CHINESE_SIMPLIFIED = 11;
+export const RUSSIAN = 12;
+export const ITALIAN = 13;
+export const ARABIC = 14;
+export const PERSIAN_FARSI = 15;
+export const GREEK = 16;
+export const PORTUGUESE = 17;
+export const HINDI = 18;
+export const JAPANESE = 19;
+export const LATIN_SPANISH = 20;
+export const SLOVAK = 21;
+export const CZECH = 22;
+export const DANISH = 24;
+export const FINNISH = 25;
+export const HUNGARIAN = 27;
+export const BAHASA_INDONESIA = 28;
+export const MALAY = 29;
+export const DUTCH = 30;
+export const NORWEGIAN = 31;
+export const SWEDISH = 32;
+export const THAI = 33;
+export const TURKISH = 34;
+export const VIETNAMESE = 35;
+export const KOREAN = 36;
+export const BRAZILIAN_PORTUGUESE = 37;
+export const ESTONIAN = 39;
+export const KAZAKH = 41;
+export const LATVIAN = 42;
+export const LITHUANIAN = 43;
+export const UKRAINIAN = 44;
+export const BULGARIAN = 45;
+export default {
+  NOT_SPECIFIED,
+  ENGLISH,
+  GERMAN,
+  SPANISH,
+  FRENCH,
+  POLISH,
+  CHINESE_SIMPLIFIED,
+  RUSSIAN,
+  ITALIAN,
+  ARABIC,
+  PERSIAN_FARSI,
+  GREEK,
+  PORTUGUESE,
+  HINDI,
+  JAPANESE,
+  LATIN_SPANISH,
+  SLOVAK,
+  CZECH,
+  DANISH,
+  FINNISH,
+  HUNGARIAN,
+  BAHASA_INDONESIA,
+  MALAY,
+  DUTCH,
+  NORWEGIAN,
+  SWEDISH,
+  THAI,
+  TURKISH,
+  VIETNAMESE,
+  KOREAN,
+  BRAZILIAN_PORTUGUESE,
+  ESTONIAN,
+  KAZAKH,
+  LATVIAN,
+  LITHUANIAN,
+  UKRAINIAN,
+  BULGARIAN
 };

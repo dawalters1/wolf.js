@@ -1,5 +1,4 @@
-const { StatusCodes } = require('http-status-codes');
-
+import { StatusCodes } from 'http-status-codes';
 class Response {
   constructor ({ code, body, headers }) {
     this.code = code;
@@ -11,5 +10,4 @@ class Response {
     return this.code >= StatusCodes.OK && this.code < StatusCodes.MULTIPLE_CHOICES;
   }
 }
-
-module.exports = Response;
+export default Response;

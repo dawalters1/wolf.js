@@ -1,15 +1,11 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class GroupAudioSlotRequest extends Base {
   constructor (client, data) {
     super(client);
-
-    this.slotId = data.slotId;
-    this.groupId = data.groupId;
-    this.reservedOccupierId = data.reservedOccupierId;
-    this.reservedExpiresAt = data.reservedExpiresAt;
+    this.slotId = data?.slotId;
+    this.groupId = data?.groupId;
+    this.reservedOccupierId = data?.reservedOccupierId;
+    this.reservedExpiresAt = data?.reservedExpiresAt;
   }
-  // TODO: Methods
 }
-
-module.exports = GroupAudioSlotRequest;
+export default GroupAudioSlotRequest;

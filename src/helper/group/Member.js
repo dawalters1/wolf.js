@@ -1,8 +1,4 @@
-
-const Base = require('../Base');
-
+import Base from '../Base.js';
 class Member extends Base {
-
 }
-
-module.exports = Member;
+export default Member;

@@ -1,5 +1,8 @@
-module.exports = {
-  IDLE: 0,
-  PLAYING: 1,
-  MUTED: 2
+export const IDLE = 0;
+export const PLAYING = 1;
+export const MUTED = 2;
+export default {
+  IDLE,
+  PLAYING,
+  MUTED
 };

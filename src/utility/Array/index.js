@@ -1,7 +1,6 @@
-const _ = require('lodash');
-const validator = require('../../validator');
-const WOLFAPIError = require('../../models/WOLFAPIError');
-
+import _ from 'lodash';
+import validator from '../../validator/index.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 class ArrayUtility {
   chunk (array, length) {
     if (validator.isNullOrUndefined(array)) {
@@ -9,7 +8,6 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     if (validator.isNullOrUndefined(length)) {
       throw new WOLFAPIError('length cannot be null or undefined', { length });
     } else if (!validator.isValidNumber(length)) {
@@ -17,7 +15,6 @@ class ArrayUtility {
     } else if (validator.isLessThanOrEqualZero(length)) {
       throw new WOLFAPIError('length cannot be less than or equal to 0', { length });
     }
-
     return _.chunk(array, length);
   }
 
@@ -27,7 +24,6 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     return _.shuffle(array);
   }
 
@@ -37,7 +33,6 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     if (validator.isNullOrUndefined(amount)) {
       throw new WOLFAPIError('amount cannot be null or undefined', { amount });
     } else if (!validator.isValidNumber(amount)) {
@@ -45,7 +40,6 @@ class ArrayUtility {
     } else if (validator.isLessThanOrEqualZero(amount)) {
       throw new WOLFAPIError('amount cannot be less than or equal to 0', { amount });
     }
-
     return amount === 1 ? _.sample(array) : _.sampleSize(array, amount);
   }
 
@@ -55,7 +49,6 @@ class ArrayUtility {
     } else if (!Array.isArray(arrays)) {
       throw new WOLFAPIError('arrays must be type array', { arrays });
     }
-
     return _.join(arrays);
   }
 
@@ -65,7 +58,6 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     return _.reverse(array);
   }
 
@@ -75,7 +67,6 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     if (validator.isNullOrUndefined(length)) {
       throw new WOLFAPIError('length cannot be null or undefined', { length });
     } else if (!validator.isValidNumber(length)) {
@@ -83,7 +74,6 @@ class ArrayUtility {
     } else if (validator.isLessThanOrEqualZero(length)) {
       throw new WOLFAPIError('length cannot be less than or equal to 0', { length });
     }
-
     return _.take(array, length);
   }
 
@@ -93,15 +83,12 @@ class ArrayUtility {
     } else if (!Array.isArray(array)) {
       throw new WOLFAPIError('array must be type array', { array });
     }
-
     if (validator.isNullOrUndefined(object)) {
       throw new WOLFAPIError('length cannot be null or undefined', { length });
     } else if (typeof object !== 'object') {
       throw new WOLFAPIError('object must be an object', { object });
     }
-
     return _.includes(array, object);
   }
 }
-
-module.exports = ArrayUtility;
+export default ArrayUtility;

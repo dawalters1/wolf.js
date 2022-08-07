@@ -1,3 +1,4 @@
+import _ from 'lodash';
 class Base {
   constructor (client) {
     this.client = client;
@@ -8,6 +9,9 @@ class Base {
       this[key] = data[key];
     }
   }
-}
 
-module.exports = Base;
+  toJSON () {
+    return _.omit(this, ['client']);
+  }
+}
+export default Base;

@@ -1,12 +1,9 @@
-const Base = require('./Base');
-
+import Base from './Base.js';
 class TipContext extends Base {
   constructor (client, data) {
     super(client);
-
-    this.type = data.type;
-    this.id = data.id;
+    this.type = data?.type;
+    this.id = data?.id;
   }
 }
-
-module.exports = TipContext;
+export default TipContext;

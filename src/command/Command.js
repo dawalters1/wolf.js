@@ -1,19 +1,15 @@
-const WOLFAPIError = require('../models/WOLFAPIError');
-const validator = require('../validator');
-
+import WOLFAPIError from '../models/WOLFAPIError.js';
+import validator from '../validator/index.js';
 const callbacks = {
   GROUP: 'group',
   PRIVATE: 'private',
   BOTH: 'both'
 };
-
-const validation = (command) => {
-  if (!(command instanceof require('./Command'))) {
+const validation = async (command) => {
+  if (!(command instanceof (await import('./Command.js')).default)) {
     throw new WOLFAPIError('object must be an instance of command', { command });
   }
-
   const { phraseName, callbackObject, children } = command;
-
   if (typeof (phraseName) !== 'string') {
     throw new WOLFAPIError('phraseName must be a string', { phraseName });
   } else if (validator.isNullOrUndefined(phraseName)) {
@@ -21,26 +17,21 @@ const validation = (command) => {
   } else if (validator.isNullOrWhitespace(phraseName)) {
     throw new WOLFAPIError('phraseName cannot be null or empty', { phraseName });
   }
-
   if (validator.isNullOrUndefined(callbackObject)) {
     throw new WOLFAPIError('callbacks cannot be null or undefined', { callbackObject });
   } else if (typeof callbackObject !== 'object') {
     throw new WOLFAPIError('callbacks must be an object', { callbackObject });
   }
-
   Object.keys(callbackObject).forEach(callback => {
     if (!Object.values(callbacks).includes(callback)) {
       throw new WOLFAPIError('Invalid callback', { callback });
     }
   });
-
   if (!validator.isValidArray(children)) {
     throw new WOLFAPIError('children must be an array', { children });
   }
-
   return children.forEach(cmd => validation(cmd));
 };
-
 class Command {
   static get getCallback () {
     return callbacks;
@@ -50,9 +41,7 @@ class Command {
     this.phraseName = phraseName;
     this.callbackObject = callbackObject;
     this.children = (Array.isArray(children) ? children : [children]).filter(Boolean);
-
     validation(this);
   }
 }
-
-module.exports = Command;
+export default Command;

@@ -1,13 +1,10 @@
-const Base = require('../../models/Base');
-const Member = require('./Member');
-
-const WOLFAPIError = require('../../models/WOLFAPIError');
-const validator = require('../../validator');
-
+import Base from '../../models/Base.js';
+import Member from './Member.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
+import validator from '../../validator/index.js';
 class Group extends Base {
   constructor (client) {
     super(client);
-
     this.member = new Member(client);
   }
 
@@ -19,7 +16,6 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
-
     if (validator.isNullOrUndefined(size)) {
       throw new WOLFAPIError('size cannot be null or undefined', { size });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -27,9 +23,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(size)) {
       throw new WOLFAPIError('size cannot be less than or equal to 0', { size });
     }
-
     // TODO:
   }
 }
-
-module.exports = Group;
+export default Group;

@@ -1,10 +1,10 @@
-const assertions = require('./Assertions');
-const config = require('./config');
-const generateToken = require('./generateToken');
-const patch = require('./patch');
-
-module.exports = {
-  assertions,
+import config from './config.js';
+import generateToken from './generateToken.js';
+import patch from './patch.js';
+export { config };
+export { generateToken };
+export { patch };
+export default {
   config,
   generateToken,
   patch
