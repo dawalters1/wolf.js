@@ -1,23 +1,27 @@
 import { Command, MessageTypes, MessageType, MessageLinkingType } from '../../constants/index.js';
-import Base from '../Base.js';
-import Subscription from './Subscription.js';
+import { Base } from '../Base.js';
+import { Subscription } from './Subscription.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import fileType from 'file-type';
 import * as nanoid from 'nanoid';
 import messageBuilder from '../../utils/messageBuilder.js';
+
 // eslint-disable-next-line no-unused-vars
 const validateOptions = (options) => {
   const _options = Object.assign({}, options);
+
   _options.includeEmbeds = typeof _options.includeEmbeds === 'boolean' ? _options.includeEmbeds : false;
   _options.links = _options.links && Array.isArray(_options.links) ? _options.links : [];
   _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
   _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : false;
   _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
   _options.formatting.alert = typeof _options.formatting.alert === 'boolean' ? _options.formatting.alert : false;
+
   if (_options.formatting.me && _options.formatting.alert) {
     throw new models.WOLFAPIError('you cannot /me and /alert the same message', _options.formatting);
   }
+
   _options.links.forEach(link => {
     if (validator.isNullOrUndefined(link.start)) {
       throw new models.WOLFAPIError('start cannot be null or undefined', { link });
@@ -28,6 +32,7 @@ const validateOptions = (options) => {
     } else if (validator.isLessThanZero(link.start)) {
       throw new models.WOLFAPIError('start cannot be less than 0', { link });
     }
+
     if (validator.isNullOrUndefined(link.end)) {
       throw new models.WOLFAPIError('end cannot be null or undefined', { link });
     } else if (!validator.isValidNumber(link.end)) {
@@ -39,6 +44,7 @@ const validateOptions = (options) => {
     } else if (link.end < link.start) {
       throw new models.WOLFAPIError('end must be larger than start', { link });
     }
+
     if (validator.isNullOrUndefined(link.type)) {
       throw new models.WOLFAPIError('type cannot be null or undefined', { link });
     } else if (validator.isNullOrWhitespace(link.type)) {
@@ -46,14 +52,17 @@ const validateOptions = (options) => {
     } else if (!Object.values(MessageLinkingType).includes(link.type)) {
       throw new models.WOLFAPIError('type is not valid', { link });
     }
+
     if (validator.isNullOrUndefined(link.value)) {
       throw new models.WOLFAPIError('value cannot be null or undefined', { link });
     } else if (validator.isNullOrWhitespace(link.value)) {
       throw new models.WOLFAPIError('value cannot be null or empty', { link });
     }
   });
+
   return _options;
 };
+
 class Messaging extends Base {
   constructor (client) {
     super(client);
@@ -99,6 +108,7 @@ class Messaging extends Base {
     if (!Object.values(MessageTypes).includes(targetType)) {
       throw new models.WOLFAPIError('Unknown Message Target', { targetType });
     }
+
     if (validator.isNullOrUndefined(targetId)) {
       throw new models.WOLFAPIError('targetId cannot be null or undefined', { targetId });
     } else if (!validator.isValidNumber(targetId)) {
@@ -106,15 +116,20 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(targetId)) {
       throw new models.WOLFAPIError('targetId cannot be less than or equal to 0', { targetId });
     }
+
     if (validator.isNullOrUndefined(content)) {
       throw new models.WOLFAPIError('content cannot be null or undefined', { content });
     }
+
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : MessageType.TEXT_PLAIN;
+
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client._botConfig.get('multimedia.messaging');
+
       if (!messageConfig.mimeTypes.includes(mimeType)) {
         throw new models.WOLFAPIError('mimeType is unsupported', mimeType);
       }
+
       return await this.client.multimedia.upload(messageConfig.route, {
         data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
         mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,
@@ -124,13 +139,17 @@ class Messaging extends Base {
       });
     }
     options = validateOptions(options);
+
     if (options.links && options.links.some((link) => link.start > content.length || link.end > content.length)) {
       throw new models.WOLFAPIError('deeplinks start index and end index must be less than or equal to the contents length', { faults: options.links.filter((link) => link.start > content.length || link.end > content.length) });
     }
+
     const responses = await (await messageBuilder(this.client, targetId, targetType === MessageTypes.GROUP, content, options)).reduce(async (result, message) => {
       (await result).push(await this.client.websocket.emit(Command.MESSAGE_SEND, message));
+
       return result;
     }, []);
+
     return responses.length > 1
       ? new models.Response({
         code: 207,
@@ -148,9 +167,10 @@ class Messaging extends Base {
   }
 
   async sendMessage (commandOrMessage, content, options = undefined) {
-    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).default)) {
+    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).CommandContext) && !(commandOrMessage instanceof (await import('../../models/Message.js')).Message)) {
       throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
+
     return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, options);
   }
 
@@ -162,6 +182,7 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
@@ -169,11 +190,13 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
+
     const response = await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
       isGroup: true,
       recipientId: targetGroupId,
       timestamp
     });
+
     return (response?.body ?? []).map((message) => new models.Message(this.client, message));
   }
 
@@ -185,6 +208,7 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
@@ -192,6 +216,7 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
+
     return await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
       isGroup: true,
       metadata: {
@@ -210,6 +235,7 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
@@ -217,6 +243,7 @@ class Messaging extends Base {
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
+
     return await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
       isGroup: true,
       metadata: {
@@ -227,4 +254,5 @@ class Messaging extends Base {
     });
   }
 }
-export default Messaging;
+
+export { Messaging };

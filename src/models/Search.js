@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Search extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class Search extends Base {
     this.reason = data?.reason;
   }
 }
-export default Search;
+
+export { Search };

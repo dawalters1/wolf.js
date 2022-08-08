@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Achievement extends Base {
   constructor (client, data) {
     super(client);
@@ -14,4 +15,5 @@ class Achievement extends Base {
     this.acquisitionPercentage = data?.acquisitionPercentage;
   }
 }
-export default Achievement;
+
+export { Achievement };

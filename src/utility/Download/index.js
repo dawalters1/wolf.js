@@ -1,3 +1,4 @@
 class Download {
 }
-export default Download;
+
+export { Download };

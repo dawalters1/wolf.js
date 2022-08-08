@@ -1,5 +1,6 @@
-import Base from './Base.js';
-import NotificationAction from './NotificationAction.js';
+import { Base } from './Base.js';
+import { NotificationAction } from './NotificationAction.js';
+
 class Notification extends Base {
   constructor (client, data) {
     super(client);
@@ -20,4 +21,5 @@ class Notification extends Base {
     this.type = data?.type;
   }
 }
-export default Notification;
+
+export { Notification };

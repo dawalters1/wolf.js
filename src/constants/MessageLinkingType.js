@@ -4,6 +4,7 @@ export const GROUP_PROFILE = 'groupProfile';
 export const SUBSCRIBER_CHAT = 'subscriberChat';
 export const SUBSCRIBER_PROFILE = 'subscriberProfile' // wolf://user/{subscriberId}/profile
 ;
+
 export default {
   EXTERNAL,
   GROUP_CHAT,

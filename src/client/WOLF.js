@@ -3,24 +3,24 @@ import fs from 'fs';
 import yaml from 'yaml';
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command } from '../constants/index.js';
-import Websocket from './websocket/Websocket.js';
-import Multimedia from './multimedia/Client.js';
-import CommandHandler from '../command/CommandHandler.js';
-import Achievement from '../helper/achievement/Achievement.js';
-import Banned from '../helper/banned/Banned.js';
-import Charm from '../helper/charm/Charm.js';
-import Contact from '../helper/contact/Contact.js';
-import Discovery from '../helper/discovery/Discovery.js';
-import Event from '../helper/event/Event.js';
-import Group from '../helper/group/Group.js';
-import Messaging from '../helper/messaging/Messaging.js';
-import Notification from '../helper/notification/Notification.js';
-import Phrase from '../helper/phrase/Phrase.js';
-import Stage from '../helper/stage/Stage.js';
-import Store from '../helper/store/Store.js';
-import Subscriber from '../helper/subscriber/Subscriber.js';
-import Tipping from '../helper/tipping/Tipping.js';
-import Utility from '../utility/Utility.js';
+import { Websocket } from './websocket/Websocket.js';
+import { Multimedia } from './multimedia/Client.js';
+import { CommandHandler } from '../command/CommandHandler.js';
+import { Achievement } from '../helper/achievement/Achievement.js';
+import { Banned } from '../helper/banned/Banned.js';
+import { Charm } from '../helper/charm/Charm.js';
+import { Contact } from '../helper/contact/Contact.js';
+import { Discovery } from '../helper/discovery/Discovery.js';
+import { Event } from '../helper/event/Event.js';
+import { Group } from '../helper/group/Group.js';
+import { Messaging } from '../helper/messaging/Messaging.js';
+import { Notification } from '../helper/notification/Notification.js';
+import { Phrase } from '../helper/phrase/Phrase.js';
+import { Stage } from '../helper/stage/Stage.js';
+import { Store } from '../helper/store/Store.js';
+import { Subscriber } from '../helper/subscriber/Subscriber.js';
+import { Tipping } from '../helper/tipping/Tipping.js';
+import { Utility } from '../utility/Utility.js';
 import { config, generateToken } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
@@ -59,16 +59,21 @@ class WOLF extends EventEmitter {
 
   login () {
     const loginDetails = this.config.get('app.login');
+
     if (!loginDetails) {
       throw new WOLFAPIError('loginDetails must be set in config');
     }
+
     const { email, password, onlineState, token } = loginDetails;
+
     if (validator.isNullOrWhitespace(email)) {
       throw new WOLFAPIError('email cannot be null or empty', { email });
     }
+
     if (validator.isNullOrWhitespace(password)) {
       throw new Error('password cannot be null or empty');
     }
+
     if (validator.isNullOrUndefined(onlineState)) {
       this.config.app.login.onlineState = OnlineState.ONLINE;
     } else {
@@ -81,6 +86,7 @@ class WOLF extends EventEmitter {
       }
     }
     this.config.app.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
+
     if (!token) {
       this.config.app.login.token = generateToken(email, password);
     }
@@ -106,5 +112,10 @@ class WOLF extends EventEmitter {
       body: { url }
     });
   }
+
+  get SPLIT_REGEX () {
+    return /[\n\t,،\s+]/g;
+  }
 }
-export default WOLF;
+
+export { WOLF };

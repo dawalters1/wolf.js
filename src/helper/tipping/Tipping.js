@@ -1,7 +1,8 @@
-import Base from '../Base.js';
+import { Base } from '../Base.js';
 import validator from '../../validator/index.js';
 import { Command, TipPeriod, TipType, TipDirection, ContextType } from '../../constants/index.js';
 import models from '../../models/index.js';
+
 class Tipping extends Base {
   async _subscribeToGroup () {
     return await this.client.websocket.emit(Command.TIP_GROUP_SUBSCRIBE);
@@ -13,6 +14,7 @@ class Tipping extends Base {
 
   async tip (targetSubscriberId, targetGroupId, context, charms) {
     charms = Array.isArray(charms) ? charms : [charms];
+
     if (validator.isNullOrUndefined(targetSubscriberId)) {
       throw new models.WOLFAPIError('targetSubscriberId cannot be null or undefined', { targetSubscriberId });
     } else if (!validator.isValidNumber(targetSubscriberId)) {
@@ -20,6 +22,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetSubscriberId)) {
       throw new models.WOLFAPIError('targetSubscriberId cannot be less than or equal to 0', { targetSubscriberId });
     }
+
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -27,6 +30,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(context)) {
       throw new models.WOLFAPIError('context cannot be null or undefined', { context });
     } else if (!Reflect.has(context, 'type')) {
@@ -36,6 +40,7 @@ class Tipping extends Base {
     } else if (!Object.values(ContextType).includes(context.type)) {
       throw new models.WOLFAPIError('type is not valid', { context });
     }
+
     if (context.type === ContextType.MESSAGE) {
       if (!Reflect.has(context, 'id')) {
         throw new models.WOLFAPIError('context must have property id', { contextId: context.id });
@@ -48,10 +53,12 @@ class Tipping extends Base {
       }
       context.id = parseInt(context.id);
     }
+
     for (const charm of charms) {
       if (validator.isNullOrUndefined(charm)) {
         throw new models.WOLFAPIError('charm cannot be null or undefined', { charm });
       }
+
       if (!Reflect.has(charm, 'quantity')) {
         throw new models.WOLFAPIError('charm must have quantity', { charm });
       } else if (validator.isNullOrUndefined(charm.quantity)) {
@@ -61,6 +68,7 @@ class Tipping extends Base {
       } else if (validator.isLessThanOrEqualZero(charm.quantity)) {
         throw new models.WOLFAPIError('quantity cannot be less than or equal to 0', { charm });
       }
+
       if (!Reflect.has(charm, 'id')) {
         throw new models.WOLFAPIError('charm must have property id', { charm });
       } else if (!validator.isValidNumber(charm.id)) {
@@ -69,6 +77,7 @@ class Tipping extends Base {
         throw new models.WOLFAPIError('id cannot be less than or equal to 0', { charm });
       }
     }
+
     return await this.client.websocket.emit(Command.TIP_ADD, {
       subscriberId: parseInt(targetSubscriberId),
       groupId: parseInt(targetGroupId),
@@ -85,6 +94,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(limit)) {
       throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(limit)) {
@@ -92,6 +102,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(limit)) {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
+
     if (validator.isNullOrUndefined(offset)) {
       throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
     } else if (!validator.isValidNumber(offset)) {
@@ -99,6 +110,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanZero(offset)) {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
+
     const response = await this.client.websocket.emit(Command.TIP_DETAIL, {
       groupId: parseInt(targetGroupId),
       id: parseInt(timestamp),
@@ -106,6 +118,7 @@ class Tipping extends Base {
       limit: parseInt(limit),
       offset: parseInt(offset)
     });
+
     return response.success ? new models.TipDetail(this.client, response.body) : undefined;
   }
 
@@ -117,6 +130,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(limit)) {
       throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(limit)) {
@@ -124,6 +138,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(limit)) {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
+
     if (validator.isNullOrUndefined(offset)) {
       throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
     } else if (!validator.isValidNumber(offset)) {
@@ -131,6 +146,7 @@ class Tipping extends Base {
     } else if (validator.isLessThanZero(offset)) {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
+
     const response = await this.client.websocket.emit(Command.TIP_SUMMARY, {
       groupId: parseInt(targetGroupId),
       id: parseInt(timestamp),
@@ -138,6 +154,7 @@ class Tipping extends Base {
       limit,
       offset
     });
+
     return response.success ? new models.TipSummary(this.client, response.body) : undefined;
   }
 
@@ -149,16 +166,19 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod cannot be null or empty', { tipPeriod });
     } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod is not valid', { tipPeriod });
     }
+
     if (validator.isNullOrWhitespace(tipType)) {
       throw new models.WOLFAPIError('tipType cannot be null or empty', { tipType });
     } else if (!Object.values(TipType).includes(tipType)) {
       throw new models.WOLFAPIError('tipType is not valid', { tipType });
     }
+
     if (tipType !== TipType.CHARM) {
       if (validator.isNullOrWhitespace(tipDirection)) {
         throw new models.WOLFAPIError('tipDirection cannot be null or empty', { tipDirection });
@@ -166,12 +186,14 @@ class Tipping extends Base {
         throw new models.WOLFAPIError('tipDirection is not valid', { tipDirection });
       }
     }
+
     const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GROUP, {
       groupId: parseInt(targetGroupId),
       period: tipPeriod,
       type: tipType,
       tipDirection: tipType === TipType.CHARM ? undefined : tipDirection
     });
+
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
@@ -183,16 +205,19 @@ class Tipping extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod cannot be null or empty', { tipPeriod });
     } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod is not valid', { tipPeriod });
     }
+
     if (validator.isNullOrWhitespace(tipType)) {
       throw new models.WOLFAPIError('tipType cannot be null or empty', { tipType });
     } else if (!Object.values(TipType).includes(tipType)) {
       throw new models.WOLFAPIError('tipType is not valid', { tipType });
     }
+
     if (tipType !== TipType.CHARM) {
       if (validator.isNullOrWhitespace(tipDirection)) {
         throw new models.WOLFAPIError('tipDirection cannot be null or empty', { tipDirection });
@@ -200,12 +225,14 @@ class Tipping extends Base {
         throw new models.WOLFAPIError('tipDirection is not valid', { tipDirection });
       }
     }
+
     const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GROUP_SUMMARY, {
       id: parseInt(targetGroupId),
       period: tipPeriod,
       type: tipType,
       tipDirection: tipType === TipType.CHARM ? null : tipDirection
     });
+
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 
@@ -215,19 +242,23 @@ class Tipping extends Base {
     } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod is not valid', { tipPeriod });
     }
+
     if (validator.isNullOrWhitespace(tipType)) {
       throw new models.WOLFAPIError('tipType cannot be null or empty', { tipType });
     } else if (!Object.values(TipType).includes(tipType)) {
       throw new models.WOLFAPIError('tipType is not valid', { tipType });
     }
+
     if (tipType === TipType.CHARM) {
       throw new models.WOLFAPIError('tipType is not valid', { tipType });
     }
+
     const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GLOBAL, {
       period: tipPeriod,
       type: tipType,
       tipDirection: tipType === TipType.GROUP ? undefined : tipDirection
     });
+
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
@@ -237,10 +268,13 @@ class Tipping extends Base {
     } else if (!Object.values(TipPeriod).includes(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod is not valid', { tipPeriod });
     }
+
     const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GLOBAL_SUMMARY, {
       period: tipPeriod
     });
+
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 }
-export default Tipping;
+
+export { Tipping };

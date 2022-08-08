@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Event extends Base {
   constructor (client, data) {
     super(client);
@@ -18,4 +19,5 @@ class Event extends Base {
     this.updatedAt = data?.updatedAt;
   }
 }
-export default Event;
+
+export { Event };

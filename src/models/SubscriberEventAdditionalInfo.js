@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class SubscriberEventAdditionalInfo extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class SubscriberEventAdditionalInfo extends Base {
     this.startsAt = data?.startsAt;
   }
 }
-export default SubscriberEventAdditionalInfo;
+
+export { SubscriberEventAdditionalInfo };

@@ -4,4 +4,5 @@ class ValidUrl {
     this.hostname = hostname;
   }
 }
-export default ValidUrl;
+
+export { ValidUrl };

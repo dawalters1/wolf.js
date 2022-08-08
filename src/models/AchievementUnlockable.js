@@ -1,5 +1,6 @@
-import AchievementUnlockableAdditionalInfo from './AchievementUnlockableAdditionalInfo.js';
-import Base from './Base.js';
+import { AchievementUnlockableAdditionalInfo } from './AchievementUnlockableAdditionalInfo.js';
+import { Base } from './Base.js';
+
 class AchievementUnlockable extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class AchievementUnlockable extends Base {
     this.additionalInfo = new AchievementUnlockableAdditionalInfo(client, data?.additionalInfo);
   }
 }
-export default AchievementUnlockable;
+
+export { AchievementUnlockable };

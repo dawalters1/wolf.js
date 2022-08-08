@@ -1,8 +1,9 @@
-import Base from './Base.js';
-import GroupStatsActive from './GroupStatsActive.js';
-import GroupStatsDetail from './GroupStatsDetail.js';
-import GroupStatsTop from './GroupStatsTop.js';
-import GroupStatsTrend from './GroupStatsTrend.js';
+import { Base } from './Base.js';
+import { GroupStatsActive } from './GroupStatsActive.js';
+import { GroupStatsDetail } from './GroupStatsDetail.js';
+import { GroupStatsTop } from './GroupStatsTop.js';
+import { GroupStatsTrend } from './GroupStatsTrend.js';
+
 class GroupStats extends Base {
   constructor (client, data) {
     super(client);
@@ -23,4 +24,5 @@ class GroupStats extends Base {
     this.trendsHours = new GroupStatsTrend(client, data?.trendsHours);
   }
 }
-export default GroupStats;
+
+export { GroupStats };

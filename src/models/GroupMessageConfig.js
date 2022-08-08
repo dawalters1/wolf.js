@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupMessageConfig extends Base {
   constructor (client, data) {
     super(client);
@@ -10,4 +11,5 @@ class GroupMessageConfig extends Base {
     this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
 }
-export default GroupMessageConfig;
+
+export { GroupMessageConfig };

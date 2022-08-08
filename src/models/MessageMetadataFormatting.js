@@ -1,6 +1,7 @@
-import Base from './Base.js';
-import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
-import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
+import { Base } from './Base.js';
+import { MessageMetadataFormattingGroupLink } from './MessageMetadataFormattingGroupLink.js';
+import { MessageMetadataFormattingUrl } from './MessageMetadataFormattingUrl.js';
+
 class MessageMetadataFormatting extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class MessageMetadataFormatting extends Base {
     this.links = data?.links ? data?.links.map((link) => new MessageMetadataFormattingUrl(client, link)) : null;
   }
 }
-export default MessageMetadataFormatting;
+
+export { MessageMetadataFormatting };

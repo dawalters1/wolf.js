@@ -1,7 +1,8 @@
-import Base from '../../models/Base.js';
-import Member from './Member.js';
-import WOLFAPIError from '../../models/WOLFAPIError.js';
+import { Base } from '../../models/Base.js';
+import { Member } from './Member.js';
+import { WOLFAPIError } from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
+
 class Group extends Base {
   constructor (client) {
     super(client);
@@ -16,6 +17,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (validator.isNullOrUndefined(size)) {
       throw new WOLFAPIError('size cannot be null or undefined', { size });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -26,4 +28,5 @@ class Group extends Base {
     // TODO:
   }
 }
-export default Group;
+
+export { Group };

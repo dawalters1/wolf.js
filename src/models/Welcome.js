@@ -1,6 +1,7 @@
-import Base from './Base.js';
-import Subscriber from './Subscriber.js';
-import WelcomeEndpoint from './WelcomeEndpoint.js';
+import { Base } from './Base.js';
+import { Subscriber } from './Subscriber.js';
+import { WelcomeEndpoint } from './WelcomeEndpoint.js';
+
 class Welcome extends Base {
   constructor (client, data) {
     super(client);
@@ -11,4 +12,5 @@ class Welcome extends Base {
     this.subscriber = data?.subscriber ? new Subscriber(client, data?.subscriber) : null;
   }
 }
-export default Welcome;
+
+export { Welcome };

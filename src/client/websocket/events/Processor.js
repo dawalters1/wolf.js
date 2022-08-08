@@ -14,6 +14,7 @@ class Processor {
             await Object.entries(group[1]).forEach(async (subGroup) => await processGroup(`${route}/${group[0]}`, subGroup));
           }
         };
+
         // Process the groupings
         for (const group of groups) {
           await processGroup(value[0], group);
@@ -27,14 +28,14 @@ class Processor {
   async process (eventString, data) {
     this.client.emit(Event.PACKET_RECEIVED, eventString, data);
 
-    console.log('handlers', this.handlers);
-
     const handler = this.handlers[eventString];
     const body = data?.body ?? data;
+
     if (handler) {
       return handler(this.client, body);
     }
     return this.client.emit(Event.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
   }
 }
-export default Processor;
+
+export { Processor };

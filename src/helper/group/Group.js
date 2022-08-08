@@ -1,19 +1,23 @@
 import { Capability, Command } from '../../constants/index.js';
-import Base from '../Base.js';
+import { Base } from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import Member from './Member.js';
+import { Member } from './Member.js';
+
 const buildGroupFromModule = (groupModule) => {
   const base = groupModule.base;
+
   base.memberCount = base.members;
   Reflect.deleteProperty(base, 'members');
   base.extended = groupModule.extended;
   base.audioConfig = groupModule.audioConfig;
   base.audioCounts = groupModule.audioCounts;
   base.messageConfig = groupModule.messageConfig;
+
   return base;
 };
+
 class Group extends Base {
   constructor (client) {
     super(client);
@@ -26,10 +30,13 @@ class Group extends Base {
       const response = await this.client.websocket.emit(Command.SUBSCRIBER_GROUP_LIST, {
         subscribe: true
       });
+
       if (response.success) {
         this.fetched = true;
+
         if (response.body.length > 0) {
           const groups = await this.getByIds(response.body.map((group) => group.id), true);
+
           for (const group of groups) {
             group.inGroup = true;
             group.capabilities = response.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
@@ -37,6 +44,7 @@ class Group extends Base {
         }
       }
     }
+
     return this.cache.filter((group) => group.InGroup);
   }
 
@@ -48,20 +56,25 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
+
     return (await this.getByIds([id]))[0];
   }
 
   async getByIds (ids, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
     if (!ids.length) {
       throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
     }
+
     if ([...new Set(ids)].length !== ids.length) {
       throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
     }
+
     for (const id of ids) {
       if (validator.isNullOrUndefined(id)) {
         throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -71,12 +84,16 @@ class Group extends Base {
         throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
+
     const groups = !forceNew ? this.cache.filter((group) => ids.includes(group.id)) : [];
+
     if (groups.length !== ids.length) {
       const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client._botConfig.get('batching.length')));
+
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(Command.GROUP_PROFILE, {
           headers: {
@@ -88,8 +105,10 @@ class Group extends Base {
             entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
           }
         });
+
         if (response.success) {
           const groupResponses = Object.values(response.body).map((groupResponse) => new models.Response(groupResponse));
+
           for (const [index, groupResponse] of groupResponses.entries()) {
             groups.push(groupResponse.success ? this._process(new models.Group(this.client, buildGroupFromModule(groupResponse.body))) : new models.Group(this.client, { id: idList[index] }));
           }
@@ -98,6 +117,7 @@ class Group extends Base {
         }
       }
     }
+
     return groups;
   }
 
@@ -107,12 +127,15 @@ class Group extends Base {
     } else if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
+
     if (!forceNew && this.cache.some((group) => this.client.utility.string.isEqual(group.name, name))) {
       return this.cache.find((group) => this.client.utility.string.isEqual(group.name, name));
     }
+
     const response = await this.client.websocket.emit(Command.GROUP_PROFILE, {
       headers: {
         version: 4
@@ -123,6 +146,7 @@ class Group extends Base {
         entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
       }
     });
+
     return response.success ? this._process(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
   }
 
@@ -134,6 +158,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
+
     return await this.client.websocket.emit(Command.GROUP_MEMBER_ADD, {
       groupId: id,
       password
@@ -146,6 +171,7 @@ class Group extends Base {
     } else if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
+
     return await this.client.websocket.emit(Command.GROUP_MEMBER_ADD, {
       name: name.toLowerCase(),
       password
@@ -160,6 +186,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
+
     return await this.client.websocket.emit(Command.GROUP_MEMBER_DELETE, {
       groupId: id
     });
@@ -171,10 +198,13 @@ class Group extends Base {
     } else if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
+
     const group = await this.getByName(name);
+
     if (!group.exists) {
       throw new models.WOLFAPIError('Unknown Group', { name });
     }
+
     return await this.leaveById(group.id);
   }
 
@@ -186,9 +216,11 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
+
     if (!validator.isValidBoolean(chronological)) {
       throw new models.WOLFAPIError('chronological must be a valid boolean', { chronological });
     }
+
     if (validator.isNullOrUndefined(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
@@ -196,6 +228,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(timestamp)) {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
+
     if (validator.isNullOrUndefined(limit)) {
       throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
     } else if (!validator.isValidNumber(limit)) {
@@ -203,6 +236,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(limit)) {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
+
     const response = await this.client.websocket.emit(Command.MESSAGE_GROUP_HISTORY_LIST, {
       headers: {
         version: 3
@@ -214,6 +248,7 @@ class Group extends Base {
         timestampEnd: timestamp === 0 ? undefined : parseInt(timestamp)
       }
     });
+
     return response.success ? response.body.map((message) => new models.Message(this.client, message)) : [];
   }
 
@@ -225,25 +260,31 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(id)) {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
+
     const response = await this.client.websocket.emit(Command.GROUP_STATS, {
       id: parseInt(id)
     });
+
     return response.success ? new models.GroupStats(this.client, response.body) : undefined;
   }
 
   async getRecommendationList () {
     const response = await this.client.websocket.emit(Command.GROUP_RECOMMENDATION_LIST);
+
     return response.success ? await this.getByIds(response.body.map((idHash) => idHash.id)) : [];
   }
 
   _process (value) {
     const existing = this.cache.find((group) => group.id === value.id);
+
     if (existing) {
       this._patch(existing, value);
     } else {
       this.cache.push(value);
     }
+
     return value;
   }
 }
-export default Group;
+
+export { Group };

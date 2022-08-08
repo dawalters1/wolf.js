@@ -35,6 +35,7 @@ export const LATVIAN = 42;
 export const LITHUANIAN = 43;
 export const UKRAINIAN = 44;
 export const BULGARIAN = 45;
+
 export default {
   NOT_SPECIFIED,
   ENGLISH,

@@ -1,7 +1,8 @@
-import Base from './Base.js';
-import MessageEdit from './MessageEdit.js';
-import MessageEmbed from './MessageEmbed.js';
-import MessageMetadata from './MessageMetadata.js';
+import { Base } from './Base.js';
+import { MessageEdit } from './MessageEdit.js';
+import { MessageEmbed } from './MessageEmbed.js';
+import { MessageMetadata } from './MessageMetadata.js';
+
 class Message extends Base {
   constructor (client, data) {
     super(client);
@@ -23,4 +24,5 @@ class Message extends Base {
     return this.client.messaging.sendMessage(this, content, options);
   }
 }
-export default Message;
+
+export { Message };

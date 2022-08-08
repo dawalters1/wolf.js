@@ -1,6 +1,7 @@
-import Base from './Base.js';
-import StoreProductDuration from './StoreProductDuration.js';
-import StoreProductImageList from './StoreProductImageList.js';
+import { Base } from './Base.js';
+import { StoreProductDuration } from './StoreProductDuration.js';
+import { StoreProductImageList } from './StoreProductImageList.js';
+
 class StoreProductProfile extends Base {
   constructor (client, data) {
     super(client);
@@ -22,4 +23,5 @@ class StoreProductProfile extends Base {
     this.heroImageUrl = data?.heroImageUrl;
   }
 }
-export default StoreProductProfile;
+
+export { StoreProductProfile };

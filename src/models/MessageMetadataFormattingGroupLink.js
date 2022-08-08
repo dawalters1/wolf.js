@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class MessageMetadataFormattingGroupLink extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class MessageMetadataFormattingGroupLink extends Base {
     this.groupId = data?.groupId;
   }
 }
-export default MessageMetadataFormattingGroupLink;
+
+export { MessageMetadataFormattingGroupLink };

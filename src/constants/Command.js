@@ -88,6 +88,7 @@ export const TIP_PRIVATE_SUBSCRIBE = 'tip private subscribe';
 export const TIP_SUMMARY = 'tip summary';
 export const TOPIC_PAGE_LAYOUT = 'topic page layout';
 export const TOPIC_PAGE_RECIPE_LIST = 'topic page recipe list';
+
 export default {
   ACHIEVEMENT,
   ACHIEVEMENT_CATEGORY_LIST,

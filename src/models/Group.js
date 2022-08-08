@@ -1,8 +1,9 @@
-import Base from './Base.js';
-import GroupAudioConfig from './GroupAudioConfig.js';
-import GroupAudioCounts from './GroupAudioCounts.js';
-import GroupExtended from './GroupExtended.js';
-import GroupMessageConfig from './GroupMessageConfig.js';
+import { Base } from './Base.js';
+import { GroupAudioConfig } from './GroupAudioConfig.js';
+import { GroupAudioCounts } from './GroupAudioCounts.js';
+import { GroupExtended } from './GroupExtended.js';
+import { GroupMessageConfig } from './GroupMessageConfig.js';
+
 class Group extends Base {
   constructor (client, data) {
     super(client);
@@ -24,4 +25,5 @@ class Group extends Base {
     this._members = [];
   }
 }
-export default Group;
+
+export { Group };

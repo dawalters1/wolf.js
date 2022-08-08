@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class TipContext extends Base {
   constructor (client, data) {
     super(client);
@@ -6,4 +7,5 @@ class TipContext extends Base {
     this.id = data?.id;
   }
 }
-export default TipContext;
+
+export { TipContext };

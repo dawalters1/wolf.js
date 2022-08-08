@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class CharmStatistics extends Base {
   constructor (client, data) {
     super(client);
@@ -10,4 +11,5 @@ class CharmStatistics extends Base {
     this.totalExpired = data?.totalExpired;
   }
 }
-export default CharmStatistics;
+
+export { CharmStatistics };

@@ -1,4 +1,5 @@
-import WOLFAPIError from './WOLFAPIError.js';
+import { WOLFAPIError } from './WOLFAPIError.js';
+
 class CommandContext {
   constructor (client, data) {
     this.client = client;
@@ -18,6 +19,7 @@ class CommandContext {
     if (!this.isGroup) {
       throw new WOLFAPIError('cannot request group for non-group command', { ...this.toJSON() });
     }
+
     return await this.client.group.getById(this.targetGroupId);
   }
 
@@ -25,6 +27,7 @@ class CommandContext {
     if (this.isGroup) {
       return await this.client.messaging.sendGroupMessage(this.targetGroupId, content, options);
     }
+
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
   }
 
@@ -32,4 +35,5 @@ class CommandContext {
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
   }
 }
-export default CommandContext;
+
+export { CommandContext };

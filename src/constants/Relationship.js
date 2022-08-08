@@ -5,6 +5,7 @@ export const ENGAGED = 3;
 export const MARRIED = 4;
 export const COMPLICATED = 5;
 export const OPEN = 6;
+
 export default {
   NOT_SPECIFIED,
   SINGLE,

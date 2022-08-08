@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Presence extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class Presence extends Base {
     this.subscriberId = data?.subscriberId;
   }
 }
-export default Presence;
+
+export { Presence };

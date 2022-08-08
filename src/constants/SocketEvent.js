@@ -8,6 +8,7 @@ export const RECONNECTED = 'reconnected';
 export const RECONNECT_FAILED = 'reconnect_failed';
 export const PING = 'ping';
 export const PONG = 'pong';
+
 export default {
   CONNECT,
   CONNECT_ERROR,

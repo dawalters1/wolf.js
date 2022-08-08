@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupStatsTrend extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class GroupStatsTrend extends Base {
     this.lineCount = data?.lineCount;
   }
 }
-export default GroupStatsTrend;
+
+export { GroupStatsTrend };

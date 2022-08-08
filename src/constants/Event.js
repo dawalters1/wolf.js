@@ -68,6 +68,7 @@ export const SUBSCRIBER_GROUP_EVENT_ADD = 'subscriberGroupEventAdd';
 export const SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriberGroupEventDelete';
 export const SUBSCRIBER_UPDATE = 'subscriberUpdate';
 export const WELCOME = 'welcome';
+
 export default {
   CONNECTED,
   CONNECTING,

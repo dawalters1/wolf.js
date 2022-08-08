@@ -5,6 +5,7 @@ export const MOD = 2;
 export const BANNED = 4;
 export const SILENCED = 8;
 export const OWNER = 32;
+
 export default {
   NOT_MEMBER,
   REGULAR,

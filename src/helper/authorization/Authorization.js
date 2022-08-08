@@ -1,6 +1,7 @@
-import Base from '../Base.js';
+import { Base } from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
+
 class Authorization extends Base {
   /**
      * Retrieve the list of authorized subscribers for the bot
@@ -23,15 +24,17 @@ class Authorization extends Base {
      * @returns {Promise<Array.<Boolean>|Boolean>}
      */
   async isAuthorized (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-    ;
-    if (!targetSubscriberIds.length) {
+    const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if (!values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+
+    if ([...new Set(values)].length !== values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-    for (const subscriberId of targetSubscriberIds) {
+
+    for (const subscriberId of values) {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
@@ -40,10 +43,13 @@ class Authorization extends Base {
         throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+
+    const results = values.reduce((result, subscriberId) => {
       result.push(this.cache.includes(subscriberId));
+
       return result;
     }, []);
+
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
@@ -53,15 +59,17 @@ class Authorization extends Base {
      * @returns {Promise<Array.<Boolean>|Boolean>}
      */
   async authorize (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-    ;
-    if (!targetSubscriberIds.length) {
+    const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if (!values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+
+    if ([...new Set(values)].length !== values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-    for (const subscriberId of targetSubscriberIds) {
+
+    for (const subscriberId of values) {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
@@ -70,15 +78,18 @@ class Authorization extends Base {
         throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+
+    const results = values.reduce((result, subscriberId) => {
       if (this.cache.includes(subscriberId)) {
         result.push(false);
       } else {
         this.cache.push(subscriberId);
         result.push(true);
       }
+
       return result;
     }, []);
+
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 
@@ -88,15 +99,17 @@ class Authorization extends Base {
      * @returns {Promise<Array.<Boolean>|Boolean>}
      */
   async unauthorize (targetSubscriberIds) {
-    targetSubscriberIds = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-    ;
-    if (!targetSubscriberIds.length) {
+    const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if (!values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
     }
-    if ([...new Set(targetSubscriberIds)].length !== targetSubscriberIds.length) {
+
+    if ([...new Set(values)].length !== values.length) {
       throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
     }
-    for (const subscriberId of targetSubscriberIds) {
+
+    for (const subscriberId of values) {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
@@ -105,16 +118,20 @@ class Authorization extends Base {
         throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-    const results = targetSubscriberIds.reduce((result, subscriberId) => {
+
+    const results = values.reduce((result, subscriberId) => {
       if (!this.cache.includes(subscriberId)) {
         result.push(false);
       } else {
         this.cache.splice(this.cache.findIndex((id) => id === subscriberId), 1);
         result.push(true);
       }
+
       return result;
     }, []);
+
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
 }
-export default Authorization;
+
+export { Authorization };

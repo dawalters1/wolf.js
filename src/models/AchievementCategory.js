@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class AchievementCategory extends Base {
   constructor (client, data) {
     super(client);
@@ -6,4 +7,5 @@ class AchievementCategory extends Base {
     this.name = data?.name;
   }
 }
-export default AchievementCategory;
+
+export { AchievementCategory };

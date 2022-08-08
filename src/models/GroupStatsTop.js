@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupStatsTop extends Base {
   constructor (client, data) {
     super(client);
@@ -9,4 +10,5 @@ class GroupStatsTop extends Base {
     this.percentage = data?.percentage;
   }
 }
-export default GroupStatsTop;
+
+export { GroupStatsTop };

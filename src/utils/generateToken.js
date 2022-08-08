@@ -1,2 +1,3 @@
 import { nanoid } from 'nanoid';
-export default (email, password) => `WJS${nanoid(32)}`;
+
+export default () => `WJS${nanoid(32)}`;

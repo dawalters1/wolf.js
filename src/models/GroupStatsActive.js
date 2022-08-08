@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupStatsActive extends Base {
   constructor (client, data) {
     super(client);
@@ -20,4 +21,5 @@ class GroupStatsActive extends Base {
     this.wordCount = data?.wordCount;
   }
 }
-export default GroupStatsActive;
+
+export { GroupStatsActive };

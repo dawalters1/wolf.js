@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupAudioSlot extends Base {
   constructor (client, data) {
     super(client);
@@ -12,4 +13,5 @@ class GroupAudioSlot extends Base {
     this.reservedExpiresAt = data?.reservedExpiresAt;
   }
 }
-export default GroupAudioSlot;
+
+export { GroupAudioSlot };

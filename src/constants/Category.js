@@ -11,6 +11,7 @@ export const SCIENCE_AND_TECH = 25;
 export const SOCIAL_AND_PEOPLE = 17;
 export const SPORTS = 19;
 export const TRAVEL_AND_LOCAL = 18;
+
 export default {
   NOT_SPECIFIED,
   BUSINESS,

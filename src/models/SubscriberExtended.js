@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class SubscriberExtended extends Base {
   constructor (client, data) {
     super(client);
@@ -12,4 +13,5 @@ class SubscriberExtended extends Base {
     this.utcOffset = data?.utcOffset;
   }
 }
-export default SubscriberExtended;
+
+export { SubscriberExtended };

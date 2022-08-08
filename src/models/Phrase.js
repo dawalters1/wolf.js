@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Phrase extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class Phrase extends Base {
     this.language = data?.language;
   }
 }
-export default Phrase;
+
+export { Phrase };

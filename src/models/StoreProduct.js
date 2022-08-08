@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class StoreProduct extends Base {
   constructor (client, data) {
     super(client);
@@ -10,12 +11,15 @@ class StoreProduct extends Base {
     this.promotionText = data?.promotionText;
     this.imageUrl = data?.imageUrl;
     this.credits = data?.credits;
+
     if (Reflect.has(data, 'botId')) {
       this.botId = data?.botId;
     }
+
     if (Reflect.has(data, 'charmId')) {
       this.charmId = data?.charmId;
     }
   }
 }
-export default StoreProduct;
+
+export { StoreProduct };

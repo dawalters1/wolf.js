@@ -5,4 +5,5 @@ class StoreProductDuration {
     this.days = data?.days;
   }
 }
-export default StoreProductDuration;
+
+export { StoreProductDuration };
