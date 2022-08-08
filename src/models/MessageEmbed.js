@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class MessageEmbed extends Base {
   constructor (client, data) {
     super(client);
@@ -10,4 +11,5 @@ class MessageEmbed extends Base {
     this.body = data?.body;
   }
 }
-export default MessageEmbed;
+
+export { MessageEmbed };

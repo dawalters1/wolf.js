@@ -1,4 +1,6 @@
-import Base from '../Base.js';
+import { Base } from '../Base.js';
+
 class Member extends Base {
 }
-export default Member;
+
+export { Member };

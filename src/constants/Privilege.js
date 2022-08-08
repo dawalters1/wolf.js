@@ -23,6 +23,7 @@ export const GROUP_ADMIN = 1 << 25;
 export const BOT = 1 << 26;
 export const ENTERTAINER = 1 << 29;
 export const SHADOW_BANNED = 1 << 30;
+
 export default {
   SUBSCRIBER,
   BOT_TESTER,

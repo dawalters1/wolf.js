@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupMember extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class GroupMember extends Base {
     this.capabilities = data?.capabilities;
   }
 }
-export default GroupMember;
+
+export { GroupMember };

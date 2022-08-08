@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class ContactAdditionalInfo extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class ContactAdditionalInfo extends Base {
     this.privilieges = data?.privilieges;
   }
 }
-export default ContactAdditionalInfo;
+
+export { ContactAdditionalInfo };

@@ -12,6 +12,7 @@ export const BROADCAST_MUTED = 'stageClientBroadcastMuted';
 export const BROADCAST_UNMUTED = 'stageClientBroadcastUnmuted';
 export const BROADCAST_STOPPED = 'stageClientBroadcastStopped';
 export const BROADCAST_DURATION = 'stageClientBroadcastDuration';
+
 export default {
   CONNECTING,
   CONNECTED,

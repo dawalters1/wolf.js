@@ -1,6 +1,7 @@
-import Base from './Base.js';
-import TipCharm from './TipCharm.js';
-import TipContext from './TipContext.js';
+import { Base } from './Base.js';
+import { TipCharm } from './TipCharm.js';
+import { TipContext } from './TipContext.js';
+
 class Tip extends Base {
   constructor (client, data) {
     super(client);
@@ -12,4 +13,5 @@ class Tip extends Base {
     this.context = new TipContext(client, data?.context);
   }
 }
-export default Tip;
+
+export { Tip };

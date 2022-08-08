@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class NotificationAction extends Base {
   constructor (client, data) {
     super(client);
@@ -9,4 +10,5 @@ class NotificationAction extends Base {
     this.imageUrl = data?.imageUrl;
   }
 }
-export default NotificationAction;
+
+export { NotificationAction };

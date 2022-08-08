@@ -5,4 +5,5 @@ class IdHash {
     this.nickname = data?.nickname;
   }
 }
-export default IdHash;
+
+export { IdHash };

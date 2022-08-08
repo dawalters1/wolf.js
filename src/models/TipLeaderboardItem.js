@@ -1,5 +1,6 @@
-import Base from './Base.js';
-import IdHash from './IdHash.js';
+import { Base } from './Base.js';
+import { IdHash } from './IdHash.js';
+
 class TipLeaderboardItem extends Base {
   constructor (client, data) {
     super(client);
@@ -11,4 +12,5 @@ class TipLeaderboardItem extends Base {
     this.subscriber = new IdHash(data?.subscriber);
   }
 }
-export default TipLeaderboardItem;
+
+export { TipLeaderboardItem };

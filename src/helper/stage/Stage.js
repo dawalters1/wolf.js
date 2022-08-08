@@ -1,6 +1,7 @@
-import Base from '../Base.js';
-import Request from './Request.js';
-import Slot from './Slot.js';
+import { Base } from '../Base.js';
+import { Request } from './Request.js';
+import { Slot } from './Slot.js';
+
 class Stage extends Base {
   // eslint-disable-next-line no-useless-constructor
   constructor (client) {
@@ -9,4 +10,5 @@ class Stage extends Base {
     this.slot = new Slot(this.client);
   }
 }
-export default Stage;
+
+export { Stage };

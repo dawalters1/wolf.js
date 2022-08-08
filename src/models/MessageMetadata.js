@@ -1,5 +1,6 @@
-import Base from './Base.js';
-import MessageMetadataFormatting from './MessageMetadataFormatting.js';
+import { Base } from './Base.js';
+import { MessageMetadataFormatting } from './MessageMetadataFormatting.js';
+
 class MessageMetadata extends Base {
   constructor (client, data) {
     super(client);
@@ -10,4 +11,5 @@ class MessageMetadata extends Base {
     this.isTipped = data?.isTipped;
   }
 }
-export default MessageMetadata;
+
+export { MessageMetadata };

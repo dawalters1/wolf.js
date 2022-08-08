@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Charm extends Base {
   constructor (client, data) {
     super(client);
@@ -13,4 +14,5 @@ class Charm extends Base {
     this.cost = data?.cost;
   }
 }
-export default Charm;
+
+export { Charm };

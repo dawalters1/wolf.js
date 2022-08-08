@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupExtended extends Base {
   constructor (client, data) {
     super(client);
@@ -15,4 +16,5 @@ class GroupExtended extends Base {
     this.entryLevel = data?.entryLevel;
   }
 }
-export default GroupExtended;
+
+export { GroupExtended };

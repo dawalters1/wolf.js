@@ -1,7 +1,8 @@
-import Base from '../Base.js';
+import { Base } from '../Base.js';
 import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
+
 class Group extends Base {
   /**
      * Request the unlocked achievements for the group
@@ -17,6 +18,7 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
+
     if (parentId) {
       if (!validator.isValidNumber(parentId)) {
         throw new models.WOLFAPIError('parentId must be a valid number', { parentId });
@@ -24,6 +26,7 @@ class Group extends Base {
         throw new models.WOLFAPIError('parentId cannot be less than or equal to 0', { parentId });
       }
     }
+
     const response = await this.client.websocket.emit(Command.ACHIEVEMENT_GROUP_LIST, {
       headers: {
         version: 2
@@ -33,7 +36,9 @@ class Group extends Base {
         parentId: parentId ? parseInt(parentId) : undefined
       }
     });
+
     return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
   }
 }
-export default Group;
+
+export { Group };

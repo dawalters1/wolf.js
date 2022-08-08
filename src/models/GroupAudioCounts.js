@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupAudioCounts extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class GroupAudioCounts extends Base {
     this.id = data?.id;
   }
 }
-export default GroupAudioCounts;
+
+export { GroupAudioCounts };

@@ -28,7 +28,9 @@ class Client {
     this.connectionState = StageConnectionState.DISCONNECTED;
     this.client = new RTCPeerConnection();
     this.source = new RTCAudioSource();
+
     const stream = new MediaStream();
+
     this.track = this.source.createTrack();
     stream.addTrack(this.track);
     this.sender = this.client.addTrack(this.track, stream);
@@ -40,4 +42,5 @@ class Client {
   stop () {
   }
 }
-export default Client;
+
+export { Client };

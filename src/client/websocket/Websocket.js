@@ -1,17 +1,20 @@
-import Processor from './events/Processor.js';
-import RequestQueue from './RequestQueue.js';
-import Response from '../../models/Response.js';
+import { Processor } from './events/Processor.js';
+import { RequestQueue } from './RequestQueue.js';
+import { Response } from '../../models/Response.js';
 import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
 import io from 'socket.io-client';
+
 class Websocket {
   constructor (client) {
     this.client = client;
     this._processor = new Processor(this.client);
+
     this._messageQueue = new RequestQueue(this.client, {
       capacity: 10,
       regenerationPeriod: (15 / 60) * 1000,
       name: 'message'
     });
+
     this._genericQueue = new RequestQueue(this.client, {
       capacity: 50,
       regenerationPeriod: (180 / 60) * 1000,
@@ -22,6 +25,7 @@ class Websocket {
   _create () {
     const connectionSettings = this.client._botConfig.get('connection');
     const { onlineState, token } = this.client.config.get('app.login');
+
     this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${token}&device=wjsframework&state=${onlineState}`, {
       transports: ['websocket'],
       reconnection: true,
@@ -47,6 +51,7 @@ class Websocket {
       command,
       body: body && !body.headers && !body.body ? { body } : body
     };
+
     if (command === ServerEvents.MESSAGE.MESSAGE_SEND) {
       return await new Response(await this._messageQueue.enqueue(request));
     } else {
@@ -54,4 +59,5 @@ class Websocket {
     }
   }
 }
-export default Websocket;
+
+export { Websocket };

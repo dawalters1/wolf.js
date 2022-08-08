@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class MessageResponse extends Base {
   constructor (client, data) {
     super(client);
@@ -6,4 +7,5 @@ class MessageResponse extends Base {
     this.timestamp = data?.timestamp;
   }
 }
-export default MessageResponse;
+
+export { MessageResponse };

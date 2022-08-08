@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class WelcomeEndpoint extends Base {
   constructor (client, data) {
     super(client);
@@ -6,4 +7,5 @@ class WelcomeEndpoint extends Base {
     this.mmsUploadEndpoint = data?.mmsUploadEndpoint;
   }
 }
-export default WelcomeEndpoint;
+
+export { WelcomeEndpoint };

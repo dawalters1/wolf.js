@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupAudioConfig extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class GroupAudioConfig extends Base {
     this.minRepLevel = data?.minRepLevel;
   }
 }
-export default GroupAudioConfig;
+
+export { GroupAudioConfig };

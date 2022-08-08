@@ -3,4 +3,5 @@ class StoreProductImageList {
     this.url = data?.url;
   }
 }
-export default StoreProductImageList;
+
+export { StoreProductImageList };

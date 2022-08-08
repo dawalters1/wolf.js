@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class Translation extends Base {
   constructor (client, data) {
     super(client);
@@ -6,4 +7,5 @@ class Translation extends Base {
     this.text = data?.text;
   }
 }
-export default Translation;
+
+export { Translation };

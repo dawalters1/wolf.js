@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class GroupStatsDetail extends Base {
   constructor (client, data) {
     super(client);
@@ -22,4 +23,5 @@ class GroupStatsDetail extends Base {
     this.timestamp = data?.timestamp;
   }
 }
-export default GroupStatsDetail;
+
+export { GroupStatsDetail };

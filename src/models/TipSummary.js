@@ -1,5 +1,6 @@
-import Base from './Base.js';
-import TipCharm from './TipCharm.js';
+import { Base } from './Base.js';
+import { TipCharm } from './TipCharm.js';
+
 class TipSummary extends Base {
   constructor (client, data) {
     super(client);
@@ -8,4 +9,5 @@ class TipSummary extends Base {
     this.version = data?.version;
   }
 }
-export default TipSummary;
+
+export { TipSummary };

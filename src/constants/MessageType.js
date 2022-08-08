@@ -10,6 +10,7 @@ export const TEXT_IMAGE = 'text/image_link';
 export const TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE = 'text/palringo-private-request-response';
 export const TEXT_PLAIN = 'text/plain';
 export const TEXT_VOICE = 'text/voice_link';
+
 export default {
   APPLICATION_PALRINGO_GROUP_ACTION,
   APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK,

@@ -1,4 +1,5 @@
 import _ from 'lodash';
+
 class Base {
   constructor (client) {
     this.client = client;
@@ -14,4 +15,5 @@ class Base {
     return _.omit(this, ['client']);
   }
 }
-export default Base;
+
+export { Base };

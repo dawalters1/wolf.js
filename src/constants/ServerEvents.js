@@ -52,6 +52,7 @@ export const TIP = {
 export const WELCOME = {
   WELCOME: 'welcome'
 };
+
 export default {
   GROUP,
   MESSAGE,

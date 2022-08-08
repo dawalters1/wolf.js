@@ -1,4 +1,5 @@
-import Base from './Base.js';
+import { Base } from './Base.js';
+
 class LinkMetadata extends Base {
   constructor (client, data) {
     super(client);
@@ -10,4 +11,5 @@ class LinkMetadata extends Base {
     this.title = data?.title;
   }
 }
-export default LinkMetadata;
+
+export { LinkMetadata };

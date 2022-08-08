@@ -4,6 +4,7 @@ import messageSendAdminActionHandler from '../../../../utils/messageSendAdminAct
 
 export default async (client, body) => {
   const message = new models.Message(client, body);
+
   switch (message.type) {
     case MessageType.APPLICATION_PALRINGO_GROUP_ACTION:
       await messageSendAdminActionHandler(client, message);
@@ -24,5 +25,6 @@ export default async (client, body) => {
   }
   // Internal
   client.emit('message', message);
+
   return await client.emit(message.isGroup ? Event.GROUP_MESSAGE : Event.PRIVATE_MESSAGE, message);
 };

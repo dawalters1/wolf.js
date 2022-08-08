@@ -1,5 +1,6 @@
-import Base from './Base.js';
-import GroupAudioSlot from './GroupAudioSlot.js';
+import { Base } from './Base.js';
+import { GroupAudioSlot } from './GroupAudioSlot.js';
+
 class GroupAudioSlotUpdate extends Base {
   constructor (client, data) {
     super(client);
@@ -7,4 +8,5 @@ class GroupAudioSlotUpdate extends Base {
     this.slot = new GroupAudioSlot(client, data?.slot);
   }
 }
-export default GroupAudioSlotUpdate;
+
+export { GroupAudioSlotUpdate };
