@@ -60,14 +60,17 @@ class Event extends Base {
       const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId), this.client._botConfig.get('batching.length')));
 
       for (const idList of idLists) {
-        const response = await this.client.websocket.emit(Command.GROUP_EVENT, {
-          headers: {
-            version: 1
-          },
-          body: {
-            idList
+        const response = await this.client.websocket.emit(
+          Command.GROUP_EVENT,
+          {
+            headers: {
+              version: 1
+            },
+            body: {
+              idList
+            }
           }
-        });
+        );
 
         if (response.success) {
           const eventResponses = Object.values(response.body).map((eventResponse) => new models.Response(eventResponse));

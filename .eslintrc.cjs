@@ -324,7 +324,7 @@ module.exports = {
       { blankLine: 'never', prev: 'import', next: 'import' },
       { blankLine: 'always', prev: 'import', next: 'class' },
       { blankLine: 'always', prev: 'export', next: 'class' },
-      { blankLine: 'always', prev: '*', next: ['const', 'let', 'var', 'empty', 'block', 'block-like', 'directive', 'return', 'if', 'let', 'iife'] },
+      { blankLine: 'always', prev: '*', next: ['const', 'let', 'var', 'empty', 'block', 'block-like', 'directive', 'return', 'if', 'iife'] },
       { blankLine: 'always', prev: 'import', next: 'export' },
       { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' },
       { blankLine: 'any', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] }

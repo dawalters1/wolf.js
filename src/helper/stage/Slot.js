@@ -23,10 +23,13 @@ class Slot extends Base {
       return group.slots;
     }
 
-    const response = await this.client.websocket.emit(Command.GROUP_AUDIO_SLOT_LIST, {
-      id: parseInt(targetGroupId),
-      subscribe: true
-    });
+    const response = await this.client.websocket.emit(
+      Command.GROUP_AUDIO_SLOT_LIST,
+      {
+        id: parseInt(targetGroupId),
+        subscribe: true
+      }
+    );
 
     this.group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot)) ?? [];
 
@@ -78,13 +81,16 @@ class Slot extends Base {
     }
     await this.get(targetGroupId, slotId);
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_SLOT_UPDATE, {
-      id: parseInt(targetGroupId),
-      slot: {
-        id: parseInt(slotId),
-        locked: true
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_SLOT_UPDATE,
+      {
+        id: parseInt(targetGroupId),
+        slot: {
+          id: parseInt(slotId),
+          locked: true
+        }
       }
-    });
+    );
   }
 
   async unlock (targetGroupId, slotId) {
@@ -105,13 +111,16 @@ class Slot extends Base {
     }
     await this.get(targetGroupId, slotId);
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_SLOT_UPDATE, {
-      id: parseInt(targetGroupId),
-      slot: {
-        id: parseInt(slotId),
-        locked: false
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_SLOT_UPDATE,
+      {
+        id: parseInt(targetGroupId),
+        slot: {
+          id: parseInt(slotId),
+          locked: false
+        }
       }
-    });
+    );
   }
 
   async mute (targetGroupId, slotId) {
@@ -133,12 +142,15 @@ class Slot extends Base {
 
     const slot = await this.get(targetGroupId, slotId);
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_UPDATE, {
-      id: parseInt(targetGroupId),
-      slotId: parseInt(slotId),
-      occupierId: slot.occupierId,
-      occupierMuted: true
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_BROADCAST_UPDATE,
+      {
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
+        occupierId: slot.occupierId,
+        occupierMuted: true
+      }
+    );
   }
 
   async unmute (targetGroupId, slotId) {
@@ -164,12 +176,15 @@ class Slot extends Base {
       throw new models.WOLFAPIError('Occupier of slot must be self to unmute', { targetGroupId, slotId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_UPDATE, {
-      id: parseInt(targetGroupId),
-      slotId: parseInt(slotId),
-      occupierId: slot.occupierId,
-      occupierMuted: false
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_BROADCAST_UPDATE,
+      {
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
+        occupierId: slot.occupierId,
+        occupierMuted: false
+      }
+    );
   }
 
   async kick (targetGroupId, slotId) {
@@ -195,11 +210,14 @@ class Slot extends Base {
       throw new models.WOLFAPIError('Slot does not have an occupier', { targetGroupId, slotId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_DISCONNECT, {
-      id: parseInt(targetGroupId),
-      slotId: parseInt(slotId),
-      occupierId: slot.occupierId
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_BROADCAST_DISCONNECT,
+      {
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
+        occupierId: slot.occupierId
+      }
+    );
   }
 
   async join (targetGroupId, slotId, sdp = undefined) {
@@ -250,11 +268,14 @@ class Slot extends Base {
       // TODO: create client
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST, {
-      id: parseInt(targetGroupId),
-      slotId: parseInt(slotId),
-      sdp
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_BROADCAST,
+      {
+        id: parseInt(targetGroupId),
+        slotId: parseInt(slotId),
+        sdp
+      }
+    );
   }
 
   async consume (targetGroupId, slotId) {
@@ -312,11 +333,14 @@ class Slot extends Base {
       throw new models.WOLFAPIError('Slot is not occupied by Bot', { targetGroupId, slotId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_DISCONNECT, {
-      id: parseInt(targetGroupId),
-      slotId: slot.id,
-      occupierId: this.client.currentSubscriber.id
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_BROADCAST_DISCONNECT,
+      {
+        id: parseInt(targetGroupId),
+        slotId: slot.id,
+        occupierId: this.client.currentSubscriber.id
+      }
+    );
   }
 }
 

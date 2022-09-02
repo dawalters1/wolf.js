@@ -9,9 +9,12 @@ class Subscription extends Base {
       return this.cache;
     }
 
-    const response = await this.client.websocket.emit(Command.SUBSCRIBER_GROUP_EVENT_LIST, {
-      subscribe: true
-    });
+    const response = await this.client.websocket.emit(
+      Command.SUBSCRIBER_GROUP_EVENT_LIST,
+      {
+        subscribe: true
+      }
+    );
 
     this.cache = response.body ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
 
@@ -27,9 +30,12 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_GROUP_EVENT_ADD, {
-      id: parseInt(eventId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_GROUP_EVENT_ADD,
+      {
+        id: parseInt(eventId)
+      }
+    );
   }
 
   async remove (eventId) {
@@ -41,9 +47,12 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_GROUP_EVENT_DELETE, {
-      id: parseInt(eventId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_GROUP_EVENT_DELETE,
+      {
+        id: parseInt(eventId)
+      }
+    );
   }
 }
 

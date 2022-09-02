@@ -9,9 +9,12 @@ class Blocked extends Base {
       return this.cache;
     }
 
-    const response = await this.client.websocket.emit(Command.SUBSCRIBER_BLOCK_LIST, {
-      subscribe: true
-    });
+    const response = await this.client.websocket.emit(
+      Command.SUBSCRIBER_BLOCK_LIST,
+      {
+        subscribe: true
+      }
+    );
 
     this.cache = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
@@ -58,9 +61,12 @@ class Blocked extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_BLOCK_ADD, {
-      id: parseInt(subscriberId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_BLOCK_ADD,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
   }
 
   async unblock (subscriberId) {
@@ -72,9 +78,12 @@ class Blocked extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_BLOCK_DELETE, {
-      id: parseInt(subscriberId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_BLOCK_DELETE,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
   }
 }
 

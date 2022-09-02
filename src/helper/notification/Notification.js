@@ -14,9 +14,12 @@ class Notification extends Base {
       return this._notifications;
     }
 
-    const response = await this.client.websocket.emit(Command.NOTIFICATION_LIST, {
-      language: this.client.options.language.code
-    });
+    const response = await this.client.websocket.emit(
+      Command.NOTIFICATION_LIST,
+      {
+        language: this.client.options.language.code
+      }
+    );
 
     return response.success ? response.body.map((notification) => this._process(new models.Notification(this.client, notification))) : [];
   }

@@ -23,10 +23,13 @@ class Request extends Base {
       return group.audioRequests;
     }
 
-    const response = await this.client.websocket.emit(Command.GROUP_AUDIO_REQUEST_LIST, {
-      id: parseInt(targetGroupId),
-      subscribe: true
-    });
+    const response = await this.client.websocket.emit(
+      Command.GROUP_AUDIO_REQUEST_LIST,
+      {
+        id: parseInt(targetGroupId),
+        subscribe: true
+      }
+    );
 
     if (response.success) {
       group._requestListFetched = true;
@@ -110,12 +113,15 @@ class Request extends Base {
         });
       }
 
-      return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_UPDATE, {
-        id: parseInt(targetGroupId),
-        slotId: parseInt(slotId),
-        reservedExpiresAt: Date.now() + 30000,
-        reservedOccupierId: subscriberId
-      });
+      return await this.client.websocket.emit(
+        Command.GROUP_AUDIO_BROADCAST_UPDATE,
+        {
+          id: parseInt(targetGroupId),
+          slotId: parseInt(slotId),
+          reservedExpiresAt: Date.now() + 30000,
+          reservedOccupierId: subscriberId
+        }
+      );
     }
 
     if (slots.some((slot) => slot.occupierId === this.client.currentSubscriber.id)) {
@@ -190,12 +196,15 @@ class Request extends Base {
         });
       }
 
-      return await this.client.websocket.emit(Command.GROUP_AUDIO_BROADCAST_UPDATE, {
-        id: parseInt(targetGroupId),
-        slotId: parseInt(slotId),
-        reservedExpiresAt: undefined,
-        reservedOccupierId: undefined
-      });
+      return await this.client.websocket.emit(
+        Command.GROUP_AUDIO_BROADCAST_UPDATE,
+        {
+          id: parseInt(targetGroupId),
+          slotId: parseInt(slotId),
+          reservedExpiresAt: undefined,
+          reservedOccupierId: undefined
+        }
+      );
     }
 
     const requests = await group.getRequestList();
@@ -240,9 +249,12 @@ class Request extends Base {
       throw new models.WOLFAPIError('request list is already empty', { targetGroupId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_REQUEST_CLEAR, {
-      id: parseInt(targetGroupId)
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_REQUEST_CLEAR,
+      {
+        id: parseInt(targetGroupId)
+      }
+    );
   }
 }
 

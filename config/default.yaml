@@ -10,6 +10,15 @@ batching:
   members: 5000
   length: 50
 
+server:
+  defaults:
+    search: 
+      limit: 25
+    members:
+      banned:
+        limit: 100
+      regular:
+        limit: 100
 
 validation:
   links:

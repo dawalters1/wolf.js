@@ -1,8 +1,8 @@
 import { Command } from '../../constants/index.js';
 import { Base } from '../Base.js';
-import { Blocked } from './Blocked.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
+import { Blocked } from './Blocked.js';
 
 class Contact extends Base {
   constructor (client) {
@@ -15,9 +15,12 @@ class Contact extends Base {
       return this.cache;
     }
 
-    const response = await this.client.websocket.emit(Command.SUBSCRIBER_CONTACT_LIST, {
-      subscribe: true
-    });
+    const response = await this.client.websocket.emit(
+      Command.SUBSCRIBER_CONTACT_LIST,
+      {
+        subscribe: true
+      }
+    );
 
     this.cache = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
@@ -64,9 +67,12 @@ class Contact extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_CONTACT_ADD, {
-      id: parseInt(subscriberId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_CONTACT_ADD,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
   }
 
   async delete (subscriberId) {
@@ -78,9 +84,12 @@ class Contact extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    return await this.client.websocket.emit(Command.SUBSCRIBER_CONTACT_DELETE, {
-      id: parseInt(subscriberId)
-    });
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_CONTACT_DELETE,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
   }
 }
 
