@@ -34,7 +34,7 @@ class Member extends Base {
 
     if (validator.isNullOrUndefined(capability)) {
       throw new WOLFAPIError('capability cannot be null or undefined', { capability });
-    } else if (!validator.isValidNumber(targetSubscriberId)) {
+    } else if (!validator.isValidNumber(capability)) {
       throw new WOLFAPIError('capability must be a valid number', { capability });
     } else if (!Object.values(Capability).includes(capability)) {
       throw new WOLFAPIError('capability is not valid', { capability });

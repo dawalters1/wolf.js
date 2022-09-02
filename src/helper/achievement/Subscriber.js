@@ -1,5 +1,5 @@
-import { Command } from '../../constants/index.js';
 import { Base } from '../Base.js';
+import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
@@ -12,11 +12,11 @@ class Subscriber extends Base {
      */
   async getById (subscriberId, parentId) {
     if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('targetSubscriberId cannot be null or undefined', { subscriberId });
+      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
     } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('targetSubscriberId must be a valid number', { subscriberId });
+      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
     } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('targetSubscriberId cannot be less than or equal to 0', { subscriberId });
+      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     if (parentId) {
@@ -27,15 +27,18 @@ class Subscriber extends Base {
       }
     }
 
-    const response = await this.client.websocket.emit(Command.ACHIEVEMENT_SUBSCRIBER_LIST, {
-      headers: {
-        version: 2
-      },
-      body: {
-        id: parseInt(subscriberId),
-        parentId: parentId ? parseInt(parentId) : undefined
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          id: parseInt(subscriberId),
+          parentId: parentId ? parseInt(parentId) : undefined
+        }
       }
-    });
+    );
 
     return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
   }

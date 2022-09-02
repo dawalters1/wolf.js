@@ -27,15 +27,18 @@ class Group extends Base {
       }
     }
 
-    const response = await this.client.websocket.emit(Command.ACHIEVEMENT_GROUP_LIST, {
-      headers: {
-        version: 2
-      },
-      body: {
-        id: parseInt(targetGroupId),
-        parentId: parentId ? parseInt(parentId) : undefined
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT_GROUP_LIST,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          id: parseInt(targetGroupId),
+          parentId: parentId ? parseInt(parentId) : undefined
+        }
       }
-    });
+    );
 
     return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
   }

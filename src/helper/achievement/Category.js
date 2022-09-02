@@ -1,9 +1,9 @@
 import { Base } from '../Base.js';
 import models from '../../models/index.js';
+import Constants, { Language } from '../../constants/index.js';
 import validator from '../../validator/index.js';
-import Constants from '../../constants/index.js';
 
-const { Language, Command } = Constants;
+const { Command } = Constants;
 
 class Category extends Base {
   constructor (client) {
@@ -26,7 +26,8 @@ class Category extends Base {
       return this.cache[language];
     }
 
-    const response = await this.client.websocket.emit(Command.ACHIEVEMENT_CATEGORY_LIST,
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT_CATEGORY_LIST,
       {
         languageId: parseInt(language)
       }

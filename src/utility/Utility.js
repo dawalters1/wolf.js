@@ -7,6 +7,7 @@ import { Download } from './Download/index.js';
 import { Group } from './Group/Group.js';
 import { NumberUtility } from './Number/index.js';
 import { StringUtility } from './String/index.js';
+import { Subscriber } from './Subscriber/Subscriber.js';
 import { Timer } from './Timer/index.js';
 
 class Utility {
@@ -23,18 +24,16 @@ class Utility {
 
     this.string = new StringUtility(client);
 
+    this.subscriber = new Subscriber(client);
+
     this.timer = new Timer(client);
   }
 
   toLanguageKey (languageId) {
     if (validator.isNullOrUndefined(languageId)) {
-      throw new WOLFAPIError('languageId cannot be null or undefined', {
-        languageId
-      });
+      throw new WOLFAPIError('languageId cannot be null or undefined', { languageId });
     } else if (!validator.isValidNumber(languageId)) {
-      throw new WOLFAPIError('languageId must be a valid number', {
-        languageId
-      });
+      throw new WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(languageId)) {
       throw new Error('languageId is invalid');
     }
@@ -190,18 +189,7 @@ class Utility {
 
     if (validator.isNullOrUndefined(type)) {
       throw new WOLFAPIError('type cannot be null or undefined', { type });
-    } else if (
-      ![
-        'milliseconds',
-        'seconds',
-        'minutes',
-        'hours',
-        'days',
-        'weeks',
-        'months',
-        'years'
-      ].includes(type)
-    ) {
+    } else if (!['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'].includes(type)) {
       throw new WOLFAPIError('type is unsupported', { type });
     }
 
@@ -209,66 +197,31 @@ class Utility {
     const parts = [];
 
     if (info.years > 0) {
-      parts.push(
-        `${info.years}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_years`
-        )}`
-      );
+      parts.push(`${info.years}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_years`)}`);
     }
 
     if (info.months > 0) {
-      parts.push(
-        `${info.months}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_months`
-        )}`
-      );
+      parts.push(`${info.months}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_months`)}`);
     }
 
     if (info.weeks > 0) {
-      parts.push(
-        `${info.weeks}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_weeks`
-        )}`
-      );
+      parts.push(`${info.weeks}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_weeks`)}`);
     }
 
     if (info.days > 0) {
-      parts.push(
-        `${info.days}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_days`
-        )}`
-      );
+      parts.push(`${info.days}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_days`)}`);
     }
 
     if (info.hours > 0) {
-      parts.push(
-        `${info.hours}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_hours`
-        )}`
-      );
+      parts.push(`${info.hours}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_hours`)}`);
     }
 
     if (info.minutes > 0) {
-      parts.push(
-        `${info.minutes}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_minutes`
-        )}`
-      );
+      parts.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_minutes`)}`);
     }
 
     if (info.seconds > 0) {
-      parts.push(
-        `${info.seconds}${this.client.phrase.getByLanguageAndName(
-          language,
-          `${this.client.options.keyword}_time_type_seconds`
-        )}`
-      );
+      parts.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_seconds`)}`);
     }
 
     return parts.join(' ');

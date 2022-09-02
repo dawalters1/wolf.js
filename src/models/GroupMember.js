@@ -7,6 +7,14 @@ class GroupMember extends Base {
     this.hash = data?.hash;
     this.capabilities = data?.capabilities;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      hash: this.hash,
+      capabilities: this.capabilities
+    };
+  }
 }
 
 export { GroupMember };

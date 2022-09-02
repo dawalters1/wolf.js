@@ -1,9 +1,7 @@
+import Language from '../constants/Language.js';
 import { Base } from './Base.js';
 import { SubscriberExtended } from './SubscriberExtended.js';
 import { SubscriberSelectedCharm } from './SubscriberSelectedCharm.js';
-import language from '../constants/Language.js';
-
-const { Language } = language;
 
 class Subscriber extends Base {
   constructor (client, data) {

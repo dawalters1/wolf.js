@@ -88,9 +88,12 @@ class Charm extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    const response = await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_SUMMARY_LIST, {
-      id: parseInt(subscriberId)
-    });
+    const response = await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
 
     return response.success ? new models.CharmSummary(this.client, response.body) : undefined;
   }
@@ -109,9 +112,12 @@ class Charm extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    const response = await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_STATISTICS, {
-      id: parseInt(subscriberId)
-    });
+    const response = await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_STATISTICS,
+      {
+        id: parseInt(subscriberId)
+      }
+    );
 
     return response.success ? new models.CharmStatistics(this.client, response.body) : undefined;
   }
@@ -148,11 +154,14 @@ class Charm extends Base {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    const response = await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_ACTIVE_LIST, {
-      id: parseInt(subscriberId),
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
+    const response = await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_ACTIVE_LIST,
+      {
+        id: parseInt(subscriberId),
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    );
 
     return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
   }
@@ -189,11 +198,14 @@ class Charm extends Base {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    const response = await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_EXPIRED_LIST, {
-      id: parseInt(subscriberId),
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
+    const response = await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_EXPIRED_LIST,
+      {
+        id: parseInt(subscriberId),
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    );
 
     return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
   }
@@ -205,8 +217,6 @@ class Charm extends Base {
      */
   async delete (charmIds) {
     charmIds = (Array.isArray(charmIds) ? charmIds : [charmIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-
-    ;
 
     if (!charmIds.length) {
       throw new models.WOLFAPIError('charmIds cannot be null or empty', { charmIds });
@@ -226,56 +236,38 @@ class Charm extends Base {
       }
     }
 
-    return await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_DELETE, {
-      idList: charmIds
-    });
+    return await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_DELETE,
+      {
+        idList: charmIds
+      }
+    );
   }
 
   /**
-     * Set selected charms
-     * @param {models.CharmSelected} charms - The charm to set
-     * @returns {Promise<models.Response} - Response
-     */
+   * Set selected charms
+   * @param {models.CharmSelected} charms - The charm to set
+   * @returns {Promise<models.Response} - Response
+   */
   async set (charms) {
-    charms = Array.isArray(charms) ? charms : [charms];
+    charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm));
 
     if (!charms.length) {
       throw new models.WOLFAPIError('charms cannot be null or empty', { charms });
     }
 
-    if ([...new Set(charms.map((charm) => JSON.stringify(charm)))].length !== charms.length) {
+    if ([...new Set(charms.map((charm) => charm.toJSON()))].length !== charms.length) {
       throw new models.WOLFAPIError('charms cannot contain duplicates', { charms });
     }
 
-    for (const charm of charms) {
-      if (validator.isNullOrUndefined(charm)) {
-        throw new models.WOLFAPIError('charm cannot be null or undefined', { charm });
-      }
+    charms.forEach((charm) => charm.validate());
 
-      if (!Reflect.has(charm, 'position')) {
-        throw new models.WOLFAPIError('charm must have property position', { charm });
-      } else if (validator.isNullOrUndefined(charm.position)) {
-        throw new models.WOLFAPIError('position cannot be null or undefined', { charm });
-      } else if (!validator.isValidNumber(charm.position)) {
-        throw new models.WOLFAPIError('position must be a valid number', { charm });
-      } else if (validator.isLessThanZero(charm.position)) {
-        throw new models.WOLFAPIError('position cannot be less than 0', { charm });
+    return await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_SET_SELECTED,
+      {
+        selectedList: charms
       }
-
-      if (!Reflect.has(charm, 'charmId')) {
-        throw new models.WOLFAPIError('charm must have property charmId', { charm });
-      } else if (validator.isNullOrUndefined(charm.charmId)) {
-        throw new models.WOLFAPIError('charmId cannot be null or undefined', { charm });
-      } else if (!validator.isValidNumber(charm.charmId)) {
-        throw new models.WOLFAPIError('charmId must be a valid number', { charm });
-      } else if (validator.isLessThanOrEqualZero(charm.charmId)) {
-        throw new models.WOLFAPIError('charmId cannot be less than or equal to 0', { charm });
-      }
-    }
-
-    return await this.client.websocket.emit(Command.CHARM_SUBSCRIBER_SET_SELECTED, {
-      selectedList: charms.map((charm) => new models.CharmSelected(this.client, charm).toJSON())
-    });
+    );
   }
 }
 

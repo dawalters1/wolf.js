@@ -4,10 +4,10 @@ import { Group } from './Group.js';
 import { Subscriber } from './Subscriber.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
-import Constants from '../../constants/index.js';
+import Constants, { Language } from '../../constants/index.js';
 import _ from 'lodash';
 
-const { Language, Command } = Constants;
+const { Command } = Constants;
 
 class Achievement extends Base {
   constructor (client) {
@@ -88,15 +88,18 @@ class Achievement extends Base {
       const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId), this.client._botConfig.get('batching.length')));
 
       for (const idList of idLists) {
-        const response = await this.client.websocket.emit(Command.ACHIEVEMENT, {
-          headers: {
-            version: 2
-          },
-          body: {
-            idList,
-            languageId: parseInt(language)
+        const response = await this.client.websocket.emit(
+          Command.ACHIEVEMENT,
+          {
+            headers: {
+              version: 2
+            },
+            body: {
+              idList,
+              languageId: parseInt(language)
+            }
           }
-        });
+        );
 
         if (response.success) {
           const achievementResponses = Object.values(response.body).map((achievementResponse) => new models.Response(achievementResponse));

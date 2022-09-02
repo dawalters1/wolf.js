@@ -29,6 +29,7 @@ export const GROUP_EVENT_UPDATE = 'group event update';
 export const GROUP_MEMBER = 'group member';
 export const GROUP_MEMBER_ADD = 'group member add';
 export const GROUP_MEMBER_DELETE = 'group member delete';
+export const GROUP_MEMBER_SEARCH = 'group member search';
 export const GROUP_MEMBER_PRIVILEGED_LIST = 'group member privileged list';
 export const GROUP_MEMBER_REGULAR_LIST = 'group member regular list';
 export const GROUP_MEMBER_BANNED_LIST = 'group member banned list';
@@ -121,6 +122,7 @@ export default {
   GROUP_MEMBER,
   GROUP_MEMBER_ADD,
   GROUP_MEMBER_DELETE,
+  GROUP_MEMBER_SEARCH,
   GROUP_MEMBER_PRIVILEGED_LIST,
   GROUP_MEMBER_REGULAR_LIST,
   GROUP_MEMBER_BANNED_LIST,
