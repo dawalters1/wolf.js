@@ -56,6 +56,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "nanoid": "^3.3.4",
+    "on-change": "^4.0.1",
     "socket.io-client": "^4.5.1",
     "tldts": "^5.7.87",
     "yaml": "^2.1.1"

@@ -10,6 +10,7 @@ import Gender from './Gender.js';
 import Language from './Language.js';
 import LoginType from './LoginType.js';
 import LookingFor from './LookingFor.js';
+import MemberListType from './MemberListType.js';
 import MessageFilterTier from './MessageFilterTier.js';
 import MessageLinkingType from './MessageLinkingType.js';
 import MessageType from './MessageType.js';
@@ -26,6 +27,7 @@ import StageConnectionState from './StageConnectionState.js';
 import TipDirection from './TipDirection.js';
 import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
+
 export { AdminAction };
 export { Capability };
 export { Category };
@@ -38,6 +40,7 @@ export { Gender };
 export { Language };
 export { LoginType };
 export { LookingFor };
+export { MemberListType };
 export { MessageFilterTier };
 export { MessageLinkingType };
 export { MessageType };
@@ -68,6 +71,7 @@ export default {
   Language,
   LoginType,
   LookingFor,
+  MemberListType,
   MessageFilterTier,
   MessageLinkingType,
   MessageType,

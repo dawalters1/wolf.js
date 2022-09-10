@@ -1,14 +1,14 @@
 import { Capability, Command, Privilege } from '../../constants/index.js';
 import { Base } from '../Base.js';
 import validator from '../../validator/index.js';
-import models, { GroupMember } from '../../models/index.js';
+import models from '../../models/index.js';
 
 const canRequestList = async (client, myCapability, includeAllButBanned = false) => {
   if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
     return true;
   }
 
-  const requiredCapabilities = [Capability.OWNER || Capability.MOD || Capability.ADMIN];
+  const requiredCapabilities = [Capability.OWNER, Capability.MOD, Capability.ADMIN];
 
   if (includeAllButBanned) {
     requiredCapabilities.push(...[Capability.REGULAR, Capability.SILENCED]);
@@ -41,10 +41,8 @@ const canPerformGroupAction = async (client, group, targetGroupMember, newCapabi
     return false;
   }
 
-  const targetHasGAP = await client.utility.subscriber.privilege.has(targetGroupMember.id, Privilege.GROUP_ADMIN);
-
-  if (client.utility.subscriber.privilege.has(Privilege.GROUP_ADMIN)) {
-    if (targetHasGAP && (newCapability === Capability.BANNED || newCapability === Capability.SILENCED)) {
+  if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
+    if (await client.utility.subscriber.privilege.has(targetGroupMember.id, Privilege.GROUP_ADMIN) && (newCapability === Capability.BANNED || newCapability === Capability.SILENCED)) {
       return false;
     }
 
@@ -90,7 +88,7 @@ class Member extends Base {
     }
 
     if (group.members.bots.complete) {
-      return group.members.bots.list;
+      return group.members.bots.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -98,12 +96,12 @@ class Member extends Base {
       {
         groupId: parseInt(targetGroupId),
         filter: 'bots',
-        offset: group.members.bots.list.length,
+        offset: group.members.bots.members.length,
         limit: parseInt(limit)
       }
     );
 
-    return group.members.bots._add(response.body.map((member) => new models.GroupMember(this.client, member)), response.success && response.body.length <= this.client._botConfig.get('server.defaults.search.limit'));
+    return group.members.bots._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
   }
 
   async getSilencedList (targetGroupId, limit = 25) {
@@ -134,7 +132,7 @@ class Member extends Base {
     }
 
     if (group.members.silenced.complete) {
-      return group.members.silenced.list;
+      return group.members.silenced.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -142,12 +140,12 @@ class Member extends Base {
       {
         groupId: parseInt(targetGroupId),
         filter: 'silenced',
-        offset: group.members.silenced.list.length,
+        offset: group.members.silenced.members.length,
         limit: parseInt(limit)
       }
     );
 
-    return group.members.silenced._add(response.body.map((member) => new models.GroupMember(this.client, member)), response.success && response.body.length <= this.client._botConfig.get('server.defaults.search.limit'));
+    return group.members.silenced._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
   }
 
   async getBannedList (targetGroupId, limit = 25) {
@@ -178,7 +176,7 @@ class Member extends Base {
     }
 
     if (group.members.banned.complete) {
-      return group.members.banned.list;
+      return group.members.banned.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -186,11 +184,11 @@ class Member extends Base {
       {
         id: parseInt(targetGroupId),
         limit: parseInt(limit),
-        after: group.members.banned.list.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        after: group.members.banned.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );
 
-    return group.members.banned._add(response.success ? response.body.map((member) => new models.GroupMember(this.client, member)) : [], response.success && response.body.length <= this.client._botConfig.get('server.defaults.members.banned.limit'));
+    return group.members.banned._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
   }
 
   async getPrivilegedList (targetGroupId) {
@@ -213,7 +211,7 @@ class Member extends Base {
     }
 
     if (group.members.privileged.complete) {
-      return group.members.privileged.list;
+      return group.members.privileged.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -224,7 +222,7 @@ class Member extends Base {
       }
     );
 
-    return group.members.privileged._add(response.success ? response.body.map((member) => new models.GroupMember(this.client, member)) : [], response.success);
+    return group.members.privileged._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
   }
 
   async getRegularList (targetGroupId, limit = 100) {
@@ -255,7 +253,7 @@ class Member extends Base {
     }
 
     if (group.members.regular.complete) {
-      return group.members.privileged.list;
+      return group.members.privileged.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -263,11 +261,11 @@ class Member extends Base {
       {
         id: parseInt(targetGroupId),
         subscribe: true,
-        after: group.members.regular.list.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        after: group.members.regular.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );
 
-    return group.members.regular._add(response.success ? response.body.map((member) => new models.GroupMember(this.client, member)) : [], response.success && response.body.length <= this.client._botConfig.get('server.defaults.members.regular.limit'));
+    return group.members.regular._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
   }
 
   async get (targetGroupId, subscriberId) {
@@ -293,7 +291,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
-    const member = group.members._get(subscriberId);
+    const member = group.members.get(subscriberId);
 
     if (member) {
       return member;
@@ -307,16 +305,7 @@ class Member extends Base {
       }
     );
 
-    if (response.success) {
-      const member = new GroupMember(this.client, response.body);
-
-      // Add user to misc as not to mess up requesting data
-      group.members.misc.push(member);
-
-      return member;
-    }
-
-    return undefined;
+    return response.success ? group.members._groupMemberAdd(response.body, response.body.capabilities) : undefined;
   }
 
   async admin (targetGroupId, subscriberId) {

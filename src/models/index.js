@@ -19,6 +19,7 @@ import { GroupAudioSlot } from './GroupAudioSlot.js';
 import { GroupAudioSlotRequest } from './GroupAudioSlotRequest.js';
 import { GroupAudioSlotUpdate } from './GroupAudioSlotUpdate.js';
 import { GroupMember } from './GroupMember.js';
+import { GroupMemberList } from './GroupMemberList.js';
 import { GroupStats } from './GroupStats.js';
 import { GroupStatsActive } from './GroupStatsActive.js';
 import { GroupStatsDetail } from './GroupStatsDetail.js';
@@ -83,6 +84,8 @@ export { GroupAudioSlotRequest };
 export { GroupAudioSlotUpdate };
 export { GroupExtended };
 export { GroupMember };
+export { GroupMemberList };
+
 export { GroupStats };
 export { GroupStatsActive };
 export { GroupStatsDetail };

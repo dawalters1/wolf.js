@@ -6,19 +6,37 @@ connection:
   query:
     device: wjsframework
 
+members: 
+  privileged:
+    capabilities: [32, 1, 2]
+    batch:
+      size: 2500
+    max: 2500
+
+  regular:
+    capabilities: [0]
+    batch:
+      size: 100
+
+  silenced:
+    capabilities: [8]
+    batch:
+      size: 25
+
+  banned:
+    capabilities: [4]
+    batch:
+      size: 100
+
+  bots:
+    capabilities: [32, 1, 2, 8, 0]    
+    privileges: [ 67108864 ]
+    batch:
+      size: 25
+
 batching:
   members: 5000
   length: 50
-
-server:
-  defaults:
-    search: 
-      limit: 25
-    members:
-      banned:
-        limit: 100
-      regular:
-        limit: 100
 
 validation:
   links:

@@ -1,130 +1,90 @@
-import { Event, Capability, Privilege } from '../constants/index.js';
-import { GroupMember } from '../models/GroupMember.js';
+/* eslint-disable no-fallthrough */
+import { Capability, Event } from '../constants/index.js';
 
-const toCapability = (adminAction) => {
-  switch (adminAction) {
-    case 'owner':
-      return Capability.OWNER;
-
-    case 'admin':
-      return Capability.ADMIN;
-
-    case 'mod':
-      return Capability.MOD;
-
-    case 'reset':
-      return Capability.REGULAR;
-
-    case 'silence':
-      return Capability.SILENCED;
-
+const toCapability = (subscriber, group, type) => {
+  switch (type) {
+    case 'join':
+      return group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
+    case 'leave':
+    case 'kick':
+      return Capability.NOT_MEMBER;
     case 'banned':
       return Capability.BANNED;
-
-    case 'join':
+    case 'admin':
+      return Capability.ADMIN;
+    case 'silence':
+      return Capability.SILENCED;
+    case 'mod':
+      return Capability.MOD;
+    case 'reset':
       return Capability.REGULAR;
-
-    default:
-      return Capability.NOT_MEMBER;
-  }
-};
-
-const toMemberListType = (action) => {
-  switch (action) {
-    case Capability.OWNER:
-    case Capability.ADMIN:
-    case Capability.MOD:
-      return 'privileged';
-    case Capability.REGULAR:
-      return 'regular';
-    case Capability.SILENCED:
-      return 'silenced';
-    case Capability.BANNED:
-      return 'banned';
+    case 'owner':
+      return Capability.OWNER;
   }
 };
 
 export default async (client, message) => {
-  const [group, subscriber] = await Promise.all([
-    client.group.getById(message.targetGroupId),
-    client.subscriber.getById(message.sourceSubscriberId)
-  ]);
+  const [subscriber, group] = await Promise.all(
+    [
+      client.subscriber.getById(message.sourceSubscriberId),
+      client.group.getById(message.targetGroupId)
+    ]
+  );
 
   const action = JSON.parse(message.body);
-
-  // Remove user from lists, so can be added to correct list
-  group.members._remove(message.sourceSubscriberId, ['leave', 'kick'].includes(action.type));
+  const capabilities = toCapability(subscriber, group, action.type);
 
   switch (action.type) {
-    case 'owner':
-    case 'admin':
-    case 'mod':
-    case 'banned':
-    case 'silence':
-
-    // eslint-disable-next-line no-fallthrough
-    case 'reset':
-      {
-        const member = new GroupMember(
-          client,
-          {
-            id: message.sourceSubscriberId,
-            capabilities: action.type === 'join' ? group.owner.id === message.sourceSubscriberId ? Capability.OWNER : Capability.REGULAR : toCapability(action.type),
-            hash: subscriber.hash
-          }
-        );
-
-        group.members[toMemberListType(toCapability(action.type))].complete ? group.members[toMemberListType(toCapability(action.type))]._add(member) : group.members.misc.push(new GroupMember(member));
-
-        client.emit(
-          Event.GROUP_MEMBER_UPDATE,
-          group,
-          {
-            groupId: group.id,
-            sourceId: action.instigatorId,
-            targetId: message.sourceSubscriberId,
-            action: action.type
-          }
-        );
-      }
-      break;
-
     case 'join':
-      {
-        const member = new GroupMember(
-          client,
-          {
-            id: message.sourceSubscriberId,
-            capabilities: action.type === 'join' ? group.owner.id === message.sourceSubscriberId ? Capability.OWNER : Capability.REGULAR : toCapability(action.type),
-            hash: subscriber.hash
-          }
-        );
+    {
+      group.members._add(subscriber, capabilities);
 
-        group.owner.id === message.sourceSubscriberId && group.members.privileged.complete ? group.members.privileged._add(member) : group.members.misc.push(new GroupMember(member));
-
-        if (client.utility.subscriber.privilege.has(message.sourceSubscriberId, Privilege.BOT) && group.members.bots.complete) {
-          group.members.bots._add(member);
-        }
-
-        client.emit(
-          message.sourceSubscriberId === client.currentSubscriber.id ? Event.JOINED_GROUP : Event.GROUP_MEMBER_ADD,
-          group,
-          subscriber
-        );
-      }
-      break;
-    case 'kick':
+      return client.emit(
+        subscriber.id === client.currentSubscriber.id ? Event.JOINED_GROUP : Event.GROUP_MEMBER_ADD,
+        group,
+        subscriber
+      );
+    }
     case 'leave':
+    case 'kick': // eslint-disable-line padding-line-between-statements
+    {
       if (action.type === 'leave' && action.instigatorId) {
         action.type = 'kick';
       }
 
+      if (subscriber.id === client.currentSubscriber.id) {
+        group.capabilities = capabilities;
+        group.inGroup = false;
+      }
+
+      group.members._delete(subscriber, capabilities);
+
       return client.emit(
-        message.sourceSubscriberId === client.currentSubscriber.id ? Event.LEFT_GROUP : Event.GROUP_MEMBER_DELETE,
+        subscriber.id === client.currentSubscriber.id ? Event.LEFT_GROUP : Event.GROUP_MEMBER_DELETE,
         group,
         subscriber
       );
-    default:
-      return console.error('Unsupported group action', action.type);
+    }
+
+    case 'owner': // eslint-disable-line padding-line-between-statements
+    case 'admin': // eslint-disable-line padding-line-between-statements
+    case 'mod': // eslint-disable-line padding-line-between-statements
+    case 'reset': // eslint-disable-line padding-line-between-statements
+    case 'silence':// eslint-disable-line padding-line-between-statements
+    case 'ban':// eslint-disable-line padding-line-between-statements
+    {
+      group.members._update(subscriber, capabilities);
+
+      return client.emit(
+        Event.GROUP_MEMBER_UPDATE,
+        group,
+        {
+          groupId: group.id,
+          sourceId: action.instigatorId,
+          targetId: message.sourceSubscriberId,
+          action: action.type
+        }
+      );
+    }
   }
 };
