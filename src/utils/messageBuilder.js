@@ -32,7 +32,7 @@ const getFormattingData = async (client, message, ads, links) => {
 
   return Object.values(data.formatting).length ? data : undefined;
 };
-//(((http|ftp|https|wss|smtp|ws|wolf):\/\/)?(www.)?[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+.*)
+// (((http|ftp|https|wss|smtp|ws|wolf):\/\/)?(www.)?[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+.*)
 const getEmbedData = (client, formatting) => {
   for (const item of [...[formatting?.groupLinks ?? []], ...[formatting?.links ?? []]].flat().filter(Boolean)) {
     if (Reflect.has(item, 'groupId')) {

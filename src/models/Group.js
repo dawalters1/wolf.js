@@ -24,12 +24,11 @@ class Group extends Base {
     this.audioCounts = new GroupAudioCounts(client, data?.audioCounts);
     this.audioConfig = new GroupAudioConfig(client, data?.audioConfig);
     this.messageConfig = new GroupMessageConfig(client, data?.messageConfig);
-    this.members = new GroupMemberList();
+    this.members = new GroupMemberList(client, data?.id);
 
     this.inGroup = false;
     this.capabilities = Capability.NOT_MEMBER;
 
-    console.log(data);
     this.exists = data?.memberCount > 0;
   }
 }
