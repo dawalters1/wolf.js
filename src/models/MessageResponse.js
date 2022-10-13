@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageResponse extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class MessageResponse extends Base {
     this.uuid = data?.uuid;
     this.timestamp = data?.timestamp;
   }
+
+  toJSON () {
+    return {
+      uuid: this.uuid,
+      timestamp: this.timestamp
+    };
+  }
 }
 
-export { MessageResponse };
+export default MessageResponse;

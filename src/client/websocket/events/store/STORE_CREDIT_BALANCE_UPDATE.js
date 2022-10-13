@@ -1,7 +1,11 @@
+import { Event } from '../../../../constants/index.js';
+
 export default async (client, body) => {
   const oldBalance = client.store._balance;
 
   client.store._balance = body.balance;
 
-  return await client.emit(Event.SUBSCRIBER_BLOCK_ADD, oldBalance >= 0 ? oldBalance : 0, body.balance);
+  return await client.emit(
+    Event.SUBSCRIBER_BLOCK_ADD,
+    oldBalance >= 0 ? oldBalance : 0, body.balance);
 };

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class StoreSection extends Base {
   constructor (client, data) {
@@ -11,4 +11,4 @@ class StoreSection extends Base {
   }
 }
 
-export { StoreSection };
+export default StoreSection;

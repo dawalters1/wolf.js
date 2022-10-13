@@ -14,9 +14,18 @@ export default async (client, body) => {
   if (body.isRemoved) {
     group.events.splice(group.events.indexOf(oldEvent), 1);
 
-    return client.emit(Event.GROUP_EVENT_DELETE, group, newEvent);
+    return client.emit(
+      Event.GROUP_EVENT_DELETE,
+      group,
+      newEvent
+    );
   }
   patch(oldEvent, newEvent);
 
-  return client.emit(Event.GROUP_EVENT_UPDATE, group, oldEvent, newEvent);
+  return client.emit(
+    Event.GROUP_EVENT_UPDATE,
+    group,
+    oldEvent,
+    newEvent
+  );
 };

@@ -8,4 +8,4 @@ class WOLFAPIError extends Error {
   }
 }
 
-export { WOLFAPIError };
+export default WOLFAPIError;

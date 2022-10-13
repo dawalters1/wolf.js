@@ -1,31 +1,24 @@
 import validator from '../validator/index.js';
-import { WOLFAPIError } from '../models/WOLFAPIError.js';
+import WOLFAPIError from '../models/WOLFAPIError.js';
 import { Language } from '../constants/index.js';
 import moment from 'moment';
-import { ArrayUtility } from './Array/index.js';
-import { Download } from './Download/index.js';
-import { Group } from './Group/Group.js';
-import { NumberUtility } from './Number/index.js';
-import { StringUtility } from './String/index.js';
-import { Subscriber } from './Subscriber/Subscriber.js';
-import { Timer } from './Timer/index.js';
+import ArrayUtility from './Array/index.js';
+import Download from './Download/index.js';
+import Group from './Group/Group.js';
+import NumberUtility from './Number/index.js';
+import StringUtility from './String/index.js';
+import Subscriber from './Subscriber/Subscriber.js';
+import Timer from './Timer/index.js';
 
 class Utility {
   constructor (client) {
     this.client = client;
-
+    this.download = Download;
     this.array = new ArrayUtility();
-
-    this.download = new Download();
-
     this.group = new Group(client);
-
     this.number = new NumberUtility();
-
     this.string = new StringUtility(client);
-
     this.subscriber = new Subscriber(client);
-
     this.timer = new Timer(client);
   }
 
@@ -228,4 +221,4 @@ class Utility {
   }
 }
 
-export { Utility };
+export default Utility;

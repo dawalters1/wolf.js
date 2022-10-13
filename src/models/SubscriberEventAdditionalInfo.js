@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class SubscriberEventAdditionalInfo extends Base {
   constructor (client, data) {
@@ -7,6 +7,14 @@ class SubscriberEventAdditionalInfo extends Base {
     this.endsAt = data?.endsAt;
     this.startsAt = data?.startsAt;
   }
+
+  toJSON () {
+    return {
+      eTag: this.eTag,
+      endsAt: this.endsAt,
+      startsAt: this.startsAt
+    };
+  }
 }
 
-export { SubscriberEventAdditionalInfo };
+export default SubscriberEventAdditionalInfo;

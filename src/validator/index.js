@@ -41,24 +41,15 @@ const isType = (arg, type) => {
 };
 
 const isNull = (arg) => arg === null;
-
 const isNullOrUndefined = (arg) => arg === null || arg === undefined;
-
 const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 'string' && arg.trim().length === 0);
-
 const isLessThanOrEqualZero = (arg) => isValidNumber(arg) && !(parseInt(arg) > 0);
-
 const isLessThanZero = (arg) => isValidNumber(arg) && !(parseInt(arg) >= 0);
-
 const isValidNumber = (arg, acceptDecimals = false) => (acceptDecimals ? /^-?\d+(\.\d+)?$/ : /^-?\d+$/).test(arg);
 const isValidArray = (arg) => Array.isArray(arg);
-
 const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'number' && (arg === 1 || arg === 0));
-
 const isValidDate = (arg) => !isNaN(new Date(arg).getDate());
-
 const isValidHex = (arg) => !isNullOrWhitespace(arg) && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/giu.test(`${arg.startsWith('#') ? '' : '#'}${arg}`);
-
 const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.text(arg);
 
 const isEqual = (sideA, sideB) => {
@@ -145,33 +136,19 @@ const isValidUrl = (client, arg) => {
 };
 
 export { isNull };
-
 export { isNullOrUndefined };
-
 export { isLessThanOrEqualZero };
-
 export { isNullOrWhitespace };
-
 export { isValidNumber };
-
 export { isValidArray };
-
 export { isLessThanZero };
-
 export { isValidBoolean };
-
 export { isValidDate };
-
 export { isType };
-
 export { trimPunctuation };
-
 export { isValidHex };
-
 export { isValidEmoji };
-
 export { isEqual };
-
 export { isValidUrl };
 
 export default {

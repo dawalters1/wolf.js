@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageMetadataFormattingUrl extends Base {
   constructor (client, data) {
@@ -7,6 +7,14 @@ class MessageMetadataFormattingUrl extends Base {
     this.end = data?.end;
     this.url = data?.url;
   }
+
+  toJSON () {
+    return {
+      start: this.start,
+      end: this.end,
+      url: this.url
+    };
+  }
 }
 
-export { MessageMetadataFormattingUrl };
+export default MessageMetadataFormattingUrl;

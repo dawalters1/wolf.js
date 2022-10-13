@@ -1,6 +1,0 @@
-
-class Event {
-
-}
-
-export { Event };

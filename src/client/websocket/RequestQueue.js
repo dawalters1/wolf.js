@@ -67,4 +67,4 @@ class RequestQueue {
   }
 }
 
-export { RequestQueue };
+export default RequestQueue;

@@ -1,4 +1,4 @@
-import { WOLFAPIError } from '../models/WOLFAPIError.js';
+import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
 
 const callbacks = {
@@ -7,7 +7,7 @@ const callbacks = {
   BOTH: 'both'
 };
 const validation = async (command) => {
-  if (!(command instanceof (await import('./Command.js')).Command)) {
+  if (!(command instanceof (await import('./Command.js')).default)) {
     throw new WOLFAPIError('object must be an instance of command', { command });
   }
 
@@ -54,4 +54,4 @@ class Command {
   }
 }
 
-export { Command };
+export default Command;

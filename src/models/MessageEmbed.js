@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageEmbed extends Base {
   constructor (client, data) {
@@ -10,6 +10,17 @@ class MessageEmbed extends Base {
     this.image = data?.image;
     this.body = data?.body;
   }
+
+  toJSON () {
+    return {
+      type: this.type,
+      groupid: this.groupId,
+      url: this.url,
+      title: this.title,
+      image: this.image,
+      body: this.body
+    };
+  }
 }
 
-export { MessageEmbed };
+export default MessageEmbed;

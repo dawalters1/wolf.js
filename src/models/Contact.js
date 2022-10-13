@@ -1,5 +1,5 @@
-import { Base } from './Base.js';
-import { ContactAdditionalInfo } from './ContactAdditionalInfo.js';
+import Base from './Base.js';
+import ContactAdditionalInfo from './ContactAdditionalInfo.js';
 
 class Contact extends Base {
   constructor (client, data) {
@@ -7,6 +7,13 @@ class Contact extends Base {
     this.id = data?.id;
     this.additionalInfo = new ContactAdditionalInfo(client, data?.additionalInfo);
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      additionalInfo: this.additionalInfo.toJSON()
+    };
+  }
 }
 
-export { Contact };
+export default Contact;

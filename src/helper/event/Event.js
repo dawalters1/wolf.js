@@ -1,10 +1,10 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { Command } from '../../constants/index.js';
+import Command from '../../constants/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import { Group } from './Group.js';
-import { Subscription } from './Subscription.js';
+import Group from './Group.js';
+import Subscription from './Subscription.js';
 
 class Event extends Base {
   constructor (client) {
@@ -88,4 +88,4 @@ class Event extends Base {
   }
 }
 
-export { Event };
+export default Event;

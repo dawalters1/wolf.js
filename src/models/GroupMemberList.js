@@ -1,6 +1,6 @@
 
 import MemberListType from '../constants/MemberListType.js';
-import { GroupMemberListSection } from './GroupMemberListSection.js';
+import GroupMemberListSection from './GroupMemberListSection.js';
 
 class GroupMemberList {
   constructor (client, targetGroupId) {
@@ -44,4 +44,4 @@ class GroupMemberList {
   }
 }
 
-export { GroupMemberList };
+export default GroupMemberList;

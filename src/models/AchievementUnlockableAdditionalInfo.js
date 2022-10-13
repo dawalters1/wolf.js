@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class AchievementUnlockableAdditionalInfo extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class AchievementUnlockableAdditionalInfo extends Base {
     this.awardedAt = data?.awardedAt;
     this.eTag = data?.eTag;
   }
+
+  toJSON () {
+    return {
+      awardedAt: this.awardedAt,
+      eTag: this.eTag
+    };
+  }
 }
 
-export { AchievementUnlockableAdditionalInfo };
+export default AchievementUnlockableAdditionalInfo;

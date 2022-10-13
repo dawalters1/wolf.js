@@ -5,5 +5,8 @@ export default async (client, body) => {
 
   client.event.subscription.cache.push(event);
 
-  return client.emit(Event.SUBSCRIBER_GROUP_EVENT_ADD, event);
+  return client.emit(
+    Event.SUBSCRIBER_GROUP_EVENT_ADD,
+    event
+  );
 };

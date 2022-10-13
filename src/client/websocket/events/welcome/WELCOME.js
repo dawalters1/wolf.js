@@ -42,7 +42,10 @@ const login = async (client) => {
   });
 
   if (!response.success) {
-    client.emit(Event.LOGIN_FAILED, response);
+    client.emit(
+      Event.LOGIN_FAILED,
+      response
+    );
 
     // Check if code is greater than 1 if so, bot is barred, attempt reconnect
     if (!(response?.headers?.subCode ?? -1 > 1)) {
@@ -53,7 +56,11 @@ const login = async (client) => {
     return await login(client);
   }
   client.currentSubscriber = response.body.subscriber;
-  client.emit(Event.LOGIN_SUCCESS, client.currentSubscriber);
+
+  client.emit(
+    Event.LOGIN_SUCCESS,
+    client.currentSubscriber
+  );
 
   return await fininaliseConnection(client, false);
 };
@@ -66,6 +73,7 @@ export default async (client, body) => {
   if (!welcome.subscriber) {
     return await login(client);
   }
+
   client.currentSubscriber = welcome.subscriber;
 
   return await fininaliseConnection(client, true);

@@ -1,9 +1,9 @@
-import { Base } from '../Base.js';
-import { Command } from '../../constants/index.js';
+import Base from '../Base.js';
+import Command from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import { Presence } from './Presence.js';
+import Presence from './Presence.js';
 
 class Subscriber extends Base {
   constructor (client) {
@@ -58,16 +58,18 @@ class Subscriber extends Base {
       const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId), this.client._botConfig.get('batching.length')));
 
       for (const idList of idLists) {
-        const response = await this.client.websocket.emit(Command.SUBSCRIBER_PROFILE, {
-          headers: {
-            version: 4
-          },
-          body: {
-            idList,
-            extended: true,
-            subscribe: true
+        const response = await this.client.websocket.emit(
+          Command.SUBSCRIBER_PROFILE, {
+            headers: {
+              version: 4
+            },
+            body: {
+              idList,
+              extended: true,
+              subscribe: true
+            }
           }
-        });
+        );
 
         if (response.success) {
           const groupResponses = Object.values(response.body).map((subscriberResponse) => new models.Response(subscriberResponse));
@@ -109,16 +111,19 @@ class Subscriber extends Base {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
-    const response = await this.client.websocket.emit(Command.MESSAGE_GROUP_HISTORY_LIST, {
-      headers: {
-        version: 2
-      },
-      body: {
-        id: parseInt(id),
-        limit: parseInt(limit),
-        timestampEnd: timestamp === 0 ? undefined : parseInt(timestamp)
+    const response = await this.client.websocket.emit(
+      Command.MESSAGE_GROUP_HISTORY_LIST,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          id: parseInt(id),
+          limit: parseInt(limit),
+          timestampEnd: timestamp === 0 ? undefined : parseInt(timestamp)
+        }
       }
-    });
+    );
 
     return response.success ? response.body.map((message) => new models.Message(this.client, message)) : [];
   }
@@ -140,4 +145,4 @@ class Subscriber extends Base {
   }
 }
 
-export { Subscriber };
+export default Subscriber;

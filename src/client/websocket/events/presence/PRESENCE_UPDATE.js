@@ -24,5 +24,9 @@ export default async (client, body) => {
     return;
   }
 
-  return client.emit(Event.PRESENCE_UPDATE, old, client.subscriber.presence.find((presence) => presence.subscriberId === body.subscriberId));
+  return client.emit(
+    Event.PRESENCE_UPDATE,
+    old,
+    client.subscriber.presence.find((presence) => presence.subscriberId === body.subscriberId)
+  );
 };

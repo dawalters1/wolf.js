@@ -81,4 +81,4 @@ class GroupMemberListSection {
   }
 }
 
-export { GroupMemberListSection };
+export default GroupMemberListSection;

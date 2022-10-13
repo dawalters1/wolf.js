@@ -4,6 +4,14 @@ class StoreProductDuration {
     this.credits = data?.credits;
     this.days = data?.days;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      credits: this.credits,
+      days: this.days
+    };
+  }
 }
 
-export { StoreProductDuration };
+export default StoreProductDuration;

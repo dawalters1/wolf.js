@@ -1,5 +1,5 @@
-import { Base } from '../Base.js';
-import { Command } from '../../constants/index.js';
+import Base from '../Base.js';
+import Command from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
@@ -52,10 +52,13 @@ class Presence extends Base {
       const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId), this.client._botConfig.get('batching.length')));
 
       for (const idList of idLists) {
-        const response = await this.client.websocket.emit(Command.SUBSCRIBER_PRESENCE, {
-          idList,
-          subscribe: true
-        });
+        const response = await this.client.websocket.emit(
+          Command.SUBSCRIBER_PRESENCE,
+          {
+            idList,
+            subscribe: true
+          }
+        );
 
         if (response.success) {
           const presenceResponses = Object.values(response.body).map((presenceResponse) => new models.Response(presenceResponse));
@@ -85,4 +88,4 @@ class Presence extends Base {
   }
 }
 
-export { Presence };
+export default Presence;

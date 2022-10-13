@@ -1,4 +1,4 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
 import Constants, { Language } from '../../constants/index.js';
 import validator from '../../validator/index.js';
@@ -43,4 +43,4 @@ class Category extends Base {
   }
 }
 
-export { Category };
+export default Category;

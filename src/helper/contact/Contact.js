@@ -1,8 +1,8 @@
-import { Command } from '../../constants/index.js';
-import { Base } from '../Base.js';
+import Command from '../../constants/index.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
-import { Blocked } from './Blocked.js';
+import Blocked from './Blocked.js';
 
 class Contact extends Base {
   constructor (client) {
@@ -93,4 +93,4 @@ class Contact extends Base {
   }
 }
 
-export { Contact };
+export default Contact;

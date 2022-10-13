@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageEdit extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class MessageEdit extends Base {
     this.subscriberId = data?.subscriberId;
     this.timestamp = data?.timestamp;
   }
+
+  toJSON () {
+    return {
+      subscriberId: this.subscriberId,
+      timestamp: this.timestamp
+    };
+  }
 }
 
-export { MessageEdit };
+export default MessageEdit;

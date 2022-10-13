@@ -1,5 +1,5 @@
-import { Command } from '../../constants/index.js';
-import { Base } from '../Base.js';
+import Command from '../../constants/index.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 
@@ -87,4 +87,4 @@ class Blocked extends Base {
   }
 }
 
-export { Blocked };
+export default Blocked;

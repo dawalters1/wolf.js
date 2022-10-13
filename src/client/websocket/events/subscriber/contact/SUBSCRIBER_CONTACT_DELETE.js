@@ -8,5 +8,8 @@ export default async (client, body) => {
   }
   client.contact.cache.splice(client.contact.cache.indexOf(contact), 1);
 
-  return await client.emit(Event.SUBSCRIBER_CONTACT_DELETE, contact);
+  return await client.emit(
+    Event.SUBSCRIBER_CONTACT_DELETE,
+    contact
+  );
 };

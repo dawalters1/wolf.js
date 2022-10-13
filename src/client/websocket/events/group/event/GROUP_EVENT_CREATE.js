@@ -11,5 +11,9 @@ export default async (client, body) => {
 
   group.events.push(event);
 
-  return client.emit(Event.GROUP_EVENT_CREATE, group, event);
+  return client.emit(
+    Event.GROUP_EVENT_CREATE,
+    group,
+    event
+  );
 };

@@ -1,5 +1,5 @@
-import { Base } from './Base.js';
-import { SubscriberEventAdditionalInfo } from './SubscriberEventAdditionalInfo.js';
+import Base from './Base.js';
+import SubscriberEventAdditionalInfo from './SubscriberEventAdditionalInfo.js';
 
 class SubscriberEvent extends Base {
   constructor (client, data) {
@@ -8,6 +8,14 @@ class SubscriberEvent extends Base {
     this.groupId = data?.groupId;
     this.additionalInfo = new SubscriberEventAdditionalInfo(client, data?.additionalInfo);
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      groupId: this.groupId,
+      additionalInfo: this.additionalInfo.toJSON()
+    };
+  }
 }
 
-export { SubscriberEvent };
+export default SubscriberEvent;

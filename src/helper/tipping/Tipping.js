@@ -1,4 +1,4 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import { Command, TipPeriod, TipType, TipDirection, ContextType } from '../../constants/index.js';
 import models from '../../models/index.js';
@@ -78,12 +78,15 @@ class Tipping extends Base {
       }
     }
 
-    return await this.client.websocket.emit(Command.TIP_ADD, {
-      subscriberId: parseInt(targetSubscriberId),
-      groupId: parseInt(targetGroupId),
-      charmList: charms,
-      context
-    });
+    return await this.client.websocket.emit(
+      Command.TIP_ADD,
+      {
+        subscriberId: parseInt(targetSubscriberId),
+        groupId: parseInt(targetGroupId),
+        charmList: charms,
+        context
+      }
+    );
   }
 
   async getDetails (targetGroupId, timestamp, limit = 20, offset = 0) {
@@ -111,13 +114,16 @@ class Tipping extends Base {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_DETAIL, {
-      groupId: parseInt(targetGroupId),
-      id: parseInt(timestamp),
-      contextType: ContextType.MESSAGE,
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_DETAIL,
+      {
+        groupId: parseInt(targetGroupId),
+        id: parseInt(timestamp),
+        contextType: ContextType.MESSAGE,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    );
 
     return response.success ? new models.TipDetail(this.client, response.body) : undefined;
   }
@@ -147,13 +153,16 @@ class Tipping extends Base {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_SUMMARY, {
-      groupId: parseInt(targetGroupId),
-      id: parseInt(timestamp),
-      contextType: ContextType.MESSAGE,
-      limit,
-      offset
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_SUMMARY,
+      {
+        groupId: parseInt(targetGroupId),
+        id: parseInt(timestamp),
+        contextType: ContextType.MESSAGE,
+        limit,
+        offset
+      }
+    );
 
     return response.success ? new models.TipSummary(this.client, response.body) : undefined;
   }
@@ -187,12 +196,15 @@ class Tipping extends Base {
       }
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GROUP, {
-      groupId: parseInt(targetGroupId),
-      period: tipPeriod,
-      type: tipType,
-      tipDirection: tipType === TipType.CHARM ? undefined : tipDirection
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_LEADERBOARD_GROUP,
+      {
+        groupId: parseInt(targetGroupId),
+        period: tipPeriod,
+        type: tipType,
+        tipDirection: tipType === TipType.CHARM ? undefined : tipDirection
+      }
+    );
 
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
@@ -226,12 +238,15 @@ class Tipping extends Base {
       }
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GROUP_SUMMARY, {
-      id: parseInt(targetGroupId),
-      period: tipPeriod,
-      type: tipType,
-      tipDirection: tipType === TipType.CHARM ? null : tipDirection
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_LEADERBOARD_GROUP_SUMMARY,
+      {
+        id: parseInt(targetGroupId),
+        period: tipPeriod,
+        type: tipType,
+        tipDirection: tipType === TipType.CHARM ? null : tipDirection
+      }
+    );
 
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
@@ -253,11 +268,14 @@ class Tipping extends Base {
       throw new models.WOLFAPIError('tipType is not valid', { tipType });
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GLOBAL, {
-      period: tipPeriod,
-      type: tipType,
-      tipDirection: tipType === TipType.GROUP ? undefined : tipDirection
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_LEADERBOARD_GLOBAL,
+      {
+        period: tipPeriod,
+        type: tipType,
+        tipDirection: tipType === TipType.GROUP ? undefined : tipDirection
+      }
+    );
 
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
@@ -269,12 +287,15 @@ class Tipping extends Base {
       throw new models.WOLFAPIError('tipPeriod is not valid', { tipPeriod });
     }
 
-    const response = await this.client.websocket.emit(Command.TIP_LEADERBOARD_GLOBAL_SUMMARY, {
-      period: tipPeriod
-    });
+    const response = await this.client.websocket.emit(
+      Command.TIP_LEADERBOARD_GLOBAL_SUMMARY,
+      {
+        period: tipPeriod
+      }
+    );
 
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 }
 
-export { Tipping };
+export default Tipping;

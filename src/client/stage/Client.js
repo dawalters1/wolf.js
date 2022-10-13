@@ -15,15 +15,17 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const setIntervalAsync = (fn) => {
-  fn().then((ms) => {
-    setTimeout(() => setIntervalAsync(fn, ms), ms);
-  });
-};
+const setIntervalAsync = (fn) => fn().then((ms) => setTimeout(() => setIntervalAsync(fn, ms), ms));
 
-class Client {
+class Client extends EventEmitter {
   constructor (client) {
+    super();
+
     this.client = client;
+
+    this._slotId = undefined;
+    this._muted = undefined;
+
     this.broadcastState = StageBroadcastState.IDLE;
     this.connectionState = StageConnectionState.DISCONNECTED;
     this.client = new RTCPeerConnection();
@@ -36,11 +38,21 @@ class Client {
     this.sender = this.client.addTrack(this.track, stream);
   }
 
-  play (stream) {
+  get slotId () {
+    return this._slotId;
+  }
+
+  get muted () {
+    return this._muted;
+  }
+
+  play (data) {
+
   }
 
   stop () {
+
   }
 }
 
-export { Client };
+export default Client;

@@ -1,4 +1,4 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import * as nanoid from 'nanoid';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
@@ -114,4 +114,4 @@ class Subscription extends Base {
   }
 }
 
-export { Subscription };
+export default Subscription;

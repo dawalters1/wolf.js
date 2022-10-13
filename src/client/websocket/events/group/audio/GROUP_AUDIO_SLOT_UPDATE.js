@@ -14,19 +14,35 @@ export default async (client, body) => {
   patch(group.slots.find((slot) => slot.id === body.slot.id), body.slot);
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
-    client.emit(new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Event.GROUP_AUDIO_REQUEST_EXPIRE : Event.GROUP_AUDIO_REQUEST_DELETE, group, new models.GroupAudioSlotRequest(client, {
-      slotId: body.slot.id,
-      reservedOccupierId: body.slot.reservedOccupierId
-    }));
+    client.emit(
+      new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Event.GROUP_AUDIO_REQUEST_EXPIRE : Event.GROUP_AUDIO_REQUEST_DELETE,
+      group,
+      new models.GroupAudioSlotRequest(client,
+        {
+          slotId: body.slot.id,
+          reservedOccupierId: body.slot.reservedOccupierId
+        }
+      )
+    );
   }
 
   if (!cached.reservedOccupierId && body.slot.reservedOccupierId) {
-    client.emit(Event.GROUP_AUDIO_REQUEST_ADD, group, new models.GroupAudioSlotRequest(client, {
-      slotId: body.slot.id,
-      reservedOccupierId: body.slot.reservedOccupierId,
-      reservedExpiresAt: new Date(body.slot.reservedExpiresAt)
-    }));
+    client.emit(
+      Event.GROUP_AUDIO_REQUEST_ADD,
+      group,
+      new models.GroupAudioSlotRequest(client,
+        {
+          slotId: body.slot.id,
+          reservedOccupierId: body.slot.reservedOccupierId,
+          reservedExpiresAt: new Date(body.slot.reservedExpiresAt)
+        }
+      )
+    );
   }
 
-  return client.emit(Event.GROUP_AUDIO_SLOT_UPDATE, cached, group.slots.find((slot) => slot.id === body.slot.id));
+  return client.emit(
+    Event.GROUP_AUDIO_SLOT_UPDATE,
+    cached,
+    group.slots.find((slot) => slot.id === body.slot.id)
+  );
 };

@@ -6,7 +6,10 @@ export default async (client, body) => {
 
   for (const notification of newData) {
     if (!cached.find((notif) => notif.id === notification.id)) {
-      client.emit(Event.NOTIFICATION_RECEIVED, notification);
+      client.emit(
+        Event.NOTIFICATION_RECEIVED,
+        notification
+      );
     }
   }
 };

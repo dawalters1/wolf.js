@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import aws4Axios from 'aws4-axios';
 import AWS from 'aws-sdk';
 import { Event } from '../../constants/index.js';
-import { Response } from '../../models/Response.js';
+import Response from '../../models/Response.js';
 
 const { aws4Interceptor } = aws4Axios;
 
@@ -32,7 +32,7 @@ class Multimedia {
           );
 
           return await new Promise((resolve, reject) => {
-            AWS.config.getCredentials(function (error) {
+            AWS.config.getCredentials((error) => {
               if (error) {
                 this.client.emit(Event.INTERNAL_ERROR, error);
                 reject(error);
@@ -43,11 +43,10 @@ class Multimedia {
           });
         }
 
-        AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] =
-          cognito.token;
+        AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
 
         return await new Promise((resolve, reject) => {
-          AWS.config.credentials.refresh(function (error) {
+          AWS.config.credentials.refresh((error) => {
             if (error) {
               this.client.emit(Event.INTERNAL_ERROR, error);
               reject(error);
@@ -72,15 +71,15 @@ class Multimedia {
     axios.interceptors.request.use(interceptor);
 
     return await new Promise((resolve, reject) => {
-      axios
-        .post(
-          `${this.client.endpointConfig.mmsUploadEndpoint}/v${route.version}/${route.path}`,
-          { body }
-        )
+      axios.post(`${this.client.endpointConfig.mmsUploadEndpoint}/v${route.version}/${route.path}`,
+        {
+          body
+        }
+      )
         .then((res) => resolve(new Response(res.data)))
         .catch((error) => reject(error));
     });
   }
 }
 
-export { Multimedia };
+export default Multimedia;

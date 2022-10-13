@@ -1,7 +1,7 @@
 import Language from '../constants/Language.js';
-import { Base } from './Base.js';
-import { SubscriberExtended } from './SubscriberExtended.js';
-import { SubscriberSelectedCharm } from './SubscriberSelectedCharm.js';
+import Base from './Base.js';
+import SubscriberExtended from './SubscriberExtended.js';
+import SubscriberSelectedCharm from './SubscriberSelectedCharm.js';
 
 class Subscriber extends Base {
   constructor (client, data) {
@@ -31,6 +31,23 @@ class Subscriber extends Base {
       }
     };
   }
+
+  toJSON () {
+    return {
+      charms: this.charms.toJSON(),
+      deviceType: this.deviceType,
+      extended: this.extended.toJSON(),
+      hash: this.hash,
+      icon: this.icon,
+      id: this.id,
+      nickname: this.nickname,
+      onlineState: this.onlineState,
+      reputation: this.reputation,
+      privileges: this.privileges,
+      status: this.status,
+      language: this.language
+    };
+  }
 }
 
-export { Subscriber };
+export default Subscriber;

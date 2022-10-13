@@ -1,12 +1,13 @@
-import { Base } from '../../models/Base.js';
-import { PrivilegeUtil } from './Privilege.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import Base from '../../models/Base.js';
+import PrivilegeUtility from './Privilege.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 
 class Subscriber extends Base {
   constructor (client) {
     super(client);
-    this.privilege = new PrivilegeUtil(client);
+
+    this.privilege = new PrivilegeUtility(client);
   }
 
   async avatar (targetGroupId, size = 128) {
@@ -25,8 +26,16 @@ class Subscriber extends Base {
     } else if (validator.isLessThanOrEqualZero(size)) {
       throw new WOLFAPIError('size cannot be less than or equal to 0', { size });
     }
-    // TODO:
+
+    return await this.client.utility.download(
+      this.client.utility.string.replace(`${this.client.endpointConfig.avatarEndpoint}/FileServerSpring/subscriber/avatar/{subscriberId}?size={size}`,
+        {
+          targetGroupId,
+          size
+        }
+      )
+    );
   }
 }
 
-export { Subscriber };
+export default Subscriber;

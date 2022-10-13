@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupExtended extends Base {
   constructor (client, data) {
@@ -15,6 +15,22 @@ class GroupExtended extends Base {
     this.passworded = data?.passworded;
     this.entryLevel = data?.entryLevel;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      longDescription: this.longDescription,
+      discoverable: this.discoverable,
+      language: this.language,
+      category: this.category,
+      advancedAdmin: this.advancedAdmin,
+      questionable: this.questionable,
+      locked: this.locked,
+      closed: this.closed,
+      passworded: this.passworded,
+      entryLevel: this.entryLevel
+    };
+  }
 }
 
-export { GroupExtended };
+export default GroupExtended;

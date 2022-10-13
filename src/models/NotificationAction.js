@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class NotificationAction extends Base {
   constructor (client, data) {
@@ -9,6 +9,16 @@ class NotificationAction extends Base {
     this.external = data?.external;
     this.imageUrl = data?.imageUrl;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      titleText: this.titleText,
+      actionUrl: this.actionUrl,
+      external: this.external,
+      imageUrl: this.imageUrl
+    };
+  }
 }
 
-export { NotificationAction };
+export default NotificationAction;

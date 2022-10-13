@@ -1,10 +1,10 @@
 import Capability from '../constants/Capability.js';
-import { Base } from './Base.js';
-import { GroupAudioConfig } from './GroupAudioConfig.js';
-import { GroupAudioCounts } from './GroupAudioCounts.js';
-import { GroupExtended } from './GroupExtended.js';
-import { GroupMemberList } from './GroupMemberList.js';
-import { GroupMessageConfig } from './GroupMessageConfig.js';
+import Base from './Base.js';
+import GroupAudioConfig from './GroupAudioConfig.js';
+import GroupAudioCounts from './GroupAudioCounts.js';
+import GroupExtended from './GroupExtended.js';
+import GroupMemberList from './GroupMemberList.js';
+import GroupMessageConfig from './GroupMessageConfig.js';
 
 class Group extends Base {
   constructor (client, data) {
@@ -31,6 +31,29 @@ class Group extends Base {
 
     this.exists = data?.memberCount > 0;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      hash: this.hash,
+      name: this.name,
+      description: this.description,
+      reputation: this.reputation,
+      owner: this.owner.toJSON(),
+      membersCount: this.membersCount,
+      official: this.official,
+      peekable: this.peekable,
+      premium: this.premium,
+      icon: this.icon,
+      extended: this.extended.toJSON(),
+      audioCounts: this.audioCounts.toJSON(),
+      audioConfig: this.audioConfig.toJSON(),
+      messageConfig: this.messageConfig.toJSON(),
+      inGroup: this.inGroup,
+      capabilities: this.capabilities,
+      exists: this.exists
+    };
+  }
 }
 
-export { Group };
+export default Group;

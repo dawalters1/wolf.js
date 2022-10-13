@@ -1,5 +1,5 @@
 import BullQueue from 'bull';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 
@@ -144,4 +144,4 @@ class Timer {
   }
 }
 
-export { Timer };
+export default Timer;

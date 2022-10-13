@@ -1,5 +1,6 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 
+// TODO
 class Discovery extends Base {
   // eslint-disable-next-line no-useless-constructor
   constructor (client) {
@@ -7,4 +8,4 @@ class Discovery extends Base {
   }
 }
 
-export { Discovery };
+export default Discovery;

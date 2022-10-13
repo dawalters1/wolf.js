@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 
@@ -10,7 +10,7 @@ class Phrase extends Base {
     this.loadLocal();
   }
 
-  loadLocal () {
+  _local () {
     if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) {
       throw new Error('Phrases folder missing in base folder');
     }
@@ -33,6 +33,10 @@ class Phrase extends Base {
   }
 
   load (phrases) {
+    if (!phrases) {
+      return this.local();
+    }
+
     phrases = Array.isArray(phrases) ? phrases : [phrases];
 
     if (phrases.length === 0) {
@@ -127,4 +131,4 @@ class Phrase extends Base {
   }
 }
 
-export { Phrase };
+export default Phrase;

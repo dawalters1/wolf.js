@@ -8,5 +8,8 @@ export default async (client, body) => {
   }
   client.event.subscription.cache.splice(client.event.subscription.cache.indexOf(cached), 1);
 
-  return client.emit(Event.SUBSCRIBER_GROUP_EVENT_DELETE, cached);
+  return client.emit(
+    Event.SUBSCRIBER_GROUP_EVENT_DELETE,
+    cached
+  );
 };

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class TimerJob extends Base {
   constructor (client, job) {
@@ -18,6 +18,17 @@ class TimerJob extends Base {
   async delay (duration) {
     return await this.client.utility.timer.delay(this.id, duration);
   }
+
+  toJSON () {
+    return {
+      handler: this.handler,
+      data: this.data,
+      duration: this.duration,
+      timestamp: this.timestamp,
+      id: this.id,
+      remaining: this.remaining
+    };
+  }
 }
 
-export { TimerJob };
+export default TimerJob;

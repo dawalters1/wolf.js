@@ -8,5 +8,8 @@ export default async (client, body) => {
   }
   client.contact.blocked.cache.splice(client.contact.blocked.cache.indexOf(contact), 1);
 
-  return await client.emit(Event.SUBSCRIBER_BLOCK_DELETE, contact);
+  return await client.emit(
+    Event.SUBSCRIBER_BLOCK_DELETE,
+    contact
+  );
 };

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class ContactAdditionalInfo extends Base {
   constructor (client, data) {
@@ -6,8 +6,17 @@ class ContactAdditionalInfo extends Base {
     this.hash = data?.hash;
     this.nicknameShort = data?.nicknameShort;
     this.onlineState = data?.onlineState;
-    this.privilieges = data?.privilieges;
+    this.privileges = data?.privileges;
+  }
+
+  toJSON () {
+    return {
+      hash: this.hash,
+      nicknameShort: this.nicknameShort,
+      onlineState: this.onlineState,
+      privileges: this.privileges
+    };
   }
 }
 
-export { ContactAdditionalInfo };
+export default ContactAdditionalInfo;

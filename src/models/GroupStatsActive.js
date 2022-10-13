@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupStatsActive extends Base {
   constructor (client, data) {
@@ -20,6 +20,27 @@ class GroupStatsActive extends Base {
     this.voiceCount = data?.voiceCount;
     this.wordCount = data?.wordCount;
   }
+
+  toJSON () {
+    return {
+      actionCount: this.actionCount,
+      emoticonCount: this.emoticonCount,
+      groupId: this.groupId,
+      happyEmoticonCount: this.happyEmoticonCount,
+      imageCount: this.imageCount,
+      lineCount: this.lineCount,
+      message: this.message,
+      nickname: this.nickname,
+      randomQoute: this.randomQoute,
+      packCount: this.packCount,
+      sadEmoticonCount: this.sadEmoticonCount,
+      subId: this.subId,
+      swearCount: this.swearCount,
+      textCount: this.textCount,
+      voiceCount: this.voiceCount,
+      wordCount: this.wordCount
+    };
+  }
 }
 
-export { GroupStatsActive };
+export default GroupStatsActive;

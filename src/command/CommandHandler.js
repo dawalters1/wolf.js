@@ -1,7 +1,7 @@
-import models from '../models/index.js';
-import { Command } from './Command.js';
+import { CommandContext } from '../models/index.js';
+import Command from './Command.js';
 import { Privilege } from '../constants/index.js';
-import { WOLFAPIError } from '../models/WOLFAPIError.js';
+import WOLFAPIError from '../models/WOLFAPIError.js';
 
 const CHARM_IDS = [813, 814];
 const checkForPrivilege = async (client, subscriber, privileges) => {
@@ -63,7 +63,7 @@ class CommandHandler {
 
       Reflect.deleteProperty(context, 'callback');
 
-      return callback.call(this, new models.CommandContext(this.client, context));
+      return callback.call(this, new CommandContext(this.client, context));
     });
   }
 
@@ -105,4 +105,4 @@ class CommandHandler {
   }
 }
 
-export { CommandHandler };
+export default CommandHandler;

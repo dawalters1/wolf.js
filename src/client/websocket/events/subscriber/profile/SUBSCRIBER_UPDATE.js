@@ -14,5 +14,9 @@ export default async (client, body) => {
   client.contact._patchIfExists('id', newSubscriber.toContact());
   client.contact.blocked._patchIfExists('id', newSubscriber.toContact());
 
-  return client.emit(Event.SUBSCRIBER_UPDATE, oldSubscriber, newSubscriber);
+  return client.emit(
+    Event.SUBSCRIBER_UPDATE,
+    oldSubscriber,
+    newSubscriber
+  );
 };

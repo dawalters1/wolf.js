@@ -8,5 +8,9 @@ export default async (client, body) => {
   }
   group.audioRequests = [];
 
-  return client.emit(Event.GROUP_AUDIO_REQUEST_CLEAR, group, body.subscriberId);
+  return client.emit(
+    Event.GROUP_AUDIO_REQUEST_CLEAR,
+    group,
+    body.subscriberId
+  );
 };

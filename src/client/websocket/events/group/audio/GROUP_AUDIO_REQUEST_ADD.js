@@ -12,5 +12,9 @@ export default async (client, body) => {
 
   group.audioRequests.push(request);
 
-  return client.emit(Event.GROUP_AUDIO_REQUEST_ADD, group, request);
+  return client.emit(
+    Event.GROUP_AUDIO_REQUEST_ADD,
+    group,
+    request
+  );
 };
