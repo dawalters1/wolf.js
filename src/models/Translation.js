@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class Translation extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class Translation extends Base {
     this.languageId = data?.languageId;
     this.text = data?.text;
   }
+
+  toJSON () {
+    return {
+      languageId: this.languageId,
+      text: this.text
+    };
+  }
 }
 
-export { Translation };
+export default Translation;

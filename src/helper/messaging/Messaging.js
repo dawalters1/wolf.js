@@ -1,11 +1,12 @@
 import { Command, MessageTypes, MessageType, MessageLinkingType } from '../../constants/index.js';
-import { Base } from '../Base.js';
-import { Subscription } from './Subscription.js';
+import Base from '../Base.js';
+import Subscription from './Subscription.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import fileType from 'file-type';
 import * as nanoid from 'nanoid';
 import messageBuilder from '../../utils/messageBuilder.js';
+import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 
 // eslint-disable-next-line no-unused-vars
 const validateOptions = (options) => {
@@ -70,38 +71,49 @@ class Messaging extends Base {
   }
 
   async _subscribeToGroup () {
-    return await this.client.websocket.emit(Command.MESSAGE_GROUP_SUBSCRIBE, {
-      headers: {
-        version: 4
+    return await this.client.websocket.emit(
+      Command.MESSAGE_GROUP_SUBSCRIBE,
+      {
+        headers: {
+          version: 4
+        }
       }
-    });
+    );
   }
 
   async _unsubscribeFromGroup (targetGroupId) {
-    return await this.client.websocket.emit(Command.MESSAGE_GROUP_UNSUBSCRIBE, {
-      headers: {
-        version: 4
-      },
-      body: {
-        id: targetGroupId
+    return await this.client.websocket.emit(
+      Command.MESSAGE_GROUP_UNSUBSCRIBE, {
+        headers: {
+          version: 4
+        },
+        body: {
+          id: targetGroupId
+        }
       }
-    });
+    );
   }
 
   async _subscribeToPrivate () {
-    return await this.client.websocket.emit(Command.MESSAGE_PRIVATE_SUBSCRIBE, {
-      headers: {
-        version: 2
+    return await this.client.websocket.emit(
+      Command.MESSAGE_PRIVATE_SUBSCRIBE,
+      {
+        headers: {
+          version: 2
+        }
       }
-    });
+    );
   }
 
   async _unsubscribeFromPrivate () {
-    return await this.client.websocket.emit(Command.MESSAGE_PRIVATE_UNSUBSCRIBE, {
-      headers: {
-        version: 2
+    return await this.client.websocket.emit(
+      Command.MESSAGE_PRIVATE_UNSUBSCRIBE,
+      {
+        headers: {
+          version: 2
+        }
       }
-    });
+    );
   }
 
   async _sendMessage (targetType, targetId, content, options = undefined) {
@@ -126,17 +138,17 @@ class Messaging extends Base {
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client._botConfig.get('multimedia.messaging');
 
-      if (!messageConfig.mimeTypes.includes(mimeType)) {
-        throw new models.WOLFAPIError('mimeType is unsupported', mimeType);
-      }
+      validateMultimediaConfig(messageConfig, content);
 
-      return await this.client.multimedia.upload(messageConfig.route, {
-        data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
-        mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,
-        recipient: parseInt(targetId),
-        isGroup: targetType === MessageTypes.GROUP,
-        flightId: nanoid(32)
-      });
+      return await this.client.multimedia.upload(messageConfig.route,
+        {
+          data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
+          mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,
+          recipient: parseInt(targetId),
+          isGroup: targetType === MessageTypes.GROUP,
+          flightId: nanoid(32)
+        }
+      );
     }
     options = validateOptions(options);
 
@@ -151,10 +163,12 @@ class Messaging extends Base {
     }, []);
 
     return responses.length > 1
-      ? new models.Response({
-        code: 207,
-        body: responses
-      })
+      ? new models.Response(
+        {
+          code: 207,
+          body: responses
+        }
+      )
       : responses[0];
   }
 
@@ -191,11 +205,14 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
-    const response = await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
-      isGroup: true,
-      recipientId: targetGroupId,
-      timestamp
-    });
+    const response = await this.client.websocket.emit(
+      Command.MESSAGE_UPDATE,
+      {
+        isGroup: true,
+        recipientId: targetGroupId,
+        timestamp
+      }
+    );
 
     return (response?.body ?? []).map((message) => new models.Message(this.client, message));
   }
@@ -217,14 +234,17 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
-    return await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
-      isGroup: true,
-      metadata: {
-        isDeleted: true
-      },
-      recipientId: targetGroupId,
-      timestamp
-    });
+    return await this.client.websocket.emit(
+      Command.MESSAGE_UPDATE,
+      {
+        isGroup: true,
+        metadata: {
+          isDeleted: true
+        },
+        recipientId: targetGroupId,
+        timestamp
+      }
+    );
   }
 
   async restoreGroupMessage (targetGroupId, timestamp) {
@@ -244,15 +264,18 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
-    return await this.client.websocket.emit(Command.MESSAGE_UPDATE, {
-      isGroup: true,
-      metadata: {
-        isDeleted: false
-      },
-      recipientId: targetGroupId,
-      timestamp
-    });
+    return await this.client.websocket.emit(
+      Command.MESSAGE_UPDATE,
+      {
+        isGroup: true,
+        metadata: {
+          isDeleted: false
+        },
+        recipientId: targetGroupId,
+        timestamp
+      }
+    );
   }
 }
 
-export { Messaging };
+export default Messaging;

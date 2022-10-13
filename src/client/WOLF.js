@@ -3,24 +3,24 @@ import fs from 'fs';
 import yaml from 'yaml';
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command } from '../constants/index.js';
-import { Websocket } from './websocket/Websocket.js';
-import { Multimedia } from './multimedia/Client.js';
-import { CommandHandler } from '../command/CommandHandler.js';
-import { Achievement } from '../helper/achievement/Achievement.js';
-import { Banned } from '../helper/banned/Banned.js';
-import { Charm } from '../helper/charm/Charm.js';
-import { Contact } from '../helper/contact/Contact.js';
-import { Discovery } from '../helper/discovery/Discovery.js';
-import { Event } from '../helper/event/Event.js';
-import { Group } from '../helper/group/Group.js';
-import { Messaging } from '../helper/messaging/Messaging.js';
-import { Notification } from '../helper/notification/Notification.js';
-import { Phrase } from '../helper/phrase/Phrase.js';
-import { Stage } from '../helper/stage/Stage.js';
-import { Store } from '../helper/store/Store.js';
-import { Subscriber } from '../helper/subscriber/Subscriber.js';
-import { Tipping } from '../helper/tipping/Tipping.js';
-import { Utility } from '../utility/Utility.js';
+import Websocket from './websocket/Websocket.js';
+import Multimedia from './multimedia/Client.js';
+import CommandHandler from '../command/CommandHandler.js';
+import Achievement from '../helper/achievement/Achievement.js';
+import Banned from '../helper/banned/Banned.js';
+import Charm from '../helper/charm/Charm.js';
+import Contact from '../helper/contact/Contact.js';
+import Discovery from '../helper/discovery/Discovery.js';
+import Event from '../helper/event/Event.js';
+import Group from '../helper/group/Group.js';
+import Messaging from '../helper/messaging/Messaging.js';
+import Notification from '../helper/notification/Notification.js';
+import Phrase from '../helper/phrase/Phrase.js';
+import Stage from '../helper/stage/Stage.js';
+import Store from '../helper/store/Store.js';
+import Subscriber from '../helper/subscriber/Subscriber.js';
+import Tipping from '../helper/tipping/Tipping.js';
+import Utility from '../utility/Utility.js';
 import { config, generateToken } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
@@ -118,4 +118,4 @@ class WOLF extends EventEmitter {
   }
 }
 
-export { WOLF };
+export default WOLF;

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 import models from './index.js';
 import validator from '../validator/index.js';
 
@@ -35,4 +35,4 @@ class CharmSelected extends Base {
   }
 }
 
-export { CharmSelected };
+export default CharmSelected;

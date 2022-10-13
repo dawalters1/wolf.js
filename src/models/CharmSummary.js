@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class CharmSummary extends Base {
   constructor (client, data) {
@@ -8,6 +8,15 @@ class CharmSummary extends Base {
     this.expireTime = data?.expireTime;
     this.giftCount = data?.giftCount;
   }
+
+  toJSON () {
+    return {
+      charmId: this.charmId,
+      total: this.total,
+      expireTime: this.expireTime,
+      giftCount: this.giftCount
+    };
+  }
 }
 
-export { CharmSummary };
+export default CharmSummary;

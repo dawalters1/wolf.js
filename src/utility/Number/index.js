@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import validator from '../../validator/index.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class NumberUtility {
   toEnglishNumbers (arg) {
@@ -90,4 +90,4 @@ class NumberUtility {
   }
 }
 
-export { NumberUtility };
+export default NumberUtility;

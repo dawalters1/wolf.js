@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupStatsTrend extends Base {
   constructor (client, data) {
@@ -7,6 +7,14 @@ class GroupStatsTrend extends Base {
     this.hour = data?.hour;
     this.lineCount = data?.lineCount;
   }
+
+  toJSON () {
+    return {
+      day: this.day,
+      hour: this.hour,
+      lineCount: this.lineCount
+    };
+  }
 }
 
-export { GroupStatsTrend };
+export default GroupStatsTrend;

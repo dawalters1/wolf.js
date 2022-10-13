@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class LinkMetadata extends Base {
   constructor (client, data) {
@@ -10,6 +10,17 @@ class LinkMetadata extends Base {
     this.isOfficial = data?.isOfficial;
     this.title = data?.title;
   }
+
+  toJSON () {
+    return {
+      description: this.description,
+      domain: this.domain,
+      imageSize: this.imageSize,
+      imageUrl: this.imageUrl,
+      isOfficial: this.isOfficial,
+      title: this.title
+    };
+  }
 }
 
-export { LinkMetadata };
+export default LinkMetadata;

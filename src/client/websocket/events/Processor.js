@@ -1,4 +1,5 @@
 import { Event, ServerEvents } from '../../../constants/index.js';
+
 class Processor {
   constructor (client) {
     this.client = client;
@@ -34,8 +35,9 @@ class Processor {
     if (handler) {
       return handler(this.client, body);
     }
+
     return this.client.emit(Event.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
   }
 }
 
-export { Processor };
+export default Processor;

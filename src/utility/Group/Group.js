@@ -1,11 +1,12 @@
-import { Base } from '../../models/Base.js';
-import { Member } from './Member.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import Base from '../../models/Base.js';
+import Member from './Member.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 
 class Group extends Base {
   constructor (client) {
     super(client);
+
     this.member = new Member(client);
   }
 
@@ -25,8 +26,16 @@ class Group extends Base {
     } else if (validator.isLessThanOrEqualZero(size)) {
       throw new WOLFAPIError('size cannot be less than or equal to 0', { size });
     }
-    // TODO:
+
+    return await this.client.utility.download(
+      this.client.utility.string.replace(`${this.client.endpointConfig.avatarEndpoint}/FileServerSpring/group/avatar/{targetGroupId}?size={size}`,
+        {
+          targetGroupId,
+          size
+        }
+      )
+    );
   }
 }
 
-export { Group };
+export default Group;

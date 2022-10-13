@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import validator from '../../validator/index.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 import tlds from 'tldts';
 import { ValidUrl } from '../../models/index.js';
-import { Base } from '../../models/Base.js';
+import Base from '../../models/Base.js';
 
 // eslint-disable-next-line prefer-regex-literals
 const TRIM_START_PUNC = new RegExp(/^\p{Punctuation}+/, 'gui');
@@ -274,4 +274,4 @@ class StringUtility extends Base {
   }
 }
 
-export { StringUtility };
+export default StringUtility;

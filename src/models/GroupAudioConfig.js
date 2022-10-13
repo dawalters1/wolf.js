@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupAudioConfig extends Base {
   constructor (client, data) {
@@ -8,6 +8,15 @@ class GroupAudioConfig extends Base {
     this.stageId = data?.stageId;
     this.minRepLevel = data?.minRepLevel;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      enabled: this.enabled,
+      stageId: this.stageId,
+      minRepLevel: this.minRepLevel
+    };
+  }
 }
 
-export { GroupAudioConfig };
+export default GroupAudioConfig;

@@ -12,5 +12,9 @@ export default async (client, body) => {
 
   group.audioConfig = new models.GroupAudioConfig(client, body);
 
-  return client.emit(Event.GROUP_AUDIO_UPDATE, oldAudioConfig, group.audioConfig);
+  return client.emit(
+    Event.GROUP_AUDIO_UPDATE,
+    oldAudioConfig,
+    group.audioConfig
+  );
 };

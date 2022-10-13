@@ -1,5 +1,5 @@
-import { Base } from '../../models/Base.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import Base from '../../models/Base.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import { Capability, Privilege } from '../../constants/index.js';
 
@@ -73,4 +73,4 @@ class Member extends Base {
   }
 }
 
-export { Member };
+export default Member;

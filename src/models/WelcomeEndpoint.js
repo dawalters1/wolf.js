@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class WelcomeEndpoint extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class WelcomeEndpoint extends Base {
     this.avatarEndpoint = data?.avatarEndpoint;
     this.mmsUploadEndpoint = data?.mmsUploadEndpoint;
   }
+
+  toJSON () {
+    return {
+      avatarEndpoint: this.avatarEndpoint,
+      mmsUploadEndpoint: this.mmsUploadEndpoint
+    };
+  }
 }
 
-export { WelcomeEndpoint };
+export default WelcomeEndpoint;

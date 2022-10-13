@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupAudioCounts extends Base {
   constructor (client, data) {
@@ -7,6 +7,14 @@ class GroupAudioCounts extends Base {
     this.consumerCount = data?.consumerCount;
     this.id = data?.id;
   }
+
+  toJSON () {
+    return {
+      broadcasterCount: this.broadcasterCount,
+      consumerCount: this.consumerCount,
+      id: this.id
+    };
+  }
 }
 
-export { GroupAudioCounts };
+export default GroupAudioCounts;

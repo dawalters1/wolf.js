@@ -1,5 +1,5 @@
 import { Capability, Command, Privilege } from '../../constants/index.js';
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
@@ -566,4 +566,4 @@ class Member extends Base {
   }
 }
 
-export { Member };
+export default Member;

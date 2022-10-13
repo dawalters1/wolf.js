@@ -1,9 +1,9 @@
 import { Capability, Command } from '../../constants/index.js';
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import { Member } from './Member.js';
+import Member from './Member.js';
 
 const buildGroupFromModule = (groupModule) => {
   const base = groupModule.base;
@@ -311,4 +311,4 @@ class Group extends Base {
   }
 }
 
-export { Group };
+export default Group;

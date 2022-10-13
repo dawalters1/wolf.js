@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class Event extends Base {
   constructor (client, data) {
@@ -18,6 +18,25 @@ class Event extends Base {
     this.createdAt = data?.createdAt;
     this.updatedAt = data?.updatedAt;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      groupId: this.groupId,
+      createdBy: this.createdBy,
+      title: this.title,
+      category: this.category,
+      shortDescription: this.shortDescription,
+      longDescription: this.shortDescription,
+      imageUrl: this.imageUrl,
+      startsAt: this.startsAt,
+      endsAt: this.endsAt,
+      isRemoved: this.isRemoved,
+      attendanceCount: this.attendanceCount,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt
+    };
+  }
 }
 
-export { Event };
+export default Event;

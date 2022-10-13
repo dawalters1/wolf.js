@@ -1,7 +1,9 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
+import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
+import fileType from 'file-type';
 
 class Group extends Base {
   async getEventList (targetGroupId, forceNew = false) {
@@ -39,14 +41,76 @@ class Group extends Base {
     return group.events;
   }
 
-  async create () {
+  async create (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
+    // TODO: validate
+
+    const result = await this._websocket.emit(
+      Command.GROUP_EVENT_CREATE,
+      {
+        groupId: targetGroupId,
+        title,
+        longDescription,
+        shortDescription,
+        startsAt: new Date(startsAt),
+        endsAt: new Date(endsAt)
+      }
+    );
+
+    if (result.success && thumbnail) {
+      result.body.thumbnailUploadResponse = await this.updateThumbnail(result.body.id, thumbnail);
+    }
   }
 
-  async update () {
+  async update (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
+    // TODO: validate
+    const result = await this._websocket.emit(
+      Command.GROUP_EVENT_UPDATE,
+      {
+        groupId: targetGroupId,
+        id: eventId,
+        title,
+        longDescription,
+        shortDescription,
+        imageUrl,
+        startsAt: new Date(startsAt),
+        endsAt: new Date(endsAt),
+        isRemoved: false
+      }
+    );
+
+    if (result.success && thumbnail) {
+      result.body.thumbnailUploadResponse = await this.updateThumbnail(result.body.id, thumbnail);
+    }
+
+    return result;
   }
 
-  async delete () {
+  async updateThumbnail (eventId, thumbnail) {
+    // TODO: validate
+    const eventConfig = this.client._botConfig.get('multimedia.event');
+
+    validateMultimediaConfig(eventConfig, thumbnail);
+
+    return this.client.multimedia.upload(eventConfig.route,
+      {
+        data: thumbnail.toString('base64'),
+        mimeType: (await fileType.fromBuffer(thumbnail)).mime,
+        id: eventId,
+        source: this.client.currentSubscriber.id
+      }
+    );
+  }
+
+  async delete (targetGroupId, eventId) {
+    return await this.client.websocket.emit(
+      Command.GROUP_EVENT_CREATE,
+      {
+        groupId: parseInt(targetGroupId),
+        id: parseInt(eventId),
+        isRemoved: true
+      }
+    );
   }
 }
 
-export { Group };
+export default Group;

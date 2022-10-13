@@ -1,6 +1,6 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { Command } from '../../constants/index.js';
+import Command from '../../constants/index.js';
 import models from '../../models/index.js';
 
 class Request extends Base {
@@ -86,31 +86,19 @@ class Request extends Base {
       const slot = slots.find((slot) => slot.id === slotId);
 
       if (!slot) {
-        throw new models.WOLFAPIError('slot does not exist', {
-          targetGroupId,
-          slotId
-        });
+        throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });
       }
 
       if (slot.locked) {
-        throw new models.WOLFAPIError('slot is locked', {
-          targetGroupId,
-          slotId
-        });
+        throw new models.WOLFAPIError('slot is locked', { targetGroupId, slotId });
       }
 
       if (slots.some((slot) => slot.occupierId === subscriberId)) {
-        throw new models.WOLFAPIError('subscriber already occupies a slot in this group', {
-          targetGroupId,
-          subscriberId
-        });
+        throw new models.WOLFAPIError('subscriber already occupies a slot in this group', { targetGroupId, subscriberId });
       }
 
       if (slots.some((slot) => slot.reservedOccupierId === subscriberId)) {
-        throw new models.WOLFAPIError('subscriber already has a slot request in this group', {
-          targetGroupId,
-          subscriberId
-        });
+        throw new models.WOLFAPIError('subscriber already has a slot request in this group', { targetGroupId, subscriberId });
       }
 
       return await this.client.websocket.emit(
@@ -132,9 +120,12 @@ class Request extends Base {
       throw new models.WOLFAPIError('bot already has a slot request in this group', { targetGroupId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_REQUEST_ADD, {
-      id: parseInt(targetGroupId)
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_REQUEST_ADD,
+      {
+        id: parseInt(targetGroupId)
+      }
+    );
   }
 
   async delete (targetGroupId, slotId = undefined) {
@@ -176,24 +167,15 @@ class Request extends Base {
       const slot = slots.find((slot) => slot.id === slotId);
 
       if (!slot) {
-        throw new models.WOLFAPIError('slot does not exist', {
-          targetGroupId,
-          slotId
-        });
+        throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });
       }
 
       if (slot.locked) {
-        throw new models.WOLFAPIError('slot is locked', {
-          targetGroupId,
-          slotId
-        });
+        throw new models.WOLFAPIError('slot is locked', { targetGroupId, slotId });
       }
 
       if (slot.occupierId) {
-        throw new models.WOLFAPIError('slot request has already been accepted', {
-          targetGroupId,
-          slotId
-        });
+        throw new models.WOLFAPIError('slot request has already been accepted', { targetGroupId, slotId });
       }
 
       return await this.client.websocket.emit(
@@ -213,9 +195,12 @@ class Request extends Base {
       throw new models.WOLFAPIError('bot is not in the mic request list', { targetGroupId });
     }
 
-    return await this.client.websocket.emit(Command.GROUP_AUDIO_REQUEST_DELETE, {
-      id: parseInt(targetGroupId)
-    });
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_REQUEST_DELETE,
+      {
+        id: parseInt(targetGroupId)
+      }
+    );
   }
 
   async clear (targetGroupId) {
@@ -258,4 +243,4 @@ class Request extends Base {
   }
 }
 
-export { Request };
+export default Request;

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupMessageConfig extends Base {
   constructor (client, data) {
@@ -10,6 +10,17 @@ class GroupMessageConfig extends Base {
     this.id = data?.id;
     this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
+
+  toJSON () {
+    return {
+      disableHyperlink: this.disableHyperlink,
+      disableImage: this.disableImage,
+      disableImageFilter: this.disableImageFilter,
+      disableVoice: this.disableVoice,
+      id: this.id,
+      slowModeRateInSeconds: this.slowModeRateInSeconds
+    };
+  }
 }
 
-export { GroupMessageConfig };
+export default GroupMessageConfig;

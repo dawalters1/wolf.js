@@ -1,6 +1,6 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { Command } from '../../constants/index.js';
+import Command from '../../constants/index.js';
 import models from '../../models/index.js';
 
 class Store extends Base {
@@ -31,4 +31,4 @@ class Store extends Base {
   }
 }
 
-export { Store };
+export default Store;

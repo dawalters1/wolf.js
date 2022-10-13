@@ -1,7 +1,7 @@
-import { Base } from '../Base.js';
-import { Category } from './Category.js';
-import { Group } from './Group.js';
-import { Subscriber } from './Subscriber.js';
+import Base from '../Base.js';
+import Category from './Category.js';
+import Group from './Group.js';
+import Subscriber from './Subscriber.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import Constants, { Language } from '../../constants/index.js';
@@ -12,6 +12,7 @@ const { Command } = Constants;
 class Achievement extends Base {
   constructor (client) {
     super(client, {});
+
     this.category = new Category(this.client);
     this.group = new Group(client);
     this.subscriber = new Subscriber(client);
@@ -133,4 +134,4 @@ class Achievement extends Base {
   }
 }
 
-export { Achievement };
+export default Achievement;

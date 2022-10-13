@@ -12,5 +12,8 @@ export default async (client, body) => {
 
   client.contact.blocked.cache.push(contact);
 
-  return await client.emit(Event.SUBSCRIBER_BLOCK_ADD, contact);
+  return await client.emit(
+    Event.SUBSCRIBER_BLOCK_ADD,
+    contact
+  );
 };

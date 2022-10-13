@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import validator from '../../validator/index.js';
-import { WOLFAPIError } from '../../models/WOLFAPIError.js';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class ArrayUtility {
   chunk (array, length) {
@@ -104,4 +104,4 @@ class ArrayUtility {
   }
 }
 
-export { ArrayUtility };
+export default ArrayUtility;

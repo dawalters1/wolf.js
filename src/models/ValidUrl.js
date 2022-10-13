@@ -3,6 +3,13 @@ class ValidUrl {
     this.url = url;
     this.hostname = hostname;
   }
+
+  toJSON () {
+    return {
+      url: this.url,
+      hostname: this.hostname
+    };
+  }
 }
 
-export { ValidUrl };
+export default ValidUrl;

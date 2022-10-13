@@ -1,5 +1,5 @@
-import { Base } from './Base.js';
-import { IdHash } from './IdHash.js';
+import Base from './Base.js';
+import IdHash from './IdHash.js';
 
 class TipLeaderboardItem extends Base {
   constructor (client, data) {
@@ -8,9 +8,20 @@ class TipLeaderboardItem extends Base {
     this.charmId = data?.charmId;
     this.quantity = data?.quantity;
     this.credits = data?.credits;
-    this.group = new IdHash(data?.group);
-    this.subscriber = new IdHash(data?.subscriber);
+    this.group = data?.group ? new IdHash(data.group) : null;
+    this.subscriber = data?.subscriber ? new IdHash(data.subscriber) : null;
+  }
+
+  toJSON () {
+    return {
+      rank: this.rank,
+      charmId: this.charmId,
+      quantity: this.quantity,
+      credits: this.credits,
+      group: this.group?.toJSON(),
+      subscriber: this.subscriber?.toJSON()
+    };
   }
 }
 
-export { TipLeaderboardItem };
+export default TipLeaderboardItem;

@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageSettingFilter extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class MessageSettingFilter extends Base {
     this.enabled = data?.enabled;
     this.tier = data?.tier;
   }
+
+  toJSON () {
+    return {
+      enabled: this.enabled,
+      tier: this.tier
+    };
+  }
 }
 
-export { MessageSettingFilter };
+export default MessageSettingFilter;

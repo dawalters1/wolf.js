@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class TipContext extends Base {
   constructor (client, data) {
@@ -6,6 +6,13 @@ class TipContext extends Base {
     this.type = data?.type;
     this.id = data?.id;
   }
+
+  toJSON () {
+    return {
+      type: this.type,
+      id: this.id
+    };
+  }
 }
 
-export { TipContext };
+export default TipContext;

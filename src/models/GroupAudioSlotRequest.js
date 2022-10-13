@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class GroupAudioSlotRequest extends Base {
   constructor (client, data) {
@@ -8,6 +8,15 @@ class GroupAudioSlotRequest extends Base {
     this.reservedOccupierId = data?.reservedOccupierId;
     this.reservedExpiresAt = data?.reservedExpiresAt;
   }
+
+  toJSON () {
+    return {
+      slotId: this.slotId,
+      groupId: this.groupId,
+      reservedOccupierId: this.reservedOccupierId,
+      reservedExpiresAt: this.reservedExpiresAt
+    };
+  }
 }
 
-export { GroupAudioSlotRequest };
+export default GroupAudioSlotRequest;

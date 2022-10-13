@@ -1,5 +1,5 @@
-import { Command } from '../../constants/index.js';
-import { Base } from '../Base.js';
+import Command from '../../constants/index.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
 import { NOTIFICATION_LIST_CLEAR } from '../../constants/Command.js';
 import validator from '../../validator/index.js';
@@ -41,4 +41,4 @@ class Notification extends Base {
   }
 }
 
-export { Notification };
+export default Notification;

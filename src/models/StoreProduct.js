@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class StoreProduct extends Base {
   constructor (client, data) {
@@ -20,6 +20,29 @@ class StoreProduct extends Base {
       this.charmId = data?.charmId;
     }
   }
+
+  toJSON () {
+    const json = {
+      id: this.id,
+      isLimited: this.isLimited,
+      name: this.name,
+      targetType: this.targetType,
+      reputationLevel: this.reputationLevel,
+      promotionText: this.promotionText,
+      imageUrl: this.imageUrl,
+      credits: this.credits
+    };
+
+    if (this.botId) {
+      json.botId = this.botId;
+    }
+
+    if (this.charmId) {
+      json.charmId = this.charmId;
+    }
+
+    return json;
+  }
 }
 
-export { StoreProduct };
+export default StoreProduct;

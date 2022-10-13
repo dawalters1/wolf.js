@@ -1,4 +1,4 @@
-import { WOLFAPIError } from './WOLFAPIError.js';
+import WOLFAPIError from './WOLFAPIError.js';
 
 class CommandContext {
   constructor (client, data) {
@@ -34,6 +34,17 @@ class CommandContext {
   async replyPrivate (content, options) {
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
   }
+
+  toJSON () {
+    return {
+      isGroup: this.isGroup,
+      argument: this.argument,
+      targetGroupId: this.targetGroupId,
+      sourceSubscriberId: this.sourceSubscriberId,
+      timestamp: this.timestamp,
+      type: this.type
+    };
+  }
 }
 
-export { CommandContext };
+export default CommandContext;

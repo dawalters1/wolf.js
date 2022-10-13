@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class Presence extends Base {
   constructor (client, data) {
@@ -8,6 +8,15 @@ class Presence extends Base {
     this.lastActive = data?.lastActive;
     this.subscriberId = data?.subscriberId;
   }
+
+  toJSON () {
+    return {
+      device: this.device,
+      state: this.state,
+      lastActive: this.lastActive,
+      subscriberId: this.subscriberId
+    };
+  }
 }
 
-export { Presence };
+export default Presence;

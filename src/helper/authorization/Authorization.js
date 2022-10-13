@@ -1,4 +1,4 @@
-import { Base } from '../Base.js';
+import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
@@ -134,4 +134,4 @@ class Authorization extends Base {
   }
 }
 
-export { Authorization };
+export default Authorization;

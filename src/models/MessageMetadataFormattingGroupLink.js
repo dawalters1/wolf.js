@@ -1,4 +1,4 @@
-import { Base } from './Base.js';
+import Base from './Base.js';
 
 class MessageMetadataFormattingGroupLink extends Base {
   constructor (client, data) {
@@ -7,6 +7,14 @@ class MessageMetadataFormattingGroupLink extends Base {
     this.end = data?.end;
     this.groupId = data?.groupId;
   }
+
+  toJSON () {
+    return {
+      start: this.start,
+      end: this.end,
+      groupId: this.groupId
+    };
+  }
 }
 
-export { MessageMetadataFormattingGroupLink };
+export default MessageMetadataFormattingGroupLink;

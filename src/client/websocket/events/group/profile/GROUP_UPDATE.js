@@ -11,5 +11,9 @@ export default async (client, body) => {
   const oldGroup = new models.Group(client, cached);
   const newGroup = await client.group.getById(body.id, true);
 
-  return client.emit(Event.GROUP_UPDATE, oldGroup, newGroup);
+  return client.emit(
+    Event.GROUP_UPDATE,
+    oldGroup,
+    newGroup
+  );
 };

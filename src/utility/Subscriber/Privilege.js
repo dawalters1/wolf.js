@@ -1,9 +1,9 @@
-import { Base } from '../../models/Base.js';
+import Base from '../../models/Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import { Privilege } from '../../constants/index.js';
 
-class PrivilegeUtil extends Base {
+class PrivilegeUtility extends Base {
   async has (subscriberId, privileges, requireAll = false) {
     privileges = Array.isArray(privileges) ? privileges : [privileges];
 
@@ -39,4 +39,4 @@ class PrivilegeUtil extends Base {
   }
 }
 
-export { PrivilegeUtil };
+export default PrivilegeUtility;

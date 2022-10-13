@@ -1,5 +1,5 @@
-import { Base } from './Base.js';
-import { IdHash } from './IdHash.js';
+import Base from './Base.js';
+import IdHash from './IdHash.js';
 
 class TipCharm extends Base {
   constructor (client, data) {
@@ -10,6 +10,16 @@ class TipCharm extends Base {
     this.magnitude = data?.magnitude;
     this.subscriber = new IdHash(this.subscriber);
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      quantity: this.quantity,
+      credits: this.credits,
+      magnitude: this.magnitude,
+      subscriber: this.subscriber.toJSON()
+    };
+  }
 }
 
-export { TipCharm };
+export default TipCharm;
