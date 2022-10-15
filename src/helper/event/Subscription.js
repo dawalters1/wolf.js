@@ -12,7 +12,7 @@ class Subscription extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_LIST,
       {
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 

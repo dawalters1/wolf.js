@@ -1,6 +1,6 @@
 import Processor from './events/Processor.js';
 import RequestQueue from './RequestQueue.js';
-import { Response } from '../../models/Response.js';
+import Response from '../../models/Response.js';
 import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
 import io from 'socket.io-client';
 
@@ -28,7 +28,7 @@ class Websocket {
 
   _create () {
     const connectionSettings = this.client._botConfig.get('connection');
-    const { onlineState, token } = this.client.config.get('app.login');
+    const { onlineState, token } = this.client.config.get('framework.login');
 
     this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${token}&device=wjsframework&state=${onlineState}`,
       {

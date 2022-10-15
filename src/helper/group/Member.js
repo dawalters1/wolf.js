@@ -218,7 +218,7 @@ class Member extends Base {
       Command.GROUP_MEMBER_PRIVILEGED_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 
@@ -260,7 +260,7 @@ class Member extends Base {
       Command.GROUP_MEMBER_REGULAR_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true,
+        subscribe: true, // TODO: check for dev preference
         after: group.members.regular.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );

@@ -20,7 +20,7 @@ export default async (client, body) => {
       break;
     default:
       if (message.type !== MessageType.TEXT_HTML) {
-        if (message.sourceSubscriberId === client.currentSubscriber.id && !client.options.messageHandling.processOwnMessages) {
+        if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) {
           return Promise.resolve();
         }
       }

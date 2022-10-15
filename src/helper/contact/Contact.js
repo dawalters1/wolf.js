@@ -18,7 +18,7 @@ class Contact extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_LIST,
       {
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 

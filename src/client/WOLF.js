@@ -1,6 +1,3 @@
-import path, { dirname } from 'path';
-import fs from 'fs';
-import yaml from 'yaml';
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command } from '../constants/index.js';
 import Websocket from './websocket/Websocket.js';
@@ -21,21 +18,18 @@ import Store from '../helper/store/Store.js';
 import Subscriber from '../helper/subscriber/Subscriber.js';
 import Tipping from '../helper/tipping/Tipping.js';
 import Utility from '../utility/Utility.js';
-import { config, generateToken } from '../utils/index.js';
+import { configuration, generateToken } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 // #endregion
 class WOLF extends EventEmitter {
   constructor () {
     super();
 
-    config.validateUserConfig(this, yaml.parse(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8')));
-    config.validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));
+    this.utility = new Utility(this);
+
+    configuration(this);
 
     this.websocket = new Websocket(this);
     this.multimedia = new Multimedia(this);
@@ -58,13 +52,13 @@ class WOLF extends EventEmitter {
   }
 
   login () {
-    const loginDetails = this.config.get('app.login');
+    const loginDetails = this.config.get('framework.login');
 
     if (!loginDetails) {
       throw new WOLFAPIError('loginDetails must be set in config');
     }
 
-    const { email, password, onlineState, token } = loginDetails;
+    const { email, password, onlineState } = loginDetails;
 
     if (validator.isNullOrWhitespace(email)) {
       throw new WOLFAPIError('email cannot be null or empty', { email });
@@ -75,7 +69,7 @@ class WOLF extends EventEmitter {
     }
 
     if (validator.isNullOrUndefined(onlineState)) {
-      this.config.app.login.onlineState = OnlineState.ONLINE;
+      loginDetails.onlineState = OnlineState.ONLINE;
     } else {
       if (!validator.isValidNumber(onlineState)) {
         throw new Error('onlineState must be a valid number');
@@ -85,11 +79,9 @@ class WOLF extends EventEmitter {
         throw new Error('onlineState is not valid');
       }
     }
-    this.config.app.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
 
-    if (!token) {
-      this.config.app.login.token = generateToken(email, password);
-    }
+    loginDetails.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
+
     this.websocket._create();
   }
 

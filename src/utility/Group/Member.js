@@ -49,7 +49,7 @@ class Member extends Base {
     }
 
     // Check if command subscriber is bot developer
-    if (this.client.options.developerId === targetSubscriberId) {
+    if (this.client.config.framework.developer === targetSubscriberId) {
       return true;
     }
 

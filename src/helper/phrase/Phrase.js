@@ -7,7 +7,7 @@ import validator from '../../validator/index.js';
 class Phrase extends Base {
   constructor (client) {
     super(client);
-    this.loadLocal();
+    this.load();
   }
 
   _local () {
@@ -34,7 +34,7 @@ class Phrase extends Base {
 
   load (phrases) {
     if (!phrases) {
-      return this.local();
+      return this._local();
     }
 
     phrases = Array.isArray(phrases) ? phrases : [phrases];
@@ -56,9 +56,12 @@ class Phrase extends Base {
         throw new models.WOLFAPIError('language cannot be null or empty', { phrase });
       }
 
-      phrase.name = this.client.utility.string.replace(phrase.name, {
-        keyword: this.client.options.keyword
-      });
+      phrase.name = this.client.utility.string.replace(
+        phrase.name,
+        {
+          keyword: this.client.config.keyword
+        }
+      );
 
       const existing = this.cache.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name));
 
@@ -99,11 +102,11 @@ class Phrase extends Base {
       return requested.value;
     }
 
-    if (this.client.utility.string.isEqual(language, this.client.options.language.iso)) {
+    if (this.client.utility.string.isEqual(language, this.client.config.framework.language)) {
       throw new models.WOLFAPIError('no phrase located', { name });
     }
 
-    return this.getByLanguageAndName(this.client.options.language.iso, name);
+    return this.getByLanguageAndName(this.client.config.framework.language, name);
   }
 
   getByCommandAndName (command, name) {

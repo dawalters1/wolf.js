@@ -102,7 +102,7 @@ class Group extends Base {
             },
             body: {
               idList,
-              subscribe: true,
+              subscribe: true, // TODO: check for dev preference
               entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
             }
           }
@@ -150,7 +150,7 @@ class Group extends Base {
         },
         body: {
           name: name.toLowerCase(),
-          subscribe: true,
+          subscribe: true, // TODO: check for dev preference
           entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
         }
       }

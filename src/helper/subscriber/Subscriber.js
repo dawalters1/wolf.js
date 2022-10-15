@@ -1,5 +1,5 @@
 import Base from '../Base.js';
-import Command from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
@@ -66,7 +66,7 @@ class Subscriber extends Base {
             body: {
               idList,
               extended: true,
-              subscribe: true
+              subscribe: true // TODO: check for dev preference
             }
           }
         );

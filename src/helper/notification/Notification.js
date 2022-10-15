@@ -17,7 +17,7 @@ class Notification extends Base {
     const response = await this.client.websocket.emit(
       Command.NOTIFICATION_LIST,
       {
-        language: this.client.options.language.code
+        language: this.client.config.framework.language
       }
     );
 

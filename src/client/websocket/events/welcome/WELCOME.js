@@ -1,16 +1,18 @@
 import { Command, Event } from '../../../../constants/index.js';
+import SubscriptionIntent from '../../../../constants/SubscriptionIntent.js';
 import { Welcome } from '../../../../models/index.js';
 
-const subscribeToSubscriptionType = async (client, type) => {
-  switch (type) {
-    case 'groupMessages':
-      return await client.messaging._subscribeToGroup();
-    case 'privateMessages':
-      return await client.messaging._subscribeToPrivate();
-    case 'groupTipping':
-      return await client.tipping._subscribeToGroup();
-    default:
-      throw new Error('invalid subscription type');
+const subscribeToSubscriptionType = async (client, clientIntents) => {
+  const intents = Object.values(SubscriptionIntent).filter((intent) => (clientIntents && intent) === intent);
+
+  for (const intent of intents) {
+    if (intent === SubscriptionIntent.GROUP_MESSAGE) {
+      await client.messaging._subscribeToGroup();
+    } else if (intent === SubscriptionIntent.PRIVATE_MESSAGE) {
+      await client.messaging._subscribeToPrivate();
+    } else if (intent === SubscriptionIntent.PRIVATE_MESSAGE_TIPPING) {
+      await client.tipping._subscribeToGroup();
+    }
   }
 };
 const fininaliseConnection = async (client, resume = false) => {
@@ -19,16 +21,12 @@ const fininaliseConnection = async (client, resume = false) => {
     client.subscriber.getById(client.currentSubscriber.id)
   ]);
 
-  const subscriptions = Object.entries(client.config.get('app.messageSettings.subscriptions')).filter((entry) => entry[1]).map((entry) => entry[0]);
-
-  for (const subscription of subscriptions) {
-    await subscribeToSubscriptionType(client, subscription);
-  }
+  await subscribeToSubscriptionType(client.config.framework.subscriptions.intents);
 
   return client.emit(resume ? Event.RESUME : Event.READY);
 };
 const login = async (client) => {
-  const { email: username, password, loginType: type, onlineState } = client.config.get('app.login');
+  const { email: username, password, loginType: type, onlineState } = client.config.get('framework.login');
   const response = await client.websocket.emit(Command.SECURITY_LOGIN, {
     headers: {
       version: 2
