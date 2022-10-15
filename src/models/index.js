@@ -64,70 +64,73 @@ import Welcome from './Welcome.js';
 import WelcomeEndpoint from './WelcomeEndpoint.js';
 import WOLFAPIError from './WOLFAPIError.js';
 
-export { Achievement };
-export { AchievementCategory };
-export { AchievementUnlockable };
-export { AchievementUnlockableAdditionalInfo };
-export { Charm };
-export { CharmExpiry };
-export { CharmSelected };
-export { CharmStatistics };
-export { CharmSummary };
-export { CommandContext };
-export { Contact };
-export { ContactAdditionalInfo };
-export { Event };
-export { Group };
-export { GroupAudioConfig };
-export { GroupAudioCounts };
-export { GroupAudioSlot };
-export { GroupAudioSlotRequest };
-export { GroupAudioSlotUpdate };
-export { GroupExtended };
-export { GroupMember };
-export { GroupMemberList };
-export { GroupStats };
-export { GroupStatsActive };
-export { GroupStatsDetail };
-export { GroupStatsTop };
-export { GroupStatsTrend };
-export { IdHash };
-export { LinkMetadata };
-export { Message };
-export { MessageEdit };
-export { MessageMetadata };
-export { MessageMetadataFormatting };
-export { MessageMetadataFormattingGroupLink };
-export { MessageMetadataFormattingUrl };
-export { MessageResponse };
-export { MessageSetting };
-export { MessageSettingFilter };
-export { Notification };
-export { NotificationAction };
-export { Presence };
-export { Response };
-export { Search };
-export { StoreProduct };
-export { StoreSection };
-export { Subscriber };
-export { SubscriberEvent };
-export { SubscriberEventAdditionalInfo };
-export { SubscriberExtended };
-export { SubscriberSelectedCharm };
-export { TimerJob };
-export { Tip };
-export { TipCharm };
-export { TipContext };
-export { TipDetail };
-export { TipLeaderboard };
-export { TipLeaderboardItem };
-export { TipLeaderboardSummary };
-export { TipSummary };
-export { Translation };
-export { ValidUrl };
-export { Welcome };
-export { WelcomeEndpoint };
-export { WOLFAPIError };
+export {
+  Achievement,
+  AchievementCategory,
+  AchievementUnlockable,
+  AchievementUnlockableAdditionalInfo,
+  Charm,
+  CharmExpiry,
+  CharmSelected,
+  CharmStatistics,
+  CharmSummary,
+  CommandContext,
+  Contact,
+  ContactAdditionalInfo,
+  Event,
+  Group,
+  GroupAudioConfig,
+  GroupAudioCounts,
+  GroupAudioSlot,
+  GroupAudioSlotRequest,
+  GroupAudioSlotUpdate,
+  GroupExtended,
+  GroupMember,
+  GroupMemberList,
+  GroupMessageConfig,
+  GroupStats,
+  GroupStatsActive,
+  GroupStatsDetail,
+  GroupStatsTop,
+  GroupStatsTrend,
+  IdHash,
+  LinkMetadata,
+  Message,
+  MessageEdit,
+  MessageMetadata,
+  MessageMetadataFormatting,
+  MessageMetadataFormattingGroupLink,
+  MessageMetadataFormattingUrl,
+  MessageResponse,
+  MessageSetting,
+  MessageSettingFilter,
+  Notification,
+  NotificationAction,
+  Presence,
+  Response,
+  Search,
+  StoreProduct,
+  StoreSection,
+  Subscriber,
+  SubscriberExtended,
+  SubscriberEvent,
+  SubscriberEventAdditionalInfo,
+  SubscriberSelectedCharm,
+  TimerJob,
+  Tip,
+  TipCharm,
+  TipContext,
+  TipDetail,
+  TipLeaderboard,
+  TipLeaderboardItem,
+  TipLeaderboardSummary,
+  TipSummary,
+  Translation,
+  ValidUrl,
+  Welcome,
+  WelcomeEndpoint,
+  WOLFAPIError
+};
 
 export default {
   Achievement,

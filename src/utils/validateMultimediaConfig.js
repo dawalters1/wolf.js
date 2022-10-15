@@ -1,4 +1,4 @@
-import { WOLFAPIError } from '../models';
+import { WOLFAPIError } from '../models/index.js';
 import imageSize from 'image-size';
 import fileType from 'file-type';
 

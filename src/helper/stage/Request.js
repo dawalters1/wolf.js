@@ -27,7 +27,7 @@ class Request extends Base {
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 

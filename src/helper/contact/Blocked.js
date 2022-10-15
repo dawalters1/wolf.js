@@ -12,7 +12,7 @@ class Blocked extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_LIST,
       {
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 

@@ -28,9 +28,9 @@ class CommandHandler {
     this._commands = [];
 
     this.client.on('message', async (message) => {
-      const commandHandling = this.client.options.commandHandling;
+      const commandSettings = client.config.framework.commands;
 
-      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (!commandHandling.processOwnMessages && message.sourceSubscriberId === this.client.currentSubscriber.id)) {
+      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (!commandSettings.processOwnMessages && message.sourceSubscriberId === this.client.currentSubscriber.id)) {
         return Promise.resolve();
       }
 
@@ -47,14 +47,14 @@ class CommandHandler {
         return Promise.resolve();
       }
 
-      if (commandHandling.ignoreOfficialBots || commandHandling.ignoreUnofficialBots) {
+      if (commandSettings.ignore.official || commandSettings.ignore.unofficial) {
         const subscriber = await this.client.subscriber.getById(context.sourceSubscriberId);
 
-        if (commandHandling.ignoreOfficialBots && await checkForPrivilege(this.client, subscriber, Privilege.BOT)) {
+        if (commandSettings.ignore.official && await checkForPrivilege(this.client, subscriber, Privilege.BOT)) {
           return Promise.resolve();
         }
 
-        if (commandHandling.ignoreUnofficialBots && !await checkForPrivilege(this.client, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
+        if (commandSettings.ignore.unofficial && !await checkForPrivilege(this.client, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
           return Promise.resolve();
         }
       }

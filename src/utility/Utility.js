@@ -190,31 +190,31 @@ class Utility {
     const parts = [];
 
     if (info.years > 0) {
-      parts.push(`${info.years}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_years`)}`);
+      parts.push(`${info.years}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_years`)}`);
     }
 
     if (info.months > 0) {
-      parts.push(`${info.months}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_months`)}`);
+      parts.push(`${info.months}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_months`)}`);
     }
 
     if (info.weeks > 0) {
-      parts.push(`${info.weeks}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_weeks`)}`);
+      parts.push(`${info.weeks}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_weeks`)}`);
     }
 
     if (info.days > 0) {
-      parts.push(`${info.days}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_days`)}`);
+      parts.push(`${info.days}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_days`)}`);
     }
 
     if (info.hours > 0) {
-      parts.push(`${info.hours}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_hours`)}`);
+      parts.push(`${info.hours}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_hours`)}`);
     }
 
     if (info.minutes > 0) {
-      parts.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_minutes`)}`);
+      parts.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_minutes`)}`);
     }
 
     if (info.seconds > 0) {
-      parts.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.options.keyword}_time_type_seconds`)}`);
+      parts.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_seconds`)}`);
     }
 
     return parts.join(' ');

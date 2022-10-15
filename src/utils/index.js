@@ -1,13 +1,15 @@
-import config from './config.js';
+import configuration from './configuration.js';
 import generateToken from './generateToken.js';
 import patch from './patch.js';
 
-export { config };
-export { generateToken };
-export { patch };
+export {
+  configuration,
+  generateToken,
+  patch
+};
 
 export default {
-  config,
+  configuration,
   generateToken,
   patch
 };

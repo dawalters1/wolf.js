@@ -27,7 +27,7 @@ class Slot extends Base {
       Command.GROUP_AUDIO_SLOT_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true
+        subscribe: true // TODO: check for dev preference
       }
     );
 

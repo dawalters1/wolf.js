@@ -56,7 +56,7 @@ class Presence extends Base {
           Command.SUBSCRIBER_PRESENCE,
           {
             idList,
-            subscribe: true
+***REMOVED***// TODO: check for dev preference
           }
         );
 
