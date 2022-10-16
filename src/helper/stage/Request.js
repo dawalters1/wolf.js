@@ -1,16 +1,20 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import Command from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 
 class Request extends Base {
-  async list (targetGroupId, forceNew = false) {
+  async list (targetGroupId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -27,7 +31,7 @@ class Request extends Base {
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 

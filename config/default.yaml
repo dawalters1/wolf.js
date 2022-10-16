@@ -8,31 +8,25 @@ connection:
 
 members: 
   privileged:
-    capabilities: [32, 1, 2]
     batch:
       size: 2500
     max: 2500
 
   regular:
-    capabilities: [0]
     batch:
       size: 100
 
   silenced:
-    capabilities: [8]
     batch:
       size: 25
 
   banned:
-    capabilities: [4]
     batch:
       size: 100
 
-  bots:
-    capabilities: [32, 1, 2, 8, 0]    
-    privileges: [ 67108864 ]
+  bots:  
     batch:
-      size: 25
+      size: 100
 
 batching:
   members: 5000

@@ -40,7 +40,7 @@ class Group extends Base {
       }
     );
 
-    return response.success ? response.body.map((achivement) => models.AchievementUnlockable(this.client, achivement)) : [];
+    return response.body?.map((achivement) => models.AchievementUnlockable(this.client, achivement)) ?? [];
   }
 }
 

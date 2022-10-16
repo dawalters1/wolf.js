@@ -11,7 +11,7 @@ class Subscriber extends Base {
     this.presence = new Presence(this.client);
   }
 
-  async getById (id, forceNew = false) {
+  async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -20,14 +20,18 @@ class Subscriber extends Base {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    return (await this.getByIds([id]))[0];
+    return (await this.getByIds([id], subscribe, forceNew))[0];
   }
 
-  async getByIds (ids, forceNew = false) {
+  async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
@@ -48,6 +52,10 @@ class Subscriber extends Base {
       }
     }
 
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
@@ -66,7 +74,7 @@ class Subscriber extends Base {
             body: {
               idList,
               extended: true,
-              subscribe: true // TODO: check for dev preference
+              subscribe
             }
           }
         );
@@ -125,7 +133,7 @@ class Subscriber extends Base {
       }
     );
 
-    return response.success ? response.body.map((message) => new models.Message(this.client, message)) : [];
+    return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
   }
 
   _process (value) {

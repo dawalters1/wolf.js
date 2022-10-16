@@ -163,7 +163,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
+    return response.body?.map((charm) => new models.CharmExpiry(this.client, charm)) ?? [];
   }
 
   /**
@@ -207,7 +207,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? response.body.map((charm) => new models.CharmExpiry(this.client, charm)) : [];
+    return response.body?.map((charm) => new models.CharmExpiry(this.client, charm)) ?? [];
   }
 
   /**

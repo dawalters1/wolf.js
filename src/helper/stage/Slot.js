@@ -1,16 +1,20 @@
-import Command from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Slot extends Base {
-  async list (targetGroupId) {
+  async list (targetGroupId, subscribe = true) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     const group = await this.client.group.getById(targetGroupId);
@@ -27,7 +31,7 @@ class Slot extends Base {
       Command.GROUP_AUDIO_SLOT_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 

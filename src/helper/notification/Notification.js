@@ -21,7 +21,7 @@ class Notification extends Base {
       }
     );
 
-    return response.success ? response.body.map((notification) => this._process(new models.Notification(this.client, notification))) : [];
+    return response.body?.map((notification) => this._process(new models.Notification(this.client, notification))) ?? [];
   }
 
   async clear () {

@@ -7,7 +7,6 @@ import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
 import { fileURLToPath } from 'url';
 import generateToken from './generateToken.js';
-import SubscriptionIntent from '../constants/SubscriptionIntent.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -57,21 +56,6 @@ const developerConfig = (client) => {
         }
       },
       subscriptions: {
-        events: {
-          subscriptions: typeof config?.framework?.subscriptions?.events?.subscriptions === 'boolean' ? config.framework.subscriptions.events.subscriptions : true,
-          lineup: typeof config?.framework?.subscriptions?.events?.lineup === 'boolean' ? config.framework.subscriptions.events.lineup : true
-        },
-        profiles: {
-          group: {
-            updates: typeof config?.framework?.subscriptions?.profiles?.group?.updates === 'boolean' ? config.framework.subscriptions.profiles.group.updates : true
-          },
-          subscriber: {
-            updates: typeof config?.framework?.subscriptions?.profiles?.subscriber?.updates === 'boolean' ? config.framework.subscriptions.profiles.subscriber.updates : true
-          },
-          event: {
-            updates: typeof config?.framework?.subscriptions?.profiles?.event?.updates === 'boolean' ? config.framework.subscriptions.profiles.event.updates : true
-          }
-        },
         messages: {
           group: {
             enabled: typeof config?.framework?.subscriptions?.messages?.group?.enabled === 'boolean' ? config.framework.subscriptions.messages.group.enabled : true,
@@ -86,29 +70,6 @@ const developerConfig = (client) => {
     },
     ..._.omit(config, ['keyword', 'framework']) // Load reamining developer config
   };
-
-  // This needs a better way
-  client.config.framework.subscriptions.intents = (() => {
-    let intent = 0;
-
-    if (client.config.framework.subscriptions.messages.group.enabled) {
-      intent += SubscriptionIntent.GROUP_MESSAGE;
-
-      if (client.config.framework.subscriptions.messages.group.tipping) {
-        intent += SubscriptionIntent.GROUP_MESSAGE_TIPPING;
-      }
-    }
-
-    if (client.config.framework.subscriptions.messages.private.enabled) {
-      intent += SubscriptionIntent.PRIVATE_MESSAGE;
-
-      if (client.config.framework.subscriptions.messages.private.tipping) {
-        intent += SubscriptionIntent.PRIVATE_MESSAGE_TIPPING;
-      }
-    }
-
-    return intent;
-  })();
 
   client.config.get = (path) => internalGet(client.config, path);
 };

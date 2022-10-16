@@ -1,5 +1,6 @@
 /* eslint-disable no-fallthrough */
 import { Capability, Event } from '../constants/index.js';
+import GroupMemberList from '../models/GroupMemberList.js';
 
 const toCapability = (subscriber, group, type) => {
   switch (type) {
@@ -9,6 +10,7 @@ const toCapability = (subscriber, group, type) => {
     case 'kick':
       return Capability.NOT_MEMBER;
     case 'banned':
+    case 'ban':
       return Capability.BANNED;
     case 'admin':
       return Capability.ADMIN;
@@ -37,7 +39,9 @@ export default async (client, message) => {
   switch (action.type) {
     case 'join':
     {
-      group.members._add(subscriber, capabilities);
+      await group.members._onJoin(subscriber, capabilities);
+
+      group.membersCount++;
 
       return client.emit(
         subscriber.id === client.currentSubscriber.id ? Event.JOINED_GROUP : Event.GROUP_MEMBER_ADD,
@@ -55,9 +59,11 @@ export default async (client, message) => {
       if (subscriber.id === client.currentSubscriber.id) {
         group.capabilities = capabilities;
         group.inGroup = false;
+        group.members = new GroupMemberList(client, group.id);
       }
 
-      group.members._delete(subscriber, capabilities);
+      await group.members._onLeave(subscriber, capabilities);
+      group.membersCount--;
 
       return client.emit(
         subscriber.id === client.currentSubscriber.id ? Event.LEFT_GROUP : Event.GROUP_MEMBER_DELETE,
@@ -73,7 +79,14 @@ export default async (client, message) => {
     case 'silence':// eslint-disable-line padding-line-between-statements
     case 'ban':// eslint-disable-line padding-line-between-statements
     {
-      group.members._update(subscriber, capabilities);
+      await group.members._onUpdate(subscriber, capabilities);
+
+      // non-mod+ users do not have access to banned lists
+      if (action.type === 'reset' && subscriber.id === client.currentSubscriber.id) {
+        group.members._misc.members.push(...group.members._banned.members);
+
+        await group.members._banned.reset();
+      }
 
       return client.emit(
         Event.GROUP_MEMBER_UPDATE,

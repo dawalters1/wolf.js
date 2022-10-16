@@ -1,83 +1,94 @@
+import Base from './Base.js';
+import GroupMember from './GroupMember.js';
+import WOLFAPIError from './WOLFAPIError.js';
 
-import models from './index.js';
+class GroupMemberListSection extends Base {
+  constructor (client, list, capabilities, privileges) {
+    super(client);
 
-class GroupMemberListSection {
-  constructor (client, name) {
-    this.client = client;
-    this.name = name;
+    this.list = list;
 
+    this.capabilities = capabilities ? Array.isArray(capabilities) ? capabilities : [capabilities] : undefined;
+    this.privileges = privileges ? Array.isArray(privileges) ? privileges : [privileges] : undefined;
+
+    this.complete = false;
+    this.members = [];
+  }
+
+  async get (subscriber) {
+    if (typeof subscriber === 'object' && !subscriber.id) {
+      // eslint-disable-next-line no-prototype-builtins
+      throw new WOLFAPIError('subscriber must have property id', { subscriber: subscriber.hasOwnProperty('toJSON') ? subscriber.toJSON() : subscriber });
+    }
+
+    const subscriberId = subscriber?.id ?? subscriber;
+
+    const member = this.members.find((member) => member.id === subscriberId);
+
+    return member
+      ? {
+          member,
+          list: this.list
+        }
+      : null;
+  }
+
+  async add (subscriber, capabilities) {
+    if (this.capabilities && !this.capabilities.includes(capabilities)) {
+      return false;
+    }
+
+    if (this.privileges && !await this.client.utility.subscriber.privilege.has(subscriber.id, this.privileges)) {
+      return false;
+    }
+
+    // Verify there are capabilities or privileges else its misc, and that subscriber ID is smaller than the largest IDs in the list
+    if ((this.capabilities || this.privileges) && !this.complete && !this.members.some((member) => member.id > subscriber.id)) {
+      return false;
+    }
+
+    // Prevent duplicates
+    if (this.members.some((member) => member.id === subscriber.id)) {
+      return true;
+    }
+
+    this.members.push(new GroupMember(this.client, { id: subscriber.id, capabilities, hash: subscriber.hash }));
+
+    return true;
+  }
+
+  async remove (subscriber) {
+    if (typeof subscriber === 'object' && !subscriber.id) {
+      // eslint-disable-next-line no-prototype-builtins
+      throw new WOLFAPIError('subscriber must have property id', { subscriber: subscriber.hasOwnProperty('toJSON') ? subscriber.toJSON() : subscriber });
+    }
+
+    const subscriberId = subscriber?.id ?? subscriber;
+
+    if (!this.members.some((member) => member.id === subscriberId)) {
+      return Promise.resolve();
+    }
+
+    return this.members.splice(this.members.findIndex((member) => member.id === subscriberId), 1);
+  }
+
+  async update (subscriber, capabilities) {
+    // If capabilities list, check if compatible and update if exists, if not compatible remove if exists
+    if (this.capabilities && !this.capabilities.includes(capabilities)) {
+      return this.remove(subscriber);
+    }
+
+    if (!this.members.some((member) => member.id === subscriber.id)) {
+      return this.add(subscriber, capabilities);
+    }
+
+    // If privilege list, update existing members capabilties
+    this.members.find((member) => member.id === subscriber.id).capabilities = capabilities;
+  }
+
+  reset () {
     this.members = [];
     this.complete = false;
-
-    this.lastRequestedId = 0;
-  }
-
-  _get (subscriberId) {
-    return this.members.find((member) => member.id === subscriberId);
-  }
-
-  _fromRequest (members, successful) {
-    this.members.push(...(Array.isArray(members) ? members : [members]));
-    this.complete = Array.isArray(members) && successful && members.length < this.client._botConfig.get(`members.${this.name}.batch.size`);
-    this.lastRequestedId = Array.isArray(members) ? members.sort((a, b) => a.id - b.id).splice(-1)[0]?.id ?? this.lastRequestedId : this.lastRequestedId;
-
-    return members;
-  }
-
-  async _add (subscriber, capabilities) {
-    const config = this.client._botConfig.get(`members.${this.name}`);
-
-    if (config.capabilities && !config.capabilities.includes(capabilities)) {
-      return Promise.resolve();
-    }
-
-    if (config.privileges && !await this.client.utility.subscriber.privilege.has(subscriber.id, config.privileges)) {
-      return Promise.resolve();
-    }
-
-    this.members.push(
-      new models.GroupMember(
-        this.client,
-        {
-          id: subscriber.id,
-          hash: subscriber.hash,
-          capabilities
-        }
-      )
-    );
-
-    // Prevent this member from being requested again if they magically are the next ID in the list after the last requested
-    this.lastRequestedId = this.lastRequestedId + 1 === subscriber.id ? subscriber.id : this.lastRequestedId;
-
-    return Promise.resolve();
-  }
-
-  async _delete (subscriber) {
-    if (!this._get(subscriber.id)) {
-      return Promise.resolve();
-    }
-
-    this.members.splice(this.members.findIndex((member) => member.id === subscriber.id), 1);
-
-    this.lastRequestedId = this.lastRequestedId === subscriber.id ? this.members.sort((a, b) => a.id - b.id).splice(-1)[0]?.id ?? 0 : this.lastRequestedId;
-
-    return Promise.resolve();
-  }
-
-  async _update (subscriber, capabilities) {
-    const config = this.client._botConfig.get(`members.${this.name}`);
-
-    const existing = this._get(subscriber.id);
-
-    if (!existing) {
-      return await this._add(subscriber, capabilities);
-    }
-
-    if (config.capabilities.includes(capabilities)) {
-      existing.capabilities = capabilities;
-    }
-
-    return await this._delete(subscriber, true);
   }
 }
 

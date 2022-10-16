@@ -4,7 +4,11 @@ import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Subscription extends Base {
-  async getList () {
+  async getList (subscribe = true) {
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (this.cache.length) {
       return this.cache;
     }
@@ -12,7 +16,7 @@ class Subscription extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_LIST,
       {
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 

@@ -10,7 +10,11 @@ class Contact extends Base {
     this.blocked = new Blocked(client);
   }
 
-  async list () {
+  async list (subscribe = true) {
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (this.cache.length) {
       return this.cache;
     }
@@ -18,7 +22,7 @@ class Contact extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_LIST,
       {
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 

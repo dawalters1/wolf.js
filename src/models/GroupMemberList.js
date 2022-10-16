@@ -1,46 +1,104 @@
 
-import MemberListType from '../constants/MemberListType.js';
+import { Capability, MemberListType, Privilege } from '../constants/index.js';
 import GroupMemberListSection from './GroupMemberListSection.js';
 
 class GroupMemberList {
-  constructor (client, targetGroupId) {
+  constructor (client, id) {
     this.client = client;
-    this.targetGroupId = targetGroupId;
+    this.id = id;
 
-    // #region GROUP_MEMBER_{NAME}_LIST
-    this.privileged = new GroupMemberListSection(this.client, MemberListType.PRIVILEGED);
-    this.regular = new GroupMemberListSection(this.client, MemberListType.REGULAR);
-    this.banned = new GroupMemberListSection(this.client, MemberListType.BANNED);
-    // #endregion
+    this._privileged = new GroupMemberListSection(this.client, MemberListType.PRIVILEGED, [Capability.OWNER, Capability.ADMIN, Capability.MOD]);
+    this._regular = new GroupMemberListSection(this.client, MemberListType.REGULAR, [Capability.REGULAR, Capability.SILENCED]);
+    this._silenced = new GroupMemberListSection(this.client, MemberListType.SILENCED, [Capability.SILENCED]);
+    this._banned = new GroupMemberListSection(this.client, MemberListType.BANNED, [Capability.BANNED]);
+    this._bots = new GroupMemberListSection(this.client, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
 
-    // #region  GROUP_MEMBER_SEARCH
-    this.silenced = new GroupMemberListSection(this.client, MemberListType.SILENCED);
-    this.bots = new GroupMemberListSection(this.client, MemberListType.BOTS);
-    // #endregion
+    // Members that are not in privilged, regular or banned list will appear here until they are loaded in either list
+    this._misc = new GroupMemberListSection(this.client);
   }
 
-  get (subscriberId) {
-    for (const listName of Object.values(MemberListType)) {
-      const member = this[listName]._get(subscriberId);
+  async _get (subscriberId) {
+    const member = (await Promise.all([
+      this._privileged.get(subscriberId),
+      this._regular.get(subscriberId),
+      this._banned.get(subscriberId),
+      this._misc.get(subscriberId)
+    ])).filter(Boolean)[0];
 
-      if (member) {
-        return member;
-      }
+    return member?.member;
+  }
+
+  async _onJoin (subscriber, capabilities) {
+    // Attempt to add user to privileged or regular, if failed add to misc
+    if (!(await Promise.all([this._privileged.add(subscriber, capabilities), this._regular.add(subscriber, capabilities)])).some((successful) => successful)) {
+      await this._misc.add(subscriber, capabilities);
     }
 
-    return undefined;
+    await this._bots.add(subscriber, capabilities);
+
+    return Promise.resolve();
   }
 
-  _add (subscriber, capabilities) {
-    Object.values(MemberListType).forEach((list) => this[list]._add(subscriber, capabilities));
+  async _onLeave (subscriber) {
+    return await Promise.all([
+      this._privileged.remove(subscriber),
+      this._regular.remove(subscriber),
+      this._silenced.remove(subscriber),
+      this._banned.remove(subscriber),
+      this._bots.remove(subscriber),
+      this._misc.remove(subscriber)
+    ]);
   }
 
-  _delete (subscriber) {
-    Object.values(MemberListType).forEach((list) => this[list]._delete(subscriber));
+  async _onUpdate (subscriber, capabilities) {
+    await Promise.all([
+      this._privileged.update(subscriber, capabilities),
+      this._regular.update(subscriber, capabilities),
+      this._silenced.update(subscriber, capabilities),
+      this._banned.update(subscriber, capabilities),
+      this._bots.update(subscriber, capabilities)
+    ]);
+
+    const [inMainList, inMisc] = await Promise.all([
+      (await Promise.all(
+        [
+          this._privileged.get(subscriber),
+          this._regular.get(subscriber),
+          this._banned.get(subscriber)
+        ]
+      )).filter(Boolean).length > 0,
+      !this._misc.get(subscriber)
+    ]);
+
+    // Not in main list and in misc add to misc
+    if (!inMainList && !inMisc) {
+      return await this._misc.add(subscriber, capabilities);
+    }
+
+    if (inMainList && inMisc) {
+      return await this._misc.remove(subscriber);
+    }
+
+    return Promise.resolve();
   }
 
-  _update (subscriber, capabilities) {
-    Object.values(MemberListType).forEach((list) => this[list]._update(subscriber, capabilities));
+  async privileged () {
+    if (!this._privileged.completed) {
+      // Request privileged
+    }
+
+    return this._privileged.members;
+  }
+
+  toJSON () {
+    return {
+      privileged: this._privileged.members.map((member) => member.toJSON()),
+      regular: this._regular.members.map((member) => member.toJSON()),
+      silenced: this._silenced.members.map((member) => member.toJSON()),
+      banned: this._banned.members.map((member) => member.toJSON()),
+      bots: this._bots.members.map((member) => member.toJSON()),
+      misc: this._misc.members.map((member) => member.toJSON())
+    };
   }
 }
 

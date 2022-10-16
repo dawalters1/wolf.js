@@ -4,7 +4,11 @@ import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 
 class Blocked extends Base {
-  async list () {
+  async list (subscribe = true) {
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (this.cache.length) {
       return this.cache;
     }
@@ -12,7 +16,7 @@ class Blocked extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_LIST,
       {
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 
