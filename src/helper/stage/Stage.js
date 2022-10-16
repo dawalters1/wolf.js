@@ -9,6 +9,14 @@ class Stage extends Base {
     this.request = new Request(this.client);
     this.slot = new Slot(this.client);
   }
+
+  async play (targetGroupId, data) {
+
+  }
+
+  async stop (targetGroupId, data) {
+
+  }
 }
 
 export default Stage;

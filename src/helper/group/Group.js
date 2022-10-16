@@ -51,7 +51,7 @@ class Group extends Base {
     return this.cache.filter((group) => group.InGroup);
   }
 
-  async getById (id, forceNew = false) {
+  async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -60,14 +60,18 @@ class Group extends Base {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    return (await this.getByIds([id]))[0];
+    return (await this.getByIds([id], subscribe, forceNew))[0];
   }
 
-  async getByIds (ids, forceNew = false) {
+  async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
@@ -88,6 +92,14 @@ class Group extends Base {
       }
     }
 
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
     const groups = !forceNew ? this.cache.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
@@ -102,7 +114,7 @@ class Group extends Base {
             },
             body: {
               idList,
-              subscribe: true, // TODO: check for dev preference
+              subscribe,
               entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
             }
           }
@@ -123,11 +135,15 @@ class Group extends Base {
     return groups;
   }
 
-  async getByName (name, forceNew = false) {
+  async getByName (name, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(name)) {
       throw new models.WOLFAPIError('name cannot be null or undefined', { name });
     } else if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
+    }
+
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -150,7 +166,7 @@ class Group extends Base {
         },
         body: {
           name: name.toLowerCase(),
-          subscribe: true, // TODO: check for dev preference
+          subscribe,
           entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
         }
       }
@@ -270,7 +286,7 @@ class Group extends Base {
       }
     );
 
-    return response.success ? response.body.map((message) => new models.Message(this.client, message)) : [];
+    return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
   }
 
   async getStats (id) {

@@ -6,13 +6,17 @@ import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import fileType from 'file-type';
 
 class Group extends Base {
-  async getEventList (targetGroupId, forceNew = false) {
+  async getEventList (targetGroupId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -33,7 +37,7 @@ class Group extends Base {
       Command.GROUP_EVENT_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true // TODO: check for dev preference
+        subscribe
       }
     );
 

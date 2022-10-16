@@ -1,7 +1,7 @@
 import { Capability, Command, Privilege } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import models from '../../models/index.js';
+import models, { GroupMember, WOLFAPIError } from '../../models/index.js';
 
 const canRequestList = async (client, myCapability, includeAllButBanned = false) => {
   if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
@@ -87,8 +87,8 @@ class Member extends Base {
       throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
-    if (group.members.bots.complete) {
-      return group.members.bots.members;
+    if (group.members._bots.complete) {
+      return group.members._bots.members;
     }
 
     const response = await this.client.websocket.emit(
@@ -96,15 +96,18 @@ class Member extends Base {
       {
         groupId: parseInt(targetGroupId),
         filter: 'bots',
-        offset: group.members.bots.members.length,
+        offset: group.members._bots.members.length,
         limit: parseInt(limit)
       }
     );
 
-    return group.members.bots._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
+    group.members._bots.complete = response.body.length < this.client._botConfig.get('members.bots.batch.size');
+    group.members._bots.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+
+    return group.members._bots.members;
   }
 
-  async getSilencedList (targetGroupId, limit = 25) {
+  async getSilencedList (targetGroupId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -113,26 +116,27 @@ class Member extends Base {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
-    }
-
     const group = await this.client.group.getById(targetGroupId);
 
     if (!group.exists) {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
-    if (!await canRequestList(this.client, group.capabilities, true)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
+    if (group.members._silenced.complete) {
+      return group.members._silenced.members;
     }
 
-    if (group.members.silenced.complete) {
-      return group.members.silenced.members;
+    if (group.members._regular.complete) {
+      const silenced = group.members._regular.members.filter((member) => member.capabilities === Capability.SILENCED);
+
+      group.members._silenced.complete = true;
+      group.members._silenced.members = silenced;
+
+      return group.members._silenced.members;
+    }
+
+    if (!await canRequestList(this.client, group.capabilities, true)) {
+      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
     const response = await this.client.websocket.emit(
@@ -140,15 +144,18 @@ class Member extends Base {
       {
         groupId: parseInt(targetGroupId),
         filter: 'silenced',
-        offset: group.members.silenced.members.length,
-        limit: parseInt(limit)
+        offset: group.members._silenced.members.length,
+        limit: this.client._botConfig.get('members.silenced.batch.size')
       }
     );
 
-    return group.members.silenced._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
+    group.members._silenced.complete = response.body?.length < this.client._botConfig.get('members.silenced.batch.size');
+    group.members._silenced.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+
+    return group.members._silenced.members;
   }
 
-  async getBannedList (targetGroupId, limit = 25) {
+  async getBannedList (targetGroupId, limit = 100) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -171,24 +178,36 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
+    if (group.members._banned.complete) {
+      return group.members._banned.members;
+    }
+
     if (!await canRequestList(this.client, group.capabilities)) {
       throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
-    if (group.members.banned.complete) {
-      return group.members.banned.members;
+    if (group.members._regular.complete) {
+      const silenced = group.members._regular.members.filter((member) => member.capabilities === Capability.BANNED);
+
+      group.members._banned.complete = true;
+      group.members._banned.members = silenced;
+
+      return group.members._banned.members;
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_BANNED_LIST,
       {
         id: parseInt(targetGroupId),
-        limit: parseInt(limit),
-        after: group.members.banned.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        limit: this.client._botConfig.get('members.banned.batch.size'),
+        after: group.members._banned.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );
 
-    return group.members.banned._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
+    group.members._banned.complete = response.body?.length < this.client._botConfig.get('members.banned.batch.size');
+    group.members._banned.members = response.body?.map((member) => new GroupMember(this.client, { ...member, capabilities: Capability.BANNED })) ?? [];
+
+    return group.members._banned.members;
   }
 
   async getPrivilegedList (targetGroupId) {
@@ -210,36 +229,37 @@ class Member extends Base {
       throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
-    if (group.members.privileged.complete) {
-      return group.members.privileged.members;
+    if (group.members._privileged.complete) {
+      return group.members._privileged.members;
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_PRIVILEGED_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true // TODO: check for dev preference
+        subscribe: true
       }
     );
 
-    return group.members.privileged._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
+    if (!response.success) {
+      return new WOLFAPIError('Privileged members request failed', { response });
+    }
+
+    group.members._privileged.complete = true; // 2,500 is the max supported, however some groups still have more than this
+    group.members._privileged.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+
+    response.body?.forEach((member) => group.members._misc.remove(member));
+
+    return group.members._privileged.members;
   }
 
-  async getRegularList (targetGroupId, limit = 100) {
+  async getRegularList (targetGroupId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
-    }
-
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
     const group = await this.client.group.getById(targetGroupId);
@@ -252,20 +272,29 @@ class Member extends Base {
       throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
-    if (group.members.regular.complete) {
-      return group.members.privileged.members;
+    if (returnCurrentList || group.members._regular.complete) {
+      return group.members._regular.members;
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_REGULAR_LIST,
       {
         id: parseInt(targetGroupId),
-        subscribe: true, // TODO: check for dev preference
-        after: group.members.regular.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        subscribe: true,
+        after: group.members._regular.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );
 
-    return group.members.regular._fromRequest(response?.body.map((member) => new models.GroupMember(this.client, member)) ?? [], response.success);
+    if (!response.success) {
+      return new WOLFAPIError('Regular members request failed', { response });
+    }
+
+    group.members._regular.complete = response.body.length < this.client._botConfig.get('members.regular.batch.size');
+    group.members._regular.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+
+    response.body?.forEach((member) => group.members._misc.remove(member));
+
+    return group.members._regular.members;
   }
 
   async get (targetGroupId, subscriberId) {
@@ -291,7 +320,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
-    const member = group.members.get(subscriberId);
+    const member = await group.members._get(subscriberId);
 
     if (member) {
       return member;
@@ -305,7 +334,13 @@ class Member extends Base {
       }
     );
 
-    return response.success ? group.members._groupMemberAdd(response.body, response.body.capabilities) : undefined;
+    if (response.success) {
+      await group.members._onJoin(await this.client.subscriber.getById(subscriberId, false), response.body.capabilities);
+
+      return await group.members._get(subscriberId);
+    }
+
+    return undefined;
   }
 
   async admin (targetGroupId, subscriberId) {

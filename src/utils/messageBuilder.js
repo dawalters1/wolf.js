@@ -73,6 +73,7 @@ const getEmbedData = (client, formatting) => {
   }
 };
 const getAds = (client, message) => client.utility.string.getAds(message);
+
 const getLinks = (client, message) => message.split(/(?!\(.*)[,،\s](?![^[]*?\])/g).filter(Boolean)
   .reduce((result, word, index) => {
     if (validator.isValidUrl(client, word)) {
@@ -87,6 +88,7 @@ const getLinks = (client, message) => message.split(/(?!\(.*)[,،\s](?![^[]*?\])
 
     return result;
   }, []);
+
 const buildMessage = async (client, targetId, isGroup, message) => {
   const ads = getAds(client, message);
   const links = getLinks(client, message);
