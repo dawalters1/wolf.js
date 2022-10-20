@@ -1,4 +1,4 @@
-import { MessageType, Event } from '../../../../constants/index.js';
+import { MessageType, Event, Language } from '../../../../constants/index.js';
 import models from '../../../../models/index.js';
 import messageSendAdminActionHandler from '../../../../utils/messageSendAdminActionHandler.js';
 
@@ -16,13 +16,15 @@ export default async (client, body) => {
       );
       break;
     case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
-      message.body = message.body.replace('token=TOKEN', `token=${client.config.get('login').token}`).replace('language=LANGUAGE', `language=${client.currentSubscriber.extended.language}`).replace('deviceType=DEVICETYPE', 'deviceType=0');
+      message.body = message.body
+        .replace('token=TOKEN', `token=${client.config.get('login').token}`)
+        .replace('language=LANGUAGE', `language=${client.currentSubscriber?.extended?.language || Language.ENGLISH} `)
+        .replace('platform=PLATFORM', 'platform=WJS') // Replaces deviceType
+        .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
       break;
     default:
-      if (message.type !== MessageType.TEXT_HTML) {
-        if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) {
-          return Promise.resolve();
-        }
+      if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) {
+        return Promise.resolve();
       }
       break;
   }

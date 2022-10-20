@@ -4,6 +4,8 @@ import events from 'events';
 import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
 
+const spawn = require('child_process').spawn;
+
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
 const { RTCAudioSource } = wrtc.nonstandard;
@@ -15,7 +17,7 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const setIntervalAsync = (fn) => fn().then((ms) => setTimeout(() => setIntervalAsync(fn, ms), ms));
+const setIntervalAsync = (fn) => fn().then(async (ms) => await new Promise(resolve => setTimeout(() => resolve(setIntervalAsync(fn, ms)), ms)));
 
 class Client extends EventEmitter {
   constructor (client) {
@@ -47,7 +49,26 @@ class Client extends EventEmitter {
   }
 
   play (data) {
+    let completed = false;
 
+    this.samples = new Int16Array(0);
+
+    this._ffmpeg = ffmpeg(data)
+      .toFormat('wav')
+      .native()
+      .noVideo()
+      .withOptions()
+      .on('error', () => { })
+      .pipe()
+      .on('data', (data) => {
+        const newSamples = new Int16Array(data.buffer);
+        const mergedSamples = new Int16Array(this.samples.length + newSamples.length);
+
+        mergedSamples.set(this.samples);
+        mergedSamples.set(newSamples, this.samples.length);
+        this.samples = mergedSamples;
+      })
+      .on('finish', () => { completed = true; });
   }
 
   stop () {

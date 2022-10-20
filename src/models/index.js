@@ -2,6 +2,7 @@ import Achievement from './Achievement.js';
 import AchievementCategory from './AchievementCategory.js';
 import AchievementUnlockable from './AchievementUnlockable.js';
 import AchievementUnlockableAdditionalInfo from './AchievementUnlockableAdditionalInfo.js';
+import BlackListLink from './BlacklistLink.js';
 import Charm from './Charm.js';
 import CharmExpiry from './CharmExpiry.js';
 import CharmSelected from './CharmSelected.js';
@@ -69,6 +70,7 @@ export {
   AchievementCategory,
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
+  BlackListLink,
   Charm,
   CharmExpiry,
   CharmSelected,
@@ -137,6 +139,7 @@ export default {
   AchievementCategory,
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
+  BlackListLink,
   Charm,
   CharmExpiry,
   CharmSelected,

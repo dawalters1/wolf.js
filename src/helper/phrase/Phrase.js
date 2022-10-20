@@ -63,10 +63,10 @@ class Phrase extends Base {
         }
       );
 
-      const existing = this.cache.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name));
+      const existing = this.cache.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name) && phr.language === phrase.language);
 
       if (existing) {
-        this.patch(existing, phrase);
+        this._patch(existing, phrase);
       } else {
         this.cache.push(phrase);
       }
@@ -88,7 +88,7 @@ class Phrase extends Base {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
 
-    return this.cache.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'gmiu').test(phrase.name));
+    return this.cache.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'giu').test(phrase.name));
   }
 
   getByLanguageAndName (language, name) {
