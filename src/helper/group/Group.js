@@ -1,7 +1,7 @@
 import { Capability, Command } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import models from '../../models/index.js';
+import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Member from './Member.js';
 
@@ -312,6 +312,24 @@ class Group extends Base {
     const response = await this.client.websocket.emit(Command.GROUP_RECOMMENDATION_LIST);
 
     return response.success ? await this.getByIds(response.body.map((idHash) => idHash.id)) : [];
+  }
+
+  async search (query) {
+    if (validator.isNullOrUndefined(query)) {
+      throw new models.WOLFAPIError('query cannot be null or undefined', { query });
+    } else if (validator.isNullOrWhitespace(query)) {
+      throw new models.WOLFAPIError('query cannot be null or empty', { query });
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.SEARCH,
+      {
+        query,
+        types: ['groups']
+      }
+    );
+
+    return response.body?.map((result) => new Search(this.client, result)) ?? [];
   }
 
   _process (value) {

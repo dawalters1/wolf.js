@@ -1,7 +1,7 @@
 import Base from '../Base.js';
 import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
-import models from '../../models/index.js';
+import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Presence from './Presence.js';
 
@@ -134,6 +134,24 @@ class Subscriber extends Base {
     );
 
     return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
+  }
+
+  async search (query) {
+    if (validator.isNullOrUndefined(query)) {
+      throw new models.WOLFAPIError('query cannot be null or undefined', { query });
+    } else if (validator.isNullOrWhitespace(query)) {
+      throw new models.WOLFAPIError('query cannot be null or empty', { query });
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.SEARCH,
+      {
+        query,
+        types: ['related']
+      }
+    );
+
+    return response.body?.map((result) => new Search(this.client, result)) ?? [];
   }
 
   _process (value) {

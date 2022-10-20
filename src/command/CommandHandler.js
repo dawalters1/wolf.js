@@ -73,6 +73,7 @@ class CommandHandler {
     if (commands.length === 0) {
       throw new WOLFAPIError('commands cannot be empty', { commands });
     }
+
     this._commands = commands;
   }
 

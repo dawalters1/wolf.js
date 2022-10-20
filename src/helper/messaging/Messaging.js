@@ -181,7 +181,7 @@ class Messaging extends Base {
   }
 
   async sendMessage (commandOrMessage, content, options = undefined) {
-    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).CommandContext) && !(commandOrMessage instanceof (await import('../../models/Message.js')).Message)) {
+    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).Message)) {
       throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
 
