@@ -7,7 +7,9 @@ const { Command } = Constants;
 
 class Category extends Base {
   constructor (client) {
-    super(client, {});
+    super(client);
+
+    this.categories = {};
   }
 
   /**
@@ -22,8 +24,8 @@ class Category extends Base {
       throw new Error('language is not valid', { language });
     }
 
-    if (!forceNew && this.cache[language]) {
-      return this.cache[language];
+    if (!forceNew && this.categories[language]) {
+      return this.categories[language];
     }
 
     const response = await this.client.websocket.emit(
@@ -36,10 +38,10 @@ class Category extends Base {
     return this._process(response.body?.map((category) => models.AchievementCategory(this.client, category)) ?? undefined, language);
   }
 
-  _process (list, language) {
-    this.cache[language] = list;
+  _process (categories, language) {
+    this.categories[language] = categories;
 
-    return list;
+    return categories;
   }
 }
 

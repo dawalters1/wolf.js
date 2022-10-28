@@ -3,8 +3,15 @@ import Command from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
+import patch from '../../utils/patch.js';
 
 class Presence extends Base {
+  constructor (client) {
+    super(client);
+
+    this.presences = [];
+  }
+
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -21,7 +28,7 @@ class Presence extends Base {
     return (await this.getByIds([id]))[0];
   }
 
-  async getByIds (ids, forceNew = false) {
+  async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
@@ -42,11 +49,15 @@ class Presence extends Base {
       }
     }
 
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const presence = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const presence = !forceNew ? this.presences.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (presence.length !== ids.length) {
       const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId), this.client._botConfig.get('batching.length')));
@@ -56,7 +67,7 @@ class Presence extends Base {
           Command.SUBSCRIBER_PRESENCE,
           {
             idList,
-            subscribe: true // TODO: check for dev preference
+            subscribe // TODO: check for dev preference
           }
         );
 
@@ -76,13 +87,9 @@ class Presence extends Base {
   }
 
   _process (value) {
-    const existing = this.cache.find((subscriber) => subscriber.id === value);
+    const existing = this.presences.find((subscriber) => subscriber.id === value);
 
-    if (existing) {
-      this._patch(existing, value);
-    } else {
-      this.cache.push(value);
-    }
+    existing ? patch(existing, value) : this.presences.push(value);
 
     return value;
   }

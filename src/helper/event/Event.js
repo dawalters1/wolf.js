@@ -5,12 +5,14 @@ import models from '../../models/index.js';
 import _ from 'lodash';
 import Group from './Group.js';
 import Subscription from './Subscription.js';
+import patch from '../../utils/patch.js';
 
 class Event extends Base {
   constructor (client) {
     super(client);
     this.group = new Group(this.client);
     this.subscription = new Subscription(this.client);
+    this.events = [];
   }
 
   async getById (id, forceNew = false) {
@@ -54,7 +56,7 @@ class Event extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const events = !forceNew ? this.cache.filter((event) => ids.includes(event.id)) : [];
+    const events = !forceNew ? this.events.filter((event) => ids.includes(event.id)) : [];
 
     if (events.length !== ids.length) {
       const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId), this.client._botConfig.get('batching.length')));
@@ -85,6 +87,14 @@ class Event extends Base {
     }
 
     return events;
+  }
+
+  _process (event) {
+    const existing = this.events.find((cached) => event.id === cached.id);
+
+    existing ? patch(existing, event) : this.events.push(event);
+
+    return event;
   }
 }
 

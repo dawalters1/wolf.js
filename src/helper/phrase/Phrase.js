@@ -3,10 +3,13 @@ import path from 'path';
 import Base from '../Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
+import patch from '../../utils/patch.js';
 
 class Phrase extends Base {
   constructor (client) {
     super(client);
+    this.phrases = [];
+
     this.load();
   }
 
@@ -63,24 +66,20 @@ class Phrase extends Base {
         }
       );
 
-      const existing = this.cache.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name) && phr.language === phrase.language);
+      const existing = this.phrases.find((phr) => this.client.utility.string.isEqual(phrase.name, phr.name) && phr.language === phrase.language);
 
-      if (existing) {
-        this._patch(existing, phrase);
-      } else {
-        this.cache.push(phrase);
-      }
+      existing ? patch(existing, phrase) : this.phrases.push(phrase);
     }
   }
 
   count () {
-    const languageCounts = this.cache.reduce((result, value) => {
+    const languageCounts = this.phrases.reduce((result, value) => {
       result[value.language] = result[value.language] ? result[value.language]++ : 1;
 
       return result;
     }, {});
 
-    return new models.PhraseCount(this.cache.length, languageCounts);
+    return new models.PhraseCount(this.phrases.length, languageCounts);
   }
 
   getAllByName (name) {
@@ -88,7 +87,7 @@ class Phrase extends Base {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
 
-    return this.cache.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'giu').test(phrase.name));
+    return this.phrases.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'giu').test(phrase.name));
   }
 
   getByLanguageAndName (language, name) {
@@ -96,7 +95,7 @@ class Phrase extends Base {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
 
-    const requested = this.cache.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
+    const requested = this.phrases.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
 
     if (requested) {
       return requested.value;

@@ -6,12 +6,15 @@ import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import Constants, { Language } from '../../constants/index.js';
 import _ from 'lodash';
+import patch from '../../utils/patch.js';
 
 const { Command } = Constants;
 
 class Achievement extends Base {
   constructor (client) {
-    super(client, {});
+    super(client);
+
+    this.achievements = {};
 
     this.category = new Category(this.client);
     this.group = new Group(client);
@@ -83,7 +86,7 @@ class Achievement extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const achievements = !forceNew ? this.cache[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
+    const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
 
     if (achievements.length !== ids.length) {
       const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId), this.client._botConfig.get('batching.length')));
@@ -118,17 +121,15 @@ class Achievement extends Base {
   }
 
   _process (value, language) {
-    if (!this.cache[language]) {
-      this.cache[language] = [];
+    if (!this.achievements[language]) {
+      this.achievements[language] = [];
     }
 
-    const existing = this.cache[language].find((achievement) => achievement.id === value);
+    (Array.isArray(value) ? value : [value]).forEach((achievement) => {
+      const existing = this.achievements[language].find((cached) => achievement.id === cached.id);
 
-    if (existing) {
-      this._patch(existing, value);
-    } else {
-      this.cache[language].push(value);
-    }
+      existing ? patch(existing, value) : this.achievements[language].push(achievement);
+    });
 
     return value;
   }
