@@ -4,6 +4,7 @@ import validator from '../../validator/index.js';
 import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Member from './Member.js';
+import patch from '../../utils/patch.js';
 
 const buildGroupFromModule = (groupModule) => {
   const base = groupModule.base;
@@ -22,6 +23,7 @@ class Group extends Base {
   constructor (client) {
     super(client);
     this.fetched = false;
+    this.groups = [];
     this.member = new Member(this.client);
   }
 
@@ -48,7 +50,7 @@ class Group extends Base {
       }
     }
 
-    return this.cache.filter((group) => group.InGroup);
+    return this.groups.filter((group) => group.InGroup);
   }
 
   async getById (id, subscribe = true, forceNew = false) {
@@ -100,7 +102,7 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const groups = !forceNew ? this.cache.filter((group) => ids.includes(group.id)) : [];
+    const groups = !forceNew ? this.groups.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
       const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId), this.client._botConfig.get('batching.length')));
@@ -150,12 +152,12 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    if (!forceNew && this.cache.some((group) => this.client.utility.string.isEqual(group.name, name))) {
-      return this.cache.find((group) => this.client.utility.string.isEqual(group.name, name));
+    if (!forceNew && this.groups.some((group) => this.client.utility.string.isEqual(group.name, name))) {
+      return this.groups.find((group) => this.client.utility.string.isEqual(group.name, name));
     }
 
-    if (!forceNew && this.cache.some((group) => this.client.utility.string.isEqual(group.name, name))) {
-      return this.cache.find((group) => this.client.utility.string.isEqual(group.name, name));
+    if (!forceNew && this.groups.some((group) => this.client.utility.string.isEqual(group.name, name))) {
+      return this.groups.find((group) => this.client.utility.string.isEqual(group.name, name));
     }
 
     const response = await this.client.websocket.emit(
@@ -333,13 +335,9 @@ class Group extends Base {
   }
 
   _process (value) {
-    const existing = this.cache.find((group) => group.id === value.id);
+    const existing = this.groups.find((group) => group.id === value.id);
 
-    if (existing) {
-      this._patch(existing, value);
-    } else {
-      this.cache.push(value);
-    }
+    existing ? patch(existing, value) : this.groups.push(value);
 
     return value;
   }

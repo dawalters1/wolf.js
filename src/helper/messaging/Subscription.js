@@ -7,8 +7,10 @@ class Subscription extends Base {
   constructor (client) {
     super(client, {});
 
+    this.subscriptiosn = {};
+
     this.client.on('message', (message) => {
-      const subscriptions = Object.values(this.cache).filter((subscription) => subscription.predicate(message));
+      const subscriptions = Object.values(this.subscriptions).filter((subscription) => subscription.predicate(message));
 
       for (const messageSubscription of subscriptions) {
         message.subscription = messageSubscription.id;
@@ -18,7 +20,7 @@ class Subscription extends Base {
   }
 
   async _create (predicate, timeout = Infinity) {
-    if (Object.values(this.cache).some((subscription) => subscription.predicate === predicate)) {
+    if (Object.values(this.subscriptions).some((subscription) => subscription.predicate === predicate)) {
       throw new models.WOLFAPIError('subscription is a duplicate', { predicate });
     }
 
@@ -48,7 +50,7 @@ class Subscription extends Base {
     });
 
     clearTimeout(subscription.timeout);
-    Reflect.deleteProperty(this.cache, subscription.id);
+    Reflect.deleteProperty(this.subscriptions, subscription.id);
 
     return result;
   }

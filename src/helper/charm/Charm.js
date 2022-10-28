@@ -4,20 +4,26 @@ import Base from '../Base.js';
 import validator from '../../validator/index.js';
 
 class Charm extends Base {
+  constructor (client) {
+    super(client);
+
+    this.charms = [];
+  }
+
   /**
      * Request the charms list
      * @returns {Promise<Array<models.Charm>>} - The list of charms
      */
   async list () {
-    if (this.cache.length) {
-      return this.cache;
+    if (this.charms.length) {
+      return this.charms;
     }
 
     const response = await this.client.websocket.emit(Command.CHARM_LIST);
 
-    this.cache = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
+    this.charms = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
 
-    return this._charms;
+    return this.charms;
   }
 
   /**
@@ -66,9 +72,7 @@ class Charm extends Base {
     const charms = await this.list();
 
     return ids.reduce((result, value) => {
-      const charm = charms.find((charm) => charm.id === value);
-
-      result.push(charm || new Charm({ id: value }));
+      result.push(charms.find((charm) => charm.id === value) || new Charm({ id: value }));
 
       return result;
     }, []);

@@ -24,39 +24,43 @@ import SocketEvent from './SocketEvent.js';
 import StageBroadcastState from './StageBroadcastState.js';
 import StageClientEvent from './StageClientEvent.js';
 import StageConnectionState from './StageConnectionState.js';
+import StoreType from './StoreType.js';
 import TipDirection from './TipDirection.js';
 import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
 
-export { AdminAction };
-export { Capability };
-export { Category };
-export { Command };
-export { ContextType };
-export { DeviceType };
-export { EmbedType };
-export { Event };
-export { Gender };
-export { Language };
-export { LoginType };
-export { LookingFor };
-export { MemberListType };
-export { MessageFilterTier };
-export { MessageLinkingType };
-export { MessageType };
-export { MessageTypes };
-export { OnlineState };
-export { Privilege };
-export { Relationship };
-export { SearchType };
-export { ServerEvents };
-export { SocketEvent };
-export { StageBroadcastState };
-export { StageClientEvent };
-export { StageConnectionState };
-export { TipDirection };
-export { TipPeriod };
-export { TipType };
+export {
+  AdminAction,
+  Capability,
+  Category,
+  Command,
+  ContextType,
+  DeviceType,
+  EmbedType,
+  Event,
+  Gender,
+  Language,
+  LoginType,
+  LookingFor,
+  MemberListType,
+  MessageFilterTier,
+  MessageLinkingType,
+  MessageType,
+  MessageTypes,
+  OnlineState,
+  Privilege,
+  Relationship,
+  SearchType,
+  ServerEvents,
+  SocketEvent,
+  StageBroadcastState,
+  StageClientEvent,
+  StageConnectionState,
+  StoreType,
+  TipDirection,
+  TipPeriod,
+  TipType
+};
 
 export default {
   AdminAction,
@@ -85,6 +89,7 @@ export default {
   StageBroadcastState,
   StageClientEvent,
   StageConnectionState,
+  StoreType,
   TipDirection,
   TipPeriod,
   TipType

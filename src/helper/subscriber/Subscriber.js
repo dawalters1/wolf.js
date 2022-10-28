@@ -4,10 +4,12 @@ import validator from '../../validator/index.js';
 import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Presence from './Presence.js';
+import patch from '../../utils/patch.js';
 
 class Subscriber extends Base {
   constructor (client) {
     super(client);
+    this.subscribers = [];
     this.presence = new Presence(this.client);
   }
 
@@ -60,7 +62,7 @@ class Subscriber extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const subscribers = !forceNew ? this.cache.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const subscribers = !forceNew ? this.subscribers.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (subscribers.length !== ids.length) {
       const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId), this.client._botConfig.get('batching.length')));
@@ -155,16 +157,12 @@ class Subscriber extends Base {
   }
 
   _process (value) {
-    const existing = this.cache.find((subscriber) => subscriber.id === value);
+    const existing = this.subscribers.find((subscriber) => subscriber.id === value);
 
-    if (existing) {
-      this._patch(existing, value);
-    } else {
-      this.cache.push(value);
-    }
+    existing ? patch(existing, value) : this.subscribers.push(value);
 
     if (value.id === this.client.currentSubscriber.id) {
-      this.client.currentSubscriber = this.cache.find((subscriber) => subscriber.id === this.client.currentSubscriber.id);
+      this.client.currentSubscriber = this.subscribers.find((subscriber) => subscriber.id === this.client.currentSubscriber.id);
     }
 
     return value;

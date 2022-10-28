@@ -60,21 +60,13 @@ const canPerformGroupAction = async (client, group, targetGroupMember, newCapabi
  * CANCEROUS ASS APPROACH, like wtf is this shit???
  */
 class Member extends Base {
-  async getBotList (targetGroupId, limit = 25) {
+  async getBotList (targetGroupId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
-    }
-
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
     }
 
     const group = await this.client.group.getById(targetGroupId);
@@ -87,7 +79,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetGroupId });
     }
 
-    if (group.members._bots.complete) {
+    if (group.members._bots.complete || returnCurrentList) {
       return group.members._bots.members;
     }
 
@@ -97,7 +89,7 @@ class Member extends Base {
         groupId: parseInt(targetGroupId),
         filter: 'bots',
         offset: group.members._bots.members.length,
-        limit: parseInt(limit)
+        limit: this.client._botConfig.get('members.bots.batch.size')
       }
     );
 
@@ -122,7 +114,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
-    if (group.members._silenced.complete) {
+    if (group.members._silenced.complete || returnCurrentList) {
       return group.members._silenced.members;
     }
 

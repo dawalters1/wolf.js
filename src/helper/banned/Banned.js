@@ -3,19 +3,24 @@ import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Banned extends Base {
+  constructor (client) {
+    super(client);
+    this.banned = [];
+  }
+
   /**
      * Retrieve the list of banned users for the bot
      * @returns {Promise<Array.<Number>>}
      */
   async list () {
-    return this.cache;
+    return this.banned;
   }
 
   /**
      * Clear the list of banned subscriber IDs
      */
   async clear () {
-    this.cache = [];
+    this.banned = [];
   }
 
   /**
@@ -45,7 +50,7 @@ class Banned extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      result.push(this.cache.includes(subscriberId));
+      result.push(this.banned.includes(subscriberId));
 
       return result;
     }, []);
@@ -80,10 +85,10 @@ class Banned extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      if (this.cache.includes(subscriberId)) {
+      if (this.banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.push(subscriberId);
+        this.banned.push(subscriberId);
         result.push(true);
       }
 
@@ -120,10 +125,10 @@ class Banned extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      if (!this.cache.includes(subscriberId)) {
+      if (!this.banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.splice(this.cache.findIndex((id) => id === subscriberId), 1);
+        this.banned.splice(this.banned.findIndex((id) => id === subscriberId), 1);
         result.push(true);
       }
 

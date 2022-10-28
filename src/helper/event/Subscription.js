@@ -4,13 +4,19 @@ import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Subscription extends Base {
+  constructor (client) {
+    super(client);
+
+    this.subscriptions = [];
+  }
+
   async getList (subscribe = true) {
     if (!validator.isValidBoolean(subscribe)) {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
-    if (this.cache.length) {
-      return this.cache;
+    if (this.subscriptions.length) {
+      return this.subscriptions;
     }
 
     const response = await this.client.websocket.emit(
@@ -20,9 +26,9 @@ class Subscription extends Base {
       }
     );
 
-    this.cache = response.body ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+    this.subscriptions = response.body ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
 
-    return this.cache;
+    return this.subscriptions;
   }
 
   async add (eventId) {

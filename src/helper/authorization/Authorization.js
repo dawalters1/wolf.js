@@ -3,19 +3,25 @@ import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Authorization extends Base {
+  constructor (client) {
+    super(client);
+
+    this.authorized = [];
+  }
+
   /**
      * Retrieve the list of authorized subscribers for the bot
      * @returns {Promise<Array.<Number>>}
      */
   async list () {
-    return this.cache;
+    return this.authorized;
   }
 
   /**
      * Clear the list of authorized subscribers
      */
   async clear () {
-    this.cache = [];
+    this.authorized.clear();
   }
 
   /**
@@ -45,7 +51,7 @@ class Authorization extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      result.push(this.cache.includes(subscriberId));
+      result.push(this.authorized.includes(subscriberId));
 
       return result;
     }, []);
@@ -80,10 +86,10 @@ class Authorization extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      if (this.cache.includes(subscriberId)) {
+      if (this.authorized.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.push(subscriberId);
+        this.authorized.push(subscriberId);
         result.push(true);
       }
 
@@ -120,10 +126,10 @@ class Authorization extends Base {
     }
 
     const results = values.reduce((result, subscriberId) => {
-      if (!this.cache.includes(subscriberId)) {
+      if (!this.authorized.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.cache.splice(this.cache.findIndex((id) => id === subscriberId), 1);
+        this.authorized.splice(this.authorized.findIndex((id) => id === subscriberId), 1);
         result.push(true);
       }
 

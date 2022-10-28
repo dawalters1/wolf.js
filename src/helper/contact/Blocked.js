@@ -4,13 +4,19 @@ import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 
 class Blocked extends Base {
+  constructor (client) {
+    super(client);
+
+    this.blocked = [];
+  }
+
   async list (subscribe = true) {
     if (!validator.isValidBoolean(subscribe)) {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
-    if (this.cache.length) {
-      return this.cache;
+    if (this.blocked.length) {
+      return this.blocked;
     }
 
     const response = await this.client.websocket.emit(
@@ -20,9 +26,9 @@ class Blocked extends Base {
       }
     );
 
-    this.cache = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
+    this.blocked = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
 
-    return this.cache;
+    return this.blocked;
   }
 
   async isBlocked (subscriberIds) {
@@ -48,7 +54,7 @@ class Blocked extends Base {
     await this.list();
 
     const results = subscriberIds.reduce((result, subscriberId) => {
-      result.push(this.cache.some((blocked) => blocked.id === subscriberId));
+      result.push(this.blocked.some((blocked) => blocked.id === subscriberId));
 
       return result;
     }, []);

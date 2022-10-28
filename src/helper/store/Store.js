@@ -1,13 +1,28 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { Command } from '../../constants/index.js';
+import { Command, StoreType } from '../../constants/index.js';
 import models from '../../models/index.js';
+import fs from 'fs';
 
 class Store extends Base {
   constructor (client) {
     super(client);
     this._balance = undefined;
     this._store = [];
+  }
+
+  async get (language, type = StoreType.SIMPLE) {
+    // TODO: validation
+
+    const response = await this.client.websocket.emit(
+      Command.TOPIC_PAGE_LAYOUT,
+      {
+        languageId: parseInt(language),
+        name: 'store'
+      }
+    );
+
+    fs.writeFileSync('store.json', JSON.stringify(response, null, 4));
   }
 
   async getCreditBalance (forceNew = false) {
