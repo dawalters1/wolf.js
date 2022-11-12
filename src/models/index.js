@@ -43,8 +43,15 @@ import NotificationAction from './NotificationAction.js';
 import Presence from './Presence.js';
 import Response from './Response.js';
 import Search from './Search.js';
-import StoreProduct from './StoreProduct.js';
+import Store from './Store.js';
 import StoreSection from './StoreSection.js';
+import StoreSectionElement from './StoreSectionElement.js';
+import StoreSectionElementProduct from './StoreSectionElementProduct.js';
+import StoreSectionElementProducts from './StoreSectionElementProducts.js';
+import StoreSectionElementProperties from './StoreSectionElementProperties.js';
+import StoreSectionElementPropertyAspect from './StoreSectionElementPropertyAspect.js';
+import StoreSectionElementPropertyLink from './StoreSectionElementPropertyLink.js';
+import StoreSectionElementPropertyRecipe from './StoreSectionElementPropertyRecipe.js';
 import Subscriber from './Subscriber.js';
 import SubscriberExtended from './SubscriberExtended.js';
 import SubscriberEvent from './SubscriberEvent.js';
@@ -60,6 +67,7 @@ import TipLeaderboardItem from './TipLeaderboardItem.js';
 import TipLeaderboardSummary from './TipLeaderboardSummary.js';
 import TipSummary from './TipSummary.js';
 import Translation from './Translation.js';
+import Validity from './Validity.js';
 import ValidUrl from './ValidUrl.js';
 import Welcome from './Welcome.js';
 import WelcomeEndpoint from './WelcomeEndpoint.js';
@@ -111,8 +119,15 @@ export {
   Presence,
   Response,
   Search,
-  StoreProduct,
+  Store,
   StoreSection,
+  StoreSectionElement,
+  StoreSectionElementProduct,
+  StoreSectionElementProducts,
+  StoreSectionElementProperties,
+  StoreSectionElementPropertyAspect,
+  StoreSectionElementPropertyLink,
+  StoreSectionElementPropertyRecipe,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
@@ -128,6 +143,7 @@ export {
   TipLeaderboardSummary,
   TipSummary,
   Translation,
+  Validity,
   ValidUrl,
   Welcome,
   WelcomeEndpoint,
@@ -180,8 +196,15 @@ export default {
   Presence,
   Response,
   Search,
-  StoreProduct,
+  Store,
   StoreSection,
+  StoreSectionElement,
+  StoreSectionElementProduct,
+  StoreSectionElementProducts,
+  StoreSectionElementProperties,
+  StoreSectionElementPropertyAspect,
+  StoreSectionElementPropertyLink,
+  StoreSectionElementPropertyRecipe,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
@@ -197,6 +220,7 @@ export default {
   TipLeaderboardSummary,
   TipSummary,
   Translation,
+  Validity,
   ValidUrl,
   Welcome,
   WelcomeEndpoint,

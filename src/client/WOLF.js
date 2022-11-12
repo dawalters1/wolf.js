@@ -18,6 +18,7 @@ import Stage from '../helper/stage/Stage.js';
 import Store from '../helper/store/Store.js';
 import Subscriber from '../helper/subscriber/Subscriber.js';
 import Tipping from '../helper/tipping/Tipping.js';
+import Topic from '../helper/topic/Topic.js';
 import Utility from '../utility/Utility.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
@@ -53,6 +54,7 @@ class WOLF extends EventEmitter {
     this.store = new Store(this);
     this.subscriber = new Subscriber(this);
     this.tipping = new Tipping(this);
+    this.topic = new Topic(this);
 
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_rys`, { both: (command) => rys(this, command) }));
 

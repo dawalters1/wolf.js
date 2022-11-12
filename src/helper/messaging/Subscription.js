@@ -7,7 +7,7 @@ class Subscription extends Base {
   constructor (client) {
     super(client, {});
 
-    this.subscriptiosn = {};
+    this.subscriptions = {};
 
     this.client.on('message', (message) => {
       const subscriptions = Object.values(this.subscriptions).filter((subscription) => subscription.predicate(message));
