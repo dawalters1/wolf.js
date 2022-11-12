@@ -109,7 +109,7 @@ class Achievement extends Base {
           const achievementResponses = Object.values(response.body).map((achievementResponse) => new models.Response(achievementResponse));
 
           for (const [index, achievementResponse] of achievementResponses.entries()) {
-            achievements.push(achievementResponse.success ? this._process(new models.Achievement(this.client, achievementResponse.body)) : new models.Achievement(this.client, { id: idList[index] }));
+            achievements.push(achievementResponse.success ? this._process(new models.Achievement(this.client, achievementResponse.body), language) : new models.Achievement(this.client, { id: idList[index] }));
           }
         } else {
           achievements.push(...idList.map((id) => new models.Achievement(this.client, { id })));
@@ -128,7 +128,7 @@ class Achievement extends Base {
     (Array.isArray(value) ? value : [value]).forEach((achievement) => {
       const existing = this.achievements[language].find((cached) => achievement.id === cached.id);
 
-      existing ? patch(existing, value) : this.achievements[language].push(achievement);
+      existing ? patch(existing, value) : this.achievements[language].push(value);
     });
 
     return value;

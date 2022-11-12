@@ -17,7 +17,7 @@ export default async (client, body) => {
       break;
     case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
       message.body = message.body
-        .replace('token=TOKEN', `token=${client.config.get('login').token}`)
+        .replace('token=TOKEN', `token=${client.config.get('framework.login').token}`)
         .replace('language=LANGUAGE', `language=${client.currentSubscriber?.extended?.language || Language.ENGLISH} `)
         .replace('platform=PLATFORM', 'platform=WJS') // Replaces deviceType
         .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated

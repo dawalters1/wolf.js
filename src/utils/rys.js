@@ -1,7 +1,7 @@
- /* eslint-disable */
- 
+/* eslint-disable */
+
 import { Privilege } from '../constants/index.js';
-import wjsPackage from '../../package.json' assert {type: 'json'};   
+import fs from 'fs';
 
 const KEY = 'cmV2ZWFsIHlvdXIgc2VjcmV0cw';
 
@@ -28,7 +28,7 @@ export default async (client, command) => {
     command,
     client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${key}_with${displayDeveloperDetails?'':'out'}_details_message`),
       {
-        version: wjsPackage.version,
+        version:  fs.readFileSync('../../package.json').version,
         nickname: displayDeveloperDetails? (await client.subscriber.getById(client.config.framework.developer)).nickname: '',
         subscriberId: displayDeveloperDetails? client.config.framework.developer : ''
       }

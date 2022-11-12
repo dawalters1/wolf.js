@@ -1,6 +1,6 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import Command from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
 import Group from './Group.js';

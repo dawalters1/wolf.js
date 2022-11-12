@@ -1,5 +1,5 @@
 import models from '../../models/index.js';
-import Command from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 

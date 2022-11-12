@@ -22,6 +22,125 @@ class Utility {
     this.timer = new Timer(client);
   }
 
+  toLanguageId (languageKey) {
+    if (validator.isNullOrUndefined(languageKey)) {
+      throw new WOLFAPIError('languageKey cannot be null or undefined', { languageKey });
+    }
+
+    switch (languageKey.toLowerCase()) {
+      case 'ar':
+        return Language.ARABIC;
+
+      case 'in':
+        return Language.BAHASA_INDONESIA;
+
+      case 'br':
+        return Language.BRAZILIAN_PORTUGUESE;
+
+      case 'bu':
+        return Language.BULGARIAN;
+
+      case 'ch':
+        return Language.CHINESE_SIMPLIFIED;
+
+      case 'cz':
+        return Language.CZECH;
+
+      case 'da':
+        return Language.DANISH;
+
+      case 'du':
+        return Language.DUTCH;
+
+      case 'en':
+        return Language.ENGLISH;
+
+      case 'et':
+        return Language.ESTONIAN;
+
+      case 'fi':
+        return Language.FINNISH;
+
+      case 'fr':
+        return Language.FRENCH;
+
+      case 'ge':
+        return Language.GERMAN;
+
+      case 'gr':
+        return Language.GREEK;
+
+      case 'hi':
+        return Language.HINDI;
+
+      case 'hu':
+        return Language.HUNGARIAN;
+
+      case 'it':
+        return Language.ITALIAN;
+
+      case 'ja':
+        return Language.JAPANESE;
+
+      case 'ka':
+        return Language.KAZAKH;
+
+      case 'ko':
+        return Language.KOREAN;
+
+      case 'ls':
+        return Language.LATIN_SPANISH;
+
+      case 'la':
+        return Language.LATVIAN;
+
+      case 'li':
+        return Language.LITHUANIAN;
+
+      case 'ma':
+        return Language.MALAY;
+
+      case 'no':
+        return Language.NORWEGIAN;
+
+      case 'fa':
+        return Language.PERSIAN_FARSI;
+
+      case 'po':
+        return Language.POLISH;
+
+      case 'pt':
+        return Language.PORTUGUESE;
+
+      case 'ru':
+        return Language.RUSSIAN;
+
+      case 'sl':
+        return Language.SLOVAK;
+
+      case 'es':
+        return Language.SPANISH;
+
+      case 'sv':
+        return Language.SWEDISH;
+
+      case 'th':
+        return Language.THAI;
+
+      case 'tr':
+        return Language.TURKISH;
+
+      case 'uk':
+        return Language.UKRAINIAN;
+
+      case 'vi':
+        return Language.VIETNAMESE;
+
+      default:
+        return Language.ENGLISH;
+    }
+  }
+
   toLanguageKey (languageId) {
     if (validator.isNullOrUndefined(languageId)) {
       throw new WOLFAPIError('languageId cannot be null or undefined', { languageId });
