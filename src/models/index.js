@@ -44,6 +44,9 @@ import Presence from './Presence.js';
 import Response from './Response.js';
 import Search from './Search.js';
 import Store from './Store.js';
+import StoreProduct from './StoreProduct.js';
+import StoreProductDuration from './StoreProductDuration.js';
+import StoreProductImage from './StoreProductImage.js';
 import StoreSection from './StoreSection.js';
 import StoreSectionElement from './StoreSectionElement.js';
 import StoreSectionElementProduct from './StoreSectionElementProduct.js';
@@ -120,6 +123,9 @@ export {
   Response,
   Search,
   Store,
+  StoreProduct,
+  StoreProductDuration,
+  StoreProductImage,
   StoreSection,
   StoreSectionElement,
   StoreSectionElementProduct,
@@ -197,6 +203,9 @@ export default {
   Response,
   Search,
   Store,
+  StoreProduct,
+  StoreProductDuration,
+  StoreProductImage,
   StoreSection,
   StoreSectionElement,
   StoreSectionElementProduct,

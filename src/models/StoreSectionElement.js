@@ -2,9 +2,10 @@ import Base from './Base.js';
 import StoreSectionElementProperties from './StoreSectionElementProperties.js';
 
 class StoreSectionElement extends Base {
-  constructor (client, data) {
+  constructor (client, data, languageId) {
     super(client);
-
+    this.id = data.id;
+    this.languageId = languageId;
     this.type = data.type;
     this.onInvalid = data.onInvalid;
     this.properties = new StoreSectionElementProperties(client, data.properties);
@@ -12,6 +13,8 @@ class StoreSectionElement extends Base {
 
   toJSON () {
     return {
+      id: this.id,
+      languageId: this.languageId,
       type: this.type,
       onInvalid: this.onInvalid,
       properties: this.properties.toJSON()

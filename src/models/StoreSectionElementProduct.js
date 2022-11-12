@@ -1,11 +1,12 @@
 import Base from './Base.js';
 
 class StoreSectionElementProduct extends Base {
-  constructor (client, data) {
+  constructor (client, data, languageId) {
     super(client);
 
     this.credits = data.credits;
     this.id = data.id;
+    this.languageId = languageId;
     this.imageUrl = data.imageUrl;
     this.isLimited = data.isLimited;
     this.name = data.name;
@@ -22,8 +23,8 @@ class StoreSectionElementProduct extends Base {
     }
   }
 
-  async getFullProduct () {
-
+  async getProductProfile (languageId) {
+    return await this.client.store.getProductProfile(this.id, languageId || this.languageId);
   }
 
   toJSON () {
