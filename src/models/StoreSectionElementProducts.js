@@ -2,10 +2,11 @@ import Base from './Base.js';
 import StoreSectionElementProduct from './StoreSectionElementProduct.js';
 
 class StoreSectionElementProducts extends Base {
-  constructor (client, data) {
+  constructor (client, data, languageId) {
     super(client);
+    console.log('LANGUAGE', languageId);
     this.name = data.name;
-    this.products = data.products.map((product) => new StoreSectionElementProduct(client, product));
+    this.products = data.products.map((product) => new StoreSectionElementProduct(client, product, languageId));
   }
 
   toJSON () {
