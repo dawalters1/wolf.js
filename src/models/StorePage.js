@@ -1,31 +1,20 @@
 import Base from './Base.js';
 import StoreSection from './StoreSection.js';
 
-class Store extends Base {
-  constructor (client, credits, store, languageId) {
+class StorePage extends Base {
+  constructor (client, data, languageId) {
     super(client);
 
-    this.id = store.id;
-    this.title = store.title;
+    this.id = data.id;
+    this.title = data.title;
     this.languageId = languageId;
-    this.credits = credits;
-    this.sections = store.sectionList?.map((section) => new StoreSection(client, section, languageId));
+    this.sections = data.sectionList?.map((section) => new StoreSection(client, section, languageId, true));
   }
 
   async get (value, offset = 0) {
     const section = (!value && this.sections.length === 1) ? this.sections[0] : this.sections.find((section) => section.id === value || this.client.utility.string.isEqual(section.title, value) || (section.page && this.client.utility.string.isEqual(section?.page, value)) || (section.recipe && section.recipe.id === value));
 
     return section ? await section.get(offset) : undefined;
-  }
-
-  async getCreditList () {
-    if (this.credits) {
-      return this.credits;
-    }
-
-    this.credits = await this.client.store.getCreditList(this.languageId);
-
-    return this.credits;
   }
 
   toJSON () {
@@ -38,4 +27,4 @@ class Store extends Base {
   }
 }
 
-export default Store;
+export default StorePage;

@@ -30,6 +30,10 @@ class StoreProduct extends Base {
       return await duration.purchase(quanitity, targetIds);
     }
 
+    if (this.durationList.length === 1) {
+      return await this.client.store.purchase(this.durationList[0].id, duration, quanitity);
+    }
+
     return await this.client.store.purchase(duration, quanitity, targetIds);
   }
 

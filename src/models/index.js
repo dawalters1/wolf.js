@@ -45,16 +45,12 @@ import Response from './Response.js';
 import Search from './Search.js';
 import Store from './Store.js';
 import StoreProduct from './StoreProduct.js';
+import StorePage from './StorePage.js';
+import StoreProductPartial from './StoreProductPartial.js';
 import StoreProductDuration from './StoreProductDuration.js';
 import StoreProductImage from './StoreProductImage.js';
+import StoreProductCredits from './StoreProductCredits.js';
 import StoreSection from './StoreSection.js';
-import StoreSectionElement from './StoreSectionElement.js';
-import StoreSectionElementProduct from './StoreSectionElementProduct.js';
-import StoreSectionElementProducts from './StoreSectionElementProducts.js';
-import StoreSectionElementProperties from './StoreSectionElementProperties.js';
-import StoreSectionElementPropertyAspect from './StoreSectionElementPropertyAspect.js';
-import StoreSectionElementPropertyLink from './StoreSectionElementPropertyLink.js';
-import StoreSectionElementPropertyRecipe from './StoreSectionElementPropertyRecipe.js';
 import Subscriber from './Subscriber.js';
 import SubscriberExtended from './SubscriberExtended.js';
 import SubscriberEvent from './SubscriberEvent.js';
@@ -123,17 +119,13 @@ export {
   Response,
   Search,
   Store,
+  StorePage,
   StoreProduct,
+  StoreProductCredits,
   StoreProductDuration,
   StoreProductImage,
+  StoreProductPartial,
   StoreSection,
-  StoreSectionElement,
-  StoreSectionElementProduct,
-  StoreSectionElementProducts,
-  StoreSectionElementProperties,
-  StoreSectionElementPropertyAspect,
-  StoreSectionElementPropertyLink,
-  StoreSectionElementPropertyRecipe,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
@@ -203,17 +195,13 @@ export default {
   Response,
   Search,
   Store,
+  StorePage,
   StoreProduct,
+  StoreProductCredits,
   StoreProductDuration,
   StoreProductImage,
+  StoreProductPartial,
   StoreSection,
-  StoreSectionElement,
-  StoreSectionElementProduct,
-  StoreSectionElementProducts,
-  StoreSectionElementProperties,
-  StoreSectionElementPropertyAspect,
-  StoreSectionElementPropertyLink,
-  StoreSectionElementPropertyRecipe,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
