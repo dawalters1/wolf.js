@@ -1,7 +1,7 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import { Command, Language } from '../../constants/index.js';
-import models, { WOLFAPIError } from '../../models/index.js';
+import models, { StoreProductCredits, WOLFAPIError } from '../../models/index.js';
 import patch from '../../utils/patch.js';
 import _ from 'lodash';
 import StoreProduct from '../../models/StoreProduct.js';
@@ -12,32 +12,104 @@ class Store extends Base {
     super(client);
     this._balance = undefined;
 
-    this._store = {};
-    this._pages = {};
+    this._credits = {};
+    this.stores = {};
     this._products = {};
     this._productProfiles = {};
   }
 
-  async _getPage (page, languageId) {
-    const cached = this._pages[`${languageId}:${page}`];
-
-    if (cached) {
-      return cached;
-    }
-
-    const response = await this.client.topic.getTopicPageLayout(page, languageId);
-
-    return response.success ? this._processPage(new models.Store(this.client, response.body, languageId)) : undefined;
-  }
-
-  async get (languageId) {
+  /**
+   * Request a page
+   * @param {string} page  - The page to request
+   * @param {Language} languageId  - The language ID to request
+   * @param {Boolean} forceNew - Whether or not to request new from the server
+   * @internal - Recommended for internal use only, use client.topic.getTopicPageLayout(...) instead
+   * @returns Returns requested page if exists
+   */
+  async _getPage (page, languageId, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
       throw new Error('languageId is not valid', { languageId });
     }
 
-    return this._getPage('store', languageId);
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
+    if (!forceNew && this.stores[languageId]?.pages[page]) {
+      return this.stores[languageId]?.pages[page];
+    }
+
+    const response = await this.client.topic.getTopicPageLayout(page, languageId);
+
+    if (response.success) {
+      this.stores[languageId] = {
+        ...this.stores[languageId],
+        pages: {
+          ...this.stores[languageId]?.pages,
+          [page]: new models.StorePage(this.client, response.body, languageId)
+        }
+      };
+    }
+
+    return this.stores[languageId]?.pages[page];
+  }
+
+  async getCreditList (languageId, forceNew = false) {
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new Error('languageId is not valid', { languageId });
+    }
+
+    if (!forceNew && this._credits[languageId]?.length) {
+      return this._credits[languageId];
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.STORE_PRODUCT_CREDIT_LIST,
+      {
+        languageId: parseInt(languageId)
+      }
+    );
+
+    this._credits[languageId] = response.body?.map((credits) => new StoreProductCredits(this.client, credits)) ?? [];
+
+    return this._credits[languageId];
+  }
+
+  async get (languageId, includeCredits = true, forceNew = false) {
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new Error('languageId is not valid', { languageId });
+    }
+
+    if (!validator.isValidBoolean(includeCredits)) {
+      throw new models.WOLFAPIError('includeCredits must be a valid boolean', { includeCredits });
+    }
+
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
+    if (!forceNew && this.stores[languageId]?.main) {
+      return this.stores[languageId].main;
+    }
+
+    const response = await this.client.topic.getTopicPageLayout('store', languageId);
+
+    if (response.success) {
+      this.stores[languageId] = {
+        main: new models.Store(this.client, includeCredits ? await this.getCreditList(languageId, forceNew) : undefined, response.body, languageId),
+        pages: {
+          ...this.stores[languageId]?.pages
+        }
+      };
+    }
+
+    return this.stores[languageId]?.main;
   }
 
   async getProducts (ids, languageId, maxResults, offset, type) {
@@ -79,11 +151,11 @@ class Store extends Base {
       throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
     } else if (!validator.isValidNumber(offset)) {
       throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanOrEqualZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than or equal to 0', { offset });
+    } else if (validator.isLessThanZero(offset)) {
+      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    if (!validator.isNullOrUndefined(type)) {
+    if (validator.isNullOrUndefined(type)) {
       throw new models.WOLFAPIError('type cannot be null or undefined', { type });
     } else if (!Object.values(TopicPageRecipeType).includes(type)) {
       throw new Error('type is not valid', { type });
@@ -115,10 +187,10 @@ class Store extends Base {
           const productResponses = Object.values(response.body).map((achievementResponse) => new models.Response(achievementResponse));
 
           for (const [index, productResponse] of productResponses.entries()) {
-            products.push(productResponse.success ? this._processProduct(new models.StoreSectionElementProduct(this.client, productResponse.body, languageId)) : new models.StoreSectionElementProduct(this.client, { id: idList[index] }));
+            products.push(productResponse.success ? this._processProduct(new models.StoreProductPartial(this.client, productResponse.body, languageId)) : new models.StoreProductPartial(this.client, { id: idList[index] }));
           }
         } else {
-          products.push(...idList.map((id) => new models.StoreSectionElementProduct(this.client, { id })));
+          products.push(...idList.map((id) => new models.StoreProductPartial(this.client, { id })));
         }
       }
     }
@@ -126,7 +198,7 @@ class Store extends Base {
     return products;
   }
 
-  async getProductProfile (id, languageId) {
+  async getFullProduct (id, languageId) {
     if (Array.isArray(id)) {
       throw new WOLFAPIError('id cannot be type of array', { id });
     } else if (validator.isNullOrUndefined(id)) {

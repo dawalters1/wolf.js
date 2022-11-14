@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class StoreSectionElementProduct extends Base {
+class StoreProductPartial extends Base {
   constructor (client, data, languageId) {
     super(client);
 
@@ -23,8 +23,8 @@ class StoreSectionElementProduct extends Base {
     }
   }
 
-  async getProductProfile (languageId) {
-    return await this.client.store.getProductProfile(this.id, languageId || this.languageId);
+  async getFullProduct (languageId) {
+    return await this.client.store.getFullProduct(this.id, languageId || this.languageId);
   }
 
   toJSON () {
@@ -38,4 +38,4 @@ class StoreSectionElementProduct extends Base {
   }
 }
 
-export default StoreSectionElementProduct;
+export default StoreProductPartial;

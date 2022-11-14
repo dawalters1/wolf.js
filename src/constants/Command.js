@@ -63,6 +63,7 @@ export const STAGE_LIST = 'stage list';
 export const STORE_CREDIT_BALANCE = 'store credit balance';
 export const STORE_PRODUCT = 'store product';
 export const STORE_PRODUCT_PROFILE = 'store product profile';
+export const STORE_PRODUCT_CREDIT_LIST = 'store product credit list';
 export const STORE_CREDIT_SPEND = 'store credit spend';
 export const SUBSCRIBER_BLOCK_ADD = 'subscriber block add';
 export const SUBSCRIBER_BLOCK_DELETE = 'subscriber block delete';
@@ -156,6 +157,7 @@ export default {
   STORE_CREDIT_BALANCE,
   STORE_PRODUCT,
   STORE_PRODUCT_PROFILE,
+  STORE_PRODUCT_CREDIT_LIST,
   STORE_CREDIT_SPEND,
   SUBSCRIBER_BLOCK_ADD,
   SUBSCRIBER_BLOCK_DELETE,
