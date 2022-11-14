@@ -4,7 +4,7 @@ import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
 
-class Store extends Base {
+class Topic extends Base {
   async getTopicPageLayout (name, languageId) {
     if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
@@ -79,4 +79,4 @@ class Store extends Base {
   }
 }
 
-export default Store;
+export default Topic;
