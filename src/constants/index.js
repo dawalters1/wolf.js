@@ -7,6 +7,7 @@ import DeviceType from './DeviceType.js';
 import EmbedType from './EmbedType.js';
 import Event from './Event.js';
 import Gender from './Gender.js';
+import IconSize from './IconSize.js';
 import Language from './Language.js';
 import LoginType from './LoginType.js';
 import LookingFor from './LookingFor.js';
@@ -39,6 +40,7 @@ export {
   EmbedType,
   Event,
   Gender,
+  IconSize,
   Language,
   LoginType,
   LookingFor,
@@ -72,6 +74,7 @@ export default {
   EmbedType,
   Event,
   Gender,
+  IconSize,
   Language,
   LoginType,
   LookingFor,

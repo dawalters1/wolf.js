@@ -2,6 +2,7 @@ import Base from '../../models/Base.js';
 import Member from './Member.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
+import IconSize from '../../constants/IconSize.js';
 
 class Group extends Base {
   constructor (client) {
@@ -10,31 +11,22 @@ class Group extends Base {
     this.member = new Member(client);
   }
 
-  async avatar (targetGroupId, size = 128) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async avatar (groupId, size) {
+    if (validator.isNullOrUndefined(groupId)) {
+      throw new WOLFAPIError('groupId cannot be null or undefined', { groupId });
+    } else if (!validator.isValidNumber(groupId)) {
+      throw new WOLFAPIError('groupId must be a valid number', { groupId });
+    } else if (validator.isLessThanOrEqualZero(groupId)) {
+      throw new WOLFAPIError('groupId cannot be less than or equal to 0', { groupId });
     }
 
     if (validator.isNullOrUndefined(size)) {
       throw new WOLFAPIError('size cannot be null or undefined', { size });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('size must be a valid number', { size });
-    } else if (validator.isLessThanOrEqualZero(size)) {
-      throw new WOLFAPIError('size cannot be less than or equal to 0', { size });
+    } else if (!Object.values(IconSize).includes(size)) {
+      throw new WOLFAPIError('size is not valid', { size });
     }
 
-    return await this.client.utility.download(
-      this.client.utility.string.replace(`${this.client.endpointConfig.avatarEndpoint}/FileServerSpring/group/avatar/{targetGroupId}?size={size}`,
-        {
-          targetGroupId,
-          size
-        }
-      )
-    );
+    return await this.client.utility.download((await this.client.group.getById(groupId)).getAvatar(size));
   }
 }
 

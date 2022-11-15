@@ -6,7 +6,11 @@ connection:
   query:
     device: wjsframework
 
-members: 
+avatar:
+  endpoint: https://df49rkfq0koe8.cloudfront.net
+  placeholder: https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
+
+members:
   privileged:
     batch:
       size: 2500
@@ -24,7 +28,7 @@ members:
     batch:
       size: 100
 
-  bots:  
+  bots:
     batch:
       size: 100
 
@@ -51,9 +55,9 @@ multimedia:
       - type: 'audio/x-m4a'
         size: 1048576
       - type: 'audio/mp4'
-        size: 1048576        
+        size: 1048576
     square: false
-  
+
   avatar:
     subscriber:
       route: subscriber-avatar-update
@@ -62,8 +66,8 @@ multimedia:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152      
-      square: true    
+          size: 2097152
+      square: true
     group:
       route: group-avatar-update
       version: 1
@@ -71,8 +75,8 @@ multimedia:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152      
-      square: true    
+          size: 2097152
+      square: true
 
 validation:
   links:
@@ -96,14 +100,14 @@ internalPhrases:
     value: '>sırlarını'
   - language: tr
     name: '{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw_alias1'
-    value: '>sırrını'      
+    value: '>sırrını'
   - language: tr
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_with_details_message'
     value: 'Ben WOLF.js {version} kullanan resmi olmayan bir botum.\n\nSahibim: {nickname} (UserId {subscriberId})'
   - language: tr
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_without_details_message'
-    value: 'Ben WOLF.js {version} kullanan resmi olmayan bir botum.'    
- 
+    value: 'Ben WOLF.js {version} kullanan resmi olmayan bir botum.'
+
   - language: ar
     name: '{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw'
     value: '>كشف'

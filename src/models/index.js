@@ -27,6 +27,8 @@ import GroupStatsActive from './GroupStatsActive.js';
 import GroupStatsDetail from './GroupStatsDetail.js';
 import GroupStatsTop from './GroupStatsTop.js';
 import GroupStatsTrend from './GroupStatsTrend.js';
+import IconInfo from './IconInfo.js';
+import IconInfoAvailableSize from './IconInfoAvailableSize.js';
 import IdHash from './IdHash.js';
 import LinkMetadata from './LinkMetadata.js';
 import Message from './Message.js';
@@ -102,6 +104,8 @@ export {
   GroupStatsDetail,
   GroupStatsTop,
   GroupStatsTrend,
+  IconInfo,
+  IconInfoAvailableSize,
   IdHash,
   LinkMetadata,
   Message,
@@ -178,6 +182,8 @@ export default {
   GroupStatsDetail,
   GroupStatsTop,
   GroupStatsTrend,
+  IconInfo,
+  IconInfoAvailableSize,
   IdHash,
   LinkMetadata,
   Message,
