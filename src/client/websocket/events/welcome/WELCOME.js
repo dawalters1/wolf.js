@@ -65,7 +65,7 @@ const login = async (client) => {
 export default async (client, body) => {
   const welcome = new Welcome(client, body);
 
-  client.endpointConfig = welcome.endpointConfig;
+  client.config.endpointConfig = welcome.endpointConfig;
 
   if (!welcome.subscriber) {
     return await login(client);
