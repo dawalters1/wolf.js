@@ -10,7 +10,7 @@ export default async (client, body) => {
 
   const contact = new models.Contact(client, subscriber);
 
-  client.contact.cache.push(contact);
+  client.contact.contacts.push(contact);
 
   return await client.emit(
     Event.SUBSCRIBER_CONTACT_ADD,

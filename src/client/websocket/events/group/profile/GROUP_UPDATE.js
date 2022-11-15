@@ -2,7 +2,7 @@ import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
 
 export default async (client, body) => {
-  const cached = client.group.cache.find((group) => group.id === body.id);
+  const cached = client.group.groups.find((group) => group.id === body.id);
 
   if (!cached || cached.hash === body.hash) {
     return Promise.resolve();

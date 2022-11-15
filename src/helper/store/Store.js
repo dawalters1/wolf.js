@@ -5,7 +5,6 @@ import models, { StoreProductCredits, WOLFAPIError } from '../../models/index.js
 import patch from '../../utils/patch.js';
 import _ from 'lodash';
 import StoreProduct from '../../models/StoreProduct.js';
-import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
 
 class Store extends Base {
   constructor (client) {
@@ -112,7 +111,7 @@ class Store extends Base {
     return this.stores[languageId]?.main;
   }
 
-  async getProducts (ids, languageId, maxResults, offset, type) {
+  async getProducts (ids, languageId) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
@@ -139,31 +138,7 @@ class Store extends Base {
       throw new Error('languageId is not valid', { languageId });
     }
 
-    if (validator.isNullOrUndefined(maxResults)) {
-      throw new models.WOLFAPIError('maxResults cannot be null or undefined', { maxResults });
-    } else if (!validator.isValidNumber(maxResults)) {
-      throw new models.WOLFAPIError('maxResults must be a valid number', { maxResults });
-    } else if (validator.isLessThanOrEqualZero(maxResults)) {
-      throw new models.WOLFAPIError('maxResults cannot be less than or equal to 0', { maxResults });
-    }
-
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
-    }
-
-    if (validator.isNullOrUndefined(type)) {
-      throw new models.WOLFAPIError('type cannot be null or undefined', { type });
-    } else if (!Object.values(TopicPageRecipeType).includes(type)) {
-      throw new Error('type is not valid', { type });
-    }
-
-    const productIds = (await this.client.topic.getTopicPageRecipeList(ids, languageId, maxResults, offset, type)).body?.map((productPartial) => productPartial.id) ?? [];
-
-    const products = productIds.reduce((result, productId) => {
+    const products = ids.reduce((result, productId) => {
       if (this._products[productId] && this._products[productId][languageId]) {
         result.push(this._products[productId][languageId]);
       }
@@ -171,8 +146,8 @@ class Store extends Base {
       return result;
     }, []);
 
-    if (products.length !== productIds.length) {
-      const idLists = _.chunk(productIds.filter((productId) => !products.some((product) => product.id === productId), this.client._botConfig.get('batching.length')));
+    if (products.length !== ids.length) {
+      const idLists = _.chunk(ids.filter((productId) => !products.some((product) => product.id === productId)), this.client._botConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(

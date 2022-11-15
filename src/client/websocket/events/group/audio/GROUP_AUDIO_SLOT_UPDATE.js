@@ -3,7 +3,7 @@ import models from '../../../../../models/index.js';
 import { patch } from '../../../../../utils/index.js';
 
 export default async (client, body) => {
-  const group = client.group.cache.find((group) => group.id === body.id);
+  const group = client.group.groups.find((group) => group.id === body.id);
 
   if (!group || !client.group.slots) {
     return Promise.resolve();

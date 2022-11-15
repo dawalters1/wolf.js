@@ -112,4 +112,6 @@ export default async (client, targetId, isGroup, message, options) => {
   if (message.length <= 1000) {
     return [await buildMessage(client, targetId, isGroup, message)];
   }
+
+  // TODO:
 };

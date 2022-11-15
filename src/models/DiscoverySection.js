@@ -3,21 +3,23 @@ import TopicSectionVideo from './TopicSectionVideo.js';
 import Validity from './Validity.js';
 import WOLFAPIError from './WOLFAPIError.js';
 
-class StoreSection extends Base {
+class DiscoverySection extends Base {
   constructor (client, data, languageId, fromSubPage = false) {
     super(client);
 
     this.id = data.id;
     this.languageId = languageId;
-    this.validity = data.validity ? new Validity(client, data.validity) : undefined;
+    this.validity = data.validity ? new Validity(client, data?.validity) : undefined;
 
     const elements = data.elementList;
 
+    const sectionTitle = elements.find((element) => element.type === 'sectionTitle');
     const heading = elements.find((element) => element.type === 'heading');
     const images = elements.filter((element) => element.type === 'image');
     const videos = elements.filter((element) => element.type === 'video');
     const descriptions = elements.filter((element) => element.type === 'text');
 
+    this.sectionTitle = sectionTitle?.properties?.text;
     this.title = heading?.properties?.text;
     this.images = images.length ? images?.map((image) => image.properties.url) : undefined;
     this.description = descriptions[0]?.properties?.text;
@@ -33,7 +35,7 @@ class StoreSection extends Base {
         ? this.page = page
         : this.recipe = {
           ...collection.properties.recipe,
-          type: collection.properties.type
+          type: collection.properties.type.replace('groupEvent', 'event')
         };
     }
   }
@@ -44,7 +46,7 @@ class StoreSection extends Base {
     }
 
     if (this.page) {
-      const page = await this.client.store._getPage(this.page, this.languageId);
+      const page = await this.client.discovery._getPage(this.page, this.languageId);
 
       if (page.sections.length === 1 && page.sections[0].recipe) {
         return await page.get(offset);
@@ -53,31 +55,10 @@ class StoreSection extends Base {
       return page;
     }
 
-    return await this.client.store.getProducts((await this.client.topic.getTopicPageRecipeList(this.recipe.id, this.languageId, this.recipe.max, offset, this.recipe.type)).body?.map((productPartial) => productPartial.id) ?? []);
-  }
+    console.log(this.recipe.id, this.languageId, this.recipe.max, offset, this.recipe.type);
 
-  toJSON () {
-    const json = {
-      id: this.id,
-      languageId: this.languageId,
-      validity: this.validity,
-      title: this.title,
-      images: this.images,
-      videos: this.videos?.map((video) => video.toJSON()),
-      description: this.description,
-      additionalDescriptions: this.additionalDescriptions
-    };
-
-    if (this.page) {
-      json.page = this.page;
-    }
-
-    if (this.recipe) {
-      json.recipe = this.recipe;
-    }
-
-    return json;
+    return await this.client.discovery._getAppropriateRecipeItems(this.recipe.id, this.languageId, this.recipe.max, offset, this.recipe.type);
   }
 }
 
-export default StoreSection;
+export default DiscoverySection;
