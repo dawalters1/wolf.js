@@ -91,8 +91,10 @@ class WOLF extends EventEmitter {
     this.websocket._create();
   }
 
-  async logout () {
+  async logout (disconnect = true) {
     this.websocket.emit(Command.SECURITY_LOGOUT);
+
+    this.websocket.disconnect();
     // TODO: cache handling
   }
 

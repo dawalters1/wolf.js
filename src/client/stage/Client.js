@@ -49,10 +49,6 @@ class Client extends EventEmitter {
   }
 
   play (data) {
-    let completed = false;
-
-    this.samples = new Int16Array(0);
-
     this._ffmpeg = ffmpeg(data)
       .toFormat('wav')
       .native()
@@ -61,14 +57,9 @@ class Client extends EventEmitter {
       .on('error', () => { })
       .pipe()
       .on('data', (data) => {
-        const newSamples = new Int16Array(data.buffer);
-        const mergedSamples = new Int16Array(this.samples.length + newSamples.length);
 
-        mergedSamples.set(this.samples);
-        mergedSamples.set(newSamples, this.samples.length);
-        this.samples = mergedSamples;
       })
-      .on('finish', () => { completed = true; });
+      .on('finish', () => {});
   }
 
   stop () {

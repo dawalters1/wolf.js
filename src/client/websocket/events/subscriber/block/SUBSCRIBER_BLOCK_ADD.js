@@ -10,7 +10,7 @@ export default async (client, body) => {
 
   const contact = new models.Contact(client, subscriber);
 
-  client.contact.blocked.cache.push(contact);
+  client.contact.blocked.blocked.push(contact);
 
   return await client.emit(
     Event.SUBSCRIBER_BLOCK_ADD,

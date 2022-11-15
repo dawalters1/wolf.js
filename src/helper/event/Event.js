@@ -59,7 +59,7 @@ class Event extends Base {
     const events = !forceNew ? this.events.filter((event) => ids.includes(event.id)) : [];
 
     if (events.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId), this.client._botConfig.get('batching.length')));
+      const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId)), this.client._botConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(

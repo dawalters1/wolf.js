@@ -6,17 +6,18 @@ import GroupExtended from './GroupExtended.js';
 import GroupMemberList from './GroupMemberList.js';
 import GroupMessageConfig from './GroupMessageConfig.js';
 import IconInfo from './IconInfo.js';
+import IdHash from './IdHash.js';
 
 class Group extends Base {
   constructor (client, data) {
     super(client);
-    console.log(data);
+
     this.id = data?.id;
     this.hash = data?.hash;
     this.name = data?.name;
     this.description = data?.description;
     this.reputation = data?.reputation;
-    this.owner = data?.owner;
+    this.owner = new IdHash(data?.owner);
     this.membersCount = data?.memberCount;
     this.official = data?.official;
     this.peekable = data?.peekable;

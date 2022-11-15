@@ -65,7 +65,7 @@ class Subscriber extends Base {
     const subscribers = !forceNew ? this.subscribers.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (subscribers.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId), this.client._botConfig.get('batching.length')));
+      const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), this.client._botConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(

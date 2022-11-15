@@ -11,6 +11,9 @@ import CharmSummary from './CharmSummary.js';
 import CommandContext from './CommandContext.js';
 import Contact from './Contact.js';
 import ContactAdditionalInfo from './ContactAdditionalInfo.js';
+import Discovery from './Discovery.js';
+import DiscoveryPage from './DiscoveryPage.js';
+import DiscoverySection from './DiscoverySection.js';
 import Event from './Event.js';
 import Group from './Group.js';
 import GroupExtended from './GroupExtended.js';
@@ -53,6 +56,8 @@ import StoreProductDuration from './StoreProductDuration.js';
 import StoreProductImage from './StoreProductImage.js';
 import StoreProductCredits from './StoreProductCredits.js';
 import StoreSection from './StoreSection.js';
+import StoreSectionVideo from './TopicSectionVideo.js';
+import StoreSectionVideoAspect from './TopicSectionVideoAspect.js';
 import Subscriber from './Subscriber.js';
 import SubscriberExtended from './SubscriberExtended.js';
 import SubscriberEvent from './SubscriberEvent.js';
@@ -88,6 +93,9 @@ export {
   CommandContext,
   Contact,
   ContactAdditionalInfo,
+  Discovery,
+  DiscoveryPage,
+  DiscoverySection,
   Event,
   Group,
   GroupAudioConfig,
@@ -130,6 +138,8 @@ export {
   StoreProductImage,
   StoreProductPartial,
   StoreSection,
+  StoreSectionVideo,
+  StoreSectionVideoAspect,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
@@ -166,6 +176,9 @@ export default {
   CommandContext,
   Contact,
   ContactAdditionalInfo,
+  Discovery,
+  DiscoveryPage,
+  DiscoverySection,
   Event,
   Group,
   GroupAudioConfig,
@@ -208,6 +221,8 @@ export default {
   StoreProductImage,
   StoreProductPartial,
   StoreSection,
+  StoreSectionVideo,
+  StoreSectionVideoAspect,
   Subscriber,
   SubscriberExtended,
   SubscriberEvent,
