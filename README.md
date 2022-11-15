@@ -153,7 +153,7 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Lacking Features
 
-- V3 Store
+- V3 Store - Will be available in Version 2
 
 ## Contact
 
