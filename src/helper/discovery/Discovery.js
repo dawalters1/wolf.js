@@ -117,8 +117,6 @@ class Discovery extends Base {
 
     const response = await this.client.topic.getTopicPageLayout('discover', languageId);
 
-    console.log(response);
-
     if (response.success) {
       this._discovery[languageId] = {
         main: new models.Discovery(this.client, response.body, languageId),

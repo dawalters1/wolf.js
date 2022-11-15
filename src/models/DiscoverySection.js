@@ -55,9 +55,21 @@ class DiscoverySection extends Base {
       return page;
     }
 
-    console.log(this.recipe.id, this.languageId, this.recipe.max, offset, this.recipe.type);
-
     return await this.client.discovery._getAppropriateRecipeItems(this.recipe.id, this.languageId, this.recipe.max, offset, this.recipe.type);
+  }
+
+  toJSON () {
+    return {
+      id: this.id,
+      languageId: this.languageId,
+      validity: this.validity,
+      sectionTitle: this.sectionTitle,
+      title: this.title,
+      images: this.images,
+      videos: this.videos?.map((video) => video.toJSON()),
+      description: this.description,
+      additionalDescriptions: this.additionalDescriptions
+    };
   }
 }
 
