@@ -1,4 +1,4 @@
-export const EVENT = 'charm';
+export const EVENT = 'event';
 export const GROUP = 'group';
 export const PRODUCT = 'product';
 
