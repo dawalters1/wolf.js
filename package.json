@@ -60,6 +60,7 @@
     "on-change": "^4.0.1",
     "socket.io-client": "^4.5.1",
     "tldts": "^5.7.87",
+    "url-regex-safe": "^3.0.0",
     "wrtc": "^0.4.7",
     "yaml": "^2.1.1"
   }

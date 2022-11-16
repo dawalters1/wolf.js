@@ -119,8 +119,16 @@ const isValidUrl = (client, arg) => {
     const data = new URL(`${protocol || 'http://'}${sanitised}`);
     const parsed = tlds.parse(data.host);
 
-    if (!parsed || parsed.isIp) {
+    if (!parsed) {
       return false;
+    }
+
+    if (parsed.isIp) {
+      if (!protocol) {
+        return false;
+      }
+
+      return true;
     }
 
     if (
