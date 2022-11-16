@@ -1,12 +1,11 @@
-import { Command, MessageTypes, MessageType, MessageLinkingType } from '../../constants/index.js';
+import { Command, MessageTypes, MessageType, MessageLinkingType, EmbedType } from '../../constants/index.js';
 import Base from '../Base.js';
 import Subscription from './Subscription.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import fileType from 'file-type';
-import * as nanoid from 'nanoid';
-import messageBuilder from '../../utils/messageBuilder.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
+import { nanoid } from 'nanoid';
 
 // eslint-disable-next-line no-unused-vars
 const validateOptions = (options) => {
@@ -62,6 +61,119 @@ const validateOptions = (options) => {
   });
 
   return _options;
+};
+
+const getFormattingData = async (client, message, ads, links) => {
+  const data = {
+    formatting: {
+      groupLinks: await ads.reduce(async (result, ad) => {
+        if ((await result).length >= 25) {
+          return result;
+        }
+
+        (await result).push({
+          start: ad.start,
+          end: ad.end,
+          groupId: (await client.group.getByName(ad.ad))?.id
+        });
+
+        return result;
+      }, []),
+      links: links.map((link) => ({
+        start: link.start,
+        end: link.end,
+        url: link.link
+      }))
+    }
+  };
+
+  if (!data.formatting.groupLinks.length) {
+    Reflect.deleteProperty(data.formatting, 'groupLinks');
+  }
+
+  if (!data.formatting.links.length) {
+    Reflect.deleteProperty(data.formatting, 'links');
+  }
+
+  return Object.values(data.formatting).length ? data : undefined;
+};
+
+const getEmbedData = async (client, formatting) => {
+  for (const item of [...[formatting?.groupLinks ?? []], ...[formatting?.links ?? []]].flat().filter(Boolean)) {
+    if (Reflect.has(item, 'groupId')) {
+      if (item.groupId === undefined) {
+        continue;
+      }
+
+      return {
+        type: EmbedType.GROUP_PREVIEW,
+        groupId: item.groupId
+      };
+    }
+
+    if (Reflect.has(item, 'url')) {
+      if (item.url.startsWith('wolf://')) {
+        continue;
+      }
+
+      const metadata = await client.metadata(item.url);
+
+      if (!metadata.success || metadata.body.isBlacklisted) {
+        continue;
+      }
+
+      const preview = {
+        type: !metadata.body.title && metadata.body.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
+        url: client._botConfig.get('validation.links.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
+      };
+
+      if (preview.type === EmbedType.LINK_PREVIEW && metadata.body.title) {
+        preview.title = metadata.body?.title ?? '-';
+
+        preview.body = metadata.body?.description ?? '-';
+      }
+
+      return preview;
+    }
+  }
+};
+
+const buildMessages = async (client, recipient, isGroup, content, options) => {
+  content = options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content;
+
+  const messages = [];
+
+  while (true) { // While loop... probably not the best approach ¯\_(ツ)_/¯
+    // TODO: Developer injected links
+    const messageChunk = content.substr(0, client.utility.string.getAds(content).find((ad) => ad.start < 1000 && ad.end > 1000)?.start || client.utility.string.getLinks(content).find((link) => link.start < 1000 && link.end > 1000)?.start || (() => {
+      // Ensure splitting is done at a space and not mid word
+      const index = content.lastIndexOf(' ', 1000);
+
+      return index === -1 ? 1000 : index;
+    })()).trim();
+
+    // Get formatting data for the chunk
+    const formatting = await getFormattingData(client, messageChunk, client.utility.string.getAds(messageChunk), client.utility.string.getLinks(messageChunk));
+    const embeds = await getEmbedData(client, formatting);
+
+    messages.push({
+      recipient,
+      isGroup,
+      mimeType: 'text/plain',
+      data: Buffer.from(messageChunk, 'utf8'),
+      flightId: nanoid(32),
+      metadata: formatting,
+      embeds
+    });
+
+    if (messageChunk.length === content.length) {
+      break;
+    }
+
+    content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).slice(messageChunk.length).trim();
+  }
+
+  return messages;
 };
 
 class Messaging extends Base {
@@ -150,17 +262,20 @@ class Messaging extends Base {
         }
       );
     }
+
     options = validateOptions(options);
 
     if (options.links && options.links.some((link) => link.start > content.length || link.end > content.length)) {
       throw new models.WOLFAPIError('deeplinks start index and end index must be less than or equal to the contents length', { faults: options.links.filter((link) => link.start > content.length || link.end > content.length) });
     }
 
-    const responses = await (await messageBuilder(this.client, targetId, targetType === MessageTypes.GROUP, content, options)).reduce(async (result, message) => {
-      (await result).push(await this.client.websocket.emit(Command.MESSAGE_SEND, message));
+    const messages = await buildMessages(this.client, targetId, targetType === MessageTypes.GROUP, content, options);
 
-      return result;
-    }, []);
+    const responses = [];
+
+    for (const message of messages) {
+      responses.push(await this.client.websocket.emit(Command.MESSAGE_SEND, message));
+    }
 
     return responses.length > 1
       ? new models.Response(
@@ -181,7 +296,7 @@ class Messaging extends Base {
   }
 
   async sendMessage (commandOrMessage, content, options = undefined) {
-    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).Message)) {
+    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).default)) {
       throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
 

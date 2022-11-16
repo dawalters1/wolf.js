@@ -2,6 +2,7 @@ import Achievement from './Achievement.js';
 import AchievementCategory from './AchievementCategory.js';
 import AchievementUnlockable from './AchievementUnlockable.js';
 import AchievementUnlockableAdditionalInfo from './AchievementUnlockableAdditionalInfo.js';
+import Ad from './Ad.js';
 import BlackListLink from './BlacklistLink.js';
 import Charm from './Charm.js';
 import CharmExpiry from './CharmExpiry.js';
@@ -33,6 +34,7 @@ import GroupStatsTrend from './GroupStatsTrend.js';
 import IconInfo from './IconInfo.js';
 import IconInfoAvailableSize from './IconInfoAvailableSize.js';
 import IdHash from './IdHash.js';
+import Link from './Link.js';
 import LinkMetadata from './LinkMetadata.js';
 import Message from './Message.js';
 import MessageEdit from './MessageEdit.js';
@@ -84,6 +86,7 @@ export {
   AchievementCategory,
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
+  Ad,
   BlackListLink,
   Charm,
   CharmExpiry,
@@ -115,6 +118,7 @@ export {
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
+  Link,
   LinkMetadata,
   Message,
   MessageEdit,
@@ -167,6 +171,7 @@ export default {
   AchievementCategory,
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
+  Ad,
   BlackListLink,
   Charm,
   CharmExpiry,
@@ -198,6 +203,7 @@ export default {
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
+  Link,
   LinkMetadata,
   Message,
   MessageEdit,
