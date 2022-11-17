@@ -11,7 +11,7 @@ class Misc extends Base {
     this.metadataResults = [];
   }
 
-  async meatdata (url) {
+  async metadata (url) {
     if (validator.isNullOrUndefined(url)) {
       throw new WOLFAPIError('url cannot be null or empty', { url });
     } else if (typeof url !== 'string') {
@@ -22,7 +22,7 @@ class Misc extends Base {
       return this.metadataResults.find((result) => this.client.utility.string.isEqual(result.url, url)).metadata;
     }
 
-    const response = await this.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.METADATA_URL,
       {
         headers: {
@@ -59,7 +59,7 @@ class Misc extends Base {
       return this.blacklist;
     }
 
-    const result = await this.websocket.emit(Command.METADATA_URL_BLACKLIST);
+    const result = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
 
     this._blacklist = result.body?.map((item) => new BlackListLink(this.client, item)) ?? [];
 
