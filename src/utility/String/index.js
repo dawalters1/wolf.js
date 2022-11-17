@@ -170,23 +170,23 @@ class StringUtility extends Base {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
-    const matchingUrls = string.match(urlRegexSafe({ localhost: true, returnString: false }))?.map((url) => url.replace(/\.+$/, ''))
+    return string.match(urlRegexSafe({ localhost: true, returnString: false }))?.map((url) => url.replace(/\.+$/, ''))
+      .sort((a, b) => b.length - a.length)
       .reduce((results, url) => {
-        results.push(...[...string.matchAll(new RegExp(url, 'gi'))].filter((match) => !results.some((existingMatch) => existingMatch.index === match.index)));
+        results.push(...[...string.matchAll(new RegExp(url, 'gi'))].filter((match) => !results.some((existingMatch) => existingMatch.index === match.index) && isValidUrl(this.client, match[0])));
 
         return results;
-      }, []);
-
-    return matchingUrls?.filter((url) => isValidUrl(this.client, url[0])).map((url) =>
-      new models.Link(
-        this.client,
-        {
-          start: url.index,
-          end: url.index + url[0].length,
-          link: url[0]
-        }
-      )
-    );
+      }, [])
+      .map((url) =>
+        new models.Link(
+          this.client,
+          {
+            start: url.index,
+            end: url.index + url[0].length,
+            link: url[0]
+          }
+        )
+      ) ?? [];
   }
 
   getAds (string) {
@@ -205,7 +205,7 @@ class StringUtility extends Base {
         end: ad.index + ad[0].length,
         ad: ad[0]
       })
-    );
+    ) ?? [];
   }
 
   sanitise (string) {

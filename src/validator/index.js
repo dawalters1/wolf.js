@@ -124,15 +124,10 @@ const isValidUrl = (client, arg) => {
     }
 
     if (parsed.isIp) {
-      if (!protocol) {
-        return false;
-      }
-
-      return true;
+      return !!protocol;
     }
 
-    if (
-      !parsed.domain && !parsed.publicSuffix.split('.').every((tld) => validationConfig.tlds.includes(tld.toLowerCase()))) {
+    if (!parsed.domain && !parsed.publicSuffix.split('.').every((tld) => validationConfig.tlds.includes(tld.toLowerCase()))) {
       return false;
     }
 

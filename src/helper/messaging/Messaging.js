@@ -1,4 +1,4 @@
-import { Command, MessageTypes, MessageType, MessageLinkingType, EmbedType } from '../../constants/index.js';
+import { Command, MessageTypes, MessageType, EmbedType } from '../../constants/index.js';
 import Base from '../Base.js';
 import Subscription from './Subscription.js';
 import models from '../../models/index.js';
@@ -21,44 +21,6 @@ const validateOptions = (options) => {
   if (_options.formatting.me && _options.formatting.alert) {
     throw new models.WOLFAPIError('you cannot /me and /alert the same message', _options.formatting);
   }
-
-  _options.links.forEach(link => {
-    if (validator.isNullOrUndefined(link.start)) {
-      throw new models.WOLFAPIError('start cannot be null or undefined', { link });
-    } else if (!validator.isValidNumber(link.start)) {
-      throw new models.WOLFAPIError('start must be a valid number', { link });
-    } else if (!validator.isType(link.start, 'number')) {
-      throw new models.WOLFAPIError('start must be type of number', { link });
-    } else if (validator.isLessThanZero(link.start)) {
-      throw new models.WOLFAPIError('start cannot be less than 0', { link });
-    }
-
-    if (validator.isNullOrUndefined(link.end)) {
-      throw new models.WOLFAPIError('end cannot be null or undefined', { link });
-    } else if (!validator.isValidNumber(link.end)) {
-      throw new models.WOLFAPIError('end must be a valid number', { link });
-    } else if (!validator.isType(link.end, 'number')) {
-      throw new models.WOLFAPIError('end must be type of number', { link });
-    } else if (validator.isLessThanZero(link.end)) {
-      throw new models.WOLFAPIError('end cannot be less than 0', { link });
-    } else if (link.end < link.start) {
-      throw new models.WOLFAPIError('end must be larger than start', { link });
-    }
-
-    if (validator.isNullOrUndefined(link.type)) {
-      throw new models.WOLFAPIError('type cannot be null or undefined', { link });
-    } else if (validator.isNullOrWhitespace(link.type)) {
-      throw new models.WOLFAPIError('type cannot be null or empty', { link });
-    } else if (!Object.values(MessageLinkingType).includes(link.type)) {
-      throw new models.WOLFAPIError('type is not valid', { link });
-    }
-
-    if (validator.isNullOrUndefined(link.value)) {
-      throw new models.WOLFAPIError('value cannot be null or undefined', { link });
-    } else if (validator.isNullOrWhitespace(link.value)) {
-      throw new models.WOLFAPIError('value cannot be null or empty', { link });
-    }
-  });
 
   return _options;
 };
@@ -98,8 +60,14 @@ const getFormattingData = async (client, message, ads, links) => {
   return Object.values(data.formatting).length ? data : undefined;
 };
 
-const getEmbedData = async (client, formatting) => {
-  for (const item of [...[formatting?.groupLinks ?? []], ...[formatting?.links ?? []]].flat().filter(Boolean)) {
+const getEmbedData = async (client, formatting, options) => {
+  if (!options.formatting.includeEmbeds) {
+    return undefined;
+  }
+
+  const { groupLinks, links } = formatting?.formatting;
+
+  for (const item of [...groupLinks ?? [], ...links ?? []].flat().filter(Boolean)) {
     if (Reflect.has(item, 'groupId')) {
       if (item.groupId === undefined) {
         continue;
@@ -116,24 +84,24 @@ const getEmbedData = async (client, formatting) => {
         continue;
       }
 
-      const metadata = await client.metadata(item.url);
+      const metadata = await client.misc.metadata(item.url);
 
-      if (!metadata.success || metadata.body.isBlacklisted) {
+      if (!metadata || metadata.isBlacklisted) {
         continue;
       }
 
       const preview = {
-        type: !metadata.body.title && metadata.body.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
+        type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
         url: client._botConfig.get('validation.links.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
       };
 
-      if (preview.type === EmbedType.LINK_PREVIEW && metadata.body.title) {
-        preview.title = metadata.body?.title ?? '-';
+      if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
+        preview.title = metadata?.title ?? '-';
 
-        preview.body = metadata.body?.description ?? '-';
+        preview.body = metadata?.description ?? '-';
       }
 
-      return preview;
+      return [preview];
     }
   }
 };
@@ -141,11 +109,30 @@ const getEmbedData = async (client, formatting) => {
 const buildMessages = async (client, recipient, isGroup, content, options) => {
   content = options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content;
 
+  let offset = 0;
+  let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
+    content = content.replace(link[0], link[1]);
+
+    results.push({
+      start: link.index - offset,
+      end: (link.index + link[1].length) - offset,
+      link: link[2]
+    });
+
+    offset += (link[0].length - link[1].length);
+
+    return results;
+  }, []);
+
   const messages = [];
+  let embedsAttached = false;
 
   while (true) { // While loop... probably not the best approach ¯\_(ツ)_/¯
-    // TODO: Developer injected links
-    const messageChunk = content.substr(0, client.utility.string.getAds(content).find((ad) => ad.start < 1000 && ad.end > 1000)?.start || client.utility.string.getLinks(content).find((link) => link.start < 1000 && link.end > 1000)?.start || (() => {
+    const messageChunk = content.substr(0, developerInjectedLinks.find((link) => link.start < 1000 && link.end > 1000)?.start || client.utility.string.getAds(content)?.find((ad) => ad.start < 1000 && ad.end > 1000)?.start || client.utility.string.getLinks(content)?.find((link) => link.start < 1000 && link.end > 1000)?.start || (() => {
+      if (content.length < 1000) {
+        return content.length;
+      }
+
       // Ensure splitting is done at a space and not mid word
       const index = content.lastIndexOf(' ', 1000);
 
@@ -153,8 +140,9 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
     })()).trim();
 
     // Get formatting data for the chunk
-    const formatting = await getFormattingData(client, messageChunk, client.utility.string.getAds(messageChunk), client.utility.string.getLinks(messageChunk));
-    const embeds = await getEmbedData(client, formatting);
+    const formatting = await getFormattingData(client, messageChunk, client.utility.string.getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...client.utility.string.getLinks(messageChunk)]);
+
+    const embeds = embedsAttached ? undefined : await getEmbedData(client, formatting, options);
 
     messages.push({
       recipient,
@@ -170,7 +158,19 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
       break;
     }
 
-    content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).slice(messageChunk.length).trim();
+    embedsAttached = embedsAttached || embeds.length;
+
+    content = (options.formatting.alert ? `/alert ${content.slice(messageChunk.length)}` : options.formatting.me ? `/me ${content.slice(messageChunk.length)}` : content.slice(messageChunk.length)).trim();
+
+    developerInjectedLinks = developerInjectedLinks.filter((developerInjectedLinks) => developerInjectedLinks.start >= messageChunk.length).map((link) =>
+      (
+        {
+          ...link,
+          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0),
+          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0)
+        }
+      )
+    );
   }
 
   return messages;
