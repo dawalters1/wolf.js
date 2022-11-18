@@ -3,6 +3,7 @@ import Base from './Base.js';
 class GroupAudioSlot extends Base {
   constructor (client, data) {
     super(client);
+    console.log(data);
     this.id = data?.id;
     this.locked = data?.locked;
     this.occupierId = data?.occupierId;

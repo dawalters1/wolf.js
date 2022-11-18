@@ -5,13 +5,15 @@ import { patch } from '../../../../../utils/index.js';
 export default async (client, body) => {
   const group = client.group.groups.find((group) => group.id === body.id);
 
-  if (!group || !client.group.slots) {
+  if (!group || !group.slots) {
     return Promise.resolve();
   }
 
   const cached = new models.GroupAudioSlot(client, group.slots.find((slot) => slot.id === body.slot.id));
 
   patch(group.slots.find((slot) => slot.id === body.slot.id), body.slot);
+
+  console.log('patched', cached.toJSON(), 'with', body);
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
     client.emit(
