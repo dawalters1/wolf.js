@@ -23,7 +23,7 @@ class Slot extends Base {
       throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
     }
 
-    if (group.slots.length) {
+    if (group.slots?.length) {
       return group.slots;
     }
 
@@ -35,9 +35,9 @@ class Slot extends Base {
       }
     );
 
-    this.group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot)) ?? [];
+    group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot)) ?? [];
 
-    return this.group.slots;
+    return group.slots;
   }
 
   async get (targetGroupId, slotId) {
@@ -57,8 +57,7 @@ class Slot extends Base {
       throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
     }
 
-    const slots = await this.list(targetGroupId);
-    const slot = slots.find((slot) => slot.id === slotId);
+    const slot = (await this.list(targetGroupId))?.find((slot) => slot.id === slotId);
 
     if (!slot) {
       throw new models.WOLFAPIError('Slot does not exist', { slotId });
@@ -252,7 +251,7 @@ class Slot extends Base {
       throw new models.WOLFAPIError(`Stage minimum reputation level is ${audioConfig.minRepLevel}`, { targetGroupId, minRepLevel: audioConfig.minRepLevel, botRepLevel: Math.floor(this.client.currentSubscriber.reputation) });
     }
 
-    const slots = this.list(targetGroupId);
+    const slots = await this.list(targetGroupId);
 
     if (slots.some((slot) => slot.occupierId === this.client.currentSubscriber.id)) {
       throw new models.WOLFAPIError('Bot already occupies a slot in this Group', { targetGroupId, slot: slots.find((slot) => slot.occupierId === this.client.currentSubscriber.id) });
@@ -269,10 +268,10 @@ class Slot extends Base {
     }
 
     if (!sdp) {
-      // TODO: create client
+      sdp = await this.client.stage._getClient(targetGroupId, true).createSDP();
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST,
       {
         id: parseInt(targetGroupId),
@@ -280,6 +279,12 @@ class Slot extends Base {
         sdp
       }
     );
+
+    if (response.success) {
+      await this.client.stage._getClient(targetGroupId, true).setResponse(slotId, response.body.sdp);
+    }
+
+    return response;
   }
 
   async consume (targetGroupId, slotId) {
@@ -311,6 +316,7 @@ class Slot extends Base {
     if (!slot.occupierId) {
       throw new models.WOLFAPIError('Slot is not occupied', { targetGroupId, slotId });
     }
+
     // TODO: check for client
   }
 
@@ -337,11 +343,13 @@ class Slot extends Base {
       throw new models.WOLFAPIError('Slot is not occupied by Bot', { targetGroupId, slotId });
     }
 
+    this.client.stage._deleteClient(targetGroupId);
+
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,
       {
         id: parseInt(targetGroupId),
-        slotId: slot.id,
+        slotId: parseInt(slot.id),
         occupierId: this.client.currentSubscriber.id
       }
     );

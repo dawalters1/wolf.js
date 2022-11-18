@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { StageBroadcastState, StageConnectionState } from '../../constants/index.js';
+import { Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
 import events from 'events';
 import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
-
-const spawn = require('child_process').spawn;
+import { nanoid } from 'nanoid';
 
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
@@ -25,13 +24,15 @@ class Client extends EventEmitter {
 
     this.client = client;
 
-    this._slotId = undefined;
-    this._muted = undefined;
+    this.slotId = undefined;
+    this.muted = undefined;
 
     this.broadcastState = StageBroadcastState.IDLE;
     this.connectionState = StageConnectionState.DISCONNECTED;
     this.client = new RTCPeerConnection();
     this.source = new RTCAudioSource();
+    this.completed = false;
+    this.duration = 0;
 
     const stream = new MediaStream();
 
@@ -40,30 +41,77 @@ class Client extends EventEmitter {
     this.sender = this.client.addTrack(this.track, stream);
   }
 
-  get slotId () {
-    return this._slotId;
+  reset () {
+
   }
 
-  get muted () {
-    return this._muted;
+  get samples () {
+    return this._samples;
+  }
+
+  set samples (value) {
+    this._samples = value;
+
+    if (this._samples.length > (SLICE_COUNT * 2) && !this.ffmpeg.isPaused()) {
+      this.ffmpeg.pause();
+    } else if (this.ffmpeg.isPaused()) {
+      this.ffmpeg.resume();
+    }
   }
 
   play (data) {
-    this._ffmpeg = ffmpeg(data)
+    const id = nanoid();
+
+    this.songId = nanoid();
+
+    this.ffmpeg = ffmpeg(data)
       .toFormat('wav')
       .native()
       .noVideo()
-      .withOptions()
-      .on('error', () => { })
+      .on('error', (error) => {
+        if (this.broadcastState === StageBroadcastState.IDLE) {
+          return Promise.resolve();
+        }
+
+        this.emit(Event.STAGE_CLIENT_ERROR, error);
+      })
       .pipe()
       .on('data', (data) => {
 
       })
-      .on('finish', () => {});
+      .on('finish', () => { this.completed = true; });
+
+    this.broadcastState = StageBroadcastState.PLAYING;
   }
 
   stop () {
+    this.reset();
+  }
 
+  async createSDP () {
+    const offer = await this.client.createOffer({
+      offerToSendAudio: true,
+      offerToSendVideo: false,
+      offerToReceiveAudio: false,
+      offerToReceiveVideo: false
+    });
+
+    this.client.setLocalDescription(offer);
+
+    return offer.sdp.replace('a=sendrecv', 'a=recvonly');
+  }
+
+  async setResponse (slotId, sdp) {
+    this.slotId = slotId;
+
+    this.client.setRemoteDescription(
+      new RTCSessionDescription(
+        {
+          type: 'answer',
+          sdp
+        }
+      )
+    );
   }
 }
 
