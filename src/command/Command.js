@@ -50,6 +50,7 @@ class Command {
     this.callbackObject = callbackObject;
     this.commandCallbackTypes = Object.keys(callbackObject);
     this.children = (Array.isArray(children) ? children : [children]).filter(Boolean);
+
     validation(this);
   }
 }

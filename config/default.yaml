@@ -1,5 +1,7 @@
 app: wjs
 
+commandKey: cmV2ZWFsIHlvdXIgc2VjcmV0cw
+
 connection:
   host: https://v3-rc.palringo.com
   port: 3051
@@ -90,10 +92,10 @@ internalPhrases:
     value: '>tys'
   - language: en
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_with_details_message'
-    value: 'I am an Unofficial Bot using WOLF.js {version}\n\nOwned By: {nickname} (UserId {subscriberId})'
+    value: "I am an Unofficial Bot using [WOLF.js](http://www.github.com\/dawalters1\/wolf.js) {version}\n\nOwned By: [{nickname}](wolf:\/\/user\/{subscriberId}) (UserId {subscriberId})"
   - language: en
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_without_details_message'
-    value: I am an Unofficial Bot using WOLF.js {version}
+    value: I am an Unofficial Bot using [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version}
 
   - language: tr
     name: '{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw'
@@ -103,17 +105,17 @@ internalPhrases:
     value: '>sırrını'
   - language: tr
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_with_details_message'
-    value: 'Ben WOLF.js {version} kullanan resmi olmayan bir botum.\n\nSahibim: {nickname} (UserId {subscriberId})'
+    value: "Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahibim: [{nickname}](wolf://user/{subscriberId}) (UserId {subscriberId})"
   - language: tr
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_without_details_message'
-    value: 'Ben WOLF.js {version} kullanan resmi olmayan bir botum.'
+    value: 'Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum.'
 
   - language: ar
     name: '{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw'
     value: '>كشف'
   - language: ar
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_with_details_message'
-    value: 'انا بوت غير رسمي نسخة WOLF.js {version}\n\nمالك البوت: {nickname} (UserId {subscriberId})'
+    value: "انا بوت غير رسمي نسخة [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version}\n\nمالك البوت: [{nickname}](wolf://user/{subscriberId}) (UserId {subscriberId})"
   - language: ar
     name: '{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_without_details_message'
-    value: 'انا بوت غير رسمي نسخة WOLF.js {version}'
+    value: 'انا بوت غير رسمي نسخة [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version}'

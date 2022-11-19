@@ -56,7 +56,7 @@ class WOLF extends EventEmitter {
     this.tipping = new Tipping(this);
     this.topic = new Topic(this);
 
-    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_rys`, { both: (command) => rys(this, command) }));
+    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._botConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
 
     this.phrase.load(this._botConfig.get('internalPhrases'));
   }

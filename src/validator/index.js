@@ -138,21 +138,22 @@ const isValidUrl = (client, arg) => {
   }
 };
 
-export { isNull };
-export { isNullOrUndefined };
-export { isLessThanOrEqualZero };
-export { isNullOrWhitespace };
-export { isValidNumber };
-export { isValidArray };
-export { isLessThanZero };
-export { isValidBoolean };
-export { isValidDate };
-export { isType };
-export { trimPunctuation };
-export { isValidHex };
-export { isValidEmoji };
-export { isEqual };
-export { isValidUrl };
+export {
+  isNull,
+  isNullOrUndefined,
+  isLessThanOrEqualZero,
+  isNullOrWhitespace,
+  isValidNumber,
+  isValidArray,
+  isLessThanZero,
+  isValidBoolean,
+  isValidDate,
+  isType,
+  trimPunctuation,
+  isValidHex, isValidEmoji,
+  isEqual,
+  isValidUrl
+};
 
 export default {
   isNull,

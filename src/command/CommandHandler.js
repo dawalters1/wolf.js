@@ -4,11 +4,7 @@ import { Privilege } from '../constants/index.js';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 
 const CHARM_IDS = [813, 814];
-const checkForPrivilege = async (client, subscriber, privileges) => {
-  privileges = Array.isArray(privileges) ? privileges : [privileges];
 
-  return privileges.some((privilege) => (subscriber.privileges & privilege) === privilege);
-};
 const checkForBotCharm = async (client, subscriber) => {
   if (subscriber.charms && subscriber.charms.selectedList.some((charm) => CHARM_IDS.includes(charm.charmId))) {
     return true;
@@ -50,11 +46,11 @@ class CommandHandler {
       if (commandSettings.ignore.official || commandSettings.ignore.unofficial) {
         const subscriber = await this.client.subscriber.getById(context.sourceSubscriberId);
 
-        if (commandSettings.ignore.official && await checkForPrivilege(this.client, subscriber, Privilege.BOT)) {
+        if (commandSettings.ignore.official && await client.utility.subscriber.privilege.has(subscriber.id, Privilege.BOT)) {
           return Promise.resolve();
         }
 
-        if (commandSettings.ignore.unofficial && !await checkForPrivilege(this.client, subscriber, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
+        if (commandSettings.ignore.unofficial && !await client.utility.subscriber.privilege.has(subscriber.id, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
           return Promise.resolve();
         }
       }
@@ -78,7 +74,7 @@ class CommandHandler {
   }
 
   isCommand (message) {
-    const args = message.split(this.client.SPLIT_REGEX).filter(Boolean);
+    const args = message?.split(this.client.SPLIT_REGEX).filter(Boolean);
 
     return this._commands.some((command) => this.client.phrase.getAllByName(command.phraseName).some((phrase) => this.client.utility.string.isEqual(phrase.value, args[0])));
   }
