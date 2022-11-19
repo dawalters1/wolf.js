@@ -23,7 +23,6 @@ import SearchType from './SearchType.js';
 import ServerEvents from './ServerEvents.js';
 import SocketEvent from './SocketEvent.js';
 import StageBroadcastState from './StageBroadcastState.js';
-import StageClientEvent from './StageClientEvent.js';
 import StageConnectionState from './StageConnectionState.js';
 import StoreType from './StoreType.js';
 import TipDirection from './TipDirection.js';
@@ -56,7 +55,6 @@ export {
   ServerEvents,
   SocketEvent,
   StageBroadcastState,
-  StageClientEvent,
   StageConnectionState,
   StoreType,
   TipDirection,
@@ -90,7 +88,6 @@ export default {
   ServerEvents,
   SocketEvent,
   StageBroadcastState,
-  StageClientEvent,
   StageConnectionState,
   StoreType,
   TipDirection,

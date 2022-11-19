@@ -1,10 +1,11 @@
 import Base from './Base.js';
 
 class GroupAudioSlot extends Base {
-  constructor (client, data) {
+  constructor (client, data, targetGroupId) {
     super(client);
-    console.log(data);
+
     this.id = data?.id;
+    this.groupId = targetGroupId;
     this.locked = data?.locked;
     this.occupierId = data?.occupierId;
     this.occupierMuted = data?.occupierMuted;
@@ -17,6 +18,7 @@ class GroupAudioSlot extends Base {
   toJSON () {
     return {
       id: this.id,
+      groupId: this.groupId,
       locked: this.locked,
       occupierId: this.occupierId,
       occupierMuted: this.occupierMuted,

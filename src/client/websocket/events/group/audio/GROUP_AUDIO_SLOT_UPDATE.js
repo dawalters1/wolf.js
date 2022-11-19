@@ -13,8 +13,6 @@ export default async (client, body) => {
 
   patch(group.slots.find((slot) => slot.id === body.slot.id), body.slot);
 
-  console.log('patched', cached.toJSON(), 'with', body);
-
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
     client.emit(
       new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Event.GROUP_AUDIO_REQUEST_EXPIRE : Event.GROUP_AUDIO_REQUEST_DELETE,

@@ -35,7 +35,7 @@ class Slot extends Base {
       }
     );
 
-    group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot)) ?? [];
+    group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot, targetGroupId)) ?? [];
 
     return group.slots;
   }

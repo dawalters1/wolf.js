@@ -45,20 +45,18 @@ export const RESUME = 'resume';
 export const RECONNECTED = 'reconnected';
 export const RECONNECTING = 'reconnecting';
 export const RECONNECT_FAILED = 'reconnectFailed';
-export const STAGE_CLIENT_BROADCAST_END = 'stageClientBroadcastEnd';
+export const STAGE_CLIENT_END = 'stageClientEnd';
 export const STAGE_CLIENT_CONNECTED = 'stageClientConnected';
 export const STAGE_CLIENT_CONNECTING = 'stageClientConnecting';
 export const STAGE_CLIENT_DISCONNECTED = 'stageClientDisconnected';
-export const STAGE_CLIENT_DURATION_UPDATE = 'stageClientBroadcastDuration';
-export const STAGE_CLIENT_ERROR = 'stageClientBroadcastError';
+export const STAGE_CLIENT_ERROR = 'stageClientError';
 export const STAGE_CLIENT_KICKED = 'stageClientKicked';
-export const STAGE_CLIENT_MUTED = 'stageClientBroadcastMuted';
-export const STAGE_CLIENT_PAUSED = 'stageClientBroadcastPaused';
+export const STAGE_CLIENT_MUTED = 'stageClientMuted';
 export const STAGE_CLIENT_READY = 'stageClientReady';
-export const STAGE_CLIENT_STOPPED = 'stageClientBroadcastStopped';
-export const STAGE_CLIENT_UNMUTED = 'stageClientBroadcastUnmuted';
-export const STAGE_CLIENT_UNPAUSED = 'stageClientBroadcastUnpaused';
-export const STAGE_CLIENT_VIEWER_COUNT_CHANGED = 'stageClientBroadcastViewerCountChanged';
+export const STAGE_CLIENT_START = 'stageClientStart';
+export const STAGE_CLIENT_STOPPED = 'stageClientStopped';
+export const STAGE_CLIENT_UNMUTED = 'stageClientUnmuted';
+export const STAGE_CLIENT_VIEWER_COUNT_CHANGED = 'stageClientViewerCountChanged';
 export const STORE_CREDIT_BALANCE_UPDATE = 'storeCreditBalanceUpdate';
 export const SUBSCRIBER_BLOCK_ADD = 'subscriberBlockAdd';
 export const SUBSCRIBER_BLOCK_DELETE = 'subscriberBlockDelete';
@@ -117,19 +115,17 @@ export default {
   RECONNECTED,
   RECONNECTING,
   RECONNECT_FAILED,
-  STAGE_CLIENT_BROADCAST_END,
+  STAGE_CLIENT_END,
+  STAGE_CLIENT_START,
   STAGE_CLIENT_CONNECTED,
   STAGE_CLIENT_CONNECTING,
   STAGE_CLIENT_DISCONNECTED,
-  STAGE_CLIENT_DURATION_UPDATE,
   STAGE_CLIENT_ERROR,
   STAGE_CLIENT_KICKED,
   STAGE_CLIENT_MUTED,
-  STAGE_CLIENT_PAUSED,
   STAGE_CLIENT_READY,
   STAGE_CLIENT_STOPPED,
   STAGE_CLIENT_UNMUTED,
-  STAGE_CLIENT_UNPAUSED,
   STAGE_CLIENT_VIEWER_COUNT_CHANGED,
   STORE_CREDIT_BALANCE_UPDATE,
   SUBSCRIBER_BLOCK_ADD,

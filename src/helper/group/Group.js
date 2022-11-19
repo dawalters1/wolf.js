@@ -50,7 +50,7 @@ class Group extends Base {
       }
     }
 
-    return this.groups.filter((group) => group.InGroup);
+    return this.groups.filter((group) => group.inGroup);
   }
 
   async getById (id, subscribe = true, forceNew = false) {

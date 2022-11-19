@@ -3,6 +3,7 @@ import Base from '../Base.js';
 import Request from './Request.js';
 import Slot from './Slot.js';
 import StageClient from '../../client/stage/Client.js';
+import { Event } from '../../constants/index.js';
 
 class Stage extends Base {
   // eslint-disable-next-line no-useless-constructor
@@ -12,10 +13,31 @@ class Stage extends Base {
     this.request = new Request(this.client);
     this.slot = new Slot(this.client);
 
-    this.client.on('groupAudioCountUpdate', (oldCount, newCount) => {});
-    this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {});
-
     this.clients = {};
+
+    this.client.on('groupAudioCountUpdate', (oldCount, newCount) => {
+      if (!this.clients[newCount.id]) {
+        return Promise.resolve();
+      }
+
+      return this.client.emit(
+        Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
+        {
+          targetGroupId: oldCount.id,
+          count: newCount.consumerCount
+        }
+      );
+    });
+
+    this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {
+      const client = this.clients[newSlot.groupId];
+
+      if (client && client.slotId === newSlot.id) {
+        return client.handleSlotUpdate(newSlot, newSlot.sourceSubscriberId);
+      }
+
+      return Promise.resolve();
+    });
   }
 
   _getClient (targetGroupId, createIfNotExists = false) {
@@ -26,7 +48,24 @@ class Stage extends Base {
     if (createIfNotExists) {
       const client = new StageClient();
 
-      // TODO: internal client events
+      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_DISCONNECTED, async (data) => {
+        this._deleteClient(targetGroupId);
+        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, { ...data, targetGroupId });
+      });
+      client.on(Event.STAGE_CLIENT_KICKED, async (data) => {
+        this._deleteClient(targetGroupId);
+        this.client.emit(Event.STAGE_CLIENT_KICKED, { ...data, targetGroupId });
+      });
+      client.on(Event.READY, (data) => this.client.emit(Event.READY, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, { ...data, targetGroupId }));
 
       this.clients[targetGroupId] = client;
     }
@@ -40,16 +79,12 @@ class Stage extends Base {
     Reflect.deleteProperty(this.clients, targetGroupId);
   }
 
-  async play (targetGroupId, stream) {
+  async play (targetGroupId, data) {
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
 
-    if (!stream || typeof (stream) !== typeof (ReadableStream)) {
-      //   throw new WOLFAPIError('stream must be type readable stream', { stream });
-    }
-
-    return await this.clients[targetGroupId].play(stream);
+    return await this.clients[targetGroupId].play(data);
   }
 
   async stop (targetGroupId) {
