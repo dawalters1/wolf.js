@@ -49,6 +49,7 @@ export const STAGE_CLIENT_END = 'stageClientEnd';
 export const STAGE_CLIENT_CONNECTED = 'stageClientConnected';
 export const STAGE_CLIENT_CONNECTING = 'stageClientConnecting';
 export const STAGE_CLIENT_DISCONNECTED = 'stageClientDisconnected';
+export const STAGE_CLIENT_DURATION = 'stageClientDuration';
 export const STAGE_CLIENT_ERROR = 'stageClientError';
 export const STAGE_CLIENT_KICKED = 'stageClientKicked';
 export const STAGE_CLIENT_MUTED = 'stageClientMuted';
@@ -120,6 +121,7 @@ export default {
   STAGE_CLIENT_CONNECTED,
   STAGE_CLIENT_CONNECTING,
   STAGE_CLIENT_DISCONNECTED,
+  STAGE_CLIENT_DURATION,
   STAGE_CLIENT_ERROR,
   STAGE_CLIENT_KICKED,
   STAGE_CLIENT_MUTED,

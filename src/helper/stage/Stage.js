@@ -3,7 +3,7 @@ import Base from '../Base.js';
 import Request from './Request.js';
 import Slot from './Slot.js';
 import StageClient from '../../client/stage/Client.js';
-import { Event } from '../../constants/index.js';
+import { Event, StageBroadcastState } from '../../constants/index.js';
 
 class Stage extends Base {
   // eslint-disable-next-line no-useless-constructor
@@ -66,6 +66,7 @@ class Stage extends Base {
       client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, { ...data, targetGroupId }));
       client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, { ...data, targetGroupId }));
       client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, { ...data, targetGroupId }));
 
       this.clients[targetGroupId] = client;
     }
@@ -93,6 +94,50 @@ class Stage extends Base {
     }
 
     return await this.clients[targetGroupId].stop();
+  }
+
+  async pause (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].pause();
+  }
+
+  async resume (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].resume();
+  }
+
+  async getBroadcastState (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].broadcastState;
+  }
+
+  async isPlaying (targetGroupId) {
+    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PLAYING;
+  }
+
+  async isPaused (targetGroupId) {
+    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PAUSED;
+  }
+
+  async isIdle (targetGroupId) {
+    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PAUSED;
+  }
+
+  async duration (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].duration;
   }
 }
 

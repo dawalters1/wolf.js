@@ -40,8 +40,8 @@
     "eslint-plugin-promise": "^6.1.1"
   },
   "engines": {
-    "node": ">=14.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "dependencies": {
     "aws-sdk": "^2.1130.0",
