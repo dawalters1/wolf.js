@@ -107,9 +107,12 @@ const getEmbedData = async (client, formatting, options) => {
 };
 
 const buildMessages = async (client, recipient, isGroup, content, options) => {
-  content = options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content;
+  content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
 
   let offset = 0;
+
+  console.log([...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]);
+
   let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
     content = content.replace(link[0], link[1]);
 
