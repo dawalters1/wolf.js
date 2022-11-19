@@ -5,10 +5,11 @@ import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
 import { setDriftlessTimeout } from 'driftless';
 import _ from 'lodash';
+import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
-const { RTCAudioSource } = wrtc.nonstandard;
+const { RTCAudioSource, RTCAudioSink } = wrtc.nonstandard;
 const MediaStream = wrtc.MediaStream;
 
 const SAMPLE_RATE = 48000;
@@ -44,16 +45,18 @@ class Client extends EventEmitter {
     this.connectionState = StageConnectionState.DISCONNECTED;
     this.client = new RTCPeerConnection();
     this.source = new RTCAudioSource();
-    this.completed = false;
-    this.samples = [];
-    this.emittedPlaying = false;
-    this.duration = 10;
 
     const stream = new MediaStream();
 
     this.track = this.source.createTrack();
     stream.addTrack(this.track);
     this.sender = this.client.addTrack(this.track, stream);
+
+    this.completed = false;
+    this.samples = [];
+    this.emittedPlaying = false;
+    this.duration = 10;
+    this.volume = 1;
 
     const onFirstBroadcast = () => {
       this.emittedPlaying = true;
@@ -82,7 +85,7 @@ class Client extends EventEmitter {
           if (!this.muted) {
             this.source.onData(
               {
-                samples: sample,
+                samples: sample.map((samples) => samples * this.volume), // This works to adjust volume, but causes static at lower volumes
                 sampleRate: SAMPLE_RATE,
                 bitsPerSample: BITRATE,
                 channelCount: CHANNEL_COUNT,
@@ -160,6 +163,14 @@ class Client extends EventEmitter {
 
       this.emit(Event.STAGE_CLIENT_DISCONNECTED);
     }
+  }
+
+  changeVolume (volume) {
+    if (volume < 0 || volume > 2) {
+      throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
+    }
+
+    this.volume = volume;
   }
 
   play (data) {

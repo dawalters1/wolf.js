@@ -139,6 +139,22 @@ class Stage extends Base {
 
     return await this.clients[targetGroupId].duration;
   }
+
+  async getVolume (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].volume;
+  }
+
+  async changeVolume (targetGroupId, value) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].changeVolume(value);
+  }
 }
 
 export default Stage;
