@@ -46,6 +46,8 @@ class Client extends EventEmitter {
     this.source = new RTCAudioSource();
     this.completed = false;
     this.samples = [];
+    this.emittedPlaying = false;
+    this.duration = 10;
 
     const stream = new MediaStream();
 
@@ -53,27 +55,48 @@ class Client extends EventEmitter {
     stream.addTrack(this.track);
     this.sender = this.client.addTrack(this.track, stream);
 
-    const broadcast = () => setImmediate(() => {
-      const sample = this.samples?.shift();
+    const onFirstBroadcast = () => {
+      this.emittedPlaying = true;
 
-      if (sample) {
-        if (!this.muted) {
-          this.source.onData(
-            {
-              samples: sample,
-              sampleRate: SAMPLE_RATE,
-              bitsPerSample: BITRATE,
-              channelCount: CHANNEL_COUNT,
-              numberOfFrames: FRAMES
-            }
-          );
+      this.durationUpdater = setInterval(() => {
+        if (this.broadcastState === StageBroadcastState.PLAYING) {
+          this.duration += 10;
+
+          if (this.duration % 1000 === 0) {
+            this.emit(Event.STAGE_CLIENT_DURATION, { duration: this.duration });
+          }
         }
-      }
+      }, 10);
+      this.emit(Event.STAGE_CLIENT_START);
+    };
 
-      if (!this.samples.length) {
-        if (this.completed) {
-          this.emit(Event.STAGE_CLIENT_END);
-          this.stop();
+    const broadcast = () => setImmediate(() => {
+      if (this.broadcastState === StageBroadcastState.PLAYING) {
+        if (!this.emittedPlaying) {
+          onFirstBroadcast();
+        }
+
+        const sample = this.samples?.shift();
+
+        if (sample) {
+          if (!this.muted) {
+            this.source.onData(
+              {
+                samples: sample,
+                sampleRate: SAMPLE_RATE,
+                bitsPerSample: BITRATE,
+                channelCount: CHANNEL_COUNT,
+                numberOfFrames: FRAMES
+              }
+            );
+          }
+        }
+
+        if (!this.samples.length) {
+          if (this.completed) {
+            this.emit(Event.STAGE_CLIENT_END);
+            this.stop();
+          }
         }
       }
 
@@ -126,7 +149,9 @@ class Client extends EventEmitter {
     this.completed = false;
     this.samples = [];
     this.emittedPlaying = false;
-    this.broadcastState = StageBroadcastState.IDLE;
+    this.duration = 0;
+    clearInterval(this.durationUpdater);
+    this.broadcastState = StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
     if (disconnect) {
       this.connectionState = StageConnectionState.DISCONNECTED;
@@ -157,15 +182,21 @@ class Client extends EventEmitter {
       .on('data', (data) => this.samples.push(..._.chunk(data, SLICE_COUNT).map((sampleChunk) => createUInt8Array(sampleChunk))))
       .on('finish', () => { this.completed = true; });
 
-    this.broadcastState = StageBroadcastState.PLAYING;
-
-    this.emit(Event.STAGE_CLIENT_START);
+    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;
   }
 
   stop () {
     this.reset();
 
     return this.emit(Event.STAGE_CLIENT_STOPPED);
+  }
+
+  pause () {
+    this.broadcastState = StageBroadcastState.PAUSED;
+  }
+
+  resume () {
+    this.broadcastState = this.ffmpeg ? StageBroadcastState.PLAYING : StageBroadcastState.IDLE;
   }
 
   async createSDP () {
