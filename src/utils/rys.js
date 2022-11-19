@@ -1,9 +1,12 @@
 /* eslint-disable */
-
-import { Privilege } from '../constants/index.js';
+import path, { dirname } from 'path';
 import fs from 'fs';
+import { Privilege } from '../constants/index.js';
 
-const KEY = 'cmV2ZWFsIHlvdXIgc2VjcmV0cw';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default async (client, command) => {
   if (command.sourceSubscriberId === client.currentSubscriber.id) {
@@ -18,17 +21,17 @@ export default async (client, command) => {
     return Promise.resolve();
   }
 
- if(!(isDeveloper || (hasProperArgument && await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER])) || await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF]))){
-  return Promise.resolve();
- }
+  if(!(isDeveloper || (hasProperArgument && await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER])) || await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF]))){
+    return Promise.resolve();
+  }
 
- const displayDeveloperDetails = !!client.config.framework.developer;
+  const displayDeveloperDetails = !!client.config.framework.developer;
 
   return await client.messaging.sendMessage(
     command,
-    client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${key}_with${displayDeveloperDetails?'':'out'}_details_message`),
+    client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${client._botConfig.get('commandKey')}_with${displayDeveloperDetails?'':'out'}_details_message`),
       {
-        version:  fs.readFileSync('../../package.json').version,
+        version:  JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'))).version,
         nickname: displayDeveloperDetails? (await client.subscriber.getById(client.config.framework.developer)).nickname: '',
         subscriberId: displayDeveloperDetails? client.config.framework.developer : ''
       }
