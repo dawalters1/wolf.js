@@ -7,6 +7,13 @@ class BlackListLink extends Base {
     this.id = data?.id;
     this.regex = data?.regex;
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      regex: this.regex
+    };
+  }
 }
 
 export default BlackListLink;

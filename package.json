@@ -44,14 +44,12 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@descript/web-audio-js": "^0.15.3-patched.5",
     "aws-sdk": "^2.1130.0",
     "aws4-axios": "^2.4.9",
     "axios": "^0.27.2",
     "bull": "^4.8.5",
     "config": "^3.3.7",
     "crypto-js": "^4.1.1",
-    "driftless": "^2.0.3",
     "file-type": "^16.5.3",
     "fluent-ffmpeg": "^2.1.2",
     "http-status-codes": "^2.2.0",
@@ -59,13 +57,9 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "nanoid": "^3.3.4",
-    "on-change": "^4.0.1",
-    "play-dl": "^1.9.6",
     "socket.io-client": "^4.5.1",
-    "standardized-audio-context": "^25.3.34",
     "tldts": "^5.7.87",
     "url-regex-safe": "^3.0.0",
-    "web-audio-api": "^0.2.2",
     "wrtc": "^0.4.7",
     "yaml": "^2.1.1"
   }

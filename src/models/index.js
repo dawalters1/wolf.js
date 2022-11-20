@@ -43,10 +43,12 @@ import MessageMetadataFormatting from './MessageMetadataFormatting.js';
 import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
 import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
 import MessageResponse from './MessageResponse.js';
-import MessageSetting from './MessageSetting.js';
+import MessageSettings from './MessageSettings.js';
 import MessageSettingFilter from './MessageSettingFilter.js';
 import Notification from './Notification.js';
 import NotificationAction from './NotificationAction.js';
+import Phrase from '../helper/phrase/Phrase.js';
+import PhraseCount from './PhraseCount.js';
 import Presence from './Presence.js';
 import Response from './Response.js';
 import Search from './Search.js';
@@ -127,10 +129,12 @@ export {
   MessageMetadataFormattingGroupLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
-  MessageSetting,
+  MessageSettings,
   MessageSettingFilter,
   Notification,
   NotificationAction,
+  Phrase,
+  PhraseCount,
   Presence,
   Response,
   Search,
@@ -212,10 +216,12 @@ export default {
   MessageMetadataFormattingGroupLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
-  MessageSetting,
+  MessageSettings,
   MessageSettingFilter,
   Notification,
   NotificationAction,
+  Phrase,
+  PhraseCount,
   Presence,
   Response,
   Search,

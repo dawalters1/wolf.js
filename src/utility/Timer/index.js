@@ -91,6 +91,8 @@ class Timer {
     if (job) {
       return await job.remove();
     }
+
+    return undefined;
   }
 
   async get (name) {

@@ -96,6 +96,10 @@ class Contact extends Base {
       }
     );
   }
+
+  _cleanUp (reconnection = false) {
+    this.contacts = [];
+  }
 }
 
 export default Contact;

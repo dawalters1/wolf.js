@@ -26,17 +26,20 @@ const fininaliseConnection = async (client, resume = false) => {
 };
 const login = async (client) => {
   const { email: username, password, loginType: type, onlineState } = client.config.get('framework.login');
-  const response = await client.websocket.emit(Command.SECURITY_LOGIN, {
-    headers: {
-      version: 2
-    },
-    body: {
-      type,
-      onlineState,
-      username,
-      password
+  const response = await client.websocket.emit(
+    Command.SECURITY_LOGIN,
+    {
+      headers: {
+        version: 2
+      },
+      body: {
+        type,
+        onlineState,
+        username,
+        password
+      }
     }
-  });
+  );
 
   if (!response.success) {
     client.emit(
@@ -63,6 +66,8 @@ const login = async (client) => {
 };
 
 export default async (client, body) => {
+  await client._cleanUp(body.loggedInUser === undefined);
+
   const welcome = new Welcome(client, body);
 
   client.config.endpointConfig = welcome.endpointConfig;

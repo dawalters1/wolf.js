@@ -1,4 +1,4 @@
-import * as axios from 'axios';
+import axios from 'axios';
 import aws4Axios from 'aws4-axios';
 import AWS from 'aws-sdk';
 import { Event } from '../../constants/index.js';
@@ -16,7 +16,7 @@ class Multimedia {
           return AWS.config.credentials;
         }
 
-        const cognito = await this.client.getSecurityToken(true);
+        const cognito = await this.client.misc.getSecurityToken(true);
 
         if (!AWS.config.credentials) {
           AWS.config.credentials = new AWS.CognitoIdentityCredentials(
@@ -59,7 +59,7 @@ class Multimedia {
     };
   }
 
-  async upload (route, body) {
+  async upload (config, body) {
     const interceptor = aws4Interceptor(
       {
         region: 'eu-west-1',
@@ -70,14 +70,10 @@ class Multimedia {
 
     axios.interceptors.request.use(interceptor);
 
-    return await new Promise((resolve, reject) => {
-      axios.post(`${this.client.endpointConfig.mmsUploadEndpoint}/v${route.version}/${route.path}`,
-        {
-          body
-        }
-      )
+    return await new Promise((resolve) => {
+      axios.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
         .then((res) => resolve(new Response(res.data)))
-        .catch((error) => reject(error));
+        .catch((error) => resolve(new Response({ code: error.response?.code })));
     });
   }
 }

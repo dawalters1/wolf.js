@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 
 class Response {
-  constructor ({ code, body, headers }) {
-    this.code = code;
+  constructor ({ code, status, body, headers }) {
+    this.code = status || code;
     this.body = body;
     this.headers = headers;
   }

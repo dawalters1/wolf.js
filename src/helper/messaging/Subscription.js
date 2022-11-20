@@ -114,6 +114,10 @@ class Subscription extends Base {
 
     return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
+
+  _cleanUp (reconnection = false) {
+    this.subscriptions = {};
+  }
 }
 
 export default Subscription;

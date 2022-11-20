@@ -61,9 +61,9 @@ class Websocket {
     };
 
     if (command === ServerEvents.MESSAGE.MESSAGE_SEND) {
-      return await new Response(await this._messageQueue.enqueue(request));
+      return new Response(await this._messageQueue.enqueue(request));
     } else {
-      return await new Response(await this._genericQueue.enqueue(request));
+      return new Response(await this._genericQueue.enqueue(request));
     }
   }
 }

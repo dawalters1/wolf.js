@@ -96,6 +96,12 @@ class Event extends Base {
 
     return event;
   }
+
+  _cleanUp (reconnection = false) {
+    this.events = [];
+    this.group._cleanUp(reconnection);
+    this.subscription._cleanUp(reconnection);
+  }
 }
 
 export default Event;

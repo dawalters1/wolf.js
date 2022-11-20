@@ -5,12 +5,14 @@ class MessageResponse extends Base {
     super(client);
     this.uuid = data?.uuid;
     this.timestamp = data?.timestamp;
+    this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
 
   toJSON () {
     return {
       uuid: this.uuid,
-      timestamp: this.timestamp
+      timestamp: this.timestamp,
+      slowModeRateInSeconds: this.slowModeRateInSeconds
     };
   }
 }

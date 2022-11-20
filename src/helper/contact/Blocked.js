@@ -95,6 +95,10 @@ class Blocked extends Base {
       }
     );
   }
+
+  _cleanUp (reconnection = false) {
+    this.blocked = [];
+  }
 }
 
 export default Blocked;

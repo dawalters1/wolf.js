@@ -11,8 +11,6 @@ import { nanoid } from 'nanoid';
 const validateOptions = (options) => {
   const _options = Object.assign({}, options);
 
-  _options.includeEmbeds = typeof _options.includeEmbeds === 'boolean' ? _options.includeEmbeds : false;
-  _options.links = _options.links && Array.isArray(_options.links) ? _options.links : [];
   _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
   _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : false;
   _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
@@ -110,8 +108,6 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
   content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
 
   let offset = 0;
-
-  console.log([...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]);
 
   let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
     content = content.replace(link[0], link[1]);
@@ -255,7 +251,7 @@ class Messaging extends Base {
 
       validateMultimediaConfig(messageConfig, content);
 
-      return await this.client.multimedia.upload(messageConfig.route,
+      return await this.client.multimedia.upload(messageConfig,
         {
           data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
           mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,
@@ -393,6 +389,10 @@ class Messaging extends Base {
         timestamp
       }
     );
+  }
+
+  _cleanUp (reconnection = false) {
+    this.subscription._cleanUp(reconnection);
   }
 }
 

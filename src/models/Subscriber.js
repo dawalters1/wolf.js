@@ -12,6 +12,7 @@ class Subscriber extends Base {
     this.extended = new SubscriberExtended(client, data?.extended);
     this.hash = data?.hash;
     this.icon = data?.icon;
+    this.iconHash = data?.iconHash;
     this.iconInfo = new IconInfo(client, data?.iconInfo, 'user', data?.id);
     this.id = data?.id;
     this.nickname = data?.nickname;

@@ -3,7 +3,6 @@ import { Event, StageBroadcastState, StageConnectionState } from '../../constant
 import events from 'events';
 import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
-import { setDriftlessTimeout } from 'driftless';
 import _ from 'lodash';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
@@ -61,7 +60,7 @@ class Client extends EventEmitter {
     const onFirstBroadcast = () => {
       this.emittedPlaying = true;
 
-      this.durationUpdater = setInterval(() => {
+      /* this.durationUpdater = setInterval(() => {
         if (this.broadcastState === StageBroadcastState.PLAYING) {
           this.duration += 10;
 
@@ -69,7 +68,7 @@ class Client extends EventEmitter {
             this.emit(Event.STAGE_CLIENT_DURATION, { duration: this.duration });
           }
         }
-      }, 10);
+      }, 10); */
       this.emit(Event.STAGE_CLIENT_START);
     };
 
@@ -165,7 +164,7 @@ class Client extends EventEmitter {
     }
   }
 
-  changeVolume (volume) {
+  setVolume (volume) {
     if (volume < 0 || volume > 2) {
       throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
     }

@@ -1,7 +1,7 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import { BlackListLink, LinkMetadata, WOLFAPIError } from '../../models/index.js';
-import { Command } from '../../constants/index.js';
+import { Command, MessageFilterTier } from '../../constants/index.js';
 
 class Misc extends Base {
   constructor (client) {
@@ -64,6 +64,49 @@ class Misc extends Base {
     this._blacklist = result.body?.map((item) => new BlackListLink(this.client, item)) ?? [];
 
     return this._blacklist;
+  }
+
+  async getSecurityToken (requestNew = false) {
+    if (!requestNew && this.cognito) {
+      return this.cognito;
+    }
+
+    const response = await this.client.websocket.emit(Command.SECURITY_TOKEN_REFRESH);
+
+    if (response.success) {
+      this.cognito = response.body;
+    } else {
+      throw new Error(response.headers.message || 'Error occurred while requesting new security token');
+    }
+
+    return this.cognito;
+  }
+
+  async getMessageSettings () {
+    return await this.websocket.emit(Command.MESSAGE_SETTING);
+  }
+
+  async updateMessageSettings (messageFilterTier) {
+    if (!validator.isValidNumber(messageFilterTier)) {
+      throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
+    } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
+      throw new Error('messageFilterTier is not valid', { messageFilterTier });
+    }
+
+    return await this.websocket.emit(
+      Command.MESSAGE_SETTING_UPDATE,
+      {
+        spamFilter: {
+          enabled: messageFilterTier !== MessageFilterTier.OFF,
+          tier: messageFilterTier
+        }
+      }
+    );
+  }
+
+  _cleanUp (reconnection = false) {
+    this._blacklist = [];
+    this.metadataResults = [];
   }
 }
 

@@ -286,7 +286,8 @@ class Slot extends Base {
 
     return response;
   }
-
+  // eslint-disable-next-line no-warning-comments
+  /*
   async consume (targetGroupId, slotId) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
@@ -318,7 +319,7 @@ class Slot extends Base {
     }
 
     // TODO: check for client
-  }
+  } */
 
   async leave (targetGroupId, slotId) {
     if (validator.isNullOrUndefined(targetGroupId)) {

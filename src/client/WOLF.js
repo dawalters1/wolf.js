@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { LoginType, OnlineState, Command, MessageFilterTier } from '../constants/index.js';
+import { LoginType, OnlineState, Command } from '../constants/index.js';
 import Websocket from './websocket/Websocket.js';
 import Multimedia from './multimedia/Client.js';
 import CommandHandler from '../command/CommandHandler.js';
@@ -25,6 +25,7 @@ import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
 import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
+import Authorization from '../helper/authorization/Authorization.js';
 
 // #endregion
 class WOLF extends EventEmitter {
@@ -37,9 +38,9 @@ class WOLF extends EventEmitter {
 
     this.websocket = new Websocket(this);
     this.multimedia = new Multimedia(this);
-    this.utility = new Utility(this);
     this.commandHandler = new CommandHandler(this);
     this.achievement = new Achievement(this);
+    this.authorization = new Authorization(this);
     this.banned = new Banned(this);
     this.charm = new Charm(this);
     this.contact = new Contact(this);
@@ -57,8 +58,6 @@ class WOLF extends EventEmitter {
     this.topic = new Topic(this);
 
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._botConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
-
-    this.phrase.load(this._botConfig.get('internalPhrases'));
   }
 
   login () {
@@ -94,30 +93,11 @@ class WOLF extends EventEmitter {
   async logout (disconnect = true) {
     this.websocket.emit(Command.SECURITY_LOGOUT);
 
-    this.websocket.disconnect();
-    // TODO: cache handling
-  }
-
-  async getMessageSettings () {
-    return await this.websocket.emit(Command.MESSAGE_SETTING);
-  }
-
-  async updateMessageSettings (messageFilterTier) {
-    if (!validator.isValidNumber(messageFilterTier)) {
-      throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
-    } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
-      throw new Error('messageFilterTier is not valid', { messageFilterTier });
+    if (disconnect) {
+      this.websocket.disconnect();
     }
 
-    return await this.websocket.emit(
-      Command.MESSAGE_SETTING_UPDATE,
-      {
-        spamFilter: {
-          enabled: messageFilterTier !== MessageFilterTier.OFF,
-          tier: messageFilterTier
-        }
-      }
-    );
+    this._cleanUp(true);
   }
 
   async setOnlineState (onlineState) {
@@ -139,6 +119,26 @@ class WOLF extends EventEmitter {
 
   get SPLIT_REGEX () {
     return /[\n\t,،\s+]/g;
+  }
+
+  /**
+   * Clear all cache arrays and objects
+   */
+  _cleanUp (reconnection = false) {
+    this.achievement._cleanUp(reconnection);
+    this.charm._cleanUp(reconnection);
+    this.contact._cleanUp(reconnection);
+    this.discovery._cleanUp(reconnection);
+    this.event._cleanUp(reconnection);
+    this.group._cleanUp(reconnection);
+    this.messaging._cleanUp(reconnection);
+    this.misc._cleanUp(reconnection);
+    this.notification._cleanUp(reconnection);
+    this.stage._cleanUp(reconnection);
+    this.store._cleanUp(reconnection);
+    this.subscriber._cleanUp(reconnection);
+    this.tipping._cleanUp(reconnection);
+    this.topic._cleanUp(reconnection);
   }
 }
 

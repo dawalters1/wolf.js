@@ -82,14 +82,6 @@ class GroupMemberList {
     return Promise.resolve();
   }
 
-  async privileged () {
-    if (!this._privileged.completed) {
-      // Request privileged
-    }
-
-    return this._privileged.members;
-  }
-
   toJSON () {
     return {
       privileged: this._privileged.members.map((member) => member.toJSON()),
