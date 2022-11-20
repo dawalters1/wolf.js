@@ -43,6 +43,10 @@ class Category extends Base {
 
     return categories;
   }
+
+  _cleanUp (reconnection = false) {
+    this.categories = {};
+  }
 }
 
 export default Category;

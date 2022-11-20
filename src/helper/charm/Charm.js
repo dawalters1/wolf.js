@@ -273,6 +273,10 @@ class Charm extends Base {
       }
     );
   }
+
+  _cleanUp (reconnection = false) {
+    this.charms = [];
+  }
 }
 
 export default Charm;

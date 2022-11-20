@@ -3,13 +3,13 @@ import imageSize from 'image-size';
 import fileType from 'file-type';
 
 export default async (config, buffer) => {
-  const { mime } = (await fileType.fromBuffer(buffer));
+  const { mime } = await fileType.fromBuffer(buffer);
 
-  if (!config.mimes.some((mime) => mime.type !== mime)) {
+  if (!config.mimes.some((supportedMime) => supportedMime.type === mime)) {
     throw new WOLFAPIError('mimeType is unsupported', mime);
   }
 
-  if (mime.starts('image/') && config.square) {
+  if (mime.startsWith('image/') && config.square) {
     const size = imageSize(buffer);
 
     if (size.width !== size.height) {
@@ -17,9 +17,9 @@ export default async (config, buffer) => {
     }
   }
 
-  const mimeConfig = config.mimes.find((mime) => mime.type === mime);
+  const mimeConfig = config.mimes.find((supportedMime) => supportedMime.type === mime);
 
-  if (mimeConfig.size > Buffer.byteLength(buffer)) {
+  if (Buffer.byteLength(buffer) > mimeConfig.size) {
     throw new WOLFAPIError('buffer too large', { allowed: mimeConfig.size, size: Buffer.byteLength(buffer) });
   }
 

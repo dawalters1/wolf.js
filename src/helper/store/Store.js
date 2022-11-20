@@ -306,6 +306,14 @@ class Store extends Base {
 
     return value;
   }
+
+  _cleanUp (reconnection = false) {
+    this._credits = {};
+    this._balance = -1;
+    this._products = {};
+    this.stores = {};
+    this._productProfiles = {};
+  }
 }
 
 export default Store;

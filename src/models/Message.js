@@ -21,7 +21,6 @@ class Message extends Base {
     this.isCommand = client.commandHandler.isCommand(this.body);
   }
 
-  // TODO: Methods
   async reply (content, options) {
     return this.client.messaging.sendMessage(this, content, options);
   }

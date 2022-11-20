@@ -1,5 +1,5 @@
 import { Event } from '../../../../../constants/index.js';
-import models from '../../../../../models/index.js';
+import models, { GroupAudioSlotUpdate } from '../../../../../models/index.js';
 import { patch } from '../../../../../utils/index.js';
 
 export default async (client, body) => {
@@ -43,6 +43,12 @@ export default async (client, body) => {
   return client.emit(
     Event.GROUP_AUDIO_SLOT_UPDATE,
     cached,
-    group.slots.find((slot) => slot.id === body.slot.id)
+    new GroupAudioSlotUpdate(client,
+      {
+        id: body.id,
+        slot:
+        group.slots.find((slot) => slot.id === body.slot.id)
+      }
+    )
   );
 };

@@ -41,6 +41,10 @@ class Notification extends Base {
 
     return value;
   }
+
+  _cleanUp (reconnection = false) {
+    this.notifications = [];
+  }
 }
 
 export default Notification;

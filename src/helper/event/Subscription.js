@@ -64,6 +64,10 @@ class Subscription extends Base {
       }
     );
   }
+
+  _cleanUp (reconnection = false) {
+    this.subscriptions = [];
+  }
 }
 
 export default Subscription;

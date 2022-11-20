@@ -30,10 +30,10 @@ class Stage extends Base {
     });
 
     this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {
-      const client = this.clients[newSlot.groupId];
+      const client = this.clients[newSlot.id];
 
-      if (client && client.slotId === newSlot.id) {
-        return client.handleSlotUpdate(newSlot, newSlot.sourceSubscriberId);
+      if (client && client.slotId === newSlot.slot.id) {
+        return client.handleSlotUpdate(newSlot.slot, newSlot.sourceSubscriberId);
       }
 
       return Promise.resolve();
@@ -148,12 +148,17 @@ class Stage extends Base {
     return await this.clients[targetGroupId].volume;
   }
 
-  async changeVolume (targetGroupId, value) {
+  async setVolume (targetGroupId, volume) {
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
 
-    return await this.clients[targetGroupId].changeVolume(value);
+    return await this.clients[targetGroupId].setVolume(volume);
+  }
+
+  _cleanUp (reconnection = false) {
+    this.request._cleanUp(reconnection);
+    this.slot._cleanUp(reconnection);
   }
 }
 

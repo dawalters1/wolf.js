@@ -167,6 +167,11 @@ class Subscriber extends Base {
 
     return value;
   }
+
+  _cleanUp (reconnection = false) {
+    this.subscribers = [];
+    this.presence._cleanUp(reconnection);
+  }
 }
 
 export default Subscriber;

@@ -67,7 +67,7 @@ class Presence extends Base {
           Command.SUBSCRIBER_PRESENCE,
           {
             idList,
-            subscribe // TODO: check for dev preference
+            subscribe
           }
         );
 
@@ -92,6 +92,10 @@ class Presence extends Base {
     existing ? patch(existing, value) : this.presences.push(value);
 
     return value;
+  }
+
+  _cleanUp (reconnection = false) {
+    this.presences = [];
   }
 }
 

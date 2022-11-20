@@ -8,7 +8,7 @@ class Discovery extends Base {
   constructor (client) {
     super(client);
 
-    this._discovery = {};
+    this.discovery = {};
   }
 
   /**
@@ -30,23 +30,23 @@ class Discovery extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    if (!forceNew && this._discovery[languageId]?.pages[page]) {
-      return this._discovery[languageId]?.pages[page];
+    if (!forceNew && this.discovery[languageId]?.pages[page]) {
+      return this.discovery[languageId]?.pages[page];
     }
 
     const response = await this.client.topic.getTopicPageLayout(page, languageId);
 
     if (response.success) {
-      this._discovery[languageId] = {
-        ...this._discovery[languageId],
+      this.discovery[languageId] = {
+        ...this.discovery[languageId],
         pages: {
-          ...this._discovery[languageId]?.pages,
+          ...this.discovery[languageId]?.pages,
           [page]: new models.DiscoveryPage(this.client, response.body, languageId)
         }
       };
     }
 
-    return this._discovery[languageId]?.pages[page];
+    return this.discovery[languageId]?.pages[page];
   }
 
   async _getAppropriateRecipeItems (id, languageId, maxResults, offset, type) {
@@ -111,22 +111,26 @@ class Discovery extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    if (!forceNew && this._discovery[languageId]?.main) {
-      return this._discovery[languageId].main;
+    if (!forceNew && this.discovery[languageId]?.main) {
+      return this.discovery[languageId].main;
     }
 
     const response = await this.client.topic.getTopicPageLayout('discover', languageId);
 
     if (response.success) {
-      this._discovery[languageId] = {
+      this.discovery[languageId] = {
         main: new models.Discovery(this.client, response.body, languageId),
         pages: {
-          ...this._discovery[languageId]?.pages
+          ...this.discovery[languageId]?.pages
         }
       };
     }
 
-    return this._discovery[languageId]?.main;
+    return this.discovery[languageId]?.main;
+  }
+
+  _cleanUp (reconnection = false) {
+    this.discovery = {};
   }
 }
 

@@ -137,6 +137,10 @@ class Banned extends Base {
 
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
+
+  _cleanUp (reconnection = false) {
+    this.banned = [];
+  }
 }
 
 export default Banned;

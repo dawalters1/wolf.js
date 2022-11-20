@@ -6,7 +6,7 @@ import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import fileType from 'file-type';
 
 class Group extends Base {
-  async getEventList (targetGroupId, subscribe = true, forceNew = false) {
+  async getList (targetGroupId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -75,7 +75,7 @@ class Group extends Base {
       throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_CREATE,
       {
         groupId: parseInt(targetGroupId),
@@ -87,9 +87,11 @@ class Group extends Base {
       }
     );
 
-    if (result.success && thumbnail) {
-      result.body.thumbnailUploadResponse = await this.updateThumbnail(result.body.id, thumbnail);
+    if (response.success && thumbnail) {
+      response.body.thumbnailUploadResponse = await this.updateThumbnail(response.body.id, thumbnail);
     }
+
+    return response;
   }
 
   async update (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
@@ -127,7 +129,7 @@ class Group extends Base {
       throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
     }
 
-    const result = await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_UPDATE,
       {
         groupId: parseInt(targetGroupId),
@@ -142,11 +144,11 @@ class Group extends Base {
       }
     );
 
-    if (result.success && thumbnail) {
-      result.body.thumbnailUploadResponse = await this.updateThumbnail(result.body.id, thumbnail);
+    if (response.success && thumbnail) {
+      response.body.thumbnailUploadResponse = await this.updateThumbnail(response.body.id, thumbnail);
     }
 
-    return result;
+    return response;
   }
 
   async updateThumbnail (eventId, thumbnail) {

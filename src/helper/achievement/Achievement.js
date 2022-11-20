@@ -133,6 +133,13 @@ class Achievement extends Base {
 
     return value;
   }
+
+  _cleanUp (reconnection = false) {
+    this.achievements = {};
+    this.category._cleanUp(reconnection);
+    this.group._cleanUp(reconnection);
+    this.subscriber._cleanUp(reconnection);
+  }
 }
 
 export default Achievement;

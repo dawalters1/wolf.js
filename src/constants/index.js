@@ -13,7 +13,6 @@ import LoginType from './LoginType.js';
 import LookingFor from './LookingFor.js';
 import MemberListType from './MemberListType.js';
 import MessageFilterTier from './MessageFilterTier.js';
-import MessageLinkingType from './MessageLinkingType.js';
 import MessageType from './MessageType.js';
 import MessageTypes from './MessageTypes.js';
 import OnlineState from './OnlineState.js';
@@ -24,7 +23,6 @@ import ServerEvents from './ServerEvents.js';
 import SocketEvent from './SocketEvent.js';
 import StageBroadcastState from './StageBroadcastState.js';
 import StageConnectionState from './StageConnectionState.js';
-import StoreType from './StoreType.js';
 import TipDirection from './TipDirection.js';
 import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
@@ -45,7 +43,6 @@ export {
   LookingFor,
   MemberListType,
   MessageFilterTier,
-  MessageLinkingType,
   MessageType,
   MessageTypes,
   OnlineState,
@@ -56,7 +53,6 @@ export {
   SocketEvent,
   StageBroadcastState,
   StageConnectionState,
-  StoreType,
   TipDirection,
   TipPeriod,
   TipType
@@ -78,7 +74,6 @@ export default {
   LookingFor,
   MemberListType,
   MessageFilterTier,
-  MessageLinkingType,
   MessageType,
   MessageTypes,
   OnlineState,
@@ -89,7 +84,6 @@ export default {
   SocketEvent,
   StageBroadcastState,
   StageConnectionState,
-  StoreType,
   TipDirection,
   TipPeriod,
   TipType

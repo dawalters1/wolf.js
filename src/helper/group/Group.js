@@ -341,6 +341,12 @@ class Group extends Base {
 
     return value;
   }
+
+  _cleanUp (reconnection = false) {
+    this.groups = [];
+    this.fetched = false;
+    this.member._cleanUp(reconnection);
+  }
 }
 
 export default Group;

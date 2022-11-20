@@ -3,23 +3,34 @@ import WOLFAPIError from '../models/WOLFAPIError.js';
 import { Language } from '../constants/index.js';
 import moment from 'moment';
 import ArrayUtility from './Array/index.js';
-import Download from './Download/index.js';
 import Group from './Group/Group.js';
 import NumberUtility from './Number/index.js';
 import StringUtility from './String/index.js';
 import Subscriber from './Subscriber/Subscriber.js';
 import Timer from './Timer/index.js';
+import axios from 'axios';
 
 class Utility {
   constructor (client) {
     this.client = client;
-    this.download = Download;
     this.array = new ArrayUtility();
     this.group = new Group(client);
     this.number = new NumberUtility();
     this.string = new StringUtility(client);
     this.subscriber = new Subscriber(client);
     this.timer = new Timer(client);
+  }
+
+  download (url) {
+    return new Promise((resolve, reject) => {
+      axios.get(url,
+        {
+          responseType: 'arraybuffer'
+        }
+      )
+        .then((res) => resolve(Buffer.from(res.data, 'binary')))
+        .catch(reject);
+    });
   }
 
   toLanguageId (languageKey) {
