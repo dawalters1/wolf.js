@@ -82,6 +82,7 @@ import ValidUrl from './ValidUrl.js';
 import Welcome from './Welcome.js';
 import WelcomeEndpoint from './WelcomeEndpoint.js';
 import WOLFAPIError from './WOLFAPIError.js';
+import WolfstarsProfile from './WolfstarsProfile.js';
 
 export {
   Achievement,
@@ -167,7 +168,8 @@ export {
   ValidUrl,
   Welcome,
   WelcomeEndpoint,
-  WOLFAPIError
+  WOLFAPIError,
+  WolfstarsProfile
 };
 
 export default {
@@ -254,5 +256,6 @@ export default {
   ValidUrl,
   Welcome,
   WelcomeEndpoint,
-  WOLFAPIError
+  WOLFAPIError,
+  WolfstarsProfile
 };

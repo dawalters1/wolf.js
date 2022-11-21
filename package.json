@@ -32,7 +32,7 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^17.0.21",
+    "@types/node": "^18.11.9",
     "eslint": "^8.25.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",

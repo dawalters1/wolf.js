@@ -41,7 +41,7 @@ class Group extends Base {
   }
 
   async getAvatar (size) {
-    return this.client.utility.group.getAvatar(this.id, size);
+    return this.client.utility.group.avatar(this.id, size);
   }
 
   toJSON () {

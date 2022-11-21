@@ -26,7 +26,7 @@ class Subscriber extends Base {
       throw new WOLFAPIError('size is not valid', { size });
     }
 
-    return await this.client.utility.download((await this.client.subscriber.getById(subscriberId)).getAvatar(size));
+    return await this.client.utility.download((await this.client.subscriber.getById(subscriberId)).getAvatarUrl(size));
   }
 }
 

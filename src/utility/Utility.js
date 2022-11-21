@@ -29,7 +29,7 @@ class Utility {
         }
       )
         .then((res) => resolve(Buffer.from(res.data, 'binary')))
-        .catch(reject);
+        .catch((error) => reject(error));
     });
   }
 
