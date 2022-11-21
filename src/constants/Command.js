@@ -90,6 +90,7 @@ export const TIP_PRIVATE_SUBSCRIBE = 'tip private subscribe';
 export const TIP_SUMMARY = 'tip summary';
 export const TOPIC_PAGE_LAYOUT = 'topic page layout';
 export const TOPIC_PAGE_RECIPE_LIST = 'topic page recipe list';
+export const WOLFSTAR_PROFILE = 'wolfstar profile';
 
 export default {
   ACHIEVEMENT,
@@ -183,5 +184,6 @@ export default {
   TIP_PRIVATE_SUBSCRIBE,
   TIP_SUMMARY,
   TOPIC_PAGE_LAYOUT,
-  TOPIC_PAGE_RECIPE_LIST
+  TOPIC_PAGE_RECIPE_LIST,
+  WOLFSTAR_PROFILE
 };

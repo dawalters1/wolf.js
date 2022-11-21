@@ -5,12 +5,14 @@ import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Presence from './Presence.js';
 import patch from '../../utils/patch.js';
+import Wolfstars from './Wolfstars.js';
 
 class Subscriber extends Base {
   constructor (client) {
     super(client);
     this.subscribers = [];
     this.presence = new Presence(this.client);
+    this.wolfstars = new Wolfstars(this.client);
   }
 
   async getById (id, subscribe = true, forceNew = false) {

@@ -26,7 +26,7 @@ class Group extends Base {
       throw new WOLFAPIError('size is not valid', { size });
     }
 
-    return await this.client.utility.download((await this.client.group.getById(groupId)).getAvatar(size));
+    return await this.client.utility.download((await this.client.group.getById(groupId)).getAvatarUrl(size));
   }
 }
 

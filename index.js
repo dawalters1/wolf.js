@@ -1,5 +1,6 @@
 import WOLF from './src/client/WOLF.js';
 import Command from './src/command/Command.js';
+import Validator from './src/validator/index.js';
 import {
   AdminAction,
   Capability,
@@ -96,7 +97,8 @@ import {
   Translation,
   ValidUrl,
   Welcome,
-  WelcomeEndpoint
+  WelcomeEndpoint,
+  WolfstarsProfile
 } from './src/models/index.js';
 
 export {
@@ -195,7 +197,9 @@ export {
   Translation,
   ValidUrl,
   Welcome,
-  WelcomeEndpoint
+  WelcomeEndpoint,
+  WolfstarsProfile,
+  Validator
 };
 
 export default {
@@ -294,5 +298,7 @@ export default {
   Translation,
   ValidUrl,
   Welcome,
-  WelcomeEndpoint
+  WelcomeEndpoint,
+  WolfstarsProfile,
+  Validator
 };

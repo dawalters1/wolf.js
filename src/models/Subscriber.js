@@ -21,6 +21,8 @@ class Subscriber extends Base {
     this.privileges = data?.privileges;
     this.status = data?.status;
     this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
+
+    this.exists = Object.keys(data)?.length > 1;
   }
 
   getAvatarUrl (size) {
@@ -28,7 +30,7 @@ class Subscriber extends Base {
   }
 
   async getAvatar (size) {
-    return this.client.utility.subscriber.getAvatar(this.id, size);
+    return this.client.utility.subscriber.avatar(this.id, size);
   }
 
   toContact () {
@@ -57,7 +59,8 @@ class Subscriber extends Base {
       reputation: this.reputation,
       privileges: this.privileges,
       status: this.status,
-      language: this.language
+      language: this.language,
+      exists: this.exists
     };
   }
 }

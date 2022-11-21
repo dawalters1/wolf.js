@@ -26,6 +26,7 @@ import StageConnectionState from './StageConnectionState.js';
 import TipDirection from './TipDirection.js';
 import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
+import WolfstarTalent from './WolfstarTalent.js';
 
 export {
   AdminAction,
@@ -55,7 +56,8 @@ export {
   StageConnectionState,
   TipDirection,
   TipPeriod,
-  TipType
+  TipType,
+  WolfstarTalent
 };
 
 export default {
@@ -86,5 +88,6 @@ export default {
   StageConnectionState,
   TipDirection,
   TipPeriod,
-  TipType
+  TipType,
+  WolfstarTalent
 };

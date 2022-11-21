@@ -359,11 +359,19 @@ export class SubscriberHelper extends Base {
 
     public subscribers: Array<Subscriber>;
     public presence: SubscriberPresenceHelper;
+    public wolfstars: WolfStarsHelper;
 
     public getById(id: number, subscribe: boolean, forceNew: boolean): Promise<Subscriber>;
     public getByIds(ids: number | Array<number>, subscribe: boolean, forceNew: boolean): Promise<Subscriber | Array<Subscriber>>;
     public getChatHistory(id: number, timestamp?: number, limit?: number): Promise<Array<Message>>;
     public search(query: string): Promise<Array<Search>>;
+}
+
+
+export class WolfStarsHelper extends Base {
+    private constructor(client);
+
+    public getProfile(subscriberId: number): Promise<WolfstarsProfile>;
 }
 
 export class SubscriberPresenceHelper extends Base {
@@ -1340,6 +1348,8 @@ export class Subscriber extends Base {
     public status: string;
     public language: string;
 
+    public exists: boolean;
+
     public getAvatarUrl(size: IconSize): string;
     public getAvatar(size: IconSize): Promise<Buffer>;
 
@@ -1565,6 +1575,19 @@ export class WOLFAPIError extends Error {
     public params: any
 }
 
+export class WolfstarsProfile extends Base {
+    private constructor(client: WOLF, data: object)
+
+    public maxListeners: number;
+    public shows: number;
+    public subscriberId: number;
+    public talentList: Array<WolfstarTalent>;
+    public totalListeners: number;
+    public exists: boolean;
+
+    toJSON(): Object;
+}
+
 //#endregion
 
 //#region Constants
@@ -1594,6 +1617,7 @@ export const Constants: {
     TipPeriod: TipPeriod;
     TipType: TipType;
     TopicPageRecipeType: TopicPageRecipeType;
+    WolfstarTalent: WolfstarTalent;
 }
 
 export interface AdminAction {
@@ -1841,5 +1865,17 @@ export interface TopicPageRecipeType {
     EVENT: "event",
     GROUP: "group",
     PRODUCT: "product"
+}
+
+
+export interface WolfstarTalent {
+    MUSIC: 1;
+    ENTERTAINMENT: 2;
+    TALK_SHOW: 3;
+    STORY_TELLING: 4;
+    VOICE_OVER: 5;
+    POETRY: 6;
+    COMEDY: 7;
+    IMITATING_VOICES: 7;
 }
 //#endregion
