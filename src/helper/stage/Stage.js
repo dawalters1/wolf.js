@@ -3,10 +3,15 @@ import Base from '../Base.js';
 import Request from './Request.js';
 import Slot from './Slot.js';
 import StageClient from '../../client/stage/Client.js';
-import { Event, StageBroadcastState } from '../../constants/index.js';
+import { Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
+import validator from '../../validator/index.js';
+import models from '../../models/index.js';
 
 class Stage extends Base {
-  // eslint-disable-next-line no-useless-constructor
+/**
+ *
+ * @param {import('../../client/WOLF')} client
+ */
   constructor (client) {
     super(client);
 
@@ -80,6 +85,24 @@ class Stage extends Base {
     Reflect.deleteProperty(this.clients, targetGroupId);
   }
 
+  async getSettings (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    const group = await this.client.group.getById(targetGroupId);
+
+    if (!group.exists) {
+      throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
+    }
+
+    return group.audioConfig;
+  }
+
   async play (targetGroupId, data) {
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
@@ -118,6 +141,18 @@ class Stage extends Base {
     }
 
     return await this.clients[targetGroupId].broadcastState;
+  }
+
+  async onStage (targetGroupId) {
+    return !!this.clients[targetGroupId];
+  }
+
+  async isReady (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].connectionState === StageConnectionState.READY;
   }
 
   async isPlaying (targetGroupId) {

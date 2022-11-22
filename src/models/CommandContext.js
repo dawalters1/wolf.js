@@ -5,6 +5,7 @@ class CommandContext {
     this.client = client;
     this.isGroup = data?.isGroup;
     this.argument = data?.argument;
+    this.language = data?.language;
     this.targetGroupId = data?.targetGroupId ?? undefined;
     this.sourceSubscriberId = data?.sourceSubscriberId ?? undefined;
     this.timestamp = data?.timestamp;
@@ -39,6 +40,7 @@ class CommandContext {
     return {
       isGroup: this.isGroup,
       argument: this.argument,
+      language: this.language,
       targetGroupId: this.targetGroupId,
       sourceSubscriberId: this.sourceSubscriberId,
       timestamp: this.timestamp,

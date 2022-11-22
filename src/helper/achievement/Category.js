@@ -13,10 +13,10 @@ class Category extends Base {
   }
 
   /**
-     * Request achievements category list by Language
-     * @param {Language} language - The language of achievement category list
-     * @returns {Promise<Array<models.AchievementCategory>} - The achievement category list
-     */
+   * Request achievements category list by Language
+   * @param {Language} language - The language of achievement category list
+   * @returns {Promise<Array<models.AchievementCategory>} - The achievement category list
+   */
   async getList (language, forceNew = false) {
     if (!validator.isValidNumber(language)) {
       throw new models.WOLFAPIError('language must be a valid number', { language });

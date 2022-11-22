@@ -22,11 +22,11 @@ class Achievement extends Base {
   }
 
   /**
-     * Request an achievement by ID & Language
-     * @param {Number} id - The ID of the achievement to request
-     * @param {Language} language - The language of the achievement to request
-     * @returns {Promise<models.Achievement>} - The requested achievement
-     */
+   * Request an achievement by ID & Language
+   * @param {Number} id - The ID of the achievement to request
+   * @param {Language} language - The language of the achievement to request
+   * @returns {Promise<models.Achievement>} - The requested achievement
+   */
   async getById (id, language, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -50,11 +50,11 @@ class Achievement extends Base {
   }
 
   /**
-     * Request multiple achievements by IDs & Language
-     * @param {Number|Number[]} ids - The IDs of the achievements to request
-     * @param {Language} language - The language of the achievement to request
-     * @returns {Promise<Array<models.Achievement>>} - The requested achievements
-     */
+   * Request multiple achievements by IDs & Language
+   * @param {Number|Number[]} ids - The IDs of the achievements to request
+   * @param {Language} language - The language of the achievement to request
+   * @returns {Promise<Array<models.Achievement>>} - The requested achievements
+   */
   async getByIds (ids, language, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
