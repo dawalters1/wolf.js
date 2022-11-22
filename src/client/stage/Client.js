@@ -17,14 +17,12 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const setIntervalAsync = (fn) => fn().then(async (ms) => await new Promise(resolve => setTimeout(() => resolve(setIntervalAsync(fn, ms)), ms)));
-
 const createUInt8Array = (buffer) => {
   const sample = new Int8Array(1920);
 
   sample.set(buffer);
 
-  if (buffer.length < SLICE_COUNT) {
+  if (buffer.byteLength < SLICE_COUNT) {
     sample.fill(0, buffer.byteLength);
   }
 
@@ -72,7 +70,7 @@ class Client extends EventEmitter {
       this.emit(Event.STAGE_CLIENT_START);
     };
 
-    const broadcast = () => setImmediate(() => {
+    const broadcast = () => setImmediate(async () => {
       if (this.broadcastState === StageBroadcastState.PLAYING) {
         if (!this.emittedPlaying) {
           onFirstBroadcast();

@@ -58,10 +58,13 @@ class RequestQueue {
 
     const until = this.tokenLastAdded + this.regenerationPeriod - Date.now();
 
-    this.client.emit(Event.RATE_LIMIT, {
-      queue: this.name,
-      until
-    });
+    this.client.emit(
+      Event.RATE_LIMIT,
+      {
+        queue: this.name,
+        until
+      }
+    );
 
     return until;
   }

@@ -1,7 +1,9 @@
-/**
- * @param {import('../client/WOLF')} client
- */
+
 class Base {
+  /**
+   *
+   * @param {import('../client/WOLF.js').default} client
+   */
   constructor (client) {
     this.client = client;
   }

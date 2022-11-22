@@ -53,6 +53,13 @@ class Group extends Base {
     return this.groups.filter((group) => group.inGroup);
   }
 
+  /**
+   *
+   * @param {*} id
+   * @param {*} subscribe
+   * @param {*} forceNew
+   * @returns {Promise<import('../../models/index.js').Group>} Group
+   */
   async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });

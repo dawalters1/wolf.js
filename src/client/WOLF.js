@@ -60,14 +60,22 @@ class WOLF extends EventEmitter {
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._botConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
   }
 
-  login () {
-    const loginDetails = this.config.get('framework.login');
+  login (email, password, onlineState = OnlineState.ONLINE) {
+    if (!email) {
+      const loginDetails = this.config.framework.login;
 
-    if (!loginDetails) {
-      throw new WOLFAPIError('loginDetails must be set in config');
+      if (!loginDetails) {
+        throw new WOLFAPIError('loginDetails must be set in config');
+      }
+
+      email = loginDetails.email;
+      password = loginDetails.password;
+      onlineState = loginDetails.password;
+    } else {
+      this.config.framework.login.email = email;
+      this.config.framework.login.password = password;
+      this.config.framework.login.onlineState = onlineState;
     }
-
-    const { email, password, onlineState } = loginDetails;
 
     if (validator.isNullOrWhitespace(email)) {
       throw new WOLFAPIError('email cannot be null or empty', { email });
@@ -85,7 +93,7 @@ class WOLF extends EventEmitter {
       throw new Error('onlineState is not valid');
     }
 
-    loginDetails.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
+    this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
 
     this.websocket._create();
   }

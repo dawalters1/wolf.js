@@ -9,7 +9,8 @@ class Websocket {
     this.client = client;
     this._processor = new Processor(this.client);
 
-    this._messageQueue = new RequestQueue(this.client,
+    this._messageQueue = new RequestQueue(
+      this.client,
       {
         capacity: 10,
         regenerationPeriod: (15 / 60) * 1000,
@@ -17,7 +18,8 @@ class Websocket {
       }
     );
 
-    this._genericQueue = new RequestQueue(this.client,
+    this._genericQueue = new RequestQueue(
+      this.client,
       {
         capacity: 50,
         regenerationPeriod: (180 / 60) * 1000,
