@@ -29,7 +29,7 @@ class Group extends Base {
       throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
     }
 
-    if (!forceNew && group.events.length) {
+    if (!forceNew && group.events?.length) {
       return group.events;
     }
 
@@ -42,13 +42,13 @@ class Group extends Base {
     );
 
     if (response.success) {
-      group.events = response.body.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+      group.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
     }
 
     return group.events;
   }
 
-  async create (targetGroupId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined) {
+  async create (targetGroupId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -88,13 +88,13 @@ class Group extends Base {
     );
 
     if (response.success && thumbnail) {
-      response.body.thumbnailUploadResponse = await this.updateThumbnail(response.body.id, thumbnail);
+      return [response, await this.updateThumbnail(response.body.id, thumbnail)];
     }
 
     return response;
   }
 
-  async update (targetGroupId, eventId, title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, imageUrl = undefined, thumbnail = undefined) {
+  async update (targetGroupId, eventId, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail }) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -111,22 +111,32 @@ class Group extends Base {
       throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
     }
 
-    if (validator.isNullOrWhitespace(title)) {
+    const event = await this.client.event.getById(eventId);
+
+    if (!event.exists) {
+      throw new models.WOLFAPIError('Unknown Event', { eventId });
+    }
+
+    if (title && validator.isNullOrWhitespace(title)) {
       throw new models.WOLFAPIError('title cannot be null or empty', { title });
     }
 
-    if (!validator.isValidDate(startsAt)) {
-      throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
-    } else if (new Date(startsAt) < Date.now()) {
-      throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
+    if (startsAt) {
+      if (!validator.isValidDate(startsAt)) {
+        throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
+      } else if (new Date(startsAt) < Date.now()) {
+        throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
+      }
     }
 
-    if (!validator.isValidDate(endsAt)) {
-      throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
-    } else if (new Date(endsAt) < Date.now()) {
-      throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
-    } else if (new Date(endsAt) < new Date(startsAt)) {
-      throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+    if (endsAt) {
+      if (!validator.isValidDate(endsAt)) {
+        throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
+      } else if (new Date(endsAt) < Date.now()) {
+        throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
+      } else if (new Date(endsAt) < new Date(startsAt)) {
+        throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -134,18 +144,17 @@ class Group extends Base {
       {
         groupId: parseInt(targetGroupId),
         id: parseInt(eventId),
-        title,
-        longDescription,
-        shortDescription,
-        imageUrl,
-        startsAt: new Date(startsAt),
-        endsAt: new Date(endsAt),
+        title: title ?? event.title,
+        longDescription: longDescription ?? undefined,
+        shortDescription: shortDescription ?? undefined,
+        startsAt: startsAt ? new Date(startsAt) : undefined,
+        endsAt: endsAt ? new Date(endsAt) : undefined,
         isRemoved: false
       }
     );
 
     if (response.success && thumbnail) {
-      response.body.thumbnailUploadResponse = await this.updateThumbnail(response.body.id, thumbnail);
+      return [response, await this.updateThumbnail(response.body.id, thumbnail)];
     }
 
     return response;
@@ -164,11 +173,11 @@ class Group extends Base {
       throw new models.WOLFAPIError('thumbnail must be a buffer', { thumbnail });
     }
 
-    const eventConfig = this.client._botConfig.get('multimedia.event');
+    const eventConfig = this.client._frameworkConfig.get('multimedia.event');
 
     validateMultimediaConfig(eventConfig, thumbnail);
 
-    return this.client.multimedia.upload(eventConfig.route,
+    return this.client.multimedia.upload(eventConfig,
       {
         data: thumbnail.toString('base64'),
         mimeType: (await fileType.fromBuffer(thumbnail)).mime,

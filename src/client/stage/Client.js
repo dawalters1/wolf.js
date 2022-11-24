@@ -60,13 +60,10 @@ class Client extends EventEmitter {
 
       /* this.durationUpdater = setInterval(() => {
         if (this.broadcastState === StageBroadcastState.PLAYING) {
-          this.duration += 10;
-
-          if (this.duration % 1000 === 0) {
-            this.emit(Event.STAGE_CLIENT_DURATION, { duration: this.duration });
-          }
+          this.duration += 1000;
+          this.emit(Event.STAGE_CLIENT_DURATION, { duration: this.duration });
         }
-      }, 10); */
+      }, 1000); */
       this.emit(Event.STAGE_CLIENT_START);
     };
 
@@ -167,7 +164,7 @@ class Client extends EventEmitter {
       throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
     }
 
-    this.volume = volume;
+    this.volume = volume.toFixed(2);
   }
 
   play (data) {

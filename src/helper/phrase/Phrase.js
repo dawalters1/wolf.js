@@ -10,7 +10,7 @@ class Phrase extends Base {
     super(client);
     this.phrases = [];
 
-    this.load(this.client._botConfig.get('internalPhrases'));
+    this.load(this.client._frameworkConfig.get('internalPhrases'));
     this.load();
   }
 

@@ -89,11 +89,11 @@ class Member extends Base {
         groupId: parseInt(targetGroupId),
         filter: 'bots',
         offset: group.members._bots.members.length,
-        limit: this.client._botConfig.get('members.bots.batch.size')
+        limit: this.client._frameworkConfig.get('members.bots.batch.size')
       }
     );
 
-    group.members._bots.complete = response.body.length < this.client._botConfig.get('members.bots.batch.size');
+    group.members._bots.complete = response.body.length < this.client._frameworkConfig.get('members.bots.batch.size');
     group.members._bots.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
 
     return group.members._bots.members;
@@ -137,11 +137,11 @@ class Member extends Base {
         groupId: parseInt(targetGroupId),
         filter: 'silenced',
         offset: group.members._silenced.members.length,
-        limit: this.client._botConfig.get('members.silenced.batch.size')
+        limit: this.client._frameworkConfig.get('members.silenced.batch.size')
       }
     );
 
-    group.members._silenced.complete = response.body?.length < this.client._botConfig.get('members.silenced.batch.size');
+    group.members._silenced.complete = response.body?.length < this.client._frameworkConfig.get('members.silenced.batch.size');
     group.members._silenced.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
 
     return group.members._silenced.members;
@@ -191,12 +191,12 @@ class Member extends Base {
       Command.GROUP_MEMBER_BANNED_LIST,
       {
         id: parseInt(targetGroupId),
-        limit: this.client._botConfig.get('members.banned.batch.size'),
+        limit: this.client._frameworkConfig.get('members.banned.batch.size'),
         after: group.members._banned.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
       }
     );
 
-    group.members._banned.complete = response.body?.length < this.client._botConfig.get('members.banned.batch.size');
+    group.members._banned.complete = response.body?.length < this.client._frameworkConfig.get('members.banned.batch.size');
     group.members._banned.members = response.body?.map((member) => new GroupMember(this.client, { ...member, capabilities: Capability.BANNED })) ?? [];
 
     return group.members._banned.members;
@@ -281,7 +281,7 @@ class Member extends Base {
       return new WOLFAPIError('Regular members request failed', { response });
     }
 
-    group.members._regular.complete = response.body.length < this.client._botConfig.get('members.regular.batch.size');
+    group.members._regular.complete = response.body.length < this.client._frameworkConfig.get('members.regular.batch.size');
     group.members._regular.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
 
     response.body?.forEach((member) => group.members._misc.remove(member));

@@ -75,9 +75,9 @@ const developerConfig = (client) => {
 };
 
 const frameworkConfig = (client) => {
-  client._botConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+  client._frameworkConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
 
-  client._botConfig.get = (path) => internalGet(client._botConfig, path);
+  client._frameworkConfig.get = (path) => internalGet(client._frameworkConfig, path);
 };
 
 export default async (client) => await Promise.all([

@@ -15,7 +15,7 @@ class IconInfoAvailableSize extends Base {
 
   get (size) {
     if (this[size]) {
-      return `${this.client._botConfig.get('avatar.endpoint')}${this[size]}`;
+      return `${this.client._frameworkConfig.get('avatar.endpoint')}${this[size]}`;
     }
 
     const available = Object.keys(this.toJSON());
@@ -23,7 +23,7 @@ class IconInfoAvailableSize extends Base {
     const nextUp = available.find((key, index) => index > available.indexOf(size) && this[key]);
 
     if (nextUp) {
-      return `${this.client._botConfig.get('avatar.endpoint')}${this[nextUp]}`;
+      return `${this.client._frameworkConfig.get('avatar.endpoint')}${this[nextUp]}`;
     }
 
     const sorted = available.sort((a, b) => available.indexOf(b) - available.indexOf(a));
@@ -31,10 +31,10 @@ class IconInfoAvailableSize extends Base {
     const nextDown = sorted.find((key, index) => index > sorted.indexOf(size) && this[key]);
 
     if (nextDown) {
-      return `${this.client._botConfig.get('avatar.endpoint')}${this[nextDown]}`;
+      return `${this.client._frameworkConfig.get('avatar.endpoint')}${this[nextDown]}`;
     }
 
-    return this.client.utility.string.replace(this.client._botConfig.get('avatar.placeholder'),
+    return this.client.utility.string.replace(this.client._frameworkConfig.get('avatar.placeholder'),
       {
         type: this.targetType,
         lastNumOfId: this.targetId.toString().slice(-1)[0]

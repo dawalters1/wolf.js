@@ -30,7 +30,7 @@ class Wolfstars extends Base {
 
     const wolfstars = [];
 
-    const idLists = _.chunk(subscriberIds, this.client._botConfig.get('batching.length'));
+    const idLists = _.chunk(subscriberIds, this.client._frameworkConfig.get('batching.length'));
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(

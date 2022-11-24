@@ -2,7 +2,7 @@ import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
 
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.groupId);
+  const group = client.group.groups.find((group) => group.id === body.id);
 
   if (!group) {
     return Promise.resolve();

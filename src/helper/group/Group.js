@@ -112,7 +112,7 @@ class Group extends Base {
     const groups = !forceNew ? this.groups.filter((group) => ids.includes(group.id)) : [];
 
     if (groups.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId)), this.client._botConfig.get('batching.length'));
+      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId)), this.client._frameworkConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
