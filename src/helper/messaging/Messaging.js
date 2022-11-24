@@ -90,7 +90,7 @@ const getEmbedData = async (client, formatting, options) => {
 
       const preview = {
         type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
-        url: client._botConfig.get('validation.links.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
+        url: client._frameworkConfig.get('validation.links.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
       };
 
       if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
@@ -247,7 +247,7 @@ class Messaging extends Base {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
-      const messageConfig = this.client._botConfig.get('multimedia.messaging');
+      const messageConfig = this.client._frameworkConfig.get('multimedia.messaging');
 
       validateMultimediaConfig(messageConfig, content);
 

@@ -4,11 +4,11 @@ class TimerJob extends Base {
   constructor (client, job) {
     super(client);
     this.handler = job?.name ?? undefined;
-    this.data = job.data ?? undefined;
-    this.duration = job.delay ?? undefined;
-    this.timestamp = job.timestamp ?? undefined;
-    this.id = job?.id ?? undefined;
-    this.remaining = (job.timestamp + job.delay) - Date.now();
+    this.data = job?.data ?? undefined;
+    this.duration = job?.opts?.delay ?? undefined;
+    this.timestamp = job?.opts?.timestamp ?? undefined;
+    this.id = job?.opts?.id ?? undefined;
+    this.remaining = job ? (job?.opts?.timestamp + job?.opts?.delay) - Date.now() : undefined;
   }
 
   async cancel () {

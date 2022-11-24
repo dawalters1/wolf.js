@@ -1,6 +1,6 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { BlackListLink, LinkMetadata, WOLFAPIError } from '../../models/index.js';
+import { BlacklistLink, LinkMetadata, WOLFAPIError } from '../../models/index.js';
 import { Command, MessageFilterTier } from '../../constants/index.js';
 
 class Misc extends Base {
@@ -61,7 +61,7 @@ class Misc extends Base {
 
     const result = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
 
-    this._blacklist = result.body?.map((item) => new BlackListLink(this.client, item)) ?? [];
+    this._blacklist = result.body?.map((item) => new BlacklistLink(this.client, item)) ?? [];
 
     return this._blacklist;
   }

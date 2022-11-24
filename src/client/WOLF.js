@@ -19,7 +19,7 @@ import Store from '../helper/store/Store.js';
 import Subscriber from '../helper/subscriber/Subscriber.js';
 import Tipping from '../helper/tipping/Tipping.js';
 import Topic from '../helper/topic/Topic.js';
-import Utility from '../utility/Utility.js';
+import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
@@ -57,20 +57,16 @@ class WOLF extends EventEmitter {
     this.tipping = new Tipping(this);
     this.topic = new Topic(this);
 
-    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._botConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
+    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
   }
 
   login (email, password, onlineState = OnlineState.ONLINE) {
     if (!email) {
       const loginDetails = this.config.framework.login;
 
-      if (!loginDetails) {
-        throw new WOLFAPIError('loginDetails must be set in config');
-      }
-
       email = loginDetails.email;
       password = loginDetails.password;
-      onlineState = loginDetails.password;
+      onlineState = loginDetails.onlineState;
     } else {
       this.config.framework.login.email = email;
       this.config.framework.login.password = password;

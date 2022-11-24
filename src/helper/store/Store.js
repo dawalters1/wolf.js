@@ -147,7 +147,7 @@ class Store extends Base {
     }, []);
 
     if (products.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((productId) => !products.some((product) => product.id === productId)), this.client._botConfig.get('batching.length'));
+      const idLists = _.chunk(ids.filter((productId) => !products.some((product) => product.id === productId)), this.client._frameworkConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(

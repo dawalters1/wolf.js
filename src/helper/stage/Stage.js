@@ -5,7 +5,7 @@ import Slot from './Slot.js';
 import StageClient from '../../client/stage/Client.js';
 import { Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
 import validator from '../../validator/index.js';
-import models from '../../models/index.js';
+import models, { StageClientDurationUpdate, StageClientGeneralUpdate, StageClientViewerCountUpdate } from '../../models/index.js';
 
 class Stage extends Base {
 /**
@@ -27,11 +27,13 @@ class Stage extends Base {
 
       return this.client.emit(
         Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
-        {
-          targetGroupId: oldCount.id,
-          oldCount: oldCount.consumerCount,
-          newCount: newCount.consumerCount
-        }
+        new StageClientViewerCountUpdate(
+          {
+            targetGroupId: oldCount.id,
+            oldCount: oldCount.consumerCount,
+            newCount: newCount.consumerCount
+          }
+        )
       );
     });
 
@@ -54,25 +56,25 @@ class Stage extends Base {
     if (createIfNotExists) {
       const client = new StageClient();
 
-      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, { ...data, targetGroupId }));
+      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
       client.on(Event.STAGE_CLIENT_DISCONNECTED, async (data) => {
         this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, { ...data, targetGroupId });
+        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate({ ...data, targetGroupId }));
       });
       client.on(Event.STAGE_CLIENT_KICKED, async (data) => {
         this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_KICKED, { ...data, targetGroupId });
+        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate({ ...data, targetGroupId }));
       });
-      client.on(Event.READY, (data) => this.client.emit(Event.READY, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, { ...data, targetGroupId }));
-      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, { ...data, targetGroupId }));
+      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate({ ...data, targetGroupId })));
 
       this.clients[targetGroupId] = client;
     }
@@ -86,7 +88,7 @@ class Stage extends Base {
     Reflect.deleteProperty(this.clients, targetGroupId);
   }
 
-  async getSettings (targetGroupId) {
+  async getAudioConfig (targetGroupId) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -102,6 +104,24 @@ class Stage extends Base {
     }
 
     return group.audioConfig;
+  }
+
+  async getAudioCount (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    const group = await this.client.group.getById(targetGroupId);
+
+    if (!group.exists) {
+      throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
+    }
+
+    return group.audioCounts;
   }
 
   async play (targetGroupId, data) {
@@ -190,6 +210,14 @@ class Stage extends Base {
     }
 
     return await this.clients[targetGroupId].setVolume(volume);
+  }
+
+  async getSlotId (targetGroupId) {
+    if (!this.clients[targetGroupId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    return await this.clients[targetGroupId].slotId;
   }
 
   _cleanUp (reconnection = false) {

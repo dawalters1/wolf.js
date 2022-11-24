@@ -33,7 +33,7 @@ const validation = async (command) => {
     }
   });
 
-  if (!validator.isValidArray(children)) {
+  if (!Array.isArray(children)) {
     throw new WOLFAPIError('children must be an array', { children });
   }
 

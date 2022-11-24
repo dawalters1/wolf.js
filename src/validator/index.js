@@ -46,39 +46,10 @@ const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 's
 const isLessThanOrEqualZero = (arg) => isValidNumber(arg) && !(parseInt(arg) > 0);
 const isLessThanZero = (arg) => isValidNumber(arg) && !(parseInt(arg) >= 0);
 const isValidNumber = (arg, acceptDecimals = false) => (acceptDecimals ? /^-?\d+(\.\d+)?$/ : /^-?\d+$/).test(arg);
-const isValidArray = (arg) => Array.isArray(arg);
 const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'number' && (arg === 1 || arg === 0));
 const isValidDate = (arg) => !isNaN(new Date(arg).getDate());
 const isValidHex = (arg) => !isNullOrWhitespace(arg) && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/giu.test(`${arg.startsWith('#') ? '' : '#'}${arg}`);
 const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.text(arg);
-
-const isEqual = (sideA, sideB) => {
-  if (typeof sideA !== 'string') {
-    return false;
-  }
-
-  if (typeof sideB !== 'string') {
-    return false;
-  }
-
-  if (sideA === undefined && sideB === undefined) {
-    return true;
-  }
-
-  if (sideA === undefined || sideB === undefined) {
-    return false;
-  }
-
-  if (sideA === null && sideB === null) {
-    return true;
-  }
-
-  if (sideA === null || sideB === null) {
-    return false;
-  }
-
-  return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
-};
 
 const isValidUrl = (client, arg) => {
   if (!arg) {
@@ -99,7 +70,7 @@ const isValidUrl = (client, arg) => {
 
   let sanitised = trimPunctuation(arg).trim();
 
-  const validationConfig = client._botConfig.get('validation.links');
+  const validationConfig = client._frameworkConfig.get('validation.links');
 
   const protocol = validationConfig.protocols.sort((a, b) => b.length - a.length).find((prot) => sanitised.toLowerCase().startsWith(prot));
 
@@ -138,30 +109,12 @@ const isValidUrl = (client, arg) => {
   }
 };
 
-export {
+const exports = {
   isNull,
   isNullOrUndefined,
   isLessThanOrEqualZero,
   isNullOrWhitespace,
   isValidNumber,
-  isValidArray,
-  isLessThanZero,
-  isValidBoolean,
-  isValidDate,
-  isType,
-  trimPunctuation,
-  isValidHex, isValidEmoji,
-  isEqual,
-  isValidUrl
-};
-
-export default {
-  isNull,
-  isNullOrUndefined,
-  isLessThanOrEqualZero,
-  isNullOrWhitespace,
-  isValidNumber,
-  isValidArray,
   isLessThanZero,
   isValidBoolean,
   isValidDate,
@@ -169,6 +122,23 @@ export default {
   trimPunctuation,
   isValidHex,
   isValidEmoji,
-  isEqual,
   isValidUrl
+};
+
+export {
+  isNull,
+  isNullOrUndefined,
+  isLessThanOrEqualZero,
+  isNullOrWhitespace,
+  isValidNumber,
+  isLessThanZero,
+  isValidBoolean,
+  isValidDate,
+  isType,
+  trimPunctuation,
+  isValidHex,
+  isValidEmoji,
+  isValidUrl,
+
+  exports as default
 };

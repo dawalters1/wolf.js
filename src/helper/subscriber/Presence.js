@@ -60,7 +60,7 @@ class Presence extends Base {
     const presence = !forceNew ? this.presences.filter((subscriber) => ids.includes(subscriber.id)) : [];
 
     if (presence.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId)), this.client._botConfig.get('batching.length'));
+      const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(

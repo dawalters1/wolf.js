@@ -3,6 +3,7 @@ import Base from './Base.js';
 class Event extends Base {
   constructor (client, data) {
     super(client);
+
     this.id = data?.id;
     this.groupId = data?.groupId;
     this.createdBy = data?.createdBy;
@@ -15,8 +16,8 @@ class Event extends Base {
     this.endsAt = data?.endsAt;
     this.isRemoved = data?.isRemoved;
     this.attendanceCount = data?.attendanceCount;
-    this.createdAt = data?.createdAt;
-    this.updatedAt = data?.updatedAt;
+
+    this.exists = Object.keys(data).length > 1;
   }
 
   toJSON () {
@@ -33,8 +34,7 @@ class Event extends Base {
       endsAt: this.endsAt,
       isRemoved: this.isRemoved,
       attendanceCount: this.attendanceCount,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      exists: this.exists
     };
   }
 }

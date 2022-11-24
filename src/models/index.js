@@ -3,7 +3,7 @@ import AchievementCategory from './AchievementCategory.js';
 import AchievementUnlockable from './AchievementUnlockable.js';
 import AchievementUnlockableAdditionalInfo from './AchievementUnlockableAdditionalInfo.js';
 import Ad from './Ad.js';
-import BlackListLink from './BlacklistLink.js';
+import BlacklistLink from './BlacklistLink.js';
 import Charm from './Charm.js';
 import CharmExpiry from './CharmExpiry.js';
 import CharmSelected from './CharmSelected.js';
@@ -25,6 +25,7 @@ import GroupAudioSlotRequest from './GroupAudioSlotRequest.js';
 import GroupAudioSlotUpdate from './GroupAudioSlotUpdate.js';
 import GroupMember from './GroupMember.js';
 import GroupMemberList from './GroupMemberList.js';
+import GroupMemberListSection from './GroupMemberListSection.js';
 import GroupMessageConfig from './GroupMessageConfig.js';
 import GroupStats from './GroupStats.js';
 import GroupStatsActive from './GroupStatsActive.js';
@@ -39,6 +40,7 @@ import Link from './Link.js';
 import LinkMetadata from './LinkMetadata.js';
 import Message from './Message.js';
 import MessageEdit from './MessageEdit.js';
+import MessageEmbed from './MessageEmbed.js';
 import MessageMetadata from './MessageMetadata.js';
 import MessageMetadataFormatting from './MessageMetadataFormatting.js';
 import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
@@ -53,6 +55,9 @@ import PhraseCount from './PhraseCount.js';
 import Presence from './Presence.js';
 import Response from './Response.js';
 import Search from './Search.js';
+import StageClientDurationUpdate from './StageClientDurationUpdate.js';
+import StageClientGeneralUpdate from './StageClientGeneralUpdate.js';
+import StageClientViewerCountUpdate from './StageClientViewerCountUpdate.js';
 import Store from './Store.js';
 import StoreProduct from './StoreProduct.js';
 import StorePage from './StorePage.js';
@@ -61,8 +66,6 @@ import StoreProductDuration from './StoreProductDuration.js';
 import StoreProductImage from './StoreProductImage.js';
 import StoreProductCredits from './StoreProductCredits.js';
 import StoreSection from './StoreSection.js';
-import StoreSectionVideo from './TopicSectionVideo.js';
-import StoreSectionVideoAspect from './TopicSectionVideoAspect.js';
 import Subscriber from './Subscriber.js';
 import SubscriberExtended from './SubscriberExtended.js';
 import SubscriberEvent from './SubscriberEvent.js';
@@ -77,6 +80,8 @@ import TipLeaderboard from './TipLeaderboard.js';
 import TipLeaderboardItem from './TipLeaderboardItem.js';
 import TipLeaderboardSummary from './TipLeaderboardSummary.js';
 import TipSummary from './TipSummary.js';
+import TopicSectionVideo from './TopicSectionVideo.js';
+import TopicSectionVideoAspect from './TopicSectionVideoAspect.js';
 import Translation from './Translation.js';
 import Validity from './Validity.js';
 import ValidUrl from './ValidUrl.js';
@@ -91,7 +96,7 @@ export {
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
   Ad,
-  BlackListLink,
+  BlacklistLink,
   Charm,
   CharmExpiry,
   CharmSelected,
@@ -113,6 +118,7 @@ export {
   GroupExtended,
   GroupMember,
   GroupMemberList,
+  GroupMemberListSection,
   GroupMessageConfig,
   GroupStats,
   GroupStatsActive,
@@ -127,13 +133,14 @@ export {
   LinkMetadata,
   Message,
   MessageEdit,
+  MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
   MessageMetadataFormattingGroupLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
-  MessageSettings,
   MessageSettingFilter,
+  MessageSettings,
   Notification,
   NotificationAction,
   Phrase,
@@ -141,6 +148,9 @@ export {
   Presence,
   Response,
   Search,
+  StageClientDurationUpdate,
+  StageClientGeneralUpdate,
+  StageClientViewerCountUpdate,
   Store,
   StorePage,
   StoreProduct,
@@ -149,12 +159,10 @@ export {
   StoreProductImage,
   StoreProductPartial,
   StoreSection,
-  StoreSectionVideo,
-  StoreSectionVideoAspect,
   Subscriber,
-  SubscriberExtended,
   SubscriberEvent,
   SubscriberEventAdditionalInfo,
+  SubscriberExtended,
   SubscriberSelectedCharm,
   TimerJob,
   Tip,
@@ -165,6 +173,8 @@ export {
   TipLeaderboardItem,
   TipLeaderboardSummary,
   TipSummary,
+  TopicSectionVideo,
+  TopicSectionVideoAspect,
   Translation,
   Validity,
   ValidUrl,
@@ -180,7 +190,7 @@ export default {
   AchievementUnlockable,
   AchievementUnlockableAdditionalInfo,
   Ad,
-  BlackListLink,
+  BlacklistLink,
   Charm,
   CharmExpiry,
   CharmSelected,
@@ -202,6 +212,7 @@ export default {
   GroupExtended,
   GroupMember,
   GroupMemberList,
+  GroupMemberListSection,
   GroupMessageConfig,
   GroupStats,
   GroupStatsActive,
@@ -216,13 +227,14 @@ export default {
   LinkMetadata,
   Message,
   MessageEdit,
+  MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
   MessageMetadataFormattingGroupLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
-  MessageSettings,
   MessageSettingFilter,
+  MessageSettings,
   Notification,
   NotificationAction,
   Phrase,
@@ -230,6 +242,9 @@ export default {
   Presence,
   Response,
   Search,
+  StageClientDurationUpdate,
+  StageClientGeneralUpdate,
+  StageClientViewerCountUpdate,
   Store,
   StorePage,
   StoreProduct,
@@ -238,12 +253,10 @@ export default {
   StoreProductImage,
   StoreProductPartial,
   StoreSection,
-  StoreSectionVideo,
-  StoreSectionVideoAspect,
   Subscriber,
-  SubscriberExtended,
   SubscriberEvent,
   SubscriberEventAdditionalInfo,
+  SubscriberExtended,
   SubscriberSelectedCharm,
   TimerJob,
   Tip,
@@ -254,6 +267,8 @@ export default {
   TipLeaderboardItem,
   TipLeaderboardSummary,
   TipSummary,
+  TopicSectionVideo,
+  TopicSectionVideoAspect,
   Translation,
   Validity,
   ValidUrl,

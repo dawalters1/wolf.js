@@ -92,7 +92,7 @@ export default async (client, message) => {
       return client.emit(
         Event.GROUP_MEMBER_UPDATE,
         group,
-        new GroupSubscriberUpdate(this.client,
+        new GroupSubscriberUpdate(client,
           {
             groupId: group.id,
             sourceId: action.instigatorId,

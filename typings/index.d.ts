@@ -111,12 +111,16 @@ export class WOLF {
     public websocket: Websocket;
 
     /**
-     * Login to WOLF
-     * @param email - Optional email if not storing in config file
-     * @param password - Optional password if not storing in config file
-     * @param onlineState - Optional onlineState if not storing in config file
+     * Login to WOLF using credentials stored in configuration
      */
-    public login(email?: string, password?: string, onlineState?: OnlineState): void;
+    public login(): void;
+    /**
+     * Login to WOLF
+     * @param email - The email belonging to the account
+     * @param password - The password belonging to the account
+     * @param onlineState - The onlineState to appear as
+     */
+    public login(email: string, password: string, onlineState: OnlineState): void;
     /**
      * Logout of WOLF
      */
@@ -431,6 +435,14 @@ export class DiscoveryHelper extends Base {
 
 export class EventHelper extends Base {
     private constructor(client);
+    /**
+     * Exposes the group event methods
+     */
+    public group: GroupEventHelper;
+    /**
+     * Exposes the subscriber event subscription methods
+     */
+    public subscription: EventSubscriptionHelper;
 
     /**
      * Get an event
@@ -447,12 +459,54 @@ export class EventHelper extends Base {
 export class GroupEventHelper extends Base {
     private constructor(client);
 
+    /**
+     * Get the groups event list
+     * @param targetGroupId - The ID of the group
+     * @param subscribe - Whether or not to subscribe to the groups event list
+     * @param forceNew - Whether or not to request new from the server
+     */
     public getList(targetGroupId: number, subscribe?: boolean, forceNew?: false): Promise<Array<Event>>;
-    //Incorrect response
-    public create(targetGroupId: number, title: string, startsAt: Date, endsAt: Date, shortDescription: string, longDescription: string, thumbnail: Buffer): Promise<Response<any>>
-    //Incorrect response
-    public update(targetGroupId: number, eventId: number, title: string, startsAt: Date, endsAt: Date, shortDescription: string, longDescription: string, imageUrl: string, thumbnail: Buffer): Promise<Response<any>>
+
+    /**
+     * Create an event without a thumbnail
+     * @param targetGroupId - The ID of the group
+     * @param eventData - The event data
+     */
+    public create(targetGroupId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
+    /**
+     * Create an event with a thumbnail
+     * @param targetGroupId - The ID of the group
+     * @param eventData - The event data
+     */
+    public create(targetGroupId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
+
+    /**
+     * Update an existing event using the existing thumbnail
+     * @param targetGroupId - The ID of the group
+     * @param eventId - The ID of the event
+     * @param eventData - The new event data
+     */
+    public update(targetGroupId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
+    /**
+     * Update an existing event using a new thumbnail
+     * @param targetGroupId - The ID of the group
+     * @param eventId - The ID of the event
+     * @param eventData - The new event data
+     */
+    public update(targetGroupId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
+
+    /**
+     * Update an events thumbnail
+     * @param eventId - The ID of the event
+     * @param thumbnail - The new thumbnail
+     */
     public updateThumbnail(eventId: number, thumbnail: Buffer): Promise<Response>
+
+    /**
+     * Cancel an event
+     * @param targetGroupId - The ID of the group
+     * @param eventId - The ID of the event
+     */
     public delete(targetGroupId: number, eventId: number): Promise<Response>
 }
 
@@ -816,7 +870,12 @@ export class StageHelper extends Base {
      * Get a groups stage settings
      * @param targetGroupId - The ID of the group
      */
-    public getSettings(targetGroupId: number): Promise<GroupAudioConfig>;
+    public getAudioConfig(targetGroupId: number): Promise<GroupAudioConfig>;
+    /**
+     * Get a groups stage settings
+     * @param targetGroupId - The ID of the group
+     */
+    public getAudioCount(targetGroupId: number): Promise<GroupAudioCounts>;
     /**
      * Play audio on stage
      * @param targetGroupId - The ID of the group (Must join first)
@@ -879,6 +938,11 @@ export class StageHelper extends Base {
      * @param volume - The volume value
      */
     public setVolume(targetGroupId: number, volume: number): Promise<void>;
+    /**
+    * Get the slot the bot is on
+    * @param targetGroupId - The ID of the group
+    */
+    public getSlotId(targetGroupId: number): Promise<number>;
 }
 
 export class StageRequestHelper extends Base {
@@ -1434,6 +1498,24 @@ export class Utility {
     public toReadableTime(language: string, time: number, type: 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): string;
 
 }
+
+export namespace Validator {
+
+    export function isType(arg: any, type: 'String' | 'Undefined' | 'Null' | 'Boolean' | 'Number' | 'BigInt' | 'Function' | 'Object'): boolean;
+    export function isNull(arg: any): boolean;
+    export function isNullOrUndefined(arg: any): boolean;
+    export function isNullOrWhitespace(arg: String): Boolean;
+    export function isLessThanOrEqualZero(arg: Number): Boolean;
+    export function isLessThanZero(arg: Number): Boolean;
+    export function isValidNumber(arg: String | Number, acceptDecimals: Boolean): Boolean;
+    export function isValidBoolean(arg: Number | Boolean): Boolean
+    export function isValidDate(arg: Date | Number): Boolean;
+    export function isValidHex(arg: string): Boolean;
+    export function isValidEmoji(arg: string): Boolean;
+    export function isValidUrl(api: WOLF, arg: String): Boolean
+}
+
+
 //#endregion
 
 //#region Models
@@ -1675,8 +1757,6 @@ export class Event extends Base {
     public endsAt: Date;
     public isRemoved: boolean;
     public attendanceCount: number;
-    public createdAt: Date;
-    public updatedAt: Date;
 
     toJSON(): Object;
 }
@@ -2167,6 +2247,28 @@ export class Search extends Base {
     public reason: string;
 
     toJSON(): Object;
+}
+
+export class StageClientDurationUpdate {
+    private constructor(data: object);
+
+    public targetGroupId: number;
+    public duration: number;
+}
+
+export class StageClientGeneralUpdate {
+    private constructor(data: object);
+
+    public targetGroupId: number;
+    public sourceSubscriberId: number;
+}
+
+export class StageClientViewerCountUpdate {
+    private constructor(data: object);
+
+    public targetGroupId: number;
+    public oldViewerCount: number;
+    public newViewerCount: number;
 }
 
 export class Store extends Base {
@@ -3041,55 +3143,55 @@ export interface ClientEvents {
     /**
      * Fires when a stage broadcast ends
      */
-    stageClientEnd: [data: { targetGroupId: number }],
+    stageClientEnd: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client connects
      */
-    stageClientConnected: [data: { targetGroupId: number }],
+    stageClientConnected: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is connecting
      */
-    stageClientConnecting: [data: { targetGroupId: number }],
+    stageClientConnecting: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client disconencts
      */
-    stageClientDisconnected: [data: { targetGroupId: number, sourceSubscriberId?: number }],
+    stageClientDisconnected: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage clients broadcast duration updates
      */
-    stageClientDuration: [data: { targetGroupId: number, duration: number }],
+    stageClientDuration: [data: StageClientDurationUpdate],
     /**
      * Fires when a stage client encounters an error
      */
-    stageClientError: [data: { targetGroupId: number, error: Error }],
+    stageClientError: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is kicked
      */
-    stageClientKicked: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    stageClientKicked: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is muted
      */
-    stageClientMuted: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    stageClientMuted: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is ready to broadcast
      */
-    stageClientReady: [data: { targetGroupId: number }],
+    stageClientReady: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client starts broadcasting
      */
-    stageClientStart: [data: { targetGroupId: number }],
+    stageClientStart: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is stopped
      */
-    stageClientStopped: [data: { targetGroupId: number }],
+    stageClientStopped: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client is unmuted
      */
-    stageClientUnmuted: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    stageClientUnmuted: [data: StageClientGeneralUpdate],
     /**
      * Fires when a stage client viewer count changes
      */
-    stageClientViewerCountChanged: [{ targetGroupId: number, oldCount: number, newCount: number }],
+    stageClientViewerCountChanged: [data: StageClientViewerCountUpdate],
     /**
      * Fires when the bots credit balance changes
      */

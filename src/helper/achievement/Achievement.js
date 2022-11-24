@@ -89,7 +89,7 @@ class Achievement extends Base {
     const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
 
     if (achievements.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._botConfig.get('batching.length'));
+      const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
