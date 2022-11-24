@@ -1,6 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { Capability, Event } from '../constants/index.js';
 import GroupMemberList from '../models/GroupMemberList.js';
+import GroupSubscriberUpdate from '../models/GroupSubscriberUpdate.js';
 
 const toCapability = (subscriber, group, type) => {
   switch (type) {
@@ -91,12 +92,14 @@ export default async (client, message) => {
       return client.emit(
         Event.GROUP_MEMBER_UPDATE,
         group,
-        {
-          groupId: group.id,
-          sourceId: action.instigatorId,
-          targetId: message.sourceSubscriberId,
-          action: action.type
-        }
+        new GroupSubscriberUpdate(this.client,
+          {
+            groupId: group.id,
+            sourceId: action.instigatorId,
+            targetId: message.sourceSubscriberId,
+            action: action.type
+          }
+        )
       );
     }
   }

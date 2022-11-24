@@ -29,7 +29,8 @@ class Stage extends Base {
         Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
         {
           targetGroupId: oldCount.id,
-          count: newCount.consumerCount
+          oldCount: oldCount.consumerCount,
+          newCount: newCount.consumerCount
         }
       );
     });

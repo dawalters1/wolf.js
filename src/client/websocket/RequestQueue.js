@@ -1,5 +1,6 @@
 import { Event } from '../../constants/index.js';
 
+// TODO: rewrite this jank for packet sent/failed/retry
 class RequestQueue {
   constructor (client, config) {
     this.client = client;
@@ -41,11 +42,15 @@ class RequestQueue {
 
       const item = this.queue.shift();
 
-      this.client.websocket.socket.emit(item.request.command, item.request.body, response => {
-        item.resolve(response);
-        this.processing = false;
-        this.dequeue();
-      });
+      this.client.websocket.socket.emit(item.request.command, item.request.body,
+        response => {
+          item.resolve(response);
+          this.processing = false;
+          this.dequeue();
+        }
+      );
+
+      this.client.emit(Event.PACKET_SENT, item.request.command, item.request.body);
     }, this.getWaitTime());
 
     return Promise.resolve();

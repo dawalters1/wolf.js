@@ -36,7 +36,7 @@ class Processor {
       return handler(this.client, body);
     }
 
-    return this.client.emit(Event.INTERNAL_ERROR, `Unhandled socket event: ${eventString}`);
+    return this.client.emit(Event.INTERNAL_ERROR, new Error(`Unhandled socket event: ${eventString}`));
   }
 }
 
