@@ -31,6 +31,7 @@ import GroupStatsActive from './GroupStatsActive.js';
 import GroupStatsDetail from './GroupStatsDetail.js';
 import GroupStatsTop from './GroupStatsTop.js';
 import GroupStatsTrend from './GroupStatsTrend.js';
+import GroupSubscriberUpdate from './GroupSubscriberUpdate.js';
 import IconInfo from './IconInfo.js';
 import IconInfoAvailableSize from './IconInfoAvailableSize.js';
 import IdHash from './IdHash.js';
@@ -118,6 +119,7 @@ export {
   GroupStatsDetail,
   GroupStatsTop,
   GroupStatsTrend,
+  GroupSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
@@ -206,6 +208,7 @@ export default {
   GroupStatsDetail,
   GroupStatsTop,
   GroupStatsTrend,
+  GroupSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,

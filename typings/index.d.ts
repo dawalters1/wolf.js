@@ -122,7 +122,7 @@ export class WOLF {
      */
     public logout(): Promise<void>;
 
-    //public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
+    public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => Promise<void>): this;
 
 }
 
@@ -1580,8 +1580,15 @@ export class CommandContext extends Base {
     public timestamp: number;
     public type: MessageType;
 
+    /**
+     * Gets the command subscriber
+     */
     public subscriber(): Promise<Subscriber>;
+    /**
+     * Gets the command group
+     */
     public group(): Promise<Group>;
+
     public reply(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
     public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
 
@@ -1896,6 +1903,17 @@ export class GroupStatsTrend extends Base {
     public day: number;
     public hour: number;
     public lineCount: number;
+
+    toJSON(): Object;
+}
+
+export class GroupSubscriberUpdate extends Base {
+    private constructor(client: WOLF, data: object)
+
+    public groupId: number;
+    public sourceId: number;
+    public targetId: number;
+    public action: string;
 
     toJSON(): Object;
 }
@@ -2830,5 +2848,284 @@ export interface WolfstarTalent {
 
 //#region Client events
 
+export interface ClientEvents {
+
+    /**
+     * Client connected to the server
+     */
+    connected: [],
+    /**
+     * Client is connecting to the server
+     */
+    connecting: [],
+    /**
+     * Client encountered an occurred while connecting to the server
+     */
+    connectError: [error: Error],
+    /**
+     * Client encountered a timeout while connecting to the server
+     */
+    connectTimeout: [error: Error],
+    /**
+     * Client disconnected from the server
+     */
+    disconnected: [reason: string],
+    /**
+     * An websocket error occurred
+     */
+    error: [error: Error],
+    /**
+     * Fires when a group audio count updates
+     */
+    groupAudioCountUpdate: [oldCounts: GroupAudioCounts, newCounts: GroupAudioCounts],
+    /**
+     * Fired when a group audio request is added
+     */
+    groupAudioRequestAdd: [request: GroupAudioSlotRequest],
+    /**
+     * Fired when a group audio request list is cleared
+     */
+    groupAudioRequestListClear: [group: Group, subscriberId: number],
+    /**
+     * Fired when a group audio request is deleted
+     */
+    groupAudioRequestDelete: [group: Group, request: GroupAudioSlotRequest],
+    /**
+     * Fired when a group audio request expires
+     */
+    groupAudioRequestExpire: [group: Group, request: GroupAudioSlotRequest],
+    /**
+     * Fired when a group audio slot is updated
+     */
+    groupAudioSlotUpdate: [oldSlot: GroupAudioSlot, newSlot: GroupAudioSlot],
+    /**
+     * Fired when a groups audio configuration is updated
+     */
+    groupAudioUpdate: [oldConfig: GroupAudioConfig, newConfig: GroupAudioConfig],
+    /**
+     * Fired when a group event is created
+     */
+    groupEventCreate: [group: Group, event: Event],
+    /**
+     * Fired when a group event is deleted
+     */
+    groupEventDelete: [group: Group, event: Event],
+    /**
+     * Fired when a group event is updated
+     */
+    groupEventUpdate: [group: Group, oldEvent: Event, newEvent: Event],
+    /**
+     * Fired when a group member joins
+     */
+    groupMemberAdd: [group: Group, subscriber: Subscriber],
+    /**
+     * Fired when a group member leaves
+     */
+    groupMemberDelete: [group: Group, subscriber: Subscriber],
+    /**
+     * Fired when a group member is updated
+     */
+    groupMemberUpdate: [group: Group, update: GroupSubscriberUpdate],
+    /**
+     * Fired when a group message is received
+     */
+    groupMessage: [message: Message],
+    /**
+     * Fired when a group message is updated
+     */
+    groupMessageUpdate: [message: Message],
+    /**
+     * Fired when a group message is tipped
+     */
+    groupTipAdd: [tip: Tip],
+    /**
+     * Fired when a group profile is updated
+     */
+    groupUpdate: [oldGroup: Group, newGroup: Group],
+    /**
+     * Fired when an internal framework error occurs
+     */
+    internalError: [error: Error],
+    /**
+     * Fires when the bot joins a group
+     */
+    joinedGroup: [group: Group, subscriber: Subscriber],
+    /**
+     * Fires when the bot leaves a group
+     */
+    leftGroup: [group: Group, subscriber: Subscriber],
+    /**
+     *
+     */
+    //log: [],
+    /**
+     * Fires when login fails
+     */
+    loginFailed: [response: Response],
+    /**
+     * Fires when login succeeds
+     */
+    loginSuccess: [response: Response<Subscriber>],
+    /**
+     * Fires when a notification is received
+     */
+    notificationReceived: [Notification: Notification],
+    /**
+     * Fires when a packet is received from the server
+     */
+    packetReceived: [eventString: string, data: object],
+    /**
+     * Fires when a packet is sent to the server
+     */
+    packetSent: [command: string, body: object],
+    /**
+     *
+     */
+    packetFailed: [],
+    /**
+     *
+     */
+    packetRetry: [],
+    /**
+     * Fires when the server pings
+     */
+    ping: [],
+    /**
+     * Fires when the client pongs
+     */
+    pong: [latency: number],
+    /**
+     * Fires when a subscribers presence updates
+     */
+    presenceUpdate: [oldPresence: Presence, newPresence: Presence],
+    /**
+     * Fires when a private message is received
+     */
+    privateMessage: [message: Message],
+    /**
+     * Fires when a subscriber accepts a private message request
+     */
+    privateMessageAcceptResponse: [subscriber: Subscriber],
+    /**
+     * Fires when a private message is updated
+     */
+    privateMessageUpdate: [],
+    /**
+     * Fires when a private message is tipped
+     */
+    privateTipAdd: [tip: Tip],
+    /**
+     * Fires when the clients internal rate limit is triggered
+     */
+    rateLimit: [rateLimit: { queue: string, until: Date }],
+    /**
+     * Fires when the client is ready for uses
+     */
+    ready: [],
+    /**
+     * Fires when the client reconnects to the server and is ready for use
+     */
+    resume: [],
+    /**
+     * Fires when the client reconnects to the server
+     */
+    reconnected: [],
+    /**
+     * Fires when the client is attempting to reconnect to the server
+     */
+    reconnecting: [attempt: number],
+    /**
+     * Fires when the client fails to reconnect to the server
+     */
+    reconnectFailed: [error: Error],
+    /**
+     * Fires when a stage broadcast ends
+     */
+    stageClientEnd: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client connects
+     */
+    stageClientConnected: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client is connecting
+     */
+    stageClientConnecting: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client disconencts
+     */
+    stageClientDisconnected: [data: { targetGroupId: number, sourceSubscriberId?: number }],
+    /**
+     * Fires when a stage clients broadcast duration updates
+     */
+    stageClientDuration: [data: { targetGroupId: number, duration: number }],
+    /**
+     * Fires when a stage client encounters an error
+     */
+    stageClientError: [data: { targetGroupId: number, error: Error }],
+    /**
+     * Fires when a stage client is kicked
+     */
+    stageClientKicked: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    /**
+     * Fires when a stage client is muted
+     */
+    stageClientMuted: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    /**
+     * Fires when a stage client is ready to broadcast
+     */
+    stageClientReady: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client starts broadcasting
+     */
+    stageClientStart: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client is stopped
+     */
+    stageClientStopped: [data: { targetGroupId: number }],
+    /**
+     * Fires when a stage client is unmuted
+     */
+    stageClientUnmuted: [data: { targetGroupId: number, sourceSubscriberId: number }],
+    /**
+     * Fires when a stage client viewer count changes
+     */
+    stageClientViewerCountChanged: [{ targetGroupId: number, oldCount: number, newCount: number }],
+    /**
+     * Fires when the bots credit balance changes
+     */
+    storeCreditBalanceUpdate: [oldBalance: number, newBalance: number],
+    /**
+     * Fires when a user is added to the bots blocked list
+     */
+    subscriberBlockAdd: [contact: Contact],
+    /**
+     * Fires when a user is removed from the bots blocked list
+     */
+    subscriberBlockDelete: [contact: Contact],
+    /**
+     * Fires when a user is added as a contact
+     */
+    subscriberContactAdd: [contact: Contact],
+    /**
+     * Fires when a user is removed as a contact
+     */
+    subscriberContactDelete: [contact: Contact],
+    /**
+     * Fires when the bot subscribes to an event
+     */
+    subscriberGroupEventAdd: [event: Event],
+    /**
+     * Fires when the bot unsubscribes from an event
+     */
+    subscriberGroupEventDelete: [event: Event],
+    /**
+     * Fires when a subscribers profile is updated
+     */
+    subscriberUpdate: [oldSubscriber: Subscriber, newSubscriber: Subscriber],
+    /**
+     * Fires when the client receives the welcome event
+     */
+    welcome: [welcome: Welcome],
+}
 
 //#endregion
