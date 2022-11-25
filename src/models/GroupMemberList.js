@@ -39,6 +39,17 @@ class GroupMemberList {
     return Promise.resolve();
   }
 
+  async _onSubscriberUpdate (subscriber) {
+    await Promise.all([
+      this._privileged.updateSubscriber(subscriber),
+      this._regular.updateSubscriber(subscriber),
+      this._silenced.updateSubscriber(subscriber),
+      this._banned.updateSubscriber(subscriber),
+      this._bots.updateSubscriber(subscriber),
+      this._misc.updateSubscriber(subscriber)
+    ]);
+  }
+
   async _onLeave (subscriber) {
     return await Promise.all([
       this._privileged.remove(subscriber),

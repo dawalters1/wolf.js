@@ -26,7 +26,7 @@ class CommandHandler {
     this.client.on('message', async (message) => {
       const commandSettings = client.config.framework.commands;
 
-      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (!commandSettings.processOwnMessages && message.sourceSubscriberId === this.client.currentSubscriber.id)) {
+      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (message.sourceSubscriberId === this.client.currentSubscriber.id && client.config.framework.commands.ignore.self)) {
         return Promise.resolve();
       }
 
@@ -67,7 +67,7 @@ class CommandHandler {
     commands = Array.isArray(commands) ? commands : [commands];
 
     if (commands.length === 0) {
-      throw new WOLFAPIError('commands cannot be empty', { commands });
+      throw new WOLFAPIError('commands cannot be an empty array', { commands });
     }
 
     this._commands = commands;

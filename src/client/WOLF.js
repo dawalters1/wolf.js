@@ -10,6 +10,7 @@ import Contact from '../helper/contact/Contact.js';
 import Discovery from '../helper/discovery/Discovery.js';
 import Event from '../helper/event/Event.js';
 import Group from '../helper/group/Group.js';
+import Log from '../helper/log/Log.js';
 import Messaging from '../helper/messaging/Messaging.js';
 import Misc from '../helper/misc/Misc.js';
 import Notification from '../helper/notification/Notification.js';
@@ -47,6 +48,7 @@ class WOLF extends EventEmitter {
     this.discovery = new Discovery(this);
     this.event = new Event(this);
     this.group = new Group(this);
+    this.log = new Log(this);
     this.messaging = new Messaging(this);
     this.misc = new Misc(this);
     this.notification = new Notification(this);
