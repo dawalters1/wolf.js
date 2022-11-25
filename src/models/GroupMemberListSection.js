@@ -72,6 +72,14 @@ class GroupMemberListSection extends Base {
     return this.members.splice(this.members.findIndex((member) => member.id === subscriberId), 1);
   }
 
+  async updateSubscriber (subscriber) {
+    if (!this.members.some((member) => member.id === subscriber.id)) {
+      return Promise.resolve();
+    }
+
+    this.members.find((member) => member.id === subscriber.id).hash = subscriber.hash;
+  }
+
   async update (subscriber, capabilities) {
     // If capabilities list, check if compatible and update if exists, if not compatible remove if exists
     if (this.capabilities && !this.capabilities.includes(capabilities)) {

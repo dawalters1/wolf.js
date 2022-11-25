@@ -62,6 +62,10 @@ export class WOLF {
     */
     public group: GroupHelper;
     /**
+     * Expoes the Logging methods
+     */
+    public log: LogHelper;
+    /**
     * Exposes the Messaging methods
     */
     public messaging: MessagingHelper;
@@ -685,6 +689,31 @@ export class GroupMemberHelper extends Base {
      * @param subscriberId - The ID of the subscriber
      */
     public kick(targetGroupId: number, subscriberId: number): Promise<Response>;
+}
+
+export class LogHelper extends Base {
+    public constructor(client: WOLF);
+
+    /**
+     * Log a debug message
+     * @param message - The message
+     */
+    public debug(message: string): void;
+    /**
+     * Log a error message
+     * @param message - The message
+     */
+    public error(message: string): void;
+    /**
+     * Log a warn message
+     * @param message - The message
+     */
+    public warn(message: string): void;
+    /**
+     * Log a info message
+     * @param message - The message
+     */
+    public info(message: string): void;
 }
 
 export class MessagingHelper extends Base {
@@ -2798,6 +2827,14 @@ export interface Language {
     BULGARIAN: 45,
 }
 
+export interface LogLevel {
+    OFF: 0,
+    ERROR: 1,
+    WARN: 2,
+    INFO: 3,
+    DEBUG: 4
+}
+
 export interface LoginType {
     EMAIL: "email",
     GOOGLE: "google",
@@ -3057,9 +3094,9 @@ export interface ClientEvents {
      */
     leftGroup: [group: Group, subscriber: Subscriber],
     /**
-     *
+     * Fires when a log is saved
      */
-    //log: [],
+    log: [level: LogLevel, message: string],
     /**
      * Fires when login fails
      */

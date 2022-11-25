@@ -6,6 +6,7 @@ const callbacks = {
   PRIVATE: 'private',
   BOTH: 'both'
 };
+
 const validation = async (command) => {
   if (!(command instanceof (await import('./Command.js')).default)) {
     throw new WOLFAPIError('object must be an instance of command', { command });
