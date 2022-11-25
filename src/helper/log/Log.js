@@ -8,7 +8,7 @@ class Log extends Base {
   constructor (client) {
     super(client);
 
-    process.on('unhandledRejection', (error) => this.client.emit(Event.LOG, LogLevel.FATAL, error));
+    process.on('unhandledRejection', (error) => this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error }));
   }
 
   debug (message) {
@@ -18,7 +18,7 @@ class Log extends Base {
       throw new WOLFAPIError('message cannot be null or empty', { message });
     }
 
-    return this.client.emit(Event.LOG, LogLevel.DEBUG, message);
+    return this.client.emit(Event.LOG, { level: LogLevel.DEBUG, message });
   }
 
   info (message) {
@@ -28,7 +28,7 @@ class Log extends Base {
       throw new WOLFAPIError('message cannot be null or empty', { message });
     }
 
-    return this.client.emit(Event.LOG, LogLevel.INFO, message);
+    return this.client.emit(Event.LOG, { level: LogLevel.INFO, message });
   }
 
   warn (message) {
@@ -38,7 +38,7 @@ class Log extends Base {
       throw new WOLFAPIError('message cannot be null or empty', { message });
     }
 
-    return this.client.emit(Event.LOG, LogLevel.WARN, message);
+    return this.client.emit(Event.LOG, { level: LogLevel.WARN, message });
   }
 
   error (message) {
@@ -48,7 +48,7 @@ class Log extends Base {
       throw new WOLFAPIError('message cannot be null or empty', { message });
     }
 
-    return this.client.emit(Event.LOG, LogLevel.ERROR, message);
+    return this.client.emit(Event.LOG, { level: LogLevel.ERROR, message });
   }
 }
 
