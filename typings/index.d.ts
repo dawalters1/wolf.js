@@ -3096,7 +3096,7 @@ export interface ClientEvents {
     /**
      * Fires when a log is saved
      */
-    log: [level: LogLevel, message: string],
+    log: [{ level: LogLevel, message: string }],
     /**
      * Fires when login fails
      */
