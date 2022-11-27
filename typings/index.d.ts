@@ -1,14 +1,14 @@
 /**
  * Typings support for 1.0.0
  * Created: 8/11/21
- * Updated: 2/3/22
+ * Updated: 27/11/22
  */
 
 import type { Readable } from "stream";
-  
+
 export class ResponseObject<T = undefined> {
   private constructor();
- 
+
   /**
    * The status response code of the request
    */
@@ -21,21 +21,21 @@ export class ResponseObject<T = undefined> {
    * Headers provided by the server
    */
   public headers: Object;
- 
+
   /**
    * Whether or not the request was successful
    */
   public success: Boolean;
 }
- 
- //#region Command
+
+//#region Command
 export class Command {
   /**
    * @param trigger - The phrase name of the command
    * @param commandCallBacks - The callback object belonging to the command
    * @param children - The children of the command
    */
-  public constructor(trigger: String, commandCallBacks: {group: (command: CommandObject, ...args: any) => void,  private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
+  public constructor(trigger: String, commandCallBacks: { group: (command: CommandObject, ...args: any) => void, private: (command: CommandObject, ...args: any) => void, both: (command: CommandObject, ...args: any) => void }, children: Array<Command>)
 }
 
 export class CommandObject {
@@ -80,17 +80,17 @@ export class CommandHandler {
    * Determine whether or not the message starts with a command
    * @param message - The message
    */
-  public isCommand(message: MessageObject) : Boolean;
+  public isCommand(message: MessageObject): Boolean;
   /**
    * Register all the commands for the bot
    * @param Commands - Array of commands
    */
   public register(Commands: Command): void;
 }
- 
- //#endregion
- 
- //#region Objects
+
+//#endregion
+
+//#region Objects
 export class AchievementObject {
   /**
    * The percentage of users who earned the achievement
@@ -133,18 +133,18 @@ export class AchievementObject {
 
 export class AchievementUnlockableObject {
   public id: Number;
-  public additionalInfo: 
-  {
-    eTag: String,  
-    /**
-     * 
-     */
-    awardedAt: Date,  
-    /**
-     * 
-     */
-    categoryId: Number 
-  }
+  public additionalInfo:
+    {
+      eTag: String,
+      /**
+       *
+       */
+      awardedAt: Date,
+      /**
+       *
+       */
+      categoryId: Number
+    }
 }
 
 export class AchievementCategoryObject {
@@ -189,7 +189,7 @@ export class CharmSubscriberStatisticsObject {
   public totalLifeTime: Number;
 }
 
-export class CharmSubscriberSummaryObject{
+export class CharmSubscriberSummaryObject {
   public charmId: Number;
   public expireTime: Date;
   public giftCount: Number;
@@ -202,14 +202,14 @@ export class ConfigCommandSettingsObject {
   public processOwnMessages: Boolean;
 }
 
-export class ConfigSubscriptionsObject{
+export class ConfigSubscriptionsObject {
   /**
    * subscribe to tipping messages
    */
   public groupTipping: Boolean;
-    /**
-   * subscribe to group messages
-   */
+  /**
+ * subscribe to group messages
+ */
   public groupMessages: Boolean;
   /**
    * subscribe to private messages
@@ -221,7 +221,7 @@ export class ConfigMessageSettingsObject {
   public processOwnMessages: Boolean;
 
   public subscriptions: ConfigSubscriptionsObject;
-} 
+}
 
 export class ConfigAppObject {
   public developerId: Number;
@@ -239,7 +239,7 @@ export class ConfigObject {
    */
   public get(path: String): any;
 }
- 
+
 export class ConfigOptionsObject {
   public keyword: String;
   public commandSettings: {
@@ -266,27 +266,27 @@ export class DiscoveryRecipeObject {
 
 export class DiscoverySectionElementObject {
   public onInvalid: String;
-  public aspect: 
-  {
-    width: Number;
-    height: Number,
-  };
-  public link: 
-  {
-    url: String,
-    text: String,
-  }
+  public aspect:
+    {
+      width: Number;
+      height: Number,
+    };
+  public link:
+    {
+      url: String,
+      text: String,
+    }
   public autoplay: Boolean;
   public muted: Boolean;
   public loop: Boolean;
   public context: String;
   public url: String;
-  public recipe: 
-  {
-    id: Number,
-    min: Number;
-    max: Number;
-  }
+  public recipe:
+    {
+      id: Number,
+      min: Number;
+      max: Number;
+    }
   public size: String;
   public style: String;
   public type: String;
@@ -296,16 +296,16 @@ export class DiscoverySectionElementObject {
 
 export class DiscoverySectionObject {
   public id: Number;
-  public validity :
-  {
-    fromTime: Date;
-    endTime: Date,
-  }
+  public validity:
+    {
+      fromTime: Date;
+      endTime: Date,
+    }
   /**
    * Key Value pairs
    * Refer to elementType enum
    */
-  public elements: { [key:string]: DiscoverySectionElementObject }
+  public elements: { [key: string]: DiscoverySectionElementObject }
 }
 
 export class DiscoveryObject {
@@ -313,16 +313,16 @@ export class DiscoveryObject {
   public name: String;
   public section: Array<DiscoverySectionObject>;
 }
- 
+
 export class EventGroupObject {
   public id: Number;
-  public additionalInfo :
-  {
-    eTag: String;
-    startsAt: Date;
-    endsAt: Date
-  }
- 
+  public additionalInfo:
+    {
+      eTag: String;
+      startsAt: Date;
+      endsAt: Date
+    }
+
   /**
    * Only available when creating, updating events
    */
@@ -363,12 +363,12 @@ export class GroupProfileBuilder {
   public setCategory(category: Category): GroupProfileBuilder;
   public setLanguage(language: Language): GroupProfileBuilder;
   public setEntryLevel(entryLevel: Number): GroupProfileBuilder;
-  public setAdvancedAdmin (isEnabled: Boolean): GroupProfileBuilder;
+  public setAdvancedAdmin(isEnabled: Boolean): GroupProfileBuilder;
   public setDiscoverable(isEnabled: Boolean): GroupProfileBuilder;
   public setConversationPreview(isEnabled: Boolean): GroupProfileBuilder;
   public setStageState(isEnabled: Boolean): GroupProfileBuilder;
   public setStageLevel(level: Number): GroupProfileBuilder;
-  public create() : Promise<ResponseObject>;
+  public create(): Promise<ResponseObject>;
   public save(): Promise<ResponseObject>;
 }
 
@@ -399,13 +399,13 @@ export class GroupAudioCountObject {
   public consumerCount: Number;
   public broadcasterCount: Number;
 }
- 
+
 export class GroupAudioRequestObject {
   public slotId: Number;
   public reservedOccupierId: Number;
   public reservedExpiresAt: Date;
 }
- 
+
 export class GroupAudioSlotObject {
   public id: Number;
   public locked: Number;
@@ -448,9 +448,9 @@ export class GroupObject {
   public inGroup: Boolean;
   public capabilities: Capability;
   public language: String;
- 
+
   public toDisplayName(withId: Boolean): String;
-  public sendMessage(content: String | Buffer, opts : MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
+  public sendMessage(content: String | Buffer, opts: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
   public update(): GroupProfileBuilder;
   public join(password: String): Promise<ResponseObject>;
   public leave(): Promise<ResponseObject>;
@@ -481,33 +481,33 @@ export class GroupStatsActiveSubscriberObject {
 export class GroupStatsTopSubscriberObject {
   public nickname: String;
   public percentage: Number;
-  public subId: Number; 
+  public subId: Number;
   public value: Number;
   public randomQoute: String;
 }
 
 export class GroupStatsObject {
-  public details : 
-  {
-    actionCount: Number;
-    emoticonCount: Number;
-    happyCount: Number;
-    id: Number;
-    imageCount: Number;
-    lineCount: Number;
-    memberCount: Number;
-    name: String;
-    owner: {subId: Number, level: Number, nickname: String}
-    packCount: Number;
-    questionCount: Number;
-    sadCount: Number;
-    spokenCount: Number;
-    swearCount: Number;
-    textCount: Number;
-    timestamp: Number;
-    voiceCount: Number;
-    wordCount: Number;
-  };
+  public details:
+    {
+      actionCount: Number;
+      emoticonCount: Number;
+      happyCount: Number;
+      id: Number;
+      imageCount: Number;
+      lineCount: Number;
+      memberCount: Number;
+      name: String;
+      owner: { subId: Number, level: Number, nickname: String }
+      packCount: Number;
+      questionCount: Number;
+      sadCount: Number;
+      spokenCount: Number;
+      swearCount: Number;
+      textCount: Number;
+      timestamp: Number;
+      voiceCount: Number;
+      wordCount: Number;
+    };
   public next30: Array<GroupStatsActiveSubscriberObject>;
   public top25: Array<GroupStatsActiveSubscriberObject>;
   public topAction: Array<GroupStatsTopSubscriberObject>;
@@ -519,9 +519,9 @@ export class GroupStatsObject {
   public topSwear: Array<GroupStatsTopSubscriberObject>;
   public topText: Array<GroupStatsTopSubscriberObject>;
   public topWord: Array<GroupStatsTopSubscriberObject>;
-  public trends:  Array<{ day: number, lineCount: Number}>
-  public trendsDay:  Array<{ day: number, lineCount: Number}>
-  public trendsHour: Array<{ hour: number, lineCount: Number}>
+  public trends: Array<{ day: number, lineCount: Number }>
+  public trendsDay: Array<{ day: number, lineCount: Number }>
+  public trendsHour: Array<{ hour: number, lineCount: Number }>
 }
 
 export class IdHashObject {
@@ -534,11 +534,11 @@ export class IdHashObject {
 }
 
 export class LinkMetadataObject {
-  public description: String; 
-  public domain: String; 
-  public imageSize: String; 
-  public imageUrl: String; 
-  public isOfficial: Boolean; 
+  public description: String;
+  public domain: String;
+  public imageSize: String;
+  public imageUrl: String;
+  public isOfficial: Boolean;
   public title: String
 }
 
@@ -547,14 +547,14 @@ export class MessageLinkingObject {
   public end: Number;
   public value: String | Number;
   public MessageLinkingType: MessageLinkingType
-} 
+}
 
 export class MessageSettingsObject {
-  public spamFilter: 
-  {
-    enabled: Boolean;
-    tier: MessageFilterTier
-  }
+  public spamFilter:
+    {
+      enabled: Boolean;
+      tier: MessageFilterTier
+    }
 }
 
 export class MessageOptionsMessageFormattingObject {
@@ -636,7 +636,7 @@ export class MessageEditObject {
 export class MessageObject {
   public id: string;
   public body: String;
-  public sourceSubscriberId:  Number;
+  public sourceSubscriberId: Number;
   public targetGroupId: Number;
   public embeds: Array<MessageEmbedObject>;
   public metadata: MessageMetadataObject;
@@ -648,16 +648,16 @@ export class MessageObject {
 }
 
 export class NotificationObject {
-  public actions: 
-  Array<
-    {
-      id: Number,
-      titleText: String;
-      actionUrl: String;
-      external: Boolean;
-      imageUrl: String
-    }
-  >;
+  public actions:
+    Array<
+      {
+        id: Number,
+        titleText: String;
+        actionUrl: String;
+        external: Boolean;
+        imageUrl: String
+      }
+    >;
   public endAt: Date;
   public favourite: Boolean;
   public global: Boolean;
@@ -687,13 +687,13 @@ export class PhraseCountObject {
   /**
    * example: {"en": 15, "ar": 4}
    */
-  public countByLanguage: { [key: string]: number}
+  public countByLanguage: { [key: string]: number }
   public total: Number;
 }
 
 export class SearchObject {
   public type: SearchType;
-  public id: Number; 
+  public id: Number;
   public hash: String;
   public reason: String
 }
@@ -703,7 +703,7 @@ export class StageGroupObject {
   public expireTime: Date;
 }
 
-export class StageObject{
+export class StageObject {
   public id: Number;
   public name: String;
   public schemaUrl: String;
@@ -727,14 +727,14 @@ export class StageSlotRequestObject {
   public subscriberId: Number;
   public hash: String;
   public expiresAt: Date;
-}  
+}
 
 export class SubscriberProfileBuilder {
   private constructor(api: WOLFBot, subscriber: SubscriberObject);
   public setNickname(nickname: String): SubscriberProfileBuilder;
-  public setAbout(about: String) : SubscriberProfileBuilder;
+  public setAbout(about: String): SubscriberProfileBuilder;
   public setName(name: String): SubscriberProfileBuilder;
-  public setStatus(status: String) : SubscriberProfileBuilder;
+  public setStatus(status: String): SubscriberProfileBuilder;
   public setLanguage(language: Language): SubscriberProfileBuilder;
   public setRelationship(relationship: Relationship): SubscriberProfileBuilder;
   public setGender(gender: Gender): SubscriberProfileBuilder;
@@ -747,21 +747,21 @@ export class SubscriberProfileBuilder {
 
 export class SubscriberObject {
   private constructor(api: WOLFBot, subscriber: SubscriberObject);
- 
+
   public exists: Boolean;
   public charms: { selectedList: Array<CharmSelectedObject> };
   public deviceType: DeviceType;
-  public extended : 
-  {  
-    about: String;  
-    gender: Gender;   
-    language: Language; 
-    lookingFor: LookingFor;  
-    name: String; 
-    relationship: Relationship; 
-    urls: Array<String>; 
-    utcOffset: Number;
-  };
+  public extended:
+    {
+      about: String;
+      gender: Gender;
+      language: Language;
+      lookingFor: LookingFor;
+      name: String;
+      relationship: Relationship;
+      urls: Array<String>;
+      utcOffset: Number;
+    };
   public hash: String;
   public icon: Number;
   public id: Number;
@@ -784,7 +784,7 @@ export class TimerJobObject {
 
 export class TipDetailsObject {
   public id: Number;
-  public charmList: Array<TipCharmObject>; 
+  public charmList: Array<TipCharmObject>;
   public version: Number;
 }
 
@@ -794,7 +794,7 @@ export class TipSummaryObject {
   public version: Number;
 }
 
-export class TipContextObject{
+export class TipContextObject {
   public type: String;
   public id: Number;
 }
@@ -834,11 +834,11 @@ export class PresenceObject {
 }
 
 export class WelcomeBannerObject {
-  public notification:  { [key:string]: Object };
-  public promotion:  { [key:string]: Object };
+  public notification: { [key: string]: Object };
+  public promotion: { [key: string]: Object };
 }
 
-export class WelcomeEndpointConfigObject {  
+export class WelcomeEndpointConfigObject {
   public avatarEndpoint: String;
   public mmsUploadEndpoint: String;
   public banner: WelcomeBannerObject;
@@ -851,13 +851,22 @@ export class WelcomeObject {
   public endpointConfig: WelcomeEndpointConfigObject;
   public loggedInUser: SubscriberObject;
 }
- //#endregion
- 
- //#region Client Typings
- 
+
+export class WolfstarsObject {
+  public maxListeners: number;
+  public shows: number;
+  public subscriberId: number;
+  public talentList: Array<WolfstarTalent>;
+  public totalListeners: number;
+  public exists: boolean;
+}
+//#endregion
+
+//#region Client Typings
+
 export class Handler {
   private constructor();
- 
+
   private _handlers: Object;
   /**
    * @param eventName - The eventString name
@@ -871,12 +880,12 @@ export class Websocket {
   /**
    * Initialise client connections
    */
-  private _init() : void;
+  private _init(): void;
   /**
    * Handles wildcard socket events
    */
-  private _handler : Handler;
- 
+  private _handler: Handler;
+
   /**
    * Send a request to the server
    * @param command - The command
@@ -887,7 +896,7 @@ export class Websocket {
 
 export class MultiMediaService {
   private constructor();
- 
+
   private _getCredentials(attempt: Number): Object;
   private _sendRequest(route: String, body: Object, attempt: Number): Promise<ResponseObject>;
   /**
@@ -922,12 +931,12 @@ export class MultiMediaService {
 
 export class WOLFBot {
   public constructor();
- 
+
   public websocket: Websocket;
   /**
    * @ignore
    */
-  private multiMediaService(): MultiMediaService; 
+  private multiMediaService(): MultiMediaService;
   /**
    * Exposes the commandHandler methods
    */
@@ -938,75 +947,77 @@ export class WOLFBot {
   public achievement(): Achievement;
   /**
    * Exposes the authorization methods
-   */    
+   */
   public authorization(): Authorization;
   /**
    * Exposes the banned methods
-   */    
+   */
   public banned(): Banned;
   /**
    * Exposes the blocked methods
-   */    
+   */
   public blocked(): Blocked;
   /**
    * Exposes the charm methods
-   */        
+   */
   public charm(): Charm;
   /**
    * Exposes the contact methods
-   */  
+   */
   public contact(): Contact;
   /**
    * Exposes the discovery methods
-   */      
+   */
   public discovery(): Discovery;
   /**
    * Exposes the event methods
-   */          
+   */
   public event(): Event;
   /**
    * Exposes the group methods
-   */       
+   */
   public group(): Group;
   /**
    * Exposes the messaging methods
-   */          
+   */
   public messaging(): Messaging;
   /**
    * Exposes the notification methods
-   */     
+   */
   public notification(): Notification;
   /**
    * Exposes the phrase methods
-   */ 
+   */
   public phrase(): Phrase;
   /**
    * Exposes the stage methods
-   */ 
+   */
   public stage(): Stage;
   /**
    * Exposes the store methods
-   */     
+   */
   public store(): Store;
   /**
    * Exposes the subscriber methods
-   */ 
+   */
   public subscriber(): Subscriber;
   /**
    * Exposes the tipping methods
-   */    
+   */
   public tipping(): Tipping;
- 
+
+  public topic(): Topic;
+
   /**
    * Login to an account
    * @param email - The email belonging to the account
-   * @param password - The password belonging to the account 
-   * @param onlineState - The online state to appear as 
-   * @param loginType - The account type 
+   * @param password - The password belonging to the account
+   * @param onlineState - The online state to appear as
+   * @param loginType - The account type
    * @param token - The token to use to log in (Automatically generated if not provided)
    */
   public login(email: String, password: String, onlineState: OnlineState, loginType: LoginType, token: String): void;
- 
+
   /**
    * Logout of the current account
    */
@@ -1047,7 +1058,7 @@ export class WOLFBot {
   public setMessageSettings(messageFilterTier: MessageFilterTier): Promise<ResponseObject>;
   /**
    * Update the bots avatar
-   * @param avatar - The avatar 
+   * @param avatar - The avatar
    */
   public updateAvatar(avatar: Buffer): Promise<ResponseObject>;
   /**
@@ -1055,27 +1066,27 @@ export class WOLFBot {
    */
   public updateProfile(): SubscriberProfileBuilder;
   /**
-   * Handle an event 
+   * Handle an event
    * @param event - The event string
    * @param listener - The event handler
    */
   public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => void): this;
- 
+
   /**
-   * The bots yaml configuration 
+   * The bots yaml configuration
    */
   public config: ConfigObject;
- 
+
   /**
    * Config Settings
    */
   public options: ConfigOptionsObject;
- 
+
   /**
    * The current account logged in
    */
   public currentSubscriber: SubscriberObject;
- 
+
   /**
    * Exposes the utility methods
    */
@@ -1088,18 +1099,18 @@ export class WOLFBot {
 
 export abstract class BaseHelper {
   public constructor(api: WOLFBot);
- 
+
   private _api: WOLFBot;
   private _websocket: Websocket;
- 
+
   private _cleanup(): void;
   private _process(...args: any): void;
- 
+
 }
 
 export class AchievementSubscriber {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get achievements belonging to a subscriber
    * @param subscriberId - The id of the subscriber
@@ -1109,7 +1120,7 @@ export class AchievementSubscriber {
 
 export class AchievementGroup {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get achievements belonging to a group
    * @param targetGroupId - The id of the group
@@ -1119,11 +1130,11 @@ export class AchievementGroup {
 
 export class Achievement extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Exposes the group achievement methods
    */
-  public group() : AchievementGroup;
+  public group(): AchievementGroup;
   /**
    * Exposes the subscriber achievement methods
    */
@@ -1147,12 +1158,12 @@ export class Achievement extends BaseHelper {
    * @param language - The language of the achievements
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getByIds(achievementIds: Array<Number>, language: Language, requestNew?: Boolean):  Promise<Array<AchievementObject>>;
+  public getByIds(achievementIds: Array<Number>, language: Language, requestNew?: Boolean): Promise<Array<AchievementObject>>;
 }
 
 export class Authorization extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the list of authorized users
    */
@@ -1165,22 +1176,22 @@ export class Authorization extends BaseHelper {
    * Check whether or not a subscriber is authorized
    * @param subscriberIds - The id or ids of the subscribers to check
    */
-  public isAuthorized(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public isAuthorized(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Authorize a subscriber (Subscriber bypasses permission checks)
    * @param subscriberIds - The id or ids of the subscribers to authorize
    */
-  public authorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public authorize(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Unauthorize a subscriber (Subscriber no longer bypasses permission checks)
    * @param subscriberIds - The id or ids of the subscribers to unauthorize
    */
-  public unauthorize(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public unauthorize(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
 }
 
 export class Banned extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the list of banned users
    */
@@ -1193,22 +1204,22 @@ export class Banned extends BaseHelper {
    * Check whether or not a subscriber is banned
    * @param subscriberIds - The id or ids of the subscribers to check
    */
-  public isBanned(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public isBanned(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Ban a subscriber (Subscriber wont be able to use commands)
    * @param subscriberIds - The id or ids of the subscribers to ban
    */
-  public ban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public ban(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Unban a subscriber (Subscriber will be able to use commands)
    * @param subscriberIds - The id or ids of the subscribers to unauthorize
-   */    
-  public unban(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+   */
+  public unban(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
 }
 
 export class Blocked extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the bots blocked list
    */
@@ -1217,22 +1228,22 @@ export class Blocked extends BaseHelper {
    * Check whether or not a subscriber is blocked
    * @param subscriberIds - The id or ids of the subscribers to check
    */
-  public isBlocked(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public isBlocked(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Block a subscriber (They wont be able to PM the bot)
    * @param subscriberId - The id of the subscriber to block
    */
-  public block(subscriberId: Number) :  Promise<ResponseObject>
+  public block(subscriberId: Number): Promise<ResponseObject>
   /**
    * Unblock a subscriber (They will be able to PM the bot)
    * @param subscriberId - The id of the subscriber to block
    */
-  public unblock(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+  public unblock(subscriberIds: Number | Array<Number>): Promise<ResponseObject>;
 }
 
 export class Charm extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the list of charms
    * @param language - The language of charms
@@ -1275,7 +1286,7 @@ export class Charm extends BaseHelper {
    * @param subscriberId - The id of the subscriber
    * @param limit - (Default: 15) How many to request at one time
    * @param offset - Position of where to request from
-   */    
+   */
   public getSubscriberExpiredList(subscriberId: Number, limit?: Number, offset?: Number): Promise<Array<CharmSubscriberObject>>;
   /**
    * Delete charms from your active or expired list
@@ -1283,13 +1294,13 @@ export class Charm extends BaseHelper {
   public remove(charmIds: Number | Array<Number>): Promise<ResponseObject>;
   /**
    * Set the charms that appear over the bots avatar
-   */    
+   */
   public set(charms: CharmSelectedObject | Array<CharmSelectedObject>): Promise<ResponseObject>;
 }
 
 export class Contact extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the bots contact list
    */
@@ -1298,22 +1309,22 @@ export class Contact extends BaseHelper {
    * Check whether or not a subscriber is a contact
    * @param subscriberIds - The id or ids of the subscribers to check
    */
-  public isContact(subscriberIds: Number | Array<Number>) : Promise<Boolean | Array<Boolean>>;
+  public isContact(subscriberIds: Number | Array<Number>): Promise<Boolean | Array<Boolean>>;
   /**
    * Add a subscriber as a contact
    * @param subscriberId - The id of the subscriber
    */
-  public add(subscriberId: Number) :  Promise<ResponseObject>
+  public add(subscriberId: Number): Promise<ResponseObject>
   /**
    * Remove a subscriber as a contact
    * @param subscriberId - The id of the subscriber
-   */    
-  public remove(subscriberIds: Number | Array<Number>) : Promise<ResponseObject>;
+   */
+  public remove(subscriberIds: Number | Array<Number>): Promise<ResponseObject>;
 }
 
 export class Discovery extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Get the discovery section
    * @param language - The language of the discovery list
@@ -1366,26 +1377,26 @@ export class Event extends BaseHelper {
    * Update an events thumbnail
    * @param eventId - The id of the event to delete
    * @param thumbnail - The new thumbnail of the event
-   */    
+   */
   public updateThunbmail(eventId: Number, thumbnail: Buffer): Promise<ResponseObject>;
   /**
-   * Delete an event 
+   * Delete an event
    * @param targetGroupId - The id of the group the event belongs too
    * @param eventId - The id of the event
    */
   public remove(targetGroupId: Number, eventId: Number): Promise<ResponseObject<EventGroupObject>>;
   /**
-   * Get an event 
+   * Get an event
    * @param eventId - The id of the event
    * @param requestNew - Whether or not to request new data from the server
-   */    
+   */
   public getById(eventId: Number, requestNew?: Boolean): Promise<EventGroupObject>;
   /**
-   * Get multiple events 
+   * Get multiple events
    * @param eventIds - The ids of the events
    * @param requestNew - Whether or not to request new data from the server
-   */  
-  public getByIds(eventIds: Number|Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
+   */
+  public getByIds(eventIds: Number | Array<Number>, requestNew?: Boolean): Promise<EventGroupObject | Array<EventGroupObject>>;
   /**
    * Get the events list for a group
    * @param targetGroupId - The id of the group
@@ -1402,16 +1413,16 @@ export class Event extends BaseHelper {
    * @param eventId - The id of the event
    */
   public subscribe(eventId: Number): Promise<ResponseObject>;
- /**
-   * Unsubscribe to an event
-   * @param eventId - The id of the event
-   */
-  public unsubscribe(eventId: Number): Promise<ResponseObject>;              
+  /**
+    * Unsubscribe to an event
+    * @param eventId - The id of the event
+    */
+  public unsubscribe(eventId: Number): Promise<ResponseObject>;
 }
 
 export class Group extends BaseHelper {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get the list of groups the bot is in
    */
@@ -1426,10 +1437,10 @@ export class Group extends BaseHelper {
    * Get multiple groups
    * @param targetGroupIds - The ids of the groups
    * @param requestNew - Whether or not to request new data from the server
-   */    
-  public getByIds(targetGroupIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<GroupObject>>;
+   */
+  public getByIds(targetGroupIds: Number | Array<Number>, requestNew?: Boolean): Promise<Array<GroupObject>>;
   /**
-   * 
+   *
    * @param targetGroupName - The name of the group
    * @param requestNew - Whether or not to request new data from the server
    */
@@ -1444,7 +1455,7 @@ export class Group extends BaseHelper {
    * Join a group
    * @param targetGroupName - The name of the group
    * @param password - The password of the group
-   */    
+   */
   public joinByName(targetGroupName: String, password?: String): Promise<ResponseObject>
   /**
    * Leave a group
@@ -1454,14 +1465,14 @@ export class Group extends BaseHelper {
   /**
    * Leave a group
    * @param targetGroupName - The name of the group
-   */       
+   */
   public leaveByName(targetGroupName: String): Promise<ResponseObject>
   /**
-   * Get the chat history of a group 
+   * Get the chat history of a group
    * @param targetGroupId - The id of the group
    * @param chronological - Whether or not to return in chronological order
    * @param timestamp - The timestamp of the last message
-   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request
    */
   public getChatHistory(targetGroupId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
   /**
@@ -1505,37 +1516,37 @@ export class Group extends BaseHelper {
 }
 
 export class MessageSubscription extends BaseHelper {
-  private constructor(api : WOLFBot);
+  private constructor(api: WOLFBot);
   /**
    * Watch for a message using specific paramaters
    * @param predict - The paramaters ((message)=>message.isGroup && message.sourceSubscriberId === 80280172)
    * @param timeout - How long until the subscription ends (Default: Infinite)
   */
-  public nextMessage(predict: Function, timeout?: Number ) : Promise<MessageObject>;
+  public nextMessage(predict: Function, timeout?: Number): Promise<MessageObject>;
   /**
    * Watch for a message from a specific group
    * @param targetGroupId - The id of the group
    * @param timeout - How long until the subscription ends (Default: Infinite)
    */
-  public nextGroupMessage(targetGroupId: Number, timeout?: Number ) : Promise<MessageObject>;
+  public nextGroupMessage(targetGroupId: Number, timeout?: Number): Promise<MessageObject>;
   /**
    * Watch for a message from a specific subscriber
    * @param sourceSubscriberId - The id of the subscriber
    * @param timeout - How long until the subscription ends (Default: Infinite)
-   */    
-  public nextPrivateMessage(sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+   */
+  public nextPrivateMessage(sourceSubscriberId: Number, timeout?: Number): Promise<MessageObject>;
   /**
    * Watch for a message from a specific group and subscriber
    * @param targetGroupId - The id of the group
    * @param sourceSubscriberId - The id of the subscriber
    * @param timeout - How long until the subscription ends (Default: Infinite)
-   */  
-  public nextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number ) : Promise<MessageObject>;
+   */
+  public nextGroupSubscriberMessage(targetGroupId: Number, sourceSubscriberId: Number, timeout?: Number): Promise<MessageObject>;
 }
 
 export class Messaging extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Exposes the message subscription methods
    */
@@ -1543,24 +1554,24 @@ export class Messaging extends BaseHelper {
   /**
    * Send a group message
    * @param targetGroupId - The id of the group
-   * @param content - The text, image/audio buffer 
+   * @param content - The text, image/audio buffer
    * @param opts - The sending options (Text Only)
    */
-  public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;    
+  public sendGroupMessage(targetGroupId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
   /**
    * Send a private message
    * @param targetSubscriberId - The id of the subscriber
-   * @param content - The text, image/audio buffer 
+   * @param content - The text, image/audio buffer
    * @param opts - The sending options (Text Only)
-   */   
-  public sendPrivateMessage(targetSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+   */
+  public sendPrivateMessage(targetSubscriberId: Number, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
   /**
    * Send a message using command or message
    * @param commandOrMessage - The command or message to respond too
-   * @param content - The text, image/audio buffer 
+   * @param content - The text, image/audio buffer
    * @param opts - The sending options (Text Only)
    */
-  public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: MessageOptionsObject):  Promise<ResponseObject<MessageResponseObject>>;
+  public sendMessage(commandOrMessage: CommandObject | MessageObject, content: Buffer | String, opts?: MessageOptionsObject): Promise<ResponseObject<MessageResponseObject>>;
   /**
    * Accept a chat request
    * @param subscriberId - The id of the subscriber
@@ -1583,18 +1594,18 @@ export class Messaging extends BaseHelper {
    * @param targetGroupId - The id of the group
    * @param timestamp - The timestamp belonging to the message
    */
-  public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;  
+  public getGroupMessageEditHistory(targetGroupId: Number, timestamp: Number): Promise<ResponseObject<MessageEditObject>>;
 }
 
 export class Notification extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Request the notifications list
    * @param language - The language of the notifications
    * @param requestNew - Whether or not to request new data from the server
    */
-  public list(language: Language, requestNew?: Boolean) : Promise<Array<NotificationObject>>;
+  public list(language: Language, requestNew?: Boolean): Promise<Array<NotificationObject>>;
   /**
    * Clears the notification list (All languages)
    */
@@ -1612,8 +1623,8 @@ export class Notification extends BaseHelper {
 }
 
 export class Phrase extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Get the list of phrases
    */
@@ -1648,7 +1659,7 @@ export class Phrase extends BaseHelper {
   public getByLanguageAndName(language: String, name: String): String;
   /**
    * Get a specific phrase using command and name
-   * @param command - The command 
+   * @param command - The command
    * @param name - The phrase name
    */
   public getByCommandAndName(command: CommandObject, name: String): String;
@@ -1659,33 +1670,33 @@ export class Phrase extends BaseHelper {
    */
   public isRequestedPhrase(name: String, value: String): Boolean;
 }
- 
+
 export class Stage extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Get group audio settings
    * @param targetGroupId - The id of the grooup
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>; 
+  public getGroupSettings(targetGroupId: Number, requestNew?: Boolean): Promise<GroupAudioConfigObject>;
   /**
    * Get the list of publicly available stages
    * @param requestNew  - Whether or not to request new data from the server
    */
-  public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;  
+  public getStageList(requestNew?: Boolean): Promise<Array<StageObject>>;
   /**
    * Get the list of stages available to group
    * @param targetGroupId - The id of the group
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>; 
-   /**
-   * Get the slots for a group
-   * @param targetGroupId - The id of the group
-   * @param requestNew - Whether or not to request new data from the server 
-   */
-  public getGroupSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;       
+  public getStageListForGroup(targetGroupId: Number, requestNew?: Boolean): Promise<Array<StageGroupObject>>;
+  /**
+  * Get the slots for a group
+  * @param targetGroupId - The id of the group
+  * @param requestNew - Whether or not to request new data from the server
+  */
+  public getGroupSlots(targetGroupId: Number, requestNew?: Boolean): Promise<Array<GroupAudioSlotObject>>;
   /**
    * Update a slots mute state
    * @param targetGroupId - The id of the group
@@ -1710,13 +1721,13 @@ export class Stage extends BaseHelper {
    * @param targetGroupId - The group Id
    * @param slotId - The slot Id
    */
-  public kickSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;    
+  public kickSlot(targetGroupId: Number, slotId: Number): Promise<ResponseObject>;
   /**
    * Kick a slot using subscriber id
    * @param targetGroupId - The group Id
    * @param subscriberId - The id of the subscriber
    */
-  public kickSubscriberFromStage(targetGroupId: Number, subscriberId: Number): Promise<ResponseObject>;      
+  public kickSubscriberFromStage(targetGroupId: Number, subscriberId: Number): Promise<ResponseObject>;
   /**
    * Join a slot
    * @param targetGroupId - The id of the group
@@ -1724,7 +1735,7 @@ export class Stage extends BaseHelper {
    * @param sdp - The sdp (Leave empty for internal handling)
    * @param opts - The ffmpeg settings
    */
-  public joinSlot(targetGroupId: Number, slotId: Number, sdp?:String, opts?: Array<string> ): Promise<ResponseObject<GroupAudioSlotObject>>;
+  public joinSlot(targetGroupId: Number, slotId: Number, sdp?: String, opts?: Array<string>): Promise<ResponseObject<GroupAudioSlotObject>>;
   /**
    * Listen to a slot
    * @param targetGroupId - The id of the group
@@ -1742,7 +1753,7 @@ export class Stage extends BaseHelper {
    * Pause the broadcast of a group
    * @param targetGroupId - The id of the group
    */
-  public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>; 
+  public pause(targetGroupId: Number): Promise<StageClientUpdatedObject>;
   /**
    * Resume a broadcast of a group
    * @param targetGroupId - The id of the group
@@ -1778,7 +1789,7 @@ export class Stage extends BaseHelper {
    * Check whether or not the client is playing
    * @param targetGroupId - The id of the group
    */
-  public isBroadcasting(targetGroupId: Number): Promise<Boolean>;      
+  public isBroadcasting(targetGroupId: Number): Promise<Boolean>;
   /**
    * Check whether or not the client is connecting
    * @param targetGroupId - The id of the group
@@ -1793,12 +1804,18 @@ export class Stage extends BaseHelper {
    * Check whether or not the client is paused
    * @param targetGroupId - The id of the group
    */
-  public isPaused(targetGroupId: Number): Promise<Boolean>;  
+  public isPaused(targetGroupId: Number): Promise<Boolean>;
   /**
    * Get the current broadcast duration
    * @param targetGroupId - The id of the group
    */
   public duration(targetGroupId: Number): Promise<Number>;
+  /**
+   * Changes the volume of the current broadcast *May cause static*
+   * @param targetGroupId - The id of the group
+   * @param volume - The new volume level
+   */
+  public setVolume(targetGroupId: Number, volume: Number): Promise<void>;
   /**
    * Check whether or not a client exists for a group
    * @param targetGroupId - The id of the group
@@ -1846,18 +1863,23 @@ export class Stage extends BaseHelper {
 }
 
 export class Store extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
   /**
    * Get the credit balance
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getBalance(requestNew?: Boolean) : Number;
+  public getBalance(requestNew?: Boolean): Number;
 }
 
 export class Subscriber extends BaseHelper {
-  private constructor(api : WOLFBot);
- 
+  private constructor(api: WOLFBot);
+
+  /**
+   * Exposes the wolfstar profile methods
+   */
+  public wolfstar(): Wolfstar;
+
   /**
    * Get the online state and device type for a subscriber
    * @param subscriberId - The id of the subscriber
@@ -1869,7 +1891,7 @@ export class Subscriber extends BaseHelper {
    * @param subscriberIds - The id or ids of the subscriber
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getPresenceByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<PresenceObject>>; 
+  public getPresenceByIds(subscriberIds: Number | Array<Number>, requestNew?: Boolean): Promise<Array<PresenceObject>>;
   /**
    * Get a subscriber
    * @param subscriberId - The id of the subscriber
@@ -1881,20 +1903,35 @@ export class Subscriber extends BaseHelper {
    * @param subscriberIds - The id or ids of the subscriber
    * @param requestNew - Whether or not to request new data from the server
    */
-  public getByIds(subscriberIds: Number |Array<Number>, requestNew?: Boolean) : Promise<Array<SubscriberObject>>; 
+  public getByIds(subscriberIds: Number | Array<Number>, requestNew?: Boolean): Promise<Array<SubscriberObject>>;
   /**
-   * Get the chat history of a subscriberId 
+   * Get the chat history of a subscriberId
    * @param subscriberId - The id of the subscriberId
    * @param chronological - Whether or not to return in chronological order
    * @param timestamp - The timestamp of the last message
-   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request 
+   * @param limit - (Default: 15, Min: 5, Max: 30) How many messages to request
    */
   public getChatHistory(subscriberId: Number, chronological: Boolean, timestamp?: Number, limit?: Number): Promise<Array<MessageObject>>;
 }
 
+export class Wolfstar extends BaseHelper {
+  private constructor(api: WOLFBot);
+
+  /**
+   * Get a subscribers wolfstar profile (Does not cache)
+   * @param id - The id of the subscriber
+   */
+  public getById(id: Number): Promise<WolfstarsObject>;
+  /**
+   * Get multiple subscribers wolfstar profiles (Does not cache)
+   * @param subscriberIds - The id or ids of the subscriber
+   */
+  public getByIds(subscriberIds: Number | Array<Number>): Promise<Array<WolfstarsObject>>;
+}
+
 export class Tipping extends BaseHelper {
-  private constructor(api : WOLFBot);
-     
+  private constructor(api: WOLFBot);
+
   /**
    * Add a tip to a message
    * @param subscriberId - The id of the subscriber
@@ -1917,15 +1954,15 @@ export class Tipping extends BaseHelper {
    * @param timestamp - The timestamp of the message
    * @param limit - How many tips to return
    * @param offset - The index where return tips should start
-   */    
-  public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<{ [key: number]: ResponseObject<TipSummaryObject>}>>
+   */
+  public getSummary(targetGroupId: Number, timestamp: Number, limit?: Number, offset?: Number): Promise<ResponseObject<{ [key: number]: ResponseObject<TipSummaryObject> }>>
   /**
    * Get group tipping leaderboard
    * @param targetGroupId - The id of the group
    * @param tipPeriod - The tipping period
    * @param tipType - The type of tips
    * @param tipDirection - The direction of tips sent/received
-   */  
+   */
   public getGroupLeaderboard(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardObject>
   /**
    * Get group tipping leaderboard summary
@@ -1933,7 +1970,7 @@ export class Tipping extends BaseHelper {
    * @param tipPeriod - The tipping period
    * @param tipType - The type of tips
    * @param tipDirection - The direction of tips sent/received
-   */    
+   */
   public getGroupLeaderboardSummary(targetGroupId: Number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummmaryObject>
   /**
    * Get global tipping leaderboard
@@ -1941,28 +1978,49 @@ export class Tipping extends BaseHelper {
    * @param tipType - The type of tips
    * @param tipDirection - The direction of tips sent/received
    */
-  public getGlobalLeaderboard (tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardObject>
+  public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardObject>
   /**
    * Get global tipping leaderboard summary
    * @param tipPeriod - The tipping period
-   */    
+   */
   public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSummmaryObject>
+}
+
+export class Topic extends BaseHelper {
+  private constructor(api: WOLFBot);
+
+
+  /**
+   * Get a topic page
+   * @param name - The page name
+   * @param languageId - The language to request in
+   */
+  public getTopicPageLayout(name: string, languageId: Language): Promise<ResponseObject<object>>;
+  /**
+   *
+   * @param id - The recipe ID
+   * @param languageId - The language to request in
+   * @param maxResults - How many items should be returned
+   * @param offset - Where the request should start at (Default: 0)
+   * @param type - The type of recipe
+   */
+  public getTopicPageRecipeList(id: number, languageId: Language, maxResults: number, offset: number, type: TopicPageRecipeType): Promise<ResponseObject<Array<object>>>;
 }
 
 export class AchievementUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Map achievements to their correct category
    * @param achievements - The achievements to map
    * @param language - The language of the achievements
    */
-  public mapToCategories(achievements: Array<AchievementObject>, language: Language): Promise<Array<{id: Number, name: String, achievements: Array<AchievementObject>}>>;
+  public mapToCategories(achievements: Array<AchievementObject>, language: Language): Promise<Array<{ id: Number, name: String, achievements: Array<AchievementObject> }>>;
 }
 
 export class ArrayUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Chunk an array into smaller arrays
    * @param array - The array
@@ -1978,12 +2036,12 @@ export class ArrayUtility {
    * Get a random item from an array
    * @param array - The array
    */
-  public getRandomIndex(array: Array<any>): any; 
+  public getRandomIndex(array: Array<any>): any;
 }
 
 export class DiscoveryUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get all sections from the discovery page that contain a recipe id
    * @param language - The language of the discovery page
@@ -1994,7 +2052,7 @@ export class DiscoveryUtility {
 
 export class DownloadUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Download a file from url
    * @param url - The url
@@ -2004,7 +2062,7 @@ export class DownloadUtility {
 
 export class MemberUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Get a group member
    * @param targetGroupId - The id of the group
@@ -2019,12 +2077,12 @@ export class MemberUtility {
    * @param checkStaff - Whether or not to allow staff to bypass check
    * @param includeAuthorizedSubscribers - Whether or not to allow authorized users to bypass check
    */
-  public hasCapability(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>; 
+  public hasCapability(targetGroupId: Number, targetSubscriberId: Number, requiredCapability: Capability, checkStaff?: Boolean, includeAuthorizedSubscribers?: Number): Promise<Boolean>;
 }
 
 export class GroupUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Exposes the member methods
    */
@@ -2045,38 +2103,38 @@ export class GroupUtility {
 
 export class NumberUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Convert all numbers to english
    * @param arg - The string or number to convert
    */
-  public toEnglishNumbers(arg: String|Number): Number | String;
+  public toEnglishNumbers(arg: String | Number): Number | String;
   /**
    * Convert all numbers to arabic
    * @param arg - The string or number to convert
-   */    
-  public toArabicNumbers(arg: String|Number): Number| String;
+   */
+  public toArabicNumbers(arg: String | Number): Number | String;
   /**
    * Convert all numbers to persian
    * @param arg - The string or number to convert
-   */        
-  public toPersianNumbers(arg: String |Number): Number | String;
+   */
+  public toPersianNumbers(arg: String | Number): Number | String;
   /**
    * Add commas to a number
    * @param arg The string or number
    */
-  public addCommas(arg: Number | String) : Number | String;
+  public addCommas(arg: Number | String): Number | String;
 }
 
 export class StringUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Replace placeholders with appropriate data
    * @param string - The string to replace
    * @param replacements - Example: { nickname: 'Martin', subscriberId: 1 }
    */
-  public replace(string: String, replacements: { [key: string]: String|Number}): String;
+  public replace(string: String, replacements: { [key: string]: String | Number }): String;
   /**
    * Check whether or not two strings are the same
    * @param sideA - The first string
@@ -2097,7 +2155,7 @@ export class StringUtility {
    */
   public trimAds(string: String): String;
   /**
-   * Format a link to a valid format 
+   * Format a link to a valid format
    * @param url - The url to format
    */
   public getValidUrl(url: String): FormattedUrlObject;
@@ -2110,19 +2168,19 @@ export class StringUtility {
 
 export class PrivilegeUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Check whether or not a subscriber has a privilege or privileges
    * @param targetSubscriberId - The id of the subscriber
    * @param privs - The privileges to check
    * @param requiresAll - Whether or not a subscriber should have all privileges provided
    */
-  public has(targetSubscriberId: Number, privs: Array<Number>|Number, requiresAll?: Boolean): Promise<Boolean>
+  public has(targetSubscriberId: Number, privs: Array<Number> | Number, requiresAll?: Boolean): Promise<Boolean>
 }
 
 export class SubscriberUtility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Exposes the privilege methods
    */
@@ -2131,14 +2189,14 @@ export class SubscriberUtility {
    * Get a subscriber avatar
    * @param subscriberId - The id of the group
    * @param size - The size of the image
-   */    
+   */
   public getAvatar(subscriberId: Number, size: Number): Promise<Buffer>;
   /**
       Convert group details into nickname (id) or nickname
    * @param subscriber - The subscriber
    * @param trimAds - Whether or not to trim ads from the nickname
    * @param excludeId - Whether or not to show the subscribers id
-   */    
+   */
   public toDisplayName(subscriber: SubscriberObject, trimAds?: Boolean, excludeId?: Boolean): String;
   /**
    * Check whether or not a subscriber has a charm or charms
@@ -2185,7 +2243,7 @@ export class TimerUtility {
 
 export class Utility {
   private constructor(api: WOLFBot);
- 
+
   /**
    * Exposes the achievement methods
    */
@@ -2235,80 +2293,80 @@ export class Utility {
   public delay(duration: Number): Promise<void>;
 }
 
-export namespace  Validator {
+export namespace Validator {
   /**
    * Check whether or not a arg is a specific type
    * @param arg - The arg
    * @param type - The type
    */
-  export function isType(arg: any, type: 'String' | 'Undefined'| 'Null'| 'Boolean'| 'Number'|'BigInt'|'Function'|'Object'): Boolean;
+  export function isType(arg: any, type: 'String' | 'Undefined' | 'Null' | 'Boolean' | 'Number' | 'BigInt' | 'Function' | 'Object'): Boolean;
   /**
    * Check to see if arg is null
    * @param arg - The item
    */
-  export function isNull(arg: any):Boolean;
+  export function isNull(arg: any): Boolean;
   /**
    * Check to see if arg is null or undefined
    * @param arg - The item
    */
-  export function isNullOrUndefined(arg: any):Boolean;
+  export function isNullOrUndefined(arg: any): Boolean;
   /**
    * Check to seeif arg is null or empty/whitespace
-   * @param arg - The string 
+   * @param arg - The string
    */
-  export function isNullOrWhitespace(arg: String):Boolean;
+  export function isNullOrWhitespace(arg: String): Boolean;
   /**
    * Check to see if arg is less than or equal to 0
    * @param arg - The number
    */
-  export function isLessThanOrEqualZero(arg: Number):Boolean;
+  export function isLessThanOrEqualZero(arg: Number): Boolean;
   /**
    * Check to see if arg is less than 0
    * @param arg - The number
    */
-  export function isLessThanZero(arg: Number):Boolean;
+  export function isLessThanZero(arg: Number): Boolean;
   /**
    * Check to see if arg is a valid number
    * @param arg - the number or string
    */
-  export function isValidNumber(arg: String | Number, acceptDecimals: Boolean):Boolean;
+  export function isValidNumber(arg: String | Number, acceptDecimals: Boolean): Boolean;
   /**
    * Check to see if arg is a valid date
    * @param arg - The date or number
    */
-  export function isValidDate(arg: Date | Number):Boolean;
+  export function isValidDate(arg: Date | Number): Boolean;
   /**
    * Check to see if arg is a valid buffer
    * @param arg - The string or buffer
    */
-  export function isBuffer(arg: Buffer | String):Boolean
+  export function isBuffer(arg: Buffer | String): Boolean
   /**
    * Check to see if arg is a valid url
    * @param api - The bot instance
    * @param arg - The string or buffer
    */
-  export function isValidUrl(api: WOLFBot, arg: String):Boolean
+  export function isValidUrl(api: WOLFBot, arg: String): Boolean
   /**
    * Check to see if arg is a valid ad
    * @param arg - The string or buffer
    */
-  export function isValidAd(arg: String):Boolean
+  export function isValidAd(arg: String): Boolean
   /**
    * Check to see if an arg is a valid boolean
    * @param arg - The number of boolean
    */
-  export function isValidBoolean(arg: Number| Boolean): Boolean
+  export function isValidBoolean(arg: Number | Boolean): Boolean
 }
 
 //#endregion
- 
+
 //#region enums
- 
+
 export const Constants: {
   AdminAction: AdminAction;
-  Capability:Capability;
+  Capability: Capability;
   Category: Category;
-  ContextType:ContextType;
+  ContextType: ContextType;
   DeviceType: DeviceType;
   EmbedType: EmbedType;
   Gender: Gender;
@@ -2325,134 +2383,136 @@ export const Constants: {
   TipDirection: TipDirection;
   TipPeriod: TipPeriod;
   TipType: TipType;
+  TopicPageRecipeType: TopicPageRecipeType;
+  WolfstarTalent: WolfstarTalent;
 }
 
 export interface AdminAction {
-  REGULAR : 0,
-  ADMIN : 1,
-  MOD : 2,
-  BAN : 4,
-  SILENCE : 8,
-  KICK : 16,
-  JOIN : 17,
-  LEAVE : 18,
-  OWNER : 32,
+  REGULAR: 0,
+  ADMIN: 1,
+  MOD: 2,
+  BAN: 4,
+  SILENCE: 8,
+  KICK: 16,
+  JOIN: 17,
+  LEAVE: 18,
+  OWNER: 32,
 }
 
 export interface Capability {
-  NOT_MEMBER : -1,
-  REGULAR : 0,
-  ADMIN : 1,
-  MOD : 2,
-  BANNED : 4,
-  SILENCED : 8,
-  OWNER : 32,
+  NOT_MEMBER: -1,
+  REGULAR: 0,
+  ADMIN: 1,
+  MOD: 2,
+  BANNED: 4,
+  SILENCED: 8,
+  OWNER: 32,
 }
 
 export interface Category {
-  NOT_SPECIFIED : 0,
-  BUSINESS : 8,
-  EDUCATION : 10,
-  ENTERTAINMENT : 26,
-  GAMING : 12,
-  LIFESTYLE : 13,
-  MUSIC : 14,
-  NEWS_AND_POLITICS : 15,
-  PHOTOGRAPHY : 16,
-  SCIENCE_AND_TECH : 25,
-  SOCIAL_AND_PEOPLE : 17,
-  SPORTS : 19,
-  TRAVEL_AND_LOCAL : 18,
+  NOT_SPECIFIED: 0,
+  BUSINESS: 8,
+  EDUCATION: 10,
+  ENTERTAINMENT: 26,
+  GAMING: 12,
+  LIFESTYLE: 13,
+  MUSIC: 14,
+  NEWS_AND_POLITICS: 15,
+  PHOTOGRAPHY: 16,
+  SCIENCE_AND_TECH: 25,
+  SOCIAL_AND_PEOPLE: 17,
+  SPORTS: 19,
+  TRAVEL_AND_LOCAL: 18,
 }
 
 export interface ContextType {
-  MESSAGE : "message",
-  STAGE : "stage",
+  MESSAGE: "message",
+  STAGE: "stage",
 }
 
 export interface DeviceType {
-  OTHER : 0,
-  BOT : 1,
-  IPHONE : 5,
-  IPAD : 6,
-  ANDROID : 7,
-  WEB : 8,
+  OTHER: 0,
+  BOT: 1,
+  IPHONE: 5,
+  IPAD: 6,
+  ANDROID: 7,
+  WEB: 8,
 }
 
 export interface EmbedType {
-  IMAGE_PREVIEW : "imagePreview",
-  GROUP_PREVIEW : "groupPreview",
-  LINK_PREVIEW : "linkPreview",
+  IMAGE_PREVIEW: "imagePreview",
+  GROUP_PREVIEW: "groupPreview",
+  LINK_PREVIEW: "linkPreview",
 }
 
 export interface Gender {
-  NOT_SPECIFIED : 0,
-  MALE : 1,
-  FEMALE : 2,
+  NOT_SPECIFIED: 0,
+  MALE: 1,
+  FEMALE: 2,
 }
 
 export interface Language {
-  NOT_SPECIFIED : 0,
-  ENGLISH : 1,
-  GERMAN : 3,
-  SPANISH : 4,
-  FRENCH : 6,
-  POLISH : 10,
-  CHINESE_SIMPLIFIED : 11,
-  RUSSIAN : 12,
-  ITALIAN : 13,
-  ARABIC : 14,
-  PERSIAN_FARSI : 15,
-  GREEK : 16,
-  PORTUGUESE : 17,
-  HINDI : 18,
-  JAPANESE : 19,
-  LATIN_SPANISH : 20,
-  SLOVAK : 21,
-  CZECH : 22,
-  DANISH : 24,
-  FINNISH : 25,
-  HUNGARIAN : 27,
-  BAHASA_INDONESIA : 28,
-  MALAY : 29,
-  DUTCH : 30,
-  NORWEGIAN : 31,
-  SWEDISH : 32,
-  THAI : 33,
-  TURKISH : 34,
-  VIETNAMESE : 35,
-  KOREAN : 36,
-  BRAZILIAN_PORTUGUESE : 37,
-  ESTONIAN : 39,
-  KAZAKH : 41,
-  LATVIAN : 42,
-  LITHUANIAN : 43,
-  UKRAINIAN : 44,
-  BULGARIAN : 45,
+  NOT_SPECIFIED: 0,
+  ENGLISH: 1,
+  GERMAN: 3,
+  SPANISH: 4,
+  FRENCH: 6,
+  POLISH: 10,
+  CHINESE_SIMPLIFIED: 11,
+  RUSSIAN: 12,
+  ITALIAN: 13,
+  ARABIC: 14,
+  PERSIAN_FARSI: 15,
+  GREEK: 16,
+  PORTUGUESE: 17,
+  HINDI: 18,
+  JAPANESE: 19,
+  LATIN_SPANISH: 20,
+  SLOVAK: 21,
+  CZECH: 22,
+  DANISH: 24,
+  FINNISH: 25,
+  HUNGARIAN: 27,
+  BAHASA_INDONESIA: 28,
+  MALAY: 29,
+  DUTCH: 30,
+  NORWEGIAN: 31,
+  SWEDISH: 32,
+  THAI: 33,
+  TURKISH: 34,
+  VIETNAMESE: 35,
+  KOREAN: 36,
+  BRAZILIAN_PORTUGUESE: 37,
+  ESTONIAN: 39,
+  KAZAKH: 41,
+  LATVIAN: 42,
+  LITHUANIAN: 43,
+  UKRAINIAN: 44,
+  BULGARIAN: 45,
 }
 
 export interface LoginType {
-  EMAIL : "email",
-  GOOGLE : "google",
-  FACEBOOK : "facebook",
-  TWITTER : "twitter",
-  SNAPCHAT : "snapchat",
-  APPLE : "apple",
+  EMAIL: "email",
+  GOOGLE: "google",
+  FACEBOOK: "facebook",
+  TWITTER: "twitter",
+  SNAPCHAT: "snapchat",
+  APPLE: "apple",
 }
 
 export interface LookingFor {
-  NOT_SPECIFIED : 0,
-  FRIENDSHIP : 1,
-  DATING : 2,
-  RELATIONSHIP : 4,
-  NETWORKING : 8,
+  NOT_SPECIFIED: 0,
+  FRIENDSHIP: 1,
+  DATING: 2,
+  RELATIONSHIP: 4,
+  NETWORKING: 8,
 }
 
 export interface MessageFilterTier {
-  OFF : 0,
-  RELAXED : 3,
-  RECOMMENDED : 2,
-  STRICT : 1,
+  OFF: 0,
+  RELAXED: 3,
+  RECOMMENDED: 2,
+  STRICT: 1,
 }
 
 export interface MessageLinkingType {
@@ -2460,98 +2520,115 @@ export interface MessageLinkingType {
   SUBSCRIBER_PROFILE: 'subscriberProfile',
   SUBSCRIBER_CHAT: 'subscriberChat',
   GROUP_PROFILE: 'groupProfile',
-  GROUP_CHAT: 'groupChat' 
+  GROUP_CHAT: 'groupChat'
 }
 
 export interface MessageType {
-  TEXT_PLAIN : "text/plain",
-  TEXT_HTML : "text/html",
-  TEXT_IMAGE : "text/image_link",
-  IMAGE_JPEG : "image/jpeg",
-  IMAGE_GIF : "image/gif",
-  AUDIO_AAC : "audio/aac",
-  TEXT_VOICE : "text/voice_link",
-  AUDIO_SPEEX : "audio/x-speex",
-  IMAGE_JPEGHTML : "image/jpeghtml",
-  APPLICATION_PALRINGO_GROUP_ACTION : "application/palringo-group-action",
-  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK : "application/palringo-interactive-message-pack",
-  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE : "text/palringo-private-request-response",
+  TEXT_PLAIN: "text/plain",
+  TEXT_HTML: "text/html",
+  TEXT_IMAGE: "text/image_link",
+  IMAGE_JPEG: "image/jpeg",
+  IMAGE_GIF: "image/gif",
+  AUDIO_AAC: "audio/aac",
+  TEXT_VOICE: "text/voice_link",
+  AUDIO_SPEEX: "audio/x-speex",
+  IMAGE_JPEGHTML: "image/jpeghtml",
+  APPLICATION_PALRINGO_GROUP_ACTION: "application/palringo-group-action",
+  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK: "application/palringo-interactive-message-pack",
+  TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: "text/palringo-private-request-response",
 }
 
 export interface OnlineState {
-  OFFLINE : 0,
-  ONLINE : 1,
-  AWAY : 2,
-  INVISIBLE : 3,
-  BUSY : 5,
-  IDLE : 9,
+  OFFLINE: 0,
+  ONLINE: 1,
+  AWAY: 2,
+  INVISIBLE: 3,
+  BUSY: 5,
+  IDLE: 9,
 }
 
 export interface Privilege {
-  SUBSCRIBER : 1,
-  BOT_TESTER : 2,
-  GAME_TESTER : 4,
-  CONTENT_SUBMITER : 8,
-  SELECTCLUB_1 : 16,
-  ELITECLUB_1 : 64,
+  SUBSCRIBER: 1,
+  BOT_TESTER: 2,
+  GAME_TESTER: 4,
+  CONTENT_SUBMITER: 8,
+  SELECTCLUB_1: 16,
+  ELITECLUB_1: 64,
   RANK_1: 128,
-  VOLUNTEER : 512,
-  SELECTCLUB_2 : 1024,
-  ALPHA_TESTER : 2048,
-  STAFF :4096,
-  TRANSLATOR : 8192,
-  DEVELOPER : 16384,
-  ELITECLUB_2 : 131072,
-  PEST : 262144,
-  VALID_EMAIL : 524288,
-  PREMIUM_ACCOUNT : 1048576,
-  VIP : 2097152,
-  ELITECLUB_3 :4194304,
-  USER_ADMIN : 16777216,
-  GROUP_ADMIN : 33554432,
-  BOT : 67108864,
-  ENTERTAINER : 536870912,
-  SHADOW_BANNED : 1073741824,
+  VOLUNTEER: 512,
+  SELECTCLUB_2: 1024,
+  ALPHA_TESTER: 2048,
+  STAFF: 4096,
+  TRANSLATOR: 8192,
+  DEVELOPER: 16384,
+  ELITECLUB_2: 131072,
+  PEST: 262144,
+  VALID_EMAIL: 524288,
+  PREMIUM_ACCOUNT: 1048576,
+  VIP: 2097152,
+  ELITECLUB_3: 4194304,
+  USER_ADMIN: 16777216,
+  GROUP_ADMIN: 33554432,
+  BOT: 67108864,
+  ENTERTAINER: 536870912,
+  SHADOW_BANNED: 1073741824,
 }
 
 export interface Relationship {
-  NOT_SPECIFIED : 0,
-  SINGLE : 1,
-  RELATIONSHIP : 2,
-  ENGAGED : 3,
-  MARRIED : 4,
-  COMPLICATED : 5,
-  OPEN : 6,
+  NOT_SPECIFIED: 0,
+  SINGLE: 1,
+  RELATIONSHIP: 2,
+  ENGAGED: 3,
+  MARRIED: 4,
+  COMPLICATED: 5,
+  OPEN: 6,
 }
 
 export interface SearchType {
-  GROUP : "group",
-  SUBSCRIBER : "subscriber",
+  GROUP: "group",
+  SUBSCRIBER: "subscriber",
 }
 
 export interface TipDirection {
-  SENT : "sent",
-  RECEIVED : "received",
+  SENT: "sent",
+  RECEIVED: "received",
 }
 
 export interface TipPeriod {
-  ALL_TIME : "alltime",
-  DAY : "day",
-  WEEK : "week",
-  MONTH : "month",
+  ALL_TIME: "alltime",
+  DAY: "day",
+  WEEK: "week",
+  MONTH: "month",
 }
 
 export interface TipType {
-  CHARM : "charm",
-  SUBSCRIBER : "subscriber",
-  GROUP : "group",
+  CHARM: "charm",
+  SUBSCRIBER: "subscriber",
+  GROUP: "group",
 }
-   
+
+export interface TopicPageRecipeType {
+  EVENT: "event",
+  GROUP: "group",
+  PRODUCT: "product"
+}
+
+export interface WolfstarTalent {
+  MUSIC: 1;
+  ENTERTAINMENT: 2;
+  TALK_SHOW: 3;
+  STORY_TELLING: 4;
+  VOICE_OVER: 5;
+  POETRY: 6;
+  COMEDY: 7;
+  IMITATING_VOICES: 8;
+}
+
 //#endregion
- 
+
 //#region interfaces - Borrowed from Discord.JS setup - https=//github.com/discordjs/discord.js
 // https://github.com/discordjs/discord.js/blob/main/typings/index.d.ts
- 
+
 export interface ClientEvents {
   /**
    * The socket connected to the server
@@ -2618,13 +2695,13 @@ export interface ClientEvents {
    */
   groupMemberAdd: [group: GroupObject, subscriber: SubscriberObject],
   /**
-   * A subscribers capability has been updated in a group 
+   * A subscribers capability has been updated in a group
    */
   groupMemberUpdate: [group: GroupObject, action: GroupAdminActionObject],
   /**
    * A subscriber left a group
    */
-  groupMemberDelete:[group: GroupObject, subscriber: SubscriberObject],
+  groupMemberDelete: [group: GroupObject, subscriber: SubscriberObject],
   /**
    * A group message has been received
    */
@@ -2668,7 +2745,7 @@ export interface ClientEvents {
   /**
    * A new notification was received
    */
-  notificationReceived:[notification: NotificationObject],
+  notificationReceived: [notification: NotificationObject],
   /**
    * A packet was received from the server
    */
@@ -2774,7 +2851,7 @@ export interface ClientEvents {
    */
   stageClientBroadcastPaused: [change: StageClientUpdatedObject],
   /**
-   * The bot is ready to broadcast 
+   * The bot is ready to broadcast
    */
   stageClientReady: [change: StageClientUpdatedObject],
   /**
@@ -2790,7 +2867,7 @@ export interface ClientEvents {
    */
   stageClientBroadcastUnpaused: [change: StageClientUpdatedObject],
   /**
-   * The bots listener count has changed 
+   * The bots listener count has changed
    */
   stageClientBroadcastViewerCountChanged: [change: StageClientViewerObject],
   /**
@@ -2826,5 +2903,5 @@ export interface ClientEvents {
    */
   welcome: [welcome: WelcomeObject],
 }
- 
+
 //#endregion
