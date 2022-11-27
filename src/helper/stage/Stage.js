@@ -6,18 +6,18 @@ const validator = require('../../validator');
 const { Commands } = require('../../constants');
 
 module.exports = class Stage extends BaseHelper {
-  constructor(api) {
+  constructor (api) {
     super(api);
 
     this._manager = new Manager(this._api);
     this._stageList = [];
   }
 
-  async getSettings(targetGroupId) {
+  async getSettings (targetGroupId) {
     return this.getGroupSettings(targetGroupId);
   }
 
-  async getGroupSettings(targetGroupId, requestNew = false) {
+  async getGroupSettings (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -39,11 +39,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async getStages(requestNew = false) {
+  async getStages (requestNew = false) {
     return this.getStageList(requestNew);
   }
 
-  async getStageList(requestNew = false) {
+  async getStageList (requestNew = false) {
     try {
       if (!validator.isValidBoolean(requestNew)) {
         throw new Error('requestNew must be a valid boolean');
@@ -65,11 +65,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async getStagesForGroup(targetGroupId, requestNew = false) {
+  async getStagesForGroup (targetGroupId, requestNew = false) {
     return this.getStageListForGroup(targetGroupId, requestNew);
   }
 
-  async getStageListForGroup(targetGroupId, requestNew = false) {
+  async getStageListForGroup (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -116,11 +116,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async getSlots(targetGroupId, requestNew = false) {
+  async getSlots (targetGroupId, requestNew = false) {
     return this.getGroupSlots(targetGroupId, requestNew);
   }
 
-  async getGroupSlots(targetGroupId, requestNew = false) {
+  async getGroupSlots (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -152,9 +152,9 @@ module.exports = class Stage extends BaseHelper {
 
       const result = await this._websocket.emit(
         Commands.GROUP_AUDIO_SLOT_LIST, {
-        id: targetGroupId,
-        subscribe: true
-      }
+          id: targetGroupId,
+          subscribe: true
+        }
       );
 
       if (result.success) {
@@ -168,7 +168,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async updateSlotMuteState(targetGroupId, slotId, isMuted) {
+  async updateSlotMuteState (targetGroupId, slotId, isMuted) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -234,7 +234,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async updateSlotLockState(targetGroupId, slotId, isLocked) {
+  async updateSlotLockState (targetGroupId, slotId, isLocked) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -297,7 +297,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async leaveSlot(targetGroupId) {
+  async leaveSlot (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -346,11 +346,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async removeSubscriberFromSlot(targetGroupId, slotId) {
+  async removeSubscriberFromSlot (targetGroupId, slotId) {
     return this.kickSlot(targetGroupId, slotId);
   }
 
-  async kickSlot(targetGroupId, slotId) {
+  async kickSlot (targetGroupId, slotId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -412,7 +412,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async kickSubscriberFromStage(targetGroupId, subscriberId) {
+  async kickSubscriberFromStage (targetGroupId, subscriberId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -463,7 +463,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async joinSlot(targetGroupId, slotId, sdp = undefined, opts = undefined) {
+  async joinSlot (targetGroupId, slotId, sdp = undefined, opts = undefined) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -566,7 +566,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async consumeSlot(targetGroupId, slotId, sdp) {
+  async consumeSlot (targetGroupId, slotId, sdp) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -592,11 +592,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async play(targetGroupId, data) {
+  async play (targetGroupId, data) {
     return this.broadcast(targetGroupId, data);
   }
 
-  async broadcast(targetGroupId, data) {
+  async broadcast (targetGroupId, data) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -624,7 +624,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async pause(targetGroupId) {
+  async pause (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -648,7 +648,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async resume(targetGroupId) {
+  async resume (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -672,7 +672,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async stop(targetGroupId) {
+  async stop (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -696,7 +696,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isMuted(targetGroupId) {
+  async isMuted (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -720,11 +720,11 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isPlaying(targetGroupId) {
+  async isPlaying (targetGroupId) {
     return this.isBroadcasting(targetGroupId);
   }
 
-  async isBroadcasting(targetGroupId) {
+  async isBroadcasting (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -748,7 +748,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isConnected(targetGroupId) {
+  async isConnected (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -772,7 +772,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isConnecting(targetGroupId) {
+  async isConnecting (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -796,7 +796,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isReady(targetGroupId) {
+  async isReady (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -820,7 +820,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async isPaused(targetGroupId) {
+  async isPaused (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -844,7 +844,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async hasClient(targetGroupId) {
+  async hasClient (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -863,7 +863,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async setClientOptions(targetGroupId, opts) {
+  async setClientOptions (targetGroupId, opts) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -906,7 +906,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async getClientOptions(targetGroupId) {
+  async getClientOptions (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -930,7 +930,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async slotId(targetGroupId) {
+  async slotId (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -955,7 +955,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async duration(targetGroupId) {
+  async duration (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -980,7 +980,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async setVolume(targetGroupId, volume) {
+  async setVolume (targetGroupId, volume) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -992,10 +992,9 @@ module.exports = class Stage extends BaseHelper {
         throw new Error('targetGroupId cannot be less than or equal to 0');
       }
 
-
       if (validator.isNullOrUndefined(volume)) {
         throw new Error('volume cannot be null or undefined');
-      } else if (!validator.isValidNumber(volume)) {
+      } else if (!validator.isValidNumber(volume, true)) {
         throw new Error('volume must be a valid number');
       } else if (!validator.isType(volume, 'number')) {
         throw new Error('volume must be type of number');
@@ -1016,7 +1015,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async getSlotRequestList(targetGroupId, requestNew = false) {
+  async getSlotRequestList (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1067,7 +1066,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async requestMic(targetGroupId) {
+  async requestMic (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1123,7 +1122,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async cancelMicRequest(targetGroupId) {
+  async cancelMicRequest (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1175,7 +1174,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async clearMicRequestList(targetGroupId) {
+  async clearMicRequestList (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1215,7 +1214,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async addSlotRequest(targetGroupId, slotId, subscriberId) {
+  async addSlotRequest (targetGroupId, slotId, subscriberId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1291,7 +1290,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async cancelSlotRequest(targetGroupId, slotId) {
+  async cancelSlotRequest (targetGroupId, slotId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -1358,7 +1357,7 @@ module.exports = class Stage extends BaseHelper {
     }
   }
 
-  async _cleanup(disconnected) {
+  async _cleanup (disconnected) {
     if (!disconnected && this._stageList.length > 0) {
       return await this.getStageList(true);
     }

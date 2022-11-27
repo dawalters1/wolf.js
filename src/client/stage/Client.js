@@ -72,7 +72,7 @@ class Client extends EventEmitter {
         if (!this._muted) {
           this._source.onData(
             {
-              samples: sample.map((samples) => samples * this.volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
+              samples: sample.map((samples) => samples * this._volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
