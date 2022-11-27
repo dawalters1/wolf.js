@@ -119,7 +119,11 @@ class Timer {
         throw new Error('name cannot be null or empty');
       }
 
-      await this._timerQueue.removeJobs(name);
+      const job = await this._timerQueue.getJob(name);
+
+      if (job) {
+        return await job.remove();
+      }
 
       return Promise.resolve();
     } catch (error) {
