@@ -238,7 +238,9 @@ exports.Commands = {
   TIP_SUMMARY: 'tip summary',
 
   TOPIC_PAGE_LAYOUT: 'topic page layout',
-  TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list'
+  TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list',
+
+  WOLFSTAR_PROFILE: 'wolfstar profile'
 };
 
 exports.AdminAction = {
@@ -390,7 +392,7 @@ exports.MessageFilterTier = {
 
 exports.MessageType = {
   APPLICATION_PALRINGO_GROUP_ACTION: 'application/palringo-group-action',
-  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK : "application/palringo-interactive-message-pack",
+  APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK: 'application/palringo-interactive-message-pack',
 
   AUDIO_AAC: 'audio/aac',
   AUDIO_SPEEX: 'audio/x-speex',
@@ -434,7 +436,9 @@ exports.Privilege = {
   VALID_EMAIL: 1 << 19,
   PREMIUM_ACCOUNT: 1 << 20,
   VIP: 1 << 21,
+  WOLF_STAR: 1 << 21,
   ELITECLUB_3: 1 << 22,
+  WOLF_STAR_PRO: 1 << 23,
   USER_ADMIN: 1 << 24,
   GROUP_ADMIN: 1 << 25,
   BOT: 1 << 26,
@@ -473,4 +477,21 @@ exports.TipType = {
   CHARM: 'charm',
   SUBSCRIBER: 'subscriber',
   GROUP: 'group'
+};
+
+exports.TopicPageRecipeType = {
+  EVENT: 'event',
+  GROUP: 'group',
+  PRODUCT: 'product'
+};
+
+exports.WolfstarTalent = {
+  MUSIC: 1,
+  ENTERTAINMENT: 2,
+  TALK_SHOW: 3,
+  STORY_TELLING: 4,
+  VOICE_OVER: 5,
+  POETRY: 6,
+  COMEDY: 7,
+  IMITATING_VOICES: 8
 };

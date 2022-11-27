@@ -4,6 +4,7 @@ const { RTCSessionDescription, RTCPeerConnection } = wrtc;
 const { RTCAudioSource } = require('wrtc').nonstandard;
 const MediaStream = require('wrtc').MediaStream;
 const ffmpeg = require('fluent-ffmpeg');
+const _ = require('lodash');
 
 const { connectionState, broadcastState, events } = require('./constants');
 
@@ -13,15 +14,17 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const setIntervalAsync = (fn) => {
-  fn().then((ms) => {
-    setTimeout(() => setIntervalAsync(fn, ms), ms);
-  });
-};
+const createUInt8Array = (buffer) => {
+  const sample = new Int8Array(1920);
 
-const delay = async (duration) => new Promise(resolve => {
-  setTimeout(resolve, duration);
-});
+  sample.set(buffer);
+
+  if (buffer.byteLength < SLICE_COUNT) {
+    sample.fill(0, buffer.byteLength);
+  }
+
+  return sample;
+};
 
 class Client extends EventEmitter {
   constructor (targetGroupId, opts) {
@@ -38,7 +41,8 @@ class Client extends EventEmitter {
     this._chunks = [];
     this._samples = [];
     this._duration = 0;
-
+    this._volume = 1;
+    this._emittedPlaying = false;
     this._source = new RTCAudioSource();
     const stream = new MediaStream();
     this._track = this._source.createTrack();
@@ -46,33 +50,45 @@ class Client extends EventEmitter {
 
     this._sender = this._client.addTrack(this._track, stream);
 
-    setIntervalAsync(async () => {
-      if (this._broadcastState !== broadcastState.BROADCASTING) {
-        return Promise.resolve(10);
-      }
-
-      if (this._chunks.length === 0) {
-        if (this._downloadComplete) {
-          this.stop(true);
-        }
-        return Promise.resolve(0);
-      }
-
-      const data = this._chunks.shift();
-
-      this._duration += 10;
-
-      if (this._duration % 1000 === 0) {
+    this.durationUpdater = setInterval(() => {
+      if (this._broadcastState === broadcastState.BROADCASTING) {
+        this._duration += 1000;
         this._emit(events.BROADCAST_DURATION, this._duration);
+
+        if (this._duration === 1000) {
+          this._emit(events.BROADCAST_START);
+        }
+      }
+    }, 1000);
+
+    const broadcast = () => setImmediate(async () => {
+      if (this._broadcastState !== broadcastState.BROADCASTING) {
+        return broadcast();
       }
 
-      if (this._muted) {
-        return Promise.resolve(9.9);
+      const sample = this._samples?.shift();
+
+      if (sample) {
+        if (!this._muted) {
+          this._source.onData(
+            {
+              samples: sample.map((samples) => samples * this.volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
+              sampleRate: SAMPLE_RATE,
+              bitsPerSample: BITRATE,
+              channelCount: CHANNEL_COUNT,
+              numberOfFrames: FRAMES
+            }
+          );
+        }
       }
 
-      this._source.onData(data);
+      if (!this._samples.length) {
+        if (this._downloadComplete) {
+          return this.stop(true);
+        }
+      }
 
-      return Promise.resolve(9.9);
+      return broadcast();
     });
 
     this._downloadComplete = false;
@@ -84,62 +100,46 @@ class Client extends EventEmitter {
           this._emit(events.CONNECTING);
         } else if (this._connectionState === connectionState.CONNECTING) {
           this._connectionState = connectionState.CONNECTED;
-
-          await delay(2000);
-
-          this._connectionState = connectionState.READY;
-
-          this._emit(events.READY);
         }
       } else if (this._client.connectionState === 'disconnected') {
         this._connectionState = connectionState.DISCONNECTED;
 
-        this._reset();
-
-        this._client.close();
+        this._reset(true);
 
         this._emit(events.DISCONNECTED);
       }
 
       return Promise.resolve();
     };
+
+    broadcast();
   }
 
-  _reset (resetTrack = false) {
+  _reset (disconnect = false) {
     if (this._ffmpeg) {
       this._ffmpeg.destroy();
     }
 
-    if (this._downloader && typeof this._downloader === 'object') {
-      this._downloader.destroy();
-    }
-
-    this._chunks = [];
     this._samples = [];
     this._duration = 0;
+    this._emittedPlaying = false;
 
     this._downloadComplete = false;
 
-    if (resetTrack) {
-      this._source = new RTCAudioSource();
-      this._track = this._source.createTrack();
-      const mediaStream = new MediaStream();
-      mediaStream.addTrack(this._track);
-
-      this._sender.replaceTrack(this._track);
+    if (disconnect) {
+      this._client.close();
     }
   }
 
   _emit (command, data = {}) {
     this.emit(
       command,
-      Object.assign(data,
-        {
-          client: this,
-          duration: this.duration,
-          slotId: this._slotId
-        }
-      )
+      {
+        ...data,
+        client: this,
+        duration: this.duration,
+        slotId: this._slotId
+      }
     );
   }
 
@@ -151,6 +151,9 @@ class Client extends EventEmitter {
       } else if (!this._muted && slot.occupierMuted) {
         this._muted = true;
         this._emit(events.BROADCAST_MUTED, { sourceSubscriberId });
+      } else if (this._connectionState !== connectionState.READY && slot.connectionState === 'CONNECTED') {
+        this._connectionState = connectionState.READY;
+        this.emit(events.READY);
       } else if (!slot.locked) {
         return Promise.resolve();
       }
@@ -166,23 +169,16 @@ class Client extends EventEmitter {
   }
 
   broadcast (data) {
-    this._reset(false);
+    this._reset();
 
-    this._downloader = data;
-
-    if (this._broadcastState !== broadcastState.PAUSED) {
-      this._broadcastState = broadcastState.BROADCASTING;
-      this._emit(events.BROADCAST_START);
-    }
-
-    this._ffmpeg = ffmpeg(this._downloader)
+    this._ffmpeg = ffmpeg(data)
       .toFormat('wav')
       .native()
       .noVideo()
       .withOptions(this._opts)
       .on('error', error => {
-        if (this._downloader && typeof this._downloader === 'object') {
-          this._downloader.destroy();
+        if (typeof data.destory === 'function') {
+          data.destroy();
         }
 
         if (this._broadcastState !== broadcastState.BROADCASTING) {
@@ -192,29 +188,12 @@ class Client extends EventEmitter {
         this._emit(events.BROADCAST_ERROR, error);
       })
       .pipe()
-      .on('data', (chunk) => {
-        const newSamples = new Int8Array(chunk);
-        const mergedSamples = new Int8Array(this._samples.length + newSamples.length);
-        mergedSamples.set(this._samples);
-        mergedSamples.set(newSamples, this._samples.length);
-        this._samples = mergedSamples;
-
-        while (this._samples.length > SLICE_COUNT) {
-          this._chunks.push({
-            samples: this._samples.slice(0, SLICE_COUNT),
-            sampleRate: SAMPLE_RATE,
-            bitsPerSample: BITRATE,
-            channelCount: CHANNEL_COUNT,
-            numberOfFrames: FRAMES
-          });
-
-          this._samples = this._samples.slice(SLICE_COUNT);
-        }
-      })
+      .on('data', (data) => this._samples.push(..._.chunk(data, SLICE_COUNT).map((sampleChunk) => createUInt8Array(sampleChunk))))
       .on('finish', () => {
         this._downloadComplete = true;
-      })
-    ;
+      });
+
+    this._broadcastState = this._broadcastState === broadcastState.PAUSED ? broadcastState.PAUSED : broadcastState.BROADCASTING;
   }
 
   async pause () {
@@ -226,17 +205,21 @@ class Client extends EventEmitter {
   }
 
   async resume () {
-    this._broadcastState = this._chunks.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
+    this._broadcastState = this._samples.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
     this._emit(events.BROADCAST_RESUME);
 
     return this.duration;
   }
 
-  async disconnect () {
-    this._reset();
-    this._client.close();
+  async setVolume (value) {
+    this._volume = value;
 
+    return Promise.resolve();
+  }
+
+  async disconnect () {
+    this._reset(true);
     return Promise.resolve();
   }
 
@@ -247,7 +230,7 @@ class Client extends EventEmitter {
 
     this._broadcastState = broadcastState.NOT_BROADCASTING;
 
-    this._reset(this._connectionState !== connectionState.DISCONNECTED);
+    this._reset();
 
     if (this._connectionState === connectionState.DISCONNECTED) {
       return Promise.resolve();
@@ -310,6 +293,10 @@ class Client extends EventEmitter {
 
   get opts () {
     return this._opts;
+  }
+
+  get volume () {
+    return this._volume;
   }
 }
 

@@ -33,6 +33,7 @@ const Stage = require('../helper/stage/Stage');
 const Store = require('../helper/store/Store');
 const Subscriber = require('../helper/subscriber/Subscriber');
 const Tipping = require('../helper/tipping/Tipping');
+const Topic = require('../helper/topic/Topic');
 
 const Utility = require('../utils');
 const { validateUserConfig, validateBotConfig } = require('../utils/Config');
@@ -74,6 +75,7 @@ class WOLFBot extends EventEmitter {
     this._store = new Store(this);
     this._subscriber = new Subscriber(this);
     this._tipping = new Tipping(this);
+    this._topic = new Topic(this);
 
     this._currentSubscriber = undefined;
 
@@ -262,6 +264,13 @@ class WOLFBot extends EventEmitter {
     return this._tipping;
   }
 
+  /**
+   * Exposes the Topic methods
+   * @returns {Topic}
+   */
+  topic () {
+    return this._topic;
+  }
   // #endregion
 
   /**

@@ -2,6 +2,7 @@ const BaseHelper = require('../BaseHelper');
 const SubscriberObject = require('../../models/SubscriberObject');
 const Message = require('../../models/MessageObject');
 const Response = require('../../models/ResponseObject');
+const Wolfstar = require('./Wolfstar');
 
 const validator = require('../../validator');
 const { Commands } = require('../../constants');
@@ -12,8 +13,13 @@ class Subscriber extends BaseHelper {
   constructor (api) {
     super(api);
 
+    this._wolfstar = new Wolfstar(this._api);
     this._subscribers = [];
     this._presence = [];
+  }
+
+  wolfstar () {
+    return this._wolfstar;
   }
 
   async getPresenceById (subscriberId, requestNew = false) {
