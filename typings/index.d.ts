@@ -2980,7 +2980,7 @@ export interface WolfstarTalent {
     VOICE_OVER: 5;
     POETRY: 6;
     COMEDY: 7;
-    IMITATING_VOICES: 7;
+    IMITATING_VOICES: 8;
 }
 
 //#endregion
