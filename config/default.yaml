@@ -2,10 +2,10 @@ app: wjs
 
 connection:
   host: https://v3-rc.palringo.com
-  port: 3051
+  port: 443
   query:
     device: wjsframework
-    
+
 
 networking:
   events:
@@ -15,7 +15,7 @@ networking:
 
 notificationSettings:
   duration: 600000
-  
+
 batch:
   length: 50
 
@@ -70,27 +70,27 @@ multimedia:
     validation:
       size:
         jpeg: 1048576
-      mimes: ['image/jpeg']  
+      mimes: ['image/jpeg']
 
 secrets:
   - language: en
     commands: ['>rys']
-    responses: 
+    responses:
       - hasDevId: true
         response: "I am an Unofficial Bot using WOLF.js {version}\n\nOwned By: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "I am an Unofficial Bot using WOLF.js {version}"        
+        response: "I am an Unofficial Bot using WOLF.js {version}"
   - language: tr
     commands: ['>sırlarını', '>sırrını']
-    responses: 
+    responses:
       - hasDevId: true
         response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum.\n\nSahibim: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum."       
-  - language: en    
+        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum."
+  - language: en
     commands: ['>كشف']
     responses:
       - hasDevId: true
         response: "انا بوت غير رسمي نسخة WOLF.js {version}\n\nمالك البوت: {nickname} ({subscriberId})"
       - hasDevId: false
-        response: "انا بوت غير رسمي نسخة WOLF.js {version}"  
+        response: "انا بوت غير رسمي نسخة WOLF.js {version}"
