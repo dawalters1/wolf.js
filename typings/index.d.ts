@@ -132,6 +132,10 @@ export class WOLF {
 
     public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => Promise<void>): this;
 
+    /**
+     * The account currently logged in
+     */
+    public currentSubscriber: Subscriber;
 }
 
 export class Websocket {
@@ -190,7 +194,6 @@ export class Base {
 export class AchievementHelper extends Base {
     private constructor(client)
 
-    public achievements: { [key: number]: Array<Achievement> }
     /**
      * Exposes the Achievement Category methods
      */
@@ -222,7 +225,6 @@ export class AchievementHelper extends Base {
 export class AchievementCategoryHelper extends Base {
     private constructor(client);
 
-    public categories: { [key: number]: Array<AchievementCategory> };
     /**
      * Request the Achievement Categories
      * @param language - The language to request in
@@ -256,7 +258,6 @@ export class AchievementSubscriberHelper extends Base {
 export class AuthorizationHelper extends Base {
     private constructor(client);
 
-    public authorized: Array<number>;
     /**
      * Get a list of authorized subscribers
      */
@@ -285,7 +286,6 @@ export class AuthorizationHelper extends Base {
 export class BannedHelper extends Base {
     private constructor(client);
 
-    public banned: Array<number>;
     /**
     * Get a list of banned subscribers
     */
@@ -314,7 +314,6 @@ export class BannedHelper extends Base {
 export class CharmHelper extends Base {
     private constructor(client);
 
-    public charms: Array<Charm>;
     /**
      * Get the list of charms
      */
@@ -333,7 +332,7 @@ export class CharmHelper extends Base {
      * Get a subscribers charm summary
      * @param subscriberId - The ID of the subscriber
      */
-    public getSubscriberSummary(subscriberId: number): Promise<CharmSummary>
+    public getSubscriberSummary(subscriberId: number): Promise<Array<CharmSummary>>
     /**
      * Get a subscribers gifting statistics
      * @param subscriberId - The ID of the subscriber
@@ -362,13 +361,12 @@ export class CharmHelper extends Base {
      * Set a charm on the bots profile
      * @param charms - The charm to set
      */
-    public set(charms: CharmSelected): Promise<Response>;
+    public set(charms: CharmSelectedBuilder): Promise<Response>;
 }
 
 export class ContactHelper extends Base {
     private constructor(client);
 
-    public contacts: Array<Contact>;
     /**
      * Exposes the Blocked methods
      */
@@ -397,7 +395,6 @@ export class ContactHelper extends Base {
 export class BlockedHelper extends Base {
     private constructor(client);
 
-    public blocked: Array<Contact>;
     /**
      * Get the Bots blocked list
      */
@@ -421,13 +418,6 @@ export class BlockedHelper extends Base {
 
 export class DiscoveryHelper extends Base {
     private constructor(client);
-
-    public discovery: {
-        [key: string]: {
-            main: Discovery,
-            pages: { [key: string]: object }
-        }
-    }
 
     /**
      * Get the discovery page
@@ -537,8 +527,6 @@ export class EventSubscriptionHelper extends Base {
 export class GroupHelper extends Base {
     private constructor(client);
 
-    public fetched: boolean;
-    public groups: Array<Group>;
     /**
      * Exposes the Group Member methods
      */
@@ -803,9 +791,6 @@ export class MessagingSubscriptionHelper extends Base {
 export class MiscHelper extends Base {
     private constructor(client);
 
-    public blacklist: Array<BlacklistLink>;
-    public metadataResults: Array<LinkMetadata>;
-
     /**
      * Get metadata for a url
      * @param url - The URL
@@ -835,7 +820,6 @@ export class MiscHelper extends Base {
 export class NotificationHelper extends Base {
     private constructor(client);
 
-    public notifications: Array<Notification>
     /**
      * Get notifications
      * @param forceNew - Whether or not to request new from the server
@@ -1110,7 +1094,6 @@ export class StoreHelper extends Base {
 export class SubscriberHelper extends Base {
     private constructor(client);
 
-    public subscribers: Array<Subscriber>;
     /**
      * Exposes the Presence methods
      */
@@ -1160,8 +1143,6 @@ export class WolfStarsHelper extends Base {
 
 export class SubscriberPresenceHelper extends Base {
     private constructor(client);
-
-    public presences: Array<Presence>;
 
     /**
      * Get a subscribers presence
@@ -1547,6 +1528,17 @@ export namespace Validator {
 
 //#endregion
 
+//#region Builders
+
+export class CharmSelectedBuilder {
+    public constructor(charmId: number, position: number);
+
+    public charmId: number;
+    public position: number
+}
+
+//#endregion
+
 //#region Models
 
 export class BaseModel {
@@ -1567,6 +1559,7 @@ export class Achievement extends BaseModel {
     public levelId: number;
     public levelName: string;
     public acquisitionPercentage: number;
+    public exists: boolean;
 
     toJSON(): Object;
 }
@@ -1632,6 +1625,7 @@ export class Charm extends Base {
     public nameTranslationList: Array<{ languageId: Language, text: string }>;
     public weight: number;
     public cost: number;
+    public exist: boolean;
 
     toJSON(): Object;
 }

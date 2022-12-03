@@ -8,7 +8,7 @@ class Log extends Base {
   constructor (client) {
     super(client);
 
-    process.on('unhandledRejection', (error) => this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error }));
+    process.on('unhandledRejection', (error) => this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error?.stack ? error.stack : error.message }));
   }
 
   debug (message) {

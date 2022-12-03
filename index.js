@@ -2,6 +2,9 @@ import WOLF from './src/client/WOLF.js';
 import Command from './src/command/Command.js';
 import Validator from './src/validator/index.js';
 import {
+  CharmSelectedBuilder
+} from './src/builders/index.js';
+import {
   AdminAction,
   Capability,
   Category,
@@ -11,6 +14,7 @@ import {
   Gender,
   IconSize,
   Language,
+  LogLevel,
   LoginType,
   LookingFor,
   MemberListType,
@@ -121,9 +125,10 @@ import {
   WolfstarsProfile
 } from './src/models/index.js';
 
-export {
+const exports = {
   WOLF,
   Command,
+  CharmSelectedBuilder,
   AdminAction,
   Capability,
   Category,
@@ -133,6 +138,7 @@ export {
   Gender,
   IconSize,
   Language,
+  LogLevel,
   LoginType,
   LookingFor,
   MemberListType,
@@ -242,9 +248,10 @@ export {
   Validator
 };
 
-export default {
+export {
   WOLF,
   Command,
+  CharmSelectedBuilder,
   AdminAction,
   Capability,
   Category,
@@ -254,6 +261,7 @@ export default {
   Gender,
   IconSize,
   Language,
+  LogLevel,
   LoginType,
   LookingFor,
   MemberListType,
@@ -360,5 +368,7 @@ export default {
   WelcomeEndpoint,
   WOLFAPIError,
   WolfstarsProfile,
-  Validator
+  Validator,
+
+  exports as default
 };

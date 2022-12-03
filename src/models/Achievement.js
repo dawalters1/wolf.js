@@ -13,6 +13,8 @@ class Achievement extends Base {
     this.levelId = data?.levelId;
     this.levelName = data?.levelName;
     this.acquisitionPercentage = data?.acquisitionPercentage;
+
+    this.exists = Object.keys(data) > 1;
   }
 
   toJSON () {
@@ -26,7 +28,8 @@ class Achievement extends Base {
       category: this.category,
       levelId: this.levelId,
       levelName: this.levelName,
-      acquisitionPercentage: this.acquisitionPercentage
+      acquisitionPercentage: this.acquisitionPercentage,
+      exists: this.exists
     };
   }
 }

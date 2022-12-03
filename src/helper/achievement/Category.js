@@ -35,7 +35,7 @@ class Category extends Base {
       }
     );
 
-    return this._process(response.body?.map((category) => models.AchievementCategory(this.client, category)) ?? undefined, language);
+    return this._process(response.body?.map((category) => new models.AchievementCategory(this.client, category)) ?? undefined, language);
   }
 
   _process (categories, language) {

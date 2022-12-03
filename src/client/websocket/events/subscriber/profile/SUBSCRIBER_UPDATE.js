@@ -1,5 +1,6 @@
 import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
+import patch from '../../../../../utils/patch.js';
 
 /**
  *
@@ -17,8 +18,13 @@ export default async function (client, body) {
   const oldSubscriber = new models.Subscriber(client, cached);
   const newSubscriber = await client.subscriber.getById(body.id, true);
 
-  client.contact._patchIfExists('id', newSubscriber.toContact());
-  client.contact.blocked._patchIfExists('id', newSubscriber.toContact());
+  if (client.contact.contacts.some((contact) => contact.id === newSubscriber.id)) {
+    patch(client.contact.contacts.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
+  }
+
+  if (client.contact.blocked.blocked.some((contact) => contact.id === newSubscriber.id)) {
+    patch(client.contact.blocked.blocked.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
+  }
 
   for (const group of await client.group.list()) {
     await group.members?._onSubscriberUpdate(newSubscriber);

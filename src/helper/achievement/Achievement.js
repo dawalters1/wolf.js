@@ -46,7 +46,7 @@ class Achievement extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    return (await this.getByIds([id]))[0];
+    return (await this.getByIds([id], language, forceNew))[0];
   }
 
   /**
@@ -86,7 +86,7 @@ class Achievement extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) : [];
+    const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) ?? [] : [];
 
     if (achievements.length !== ids.length) {
       const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));

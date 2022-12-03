@@ -72,7 +72,7 @@ class Charm extends Base {
     const charms = await this.list();
 
     return ids.reduce((result, value) => {
-      result.push(charms.find((charm) => charm.id === value) || new Charm({ id: value }));
+      result.push(charms.find((charm) => charm.id === value) || new models.Charm(this.client, { id: value }));
 
       return result;
     }, []);
@@ -99,7 +99,7 @@ class Charm extends Base {
       }
     );
 
-    return response.success ? new models.CharmSummary(this.client, response.body) : undefined;
+    return response.body?.map((charmSummary) => new models.CharmSummary(this.client, charmSummary)) ?? [];
   }
 
   /**
@@ -250,11 +250,11 @@ class Charm extends Base {
 
   /**
    * Set selected charms
-   * @param {models.CharmSelected} charms - The charm to set
+   * @param {builders.CharmSelectedBuilder} charms - The charm to set
    * @returns {Promise<models.Response} - Response
    */
   async set (charms) {
-    charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm));
+    charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm.toCharmSelected()));
 
     if (!charms.length) {
       throw new models.WOLFAPIError('charms cannot be null or empty', { charms });
