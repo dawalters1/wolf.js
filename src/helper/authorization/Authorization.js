@@ -21,7 +21,7 @@ class Authorization extends Base {
      * Clear the list of authorized subscribers
      */
   async clear () {
-    this.authorized.clear();
+    this.authorized = [];
   }
 
   /**

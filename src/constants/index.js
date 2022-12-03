@@ -9,6 +9,7 @@ import Event from './Event.js';
 import Gender from './Gender.js';
 import IconSize from './IconSize.js';
 import Language from './Language.js';
+import LogLevel from './LogLevel.js';
 import LoginType from './LoginType.js';
 import LookingFor from './LookingFor.js';
 import MemberListType from './MemberListType.js';
@@ -28,7 +29,7 @@ import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
 import WolfstarTalent from './WolfstarTalent.js';
 
-export {
+const exports = {
   AdminAction,
   Capability,
   Category,
@@ -40,6 +41,7 @@ export {
   Gender,
   IconSize,
   Language,
+  LogLevel,
   LoginType,
   LookingFor,
   MemberListType,
@@ -60,7 +62,7 @@ export {
   WolfstarTalent
 };
 
-export default {
+export {
   AdminAction,
   Capability,
   Category,
@@ -72,6 +74,7 @@ export default {
   Gender,
   IconSize,
   Language,
+  LogLevel,
   LoginType,
   LookingFor,
   MemberListType,
@@ -89,5 +92,7 @@ export default {
   TipDirection,
   TipPeriod,
   TipType,
-  WolfstarTalent
+  WolfstarTalent,
+
+  exports as default
 };
