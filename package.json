@@ -6,11 +6,12 @@
   "type": "module",
   "typings": "typings/index.d.ts",
   "scripts": {
-    "test": "mocha test/index.js"
+    "test": "mocha --exit --recursive --timeout 10000 ./test"
   },
   "files": [
     "typings",
     "src",
+    "phrases",
     "config"
   ],
   "repository": {

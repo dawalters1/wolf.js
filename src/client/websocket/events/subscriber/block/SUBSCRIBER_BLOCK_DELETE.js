@@ -1,12 +1,13 @@
 import { Event } from '../../../../../constants/index.js';
 
 export default async (client, body) => {
-  const contact = await client.contact.blocked.blocked.find((subscriber) => subscriber.id === body.targetId);
+  const contact = client.contact.blocked.blocked.find((blocked) => blocked.id === body.targetId);
 
   if (!contact) {
     return Promise.resolve();
   }
-  client.contact.blocked.blocked.splice(client.contact.blocked.blocked.indexOf(contact), 1);
+
+  client.contact.blocked.blocked = client.contact.blocked.blocked.filter((blocked) => blocked.id !== body.targetId);
 
   return await client.emit(
     Event.SUBSCRIBER_BLOCK_DELETE,

@@ -33,17 +33,17 @@ class Contact extends Base {
   }
 
   async isContact (subscriberIds) {
-    subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+    const values = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!subscriberIds.length) {
+    if (!values.length) {
       throw new models.WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
     }
 
-    if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
+    if ([...new Set(values)].length !== values.length) {
       throw new models.WOLFAPIError('subscriberIds cannot contain duplicates', { subscriberIds });
     }
 
-    for (const subscriberId of subscriberIds) {
+    for (const subscriberId of values) {
       if (validator.isNullOrUndefined(subscriberId)) {
         throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
       } else if (!validator.isValidNumber(subscriberId)) {
@@ -54,7 +54,7 @@ class Contact extends Base {
     }
     await this.list();
 
-    const results = subscriberIds.reduce((result, subscriberId) => {
+    const results = values.reduce((result, subscriberId) => {
       result.push(this.contacts.some((contact) => contact.id === subscriberId));
 
       return result;

@@ -14,7 +14,7 @@ class Achievement extends Base {
     this.levelName = data?.levelName;
     this.acquisitionPercentage = data?.acquisitionPercentage;
 
-    this.exists = Object.keys(data) > 1;
+    this.exists = Object.keys(data).length > 1;
   }
 
   toJSON () {

@@ -87,7 +87,7 @@ class Request extends Base {
     const slots = await group.getStageSlots();
 
     if (slotId) {
-      const slot = slots.find((slot) => slot.id === slotId);
+      const slot = slots.find((slot) => slot.id === parseInt(slotId));
 
       if (!slot) {
         throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });
@@ -97,11 +97,11 @@ class Request extends Base {
         throw new models.WOLFAPIError('slot is locked', { targetGroupId, slotId });
       }
 
-      if (slots.some((slot) => slot.occupierId === subscriberId)) {
+      if (slots.some((slot) => slot.occupierId === parseInt(subscriberId))) {
         throw new models.WOLFAPIError('subscriber already occupies a slot in this group', { targetGroupId, subscriberId });
       }
 
-      if (slots.some((slot) => slot.reservedOccupierId === subscriberId)) {
+      if (slots.some((slot) => slot.reservedOccupierId === parseInt(subscriberId))) {
         throw new models.WOLFAPIError('subscriber already has a slot request in this group', { targetGroupId, subscriberId });
       }
 
@@ -111,7 +111,7 @@ class Request extends Base {
           id: parseInt(targetGroupId),
           slotId: parseInt(slotId),
           reservedExpiresAt: Date.now() + 30000,
-          reservedOccupierId: subscriberId
+          reservedOccupierId: parseInt(subscriberId)
         }
       );
     }
@@ -168,7 +168,7 @@ class Request extends Base {
     const slots = await group.slots();
 
     if (slotId) {
-      const slot = slots.find((slot) => slot.id === slotId);
+      const slot = slots.find((slot) => slot.id === parseInt(slotId));
 
       if (!slot) {
         throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });

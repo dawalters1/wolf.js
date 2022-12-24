@@ -1,16 +1,26 @@
 import fs from 'fs';
-import path from 'path';
+import path, { dirname } from 'path';
 import Base from '../Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import patch from '../../utils/patch.js';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class Phrase extends Base {
   constructor (client) {
     super(client);
     this.phrases = [];
 
-    this.load(this.client._frameworkConfig.get('internalPhrases'));
+    // Load premade phrases
+    fs.readdirSync(path.join(__dirname, '../../../phrases/'))
+      .filter((file) => file.endsWith('.json'))
+      .forEach((file) =>
+        this.load(JSON.parse(fs.readFileSync(path.join(__dirname, `../../../phrases/${file}`), 'utf8'))
+          .map((phrase) => ({ ...phrase, language: path.parse(file).name }))));
+
     this.load();
   }
 

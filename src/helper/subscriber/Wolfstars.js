@@ -7,7 +7,19 @@ import validator from '../../validator/index.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class Wolfstars extends Base {
-  async getProfile (subscriberIds) {
+  async getById (id) {
+    if (validator.isNullOrUndefined(id)) {
+      throw new WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
+
+    return (await this.getByIds([id]))[0];
+  }
+
+  async getByIds (subscriberIds) {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!subscriberIds.length) {
