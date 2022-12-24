@@ -173,7 +173,7 @@ class StringUtility extends Base {
     return string.match(urlRegexSafe({ localhost: true, returnString: false }))?.map((url) => url.replace(/\.+$/, ''))
       .sort((a, b) => b.length - a.length)
       .reduce((results, url) => {
-        results.push(...[...string.matchAll(new RegExp(url, 'gi'))].filter((match) => !results.some((existingMatch) => existingMatch.index === match.index) && isValidUrl(this.client, match[0])));
+        results.push(...[...string.matchAll(new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu'))].filter((match) => !results.some((existingMatch) => existingMatch.index === match.index) && isValidUrl(this.client, match[0])));
 
         return results;
       }, [])

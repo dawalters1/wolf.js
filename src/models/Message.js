@@ -4,14 +4,16 @@ import MessageEdit from './MessageEdit.js';
 import MessageEmbed from './MessageEmbed.js';
 import MessageMetadata from './MessageMetadata.js';
 import TipContext from './TipContext.js';
+import WOLFAPIError from './WOLFAPIError.js';
 
 class Message extends Base {
   constructor (client, data) {
     super(client);
+
     this.id = data?.id;
     this.body = data?.data?.toString().trim();
-    this.sourceSubscriberId = data?.originator?.id ?? data?.originator;
-    this.targetGroupId = data?.isGroup ? data?.recipient?.id ?? data?.recipient.id : null;
+    this.sourceSubscriberId = data?.originator?.id ?? data?.originator ?? data.subscriberId;
+    this.targetGroupId = data?.isGroup ? data.targetGroupId ?? data?.recipient?.id ?? data?.recipient.id : null;
     this.embeds = data?.embeds ? data?.embeds.map((embed) => new MessageEmbed(client, embed)) : null;
     this.metadata = data?.metadata ? new MessageMetadata(client, data?.metadata) : null;
     this.isGroup = data?.isGroup;
@@ -26,14 +28,38 @@ class Message extends Base {
   }
 
   async delete () {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('editing private messages is currently not supported');
+    }
+
     return await this.client.messaging.delete(this.targetGroupId, this.timestamp);
   }
 
   async restore () {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('editing private messages is currently not supported');
+    }
+
     return await this.client.messaging.restore(this.targetGroupId, this.timestamp);
   }
 
+  async getEditHistory () {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('editing private messages is currently not supported');
+    }
+
+    if (!(this.metadata?.isEdited || this.metadata?.isDeleted)) {
+      return [];
+    }
+
+    return await this.client.messaging.getGroupMessageEditHistory(this.targetGroupId, this.timestamp);
+  }
+
   async tip (charm) {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('tipping private messages is currently not supported');
+    }
+
     return await this.client.tipping.tip(
       this.sourceSubscriberId,
       this.targetGroupId,

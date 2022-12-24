@@ -28,6 +28,10 @@ class Websocket {
     );
   }
 
+  _disconnect () {
+    return this.socket?.disconnect();
+  }
+
   _create () {
     const connectionSettings = this.client._frameworkConfig.get('connection');
     const { onlineState, token } = this.client.config.get('framework.login');

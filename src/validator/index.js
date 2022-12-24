@@ -98,6 +98,10 @@ const isValidUrl = (client, arg) => {
       return !!protocol;
     }
 
+    if (!parsed.isIcann) {
+      return false;
+    }
+
     if (!parsed.domain && !parsed.publicSuffix.split('.').every((tld) => validationConfig.tlds.includes(tld.toLowerCase()))) {
       return false;
     }

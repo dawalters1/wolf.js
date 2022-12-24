@@ -735,7 +735,7 @@ export class MessagingHelper extends Base {
      * @param targetGroupId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
-    public getGroupMessageEditHistory(targetGroupId: number, timestamp: number): Promise<Array<Message>>;
+    public getGroupMessageEditHistory(targetGroupId: number, timestamp: number): Promise<Array<MessageUpdate>>;
     /**
      * Delete a group message
      * @param targetGroupId - The ID of the group
@@ -2196,6 +2196,18 @@ export class MessageSettingFilter extends Base {
 
     toJSON(): Object;
 }
+
+export class MessageUpdate extends Base {
+    private constructor(client: WOLF, data: object)
+
+    public data: string;
+    public metadata: MessageMetadata;
+    public subscriberId: number;
+    public timestamp: number;
+
+    toJSON(): Object;
+}
+
 
 export class Notification extends Base {
     private constructor(client: WOLF, data: object)

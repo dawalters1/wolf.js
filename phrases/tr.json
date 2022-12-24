@@ -1,0 +1,18 @@
+[
+    {
+        "name": "{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw",
+        "value": ">sırlarını"
+    },
+    {
+        "name": "{keyword}_command_cmV2ZWFsIHlvdXIgc2VjcmV0cw_alias1",
+        "value": ">sırrını"
+    },
+    {
+        "name": "{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_with_details_message",
+        "value": "Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahibim: [{nickname}](wolf://user/{subscriberId}) (UserId {subscriberId})"
+    },
+    {
+        "name": "{keyword}_cmV2ZWFsIHlvdXIgc2VjcmV0cw_without_details_message",
+        "value": "Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum."
+    }
+]

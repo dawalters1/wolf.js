@@ -320,15 +320,15 @@ class Messaging extends Base {
     }
 
     const response = await this.client.websocket.emit(
-      Command.MESSAGE_UPDATE,
+      Command.MESSAGE_UPDATE_LIST,
       {
         isGroup: true,
-        recipientId: targetGroupId,
-        timestamp
+        recipientId: parseInt(targetGroupId),
+        timestamp: parseInt(timestamp)
       }
     );
 
-    return (response?.body ?? []).map((message) => new models.Message(this.client, message));
+    return response.body?.map((data) => new models.MessageUpdate(this.client, data)) ?? [];
   }
 
   async deleteGroupMessage (targetGroupId, timestamp) {

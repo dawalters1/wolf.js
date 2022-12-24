@@ -48,6 +48,7 @@ import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
 import MessageResponse from './MessageResponse.js';
 import MessageSettings from './MessageSettings.js';
 import MessageSettingFilter from './MessageSettingFilter.js';
+import MessageUpdate from './MessageUpdate.js';
 import Notification from './Notification.js';
 import NotificationAction from './NotificationAction.js';
 import Phrase from '../helper/phrase/Phrase.js';
@@ -141,6 +142,7 @@ export {
   MessageResponse,
   MessageSettingFilter,
   MessageSettings,
+  MessageUpdate,
   Notification,
   NotificationAction,
   Phrase,
@@ -235,6 +237,7 @@ export default {
   MessageResponse,
   MessageSettingFilter,
   MessageSettings,
+  MessageUpdate,
   Notification,
   NotificationAction,
   Phrase,

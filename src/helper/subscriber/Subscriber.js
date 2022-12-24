@@ -132,7 +132,7 @@ class Subscriber extends Base {
         body: {
           id: parseInt(id),
           limit: parseInt(limit),
-          timestampEnd: timestamp === 0 ? undefined : parseInt(timestamp)
+          timestampEnd: timestamp <= 0 ? undefined : parseInt(timestamp)
         }
       }
     );

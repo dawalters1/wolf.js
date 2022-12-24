@@ -5,7 +5,7 @@ import models from '../../models/index.js';
 
 class Subscription extends Base {
   constructor (client) {
-    super(client, {});
+    super(client);
 
     this.subscriptions = {};
 
