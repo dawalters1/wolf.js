@@ -54,25 +54,18 @@ class Client extends EventEmitter {
       if (this._broadcastState === broadcastState.BROADCASTING) {
         this._duration += 1000;
         this._emit(events.BROADCAST_DURATION, this._duration);
-
-        if (this._duration === 1000) {
-          this._emit(events.BROADCAST_START);
-        }
       }
     }, 1000);
 
-    const broadcast = () => setImmediate(async () => {
-      if (this._broadcastState !== broadcastState.BROADCASTING) {
-        return broadcast();
-      }
+    const broadcast = () => setTimeout(async () => {
+      if (this._broadcastState === broadcastState.BROADCASTING) {
 
-      const sample = this._samples?.shift();
+        const sample = this._samples?.shift();
 
-      if (sample) {
-        if (!this._muted) {
+        if (sample && !this._muted) {
           this._source.onData(
             {
-              samples: sample.map((samples) => samples * this._volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
+              samples: createUInt8Array(sample).map((samples) => this._volume === 1 || samples === 0 ? samples : samples * this._volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
@@ -80,16 +73,19 @@ class Client extends EventEmitter {
             }
           );
         }
-      }
 
-      if (!this._samples.length) {
-        if (this._downloadComplete) {
+        if (!this._samples.length && this._downloadComplete) {
           return this.stop(true);
+        }
+
+        if(!this._emittedPlaying){
+          this._emittedPlaying = true;
+          this._emit(events.BROADCAST_START);
         }
       }
 
       return broadcast();
-    });
+    }, 1);
 
     this._downloadComplete = false;
 
@@ -178,7 +174,7 @@ class Client extends EventEmitter {
       .withOptions(this._opts)
       .on('error', error => {
         if (typeof data.destory === 'function') {
-          data.destroy();
+          data?.destroy();
         }
 
         if (this._broadcastState !== broadcastState.BROADCASTING) {
@@ -188,7 +184,7 @@ class Client extends EventEmitter {
         this._emit(events.BROADCAST_ERROR, error);
       })
       .pipe()
-      .on('data', (data) => this._samples.push(..._.chunk(data, SLICE_COUNT).map((sampleChunk) => createUInt8Array(sampleChunk))))
+      .on('data', (data) => this._samples.push(..._.chunk(data, SLICE_COUNT)))
       .on('finish', () => {
         this._downloadComplete = true;
       });
