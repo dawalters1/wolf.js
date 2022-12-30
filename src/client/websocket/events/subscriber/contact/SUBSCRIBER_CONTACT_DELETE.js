@@ -7,7 +7,7 @@ export default async (client, body) => {
     return Promise.resolve();
   }
 
-  client.contact.contacts = client.contact.contacts.filter((blocked) => blocked.id !== body.targetId);
+  client.contact.contacts = client.contact.contacts.filter((contact) => contact.id !== body.targetId);
 
   return await client.emit(
     Event.SUBSCRIBER_CONTACT_DELETE,

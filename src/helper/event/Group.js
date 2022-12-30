@@ -3,7 +3,7 @@ import validator from '../../validator/index.js';
 import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
-import fileType from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 
 class Group extends Base {
   async getList (targetGroupId, subscribe = true, forceNew = false) {
@@ -180,7 +180,7 @@ class Group extends Base {
     return this.client.multimedia.upload(eventConfig,
       {
         data: thumbnail.toString('base64'),
-        mimeType: (await fileType.fromBuffer(thumbnail)).mime,
+        mimeType: (await fileTypeFromBuffer(thumbnail)).mime,
         id: parseInt(eventId),
         source: this.client.currentSubscriber.id
       }
@@ -205,7 +205,7 @@ class Group extends Base {
     }
 
     return await this.client.websocket.emit(
-      Command.GROUP_EVENT_CREATE,
+      Command.GROUP_EVENT_UPDATE,
       {
         groupId: parseInt(targetGroupId),
         id: parseInt(eventId),

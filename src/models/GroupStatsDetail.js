@@ -3,7 +3,7 @@ import Base from './Base.js';
 class GroupStatsDetail extends Base {
   constructor (client, data) {
     super(client);
-    this.actionCount = data?.acountCount;
+    this.actionCount = data?.actionCount;
     this.emoticonCount = data?.emoticonCount;
     this.id = data?.id;
     this.happyCount = data?.happyCount;

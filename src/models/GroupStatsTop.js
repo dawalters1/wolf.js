@@ -4,8 +4,9 @@ class GroupStatsTop extends Base {
   constructor (client, data) {
     super(client);
     this.nickname = data?.nickname;
-    this.randomQoute = data?.randomQoute;
+    this.randomQuote = data?.randomQuote;
     this.subId = data?.subId;
+    this.wpl = data?.wpl;
     this.value = data?.value;
     this.percentage = data?.percentage;
   }
@@ -13,9 +14,10 @@ class GroupStatsTop extends Base {
   toJSON () {
     return {
       nickname: this.nickname,
-      randomQoute: this.randomQoute,
+      randomQuote: this.randomQuote,
       subId: this.subId,
       value: this.value,
+      wpl: this.wpl,
       percentage: this.percentage
     };
   }

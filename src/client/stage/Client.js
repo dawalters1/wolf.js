@@ -18,15 +18,11 @@ const BITRATE = 16;
 const FRAMES = 480;
 
 const createUInt8Array = (buffer) => {
-  const sample = new Int8Array(1920);
-
-  sample.set(buffer);
-
-  if (buffer.byteLength < SLICE_COUNT) {
-    sample.fill(0, buffer.byteLength);
+  for (let i = buffer.length; i < 1920; i++) {
+    buffer[i] = 0;
   }
 
-  return sample;
+  return new Int8Array(buffer);
 };
 
 class Client extends EventEmitter {
@@ -55,31 +51,15 @@ class Client extends EventEmitter {
     this.duration = 10;
     this.volume = 1;
 
-    const onFirstBroadcast = () => {
-      this.emittedPlaying = true;
-
-      /* this.durationUpdater = setInterval(() => {
-        if (this.broadcastState === StageBroadcastState.PLAYING) {
-          this.duration += 1000;
-          this.emit(Event.STAGE_CLIENT_DURATION, { duration: this.duration });
-        }
-      }, 1000); */
-      this.emit(Event.STAGE_CLIENT_START);
-    };
-
-    const broadcast = () => setImmediate(async () => {
+    const broadcast = () => setTimeout(async () => {
       if (this.broadcastState === StageBroadcastState.PLAYING) {
-        if (!this.emittedPlaying) {
-          onFirstBroadcast();
-        }
-
         const sample = this.samples?.shift();
 
         if (sample) {
           if (!this.muted) {
             this.source.onData(
               {
-                samples: sample.map((samples) => samples * this.volume), // This works to adjust volume, but causes static at lower volumes
+                samples: createUInt8Array(sample).map((samples) => this.volume === 1 || samples === 0 ? samples : samples * this.volume.toFixed(2)),
                 sampleRate: SAMPLE_RATE,
                 bitsPerSample: BITRATE,
                 channelCount: CHANNEL_COUNT,
@@ -95,10 +75,15 @@ class Client extends EventEmitter {
             this.stop();
           }
         }
+
+        if (!this.emittedPlaying) {
+          this.emittedPlaying = true;
+          this.emit(Event.STAGE_CLIENT_START);
+        }
       }
 
       return broadcast();
-    });
+    }, 1);
 
     this.client.onconnectionstatechange = async () => {
       const state = this.client.connectionState;
@@ -175,6 +160,10 @@ class Client extends EventEmitter {
       .native()
       .noVideo()
       .on('error', (error) => {
+        console.log('errored');
+
+        data?.destroy();
+
         if (this.broadcastState === StageBroadcastState.IDLE) {
           return Promise.resolve();
         }
@@ -184,7 +173,7 @@ class Client extends EventEmitter {
         this.emit(Event.STAGE_CLIENT_ERROR, error);
       })
       .pipe()
-      .on('data', (data) => this.samples.push(..._.chunk(data, SLICE_COUNT).map((sampleChunk) => createUInt8Array(sampleChunk))))
+      .on('data', (data) => this.samples.push(..._.chunk(data, SLICE_COUNT)))
       .on('finish', () => { this.completed = true; });
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;

@@ -251,7 +251,7 @@ class Group extends Base {
     return await this.leaveById(group.id);
   }
 
-  async getChatHistory (id, chronological, timestamp = 0, limit = 15) {
+  async getChatHistory (id, chronological = false, timestamp = 0, limit = 15) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -268,8 +268,8 @@ class Group extends Base {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
       throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-    } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
+    } else if (validator.isLessThanZero(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be less than 0', { timestamp });
     }
 
     if (validator.isNullOrUndefined(limit)) {

@@ -14,7 +14,7 @@ class Event extends Base {
     this.imageUrl = data?.imageUrl;
     this.startsAt = data?.startsAt;
     this.endsAt = data?.endsAt;
-    this.isRemoved = data?.isRemoved;
+    this.isRemoved = data?.isRemoved ?? false;
     this.attendanceCount = data?.attendanceCount;
 
     this.exists = Object.keys(data).length > 1;

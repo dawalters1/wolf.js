@@ -1,9 +1,9 @@
 import { WOLFAPIError } from '../models/index.js';
 import imageSize from 'image-size';
-import fileType from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 
 export default async (config, buffer) => {
-  const { mime } = await fileType.fromBuffer(buffer);
+  const { mime } = await fileTypeFromBuffer(buffer);
 
   if (!config.mimes.some((supportedMime) => supportedMime.type === mime)) {
     throw new WOLFAPIError('mimeType is unsupported', mime);

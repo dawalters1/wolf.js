@@ -3,7 +3,8 @@ import Base from './Base.js';
 class GroupStatsActive extends Base {
   constructor (client, data) {
     super(client);
-    this.actionCount = data?.acountCount;
+
+    this.actionCount = data?.actionCount;
     this.emoticonCount = data?.emoticonCount;
     this.groupId = data?.groupId;
     this.happyEmoticonCount = data?.happyEmoticonCount;
@@ -11,7 +12,7 @@ class GroupStatsActive extends Base {
     this.lineCount = data?.lineCount;
     this.message = data?.message;
     this.nickname = data?.nickname;
-    this.randomQoute = data?.randomQoute;
+    this.randomQuote = data?.randomQuote;
     this.packCount = data?.packCount;
     this.sadEmoticonCount = data?.sadEmoticonCount;
     this.subId = data?.subId;
@@ -31,7 +32,7 @@ class GroupStatsActive extends Base {
       lineCount: this.lineCount,
       message: this.message,
       nickname: this.nickname,
-      randomQoute: this.randomQoute,
+      randomQuote: this.randomQuote,
       packCount: this.packCount,
       sadEmoticonCount: this.sadEmoticonCount,
       subId: this.subId,
