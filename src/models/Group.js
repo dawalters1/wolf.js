@@ -23,6 +23,7 @@ class Group extends Base {
     this.peekable = data?.peekable;
     this.premium = data?.premium;
     this.icon = data?.icon;
+    this.iconHash = data?.iconHash;
     this.iconInfo = new IconInfo(client, data?.iconInfo, 'group', data?.id);
     this.extended = new GroupExtended(client, data?.extended);
     this.audioCounts = new GroupAudioCounts(client, data?.audioCounts);
@@ -57,6 +58,7 @@ class Group extends Base {
       peekable: this.peekable,
       premium: this.premium,
       icon: this.icon,
+      iconHash: this.iconHash,
       iconInfo: this.iconInfo.toJSON(),
       extended: this.extended.toJSON(),
       audioCounts: this.audioCounts.toJSON(),

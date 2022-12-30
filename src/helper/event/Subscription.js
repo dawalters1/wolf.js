@@ -26,7 +26,7 @@ class Subscription extends Base {
       }
     );
 
-    this.subscriptions = response.body ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+    this.subscriptions = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
 
     return this.subscriptions;
   }

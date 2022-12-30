@@ -13,12 +13,10 @@
     "noUnusedParameters": true,
     "strict": true,
     "useUnknownInCatchVariables": true,
-
     // Modules
     "module": "ES6",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-
     // Emit
     "declaration": false,
     "importHelpers": true,
@@ -33,17 +31,16 @@
     "sourceMap": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-
     // Language and Environment
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "target": "ES2020",
     "useDefineForClassFields": true,
-
     // Output Formatting
     "pretty": false,
-
     // Completeness
     "skipLibCheck": false,
     "skipDefaultLibCheck": true

@@ -3,7 +3,7 @@ import Base from '../Base.js';
 import Subscription from './Subscription.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
-import fileType from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { nanoid } from 'nanoid';
 
@@ -244,7 +244,7 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('content cannot be null or undefined', { content });
     }
 
-    const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : MessageType.TEXT_PLAIN;
+    const mimeType = Buffer.isBuffer(content) ? (await fileTypeFromBuffer(content)).mime : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client._frameworkConfig.get('multimedia.messaging');

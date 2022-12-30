@@ -9,7 +9,7 @@ class GroupStats extends Base {
     super(client);
     this.details = new GroupStatsDetail(client, data?.details);
     this.next30 = (data?.next30 ?? []).map((item) => new GroupStatsActive(client, item));
-    this.top25 = (data?.top25 ?? []).map((item) => new GroupStatsTop(client, item));
+    this.top25 = (data?.top25 ?? []).map((item) => new GroupStatsActive(client, item));
     this.topAction = (data?.topAction ?? []).map((item) => new GroupStatsTop(client, item));
     this.topEmoticon = (data?.topEmoticon ?? []).map((item) => new GroupStatsTop(client, item));
     this.topHappy = (data?.topHappy ?? []).map((item) => new GroupStatsTop(client, item));
@@ -19,28 +19,28 @@ class GroupStats extends Base {
     this.topSwear = (data?.topSwear ?? []).map((item) => new GroupStatsTop(client, item));
     this.topText = (data?.topText ?? []).map((item) => new GroupStatsTop(client, item));
     this.topWord = (data?.topWord ?? []).map((item) => new GroupStatsTop(client, item));
-    this.trends = (data?.topWord ?? []).map((item) => new GroupStatsTrend(client, item));
-    this.trendsDay = (data?.topWord ?? []).map((item) => new GroupStatsTrend(client, item));
-    this.trendsHours = (data?.topWord ?? []).map((item) => new GroupStatsTrend(client, item));
+    this.trends = (data?.trends ?? []).map((item) => new GroupStatsTrend(client, item));
+    this.trendsDay = (data?.trendsDay ?? []).map((item) => new GroupStatsTrend(client, item));
+    this.trendsHour = (data?.trendsHour ?? []).map((item) => new GroupStatsTrend(client, item));
   }
 
   toJSON () {
     return {
       details: this.details.toJSON(),
       next30: this.next30.map((item) => item.toJSON()),
-      top25: this.next30.map((item) => item.toJSON()),
-      topAction: this.next30.map((item) => item.toJSON()),
-      topEmoticon: this.next30.map((item) => item.toJSON()),
-      topHappy: this.next30.map((item) => item.toJSON()),
-      topImage: this.next30.map((item) => item.toJSON()),
-      topQuestion: this.next30.map((item) => item.toJSON()),
-      topSad: this.next30.map((item) => item.toJSON()),
-      topSwear: this.next30.map((item) => item.toJSON()),
-      topText: this.next30.map((item) => item.toJSON()),
-      topWord: this.next30.map((item) => item.toJSON()),
-      trends: this.next30.map((item) => item.toJSON()),
-      trendsDay: this.next30.map((item) => item.toJSON()),
-      trendsHours: this.next30.map((item) => item.toJSON())
+      top25: this.top25.map((item) => item.toJSON()),
+      topAction: this.topAction.map((item) => item.toJSON()),
+      topEmoticon: this.topEmoticon.map((item) => item.toJSON()),
+      topHappy: this.topHappy.map((item) => item.toJSON()),
+      topImage: this.topImage.map((item) => item.toJSON()),
+      topQuestion: this.topQuestion.map((item) => item.toJSON()),
+      topSad: this.topSad.map((item) => item.toJSON()),
+      topSwear: this.topSwear.map((item) => item.toJSON()),
+      topText: this.topText.map((item) => item.toJSON()),
+      topWord: this.topWord.map((item) => item.toJSON()),
+      trends: this.trends.map((item) => item.toJSON()),
+      trendsDay: this.trendsDay.map((item) => item.toJSON()),
+      trendsHour: this.trendsHour.map((item) => item.toJSON())
     };
   }
 }
