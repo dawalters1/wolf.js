@@ -9,6 +9,10 @@ class GroupAudioConfig extends Base {
     this.minRepLevel = data?.minRepLevel;
   }
 
+  async update ({ enabled, stageId, minRepLevel }) {
+    return await this.client.stage.updateAudioConfig(this.id, { enabled, stageId, minRepLevel });
+  }
+
   toJSON () {
     return {
       id: this.id,

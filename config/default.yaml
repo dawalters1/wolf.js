@@ -2,6 +2,9 @@ app: wjs
 
 commandKey: cmV2ZWFsIHlvdXIgc2VjcmV0cw
 
+charms:
+  unofficial: [813, 814]
+
 connection:
   host: https://v3-rc.palringo.com
   port: 3051
@@ -9,7 +12,7 @@ connection:
     device: wjsframework
   mocha:
     email:
-    password:
+    password: 
 
 avatar:
   endpoint: https://df49rkfq0koe8.cloudfront.net

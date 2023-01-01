@@ -557,6 +557,12 @@ export class GroupHelper extends Base {
      */
     public getByName(name: string, subscribe?: boolean, forceNew?: boolean): Promise<Group>;
     /**
+     * Update a group profile
+     * @param id - The ID of the group
+     * @param groupData - The new group data
+     */
+    public update(id: number, groupData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number }): Promise<Response>;
+    /**
      * Join a group
      * @param id - The ID of the group
      * @param password - The password
@@ -795,7 +801,7 @@ export class MiscHelper extends Base {
      * Get metadata for a url
      * @param url - The URL
      */
-    public metadata(url: string): Promise<LinkMetadata>;
+    public metadata(url: string): Promise<Response<LinkMetadata>>;
     /**
      * Get list of blacklisted links
      * @param forceNew - Whether or not to request new from the server
@@ -884,6 +890,12 @@ export class StageHelper extends Base {
      * @param targetGroupId - The ID of the group
      */
     public getAudioConfig(targetGroupId: number): Promise<GroupAudioConfig>;
+    /**
+     * Update the groups audio config
+     * @param targetGroupId - The ID of the group
+     * @param audioConfig - The new audio config
+     */
+    public updateAudioConfig(targetGroupId: number, audioConfig: { stageId?: number, enabled?: boolean, minRepLevel?: number }): Promise<Response>;
     /**
      * Get a groups stage settings
      * @param targetGroupId - The ID of the group

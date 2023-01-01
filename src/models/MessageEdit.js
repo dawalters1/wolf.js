@@ -7,6 +7,10 @@ class MessageEdit extends Base {
     this.timestamp = data?.timestamp;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subscriberId);
+  }
+
   toJSON () {
     return {
       subscriberId: this.subscriberId,

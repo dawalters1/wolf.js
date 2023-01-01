@@ -3,14 +3,14 @@ import Base from '../Base.js';
 import Request from './Request.js';
 import Slot from './Slot.js';
 import StageClient from '../../client/stage/Client.js';
-import { Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
+import { Command, Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models, { StageClientDurationUpdate, StageClientGeneralUpdate, StageClientViewerCountUpdate } from '../../models/index.js';
 
 class Stage extends Base {
 /**
  *
- * @param {import('../../client/WOLF')} client
+ * @param {import('../../client/WOLF').default} client
  */
   constructor (client) {
     super(client);
@@ -105,6 +105,49 @@ class Stage extends Base {
 
     return group.audioConfig;
   }
+
+  async updateAudioConfig (targetGroupId, { stageId, enabled, minRepLevel }) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
+    if (stageId) {
+      if (!validator.isValidNumber(stageId)) {
+        throw new models.WOLFAPIError('stageId must be a valid number', { stageId });
+      } else if (validator.isLessThanZero(stageId)) {
+        throw new models.WOLFAPIError('stageId cannot be less than 0', { stageId });
+      }
+    }
+
+    if (enabled && !validator.isValidBoolean(enabled)) {
+      throw new models.WOLFAPIError('enabled must be a valid boolean', { enabled });
+    }
+
+    if (minRepLevel) {
+      if (!validator.isValidNumber(minRepLevel)) {
+        throw new models.WOLFAPIError('minRepLevel must be a valid number', { minRepLevel });
+      } else if (validator.isLessThanZero(minRepLevel)) {
+        throw new models.WOLFAPIError('minRepLevel cannot be less than 0', { minRepLevel });
+      }
+    }
+
+    const audioConfig = await this.client.group.getById(targetGroupId);
+
+    return await this.client.websocket.emit(
+      Command.GROUP_AUDIO_UPDATE,
+      {
+        id: parseInt(targetGroupId),
+        stageId: parseInt(stageId) || audioConfig.stageId,
+        enabled: enabled || audioConfig.enabled,
+        minRepLevel: parseInt(minRepLevel) || audioConfig.minRepLevel
+      }
+    );
+  }
+  // Implement updateAudioConfig
 
   async getAudioCount (targetGroupId) {
     if (validator.isNullOrUndefined(targetGroupId)) {

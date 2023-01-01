@@ -8,6 +8,10 @@ class MessageMetadataFormattingUrl extends Base {
     this.url = data?.url;
   }
 
+  async metadata () {
+    return await this.client.misc.metadata(this.url);
+  }
+
   toJSON () {
     return {
       start: this.start,

@@ -10,6 +10,10 @@ class Link extends Base {
     this.link = data.link;
   }
 
+  async metadata () {
+    return await this.client.misc.metadata(this.link);
+  }
+
   toJSON () {
     return {
       start: this.start,

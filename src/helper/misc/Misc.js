@@ -1,6 +1,6 @@
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import { BlacklistLink, LinkMetadata, WOLFAPIError } from '../../models/index.js';
+import { BlacklistLink, LinkMetadata, MessageSettings, WOLFAPIError } from '../../models/index.js';
 import { Command, MessageFilterTier } from '../../constants/index.js';
 
 class Misc extends Base {
@@ -44,10 +44,10 @@ class Misc extends Base {
         }
       );
 
-      return metadata;
+      response.body = metadata;
     }
 
-    return undefined;
+    return response;
   }
 
   async linkBlacklist (forceNew = false) {
@@ -83,7 +83,9 @@ class Misc extends Base {
   }
 
   async getMessageSettings () {
-    return await this.websocket.emit(Command.MESSAGE_SETTING);
+    const response = await this.client.websocket.emit(Command.MESSAGE_SETTING);
+
+    return response.success ? new MessageSettings(this.client, response.body) : null;
   }
 
   async updateMessageSettings (messageFilterTier) {
@@ -93,7 +95,7 @@ class Misc extends Base {
       throw new Error('messageFilterTier is not valid', { messageFilterTier });
     }
 
-    return await this.websocket.emit(
+    return await this.client.websocket.emit(
       Command.MESSAGE_SETTING_UPDATE,
       {
         spamFilter: {

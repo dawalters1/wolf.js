@@ -9,6 +9,10 @@ class TipSummary extends Base {
     this.version = data?.version;
   }
 
+  async charms () {
+    return await this.client.charm.getByIds(this.list.map((charm) => charm.charmId));
+  }
+
   toJSON () {
     return {
       id: this.id,

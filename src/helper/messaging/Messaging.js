@@ -82,11 +82,13 @@ const getEmbedData = async (client, formatting, options) => {
         continue;
       }
 
-      const metadata = await client.misc.metadata(item.url);
+      const response = await client.misc.metadata(item.url);
 
-      if (!metadata || metadata.isBlacklisted) {
+      if (!response.success) {
         continue;
       }
+
+      const metadata = response.body;
 
       const preview = {
         type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,

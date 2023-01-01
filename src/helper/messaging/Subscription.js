@@ -1,5 +1,5 @@
 import Base from '../Base.js';
-import * as nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
@@ -7,20 +7,21 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this.subscriptions = {};
+    this.subscriptions = [];
 
     this.client.on('message', (message) => {
-      const subscriptions = Object.values(this.subscriptions).filter((subscription) => subscription.predicate(message));
+      const subscriptions = this.subscriptions.filter((subscription) => subscription.predicate(message));
 
       for (const messageSubscription of subscriptions) {
         message.subscription = messageSubscription.id;
         messageSubscription.def.resolve(message);
+        console.log('subscription found');
       }
     });
   }
 
   async _create (predicate, timeout = Infinity) {
-    if (Object.values(this.subscriptions).some((subscription) => subscription.predicate === predicate)) {
+    if (this.subscriptions.some((subscription) => subscription.predicate === predicate)) {
       throw new models.WOLFAPIError('subscription is a duplicate', { predicate });
     }
 
@@ -45,12 +46,15 @@ class Subscription extends Base {
       subscription.timeout = setTimeout(() => subscription.def.resolve(null), timeout);
     }
 
+    this.subscriptions.push(subscription);
+
     const result = await new Promise((resolve, reject) => {
       subscription.def = { resolve, reject };
     });
 
     clearTimeout(subscription.timeout);
-    Reflect.deleteProperty(this.subscriptions, subscription.id);
+
+    this.subscriptions.splice(this.subscriptions.findIndex((sub) => sub.id === subscription.id), 1);
 
     return result;
   }
@@ -60,7 +64,7 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('predicate must be function', { predicate });
     }
 
-    return await this._createSubscription(predicate, timeout);
+    return await this._create(predicate, timeout);
   }
 
   async nextGroupMessage (targetGroupId, timeout = Infinity) {
@@ -116,7 +120,10 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    this.subscriptions = {};
+    if (reconnection) {
+      return;
+    }
+    this.subscriptions = [];
   }
 }
 

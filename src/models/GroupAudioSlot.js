@@ -15,6 +15,42 @@ class GroupAudioSlot extends Base {
     this.reservedExpiresAt = data?.reservedExpiresAt;
   }
 
+  async join () {
+    return await this.client.stage.slot.join(this.groupId, this.id);
+  }
+
+  async leave () {
+    return await this.client.stage.slot.leave(this.groupId, this.id);
+  }
+
+  async kick () {
+    return await this.client.stage.slot.kick(this.groupId, this.id);
+  }
+
+  async mute () {
+    return await this.client.stage.slot.mute(this.groupId, this.id);
+  }
+
+  async unmute () {
+    return await this.client.stage.slot.unmute(this.groupId, this.id);
+  }
+
+  async lock () {
+    return await this.client.stage.slot.lock(this.groupId, this.id);
+  }
+
+  async unlock () {
+    return await this.client.stage.slot.unlock(this.groupId, this.id);
+  }
+
+  async request (subscriberId) {
+    return await this.client.stage.request.add(this.groupId, this.id, subscriberId);
+  }
+
+  async cancelRequet () {
+    return await this.client.stage.request.delete(this.groupId, this.id);
+  }
+
   toJSON () {
     return {
       id: this.id,

@@ -11,6 +11,10 @@ class GroupStatsTop extends Base {
     this.percentage = data?.percentage;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subId);
+  }
+
   toJSON () {
     return {
       nickname: this.nickname,

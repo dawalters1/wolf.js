@@ -10,6 +10,10 @@ class Ad extends Base {
     this.ad = data.ad;
   }
 
+  async group () {
+    return await this.client.group.getByName(this.ad);
+  }
+
   toJSON () {
     return {
       start: this.start,

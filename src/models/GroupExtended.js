@@ -16,6 +16,10 @@ class GroupExtended extends Base {
     this.entryLevel = data?.entryLevel;
   }
 
+  async update ({ longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
+    return await this.client.group.update(this.id, { longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel });
+  }
+
   toJSON () {
     return {
       id: this.id,

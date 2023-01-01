@@ -1,4 +1,4 @@
-import { Capability, Command } from '../../constants/index.js';
+import { Capability, Category, Command, Language } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models, { Search } from '../../models/index.js';
@@ -182,6 +182,104 @@ class Group extends Base {
     );
 
     return response.success ? this._process(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
+  }
+
+  async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
+    if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
+
+    if (peekable && !validator.isValidBoolean(peekable)) {
+      throw new models.WOLFAPIError('peekable must be a valid boolean', { peekable });
+    }
+
+    if (disableHyperlink && !validator.isValidBoolean(disableHyperlink)) {
+      throw new models.WOLFAPIError('disableHyperlink must be a valid boolean', { disableHyperlink });
+    }
+
+    if (disableImage && !validator.isValidBoolean(disableImage)) {
+      throw new models.WOLFAPIError('disableImage must be a valid boolean', { disableImage });
+    }
+
+    if (disableImageFilter && !validator.isValidBoolean(disableImageFilter)) {
+      throw new models.WOLFAPIError('disableImageFilter must be a valid boolean', { disableImageFilter });
+    }
+
+    if (disableVoice && !validator.isValidBoolean(disableVoice)) {
+      throw new models.WOLFAPIError('disableVoice must be a valid boolean', { disableVoice });
+    }
+
+    if (discoverable && !validator.isValidBoolean(discoverable)) {
+      throw new models.WOLFAPIError('discoverable must be a valid boolean', { discoverable });
+    }
+
+    if (advancedAdmin && !validator.isValidBoolean(advancedAdmin)) {
+      throw new models.WOLFAPIError('advancedAdmin must be a valid boolean', { advancedAdmin });
+    }
+
+    if (closed && !validator.isValidBoolean(closed)) {
+      throw new models.WOLFAPIError('closed must be a valid boolean', { closed });
+    }
+
+    if (locked && !validator.isValidBoolean(locked)) {
+      throw new models.WOLFAPIError('locked must be a valid boolean', { locked });
+    }
+
+    if (questionable && !validator.isValidBoolean(questionable)) {
+      throw new models.WOLFAPIError('questionable must be a valid boolean', { questionable });
+    }
+
+    if (language) {
+      if (!validator.isValidNumber(language)) {
+        throw new models.WOLFAPIError('language must be a valid number', { language });
+      } else if (!Object.values(Language).includes(parseInt(language))) {
+        throw new Error('language is not valid', { language });
+      }
+    }
+
+    if (category) {
+      if (!validator.isValidNumber(category)) {
+        throw new models.WOLFAPIError('category must be a valid number', { category });
+      } else if (!Object.values(Category).includes(parseInt(category))) {
+        throw new Error('category is not valid', { category });
+      }
+    }
+
+    const group = await this.getById(parseInt(id));
+
+    if (!group.exists) {
+      throw new models.WOLFAPIError('Unknown Group', { id });
+    }
+
+    return await this.client.websocket.emit(
+      Command.GROUP_PROFILE_UPDATE,
+      {
+        id: parseInt(id),
+        description: description || this.description,
+        peekable: peekable || this.peekable,
+        messageConfig: {
+          disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink,
+          disableImage: disableImage || this.messageConfig.disableImage,
+          disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter,
+          disableVoice: disableVoice || this.messageConfig.disableVoice
+        },
+        extended: {
+          longDescription: longDescription || this.extended.longDescription,
+          discoverable: discoverable || this.extended.discoverable,
+          language: parseInt(language) || this.extended.language,
+          category: parseInt(category) || this.extended.category,
+          advancedAdmin: advancedAdmin || this.extended.advancedAdmin,
+          questionable: questionable || this.extended.questionable,
+          locked: locked || this.extended.locked,
+          closed: closed || this.extended.closed,
+          entryLevel: parseInt(entryLevel) || this.extended.entryLevel
+        }
+      }
+    );
   }
 
   async joinById (id, password = undefined) {

@@ -22,6 +22,10 @@ class GroupStatsActive extends Base {
     this.wordCount = data?.wordCount;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subId);
+  }
+
   toJSON () {
     return {
       actionCount: this.actionCount,

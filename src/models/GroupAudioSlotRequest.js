@@ -9,6 +9,18 @@ class GroupAudioSlotRequest extends Base {
     this.reservedExpiresAt = data?.reservedExpiresAt;
   }
 
+  async delete () {
+    return await this.client.stage.request.delete(this.groupId, this.slotId);
+  }
+
+  async accept () {
+    return await this.client.stage.slot.join(this.groupId, this.slotId);
+  }
+
+  async reject () {
+    return this.delete();
+  }
+
   toJSON () {
     return {
       slotId: this.slotId,

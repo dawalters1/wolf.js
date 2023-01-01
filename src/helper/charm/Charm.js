@@ -256,10 +256,6 @@ class Charm extends Base {
   async set (charms) {
     charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm.toCharmSelected()));
 
-    if (!charms.length) {
-      throw new models.WOLFAPIError('charms cannot be null or empty', { charms });
-    }
-
     if ([...new Set(charms.map((charm) => charm.toJSON()))].length !== charms.length) {
       throw new models.WOLFAPIError('charms cannot contain duplicates', { charms });
     }

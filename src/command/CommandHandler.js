@@ -3,15 +3,15 @@ import Command from './Command.js';
 import { Privilege } from '../constants/index.js';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 
-const CHARM_IDS = [813, 814];
-
 const checkForBotCharm = async (client, subscriber) => {
-  if (subscriber.charms && subscriber.charms.selectedList.some((charm) => CHARM_IDS.includes(charm.charmId))) {
+  const charmIds = client._frameworkConfig.charm.unofficial;
+
+  if (subscriber.charms && subscriber.charms.selectedList.some((charm) => charmIds.includes(charm.charmId))) {
     return true;
   }
 
   if (subscriber.charmSummary) {
-    return subscriber.charmSummary.some((charm) => CHARM_IDS.includes(charm.charmId));
+    return subscriber.charmSummary.some((charm) => charmIds.includes(charm.charmId));
   }
   subscriber.charmSummary = await client.charm.getSubscriberSummary(subscriber.id);
 
@@ -30,14 +30,17 @@ class CommandHandler {
         return Promise.resolve();
       }
 
-      const context = this._getCommand(this._commands, {
-        isGroup: message.isGroup,
-        argument: message.body,
-        targetGroupId: message.targetGroupId,
-        sourceSubscriberId: message.sourceSubscriberId,
-        timestamp: message.timestamp,
-        type: message.type
-      });
+      const context = this._getCommand(
+        this._commands,
+        {
+          isGroup: message.isGroup,
+          argument: message.body,
+          targetGroupId: message.targetGroupId,
+          sourceSubscriberId: message.sourceSubscriberId,
+          timestamp: message.timestamp,
+          type: message.type
+        }
+      );
 
       if (!context.callback) {
         return Promise.resolve();
@@ -74,9 +77,7 @@ class CommandHandler {
   }
 
   isCommand (message) {
-    const args = message?.split(this.client.SPLIT_REGEX).filter(Boolean);
-
-    return this._commands.some((command) => this.client.phrase.getAllByName(command.phraseName).some((phrase) => this.client.utility.string.isEqual(phrase.value, args[0])));
+    return this._commands.some((command) => this.client.phrase.getAllByName(command.phraseName).some((phrase) => this.client.utility.string.isEqual(phrase.value, message?.split(this.client.SPLIT_REGEX).filter(Boolean)[0])));
   }
 
   _getCommand (commands, context) {
@@ -94,11 +95,7 @@ class CommandHandler {
       return false;
     });
 
-    if (!command || command.children.length === 0) {
-      return context;
-    }
-
-    return this._getCommand(command.children, context);
+    return (!command || command.children.length === 0) ? context : this._getCommand(command.children, context);
   }
 }
 

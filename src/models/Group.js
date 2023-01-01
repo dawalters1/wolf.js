@@ -45,6 +45,32 @@ class Group extends Base {
     return this.client.utility.group.avatar(this.id, size);
   }
 
+  async join (password = undefined) {
+    return await this.client.group.joinById(this.id, password);
+  }
+
+  async leave () {
+    return await this.client.group.leaveById(this.id);
+  }
+
+  // TODO
+
+  async stats () {
+    return await this.client.group.getStats(this.id);
+  }
+
+  async slots () {
+    return await this.client.stage.slot.list(this.id);
+  }
+
+  async sendMessage (content, options = undefined) {
+    return await this.client.messaging.sendGroupMessage(this.id, content, options);
+  }
+
+  async update ({ description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
+    return await this.client.group.update(this.id, { description: description || this.description, peekable: peekable || this.peekable, disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink, disableImage: disableImage || this.messageConfig.disableImage, disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter, disableVoice: disableVoice || this.messageConfig.disableVoice, longDescription: longDescription || this.extended.longDescription, discoverable: discoverable || this.extended.discoverable, language: language || this.extended.language, category: category || this.extended.category, advancedAdmin: advancedAdmin || this.extended.advancedAdmin, questionable: questionable || this.extended.questionable, locked: locked || this.extended.locked, closed: closed || this.extended.closed, entryLevel: entryLevel || this.extended.entryLevel });
+  }
+
   toJSON () {
     return {
       id: this.id,
