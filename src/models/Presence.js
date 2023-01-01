@@ -9,6 +9,10 @@ class Presence extends Base {
     this.subscriberId = data?.subscriberId;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subscriberId);
+  }
+
   toJSON () {
     return {
       device: this.device,

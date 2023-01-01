@@ -10,6 +10,18 @@ class GroupSubscriberUpdate extends Base {
     this.action = data?.action;
   }
 
+  async group () {
+    return await this.client.group.getById(this.groupId);
+  }
+
+  async sourceSubscriber () {
+    return await this.client.subscriber.getById(this.sourceId);
+  }
+
+  async targetSubscriber () {
+    return await this.client.subscriber.getById(this.targetId);
+  }
+
   toJSON () {
     return {
       groupId: this.groupId,

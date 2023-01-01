@@ -6,9 +6,13 @@ class MessageUpdate extends Base {
     super(client);
 
     this.data = data?.data?.toString().trim();
-    this.metadata = data.metadata ? new MessageMetadata(client, this.metadata) : undefined;
+    this.metadata = data.metadata ? new MessageMetadata(client, this.metadata) : null;
     this.subscriberId = data?.subscriberId;
     this.timestamp = data?.timestamp;
+  }
+
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subscriberId);
   }
 
   toJSON () {

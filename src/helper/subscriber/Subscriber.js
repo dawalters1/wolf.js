@@ -111,8 +111,8 @@ class Subscriber extends Base {
       throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
     } else if (!validator.isValidNumber(timestamp)) {
       throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-    } else if (validator.isLessThanOrEqualZero(timestamp)) {
-      throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
+    } else if (validator.isLessThanZero(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be less than 0', { timestamp });
     }
 
     if (validator.isNullOrUndefined(limit)) {
@@ -124,7 +124,7 @@ class Subscriber extends Base {
     }
 
     const response = await this.client.websocket.emit(
-      Command.MESSAGE_GROUP_HISTORY_LIST,
+      Command.MESSAGE_PRIVATE_HISTORY_LIST,
       {
         headers: {
           version: 2

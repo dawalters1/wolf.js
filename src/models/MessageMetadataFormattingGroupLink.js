@@ -8,6 +8,10 @@ class MessageMetadataFormattingGroupLink extends Base {
     this.groupId = data?.groupId;
   }
 
+  async group () {
+    return await this.client.group.getById(this.groupId);
+  }
+
   toJSON () {
     return {
       start: this.start,

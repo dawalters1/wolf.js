@@ -11,6 +11,10 @@ class GroupMessageConfig extends Base {
     this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
 
+  async update ({ disableHyperlink, disableImage, disableImageFilter, disableVoice }) {
+    return await this.client.group.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter });
+  }
+
   toJSON () {
     return {
       disableHyperlink: this.disableHyperlink,

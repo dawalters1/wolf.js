@@ -1,18 +1,21 @@
 /* eslint-disable no-unused-vars */
-import { WOLF, Language, CharmSelectedBuilder, Group, Message, StoreProductPartial, Event, LogLevel } from '../index.js';
+import { WOLF, MessageFilterTier, Language, CharmSelectedBuilder, Group, TipPeriod, TipDirection, TipType, Message, StoreProductPartial, Event, LogLevel, WOLFAPIError } from '../index.js';
 import { describe, before, after, it } from 'mocha';
 import { expect } from 'chai';
 import fs from 'fs';
 
 const contactIds = [25129067, 29976610];
 const blockedIds = [81175317, 26517517];
-let eventId;
 
 const groupId = 18448720;
 const subscriberId = 80280172;
+const timestamp = 1672331025173759;
 
 describe('Helpers', () => {
   const client = new WOLF();
+
+  let eventId;
+  let message;
 
   before(() => {
     const mochaConfig = client._frameworkConfig.get('connection.mocha');
@@ -21,6 +24,13 @@ describe('Helpers', () => {
       client.on('ready', () => resolve());
       client.on('loginFailed', (reason) => reject(reason));
 
+      client.on('message', (msg) => {
+        if (message.targetGroupId === groupId && message.sourceSubscriberId === client.currentSubscriber.id) {
+          message = msg;
+
+          console.log(message.toJSON());
+        }
+      });
       client.login(mochaConfig.email, mochaConfig.password);
     });
   });
@@ -1412,7 +1422,7 @@ describe('Helpers', () => {
             expect(history.length).to.equal(0);
           });
 
-          it('should return anarray of messages history is available', async () => {
+          it('should return an array of messages history is available', async () => {
             const history = await client.group.getChatHistory(18448720);
 
             expect(history).to.not.equal(undefined);
@@ -1519,10 +1529,9 @@ describe('Helpers', () => {
     });
   });
 
-        */
   describe('Messaging', () => {
+
     describe('Messaging Helper', () => {
-      /*
       describe('sendGroupMessage', () => {
         it('should send a text message', async () => {
           const response = await client.messaging.sendGroupMessage(groupId, 'hello from V2');
@@ -1531,7 +1540,6 @@ describe('Helpers', () => {
           expect(response).to.not.equal(null);
           expect(response.success).to.equal(true);
         });
-
         it('should send a image message', async () => {
           const response = await client.messaging.sendGroupMessage(groupId, fs.readFileSync('D:/images/testavi.jpg'));
 
@@ -1548,7 +1556,6 @@ describe('Helpers', () => {
           expect(response.success).to.equal(true);
         });
       });
-*/
       describe('sendPrivateMessage', () => {
         it('should send a text message', async () => {
           const response = await client.messaging.sendPrivateMessage(subscriberId, 'hello from V2');
@@ -1576,65 +1583,201 @@ describe('Helpers', () => {
       });
 
       describe('sendMessage', () => {
-
+        //
       });
 
       describe('getGroupMessageEditHistory', () => {
+        it('should return an empty array if no history exists', async () => {
+          const history = await client.messaging.getGroupMessageEditHistory(groupId, timestamp - 100);
 
+          expect(history).to.not.equal(undefined);
+          expect(history).to.not.equal(null);
+          expect(history.length).to.equal(0);
+        });
+
+        it('should return an empty array of edits if history exists', async () => {
+          const history = await client.messaging.getGroupMessageEditHistory(groupId, timestamp);
+
+          expect(history).to.not.equal(undefined);
+          expect(history).to.not.equal(null);
+          expect(history.length).to.greaterThan(0);
+        });
       });
 
       describe('deleteGroupMessage', () => {
+        it('should delete the message', async () => {
+          const response = await client.messaging.deleteGroupMessage(groupId, timestamp);
 
+          expect(response).to.not.equal(undefined);
+          expect(response).to.not.equal(null);
+          expect(response.success).to.equal(true);
+        });
       });
 
       describe('restoreGroupMessage', () => {
+        it('should restore the message', async () => {
+          const response = await client.messaging.restoreGroupMessage(groupId, timestamp);
 
+          expect(response).to.not.equal(undefined);
+          expect(response).to.not.equal(null);
+          expect(response.success).to.equal(true);
+        });
       });
     });
 
     describe('Messaging Subscription Helper', () => {
       describe('nextMessage', () => {
+        it('should get the next message', async () => {
+          const message = await client.messaging.subscription.nextMessage((message) => message.sourceSubscriberId === subscriberId);
 
+          expect(message).to.not.equal(undefined);
+          expect(message).to.not.equal(null);
+          console.log(message);
+          expect(message.sourceSubscriberId).to.equal(subscriberId);
+        });
+
+        it('should timeout the next message', async () => {
+          const message = await client.messaging.subscription.nextMessage((message) => message.sourceSubscriberId === subscriberId, 1000);
+
+          expect(message).to.not.equal(undefined);
+          expect(message).to.equal(null);
+        });
       });
 
       describe('nextGroupMessage', () => {
+        it('should get the next group message', async () => {
+          const message = await client.messaging.subscription.nextGroupMessage(groupId);
 
+          expect(message).to.not.equal(undefined);
+          expect(message).to.not.equal(null);
+          console.log(message);
+          expect(message.targetGroupId).to.equal(groupId);
+        });
+
+        it('should timeout the next group message', async () => {
+          const message = await client.messaging.subscription.nextGroupMessage(groupId, 1000);
+
+          expect(message).to.not.equal(undefined);
+          expect(message).to.equal(null);
+        });
       });
 
       describe('nextPrivateMessage', () => {
+        it('should get the next private message', async () => {
+          const message = await client.messaging.subscription.nextPrivateMessage(message.sourceSubscriberId);
 
+          expect(message).to.not.equal(undefined);
+          expect(message).to.not.equal(null);
+          console.log(message);
+          expect(message.sourceSubscriberId).to.equal(subscriberId);
+        });
+
+        it('should timeout the next private message', async () => {
+          const message = await client.messaging.subscription.nextPrivateMessage(message.sourceSubscriberId, 1000);
+
+          expect(message).to.not.equal(undefined);
+          expect(message).to.equal(null);
+        });
       });
 
       describe('nextGroupSubscriberMessage', () => {
+        it('should get the next private message', async () => {
+          const message = await client.messaging.subscription.nextGroupSubscriberMessage(groupId, subscriberId);
 
+          expect(message).to.not.equal(undefined);
+          expect(message).to.not.equal(null);
+          console.log(message);
+          expect(message.sourceSubscriberId).to.equal(subscriberId);
+        });
+
+        it('should timeout the next private message', async () => {
+          const message = await client.messaging.subscription.nextGroupSubscriberMessage(groupId, subscriberId, 1000);
+
+          expect(message).to.not.equal(undefined);
+          expect(message).to.equal(null);
+        });
       });
+
     });
   });
 
   describe('Misc', () => {
     describe('Misc Helper', () => {
       describe('metadata', () => {
+        it('should return a metadata object', async () => {
+          const metadata = await client.misc.metadata('https://media.tenor.com/Dlb7NqumGLMAAAAi/dino-dinosaur.gif');
 
+          expect(metadata).to.not.equal(undefined);
+          expect(metadata).to.not.equal(null);
+
+          // This all sets
+        });
       });
 
+      /*
       describe('linkBlacklist', () => {
+        it('should return an array of blacklisted links', async () => {
+          const blacklisted = await client.misc.linkBlacklist();
 
+          expect(blacklisted).to.not.equal(undefined);
+          expect(blacklisted).to.not.equal(null);
+          expect(blacklisted.length).to.greaterThan(0);
+
+          expect(blacklisted[0].id).to.not.equal(undefined);
+          expect(blacklisted[0].id).to.not.equal(null);
+
+          expect(blacklisted[0].regex).to.not.equal(undefined);
+          expect(blacklisted[0].regex).to.not.equal(null);
+        });
       });
-
       describe('getSecurityToken', () => {
+        it('should return a cognito token', async () => {
+          const cognito = await client.misc.getSecurityToken();
 
+          expect(cognito).to.not.equal(undefined);
+          expect(cognito).to.not.equal(null);
+
+          expect(cognito.token).to.not.equal(undefined);
+          expect(cognito.token).to.not.equal(null);
+
+          expect(cognito.identity).to.not.equal(undefined);
+          expect(cognito.identity).to.not.equal(null);
+        });
       });
-
       describe('getMessageSettings', () => {
+        it('should get message settings', async () => {
+          const settings = await client.misc.getMessageSettings();
 
+          expect(settings).to.not.equal(undefined);
+          expect(settings).to.not.equal(null);
+
+          expect(settings.spamFilter).to.not.equal(undefined);
+          expect(settings.spamFilter).to.not.equal(null);
+
+          expect(settings.spamFilter.enabled).to.be.a('boolean');
+          expect(settings.spamFilter.tier).to.greaterThanOrEqual(0);
+        });
       });
 
       describe('updateMessageSettings', () => {
+        it('should update message settings', async () => {
+          await client.misc.updateMessageSettings(MessageFilterTier.STRICT);
 
+          const settings = await client.misc.getMessageSettings();
+
+          expect(settings).to.not.equal(undefined);
+          expect(settings).to.not.equal(null);
+
+          expect(settings.spamFilter).to.not.equal(undefined);
+          expect(settings.spamFilter).to.not.equal(null);
+
+          expect(settings.spamFilter.enabled).to.equal(true);
+          expect(settings.spamFilter.tier).to.equal(MessageFilterTier.STRICT);
+        });
       });
     });
   });
-  /*
+
   describe('Notification', () => {
     describe('Notification Helper', () => {
       describe('list', () => {
@@ -1665,11 +1808,24 @@ describe('Helpers', () => {
     });
 
   });
-*/
   describe('Phrase', () => {
     describe('Phrase Helper', () => {
       describe('load', () => {
+        it('should load phrases', async () => {
+          await client.phrase.load([
+            {
+              name: 'hello',
+              value: 'goodbye',
+              language: 'en'
+            }
+          ]);
 
+          expect(client.phrase.phrases).to.deep.include({
+            name: 'hello',
+            value: 'goodbye',
+            language: 'en'
+          });
+        });
       });
 
       describe('count', () => {
@@ -1677,23 +1833,59 @@ describe('Helpers', () => {
       });
 
       describe('getAllByName', () => {
+        it('should return an empty array if none exist', async () => {
+          const phrases = await client.phrase.getAllByName('fdafsdfsafa');
 
+          expect(phrases).to.not.equal(undefined);
+          expect(phrases).to.not.equal(null);
+          expect(phrases.length).to.equal(0);
+        });
+
+        it('should return an array if phrases exist', async () => {
+          const phrases = await client.phrase.getAllByName('hello');
+
+          expect(phrases).to.not.equal(undefined);
+          expect(phrases).to.not.equal(null);
+          expect(phrases.length).to.equal(1);
+        });
       });
 
       describe('getByLanguageAndName', () => {
+        it('should return a string phrase if it exists', async () => {
+          const phrase = await client.phrase.getByLanguageAndName('en', 'hello');
 
+          expect(phrase).to.not.equal(undefined);
+          expect(phrase).to.not.equal(null);
+          expect(phrase).to.equal('goodbye');
+        });
       });
 
       describe('getByCommandAndName', () => {
-
+        // This works
       });
 
       describe('isRequestedPhrase', () => {
+        it('should return true if it matches', async () => {
+          const input = 'goodbye';
+          const result = await client.phrase.isRequestedPhrase('hello', input);
 
+          expect(result).to.not.equal(undefined);
+          expect(result).to.not.equal(null);
+          expect(result).to.equal(true);
+        });
+        it('should return false if it doesnt match', async () => {
+          const input = 'good-bye';
+          const result = await client.phrase.isRequestedPhrase('hello', input);
+
+          expect(result).to.not.equal(undefined);
+          expect(result).to.not.equal(null);
+          expect(result).to.equal(false);
+        });
       });
     });
   });
 
+*/
   describe('Stage', () => {
 
   });
@@ -1701,27 +1893,32 @@ describe('Helpers', () => {
   describe('Store', () => {
     describe('Store Helper', () => {
       describe('getCreditList', () => {
-
+        // Worked during dev.
       });
 
       describe('get', () => {
 
+        // Worked during dev.
       });
 
       describe('getProducts', () => {
 
+        // Worked during dev.
       });
 
       describe('getFullProduct', () => {
 
+        // Worked during dev.
       });
 
       describe('purchase', () => {
 
+        // Worked during dev.
       });
 
       describe('getCreditBalance', () => {
 
+        // Worked during dev.
       });
     });
   });
@@ -1729,39 +1926,102 @@ describe('Helpers', () => {
   describe('Subscriber', () => {
     describe('Subscriber Helper', () => {
       describe('getById', () => {
+        it('should return a group if it does not exist', async () => {
+          const subscriber = await client.subscriber.getById(4324452342);
 
+          expect(subscriber).to.not.equal(undefined);
+          expect(subscriber).to.not.equal(null);
+          expect(subscriber.exists).to.equal(false);
+        });
+
+        it('should return a group if it exists', async () => {
+          const subscriber = await client.subscriber.getById(12952203);
+
+          // Works
+        });
       });
 
       describe('getByIds', () => {
 
+        // Worked during dev.
       });
 
       describe('getChatHistory', () => {
+        it('should return an empty array if no history is available', async () => {
+          const history = await client.subscriber.getChatHistory(431432421);
 
+          expect(history).to.not.equal(undefined);
+          expect(history).to.not.equal(null);
+          expect(history.length).to.equal(0);
+        });
+
+        it('should return an array of messages history is available', async () => {
+          const history = await client.subscriber.getChatHistory(80280172);
+
+          expect(history).to.not.equal(undefined);
+          expect(history).to.not.equal(null);
+          expect(history.length).to.greaterThan(0);
+
+          for (const message of history) {
+            expect(message).to.not.equal(undefined);
+            expect(message).to.not.equal(null);
+            expect(message).to.be.an.instanceOf(Message);
+          }
+
+          const historyAfter = await client.subscriber.getChatHistory(80280172, history.slice(-1)[0].timestamp);
+
+          expect(historyAfter).to.not.equal(undefined);
+          expect(historyAfter).to.not.equal(null);
+          expect(historyAfter.length).to.greaterThan(0);
+
+          for (const message of historyAfter) {
+            expect(message).to.not.equal(undefined);
+            expect(message).to.not.equal(null);
+            expect(message).to.be.an.instanceOf(Message);
+            expect(history).to.not.deep.include(message);
+          }
+        });
       });
 
       describe('search', () => {
+        it('should return an empty array if no search results exist', async () => {
+          const results = await client.subscriber.search('fgfdgdgdgfdgfdgfdgfdgfdgfdgfhgjhgjhgjh');
 
+          expect(results).to.not.equal(undefined);
+          expect(results).to.not.equal(null);
+          expect(results.length).to.equal(0);
+        });
+
+        it('should return an array if search results exist', async () => {
+          const results = await client.subscriber.search('Dew');
+
+          expect(results).to.not.equal(undefined);
+          expect(results).to.not.equal(null);
+          expect(results.length).to.greaterThan(0);
+        });
       });
     });
 
     describe('Presence Helper', () => {
       describe('getById', () => {
-
+        // Works
       });
 
       describe('getByIds', () => {
 
+        // Works
       });
     });
 
     describe('Wolfstar Helper', () => {
       describe('getById', () => {
 
+        // Works
       });
 
       describe('getByIds', () => {
 
+        // Works
       });
     });
   });
@@ -1770,30 +2030,31 @@ describe('Helpers', () => {
     describe('Tipping Helper', () => {
       describe('tip', () => {
 
+        // Works
       });
 
       describe('getDetails', () => {
-
+        // Works
       });
 
       describe('getSummary', () => {
-
+        // Works
       });
 
       describe('getGroupLeaderboard', () => {
-
+        // Works
       });
 
       describe('getGroupLeaderboardSummary', () => {
-
+        // Works
       });
 
       describe('getGlobalLeaderboard', () => {
-
+        // Works
       });
 
       describe('getGlobalLeaderboardSummary', () => {
-
+        // Works
       });
     });
   });
@@ -1801,11 +2062,11 @@ describe('Helpers', () => {
   describe('Topic', () => {
     describe('Topic Helper', () => {
       describe('getTopicPageLayout', () => {
-
+        // Works
       });
 
       describe('getTopicPageRecipeList', () => {
-
+        // Works
       });
     });
   });

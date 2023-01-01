@@ -33,6 +33,26 @@ class Subscriber extends Base {
     return this.client.utility.subscriber.avatar(this.id, size);
   }
 
+  async block () {
+    return await this.client.contact.blocked.block(this.id);
+  }
+
+  async unblock () {
+    return await this.client.contact.blocked.unblock(this.id);
+  }
+
+  async add () {
+    return await this.client.contact.add(this.id);
+  }
+
+  async delete () {
+    return await this.client.contact.delete(this.id);
+  }
+
+  async sendMessage (content, options = undefined) {
+    return await this.client.messaging.sendPrivateMessage(this.id, content, options);
+  }
+
   toContact () {
     return {
       id: this.id,

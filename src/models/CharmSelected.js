@@ -27,6 +27,14 @@ class CharmSelected extends Base {
     }
   }
 
+  async charm () {
+    return await this.client.charm.getById(this.charmId);
+  }
+
+  async deselect () {
+    return await this.client.charm.set();
+  }
+
   toJSON () {
     return {
       charmId: this.charmId,

@@ -1,3 +1,4 @@
+import SearchType from '../constants/SearchType.js';
 import Base from './Base.js';
 
 class Search extends Base {
@@ -7,6 +8,14 @@ class Search extends Base {
     this.id = data?.id;
     this.hash = data?.hash;
     this.reason = data?.reason;
+  }
+
+  async getProfile () {
+    if (this.type === SearchType.GROUP) {
+      return await this.client.group.getById(this.id);
+    }
+
+    return await this.client.subscriber.getById(this.id);
   }
 
   toJSON () {

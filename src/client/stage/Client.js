@@ -155,13 +155,19 @@ class Client extends EventEmitter {
   play (data) {
     this.reset();
 
+    this.durationUpdater = setInterval(() => {
+      if (this.broadcastState === StageBroadcastState.PLAYING) {
+        this.duration += 1000;
+      }
+
+      return Promise.resolve();
+    }, 1000);
+
     this.ffmpeg = ffmpeg(data)
       .toFormat('wav')
       .native()
       .noVideo()
       .on('error', (error) => {
-        console.log('errored');
-
         data?.destroy();
 
         if (this.broadcastState === StageBroadcastState.IDLE) {

@@ -12,6 +12,10 @@ class TipLeaderboardItem extends Base {
     this.subscriber = data?.subscriber ? new IdHash(data.subscriber) : null;
   }
 
+  async charm () {
+    return await this.client.charm.getById(this.charmId);
+  }
+
   toJSON () {
     return {
       rank: this.rank,

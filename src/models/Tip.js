@@ -13,6 +13,22 @@ class Tip extends Base {
     this.context = new TipContext(client, data?.context);
   }
 
+  async charms () {
+    return await this.client.charm.getByIds(this.charmList.map((charm) => charm.charmId));
+  }
+
+  async group () {
+    return await this.client.group.getById(this.groupId);
+  }
+
+  async sourceSubscriber () {
+    return await this.client.subscriber.getById(this.sourceSubscriberId);
+  }
+
+  async targetSubscriber () {
+    return await this.client.subscriber.getById(this.subscriberId);
+  }
+
   toJSON () {
     return {
       charmList: this.charmList.map((item) => item.toJSON()),

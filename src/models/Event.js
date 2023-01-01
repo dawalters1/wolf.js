@@ -20,6 +20,22 @@ class Event extends Base {
     this.exists = Object.keys(data).length > 1;
   }
 
+  async subscribe () {
+    return this.client.event.subscription.add(this.id);
+  }
+
+  async unsubscribe () {
+    return this.client.event.subscription.remove(this.id);
+  }
+
+  async update ({ title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
+    return this.client.event.group.update(this.groupId, this.id, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail });
+  }
+
+  async updateThumbnail (thumbnail) {
+    return this.client.event.group.updateThumbnail(this.id, thumbnail);
+  }
+
   toJSON () {
     return {
       id: this.id,
