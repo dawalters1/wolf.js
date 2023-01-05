@@ -31,19 +31,26 @@ const getFormattingData = async (client, message, ads, links) => {
           return result;
         }
 
-        (await result).push({
-          start: ad.start,
-          end: ad.end,
-          groupId: (await client.group.getByName(ad.ad))?.id
-        });
+        (await result).push(
+          {
+            start: ad.start,
+            end: ad.end,
+            groupId: (await client.group.getByName(ad.ad))?.id
+          }
+        );
 
         return result;
       }, []),
-      links: links.map((link) => ({
-        start: link.start,
-        end: link.end,
-        url: link.link
-      }))
+
+      links: links.map((link) =>
+        (
+          {
+            start: link.start,
+            end: link.end,
+            url: link.link
+          }
+        )
+      )
     }
   };
 
@@ -114,11 +121,13 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
   let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
     content = content.replace(link[0], link[1]);
 
-    results.push({
-      start: link.index - offset,
-      end: (link.index + link[1].length) - offset,
-      link: link[2]
-    });
+    results.push(
+      {
+        start: link.index - offset,
+        end: (link.index + link[1].length) - offset,
+        link: link[2]
+      }
+    );
 
     offset += (link[0].length - link[1].length);
 
@@ -145,15 +154,17 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
 
     const embeds = embedsAttached ? undefined : await getEmbedData(client, formatting, options);
 
-    messages.push({
-      recipient,
-      isGroup,
-      mimeType: 'text/plain',
-      data: Buffer.from(messageChunk, 'utf8'),
-      flightId: nanoid(32),
-      metadata: formatting,
-      embeds
-    });
+    messages.push(
+      {
+        recipient,
+        isGroup,
+        mimeType: 'text/plain',
+        data: Buffer.from(messageChunk, 'utf8'),
+        flightId: nanoid(32),
+        metadata: formatting,
+        embeds
+      }
+    );
 
     if (messageChunk.length === content.length) {
       break;

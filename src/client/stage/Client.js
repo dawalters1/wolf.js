@@ -133,7 +133,7 @@ class Client extends EventEmitter {
     this.emittedPlaying = false;
     this.duration = 0;
     clearInterval(this.durationUpdater);
-    this.broadcastState = StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
+    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
     if (disconnect) {
       this.connectionState = StageConnectionState.DISCONNECTED;

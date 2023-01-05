@@ -8,8 +8,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default async (client, command) => {
-  return Promise.resolve();
+export default async function (client, command) {
   if (command.sourceSubscriberId === client.currentSubscriber.id) {
     return Promise.resolve();
   }

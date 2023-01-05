@@ -136,6 +136,8 @@ export class WOLF {
      * The account currently logged in
      */
     public currentSubscriber: Subscriber;
+
+    public SPLIT_REGEX: RegExp;
 }
 
 export class Websocket {
@@ -721,21 +723,21 @@ export class MessagingHelper extends Base {
      * @param content - The message
      * @param options - The sending options
      */
-    public sendGroupMessage(targetGroupId: number, content: string | Buffer, options: MessageSendOptions): Promise<MessageResponse>;
+    public sendGroupMessage(targetGroupId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Send a private message
      * @param targetSubscriberId - The ID of the group
      * @param content - The message
      * @param options - The sending options
      */
-    public sendPrivateMessage(targetSubscriberId: number, content: string | Buffer, options: MessageSendOptions): Promise<MessageResponse>;
+    public sendPrivateMessage(targetSubscriberId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Send a message based on command or message
      * @param commandOrMessage - The command or message to send from
      * @param content - The message
      * @param options - The sending options
      */
-    public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options: MessageSendOptions): Promise<MessageResponse>;
+    public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Get message edit history
      * @param targetGroupId - The ID of the group
@@ -922,6 +924,11 @@ export class StageHelper extends Base {
      * @param targetGroupId - The ID of the group
      */
     public resume(targetGroupId: number): Promise<void>;
+    /**
+     * Whether or not the bot is on stage
+     * @param targetGroupId - The ID of the group
+     */
+    public onStage(targetGroupId: number): Promise<boolean>
     /**
      * Get the current broadcast state of the client for a group
      * @param targetGroupId - The ID of the group
@@ -1327,7 +1334,7 @@ export class NumberUtility {
      * Convert a number or string to english numbers
      * @param arg - The number or string
      */
-    public toEnglishNumber(arg: number | string): number | string;
+    public toEnglishNumbers(arg: number | string): number | string;
     /**
      * Convert a number or string to arabic numbers
      * @param arg - The number or string
@@ -2734,271 +2741,270 @@ export const Constants: {
     WolfstarTalent: WolfstarTalent;
 }
 
-export interface AdminAction {
-    REGULAR: 0,
-    ADMIN: 1,
-    MOD: 2,
-    BAN: 4,
-    SILENCE: 8,
-    KICK: 16,
-    JOIN: 17,
-    LEAVE: 18,
-    OWNER: 32,
+export enum AdminAction {
+    REGULAR = 0,
+    ADMIN = 1,
+    MOD = 2,
+    BAN = 4,
+    SILENCE = 8,
+    KICK = 16,
+    JOIN = 17,
+    LEAVE = 18,
+    OWNER = 32,
 }
 
-export interface Capability {
-    NOT_MEMBER: -1,
-    REGULAR: 0,
-    ADMIN: 1,
-    MOD: 2,
-    BANNED: 4,
-    SILENCED: 8,
-    OWNER: 32,
+export enum Capability {
+    NOT_MEMBER = -1,
+    REGULAR = 0,
+    ADMIN = 1,
+    MOD = 2,
+    BANNED = 4,
+    SILENCED = 8,
+    OWNER = 32,
 }
 
-export interface Category {
-    NOT_SPECIFIED: 0,
-    BUSINESS: 8,
-    EDUCATION: 10,
-    ENTERTAINMENT: 26,
-    GAMING: 12,
-    LIFESTYLE: 13,
-    MUSIC: 14,
-    NEWS_AND_POLITICS: 15,
-    PHOTOGRAPHY: 16,
-    SCIENCE_AND_TECH: 25,
-    SOCIAL_AND_PEOPLE: 17,
-    SPORTS: 19,
-    TRAVEL_AND_LOCAL: 18,
+export enum Category {
+    NOT_SPECIFIED = 0,
+    BUSINESS = 8,
+    EDUCATION = 10,
+    ENTERTAINMENT = 26,
+    GAMING = 12,
+    LIFESTYLE = 13,
+    MUSIC = 14,
+    NEWS_AND_POLITICS = 15,
+    PHOTOGRAPHY = 16,
+    SCIENCE_AND_TECH = 25,
+    SOCIAL_AND_PEOPLE = 17,
+    SPORTS = 19,
+    TRAVEL_AND_LOCAL = 18,
 }
 
-export interface ContextType {
-    MESSAGE: "message",
-    STAGE: "stage",
+export enum ContextType {
+    MESSAGE = "message",
+    STAGE = "stage",
 }
 
-export interface DeviceType {
-    OTHER: 0,
-    BOT: 1,
-    IPHONE: 5,
-    IPAD: 6,
-    ANDROID: 7,
-    WEB: 8,
+export enum DeviceType {
+    OTHER = 0,
+    BOT = 1,
+    IPHONE = 5,
+    IPAD = 6,
+    ANDROID = 7,
+    WEB = 8,
 }
 
-export interface EmbedType {
-    IMAGE_PREVIEW: "imagePreview",
-    GROUP_PREVIEW: "groupPreview",
-    LINK_PREVIEW: "linkPreview",
+export enum EmbedType {
+    IMAGE_PREVIEW = "imagePreview",
+    GROUP_PREVIEW = "groupPreview",
+    LINK_PREVIEW = "linkPreview",
 }
 
-export interface Gender {
-    NOT_SPECIFIED: 0,
-    MALE: 1,
-    FEMALE: 2,
+export enum Gender {
+    NOT_SPECIFIED = 0,
+    MALE = 1,
+    FEMALE = 2,
 }
 
-export interface IconSize {
-    SMALL: "small",
-    MEDIUM: "medium",
-    LARGE: "large",
-    XLARGE: "xlarge"
+export enum IconSize {
+    SMALL = "small",
+    MEDIUM = "medium",
+    LARGE = "large",
+    XLARGE = "xlarge"
 }
 
-export interface Language {
-    NOT_SPECIFIED: 0,
-    ENGLISH: 1,
-    GERMAN: 3,
-    SPANISH: 4,
-    FRENCH: 6,
-    POLISH: 10,
-    CHINESE_SIMPLIFIED: 11,
-    RUSSIAN: 12,
-    ITALIAN: 13,
-    ARABIC: 14,
-    PERSIAN_FARSI: 15,
-    GREEK: 16,
-    PORTUGUESE: 17,
-    HINDI: 18,
-    JAPANESE: 19,
-    LATIN_SPANISH: 20,
-    SLOVAK: 21,
-    CZECH: 22,
-    DANISH: 24,
-    FINNISH: 25,
-    HUNGARIAN: 27,
-    BAHASA_INDONESIA: 28,
-    MALAY: 29,
-    DUTCH: 30,
-    NORWEGIAN: 31,
-    SWEDISH: 32,
-    THAI: 33,
-    TURKISH: 34,
-    VIETNAMESE: 35,
-    KOREAN: 36,
-    BRAZILIAN_PORTUGUESE: 37,
-    ESTONIAN: 39,
-    KAZAKH: 41,
-    LATVIAN: 42,
-    LITHUANIAN: 43,
-    UKRAINIAN: 44,
-    BULGARIAN: 45,
+export enum Language {
+    NOT_SPECIFIED = 0,
+    ENGLISH = 1,
+    GERMAN = 3,
+    SPANISH = 4,
+    FRENCH = 6,
+    POLISH = 10,
+    CHINESE_SIMPLIFIED = 11,
+    RUSSIAN = 12,
+    ITALIAN = 13,
+    ARABIC = 14,
+    PERSIAN_FARSI = 15,
+    GREEK = 16,
+    PORTUGUESE = 17,
+    HINDI = 18,
+    JAPANESE = 19,
+    LATIN_SPANISH = 20,
+    SLOVAK = 21,
+    CZECH = 22,
+    DANISH = 24,
+    FINNISH = 25,
+    HUNGARIAN = 27,
+    BAHASA_INDONESIA = 28,
+    MALAY = 29,
+    DUTCH = 30,
+    NORWEGIAN = 31,
+    SWEDISH = 32,
+    THAI = 33,
+    TURKISH = 34,
+    VIETNAMESE = 35,
+    KOREAN = 36,
+    BRAZILIAN_PORTUGUESE = 37,
+    ESTONIAN = 39,
+    KAZAKH = 41,
+    LATVIAN = 42,
+    LITHUANIAN = 43,
+    UKRAINIAN = 44,
+    BULGARIAN = 45,
 }
 
-export interface LogLevel {
-    OFF: 0,
-    ERROR: 1,
-    WARN: 2,
-    INFO: 3,
-    DEBUG: 4
+export enum LogLevel {
+    OFF = 0,
+    ERROR = 1,
+    WARN = 2,
+    INFO = 3,
+    DEBUG = 4
 }
 
-export interface LoginType {
-    EMAIL: "email",
-    GOOGLE: "google",
-    FACEBOOK: "facebook",
-    TWITTER: "twitter",
-    SNAPCHAT: "snapchat",
-    APPLE: "apple",
+export enum LoginType {
+    EMAIL = "email",
+    GOOGLE = "google",
+    FACEBOOK = "facebook",
+    TWITTER = "twitter",
+    SNAPCHAT = "snapchat",
+    APPLE = "apple",
 }
 
-export interface LookingFor {
-    NOT_SPECIFIED: 0,
-    FRIENDSHIP: 1,
-    DATING: 2,
-    RELATIONSHIP: 4,
-    NETWORKING: 8,
+export enum LookingFor {
+    NOT_SPECIFIED = 0,
+    FRIENDSHIP = 1,
+    DATING = 2,
+    RELATIONSHIP = 4,
+    NETWORKING = 8,
 }
 
-export interface MemberListType {
-    PRIVILEGED: "privileged",
-    REGULAR: "regular",
-    SILENCED: "silenced",
-    BANNED: "banned",
-    BOTS: "bots"
+export enum MemberListType {
+    PRIVILEGED = "privileged",
+    REGULAR = "regular",
+    SILENCED = "silenced",
+    BANNED = "banned",
+    BOTS = "bots"
 }
 
-export interface MessageFilterTier {
-    OFF: 0,
-    RELAXED: 3,
-    RECOMMENDED: 2,
-    STRICT: 1,
+export enum MessageFilterTier {
+    OFF = 0,
+    RELAXED = 3,
+    RECOMMENDED = 2,
+    STRICT = 1,
 }
 
-export interface MessageType {
-    TEXT_PLAIN: "text/plain",
-    TEXT_HTML: "text/html",
-    TEXT_IMAGE: "text/image_link",
-    IMAGE_JPEG: "image/jpeg",
-    IMAGE_GIF: "image/gif",
-    AUDIO_AAC: "audio/aac",
-    TEXT_VOICE: "text/voice_link",
-    AUDIO_SPEEX: "audio/x-speex",
-    IMAGE_JPEGHTML: "image/jpeghtml",
-    APPLICATION_PALRINGO_GROUP_ACTION: "application/palringo-group-action",
-    APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK: "application/palringo-interactive-message-pack",
-    TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE: "text/palringo-private-request-response",
+export enum MessageType {
+    TEXT_PLAIN = "text/plain",
+    TEXT_HTML = "text/html",
+    TEXT_IMAGE = "text/image_link",
+    IMAGE_JPEG = "image/jpeg",
+    IMAGE_GIF = "image/gif",
+    AUDIO_AAC = "audio/aac",
+    TEXT_VOICE = "text/voice_link",
+    AUDIO_SPEEX = "audio/x-speex",
+    IMAGE_JPEGHTML = "image/jpeghtml",
+    APPLICATION_PALRINGO_GROUP_ACTION = "application/palringo-group-action",
+    APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK = "application/palringo-interactive-message-pack",
+    TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE = "text/palringo-private-request-response",
 }
 
-export interface OnlineState {
-    OFFLINE: 0,
-    ONLINE: 1,
-    AWAY: 2,
-    INVISIBLE: 3,
-    BUSY: 5,
-    IDLE: 9,
+export enum OnlineState {
+    OFFLINE = 0,
+    ONLINE = 1,
+    AWAY = 2,
+    INVISIBLE = 3,
+    BUSY = 5,
+    IDLE = 9,
 }
 
-export interface Privilege {
-    SUBSCRIBER: 1,
-    BOT_TESTER: 2,
-    GAME_TESTER: 4,
-    CONTENT_SUBMITER: 8,
-    SELECTCLUB_1: 16,
-    ELITECLUB_1: 64,
-    RANK_1: 128,
-    VOLUNTEER: 512,
-    SELECTCLUB_2: 1024,
-    ALPHA_TESTER: 2048,
-    STAFF: 4096,
-    TRANSLATOR: 8192,
-    DEVELOPER: 16384,
-    ELITECLUB_2: 131072,
-    PEST: 262144,
-    VALID_EMAIL: 524288,
-    PREMIUM_ACCOUNT: 1048576,
-    VIP: 2097152,
-    ELITECLUB_3: 4194304,
-    USER_ADMIN: 16777216,
-    GROUP_ADMIN: 33554432,
-    BOT: 67108864,
-    ENTERTAINER: 536870912,
-    SHADOW_BANNED: 1073741824,
+export enum Privilege {
+    SUBSCRIBER = 1,
+    BOT_TESTER = 2,
+    GAME_TESTER = 4,
+    CONTENT_SUBMITER = 8,
+    SELECTCLUB_1 = 16,
+    ELITECLUB_1 = 64,
+    RANK_1 = 128,
+    VOLUNTEER = 512,
+    SELECTCLUB_2 = 1024,
+    ALPHA_TESTER = 2048,
+    STAFF = 4096,
+    TRANSLATOR = 8192,
+    DEVELOPER = 16384,
+    ELITECLUB_2 = 131072,
+    PEST = 262144,
+    VALID_EMAIL = 524288,
+    PREMIUM_ACCOUNT = 1048576,
+    VIP = 2097152,
+    ELITECLUB_3 = 4194304,
+    USER_ADMIN = 16777216,
+    GROUP_ADMIN = 33554432,
+    BOT = 67108864,
+    ENTERTAINER = 536870912,
+    SHADOW_BANNED = 1073741824,
 }
 
-export interface Relationship {
-    NOT_SPECIFIED: 0,
-    SINGLE: 1,
-    RELATIONSHIP: 2,
-    ENGAGED: 3,
-    MARRIED: 4,
-    COMPLICATED: 5,
-    OPEN: 6,
+export enum Relationship {
+    NOT_SPECIFIED = 0,
+    SINGLE = 1,
+    RELATIONSHIP = 2,
+    ENGAGED = 3,
+    MARRIED = 4,
+    COMPLICATED = 5,
+    OPEN = 6,
 }
 
-export interface SearchType {
-    GROUP: "group",
-    SUBSCRIBER: "subscriber",
+export enum SearchType {
+    GROUP = "group",
+    SUBSCRIBER = "subscriber",
 }
 
-export interface StageBroadcastState {
-    IDLE: 0,
-    PLAYING: 1,
-    PAUSED: 2
+export enum StageBroadcastState {
+    IDLE = 0,
+    PLAYING = 1,
+    PAUSED = 2
 }
 
-export interface StageConnectionState {
-    INITIALISING: "initialising",
-    DISCONNECTED: "disconnected",
-    CONNECTING: "connecting",
-    CONNECTED: "connected",
-    READY: "ready"
+export enum StageConnectionState {
+    INITIALISING = "initialising",
+    DISCONNECTED = "disconnected",
+    CONNECTING = "connecting",
+    CONNECTED = "connected",
+    READY = "ready"
 }
 
-export interface TipDirection {
-    SENT: "sent",
-    RECEIVED: "received",
+export enum TipDirection {
+    SENT = "sent",
+    RECEIVED = "received",
 }
 
-export interface TipPeriod {
-    ALL_TIME: "alltime",
-    DAY: "day",
-    WEEK: "week",
-    MONTH: "month",
+export enum TipPeriod {
+    ALL_TIME = "alltime",
+    DAY = "day",
+    WEEK = "week",
+    MONTH = "month",
 }
 
-export interface TipType {
-    CHARM: "charm",
-    SUBSCRIBER: "subscriber",
-    GROUP: "group",
+export enum TipType {
+    CHARM = "charm",
+    SUBSCRIBER = "subscriber",
+    GROUP = "group",
 }
 
-export interface TopicPageRecipeType {
-    EVENT: "event",
-    GROUP: "group",
-    PRODUCT: "product"
+export enum TopicPageRecipeType {
+    EVENT = "event",
+    GROUP = "group",
+    PRODUCT = "product"
 }
 
-
-export interface WolfstarTalent {
-    MUSIC: 1;
-    ENTERTAINMENT: 2;
-    TALK_SHOW: 3;
-    STORY_TELLING: 4;
-    VOICE_OVER: 5;
-    POETRY: 6;
-    COMEDY: 7;
-    IMITATING_VOICES: 8;
+export enum WolfstarTalent {
+    MUSIC = 1,
+    ENTERTAINMENT = 2,
+    TALK_SHOW = 3,
+    STORY_TELLING = 4,
+    VOICE_OVER = 5,
+    POETRY = 6,
+    COMEDY = 7,
+    IMITATING_VOICES = 8,
 }
 
 //#endregion

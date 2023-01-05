@@ -5,11 +5,11 @@ import models from '../../models/index.js';
 
 class Subscriber extends Base {
   /**
-     * Request the unlocked achievements for the subscriber
-     * @param {Number} subscriberId - The ID of the subscriber
-     * @param {Number} parentId - The ID of the parent achievement (Optional)
-     * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the subscriber
-     */
+   * Request the unlocked achievements for the subscriber
+   * @param {Number} subscriberId - The ID of the subscriber
+   * @param {Number} parentId - The ID of the parent achievement (Optional)
+   * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the subscriber
+   */
   async getById (subscriberId, parentId) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });

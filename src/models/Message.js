@@ -27,6 +27,10 @@ class Message extends Base {
     return this.client.messaging.sendMessage(this, content, options);
   }
 
+  async replyPrivate (content, options) {
+    return this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
+  }
+
   async delete () {
     if (!this.isGroup) {
       throw new WOLFAPIError('editing private messages is currently not supported');

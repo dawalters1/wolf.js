@@ -123,7 +123,7 @@ export default async (client, body) => {
       message.body = message.body
         .replace('token=TOKEN', `token=${client.config.get('framework.login').token}`)
         .replace('language=LANGUAGE', `language=${client.currentSubscriber?.extended?.language || Language.ENGLISH} `)
-        .replace('platform=PLATFORM', 'platform=WJS') // Replaces deviceType
+        .replace('platform=PLATFORM', `platform=${client._frameworkConfig.get('connection.query.device')}`) // Replaces deviceType
         .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
       break;
     default:

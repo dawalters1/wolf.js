@@ -53,8 +53,6 @@ class Group extends Base {
     return await this.client.group.leaveById(this.id);
   }
 
-  // TODO
-
   async stats () {
     return await this.client.group.getStats(this.id);
   }

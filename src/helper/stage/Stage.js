@@ -8,10 +8,6 @@ import validator from '../../validator/index.js';
 import models, { StageClientDurationUpdate, StageClientGeneralUpdate, StageClientViewerCountUpdate } from '../../models/index.js';
 
 class Stage extends Base {
-/**
- *
- * @param {import('../../client/WOLF').default} client
- */
   constructor (client) {
     super(client);
 
@@ -228,7 +224,7 @@ class Stage extends Base {
   }
 
   async isIdle (targetGroupId) {
-    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PAUSED;
+    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.IDLE;
   }
 
   async duration (targetGroupId) {

@@ -12,6 +12,10 @@ class WolfstarsProfile extends Base {
     this.exists = Object.values(data)?.length > 1;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.subscriberId);
+  }
+
   toJSON () {
     return {
       maxListeners: this.maxListeners,

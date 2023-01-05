@@ -5,11 +5,11 @@ import models from '../../models/index.js';
 
 class Group extends Base {
   /**
-     * Request the unlocked achievements for the group
-     * @param {Number} targetGroupId - The ID of the group
-     * @param {Number} parentId - The ID of the parent achievement (Optional)
-     * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the group
-     */
+   * Request the unlocked achievements for the group
+   * @param {Number} targetGroupId - The ID of the group
+   * @param {Number} parentId - The ID of the parent achievement (Optional)
+   * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the group
+   */
   async getById (targetGroupId, parentId = undefined) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });

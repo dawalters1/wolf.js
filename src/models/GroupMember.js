@@ -8,6 +8,10 @@ class GroupMember extends Base {
     this.capabilities = data?.capabilities;
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.id);
+  }
+
   toJSON () {
     return {
       id: this.id,
