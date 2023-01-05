@@ -14,6 +14,7 @@ const subscriptions = async (client) => {
     await client.tipping._subscribeToGroup();
   }
 };
+
 const fininaliseConnection = async (client, resume = false) => {
   await Promise.all([
     client.group.list(),
@@ -24,6 +25,7 @@ const fininaliseConnection = async (client, resume = false) => {
 
   return client.emit(resume ? Event.RESUME : Event.READY);
 };
+
 const login = async (client) => {
   const { email: username, password, loginType: type, onlineState } = client.config.get('framework.login');
   const response = await client.websocket.emit(

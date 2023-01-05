@@ -92,7 +92,7 @@ class Timer {
       return await job.remove();
     }
 
-    return undefined;
+    return Promise.resolve();
   }
 
   async get (name) {

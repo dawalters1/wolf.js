@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { LoginType, OnlineState, Command } from '../constants/index.js';
+import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
 import Websocket from './websocket/Websocket.js';
 import Multimedia from './multimedia/Client.js';
 import CommandHandler from '../command/CommandHandler.js';
@@ -60,6 +60,8 @@ class WOLF extends EventEmitter {
     this.topic = new Topic(this);
 
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
+
+    this.currentSubscriber = undefined;
   }
 
   login (email, password, onlineState = OnlineState.ONLINE) {
@@ -118,6 +120,101 @@ class WOLF extends EventEmitter {
       {
         state: {
           state: parseInt(onlineState)
+        }
+      }
+    );
+  }
+
+  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls }) {
+    if (nickname) {
+      if (!validator.isType(nickname, 'string')) {
+        throw new WOLFAPIError('nickname must be a valid string', { nickname });
+      } else if (validator.isNullOrWhitespace(nickname)) {
+        throw new WOLFAPIError('nickname cannot be null or empty', { nickname });
+      }
+    }
+
+    if (status) {
+      if (!validator.isType(status, 'string')) {
+        throw new WOLFAPIError('status must be a valid string', { status });
+      } else if (validator.isNullOrWhitespace(status)) {
+        throw new WOLFAPIError('status cannot be null or empty', { status });
+      }
+    }
+
+    if (about) {
+      if (!validator.isType(about, 'string')) {
+        throw new WOLFAPIError('about must be a valid string', { about });
+      } else if (validator.isNullOrWhitespace(about)) {
+        throw new WOLFAPIError('about cannot be null or empty', { about });
+      }
+    }
+
+    if (name) {
+      if (!validator.isType(name, 'string')) {
+        throw new WOLFAPIError('name must be a valid string', { name });
+      } else if (validator.isNullOrWhitespace(name)) {
+        throw new WOLFAPIError('name cannot be null or empty', { name });
+      }
+    }
+
+    if (urls) {
+      urls = Array.isArray(urls) ? urls : [urls];
+
+      for (const url of urls) {
+        if (!validator.isType(url, 'string')) {
+          throw new WOLFAPIError('url must be a valid string', { url });
+        } else if (validator.isNullOrWhitespace(url)) {
+          throw new WOLFAPIError('url cannot be null or empty', { url });
+        }
+      }
+    }
+
+    if (gender) {
+      if (!validator.isValidNumber(gender)) {
+        throw new WOLFAPIError('onlineState must be a valid number', { gender });
+      } else if (!Object.values(Gender).includes(parseInt(gender))) {
+        throw new Error('gender is not valid', { gender });
+      }
+    }
+
+    if (language) {
+      if (!validator.isValidNumber(language)) {
+        throw new WOLFAPIError('language must be a valid number', { language });
+      } else if (!Object.values(Language).includes(parseInt(language))) {
+        throw new Error('language is not valid', { language });
+      }
+    }
+
+    if (lookingFor) {
+      if (!validator.isValidNumber(lookingFor)) {
+        throw new WOLFAPIError('lookingFor must be a valid number', { lookingFor });
+      } else if (Object.values(LookingFor).filter((value) => (this.lookingFor & value) === value).reduce((result, value) => result + value, 0) !== lookingFor) {
+        throw new WOLFAPIError('lookingFor must is not valid', { lookingFor });
+      }
+    }
+
+    if (relationship) {
+      if (!validator.isValidNumber(relationship)) {
+        throw new WOLFAPIError('relationship must be a valid number', { relationship });
+      } else if (!Object.values(Relationship).includes(parseInt(relationship))) {
+        throw new Error('relationship is not valid', { relationship });
+      }
+    }
+
+    return await this.websocket.emit(
+      Command.SUBSCRIBER_PROFILE_UPDATE,
+      {
+        nickname: nickname || this.currentSubscriber.nickname,
+        status: status || this.currentSubscriber.status,
+        extended: {
+          about: about || this.currentSubscriber.extended.about,
+          gender: gender || this.currentSubscriber.extended.gender,
+          language: language || this.currentSubscriber.extended.language,
+          lookingFor: lookingFor || this.currentSubscriber.extended.lookingFor,
+          name: name || this.currentSubscriber.extended.name,
+          relationship: relationship || this.currentSubscriber.extended.relationship,
+          urls: urls || this.currentSubscriber.extended.urls || []
         }
       }
     );

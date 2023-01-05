@@ -9,25 +9,25 @@ class Banned extends Base {
   }
 
   /**
-     * Retrieve the list of banned users for the bot
-     * @returns {Promise<Array.<Number>>}
-     */
+   * Retrieve the list of banned users for the bot
+   * @returns {Promise<Array.<Number>>}
+   */
   async list () {
     return this.banned;
   }
 
   /**
-     * Clear the list of banned subscriber IDs
-     */
+   * Clear the list of banned subscriber IDs
+   */
   async clear () {
     this.banned = [];
   }
 
   /**
-     * Check to see if a single user or multiple users are banned by ID
-     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Check to see if a single user or multiple users are banned by ID
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async isBanned (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -59,10 +59,10 @@ class Banned extends Base {
   }
 
   /**
-     * Ban a single user or multiple users by ID
-     * @param {Number| Number[]} values - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Ban a single user or multiple users by ID
+   * @param {Number| Number[]} values - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async ban (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -99,10 +99,10 @@ class Banned extends Base {
   }
 
   /**
-     * Unban a single user or multiple users by ID
-     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Unban a single user or multiple users by ID
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async unban (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 

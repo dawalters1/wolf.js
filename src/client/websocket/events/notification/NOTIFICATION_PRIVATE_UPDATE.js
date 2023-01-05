@@ -12,4 +12,6 @@ export default async (client, body) => {
       );
     }
   }
+
+  return Promise.resolve();
 };

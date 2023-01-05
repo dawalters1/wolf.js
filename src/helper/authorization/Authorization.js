@@ -10,25 +10,25 @@ class Authorization extends Base {
   }
 
   /**
-     * Retrieve the list of authorized subscribers for the bot
-     * @returns {Promise<Array.<Number>>}
-     */
+   * Retrieve the list of authorized subscribers for the bot
+   * @returns {Promise<Array.<Number>>}
+   */
   async list () {
     return this.authorized;
   }
 
   /**
-     * Clear the list of authorized subscribers
-     */
+   * Clear the list of authorized subscribers
+   */
   async clear () {
     this.authorized = [];
   }
 
   /**
-     * Check to see if a single user or multiple subscribers are authorized by ID
-     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Check to see if a single user or multiple subscribers are authorized by ID
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async isAuthorized (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -60,10 +60,10 @@ class Authorization extends Base {
   }
 
   /**
-     * Authorize a single user or multiple subscribers by ID
-     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Authorize a single user or multiple subscribers by ID
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async authorize (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -100,10 +100,10 @@ class Authorization extends Base {
   }
 
   /**
-     * Unauthorize a single user or multiple subscribers by ID
-     * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
-     * @returns {Promise<Array.<Boolean>|Boolean>}
-     */
+   * Unauthorize a single user or multiple subscribers by ID
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
+   * @returns {Promise<Array.<Boolean>|Boolean>}
+   */
   async unauthorize (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 

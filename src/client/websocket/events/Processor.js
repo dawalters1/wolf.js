@@ -32,11 +32,11 @@ class Processor {
     const handler = this.handlers[eventString];
     const body = data?.body ?? data;
 
-    if (handler) {
-      return handler(this.client, body);
+    if (!handler) {
+      return this.client.emit(Event.INTERNAL_ERROR, new Error(`Unhandled socket event: ${eventString}`));
     }
 
-    return this.client.emit(Event.INTERNAL_ERROR, new Error(`Unhandled socket event: ${eventString}`));
+    return handler(this.client, body);
   }
 }
 
