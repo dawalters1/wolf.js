@@ -71,7 +71,7 @@ class Wolfstars extends Base {
     return Array.isArray(subscriberIds) ? wolfstars : wolfstars[0];
   }
 
-  _cleanUp () {
+  _cleanUp (reconnection) {
     this.talents = {};
   }
 }

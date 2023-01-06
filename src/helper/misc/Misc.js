@@ -76,7 +76,7 @@ class Misc extends Base {
     if (response.success) {
       this.cognito = response.body;
     } else {
-      throw new Error(response.headers.message || 'Error occurred while requesting new security token');
+      throw new WOLFAPIError(response.headers.message || 'Error occurred while requesting new security token');
     }
 
     return this.cognito;
@@ -92,7 +92,7 @@ class Misc extends Base {
     if (!validator.isValidNumber(messageFilterTier)) {
       throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
     } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
-      throw new Error('messageFilterTier is not valid', { messageFilterTier });
+      throw new WOLFAPIError('messageFilterTier is not valid', { messageFilterTier });
     }
 
     return await this.client.websocket.emit(
@@ -107,6 +107,10 @@ class Misc extends Base {
   }
 
   _cleanUp (reconnection = false) {
+    if (reconnection) {
+      return Promise.resolve();
+    }
+
     this._blacklist = [];
     this.metadataResults = [];
   }

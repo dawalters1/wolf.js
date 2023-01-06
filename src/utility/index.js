@@ -158,7 +158,7 @@ class Utility {
     } else if (!validator.isValidNumber(languageId)) {
       throw new WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(languageId)) {
-      throw new Error('languageId is invalid');
+      throw new WOLFAPIError('languageId is invalid', { languageId });
     }
 
     switch (languageId) {

@@ -6,7 +6,7 @@ import _ from 'lodash';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
 import { fileURLToPath } from 'url';
-import generateToken from './generateToken.js';
+import { nanoid } from 'nanoid';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,7 +41,7 @@ const developerConfig = (client) => {
         email: typeof config?.framework?.login?.email === 'string' ? config.framework.login.email : undefined,
         password: typeof config?.framework?.login?.password === 'string' ? config.framework.login.password : undefined,
         onlineState: typeof config?.framework?.login?.onlineState === 'number' && Object.values(OnlineState).includes(config.framework.login.onlineState) ? config.framework.login.onlineState : OnlineState.ONLINE,
-        token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : generateToken(config?.framework?.login?.email, config?.framework?.login?.password)
+        token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : `WJS${nanoid(32)}`
       },
       commands: {
         ignore: {

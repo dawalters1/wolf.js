@@ -209,13 +209,13 @@ class Request extends Base {
 
   async clear (targetGroupId) {
     if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new Error('targetGroupId cannot be null or undefined');
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new Error('targetGroupId must be a valid number');
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
     } else if (!validator.isType(targetGroupId, 'number')) {
-      throw new Error('targetGroupId must be type of number');
+      throw new models.WOLFAPIError('targetGroupId must be type of number', { targetGroupId });
     } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new Error('targetGroupId cannot be less than or equal to 0');
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
     const group = await this.client.group.getById(targetGroupId);

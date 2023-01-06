@@ -39,7 +39,7 @@ class Achievement extends Base {
     if (!validator.isValidNumber(language)) {
       throw new models.WOLFAPIError('language must be a valid number', { language });
     } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new Error('language is not valid', { language });
+      throw new models.WOLFAPIError('language is not valid', { language });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -79,7 +79,7 @@ class Achievement extends Base {
     if (!validator.isValidNumber(language)) {
       throw new models.WOLFAPIError('language must be a valid number', { language });
     } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new Error('language is not valid', { language });
+      throw new models.WOLFAPIError('language is not valid', { language });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
