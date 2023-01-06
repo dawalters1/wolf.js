@@ -139,6 +139,10 @@ class Banned extends Base {
   }
 
   _cleanUp (reconnection = false) {
+    if (reconnection) {
+      return Promise.resolve();
+    }
+
     this.banned = [];
   }
 }

@@ -1,4 +1,5 @@
 import { Event, ServerEvents } from '../../../constants/index.js';
+import WOLFAPIError from '../../../models/WOLFAPIError.js';
 
 class Processor {
   constructor (client) {
@@ -21,7 +22,7 @@ class Processor {
           await processGroup(value[0], group);
         }
 
-        return await result;
+        return result;
       }, {});
     })();
   }
@@ -33,7 +34,7 @@ class Processor {
     const body = data?.body ?? data;
 
     if (!handler) {
-      return this.client.emit(Event.INTERNAL_ERROR, new Error(`Unhandled socket event: ${eventString}`));
+      return this.client.emit(Event.INTERNAL_ERROR, new WOLFAPIError('Unhandled socket event', { eventString, data }));
     }
 
     return handler(this.client, body);

@@ -23,7 +23,7 @@ class Discovery extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -61,7 +61,7 @@ class Discovery extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (validator.isNullOrUndefined(maxResults)) {
@@ -83,7 +83,7 @@ class Discovery extends Base {
     if (validator.isNullOrUndefined(type)) {
       throw new models.WOLFAPIError('type cannot be null or undefined', { type });
     } else if (!Object.values(TopicPageRecipeType).includes(type)) {
-      throw new Error('type is not valid', { type });
+      throw new models.WOLFAPIError('type is not valid', { type });
     }
 
     const topicRecipeIds = (await this.client.topic.getTopicPageRecipeList(id, languageId, maxResults, offset, type)).body?.map((productPartial) => productPartial.id) ?? [];
@@ -104,7 +104,7 @@ class Discovery extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -130,6 +130,10 @@ class Discovery extends Base {
   }
 
   _cleanUp (reconnection = false) {
+    if (reconnection) {
+      return Promise.resolve();
+    }
+
     this.discovery = {};
   }
 }

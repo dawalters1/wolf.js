@@ -12,44 +12,32 @@ function replaceRange (string, start, end, substitute) {
 class StringUtility extends Base {
   replace (string, replacements) {
     if (validator.isNullOrUndefined(string)) {
-      throw new WOLFAPIError('string cannot be null or undefined', {
-        string
-      });
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
     if (validator.isNullOrUndefined(replacements)) {
-      throw new WOLFAPIError('amount cannot be null or undefined', {
-        replacements
-      });
+      throw new WOLFAPIError('amount cannot be null or undefined', { replacements });
     } else if (typeof replacements !== 'object') {
-      throw new WOLFAPIError('replacements must be an object', {
-        replacements
-      });
+      throw new WOLFAPIError('replacements must be an object', { replacements });
     } else if (!Object.keys(replacements).length) {
-      throw new WOLFAPIError('replacements contain at least 1 property', {
-        replacements
-      });
+      throw new WOLFAPIError('replacements contain at least 1 property', { replacements });
     }
 
     return Object.entries(replacements)
-      .map((replacement) =>
-        [
-          ...string.matchAll(
-            new RegExp(_.escapeRegExp(`{${replacement[0]}}`), 'g')
+      .map((replacement) => [...string.matchAll(new RegExp(_.escapeRegExp(`{${replacement[0]}}`), 'g'))]
+        .map((match) =>
+          (
+            {
+              startsAt: match.index,
+              endsAt: match.index + match[0].length,
+              replaceWith: replacement[1] || ''
+            }
           )
-        ].map((match) => ({
-          startsAt: match.index,
-          endsAt: match.index + match[0].length,
-          replaceWith: replacement[1] || ''
-        }))
+        )
       )
       .flat()
       .sort((a, b) => b.startsAt - a.startsAt)
-      .reduce(
-        (result, value) =>
-          replaceRange(result, value.startsAt, value.endsAt, value.replaceWith),
-        string
-      );
+      .reduce((result, value) => replaceRange(result, value.startsAt, value.endsAt, value.replaceWith), string);
   }
 
   isEqual (sideA, sideB) {
@@ -82,33 +70,23 @@ class StringUtility extends Base {
 
   chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
     if (validator.isNullOrUndefined(string)) {
-      throw new WOLFAPIError('string cannot be null or undefined', {
-        string
-      });
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
     if (validator.isNullOrUndefined(length)) {
-      throw new WOLFAPIError('length cannot be null or undefined', {
-        length
-      });
+      throw new WOLFAPIError('length cannot be null or undefined', { length });
     } else if (!validator.isValidNumber(length)) {
       throw new WOLFAPIError('length must be a valid number', { length });
     } else if (validator.isLessThanOrEqualZero(length)) {
-      throw new WOLFAPIError('length cannot be less than or equal to 0', {
-        length
-      });
+      throw new WOLFAPIError('length cannot be less than or equal to 0', { length });
     }
 
     if (validator.isNullOrUndefined(splitChar)) {
-      throw new WOLFAPIError('splitChar cannot be null or undefined', {
-        splitChar
-      });
+      throw new WOLFAPIError('splitChar cannot be null or undefined', { splitChar });
     }
 
     if (validator.isNullOrUndefined(joinChar)) {
-      throw new WOLFAPIError('joinChar cannot be null or undefined', {
-        joinChar
-      });
+      throw new WOLFAPIError('joinChar cannot be null or undefined', { joinChar });
     }
 
     if (string.length <= length) {
@@ -118,17 +96,13 @@ class StringUtility extends Base {
     const lines = string.split(splitChar).filter(Boolean);
 
     if (lines.length === 0) {
-      throw new Error(
-        `string is longer than ${length} characters and contains no ${splitChar} characters`
-      );
+      throw new WOLFAPIError(`string is longer than ${length} characters and contains no ${splitChar} characters`, { length, splitChar });
     }
 
     return lines.reduce((result, value) => {
       if (result.length > 0) {
         if (result.slice(-1)[0].length + value.length + 1 <= length) {
-          result[result.length - 1] = `${
-            result.slice(-1)[0]
-          }${joinChar}${value}`;
+          result[result.length - 1] = `${result.slice(-1)[0]}${joinChar}${value}`;
 
           return result;
         }
@@ -141,9 +115,7 @@ class StringUtility extends Base {
 
   trimAds (string) {
     if (validator.isNullOrUndefined(string)) {
-      throw new WOLFAPIError('string cannot be null or undefined', {
-        string
-      });
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
     const matches = [...string.matchAll(/\[([^\][]*)]/g)]
@@ -155,10 +127,7 @@ class StringUtility extends Base {
     }
 
     for (const match of matches.reverse()) {
-      string =
-        string.substring(0, match.index) +
-        match[1] +
-        string.substring(match.index + match[0].length);
+      string = string.substring(0, match.index) + match[1] + string.substring(match.index + match[0].length);
     }
 
     // Loop check to prevent [[[]]]
@@ -210,9 +179,7 @@ class StringUtility extends Base {
 
   sanitise (string) {
     if (validator.isNullOrUndefined(string)) {
-      throw new WOLFAPIError('string cannot be null or undefined', {
-        string
-      });
+      throw new WOLFAPIError('string cannot be null or undefined', { string });
     }
 
     return _.deburr(string);

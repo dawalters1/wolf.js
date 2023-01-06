@@ -382,6 +382,11 @@ class Stage extends Base {
   }
 
   _cleanUp (reconnection = false) {
+    if (reconnection) {
+      return Promise.resolve();
+    }
+
+    Object.keys(this.clients).forEach((targetGroupId) => this._deleteClient(targetGroupId));
     this.request._cleanUp(reconnection);
     this.slot._cleanUp(reconnection);
   }

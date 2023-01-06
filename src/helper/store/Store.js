@@ -29,7 +29,7 @@ class Store extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (!validator.isValidBoolean(forceNew)) {
@@ -59,7 +59,7 @@ class Store extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (!forceNew && this._credits[languageId]?.length) {
@@ -82,7 +82,7 @@ class Store extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (!validator.isValidBoolean(includeCredits)) {
@@ -135,7 +135,7 @@ class Store extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     const products = ids.reduce((result, productId) => {
@@ -187,7 +187,7 @@ class Store extends Base {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new Error('languageId is not valid', { languageId });
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (this._productProfiles[id] && this._productProfiles[id][languageId]) {
@@ -311,8 +311,11 @@ class Store extends Base {
     this._credits = {};
     this._balance = -1;
     this._products = {};
-    this.stores = {};
     this._productProfiles = {};
+
+    if (!reconnection) {
+      this.stores = {};
+    }
   }
 }
 

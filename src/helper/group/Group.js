@@ -237,7 +237,7 @@ class Group extends Base {
       if (!validator.isValidNumber(language)) {
         throw new models.WOLFAPIError('language must be a valid number', { language });
       } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new Error('language is not valid', { language });
+        throw new models.WOLFAPIError('language is not valid', { language });
       }
     }
 
@@ -245,7 +245,7 @@ class Group extends Base {
       if (!validator.isValidNumber(category)) {
         throw new models.WOLFAPIError('category must be a valid number', { category });
       } else if (!Object.values(Category).includes(parseInt(category))) {
-        throw new Error('category is not valid', { category });
+        throw new models.WOLFAPIError('category is not valid', { category });
       }
     }
 

@@ -21,7 +21,7 @@ class Category extends Base {
     if (!validator.isValidNumber(language)) {
       throw new models.WOLFAPIError('language must be a valid number', { language });
     } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new Error('language is not valid', { language });
+      throw new models.WOLFAPIError('language is not valid', { language });
     }
 
     if (!forceNew && this.categories[language]) {
@@ -45,6 +45,9 @@ class Category extends Base {
   }
 
   _cleanUp (reconnection = false) {
+    if (reconnection) {
+      return Promise.resolve();
+    }
     this.categories = {};
   }
 }

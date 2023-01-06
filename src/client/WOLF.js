@@ -82,15 +82,15 @@ class WOLF extends EventEmitter {
     }
 
     if (validator.isNullOrWhitespace(password)) {
-      throw new Error('password cannot be null or empty');
+      throw new WOLFAPIError('password cannot be null or empty', { password });
     }
 
     if (!validator.isValidNumber(onlineState)) {
-      throw new Error('onlineState must be a valid number');
+      throw new WOLFAPIError('onlineState must be a valid number', { onlineState });
     } else if (validator.isLessThanZero(onlineState)) {
-      throw new Error('onlineState cannot be less than 0');
+      throw new WOLFAPIError('onlineState cannot be less than 0', { onlineState });
     } else if (!Object.values(OnlineState).includes(onlineState)) {
-      throw new Error('onlineState is not valid');
+      throw new WOLFAPIError('onlineState is not valid', { onlineState });
     }
 
     this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
@@ -112,7 +112,7 @@ class WOLF extends EventEmitter {
     if (!validator.isValidNumber(onlineState)) {
       throw new WOLFAPIError('onlineState must be a valid number', { onlineState });
     } else if (!Object.values(OnlineState).includes(parseInt(onlineState))) {
-      throw new Error('onlineState is not valid', { onlineState });
+      throw new WOLFAPIError('onlineState is not valid', { onlineState });
     }
 
     return await this.websocket.emit(
@@ -174,7 +174,7 @@ class WOLF extends EventEmitter {
       if (!validator.isValidNumber(gender)) {
         throw new WOLFAPIError('onlineState must be a valid number', { gender });
       } else if (!Object.values(Gender).includes(parseInt(gender))) {
-        throw new Error('gender is not valid', { gender });
+        throw new WOLFAPIError('gender is not valid', { gender });
       }
     }
 
@@ -182,7 +182,7 @@ class WOLF extends EventEmitter {
       if (!validator.isValidNumber(language)) {
         throw new WOLFAPIError('language must be a valid number', { language });
       } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new Error('language is not valid', { language });
+        throw new WOLFAPIError('language is not valid', { language });
       }
     }
 
@@ -198,7 +198,7 @@ class WOLF extends EventEmitter {
       if (!validator.isValidNumber(relationship)) {
         throw new WOLFAPIError('relationship must be a valid number', { relationship });
       } else if (!Object.values(Relationship).includes(parseInt(relationship))) {
-        throw new Error('relationship is not valid', { relationship });
+        throw new WOLFAPIError('relationship is not valid', { relationship });
       }
     }
 

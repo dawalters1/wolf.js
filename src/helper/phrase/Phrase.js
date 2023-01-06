@@ -26,13 +26,13 @@ class Phrase extends Base {
 
   _local () {
     if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) {
-      throw new Error('Phrases folder missing in base folder');
+      throw new models.WOLFAPIError('Phrases folder missing in base folder');
     }
 
     const files = fs.readdirSync(path.join(process.cwd(), '/phrases')).filter((file) => file.endsWith('.json'));
 
     if (files.length === 0) {
-      throw new Error('Missing phrase json in phrases folder');
+      throw new models.WOLFAPIError('Missing phrase json in phrases folder', { path: path.join(process.cwd(), '/phrases') });
     }
 
     for (const file of files) {
