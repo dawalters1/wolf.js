@@ -2321,8 +2321,10 @@ export class StageClientViewerCountUpdate {
     private constructor(data: object);
 
     public targetGroupId: number;
-    public oldViewerCount: number;
-    public newViewerCount: number;
+    public oldBroadcasterCount: number;
+    public newBroadcasterCount: number;
+    public oldConsumerCount: number;
+    public newConsumerCount: number;
 }
 
 export class Store extends Base {
