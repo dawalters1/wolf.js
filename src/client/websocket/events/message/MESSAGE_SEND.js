@@ -78,6 +78,10 @@ const handleApplicationPalringoGroupAction = async (client, message) => {
     case 'silence':// eslint-disable-line padding-line-between-statements
     case 'ban':// eslint-disable-line padding-line-between-statements
     {
+      if (subscriber.id === client.currentSubscriber.id) {
+        group.capabilities = capabilities;
+      }
+
       await group.members._onUpdate(subscriber, capabilities);
 
       // non-mod+ users do not have access to banned lists

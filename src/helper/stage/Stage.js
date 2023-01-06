@@ -26,8 +26,10 @@ class Stage extends Base {
         new StageClientViewerCountUpdate(
           {
             targetGroupId: oldCount.id,
-            oldCount: oldCount.consumerCount,
-            newCount: newCount.consumerCount
+            oldBroadcastCount: oldCount.broadcasterCount,
+            newBroadcasterCount: newCount.broadcasterCount,
+            oldConsumerCount: oldCount.consumerCount,
+            newConsumerCount: newCount.consumerCount
           }
         )
       );
@@ -164,6 +166,14 @@ class Stage extends Base {
   }
 
   async play (targetGroupId, data) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -172,6 +182,14 @@ class Stage extends Base {
   }
 
   async stop (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -180,6 +198,14 @@ class Stage extends Base {
   }
 
   async pause (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -188,6 +214,14 @@ class Stage extends Base {
   }
 
   async resume (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -196,6 +230,14 @@ class Stage extends Base {
   }
 
   async getBroadcastState (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -204,10 +246,26 @@ class Stage extends Base {
   }
 
   async onStage (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     return !!this.clients[targetGroupId];
   }
 
   async isReady (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -216,18 +274,50 @@ class Stage extends Base {
   }
 
   async isPlaying (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PLAYING;
   }
 
   async isPaused (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PAUSED;
   }
 
   async isIdle (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     return await this.getBroadcastState(targetGroupId) === StageBroadcastState.IDLE;
   }
 
   async duration (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -236,6 +326,14 @@ class Stage extends Base {
   }
 
   async getVolume (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }
@@ -244,14 +342,38 @@ class Stage extends Base {
   }
 
   async setVolume (targetGroupId, volume) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    }
+
+    if (validator.isNullOrUndefined(volume)) {
+      throw new models.WOLFAPIError('volume cannot be null or undefined', { volume });
+    } else if (!validator.isValidNumber(volume, true)) {
+      throw new models.WOLFAPIError('volume must be a valid number', { volume });
+    } else if (validator.isLessThanZero(volume)) {
+      throw new models.WOLFAPIError('volume cannot be less than 0', { volume });
     }
 
     return await this.clients[targetGroupId].setVolume(volume);
   }
 
   async getSlotId (targetGroupId) {
+    if (validator.isNullOrUndefined(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
+    } else if (!validator.isValidNumber(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
+    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
+      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+    }
+
     if (!this.clients[targetGroupId]) {
       throw new WOLFAPIError('bot is not on stage', { targetGroupId });
     }

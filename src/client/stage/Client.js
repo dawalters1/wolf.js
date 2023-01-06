@@ -17,12 +17,12 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const createUInt8Array = (buffer) => {
+const createUInt8Array = (buffer, volume) => {
   for (let i = buffer.length; i < 1920; i++) {
     buffer[i] = 0;
   }
 
-  return new Int8Array(buffer);
+  return new Int8Array(buffer).map((samples) => (volume === 1 || samples === 0) ? samples : samples * volume);
 };
 
 class Client extends EventEmitter {
@@ -59,11 +59,12 @@ class Client extends EventEmitter {
           if (!this.muted) {
             this.source.onData(
               {
-                samples: createUInt8Array(sample).map((samples) => this.volume === 1 || samples === 0 ? samples : samples * this.volume.toFixed(2)),
+                samples: createUInt8Array(sample, this.volume),
                 sampleRate: SAMPLE_RATE,
                 bitsPerSample: BITRATE,
                 channelCount: CHANNEL_COUNT,
-                numberOfFrames: FRAMES
+                numberOfFrames: FRAMES,
+                timestamp: Date.now()
               }
             );
           }
@@ -83,7 +84,7 @@ class Client extends EventEmitter {
       }
 
       return broadcast();
-    }, 1);
+    }, 9.9);
 
     this.client.onconnectionstatechange = async () => {
       const state = this.client.connectionState;
@@ -149,7 +150,9 @@ class Client extends EventEmitter {
       throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
     }
 
-    this.volume = volume.toFixed(2);
+    this.volume = parseFloat(volume.toPrecision(3));
+
+    return this.volume;
   }
 
   play (data) {
@@ -179,7 +182,7 @@ class Client extends EventEmitter {
         this.emit(Event.STAGE_CLIENT_ERROR, error);
       })
       .pipe()
-      .on('data', (data) => this.samples.push(..._.chunk(data, SLICE_COUNT)))
+      .on('data', async (data) => _.chunk(data, SLICE_COUNT).forEach(async (chunk) => this.samples.push(chunk)))
       .on('finish', () => { this.completed = true; });
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;
