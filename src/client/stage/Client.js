@@ -7,6 +7,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const _ = require('lodash');
 
 const { connectionState, broadcastState, events } = require('./constants');
+const c = require('config');
 
 const SAMPLE_RATE = 48000;
 const SLICE_COUNT = 1920;
@@ -14,20 +15,17 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const createUInt8Array = (buffer) => {
-  const sample = new Int8Array(1920);
-
-  sample.set(buffer);
-
-  if (buffer.byteLength < SLICE_COUNT) {
-    sample.fill(0, buffer.byteLength);
+const createUInt8Array = (buffer, volume) => {
+  for (let i = buffer.length; i < 1920; i++) {
+    buffer[i] = 0;
   }
 
-  return sample;
+  return new Int8Array(buffer).map((samples) => (volume === 1 || samples === 0) ? samples : samples * volume);
 };
 
+
 class Client extends EventEmitter {
-  constructor (targetGroupId, opts) {
+  constructor(targetGroupId, opts) {
     super();
     this._slotId = -1;
 
@@ -41,7 +39,7 @@ class Client extends EventEmitter {
     this._chunks = [];
     this._samples = [];
     this._duration = 0;
-    this._volume = 1;
+    this._volume = 1.00;
     this._emittedPlaying = false;
     this._source = new RTCAudioSource();
     const stream = new MediaStream();
@@ -65,7 +63,7 @@ class Client extends EventEmitter {
         if (sample && !this._muted) {
           this._source.onData(
             {
-              samples: createUInt8Array(sample).map((samples) => this._volume === 1 || samples === 0 ? samples : samples * this._volume.toFixed(2)), // This works to adjust volume, but causes static at lower volumes
+              samples: createUInt8Array(sample, this._volume),
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
@@ -78,14 +76,14 @@ class Client extends EventEmitter {
           return this.stop(true);
         }
 
-        if(!this._emittedPlaying){
+        if (!this._emittedPlaying) {
           this._emittedPlaying = true;
           this._emit(events.BROADCAST_START);
         }
       }
 
       return broadcast();
-    }, 1);
+    }, 9.9);
 
     this._downloadComplete = false;
 
@@ -111,7 +109,7 @@ class Client extends EventEmitter {
     broadcast();
   }
 
-  _reset (disconnect = false) {
+  _reset(disconnect = false) {
     if (this._ffmpeg) {
       this._ffmpeg.destroy();
     }
@@ -127,7 +125,7 @@ class Client extends EventEmitter {
     }
   }
 
-  _emit (command, data = {}) {
+  _emit(command, data = {}) {
     this.emit(
       command,
       {
@@ -139,7 +137,7 @@ class Client extends EventEmitter {
     );
   }
 
-  _handleSlotUpdate (slot, sourceSubscriberId) {
+  _handleSlotUpdate(slot, sourceSubscriberId) {
     if (slot.occupierId !== null) {
       if (this._muted && !slot.occupierMuted) {
         this._muted = false;
@@ -164,7 +162,7 @@ class Client extends EventEmitter {
     }
   }
 
-  broadcast (data) {
+  broadcast(data) {
     this._reset();
 
     this._ffmpeg = ffmpeg(data)
@@ -184,7 +182,7 @@ class Client extends EventEmitter {
         this._emit(events.BROADCAST_ERROR, error);
       })
       .pipe()
-      .on('data', (data) => this._samples.push(..._.chunk(data, SLICE_COUNT)))
+      .on('data', (data) => _.chunk(data, SLICE_COUNT).forEach(async (chunk) => this._samples.push(chunk)))
       .on('finish', () => {
         this._downloadComplete = true;
       });
@@ -192,7 +190,7 @@ class Client extends EventEmitter {
     this._broadcastState = this._broadcastState === broadcastState.PAUSED ? broadcastState.PAUSED : broadcastState.BROADCASTING;
   }
 
-  async pause () {
+  async pause() {
     this._broadcastState = broadcastState.PAUSED;
 
     this._emit(events.BROADCAST_PAUSED);
@@ -200,7 +198,7 @@ class Client extends EventEmitter {
     return this.duration;
   }
 
-  async resume () {
+  async resume() {
     this._broadcastState = this._samples.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
     this._emit(events.BROADCAST_RESUME);
@@ -208,18 +206,18 @@ class Client extends EventEmitter {
     return this.duration;
   }
 
-  async setVolume (value) {
-    this._volume = value;
+  async setVolume(value) {
+    this._volume = parseFloat(value.toPrecision(3));
 
     return Promise.resolve();
   }
 
-  async disconnect () {
+  async disconnect() {
     this._reset(true);
     return Promise.resolve();
   }
 
-  async stop (stoppedByClient = false) {
+  async stop(stoppedByClient = false) {
     if (this._broadcastState === broadcastState.NOT_BROADCASTING) {
       return Promise.resolve();
     }
@@ -235,7 +233,7 @@ class Client extends EventEmitter {
     this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
 
-  async _createOffer () {
+  async _createOffer() {
     const offer = await this._client.createOffer({
       offerToSendAudio: true,
       offerToSendVideo: false,
@@ -248,50 +246,50 @@ class Client extends EventEmitter {
     return offer.sdp.replace('a=sendrecv', 'a=recvonly');
   }
 
-  async _setAnswer (answer) {
+  async _setAnswer(answer) {
     this._client.setRemoteDescription(new RTCSessionDescription({
       type: 'answer',
       sdp: answer
     }));
   }
 
-  get isConnecting () {
+  get isConnecting() {
     return this._connectionState === connectionState.CONNECTING;
   }
 
-  get isConnected () {
+  get isConnected() {
     return this._connectionState === (connectionState.READY || connectionState.CONNECTED);
   }
 
-  get isReady () {
+  get isReady() {
     return this._connectionState === connectionState.READY;
   }
 
-  get isPaused () {
+  get isPaused() {
     return this._broadcastState === broadcastState.PAUSED;
   }
 
-  get isBroadcasting () {
+  get isBroadcasting() {
     return this._broadcastState === broadcastState.BROADCASTING;
   }
 
-  get isMuted () {
+  get isMuted() {
     return this._muted;
   }
 
-  get slot () {
+  get slot() {
     return this._slotId > 0 ? this._slotId : undefined;
   }
 
-  get duration () {
+  get duration() {
     return this._duration / 1000;
   }
 
-  get opts () {
+  get opts() {
     return this._opts;
   }
 
-  get volume () {
+  get volume() {
     return this._volume;
   }
 }
