@@ -12,7 +12,7 @@ connection:
     device: wjsframework
   mocha:
     email:
-    password: 
+    password:
 
 avatar:
   endpoint: https://df49rkfq0koe8.cloudfront.net

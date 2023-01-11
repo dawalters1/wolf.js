@@ -25,6 +25,11 @@ export class Response<t = undefined> {
 
 export class WOLF {
     public constructor();
+
+    /**
+     * The bot configuration
+     */
+    public config: Configuration;
     /**
      * Exposes the Achievement methods
      */
@@ -124,12 +129,17 @@ export class WOLF {
      * @param password - The password belonging to the account
      * @param onlineState - The onlineState to appear as
      */
-    public login(email: string, password: string, onlineState: OnlineState): void;
+    public login(email: string, password: string, onlineState: OnlineState): Promise<void>;
     /**
      * Logout of WOLF
      */
     public logout(): Promise<void>;
 
+    /**
+     * EventEmitter
+     * @param event - The event name
+     * @param listener - The event handler
+     */
     public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => Promise<void>): this;
 
     /**
@@ -137,6 +147,9 @@ export class WOLF {
      */
     public currentSubscriber: Subscriber;
 
+    /**
+     * Split string at commas, newlines, spaces, etc
+     */
     public SPLIT_REGEX: RegExp;
 }
 
@@ -160,6 +173,136 @@ export class Multimedia {
      * @param body - The data to uplodate
      */
     public upload<T>(config: any, body: object): Promise<Response<T>>
+}
+
+export class Configuration {
+    /**
+     * The ID of the currently logged in account
+     */
+    public subscriberId: number;
+    /**
+     * The keyword belonging to the project
+     * Default: default
+     */
+    public keyword: string;
+    /**
+     * The framework settings
+     */
+    public framework: {
+        /**
+         * The ID of the developer
+         * Default: undefined
+         */
+        developer: number;
+        /**
+         * The default language of responses
+         * Default: en
+         */
+        language: string;
+        /**
+         * Login details
+         */
+        login: {
+            /**
+             * The email belonging to the account
+             */
+            email: string;
+            /**
+             * The password belonging to the account
+             */
+            password: string;
+            /**
+             * The online state the bot should appear as
+             * Default: 1
+             */
+            onlineState: OnlineState;
+            /**
+             * The account token (Automatically generated if none provided)
+             * Default: undefined
+             */
+            token: string
+        },
+        /**
+         * Command settings
+         */
+        commands: {
+            /**
+             * Command ignore settings
+             */
+            ignore: {
+                /**
+                 * Whether or not the bot should allow official bots to use commands
+                 * Default: false
+                 */
+                official: boolean;
+                /**
+                 * Whether or not the bot should allow unofficial bots to use commands
+                 * Default: false
+                 */
+                unofficial: boolean;
+                /**
+                 * Whether or not the bot should allow itself to use commands
+                 * Default: true
+                 */
+                self: boolean;
+            }
+        },
+        /**
+         * Message settings
+         */
+        messages: {
+            /**
+             * Message ignore settings
+             */
+            ignore: {
+                /**
+                 * Whether or not the bot should process its own messages
+                 * Default: false
+                 */
+                self: boolean;
+            }
+        },
+        /**
+         * Subscription settings
+         */
+        subscriptions: {
+            /**
+             * Message subscriptions
+             */
+            messages: {
+                /**
+                 * Group settings
+                 */
+                group: {
+                    /**
+                     * Whether or not the bot should receive group messages
+                     * Default: true
+                     */
+                    enabled: boolean;
+                    /**
+                     * Whether or not the bot should receive group messages tip events
+                     * Default: true
+                     */
+                    tipping: boolean;
+                },
+                /**
+                 * Private settings
+                 */
+                private: {
+                    /**
+                     * Whether or not the bot should receive private messages
+                     * Default: true
+                     */
+                    enabled: boolean;
+                    /**
+                     * Whether or not the bot should receive private messages tip events (Not Implemented)
+                     * Default: false
+                     */
+                    tipping: boolean;
+                }
+            }
+        }
+    }
 }
 
 export class CommandHandler {
@@ -1541,7 +1684,7 @@ export namespace Validator {
     export function isValidDate(arg: Date | Number): Boolean;
     export function isValidHex(arg: string): Boolean;
     export function isValidEmoji(arg: string): Boolean;
-    export function isValidUrl(api: WOLF, arg: String): Boolean
+    export function isValidUrl(client: WOLF, arg: String): Boolean
 }
 
 

@@ -23,6 +23,8 @@ const fininaliseConnection = async (client, resume = false) => {
 
   await subscriptions(client);
 
+  client.config.subscriberId = client.currentSubscriber.id;
+
   return client.emit(resume ? Event.RESUME : Event.READY);
 };
 
@@ -53,7 +55,7 @@ const login = async (client) => {
     if (!(response?.headers?.subCode ?? -1 > 1)) {
       return Promise.resolve();
     }
-    await client.utility().delay(90000);
+    await client.utility.delay(90000);
 
     return await login(client);
   }

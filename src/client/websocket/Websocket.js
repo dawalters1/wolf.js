@@ -39,10 +39,7 @@ class Websocket {
     this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${token}&device=${connectionSettings.query.device}&state=${onlineState}`,
       {
         transports: ['websocket'],
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 3000,
-        reconnectionAttempts: Infinity
+        reconnection: true
       }
     );
 
@@ -51,9 +48,9 @@ class Websocket {
     this.socket.on(SocketEvent.CONNECT_TIMEOUT, error => this.client.emit(Event.CONNECTION_TIMEOUT, error));
     this.socket.on(SocketEvent.DISCONNECT, reason => this.client.emit(Event.DISCONNECTED, reason));
     this.socket.on(SocketEvent.ERROR, error => this.client.emit(Event.ERROR, error));
-    this.socket.on(SocketEvent.RECONNECTING, reconnectNumber => this.client.emit(Event.RECONNECTING, reconnectNumber));
-    this.socket.on(SocketEvent.RECONNECTED, () => this.client.emit(Event.RECONNECTED));
-    this.socket.on(SocketEvent.RECONNECT_FAILED, error => this.client.emit(Event.RECONNECT_FAILED, error));
+    this.socket.io.on(SocketEvent.RECONNECT_ATTEMPT, reconnectNumber => this.client.emit(Event.RECONNECTING, reconnectNumber));
+    this.socket.io.on(SocketEvent.RECONNECT, () => this.client.emit(Event.RECONNECTED));
+    this.socket.io.on(SocketEvent.RECONNECT_FAILED, error => this.client.emit(Event.RECONNECT_FAILED, error));
     this.socket.on(SocketEvent.PING, () => this.client.emit(Event.PING));
     this.socket.on(SocketEvent.PONG, (latency) => this.client.emit(Event.PONG, latency));
 

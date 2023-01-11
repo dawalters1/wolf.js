@@ -37,7 +37,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.11.9",
-    "babel-plugin-webpack-alias": "^2.1.2",
     "eslint": "^8.25.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
@@ -52,7 +51,7 @@
     "aws-sdk": "^2.1282.0",
     "aws4-axios": "^2.4.9",
     "axios": "0.27.2",
-    "bull": "^4.10.2",
+    "bull": "^4.8.1",
     "chai": "^4.3.7",
     "config": "^3.3.8",
     "crypto-js": "^4.1.1",

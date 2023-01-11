@@ -27,8 +27,6 @@ describe('Helpers', () => {
       client.on('message', (msg) => {
         if (message.targetGroupId === groupId && message.sourceSubscriberId === client.currentSubscriber.id) {
           message = msg;
-
-          console.log(message.toJSON());
         }
       });
       client.login(mochaConfig.email, mochaConfig.password);
@@ -1632,7 +1630,6 @@ describe('Helpers', () => {
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
-          console.log(message);
           expect(message.sourceSubscriberId).to.equal(subscriberId);
         });
 
@@ -1650,7 +1647,6 @@ describe('Helpers', () => {
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
-          console.log(message);
           expect(message.targetGroupId).to.equal(groupId);
         });
 
@@ -1668,7 +1664,6 @@ describe('Helpers', () => {
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
-          console.log(message);
           expect(message.sourceSubscriberId).to.equal(subscriberId);
         });
 
@@ -1686,7 +1681,6 @@ describe('Helpers', () => {
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
-          console.log(message);
           expect(message.sourceSubscriberId).to.equal(subscriberId);
         });
 
