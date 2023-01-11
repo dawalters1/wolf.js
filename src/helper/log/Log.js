@@ -5,10 +5,20 @@ import validator from '../../validator/index.js';
 import Base from '../Base.js';
 
 class Log extends Base {
+  /**
+   *
+   * @param {import('../../client/WOLF.js').default} client
+   */
   constructor (client) {
     super(client);
 
-    process.on('unhandledRejection', (error) => this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error?.stack ? error.stack : error.message }));
+    process.on('unhandledRejection', (error) => {
+      // Print to console if no log event exists
+      if (!client.eventNames().includes('log')) {
+        return console.log(error?.stack ? error.stack : error.message);
+      }
+      this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error?.stack ? error.stack : error.message });
+    });
   }
 
   debug (message) {

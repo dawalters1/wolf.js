@@ -59,6 +59,18 @@ class Message extends Base {
     return await this.client.messaging.getGroupMessageEditHistory(this.targetGroupId, this.timestamp);
   }
 
+  async subscriber () {
+    return await this.client.subscriber.getById(this.sourceSubscriberId);
+  }
+
+  async group () {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('cannot request group for non-group command', { ...this.toJSON() });
+    }
+
+    return await this.client.group.getById(this.targetGroupId);
+  }
+
   async tip (charm) {
     if (!this.isGroup) {
       throw new WOLFAPIError('tipping private messages is currently not supported');

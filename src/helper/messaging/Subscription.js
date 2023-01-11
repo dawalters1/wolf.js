@@ -15,7 +15,6 @@ class Subscription extends Base {
       for (const messageSubscription of subscriptions) {
         message.subscription = messageSubscription.id;
         messageSubscription.def.resolve(message);
-        console.log('subscription found');
       }
     });
   }

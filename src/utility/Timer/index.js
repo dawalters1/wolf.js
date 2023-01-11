@@ -16,10 +16,13 @@ class Timer {
     }
     this._handlers = handlers;
 
-    this._timerQueue = new BullQueue('bull-timer', {
-      redis: this.client.config.get('redis'),
-      prefix: `{${this.client.config.keyword}:${this.client.currentSubscriber.id}}`
-    });
+    this._timerQueue = new BullQueue(
+      'bull-timer',
+      {
+        redis: this.client.config.get('redis'),
+        prefix: `{${this.client.config.keyword}:${this.client.currentSubscriber.id}}`
+      }
+    );
 
     this._timerQueue.process('*', (job) => {
       if (!Object.keys(handlers).includes(job.name)) {
@@ -28,6 +31,7 @@ class Timer {
 
       return handlers[job.name](this.client, job.data, ...args);
     });
+
     await this._timerQueue.isReady();
     this._initialised = true;
 
@@ -64,15 +68,22 @@ class Timer {
     } else if (validator.isLessThanOrEqualZero(name)) {
       throw new WOLFAPIError('duration cannot be less than or equal to 0', { duration });
     }
+
     await this.cancel(name);
 
-    return new models.TimerJob(await this._timerQueue.add(handler, data, {
-      delay: parseInt(duration),
-      attempts: 8,
-      removeOnComplete: true,
-      removeOnFail: true,
-      jobId: name
-    }));
+    return new models.TimerJob(this.client,
+      await this._timerQueue.add(
+        handler,
+        data,
+        {
+          delay: parseInt(duration),
+          attempts: 8,
+          removeOnComplete: true,
+          removeOnFail: true,
+          jobId: name
+        }
+      )
+    );
   }
 
   async cancel (name) {
@@ -89,10 +100,12 @@ class Timer {
     const job = await this._timerQueue.getJob(name);
 
     if (job) {
+      await job.releaseLock().catch();
+
       return await job.remove();
     }
 
-    return Promise.resolve();
+    return null;
   }
 
   async get (name) {
@@ -109,10 +122,10 @@ class Timer {
     const job = await this._timerQueue.getJob(name);
 
     if (job) {
-      return new models.TimerJob(job);
+      return new models.TimerJob(this.client, job);
     }
 
-    return job;
+    return null;
   }
 
   async delay (name, duration) {
@@ -138,11 +151,21 @@ class Timer {
       Reflect.deleteProperty(existing.opts, 'timestamp'); // Remove this else the duration wont update #stupid.
       await this.cancel(name);
 
-      return new models.TimerJob(await this._timerQueue.add(existing.name, existing.data, {
-        ...existing.opts,
-        delay: parseInt(duration)
-      }));
+      return new models.TimerJob(
+        this.client,
+
+        await this._timerQueue.add(
+          existing.name,
+          existing.data,
+          {
+            ...existing.opts,
+            delay: parseInt(duration)
+          }
+        )
+      );
     }
+
+    return null;
   }
 }
 

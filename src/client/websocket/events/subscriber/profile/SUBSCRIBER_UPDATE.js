@@ -8,7 +8,7 @@ import patch from '../../../../../utils/patch.js';
  * @param {*} body
  * @returns
  */
-export default async function (client, body) {
+export default async (client, body) => {
   const cached = client.subscriber.subscribers.find((subscriber) => subscriber.id === body.id);
 
   if (!cached || cached.hash === body.hash) {
@@ -35,4 +35,4 @@ export default async function (client, body) {
     oldSubscriber,
     newSubscriber
   );
-}
+};
