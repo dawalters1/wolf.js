@@ -7,7 +7,6 @@ const ffmpeg = require('fluent-ffmpeg');
 const _ = require('lodash');
 
 const { connectionState, broadcastState, events } = require('./constants');
-const c = require('config');
 
 const SAMPLE_RATE = 48000;
 const SLICE_COUNT = 1920;
@@ -23,9 +22,8 @@ const createUInt8Array = (buffer, volume) => {
   return new Int8Array(buffer).map((samples) => (volume === 1 || samples === 0) ? samples : samples * volume);
 };
 
-
 class Client extends EventEmitter {
-  constructor(targetGroupId, opts) {
+  constructor (targetGroupId, opts) {
     super();
     this._slotId = -1;
 
@@ -55,9 +53,8 @@ class Client extends EventEmitter {
       }
     }, 1000);
 
-    const broadcast = () => setTimeout(async () => {
+    const broadcast = () => setTimeout(() => {
       if (this._broadcastState === broadcastState.BROADCASTING) {
-
         const sample = this._samples?.shift();
 
         if (sample && !this._muted) {
@@ -72,13 +69,11 @@ class Client extends EventEmitter {
           );
         }
 
-        if (!this._samples.length && this._downloadComplete) {
-          return this.stop(true);
-        }
-
         if (!this._emittedPlaying) {
           this._emittedPlaying = true;
           this._emit(events.BROADCAST_START);
+        } else if (!this._samples.length && this._downloadComplete) {
+          this.stop(true);
         }
       }
 
@@ -109,10 +104,8 @@ class Client extends EventEmitter {
     broadcast();
   }
 
-  _reset(disconnect = false) {
-    if (this._ffmpeg) {
-      this._ffmpeg.destroy();
-    }
+  _reset (disconnect = false) {
+    this._ffmpeg?.destroy();
 
     this._samples = [];
     this._duration = 0;
@@ -125,7 +118,7 @@ class Client extends EventEmitter {
     }
   }
 
-  _emit(command, data = {}) {
+  _emit (command, data = {}) {
     this.emit(
       command,
       {
@@ -137,7 +130,7 @@ class Client extends EventEmitter {
     );
   }
 
-  _handleSlotUpdate(slot, sourceSubscriberId) {
+  _handleSlotUpdate (slot, sourceSubscriberId) {
     if (slot.occupierId !== null) {
       if (this._muted && !slot.occupierMuted) {
         this._muted = false;
@@ -162,7 +155,7 @@ class Client extends EventEmitter {
     }
   }
 
-  broadcast(data) {
+  broadcast (data) {
     this._reset();
 
     this._ffmpeg = ffmpeg(data)
@@ -183,14 +176,12 @@ class Client extends EventEmitter {
       })
       .pipe()
       .on('data', (data) => _.chunk(data, SLICE_COUNT).forEach(async (chunk) => this._samples.push(chunk)))
-      .on('finish', () => {
-        this._downloadComplete = true;
-      });
+      .on('finish', () => { this._downloadComplete = true; });
 
     this._broadcastState = this._broadcastState === broadcastState.PAUSED ? broadcastState.PAUSED : broadcastState.BROADCASTING;
   }
 
-  async pause() {
+  async pause () {
     this._broadcastState = broadcastState.PAUSED;
 
     this._emit(events.BROADCAST_PAUSED);
@@ -198,7 +189,7 @@ class Client extends EventEmitter {
     return this.duration;
   }
 
-  async resume() {
+  async resume () {
     this._broadcastState = this._samples.length > 0 ? broadcastState.BROADCASTING : broadcastState.NOT_BROADCASTING;
 
     this._emit(events.BROADCAST_RESUME);
@@ -206,18 +197,18 @@ class Client extends EventEmitter {
     return this.duration;
   }
 
-  async setVolume(value) {
+  async setVolume (value) {
     this._volume = parseFloat(value.toPrecision(3));
 
     return Promise.resolve();
   }
 
-  async disconnect() {
+  async disconnect () {
     this._reset(true);
     return Promise.resolve();
   }
 
-  async stop(stoppedByClient = false) {
+  async stop (stoppedByClient = false) {
     if (this._broadcastState === broadcastState.NOT_BROADCASTING) {
       return Promise.resolve();
     }
@@ -233,7 +224,7 @@ class Client extends EventEmitter {
     this._emit(stoppedByClient ? events.BROADCAST_END : events.BROADCAST_STOPPED);
   }
 
-  async _createOffer() {
+  async _createOffer () {
     const offer = await this._client.createOffer({
       offerToSendAudio: true,
       offerToSendVideo: false,
@@ -246,50 +237,50 @@ class Client extends EventEmitter {
     return offer.sdp.replace('a=sendrecv', 'a=recvonly');
   }
 
-  async _setAnswer(answer) {
+  async _setAnswer (answer) {
     this._client.setRemoteDescription(new RTCSessionDescription({
       type: 'answer',
       sdp: answer
     }));
   }
 
-  get isConnecting() {
+  get isConnecting () {
     return this._connectionState === connectionState.CONNECTING;
   }
 
-  get isConnected() {
+  get isConnected () {
     return this._connectionState === (connectionState.READY || connectionState.CONNECTED);
   }
 
-  get isReady() {
+  get isReady () {
     return this._connectionState === connectionState.READY;
   }
 
-  get isPaused() {
+  get isPaused () {
     return this._broadcastState === broadcastState.PAUSED;
   }
 
-  get isBroadcasting() {
+  get isBroadcasting () {
     return this._broadcastState === broadcastState.BROADCASTING;
   }
 
-  get isMuted() {
+  get isMuted () {
     return this._muted;
   }
 
-  get slot() {
+  get slot () {
     return this._slotId > 0 ? this._slotId : undefined;
   }
 
-  get duration() {
+  get duration () {
     return this._duration / 1000;
   }
 
-  get opts() {
+  get opts () {
     return this._opts;
   }
 
-  get volume() {
+  get volume () {
     return this._volume;
   }
 }
