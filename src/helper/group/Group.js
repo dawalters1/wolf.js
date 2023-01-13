@@ -5,6 +5,8 @@ import models, { Search } from '../../models/index.js';
 import _ from 'lodash';
 import Member from './Member.js';
 import patch from '../../utils/patch.js';
+import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
+import { fileTypeFromBuffer } from 'file-type';
 
 const buildGroupFromModule = (groupModule) => {
   const base = groupModule.base;
@@ -184,7 +186,7 @@ class Group extends Base {
     return response.success ? this._process(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
   }
 
-  async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
+  async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -249,13 +251,23 @@ class Group extends Base {
       }
     }
 
+    const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.group');
+
+    if (avatar) {
+      if (Buffer.isBuffer(avatar)) {
+        throw new models.WOLFAPIError('avatar must be a valid buffer', { avatar });
+      }
+
+      validateMultimediaConfig(avatarConfig, avatar);
+    }
+
     const group = await this.getById(parseInt(id));
 
     if (!group.exists) {
       throw new models.WOLFAPIError('Unknown Group', { id });
     }
 
-    return await this.client.websocket.emit(
+    const response = await this.client.websocket.emit(
       Command.GROUP_PROFILE_UPDATE,
       {
         id: parseInt(id),
@@ -280,6 +292,20 @@ class Group extends Base {
         }
       }
     );
+
+    if (response.success && avatar) {
+      response.body.avatarUpload = await this.client.multimedia.upload(
+        avatarConfig,
+        {
+          data: avatar.toString('base64'),
+          mimeType: (await fileTypeFromBuffer(avatar)).mime,
+          id: parseInt(id),
+          source: this.client.currentSubscriber.id
+        }
+      );
+    }
+
+    return response;
   }
 
   async joinById (id, password = undefined) {

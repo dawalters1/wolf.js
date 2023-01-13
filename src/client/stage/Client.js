@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
 import events from 'events';
 import wrtc from 'wrtc';
@@ -8,7 +7,7 @@ import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection } = wrtc;
-const { RTCAudioSource, RTCAudioSink } = wrtc.nonstandard;
+const { RTCAudioSource } = wrtc.nonstandard;
 const MediaStream = wrtc.MediaStream;
 
 const SAMPLE_RATE = 48000;
@@ -70,16 +69,14 @@ class Client extends EventEmitter {
           }
         }
 
-        if (!this.samples.length) {
+        if (!this.emittedPlaying) {
+          this.emittedPlaying = true;
+          this.emit(Event.STAGE_CLIENT_START);
+        } else if (!this.samples.length) {
           if (this.completed) {
             this.emit(Event.STAGE_CLIENT_END);
             this.stop();
           }
-        }
-
-        if (!this.emittedPlaying) {
-          this.emittedPlaying = true;
-          this.emit(Event.STAGE_CLIENT_START);
         }
       }
 
