@@ -130,6 +130,7 @@ export class WOLF {
      * @param onlineState - The onlineState to appear as
      */
     public login(email: string, password: string, onlineState: OnlineState): Promise<void>;
+
     /**
      * Logout of WOLF
      */
@@ -151,6 +152,13 @@ export class WOLF {
      * Split string at commas, newlines, spaces, etc
      */
     public SPLIT_REGEX: RegExp;
+
+    /**
+     * Update the current logged in account profile
+     * @param profileData - The new profile data
+     */
+    public update(profileData: { nickname: string, status: string, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+
 }
 
 export class Websocket {
@@ -706,7 +714,7 @@ export class GroupHelper extends Base {
      * @param id - The ID of the group
      * @param groupData - The new group data
      */
-    public update(id: number, groupData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number }): Promise<Response>;
+    public update(id: number, groupData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar: Buffer }): Promise<Response>;
     /**
      * Join a group
      * @param id - The ID of the group
@@ -1741,6 +1749,11 @@ export class AchievementUnlockable extends Base {
     public id: number;
     public additionalInfo: AchievementUnlockableAdditionalInfo;
 
+    /**
+     * Get the achievement
+     */
+    public achievement(): Promise<Achievement>;
+
     toJSON(): Object;
 }
 
@@ -1759,6 +1772,11 @@ export class Ad extends Base {
     public start: number;
     public end: number;
     public ad: string;
+
+    /**
+     * Get the group profile
+     */
+    public group(): Promise<Group>;
 
     toJSON(): Object;
 }
@@ -1801,6 +1819,19 @@ export class CharmExpiry extends Base {
     public sourceSubscriberId: number;
     public expireTime: Date;
 
+    /**
+     * Get the charm
+     */
+    public charm(): Promise<Charm>;
+    /**
+     * Set the charm on the bots profile
+     */
+    public set(): Promise<Response>;
+    /**
+     * Delete the charm from the list
+     */
+    public delete(): Promise<Response>;
+
     toJSON(): Object;
 }
 
@@ -1809,6 +1840,15 @@ export class CharmSelected extends Base {
 
     public charmId: number;
     public position: number;
+
+    /**
+     * Get the charm
+     */
+    public charm(): Promise<Charm>;
+    /**
+     * Remove the selected charm
+     */
+    public deselect(): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -1856,7 +1896,17 @@ export class CommandContext extends Base {
      */
     public group(): Promise<Group>;
 
+    /**
+     * Reply to the command
+     * @param content - The message
+     * @param options - The send options
+     */
     public reply(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    /**
+     * Send the subscriber who used the command a private message
+     * @param content - The message
+     * @param options - The send options
+     */
     public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
 
     toJSON(): Object;
@@ -1867,6 +1917,27 @@ export class Contact extends Base {
 
     public id: number;
     public additionalInfo: ContactAdditionalInfo;
+
+    /**
+     * Add the subscriber to the bots blocked list
+     */
+    public block(): Promise<Response>;
+    /**
+     * Remove the subscriber from the bots blocked list
+     */
+    public unblock(): Promise<Response>;
+    /**
+     * Add the subscriber as a contact
+     */
+    public add(): Promise<Response>;
+    /**
+     * Delete the subscriber as a contact
+     */
+    public delete(): Promise<Response>;
+    /**
+     * Get the profile
+     */
+    public profile(): Promise<Subscriber>;
 
     toJSON(): Object;
 }
@@ -1890,6 +1961,11 @@ export class Discovery extends Base {
     public languageId: Language;
     public sections: Array<DiscoverySection>;
 
+    /**
+     * Get the page, product, event or groups
+     * @param value - The page, name or ID
+     * @param offset - The product, event or group offset
+     */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): Object;
@@ -1903,6 +1979,11 @@ export class DiscoveryPage extends Base {
     public languageId: Language;
     public sections: Array<DiscoverySection>;
 
+    /**
+     * Get the page, product, event or groups
+     * @param value - The page or ID
+     * @param offset - The product, event or group offset
+     */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): Object;
@@ -1922,6 +2003,10 @@ export class DiscoverySection extends Base {
     public videos: Array<TopicSectionVideo>;
     public additionalDescriptions: Array<string>
 
+    /**
+     * Get the page, event, product or groups belonging to the section
+     * @param offset - The Page, Event, Product or group offset
+     */
     public get(offset: number): Promise<DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): Object;
@@ -1942,6 +2027,26 @@ export class Event extends Base {
     public endsAt: Date;
     public isRemoved: boolean;
     public attendanceCount: number;
+
+    /**
+     * Add the event to the bots subscription list
+     */
+    public subscribe(): Promise<Response>;
+    /**
+     * Remove the event from the bots subscription list
+     */
+    public unsbuscribe(): Promise<Response>;
+
+    /**
+     * Update the event profile
+     * @param eventData - The new event data
+     */
+    public update(eventData: { title: string, startsAt: Date, shortDescription: string, longDescription: string, thumbnail: Buffer }): Promise<Response>;
+    /**
+     * Update the event thumbnail
+     * @param thumbnail - The thumbnail
+     */
+    public updateThumbnail(thumbnail: Buffer): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -1971,8 +2076,46 @@ export class Group extends Base {
     public capabilities: Capability;
     public exists: boolean;
 
+    /**
+     * Get the group avatar URL
+     * @param size - The size
+     */
     public getAvatarUrl(size: IconSize): string;
+    /**
+     * Get the group avatar
+     * @param size - The size
+     */
     public getAvatar(size: IconSize): Promise<Buffer>;
+
+    /**
+     * Join the group
+     * @param password - The groups password if it has one
+     */
+    public join(password: string | undefined): Promise<Response>;
+    /**
+     * Leave the group
+     */
+    public leave(): Promise<Response>;
+    /**
+     * Get the groups stats
+     */
+    public stats(): Promise<GroupStats>;
+    /**
+     * Get the groups audio slots
+     */
+    public slots(): Promise<Array<GroupAudioSlot>>;
+
+    /**
+     * Send a message in the group
+     * @param content - The message
+     * @param options - The send options
+     */
+    public sendMessage(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    /**
+     * Update the groups profile
+     * @param profileData - The new profile data
+     */
+    public update(profileData: { description: string, peekable: boolean, disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean, longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number, avatar: Buffer }): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -1984,6 +2127,12 @@ export class GroupAudioConfig extends Base {
     public enabled: boolean;
     public stageId: number | undefined;
     public minRepLevel: number;
+
+    /**
+     * Update the groups audio config
+     * @param configData - The new audio config
+     */
+    public update(configData: { enabled: boolean, stageId: number, minRepLevel: number }): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -2010,6 +2159,45 @@ export class GroupAudioSlot extends Base {
     public reservedOccupierId: number | undefined;
     public reservedExpiresAt: Date | undefined;
 
+    /**
+     * Join the slot
+     */
+    public join(): Promise<Response>;
+    /**
+     * Leave the slot
+     */
+    public leave(): Promise<Response>;
+    /**
+     * Kick the slot
+     */
+    public kick(): Promise<Response>;
+    /**
+     * Mute the slot
+     */
+    public mute(): Promise<Response>;
+    /**
+     * Unmute the slot
+     */
+    public unmute(): Promise<Response>;
+    /**
+     * Lock the slot
+     */
+    public lock(): Promise<Response>;
+    /**
+     * Unlock the slot
+     */
+    public unlock(): Promise<Response>;
+
+    /**
+     * Request a slot for the bot or specified subscriber
+     * @param subscriberId - The ID of the subscriber (Default: undefined)
+     */
+    public request(subscriberId: number | undefined): Promise<Response>;
+    /**
+     * Cancel the audio slot request
+     */
+    public cancelRequest(): Promise<Response>;
+
     toJSON(): Object;
 }
 
@@ -2020,6 +2208,19 @@ export class GroupAudioSlotRequest extends Base {
     public groupId: number;
     public reservedOccupierId: number;
     public reservedExpiresAt: Date;
+
+    /**
+     * Delete the audio slot request
+     */
+    public delete(): Promise<Response>;
+    /**
+     * Accept the audio slot request
+     */
+    public accept(): Promise<Response>;
+    /**
+     * Reject the audio slot request
+     */
+    public reject(): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -2048,6 +2249,12 @@ export class GroupExtended extends Base {
     public passworded: boolean;
     public entryLevel: number;
 
+    /**
+     * Update the groups extended profile
+     * @param extendedData - The new extended profile
+     */
+    public update(extendedData: { longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number }): Promise<Response>;
+
     toJSON(): Object;
 }
 
@@ -2057,6 +2264,11 @@ export class GroupMember extends Base {
     public id: number;
     public hash: string;
     public capabilities: Capability;
+
+    /**
+     * Get the subscribers profile
+     */
+    public subscriber(): Promise<Subscriber>;
 
     toJSON(): Object;
 }
@@ -2076,6 +2288,12 @@ export class GroupMessageConfig extends Base {
     public disableVoice: boolean;
     public id: number;
     public slowModeRateInSeconds: number;
+
+    /**
+     * Update the message config
+     * @param messageConfig - The new message config settings
+     */
+    public update(messageConfig: { disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean }): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -2122,6 +2340,11 @@ export class GroupStatsActive extends Base {
     public voiceCount: number;
     public wordCount: number;
 
+    /**
+     * Get the subscribers profile
+     */
+    public subscriber(): Promise<Subscriber>;
+
     toJSON(): Object;
 }
 
@@ -2159,6 +2382,11 @@ export class GroupStatsTop extends Base {
     public value: number;
     public percentage: number;
 
+    /**
+     * Get the subscribers profile
+     */
+    public subscriber(): Promise<Subscriber>;
+
     toJSON(): Object;
 }
 
@@ -2180,6 +2408,19 @@ export class GroupSubscriberUpdate extends Base {
     public targetId: number;
     public action: string;
 
+    /**
+     * Get the profile of the group the action was performed in
+     */
+    public group(): Promise<Group>;
+    /**
+     * Get the profile of the user who performed the action
+     */
+    public sourceSubscriber(): Promise<Subscriber>;
+    /**
+     * Get the profile of the user who the action was performed on
+     */
+    public targetSubscriber(): Promise<Subscriber>;
+
     toJSON(): Object;
 }
 
@@ -2187,6 +2428,12 @@ export class IconInfo extends Base {
     private constructor(client: WOLF, data: object)
 
     public availableSizes: IconInfoAvailableSize;
+
+    /**
+     * Get the url for the specified size if it exists, else the closest available
+     * @param size - The size
+     */
+    public get(size: IconSize): string;
 
     toJSON(): Object;
 }
@@ -2199,6 +2446,10 @@ export class IconInfoAvailableSize extends Base {
     public large: string;
     public xlarge: string;
 
+    /**
+     * Get the url for the specified size if it exists, else the closest available
+     * @param size - The size
+     */
     get(size: IconSize): string;
 
     toJSON(): Object;
@@ -2220,6 +2471,11 @@ export class Link extends Base {
     public start: number;
     public end: number;
     public link: string;
+
+    /**
+     * Get the link metadata
+     */
+    public metadata(): Promise<LinkMetadata>;
 
     toJSON(): Object;
 }
@@ -2252,11 +2508,46 @@ export class Message extends Base {
     public type: MessageType;
     public isCommand: boolean;
 
+    /**
+     * Reply to the message
+     * @param content - The message
+     * @param options - The message send options
+     */
     public reply(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    /**
+     * Send the subscriber who sent the message a private message
+     * @param content - The message
+     * @param options - The message send options
+     */
+    public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+
+    /**
+     * Delete the current message
+     */
     public delete(): Promise<Response>;
+    /**
+     * Restore the current message
+     */
     public restore(): Promise<Response>;
 
+    /**
+     * Get the edit history for the messagte
+     */
+    public getEditHistory(): Promise<Array<MessageUpdate>>
+
+    /**
+     * Tip the message
+     * @param charm - The charm to tip
+     */
     public tip(charm: TipCharm | Array<TipCharm>): Promise<Response>;
+    /**
+     * Get the subscriber profile
+     */
+    public subscriber(): Promise<Subscriber>;
+    /**
+     * Get the group profile
+     */
+    public group(): Promise<Group>;
 
     toJSON(): Object;
 }
@@ -2266,6 +2557,11 @@ export class MessageEdit extends Base {
 
     public subscriberId: number;
     public timestamp: number;
+
+    /**
+     * Get the subscriber profile
+     */
+    public subscriber(): Promise<Subscriber>;
 
     toJSON(): Object;
 }
@@ -2311,6 +2607,11 @@ export class MessageMetadataFormattingGroupLink extends Base {
     public end: number;
     public groupId: number;
 
+    /**
+     * Get the group profile
+     */
+    public group(): Promise<Group>;
+
     toJSON(): Object;
 }
 
@@ -2320,6 +2621,11 @@ export class MessageMetadataFormattingUrl extends Base {
     public start: number;
     public end: number;
     public url: string;
+
+    /**
+     * Get the link metadata
+     */
+    public metadata(): Promise<LinkMetadata>;
 
     toJSON(): Object;
 }
@@ -2356,6 +2662,12 @@ export class MessageSettingFilter extends Base {
     public enabled: boolean;
     public tier: MessageFilterTier;
 
+    /**
+     * Update the message filter settings
+     * @param messageFilterTier - The new message filter tier
+     */
+    public update(messageFilterTier: MessageFilterTier): Promise<Response>;
+
     toJSON(): Object;
 }
 
@@ -2366,6 +2678,11 @@ export class MessageUpdate extends Base {
     public metadata: MessageMetadata;
     public subscriberId: number;
     public timestamp: number;
+
+    /**
+     * Get the subscriber profile
+     */
+    public subscriber(): Promise<Subscriber>;
 
     toJSON(): Object;
 }
@@ -2432,6 +2749,11 @@ export class Presence extends Base {
     public lastActive: Date;
     public subscriberId: number;
 
+    /**
+     * Get the subscriber profile
+     */
+    public subscriber(): Promise<Subscriber>;
+
     toJSON(): Object;
 }
 
@@ -2442,6 +2764,11 @@ export class Search extends Base {
     public id: number;
     public hash: string;
     public reason: string;
+
+    /**
+     * Get the group or subscriber profile
+     */
+    public getProfile(): Promise<Subscriber | Group>;
 
     toJSON(): Object;
 }
@@ -2479,6 +2806,11 @@ export class Store extends Base {
     public credits: Array<StoreProductCredits>;
     public sections: Array<StoreSection>;
 
+    /**
+     * Get a page or section
+     * @param value - The page or ID
+     * @param offset - The product or page offset
+     */
     public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
     public getCreditList(): Promise<Array<StoreProductCredits>>;
 
@@ -2493,6 +2825,11 @@ export class StorePage extends Base {
     public languageId: Language;
     public sections: Array<StoreSection>;
 
+    /**
+     * Get a page or section
+     * @param value - Page Name, ID
+     * @param offset - Product or page offset
+     */
     public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
 
     toJSON(): Object;
@@ -2519,7 +2856,18 @@ export class StoreProduct extends Base {
     public userLevel: number;
     public webContentUrl: string;
 
+    /**
+     * Purchase an item
+     * @param duration - The duration ID
+     * @param quanitity - How many to buy
+     * @param targetGroupIds - The target user or group IDs
+     */
     public purchase(duration: StoreProductDuration | number, quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
+    /**
+     * Purchase an item
+     * @param quanitity - How many to buy
+     * @param targetGroupIds - The target user or group IDs
+     */
     public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
 
     toJSON(): Object;
@@ -2545,6 +2893,11 @@ export class StoreProductDuration extends Base {
     public days: number;
     public credits: number;
 
+    /**
+     * Purchase an item
+     * @param quanitity - How many to buy
+     * @param targetGroupIds - The target user or group IDs
+     */
     public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
 
     toJSON(): Object;
@@ -2573,6 +2926,10 @@ export class StoreProductPartial extends Base {
     public charmId: number;
     public botId: number;
 
+    /**
+     * Get a products full profile
+     * @param languageId - The language
+     */
     public getFullProduct(languageId?: Language): Promise<StoreProduct>;
 
     toJSON(): Object;
@@ -2591,6 +2948,10 @@ export class StoreSection extends Base {
     public videos: Array<TopicSectionVideo>;
     public addtionalDescriptions: Array<string>
 
+    /**
+     * Get the page or products on the store section
+     * @param offset - Page or product ID offset
+     */
     public get(offset: number): Promise<StorePage | Array<StoreProductPartial>>;
 
     toJSON(): Object;
@@ -2616,8 +2977,45 @@ export class Subscriber extends Base {
 
     public exists: boolean;
 
+    /**
+     * Get the subscribers avatar URL
+     * @param size - The size
+     */
     public getAvatarUrl(size: IconSize): string;
+    /**
+     * Get the subscribers avatar
+     * @param size - The size
+     */
     public getAvatar(size: IconSize): Promise<Buffer>;
+
+    /**
+     * Add the sbscriber to the bots blocked list
+     */
+    public block(): Promise<Response>;
+    /**
+     * Remove the subscriber from the bots blocked list
+     */
+    public unblock(): Promise<Response>;
+    /**
+     * Add the subscriber as a contact
+     */
+    public add(): Promise<Response>;
+    /**
+     * Delete subscriber as a contact
+     */
+    public delete(): Promise<Response>;
+    /**
+     * Send a message to the subscriber
+     * @param content - The message
+     * @param options - The message send options
+     */
+    public sendMessage(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+
+    /**
+     * Update the bots profile
+     * @param profileData - The new profile data
+     */
+    public update(profileData: { nickname: string, status: string, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -2628,6 +3026,19 @@ export class SubscriberEvent extends Base {
     public id: number;
     public groupId: number;
     public additionalInfo: SubscriberEventAdditionalInfo;
+
+    /**
+     * Get an event profile
+     */
+    public get(): Promise<Event>;
+    /**
+     * Add an event to the bots subscription list
+     */
+    public subscribe(): Promise<Response>;
+    /**
+     * Remove an event from the bots subscription list
+     */
+    public unsubscribe(): Promise<Response>;
 
     toJSON(): Object;
 }
@@ -2675,7 +3086,14 @@ export class TimerJob extends Base {
     public id: string;
     public remaining: number;
 
+    /**
+     * Cancel an event
+     */
     cancel(): Promise<void>;
+    /**
+     * Change the time event time
+     * @param duration - How long to wait
+     */
     delay(duration: number): Promise<void>
 
     toJSON(): Object;
@@ -2691,6 +3109,23 @@ export class Tip extends Base {
     public subscriberId: number;
     public context: TipContext;
 
+    /**
+     * Get all the charms tipped
+     */
+    public charms(): Promise<Array<Charm>>;
+    /**
+     * Get the group the tip happened in
+     */
+    public group(): Promise<Group>;
+    /**
+     * Get the subscriber who tipped
+     */
+    public sourceSubscriber(): Promise<Subscriber>;
+    /**
+     * Get the subscriber that was tipped
+     */
+    public targetSubscriber(): Promise<Subscriber>;
+
     toJSON(): Object;
 }
 
@@ -2702,6 +3137,11 @@ export class TipCharm extends Base {
     public credits: number;
     public magnitude: number;
     public subscriber: IdHash;
+
+    /**
+     * Get the charm
+     */
+    public charm(): Promise<Charm>;
 
     toJSON(): Object;
 }
@@ -2721,6 +3161,11 @@ export class TipDetail extends Base {
     public id: number;
     public list: Array<TipCharm>;
     public version: number;
+
+    /**
+     * Get the tipped charm
+     */
+    public charms(): Promise<Array<Charm>>;
 
     toJSON(): Object;
 }
@@ -2743,6 +3188,11 @@ export class TipLeaderboardItem extends Base {
     public group: IdHash;
     public subscriber: IdHash;
 
+    /**
+     * Get the charm
+     */
+    public charm(): Promise<Charm>;
+
     toJSON(): Object;
 }
 
@@ -2762,6 +3212,11 @@ export class TipSummary extends Base {
     public id: number;
     public charmList: Array<TipCharm>;
     public version: number;
+
+    /**
+     * Get all charms tipped
+     */
+    public charms(): Promise<Array<Charm>>;
 
     toJSON(): Object;
 }
@@ -2850,6 +3305,11 @@ export class WolfstarsProfile extends Base {
     public talentList: Array<WolfstarTalent>;
     public totalListeners: number;
     public exists: boolean;
+
+    /**
+     * Get the subscriber linked to the wolfstar profile
+     */
+    public subscriber(): Promise<Subscriber>;
 
     toJSON(): Object;
 }

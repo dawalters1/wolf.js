@@ -36,38 +36,37 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.11.9",
-    "eslint": "^8.25.0",
+    "@types/node": "^18.11.18",
+    "eslint": "^8.31.0",
     "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-import": "^2.27.4",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1"
+    "eslint-plugin-promise": "^6.1.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
   },
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=18.0.0",
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "aws-sdk": "^2.1282.0",
+    "aws-sdk": "^2.1294.0",
     "aws4-axios": "^2.4.9",
     "axios": "0.27.2",
-    "bull": "^4.8.1",
-    "chai": "^4.3.7",
+    "bull": "^4.10.2",
     "config": "^3.3.8",
     "crypto-js": "^4.1.1",
-    "file-type": "^18.0.0",
+    "file-type": "^18.1.0",
     "fluent-ffmpeg": "^2.1.2",
     "http-status-codes": "^2.2.0",
     "image-size": "^1.0.2",
     "lodash": "^4.17.21",
-    "mocha": "^10.2.0",
     "moment": "^2.29.4",
     "nanoid": "^4.0.0",
     "socket.io-client": "^4.5.4",
-    "tldts": "^5.7.103",
+    "tldts": "^5.7.104",
     "url-regex-safe": "^3.0.0",
-    "webpack": "^5.75.0",
     "wrtc": "^0.4.7",
-    "yaml": "^2.2.0"
+    "yaml": "^2.2.1"
   }
 }

@@ -54,12 +54,12 @@ class Subscriber extends Base {
     return await this.client.messaging.sendPrivateMessage(this.id, content, options);
   }
 
-  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls }) {
+  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
     if (this.id !== this.client.currentSubscriber.id) {
       throw new WOLFAPIError('subscriber is not logged in subscriber', { loggedInSubscriberId: this.client.currentSubscriber.id, currentProfileId: this.id });
     }
 
-    return await this.client.update({ nickname, status, about, gender, language, lookingFor, name, relationship, urls });
+    return await this.client.update({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, avatar });
   }
 
   toContact () {

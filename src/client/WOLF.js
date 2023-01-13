@@ -27,6 +27,8 @@ import { WOLFAPIError } from '../models/index.js';
 import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
 import Authorization from '../helper/authorization/Authorization.js';
+import { fileTypeFromBuffer } from 'file-type';
+import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';
 
 // #endregion
 class WOLF extends EventEmitter {
@@ -127,7 +129,7 @@ class WOLF extends EventEmitter {
     );
   }
 
-  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls }) {
+  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, thumbnail: avatar }) {
     if (nickname) {
       if (!validator.isType(nickname, 'string')) {
         throw new WOLFAPIError('nickname must be a valid string', { nickname });
@@ -204,7 +206,17 @@ class WOLF extends EventEmitter {
       }
     }
 
-    return await this.websocket.emit(
+    const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.subscriber');
+
+    if (avatar) {
+      if (Buffer.isBuffer(avatar)) {
+        throw new WOLFAPIError('avatar must be a valid buffer', { thumbnail: avatar });
+      }
+
+      validateMultimediaConfig(avatarConfig, avatar);
+    }
+
+    const response = await this.websocket.emit(
       Command.SUBSCRIBER_PROFILE_UPDATE,
       {
         nickname: nickname || this.currentSubscriber.nickname,
@@ -220,6 +232,18 @@ class WOLF extends EventEmitter {
         }
       }
     );
+
+    if (response.success && avatar) {
+      response.body.avatarUpload = await this.client.multimedia.upload(
+        avatarConfig,
+        {
+          data: avatar.toString('base64'),
+          mimeType: (await fileTypeFromBuffer(avatar)).mime
+        }
+      );
+    }
+
+    return response;
   }
 
   get SPLIT_REGEX () {
