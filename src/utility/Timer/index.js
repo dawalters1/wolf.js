@@ -100,8 +100,6 @@ class Timer {
     const job = await this._timerQueue.getJob(name);
 
     if (job) {
-      await job.releaseLock().catch();
-
       return await job.remove();
     }
 
