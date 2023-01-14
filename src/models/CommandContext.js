@@ -1,6 +1,11 @@
 import WOLFAPIError from './WOLFAPIError.js';
 
 class CommandContext {
+  /**
+   *
+   * @param {import('../client/WOLF').default} client
+   * @param {*} data
+   */
   constructor (client, data) {
     this.client = client;
     this.isGroup = data?.isGroup;
@@ -34,6 +39,14 @@ class CommandContext {
 
   async replyPrivate (content, options) {
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
+  }
+
+  async hasCapability (capability, checkStaff = true, checkAuthorized = true) {
+    if (!this.isGroup) {
+      throw new WOLFAPIError('hasCapability can only be used on a group message', { ...this.toJSON() });
+    }
+
+    return await this.client.utility.group.member.hasCapability(this.targetGroupId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
   }
 
   toJSON () {
