@@ -29,7 +29,9 @@ class Timer {
         throw new WOLFAPIError('handler does not exist in handlers', { handler: job.name, handlers: Object.keys(this._handlers) });
       }
 
-      return handlers[job.name](this.client, job.data, ...args);
+      handlers[job.name](this.client, job.data, ...args);
+
+      return Promise.resolve();
     });
 
     await this._timerQueue.isReady();
