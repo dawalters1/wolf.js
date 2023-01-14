@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.0-rc5",
+  "version": "2.0.0-rc6",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "type": "module",
