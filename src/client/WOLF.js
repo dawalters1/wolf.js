@@ -206,7 +206,7 @@ class WOLF extends EventEmitter {
       }
     }
 
-    const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.subscriber');
+    const avatarConfig = this._frameworkConfig.get('multimedia.avatar.subscriber');
 
     if (avatar) {
       if (Buffer.isBuffer(avatar)) {
