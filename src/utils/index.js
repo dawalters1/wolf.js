@@ -1,12 +1,14 @@
 import configuration from './configuration.js';
 import patch from './patch.js';
 
-export {
+const exports = {
   configuration,
   patch
 };
 
-export default {
+export {
   configuration,
-  patch
+  patch,
+
+  exports as default
 };
