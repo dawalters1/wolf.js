@@ -14,7 +14,6 @@
 
 # CONTAINS BREAKING CHANGES
 - Migrate from CommonJS to ESM
-- Large Groups
 - Helpers and utilities are now getters rather than methods and are now accessed as client.helperName.method()
 - Multiple helpers have been broken down into various sub helpers
 - Methods have been moved around, use typings as a reference as shown in [Command](#command---srcmeindexjs) to verify methods still exist
@@ -22,6 +21,7 @@
 # What's New
 - Add Group Message Config
 - Fully Object-Oriented
+- Large Groups
 - Log Helper
 - Misc Helper
 - Use typings as a reference as shown in [Command](#command---srcmeindexjs) to view additional changes
