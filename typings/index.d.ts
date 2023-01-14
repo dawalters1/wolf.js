@@ -1909,6 +1909,14 @@ export class CommandContext extends Base {
      */
     public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
 
+    /**
+     * Check if a user has a capability
+     * @param capability - The minimum capability to check
+     * @param checkStaff - Whether or not to check if user is staff (Default: true)
+     * @param checkAuthorized - Whether or not to check if a user is authorized (Default: true)
+     */
+    public hasCapability(capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>;
+
     toJSON(): Object;
 }
 
