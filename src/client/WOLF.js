@@ -129,7 +129,7 @@ class WOLF extends EventEmitter {
     );
   }
 
-  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, thumbnail: avatar }) {
+  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
     if (nickname) {
       if (!validator.isType(nickname, 'string')) {
         throw new WOLFAPIError('nickname must be a valid string', { nickname });
@@ -209,7 +209,7 @@ class WOLF extends EventEmitter {
     const avatarConfig = this._frameworkConfig.get('multimedia.avatar.subscriber');
 
     if (avatar) {
-      if (Buffer.isBuffer(avatar)) {
+      if (!Buffer.isBuffer(avatar)) {
         throw new WOLFAPIError('avatar must be a valid buffer', { thumbnail: avatar });
       }
 
@@ -234,7 +234,7 @@ class WOLF extends EventEmitter {
     );
 
     if (response.success && avatar) {
-      response.body.avatarUpload = await this.client.multimedia.upload(
+      response.body.avatarUpload = await this.multimedia.upload(
         avatarConfig,
         {
           data: avatar.toString('base64'),
