@@ -8,7 +8,7 @@ import NumberUtility from './number/index.js';
 import StringUtility from './string/index.js';
 import Subscriber from './subscriber/Subscriber.js';
 import Timer from './timer/index.js';
-import axios from 'axios';
+import superagent from 'superagent';
 
 class Utility {
   constructor (client) {
@@ -21,16 +21,12 @@ class Utility {
     this.timer = new Timer(client);
   }
 
-  download (url) {
-    return new Promise((resolve, reject) => {
-      axios.get(url,
-        {
-          responseType: 'arraybuffer'
-        }
-      )
-        .then((res) => resolve(Buffer.from(res.data, 'binary')))
-        .catch((error) => reject(error));
-    });
+  async download (url) {
+    return await superagent
+      .get(url)
+      .buffer(true)
+      .parse(superagent.parse.image)
+      .then(res => res.body);
   }
 
   toLanguageId (languageKey) {

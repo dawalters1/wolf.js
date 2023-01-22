@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.0-rc7",
+  "version": "2.0.0-rc8",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "type": "module",
@@ -37,12 +37,12 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^18.11.18",
+    "chai": "^4.3.7",
     "eslint": "^8.31.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
-    "chai": "^4.3.7",
     "mocha": "^10.2.0"
   },
   "engines": {
@@ -64,6 +64,7 @@
     "moment": "^2.29.4",
     "nanoid": "^4.0.0",
     "socket.io-client": "^4.5.4",
+    "superagent": "^8.0.8",
     "tldts": "^5.7.104",
     "url-regex-safe": "^3.0.0",
     "wrtc": "^0.4.7",
