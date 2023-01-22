@@ -54,7 +54,7 @@ class Member extends Base {
     }
 
     // Check if command subscriber is authorized
-    if (checkAuthorized && await this.client.authorized.isAuthorized(targetSubscriberId)) {
+    if (checkAuthorized && await this.client.authorization.isAuthorized(targetSubscriberId)) {
       return true;
     }
 
