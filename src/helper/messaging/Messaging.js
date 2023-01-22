@@ -170,7 +170,7 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
       break;
     }
 
-    embedsAttached = embedsAttached || embeds.length;
+    embedsAttached = embedsAttached || embeds?.length;
 
     content = (options.formatting.alert ? `/alert ${content.slice(messageChunk.length)}` : options.formatting.me ? `/me ${content.slice(messageChunk.length)}` : content.slice(messageChunk.length)).trim();
 
