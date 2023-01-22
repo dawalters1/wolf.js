@@ -9,7 +9,7 @@ class Welcome extends Base {
     this.token = data?.token;
     this.country = data?.country;
     this.endpointConfig = new WelcomeEndpoint(client, data?.endpointConfig);
-    this.subscriber = data?.subscriber ? new Subscriber(client, data?.subscriber) : null;
+    this.subscriber = data?.loggedInUser ? new Subscriber(client, data?.loggedInUser) : null;
   }
 
   toJSON () {

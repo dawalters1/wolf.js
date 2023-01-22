@@ -74,13 +74,13 @@ export default async (client, body) => {
 
   const welcome = new Welcome(client, body);
 
+  client.emit(
+    Event.WELCOME,
+    welcome
+  );
+
   client.config.endpointConfig = welcome.endpointConfig;
-
-  if (!welcome.subscriber) {
-    return await login(client);
-  }
-
   client.currentSubscriber = welcome.subscriber;
 
-  return await fininaliseConnection(client, true);
+  return client.currentSubscriber ? await fininaliseConnection(client, true) : await login(client);
 };
