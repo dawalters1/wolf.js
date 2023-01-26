@@ -70,24 +70,23 @@ class GroupMemberList {
       this._bots.update(subscriber, capabilities)
     ]);
 
-    const [inMainList, inMisc] = await Promise.all([
-      (await Promise.all(
-        [
-          this._privileged.get(subscriber),
-          this._regular.get(subscriber),
-          this._banned.get(subscriber)
-        ]
-      )).filter(Boolean).length > 0,
-      !this._misc.get(subscriber)
-    ]);
+    const inMainList = (await Promise.all(
+      [
+        this._privileged.get(subscriber),
+        this._regular.get(subscriber),
+        this._banned.get(subscriber)
+      ]
+    )).filter(Boolean).length > 0;
+
+    const inMisc = !!await this._misc.get(subscriber);
 
     // Not in main list and in misc add to misc
     if (!inMainList && !inMisc) {
       return await this._misc.add(subscriber, capabilities);
-    }
-
-    if (inMainList && inMisc) {
+    } else if (inMainList && inMisc) {
       return await this._misc.remove(subscriber);
+    } else if (inMisc) {
+      return await this._misc.update(subscriber, capabilities);
     }
 
     return Promise.resolve();
