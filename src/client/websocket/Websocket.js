@@ -5,14 +5,14 @@ import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
 import io from 'socket.io-client';
 
 class Websocket {
-  constructor (client) {
+  constructor(client) {
     this.client = client;
     this._processor = new Processor(this.client);
 
     this._messageQueue = new RequestQueue(
       this.client,
       {
-        capacity: 10,
+        capacity: 50,
         regenerationPeriod: (15 / 60) * 1000,
         name: 'message'
       }
@@ -28,11 +28,11 @@ class Websocket {
     );
   }
 
-  _disconnect () {
+  _disconnect() {
     return this.socket?.disconnect();
   }
 
-  _create () {
+  _create() {
     const connectionSettings = this.client._frameworkConfig.get('connection');
     const { onlineState, token } = this.client.config.get('framework.login');
 
@@ -57,7 +57,7 @@ class Websocket {
     this.socket.onAny((eventName, data) => this._processor.process(eventName, data));
   }
 
-  async emit (command, body) {
+  async emit(command, body) {
     const request = {
       command,
       body: body && !body.headers && !body.body ? { body } : body

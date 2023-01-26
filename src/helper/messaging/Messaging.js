@@ -12,7 +12,7 @@ const validateOptions = (options) => {
   const _options = Object.assign({}, options);
 
   _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
-  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : false;
+  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : true;
   _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
   _options.formatting.alert = typeof _options.formatting.alert === 'boolean' ? _options.formatting.alert : false;
 
@@ -66,7 +66,7 @@ const getFormattingData = async (client, message, ads, links) => {
 };
 
 const getEmbedData = async (client, formatting, options) => {
-  if (!options.formatting.includeEmbeds) {
+  if (!formatting || !options.formatting.includeEmbeds) {
     return undefined;
   }
 
@@ -170,7 +170,7 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
       break;
     }
 
-    embedsAttached = embedsAttached || embeds?.length;
+    embedsAttached = embedsAttached || (embeds?.length ?? false);
 
     content = (options.formatting.alert ? `/alert ${content.slice(messageChunk.length)}` : options.formatting.me ? `/me ${content.slice(messageChunk.length)}` : content.slice(messageChunk.length)).trim();
 

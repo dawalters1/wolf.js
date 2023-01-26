@@ -81,7 +81,6 @@ const handleApplicationPalringoGroupAction = async (client, message) => {
       if (subscriber.id === client.currentSubscriber.id) {
         group.capabilities = capabilities;
       }
-
       await group.members._onUpdate(subscriber, capabilities);
 
       // non-mod+ users do not have access to banned lists
