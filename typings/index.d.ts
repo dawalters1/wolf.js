@@ -1917,6 +1917,13 @@ export class CommandContext extends Base {
      */
     public hasCapability(capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>;
 
+    /**
+     * Check if a user has a privilege or privileges
+     * @param privilege - The privilege or privileges to check
+     * @param requireAll - Whether or not the subscriber should have them all
+     */
+    public hasPrivilege(privilege: Privilege | Array<Privilege>, requireAll: boolean): Promise<boolean>;
+
     toJSON(): Object;
 }
 
