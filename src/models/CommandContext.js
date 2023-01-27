@@ -49,6 +49,10 @@ class CommandContext {
     return await this.client.utility.group.member.hasCapability(this.targetGroupId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
   }
 
+  async hasPrivilege (privilege, requireAll = false) {
+    return await this.client.utility.subscriber.privilege.has(this.sourceSubscriberId, privilege, requireAll);
+  }
+
   toJSON () {
     return {
       isGroup: this.isGroup,
