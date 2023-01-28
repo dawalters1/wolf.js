@@ -113,25 +113,26 @@ class StringUtility extends Base {
     }, []);
   }
 
-  trimAds (string) {
-    if (validator.isNullOrUndefined(string)) {
-      throw new WOLFAPIError('string cannot be null or undefined', { string });
+  trimAds (stringA) {
+    if (validator.isNullOrUndefined(stringA)) {
+      throw new WOLFAPIError('string cannot be null or undefined', { stringA });
     }
 
-    const matches = [...string.matchAll(/\[([^\][]*)]/g)]
-      .filter(Boolean)
-      .filter((match) => match[0].split('\n').length === 1);
+    const matches = [...stringA.matchAll(/((\[+)(.+?)(\]+))/gs)]
+      .filter(Boolean);
 
     if (matches.length === 0) {
-      return string;
+      return stringA;
     }
 
-    for (const match of matches.reverse()) {
-      string = string.substring(0, match.index) + match[1] + string.substring(match.index + match[0].length);
-    }
+    return matches.reverse().reduce((result, match) => {
+      if (match[2].length === match[4].length) {
+        return result.substring(0, match.index) + match[3] + result.substring(match.index + match[0].length);
+      }
 
-    // Loop check to prevent [[[]]]
-    return this.trimAds(string);
+      // If square brackets are uneven only remove the ones that have matching closing bracket
+      return result.substring(0, match.index) + `${[...Array(match[2].length > match[4].length ? Math.abs(match[2].length - match[4].length) : 0).keys()].map(() => '[').join('')}${match[3]}${[...Array(match[2].length > match[4].length ? 0 : Math.abs(match[2].length - match[4].length)).keys()].map(() => ']').join('')}` + result.substring(match.index + match[0].length);
+    }, stringA);
   }
 
   getLinks (string) {
