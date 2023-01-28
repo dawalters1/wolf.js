@@ -40,9 +40,11 @@ class Websocket {
       {
         transports: ['websocket'],
         reconnection: true
+
       }
     );
 
+    this.socket.io.on('open', () => this.client.emit(Event.CONNECTING));
     this.socket.on(SocketEvent.CONNECT, () => this.client.emit(Event.CONNECTED));
     this.socket.on(SocketEvent.CONNECT_ERROR, error => this.client.emit(Event.CONNECTION_ERROR, error));
     this.socket.on(SocketEvent.CONNECT_TIMEOUT, error => this.client.emit(Event.CONNECTION_TIMEOUT, error));

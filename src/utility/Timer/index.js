@@ -102,7 +102,12 @@ class Timer {
     const job = await this._timerQueue.getJob(name);
 
     if (job) {
-      return await job.remove();
+      return job.remove()
+        .then(() => Promise.resolve())
+        .catch((error) => {
+          this.client.log.error(error);
+          Promise.resolve();
+        });
     }
 
     return null;
