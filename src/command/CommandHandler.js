@@ -86,7 +86,7 @@ class CommandHandler {
 
       if (phrase && (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (context.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!context.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE)))) {
         context.argument = context.argument.substr(phrase.value.length).trim();
-        context.language = phrase.language;
+        context.language = context.language || phrase.language;
         context.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.callbackObject.both : !context.isGroup ? command.callbackObject.private : command.callbackObject.group;
 
         return command;
