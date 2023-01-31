@@ -5,10 +5,12 @@ import { Capability, Privilege } from '../../constants/index.js';
 
 const checkCapability = (capability, subscriberCapability) => {
   switch (capability) {
+    case Capability.OWNER:
+      return [Capability.OWNER].includes(subscriberCapability);
     case Capability.ADMIN:
-      return subscriberCapability === Capability.OWNER || subscriberCapability === Capability.ADMIN;
+      return [Capability.OWNER, Capability.ADMIN].includes(subscriberCapability);
     case Capability.MOD:
-      return subscriberCapability === Capability.OWNER || subscriberCapability === Capability.ADMIN || subscriberCapability === Capability.MOD;
+      return [Capability.OWNER, Capability.ADMIN, Capability.MOD].includes(subscriberCapability);
     default:
       return true;
   }
@@ -59,7 +61,7 @@ class Member extends Base {
     }
 
     // Check if command subscriber is staff
-    if (checkStaff && (Privilege.STAFF && (await this.client.subscriber.getById(targetGroupId)).privileges) === Privilege.STAFF) {
+    if (checkStaff && (Privilege.STAFF && (await this.client.subscriber.getById(targetSubscriberId)).privileges) === Privilege.STAFF) {
       return true;
     }
 
