@@ -27,13 +27,6 @@ class Contact extends Base {
   async profile () {
     return await this.client.subscriber.getById(this.id);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      additionalInfo: this.additionalInfo.toJSON()
-    };
-  }
 }
 
 export default Contact;

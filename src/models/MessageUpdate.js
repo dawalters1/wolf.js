@@ -14,15 +14,6 @@ class MessageUpdate extends Base {
   async subscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }
-
-  toJSON () {
-    return {
-      data: this.data,
-      metadata: this.metadata.toJSON(),
-      subscriberId: this.subscriberId,
-      timestamp: this.timestamp
-    };
-  }
 }
 
 export default MessageUpdate;

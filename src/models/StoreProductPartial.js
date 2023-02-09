@@ -26,16 +26,6 @@ class StoreProductPartial extends Base {
   async getFullProduct (languageId) {
     return await this.client.store.getFullProduct(this.id, languageId || this.languageId);
   }
-
-  toJSON () {
-    const props = {
-      ...this
-    };
-
-    Reflect.deleteProperty(props, 'client');
-
-    return props;
-  }
 }
 
 export default StoreProductPartial;

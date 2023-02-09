@@ -20,14 +20,6 @@ class SubscriberEvent extends Base {
   async unsubscribe () {
     return await this.client.event.subscription.remove(this.id);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      groupId: this.groupId,
-      additionalInfo: this.additionalInfo.toJSON()
-    };
-  }
 }
 
 export default SubscriberEvent;

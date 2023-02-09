@@ -20,26 +20,6 @@ class Notification extends Base {
     this.title = data?.title;
     this.type = data?.type;
   }
-
-  toJSON () {
-    return {
-      actions: this.actions?.map((item) => item.toJSON()),
-      endAt: this.endAt,
-      favourite: this.favourite,
-      global: this.global,
-      id: this.id,
-      imageUrl: this.imageUrl,
-      layoutType: this.layoutType,
-      link: this.link,
-      message: this.message,
-      metadata: this.metadata,
-      newsStreamType: this.newsStreamType,
-      persistent: this.persistent,
-      startsAt: this.startsAt,
-      title: this.title,
-      type: this.type
-    };
-  }
 }
 
 export default Notification;

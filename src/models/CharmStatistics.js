@@ -10,17 +10,6 @@ class CharmStatistics extends Base {
     this.totalActive = data?.totalActive;
     this.totalExpired = data?.totalExpired;
   }
-
-  toJSON () {
-    return {
-      subscriberId: this.subscriberId,
-      totalGiftedSent: this.totalGiftedSent,
-      totalGiftedReceived: this.totalGiftedReceived,
-      totalLifetime: this.totalLifetime,
-      totalActive: this.totalActive,
-      totalExpired: this.totalExpired
-    };
-  }
 }
 
 export default CharmStatistics;

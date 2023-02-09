@@ -8,15 +8,6 @@ class CharmSummary extends Base {
     this.expireTime = data?.expireTime;
     this.giftCount = data?.giftCount;
   }
-
-  toJSON () {
-    return {
-      charmId: this.charmId,
-      total: this.total,
-      expireTime: this.expireTime,
-      giftCount: this.giftCount
-    };
-  }
 }
 
 export default CharmSummary;

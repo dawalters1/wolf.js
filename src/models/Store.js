@@ -27,15 +27,6 @@ class Store extends Base {
 
     return this.credits;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      title: this.title,
-      languageId: this.languageId,
-      sections: this.sections.map((section) => section.toJSON())
-    };
-  }
 }
 
 export default Store;

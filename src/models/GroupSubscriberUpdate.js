@@ -21,15 +21,6 @@ class GroupSubscriberUpdate extends Base {
   async targetSubscriber () {
     return await this.client.subscriber.getById(this.targetId);
   }
-
-  toJSON () {
-    return {
-      groupId: this.groupId,
-      sourceId: this.sourceId,
-      targetId: this.targetId,
-      action: this.action
-    };
-  }
 }
 
 export default GroupSubscriberUpdate;

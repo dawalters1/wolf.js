@@ -28,17 +28,6 @@ class Tip extends Base {
   async targetSubscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }
-
-  toJSON () {
-    return {
-      charmList: this.charmList.map((item) => item.toJSON()),
-      groupId: this.groupId,
-      isGroup: this.isGroup,
-      sourceSubscriberId: this.sourceSubscriberId,
-      subscriberId: this.subscriberId,
-      context: this.context.toJSON()
-    };
-  }
 }
 
 export default Tip;

@@ -6,13 +6,6 @@ class Translation extends Base {
     this.languageId = data?.languageId;
     this.text = data?.text;
   }
-
-  toJSON () {
-    return {
-      languageId: this.languageId,
-      text: this.text
-    };
-  }
 }
 
 export default Translation;

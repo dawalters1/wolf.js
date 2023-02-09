@@ -12,13 +12,6 @@ class MessageSettingFilter extends Base {
   async update (messageFilterTier) {
     return await this.client.misc.updateMessageSettings(messageFilterTier);
   }
-
-  toJSON () {
-    return {
-      enabled: this.enabled,
-      tier: this.tier
-    };
-  }
 }
 
 export default MessageSettingFilter;

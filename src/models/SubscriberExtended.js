@@ -14,20 +14,6 @@ class SubscriberExtended extends Base {
     this.urls = data?.urls;
     this.utcOffset = data?.utcOffset;
   }
-
-  toJSON () {
-    return {
-      about: this.about,
-      gender: this.gender,
-      language: this.gender,
-      lookingFor: this.lookingFor,
-      lookingForExtended: this.lookingForExtended,
-      name: this.name,
-      relationship: this.relationship,
-      urls: this.urls,
-      utcOffset: this.utcOffset
-    };
-  }
 }
 
 export default SubscriberExtended;

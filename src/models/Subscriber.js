@@ -73,25 +73,6 @@ class Subscriber extends Base {
       }
     };
   }
-
-  toJSON () {
-    return {
-      charms: this.charms.toJSON(),
-      deviceType: this.deviceType,
-      extended: this.extended.toJSON(),
-      hash: this.hash,
-      icon: this.icon,
-      iconInfo: this.iconInfo.toJSON(),
-      id: this.id,
-      nickname: this.nickname,
-      onlineState: this.onlineState,
-      reputation: this.reputation,
-      privileges: this.privileges,
-      status: this.status,
-      language: this.language,
-      exists: this.exists
-    };
-  }
 }
 
 export default Subscriber;

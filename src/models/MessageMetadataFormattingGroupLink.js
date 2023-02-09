@@ -11,14 +11,6 @@ class MessageMetadataFormattingGroupLink extends Base {
   async group () {
     return await this.client.group.getById(this.groupId);
   }
-
-  toJSON () {
-    return {
-      start: this.start,
-      end: this.end,
-      groupId: this.groupId
-    };
-  }
 }
 
 export default MessageMetadataFormattingGroupLink;

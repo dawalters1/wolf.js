@@ -10,16 +10,6 @@ class MessageMetadata extends Base {
     this.isSpam = data?.isSpam ?? false;
     this.isTipped = data?.isTipped ?? false;
   }
-
-  toJSON () {
-    return {
-      formatting: this.formatting.toJSON(),
-      isDeleted: this.isDeleted,
-      isEdited: this.isEdited,
-      isSpam: this.isSpam,
-      isTipped: this.isTipped
-    };
-  }
 }
 
 export default MessageMetadata;

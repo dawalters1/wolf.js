@@ -12,15 +12,6 @@ class GroupAudioConfig extends Base {
   async update ({ enabled, stageId, minRepLevel }) {
     return await this.client.stage.updateAudioConfig(this.id, { enabled, stageId, minRepLevel });
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      enabled: this.enabled,
-      stageId: this.stageId,
-      minRepLevel: this.minRepLevel
-    };
-  }
 }
 
 export default GroupAudioConfig;

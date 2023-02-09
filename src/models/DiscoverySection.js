@@ -59,17 +59,26 @@ class DiscoverySection extends Base {
   }
 
   toJSON () {
-    return {
+    const json = {
       id: this.id,
       languageId: this.languageId,
       validity: this.validity,
-      sectionTitle: this.sectionTitle,
       title: this.title,
       images: this.images,
       videos: this.videos?.map((video) => video.toJSON()),
       description: this.description,
       additionalDescriptions: this.additionalDescriptions
     };
+
+    if (this.page) {
+      json.page = this.page;
+    }
+
+    if (this.recipe) {
+      json.recipe = this.recipe;
+    }
+
+    return json;
   }
 }
 

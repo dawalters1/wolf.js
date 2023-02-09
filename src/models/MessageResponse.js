@@ -7,14 +7,6 @@ class MessageResponse extends Base {
     this.timestamp = data?.timestamp;
     this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
-
-  toJSON () {
-    return {
-      uuid: this.uuid,
-      timestamp: this.timestamp,
-      slowModeRateInSeconds: this.slowModeRateInSeconds
-    };
-  }
 }
 
 export default MessageResponse;

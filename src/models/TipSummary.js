@@ -12,14 +12,6 @@ class TipSummary extends Base {
   async charms () {
     return await this.client.charm.getByIds(this.list.map((charm) => charm.charmId));
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      charmList: this.charmList.map((item) => item.toJSON()),
-      version: this.version
-    };
-  }
 }
 
 export default TipSummary;

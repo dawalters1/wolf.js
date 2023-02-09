@@ -7,12 +7,6 @@ class MessageSettings extends Base {
 
     this.spamFilter = new MessageSettingFilter(this.client, data?.spamFilter);
   }
-
-  toJSON () {
-    return {
-      spamFilter: this.spamFilter.toJSON()
-    };
-  }
 }
 
 export default MessageSettings;

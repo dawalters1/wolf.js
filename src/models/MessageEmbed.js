@@ -10,17 +10,6 @@ class MessageEmbed extends Base {
     this.image = data?.image;
     this.body = data?.body;
   }
-
-  toJSON () {
-    return {
-      type: this.type,
-      groupid: this.groupId,
-      url: this.url,
-      title: this.title,
-      image: this.image,
-      body: this.body
-    };
-  }
 }
 
 export default MessageEmbed;

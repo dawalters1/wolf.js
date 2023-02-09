@@ -392,7 +392,7 @@ export class AchievementGroupHelper extends Base {
     /**
      * Request Achievement list for a group
      * @param targetGroupId - The ID of the group to request
-     * @param parentId - Provide if requesting child achievements
+     * @param parentId - Provide if requesting child achievements (Optional)
      */
     public getById(targetGroupId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
 }
@@ -403,7 +403,7 @@ export class AchievementSubscriberHelper extends Base {
     /**
      * Request Achievement list for a subscriber
      * @param subscriberId - The ID of the subscriber to request
-     * @param parentId - Provide if requesting child achievements
+     * @param parentId - Provide if requesting child achievements (Optional)
      */
     public getById(subscriberId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
 }
@@ -1340,7 +1340,7 @@ export class TippingHelper extends Base {
      * @param context - The context
      * @param charms - The charms to tip
      */
-    public tip(targetSubscriberId: number, targetGroupId: number, context: TipContext, charms: TipCharm | Array<TipCharm>): Promise<Response>;
+    public tip(targetSubscriberId: number, targetGroupId: number, context: { type: ContextType, id: number | undefined }, charms: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
     /**
      * Get a messages tip details
      * @param targetGroupId - The ID of the group
@@ -1714,6 +1714,10 @@ export class CharmSelectedBuilder {
 export class BaseModel {
     public constructor(client: WOLF);
 
+    /**
+     * Converts the current class to a stringifiable object
+     */
+    toJSON(): any;
 }
 
 export class Achievement extends BaseModel {
@@ -1731,7 +1735,19 @@ export class Achievement extends BaseModel {
     public acquisitionPercentage: number;
     public exists: boolean;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        parentId: number;
+        typeId: number;
+        name: string;
+        description: string;
+        imageUrl: string;
+        category: number;
+        levelId: number;
+        levelName: string;
+        acquisitionPercentage: number;
+        exists: boolean;
+    };
 }
 
 export class AchievementCategory extends Base {
@@ -1740,7 +1756,10 @@ export class AchievementCategory extends Base {
     public id: number;
     public name: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        name: string;
+    };
 }
 
 export class AchievementUnlockable extends Base {
@@ -1754,7 +1773,13 @@ export class AchievementUnlockable extends Base {
      */
     public achievement(): Promise<Achievement>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number,
+        additionalInfo: {
+            awardedAt: Date;
+            eTag: string;
+        }
+    };
 }
 
 export class AchievementUnlockableAdditionalInfo extends Base {
@@ -1763,7 +1788,10 @@ export class AchievementUnlockableAdditionalInfo extends Base {
     public awardedAt: Date;
     public eTag: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        awardedAt: Date;
+        eTag: string;
+    };
 }
 
 export class Ad extends Base {
@@ -1778,7 +1806,11 @@ export class Ad extends Base {
      */
     public group(): Promise<Group>;
 
-    toJSON(): Object;
+    toJSON(): {
+        start: number;
+        end: number;
+        ad: string;
+    };
 }
 
 export class BlacklistLink extends Base {
@@ -1807,7 +1839,18 @@ export class Charm extends Base {
     public cost: number;
     public exist: boolean;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        name: string;
+        productId: number;
+        imageUrl: string;
+        descriptionPhraseId: Number;
+        descriptionList: Array<any>;
+        nameTranslationList: Array<{ languageId: Language, text: string }>;
+        weight: number;
+        cost: number;
+        exist: boolean;
+    };
 }
 
 export class CharmExpiry extends Base {
@@ -1832,7 +1875,13 @@ export class CharmExpiry extends Base {
      */
     public delete(): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        charmId: number;
+        subscriberId: number;
+        sourceSubscriberId: number;
+        expireTime: Date;
+    };
 }
 
 export class CharmSelected extends Base {
@@ -1850,7 +1899,10 @@ export class CharmSelected extends Base {
      */
     public deselect(): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        charmId: number;
+        position: number;
+    };
 }
 
 export class CharmStatistics extends Base {
@@ -1863,7 +1915,14 @@ export class CharmStatistics extends Base {
     public totalActive: number;
     public totalExpired: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        subscriberId: number;
+        totalGiftedSent: number;
+        totalGiftedReceived: number;
+        totalLifetime: number;
+        totalActive: number;
+        totalExpired: number;
+    };
 }
 
 export class CharmSummary extends Base {
@@ -1874,11 +1933,17 @@ export class CharmSummary extends Base {
     public expireTime: Date;
     public giftCount: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        charmId: number;
+        total: number;
+        expireTime: Date;
+        giftCount: number;
+    };
 }
 
 export class CommandContext extends Base {
     private constructor(client: WOLF, data: object)
+
     public isGroup: boolean;
     public argument: string;
     public language: string;
@@ -1924,7 +1989,15 @@ export class CommandContext extends Base {
      */
     public hasPrivilege(privilege: Privilege | Array<Privilege>, requireAll: boolean): Promise<boolean>;
 
-    toJSON(): Object;
+    toJSON(): {
+        isGroup: boolean;
+        argument: string;
+        language: string;
+        targetGroupId: number | undefined;
+        sourceSubscriberId: number | undefined;
+        timestamp: number;
+        type: MessageType;
+    };
 }
 
 export class Contact extends Base {
@@ -1954,7 +2027,15 @@ export class Contact extends Base {
      */
     public profile(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number,
+        additionalInfo: {
+            hash: number;
+            nicknameShort: string;
+            onlineState: OnlineState;
+            privileges: Privilege;
+        }
+    };
 }
 
 export class ContactAdditionalInfo extends Base {
@@ -1965,7 +2046,12 @@ export class ContactAdditionalInfo extends Base {
     public onlineState: OnlineState;
     public privileges: Privilege;
 
-    toJSON(): Object;
+    toJSON(): {
+        hash: number;
+        nicknameShort: string;
+        onlineState: OnlineState;
+        privileges: Privilege;
+    };
 }
 
 export class Discovery extends Base {
@@ -1983,7 +2069,35 @@ export class Discovery extends Base {
      */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        title: string;
+        languageId: Language;
+        sections: Array<{
+            id: number;
+            languageId: Language;
+            validity: {
+                fromTime: Date;
+                endTime: Date;
+            };
+
+            sectionTitle: string;
+            title: string;
+            images: Array<string>;
+            description: string;
+            videos: Array<{
+                aspect: {
+                    width: number;
+                    height: number;
+                };
+                autoplay: boolean;
+                loop: boolean;
+                muted: boolean;
+                url: string;
+            }>;
+            additionalDescriptions: Array<string>
+        }>;
+    };
 }
 
 export class DiscoveryPage extends Base {
@@ -2001,7 +2115,36 @@ export class DiscoveryPage extends Base {
      */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        title: string;
+        languageId: Language;
+        sections: Array<{
+
+            id: number;
+            languageId: Language;
+            validity: {
+                fromTime: Date;
+                endTime: Date;
+            };
+            sectionTitle: string;
+            title: string;
+            images: Array<string>;
+            description: string;
+            videos: Array<{
+                aspect: {
+                    width: number;
+                    height: number;
+                };
+                autoplay: boolean;
+                loop: boolean;
+                muted: boolean;
+                url: string;
+            }>;
+            additionalDescriptions: Array<string>
+        }
+        >;
+    };
 }
 
 export class DiscoverySection extends Base {
@@ -2024,7 +2167,29 @@ export class DiscoverySection extends Base {
      */
     public get(offset: number): Promise<DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        languageId: Language;
+        validity: {
+            fromTime: Date;
+            endTime: Date;
+        };
+        sectionTitle: string;
+        title: string;
+        images: Array<string>;
+        description: string;
+        videos: Array<{
+            aspect: {
+                width: number;
+                height: number;
+            };
+            autoplay: boolean;
+            loop: boolean;
+            muted: boolean;
+            url: string;
+        }>;
+        additionalDescriptions: Array<string>
+    }
 }
 
 export class Event extends Base {
@@ -2063,7 +2228,20 @@ export class Event extends Base {
      */
     public updateThumbnail(thumbnail: Buffer): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        groupId: number;
+        createdBy: number;
+        title: string;
+        category: Number;
+        shortDescription: string;
+        longDescription: string;
+        imageUrl: string;
+        startsAt: Date;
+        endsAt: Date;
+        isRemoved: boolean;
+        attendanceCount: number;
+    };
 }
 
 export class Group extends Base {
@@ -2132,7 +2310,95 @@ export class Group extends Base {
      */
     public update(profileData: { description: string, peekable: boolean, disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean, longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number, avatar: Buffer }): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        hash: string;
+        name: string;
+        description: string;
+        reputation: number;
+        owner: IdHash;
+        membersCount: number;
+        official: boolean;
+        peekable: boolean;
+        premium: boolean;
+        icon: number;
+        iconInfo: {
+            availableSizes: {
+                small: string;
+                medium: string;
+                large: string;
+                xlarge: string;
+            }
+        };
+        extended: {
+            id: number;
+            longDescription: string;
+            discoverable: boolean;
+            language: Language;
+            category: Category;
+            advancedAdmin: boolean;
+            questionable: boolean;
+            locked: boolean;
+            closed: boolean;
+            passworded: boolean;
+            entryLevel: number;
+        };
+        audioCounts: {
+            broadcasterCount: number;
+            consumerCount: number;
+            id: number;
+        };
+        audioConfig: {
+            id: number;
+            enabled: boolean;
+            stageId: number | undefined;
+            minRepLevel: number;
+        };
+        messageConfig: {
+            disableHyperlink: boolean;
+            disableImage: boolean;
+            disableImageFilter: boolean;
+            disableVoice: boolean;
+            id: number;
+            slowModeRateInSeconds: number;
+        };
+        members: {
+            privileged: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+            regular: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+            silenced: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+            banned: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+            bots: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+            misc: Array<{
+                id: number;
+                hash: string;
+                capabilities: Capability;
+            }>
+        };
+
+        inGroup: boolean;
+        capabilities: Capability;
+        exists: boolean;
+    };
 }
 
 export class GroupAudioConfig extends Base {
@@ -2149,7 +2415,12 @@ export class GroupAudioConfig extends Base {
      */
     public update(configData: { enabled: boolean, stageId: number, minRepLevel: number }): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        enabled: boolean;
+        stageId: number | undefined;
+        minRepLevel: number;
+    };
 }
 
 export class GroupAudioCounts extends Base {
@@ -2159,7 +2430,11 @@ export class GroupAudioCounts extends Base {
     public consumerCount: number;
     public id: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        broadcasterCount: number;
+        consumerCount: number;
+        id: number;
+    };
 }
 
 export class GroupAudioSlot extends Base {
@@ -2213,7 +2488,16 @@ export class GroupAudioSlot extends Base {
      */
     public cancelRequest(): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        groupId: number;
+        locked: boolean;
+        occupierId: number;
+        uuid: string;
+        connectionState: StageConnectionState;
+        reservedOccupierId: number | undefined;
+        reservedExpiresAt: Date | undefined;
+    };
 }
 
 export class GroupAudioSlotRequest extends Base {
@@ -2237,7 +2521,12 @@ export class GroupAudioSlotRequest extends Base {
      */
     public reject(): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        slotId: number;
+        groupId: number;
+        reservedOccupierId: number;
+        reservedExpiresAt: Date;
+    };
 }
 
 export class GroupAudioSlotUpdate extends Base {
@@ -2246,7 +2535,19 @@ export class GroupAudioSlotUpdate extends Base {
     public id: number;
     public slot: GroupAudioSlot;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        slot: {
+            id: number;
+            groupId: number;
+            locked: boolean;
+            occupierId: number;
+            uuid: string;
+            connectionState: StageConnectionState;
+            reservedOccupierId: number | undefined;
+            reservedExpiresAt: Date | undefined;
+        };
+    };
 }
 
 export class GroupExtended extends Base {
@@ -2256,7 +2557,7 @@ export class GroupExtended extends Base {
     public longDescription: string;
     public discoverable: boolean;
     public language: Language;
-    public category: AchievementCategory;
+    public category: Category;
     public advancedAdmin: boolean;
     public questionable: boolean;
     public locked: boolean;
@@ -2270,7 +2571,19 @@ export class GroupExtended extends Base {
      */
     public update(extendedData: { longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number }): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        longDescription: string;
+        discoverable: boolean;
+        language: Language;
+        category: Category;
+        advancedAdmin: boolean;
+        questionable: boolean;
+        locked: boolean;
+        closed: boolean;
+        passworded: boolean;
+        entryLevel: number;
+    };
 }
 
 export class GroupMember extends Base {
@@ -2285,13 +2598,73 @@ export class GroupMember extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    /**
+     * Admin this member
+     */
+    public admin(): Promise<Response>;
+    /**
+     * Mod this member
+     */
+    public mod(): Promise<Response>;
+    /**
+     * Reset this member
+     */
+    public regular(): Promise<Response>;
+    /**
+     * Kick this member
+     */
+    public kick(): Promise<Response>;
+    /**
+     * Silence this member
+     */
+    public silence(): Promise<Response>;
+    /**
+     * Ban this member
+     */
+    public ban(): Promise<Response>;
+
+    toJSON(): {
+        id: number;
+        hash: string;
+        capabilities: Capability;
+    };
 }
 
 export class GroupMemberList extends Base {
     private constructor(client: WOLF, data: object)
 
-    toJSON(): Object;
+    toJSON(): {
+        privileged: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+        regular: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+        silenced: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+        banned: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+        bots: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+        misc: Array<{
+            id: number;
+            hash: string;
+            capabilities: Capability;
+        }>
+    };
 }
 
 export class GroupMessageConfig extends Base {
@@ -2310,7 +2683,14 @@ export class GroupMessageConfig extends Base {
      */
     public update(messageConfig: { disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean }): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        disableHyperlink: boolean;
+        disableImage: boolean;
+        disableImageFilter: boolean;
+        disableVoice: boolean;
+        id: number;
+        slowModeRateInSeconds: number;
+    };
 }
 
 export class GroupStats extends Base {
@@ -2332,7 +2712,136 @@ export class GroupStats extends Base {
     public trendsDay: Array<GroupStatsTrend>;
     public trendsHours: Array<GroupStatsTrend>;
 
-    toJSON(): Object;
+    toJSON(): {
+
+        details: {
+            actionCount: number;
+            emoticonCount: number;
+            id: number;
+            happyCount: number;
+            imageCOunt: number;
+            lineCount: number;
+            memberCount: number;
+            name: string;
+            owner: {
+                id: number,
+                hash: string,
+                nickname: string
+            };
+            packCount: number;
+            questionCount: number;
+            spokenCount: number;
+            sadCount: number;
+            swearCount: number;
+            textCount: number;
+            voiceCount: number;
+            wordCount: number;
+            timestamp: number;
+        };
+        next30: Array<{
+            actionCount: number;
+            emoticonCount: number;
+            groupId: number;
+            happyEmoticonCount: number;
+            imageCount: number;
+            lineCount: number;
+            message: string;
+            nickname: string;
+            randomQoute: string;
+            packCount: number;
+            sadEmoticonCount: number;
+            subId: number;
+            swearCount: number;
+            textCount: number;
+            voiceCount: number;
+            wordCount: number;
+        }>;
+        top25: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topAction: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topEmoticon: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topHappy: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topImage: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topQuestion: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topSad: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topSwear: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topText: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        topWord: Array<{
+            nickname: string;
+            randomQoute: string;
+            subId: number;
+            value: number;
+            percentage: number;
+        }>;
+        trends: Array<{
+            day: number;
+            hour: number;
+            lineCount: number;
+        }>;
+        trendsDay: Array<{
+            day: number;
+            hour: number;
+            lineCount: number;
+        }>;
+        trendsHours: Array<{
+            day: number;
+            hour: number;
+            lineCount: number;
+        }>;
+    };
 }
 
 export class GroupStatsActive extends Base {
@@ -2360,7 +2869,24 @@ export class GroupStatsActive extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        actionCount: number;
+        emoticonCount: number;
+        groupId: number;
+        happyEmoticonCount: number;
+        imageCount: number;
+        lineCount: number;
+        message: string;
+        nickname: string;
+        randomQoute: string;
+        packCount: number;
+        sadEmoticonCount: number;
+        subId: number;
+        swearCount: number;
+        textCount: number;
+        voiceCount: number;
+        wordCount: number;
+    };
 }
 
 export class GroupStatsDetail extends Base {
@@ -2385,7 +2911,30 @@ export class GroupStatsDetail extends Base {
     public wordCount: number;
     public timestamp: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        actionCount: number;
+        emoticonCount: number;
+        id: number;
+        happyCount: number;
+        imageCOunt: number;
+        lineCount: number;
+        memberCount: number;
+        name: string;
+        owner: {
+            id: number,
+            hash: string,
+            nickname: string
+        };
+        packCount: number;
+        questionCount: number;
+        spokenCount: number;
+        sadCount: number;
+        swearCount: number;
+        textCount: number;
+        voiceCount: number;
+        wordCount: number;
+        timestamp: number;
+    };
 }
 
 export class GroupStatsTop extends Base {
@@ -2402,7 +2951,13 @@ export class GroupStatsTop extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        nickname: string;
+        randomQoute: string;
+        subId: number;
+        value: number;
+        percentage: number;
+    };
 }
 
 export class GroupStatsTrend extends Base {
@@ -2412,7 +2967,11 @@ export class GroupStatsTrend extends Base {
     public hour: number;
     public lineCount: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        day: number;
+        hour: number;
+        lineCount: number;
+    };
 }
 
 export class GroupSubscriberUpdate extends Base {
@@ -2436,7 +2995,12 @@ export class GroupSubscriberUpdate extends Base {
      */
     public targetSubscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        groupId: number;
+        sourceId: number;
+        targetId: number;
+        action: string;
+    };
 }
 
 export class IconInfo extends Base {
@@ -2450,7 +3014,14 @@ export class IconInfo extends Base {
      */
     public get(size: IconSize): string;
 
-    toJSON(): Object;
+    toJSON(): {
+        availableSizes: {
+            small: string;
+            medium: string;
+            large: string;
+            xlarge: string;
+        }
+    };
 }
 
 export class IconInfoAvailableSize extends Base {
@@ -2467,7 +3038,12 @@ export class IconInfoAvailableSize extends Base {
      */
     get(size: IconSize): string;
 
-    toJSON(): Object;
+    toJSON(): {
+        small: string;
+        medium: string;
+        large: string;
+        xlarge: string;
+    };
 }
 
 export class IdHash extends Base {
@@ -2477,7 +3053,11 @@ export class IdHash extends Base {
     public hash: string;
     public nickname: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        hash: string;
+        nickname: string;
+    };
 }
 
 export class Link extends Base {
@@ -2492,7 +3072,11 @@ export class Link extends Base {
      */
     public metadata(): Promise<LinkMetadata>;
 
-    toJSON(): Object;
+    toJSON(): {
+        start: number;
+        end: number;
+        link: string;
+    };
 }
 
 export class LinkMetadata extends Base {
@@ -2505,7 +3089,14 @@ export class LinkMetadata extends Base {
     public isOfficial: boolean;
     public title: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        description: string;
+        domain: string;
+        imageSize: number;
+        imageUrl: string;
+        isOfficial: boolean;
+        title: string;
+    };
 }
 
 export class Message extends Base {
@@ -2554,7 +3145,7 @@ export class Message extends Base {
      * Tip the message
      * @param charm - The charm to tip
      */
-    public tip(charm: TipCharm | Array<TipCharm>): Promise<Response>;
+    public tip(charm: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
     /**
      * Get the subscriber profile
      */
@@ -2564,7 +3155,47 @@ export class Message extends Base {
      */
     public group(): Promise<Group>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: string;
+        body: string;
+        sourceSubscriberId: number;
+        targetGroupId: number;
+        embeds: Array<{
+            type: EmbedType;
+            groupId: number;
+            url: string;
+            title: string;
+            image: Buffer;
+            body: string;
+        }>;
+        metadata: {
+            formatting: {
+                groupLinks: Array<{
+                    start: number;
+                    end: number;
+                    groupId: number;
+
+                }>;
+                links: Array<{
+                    start: number;
+                    end: number;
+                    url: string;
+                }>
+            };
+            isDeleted: boolean;
+            isEdited: boolean;
+            isSpam: boolean;
+            isTipped: boolean;
+        };
+        isGroup: boolean;
+        timestamp: number;
+        edited: {
+            subscriberId: number;
+            timestamp: number;
+        };
+        type: MessageType;
+        isCommand: boolean;
+    };
 }
 
 export class MessageEdit extends Base {
@@ -2578,7 +3209,10 @@ export class MessageEdit extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        subscriberId: number;
+        timestamp: number;
+    };
 }
 
 export class MessageEmbed extends Base {
@@ -2591,7 +3225,14 @@ export class MessageEmbed extends Base {
     public image: Buffer;
     public body: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        type: EmbedType;
+        groupId: number;
+        url: string;
+        title: string;
+        image: Buffer;
+        body: string;
+    };
 }
 
 export class MessageMetadata extends Base {
@@ -2599,11 +3240,35 @@ export class MessageMetadata extends Base {
 
     public formatting: MessageMetadataFormatting;
     public isDeleted: boolean;
+    /**
+     * NOT IMPLEMENTED
+     */
     public isEdited: boolean;
     public isSpam: boolean;
     public isTipped: boolean;
 
-    toJSON(): Object;
+    toJSON(): {
+        formatting: {
+            groupLinks: Array<{
+                start: number;
+                end: number;
+                groupId: number;
+
+            }>;
+            links: Array<{
+                start: number;
+                end: number;
+                url: string;
+            }>
+        };
+        isDeleted: boolean;
+        /**
+         * NOT IMPLEMENTED
+         */
+        isEdited: boolean;
+        isSpam: boolean;
+        isTipped: boolean;
+    };
 }
 
 export class MessageMetadataFormatting extends Base {
@@ -2612,7 +3277,19 @@ export class MessageMetadataFormatting extends Base {
     public groupLinks: Array<MessageMetadataFormattingGroupLink>;
     public links: Array<MessageMetadataFormattingUrl>
 
-    toJSON(): Object;
+    toJSON(): {
+        groupLinks: Array<{
+            start: number;
+            end: number;
+            groupId: number;
+
+        }>;
+        links: Array<{
+            start: number;
+            end: number;
+            url: string;
+        }>
+    };
 }
 
 export class MessageMetadataFormattingGroupLink extends Base {
@@ -2627,7 +3304,11 @@ export class MessageMetadataFormattingGroupLink extends Base {
      */
     public group(): Promise<Group>;
 
-    toJSON(): Object;
+    toJSON(): {
+        start: number;
+        end: number;
+        groupId: number;
+    };
 }
 
 export class MessageMetadataFormattingUrl extends Base {
@@ -2642,9 +3323,12 @@ export class MessageMetadataFormattingUrl extends Base {
      */
     public metadata(): Promise<LinkMetadata>;
 
-    toJSON(): Object;
+    toJSON(): {
+        start: number;
+        end: number;
+        url: string;
+    };
 }
-
 export class MessageResponse extends Base {
     private constructor(client: WOLF, data: object)
 
@@ -2652,7 +3336,11 @@ export class MessageResponse extends Base {
     public timestamp: number;
     public slowModeRateInSeconds: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        uuid: string;
+        timestamp: number;
+        slowModeRateInSeconds: number;
+    };
 }
 
 export class MessageSettings extends Base {
@@ -2660,7 +3348,12 @@ export class MessageSettings extends Base {
 
     public spamFilter: MessageSettingFilter;
 
-    toJSON(): Object;
+    toJSON(): {
+        spamFilter: {
+            enabled: boolean,
+            tier: MessageFilterTier
+        }
+    };
 }
 
 export class MessageSendOptions {
@@ -2683,7 +3376,10 @@ export class MessageSettingFilter extends Base {
      */
     public update(messageFilterTier: MessageFilterTier): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        enabled: boolean,
+        tier: MessageFilterTier
+    };
 }
 
 export class MessageUpdate extends Base {
@@ -2699,7 +3395,30 @@ export class MessageUpdate extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        data: string;
+        metadata: {
+            formatting: {
+                groupLinks: Array<{
+                    start: number;
+                    end: number;
+                    groupId: number;
+
+                }>;
+                links: Array<{
+                    start: number;
+                    end: number;
+                    url: string;
+                }>
+            };
+            isDeleted: boolean;
+            isEdited: boolean;
+            isSpam: boolean;
+            isTipped: boolean;
+        };
+        subscriberId: number;
+        timestamp: number;
+    };
 }
 
 
@@ -2722,7 +3441,29 @@ export class Notification extends Base {
     public title: string;
     public type: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        actions: Array<{
+            id: number;
+            titleText: string;
+            actionurl: string;
+            external: boolean;
+            imageUrl: string;
+        }>;
+        endAt: Date;
+        favourite: boolean;
+        global: boolean;
+        id: number;
+        imageUrl: string;
+        layoutType: number;
+        link: string;
+        message: string;
+        metadata: any;
+        newsStreamType: number;
+        persistent: boolean;
+        startsAt: Date;
+        title: string;
+        type: string;
+    };
 }
 
 export class NotificationAction extends Base {
@@ -2734,7 +3475,13 @@ export class NotificationAction extends Base {
     public external: boolean;
     public imageUrl: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        titleText: string;
+        actionurl: string;
+        external: boolean;
+        imageUrl: string;
+    };
 }
 
 export class Phrase extends Base {
@@ -2744,7 +3491,11 @@ export class Phrase extends Base {
     public value: string;
     public language: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        name: string;
+        value: string;
+        language: string;
+    };
 }
 
 export class PhraseCount extends Base {
@@ -2753,7 +3504,10 @@ export class PhraseCount extends Base {
     public phrases: number;
     public phrasesPerLanguage: { [key: string]: number }
 
-    toJSON(): Object;
+    toJSON(): {
+        phrases: number;
+        phrasesPerLanguage: { [key: string]: number }
+    };
 }
 
 export class Presence extends Base {
@@ -2769,7 +3523,12 @@ export class Presence extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        device: DeviceType;
+        state: OnlineState;
+        lastActive: Date;
+        subscriberId: number;
+    };
 }
 
 export class Search extends Base {
@@ -2785,7 +3544,12 @@ export class Search extends Base {
      */
     public getProfile(): Promise<Subscriber | Group>;
 
-    toJSON(): Object;
+    toJSON(): {
+        searchType: SearchType;
+        id: number;
+        hash: string;
+        reason: string;
+    };
 }
 
 export class StageClientDurationUpdate {
@@ -2827,9 +3591,48 @@ export class Store extends Base {
      * @param offset - The product or page offset
      */
     public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
+
+    /**
+     * Get the available credit list
+     */
     public getCreditList(): Promise<Array<StoreProductCredits>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        title: string;
+        languageId: Language;
+        credits: Array<{
+            id: number;
+            credits: number;
+            code: string;
+            imageUrl: string;
+            name: string;
+            description: string;
+        }>;
+        sections: Array<{
+            id: number;
+            languageId: Language;
+            validity: {
+                fromTime: Date;
+                endTime: Date;
+            };
+
+            title: string;
+            images: Array<string>
+            description: string;
+            videos: Array<{
+                aspect: {
+                    width: number;
+                    height: number;
+                };
+                autoplay: boolean;
+                loop: boolean;
+                muted: boolean;
+                url: string;
+            }>;
+            addtionalDescriptions: Array<string>
+        }>;
+    };
 }
 
 export class StorePage extends Base {
@@ -2847,7 +3650,34 @@ export class StorePage extends Base {
      */
     public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        title: string;
+        languageId: Language;
+        sections: Array<{
+            id: number;
+            languageId: Language;
+            validity: {
+                fromTime: Date;
+                endTime: Date;
+            };
+
+            title: string;
+            images: Array<string>
+            description: string;
+            videos: Array<{
+                aspect: {
+                    width: number;
+                    height: number;
+                };
+                autoplay: boolean;
+                loop: boolean;
+                muted: boolean;
+                url: string;
+            }>;
+            addtionalDescriptions: Array<string>
+        }>;
+    };
 }
 
 export class StoreProduct extends Base {
@@ -2885,7 +3715,31 @@ export class StoreProduct extends Base {
      */
     public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        languageId: Language;
+        id: number;
+        durationList: Array<{
+            id: number;
+            days: number;
+            credits: number;
+        }>;
+        extraInfo: number;
+        heroImageUrl: string;
+        imageList: Array<{
+            url: string
+        }>;
+        isLimited: boolean;
+        isRemoved: boolean;
+        isStocked: boolean;
+        name: string;
+        promotionText: string;
+        recipeId: number;
+        reputationLevel: number;
+        targetType: string;
+        typeId: number;
+        userLevel: number;
+        webContentUrl: string;
+    };
 }
 
 export class StoreProductCredits extends Base {
@@ -2898,7 +3752,14 @@ export class StoreProductCredits extends Base {
     public name: string;
     public description: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        credits: number;
+        code: string;
+        imageUrl: string;
+        name: string;
+        description: string;
+    };
 }
 
 export class StoreProductDuration extends Base {
@@ -2915,7 +3776,11 @@ export class StoreProductDuration extends Base {
      */
     public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        days: number;
+        credits: number;
+    };
 }
 
 export class StoreProductImage extends Base {
@@ -2923,7 +3788,9 @@ export class StoreProductImage extends Base {
 
     public url: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        url: string
+    };
 }
 
 export class StoreProductPartial extends Base {
@@ -2947,7 +3814,19 @@ export class StoreProductPartial extends Base {
      */
     public getFullProduct(languageId?: Language): Promise<StoreProduct>;
 
-    toJSON(): Object;
+    toJSON(): {
+        credits: number;
+        id: number;
+        languageId: Language;
+        imageUrl: string;
+        isLimited: boolean;
+        name: string;
+        promotionText: string;
+        reputatationLevel: number;
+        targetType: string;
+        charmId: number;
+        botId: number;
+    };
 }
 
 export class StoreSection extends Base {
@@ -2969,7 +3848,29 @@ export class StoreSection extends Base {
      */
     public get(offset: number): Promise<StorePage | Array<StoreProductPartial>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        languageId: Language;
+        validity: {
+            fromTime: Date;
+            endTime: Date;
+        };
+
+        title: string;
+        images: Array<string>
+        description: string;
+        videos: Array<{
+            aspect: {
+                width: number;
+                height: number;
+            };
+            autoplay: boolean;
+            loop: boolean;
+            muted: boolean;
+            url: string;
+        }>;
+        addtionalDescriptions: Array<string>
+    };
 }
 
 export class Subscriber extends Base {
@@ -3032,7 +3933,41 @@ export class Subscriber extends Base {
      */
     public update(profileData: { nickname: string, status: string, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        charms: SubscriberSelectedCharm;
+        deviceType: DeviceType;
+        extended: {
+            about: string;
+            gender: Gender;
+            language: Language;
+            lookinFor: LookingFor;
+            lookingForExtended: Array<LookingFor>;
+            name: string;
+            relationship: Relationship;
+            urls: Array<string>;
+            utcOffset: number;
+        };
+        hash: string;
+        icon: number;
+        iconHash: string;
+        iconInfo: {
+            availableSizes: {
+                small: string;
+                medium: string;
+                large: string;
+                xlarge: string;
+            }
+        };
+        id: number;
+        nickname: string;
+        onlineState: OnlineState;
+        reputation: number;
+        privileges: Privilege;
+        status: string;
+        language: string;
+
+        exists: boolean;
+    };
 }
 
 export class SubscriberEvent extends Base {
@@ -3055,7 +3990,15 @@ export class SubscriberEvent extends Base {
      */
     public unsubscribe(): Promise<Response>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        groupId: number;
+        additionalInfo: {
+            eTag: string;
+            endsAt: Date;
+            startsAt: Date;
+        };
+    };
 }
 
 export class SubscriberEventAdditionalInfo extends Base {
@@ -3065,7 +4008,11 @@ export class SubscriberEventAdditionalInfo extends Base {
     public endsAt: Date;
     public startsAt: Date;
 
-    toJSON(): Object;
+    toJSON(): {
+        eTag: string;
+        endsAt: Date;
+        startsAt: Date;
+    };
 }
 
 export class SubscriberExtended extends Base {
@@ -3080,7 +4027,17 @@ export class SubscriberExtended extends Base {
     public urls: Array<string>;
     public utcOffset: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        about: string;
+        gender: Gender;
+        language: Language;
+        lookinFor: LookingFor;
+        lookingForExtended: Array<LookingFor>;
+        name: string;
+        relationship: Relationship;
+        urls: Array<string>;
+        utcOffset: number;
+    };
 }
 
 export class SubscriberSelectedCharm extends Base {
@@ -3088,7 +4045,12 @@ export class SubscriberSelectedCharm extends Base {
 
     public selectedList: Array<CharmSelected>;
 
-    toJSON(): Object;
+    toJSON(): {
+        selectedList: Array<{
+            charmId: number;
+            position: number;
+        }>
+    };
 }
 
 export class TimerJob extends Base {
@@ -3111,7 +4073,14 @@ export class TimerJob extends Base {
      */
     delay(duration: number): Promise<void>
 
-    toJSON(): Object;
+    toJSON(): {
+        handler: string;
+        data: Object;
+        duration: number;
+        timestamp: number;
+        id: string;
+        remaining: number;
+    };
 }
 
 export class Tip extends Base {
@@ -3141,7 +4110,27 @@ export class Tip extends Base {
      */
     public targetSubscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        charmList: Array<{
+            id: number;
+            quanitity: number;
+            credits: number;
+            magnitude: number;
+            subscriber: {
+                id: number,
+                hash: string,
+                nickname: string | undefined,
+            };
+        }>;
+        groupId: number;
+        isGroup: boolean;
+        sourceSubscriberId: number;
+        subscriberId: number;
+        context: {
+            type: ContextType;
+            id: number;
+        };
+    };
 }
 
 export class TipCharm extends Base {
@@ -3158,7 +4147,17 @@ export class TipCharm extends Base {
      */
     public charm(): Promise<Charm>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        quanitity: number;
+        credits: number;
+        magnitude: number;
+        subscriber: {
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        };
+    };
 }
 
 export class TipContext extends Base {
@@ -3167,7 +4166,10 @@ export class TipContext extends Base {
     public type: ContextType;
     public id: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        type: ContextType;
+        id: number;
+    };
 }
 
 export class TipDetail extends Base {
@@ -3182,7 +4184,21 @@ export class TipDetail extends Base {
      */
     public charms(): Promise<Array<Charm>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        list: Array<{
+            id: number;
+            quanitity: number;
+            credits: number;
+            magnitude: number;
+            subscriber: {
+                id: number,
+                hash: string,
+                nickname: string | undefined,
+            };
+        }>;
+        version: number;
+    };
 }
 
 export class TipLeaderboard extends Base {
@@ -3190,7 +4206,24 @@ export class TipLeaderboard extends Base {
 
     public leaderboard: Array<TipLeaderboardItem>;
 
-    toJSON(): Object;
+    toJSON(): {
+        leaderboard: Array<{
+            rank: number;
+            charmId: number;
+            quanitity: number;
+            credits: number;
+            group: {
+                id: number,
+                hash: string,
+                nickname: string | undefined,
+            };
+            subscriber: {
+                id: number,
+                hash: string,
+                nickname: string | undefined,
+            };
+        }>
+    };
 }
 
 export class TipLeaderboardItem extends Base {
@@ -3208,7 +4241,22 @@ export class TipLeaderboardItem extends Base {
      */
     public charm(): Promise<Charm>;
 
-    toJSON(): Object;
+    toJSON(): {
+        rank: number;
+        charmId: number;
+        quanitity: number;
+        credits: number;
+        group: {
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        };
+        subscriber: {
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        };
+    };
 }
 
 export class TipLeaderboardSummary extends Base {
@@ -3218,7 +4266,23 @@ export class TipLeaderboardSummary extends Base {
     public topGroups: Array<IdHash>;
     public topSpenders: Array<IdHash>;
 
-    toJSON(): Object;
+    toJSON(): {
+        topGifters: Array<{
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        }>;
+        topGroups: Array<{
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        }>;
+        topSpenders: Array<{
+            id: number,
+            hash: string,
+            nickname: string | undefined,
+        }>;
+    };
 }
 
 export class TipSummary extends Base {
@@ -3233,7 +4297,21 @@ export class TipSummary extends Base {
      */
     public charms(): Promise<Array<Charm>>;
 
-    toJSON(): Object;
+    toJSON(): {
+        id: number;
+        charmList: Array<{
+            id: number;
+            quanitity: number;
+            credits: number;
+            magnitude: number;
+            subscriber: {
+                id: number,
+                hash: string,
+                nickname: string | undefined,
+            };
+        }>;
+        version: number;
+    };
 }
 
 export class TopicSectionVideo extends Base {
@@ -3245,7 +4323,17 @@ export class TopicSectionVideo extends Base {
     public muted: boolean;
     public url: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        aspect: {
+
+            width: number;
+            height: number;
+        };
+        autoplay: boolean;
+        loop: boolean;
+        muted: boolean;
+        url: string;
+    };
 }
 
 export class TopicSectionVideoAspect extends Base {
@@ -3254,7 +4342,10 @@ export class TopicSectionVideoAspect extends Base {
     public width: number;
     public height: number;
 
-    toJSON(): Object;
+    toJSON(): {
+        width: number;
+        height: number;
+    };
 }
 
 export class Translation extends Base {
@@ -3263,7 +4354,10 @@ export class Translation extends Base {
     public languageId: Language;
     public text: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        languageId: Language;
+        text: string;
+    };
 }
 
 export class Validity extends Base {
@@ -3272,7 +4366,10 @@ export class Validity extends Base {
     public fromTime: Date;
     public endTime: Date;
 
-    toJSON(): Object;
+    toJSON(): {
+        fromTime: Date;
+        endTime: Date;
+    };
 }
 
 export class ValidUrl extends Base {
@@ -3281,7 +4378,10 @@ export class ValidUrl extends Base {
     public url: string;
     public hostname: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        url: string;
+        hostname: string;
+    };
 }
 
 export class Welcome extends Base {
@@ -3293,7 +4393,16 @@ export class Welcome extends Base {
     public endpointConfig: WelcomeEndpoint;
     public subscriber: Subscriber;
 
-    toJSON(): Object;
+    toJSON(): {
+        ip: string;
+        token: string;
+        country: string;
+        endpointConfig: {
+            avatarEndpoint: string;
+            mmsUploadEndpoint: string;
+        };
+        subscriber: Subscriber;
+    };
 }
 
 export class WelcomeEndpoint extends Base {
@@ -3302,7 +4411,10 @@ export class WelcomeEndpoint extends Base {
     public avatarEndpoint: string;
     public mmsUploadEndpoint: string;
 
-    toJSON(): Object;
+    toJSON(): {
+        avatarEndpoint: string;
+        mmsUploadEndpoint: string;
+    };
 }
 
 export class WOLFAPIError extends Error {
@@ -3326,7 +4438,15 @@ export class WolfstarsProfile extends Base {
      */
     public subscriber(): Promise<Subscriber>;
 
-    toJSON(): Object;
+    toJSON(): {
+        maxListeners: number;
+        shows: number;
+        subscriberId: number;
+        talentList: Array<WolfstarTalent>;
+        totalListeners: number;
+        exists: boolean;
+
+    };
 }
 
 //#endregion
@@ -3762,13 +4882,13 @@ export interface ClientEvents {
      */
     packetSent: [command: string, body: object],
     /**
-     *
+     * Fires when a packet response was not within the range of success upon retry (if failing code is retryable)
      */
-    packetFailed: [],
+    packetFailed: [command: string, body: object],
     /**
-     *
+     * Fires when a packet response was a failing code and was retryable
      */
-    packetRetry: [],
+    packetRetry: [command: string, body: object, attempt: number],
     /**
      * Fires when the server pings
      */

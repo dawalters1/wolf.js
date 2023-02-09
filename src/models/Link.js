@@ -13,14 +13,6 @@ class Link extends Base {
   async metadata () {
     return await this.client.misc.metadata(this.link);
   }
-
-  toJSON () {
-    return {
-      start: this.start,
-      end: this.end,
-      link: this.link
-    };
-  }
 }
 
 export default Link;

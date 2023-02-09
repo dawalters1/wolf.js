@@ -15,17 +15,6 @@ class TipLeaderboardItem extends Base {
   async charm () {
     return await this.client.charm.getById(this.charmId);
   }
-
-  toJSON () {
-    return {
-      rank: this.rank,
-      charmId: this.charmId,
-      quantity: this.quantity,
-      credits: this.credits,
-      group: this.group?.toJSON(),
-      subscriber: this.subscriber?.toJSON()
-    };
-  }
 }
 
 export default TipLeaderboardItem;

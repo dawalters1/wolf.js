@@ -9,16 +9,6 @@ class AchievementUnlockableAdditionalInfo extends Base {
     this.total = data?.total ?? 0;
     this.categoryId = data?.categoryId;
   }
-
-  toJSON () {
-    return {
-      awardedAt: this.awardedAt,
-      eTag: this.eTag,
-      categoryId: this.categoryId,
-      steps: this.steps,
-      total: this.total
-    };
-  }
 }
 
 export default AchievementUnlockableAdditionalInfo;

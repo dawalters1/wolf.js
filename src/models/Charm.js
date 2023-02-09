@@ -15,21 +15,6 @@ class Charm extends Base {
     this.cost = data?.cost;
     this.exists = Object.keys(data).length > 1;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      name: this.name,
-      productId: this.productId,
-      imageUrl: this.imageUrl,
-      descriptionPhraseId: this.descriptionPhraseId,
-      descriptionList: this.descriptionList,
-      nameTranslationList: this.nameTranslationList,
-      weight: this.weight,
-      cost: this.cost,
-      exists: this.exists
-    };
-  }
 }
 
 export default Charm;

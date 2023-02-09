@@ -52,18 +52,6 @@ class CommandContext {
   async hasPrivilege (privilege, requireAll = false) {
     return await this.client.utility.subscriber.privilege.has(this.sourceSubscriberId, privilege, requireAll);
   }
-
-  toJSON () {
-    return {
-      isGroup: this.isGroup,
-      argument: this.argument,
-      language: this.language,
-      targetGroupId: this.targetGroupId,
-      sourceSubscriberId: this.sourceSubscriberId,
-      timestamp: this.timestamp,
-      type: this.type
-    };
-  }
 }
 
 export default CommandContext;

@@ -10,17 +10,6 @@ class LinkMetadata extends Base {
     this.isOfficial = data?.isOfficial;
     this.title = data?.title;
   }
-
-  toJSON () {
-    return {
-      description: this.description,
-      domain: this.domain,
-      imageSize: this.imageSize,
-      imageUrl: this.imageUrl,
-      isOfficial: this.isOfficial,
-      title: this.title
-    };
-  }
 }
 
 export default LinkMetadata;

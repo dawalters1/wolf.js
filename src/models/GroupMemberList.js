@@ -7,14 +7,14 @@ class GroupMemberList {
     this.client = client;
     this.id = id;
 
-    this._privileged = new GroupMemberListSection(this.client, MemberListType.PRIVILEGED, [Capability.OWNER, Capability.ADMIN, Capability.MOD]);
-    this._regular = new GroupMemberListSection(this.client, MemberListType.REGULAR, [Capability.REGULAR, Capability.SILENCED]);
-    this._silenced = new GroupMemberListSection(this.client, MemberListType.SILENCED, [Capability.SILENCED]);
-    this._banned = new GroupMemberListSection(this.client, MemberListType.BANNED, [Capability.BANNED]);
-    this._bots = new GroupMemberListSection(this.client, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
+    this._privileged = new GroupMemberListSection(this.client, this.id, MemberListType.PRIVILEGED, [Capability.OWNER, Capability.ADMIN, Capability.MOD]);
+    this._regular = new GroupMemberListSection(this.client, this.id, MemberListType.REGULAR, [Capability.REGULAR, Capability.SILENCED]);
+    this._silenced = new GroupMemberListSection(this.client, this.id, MemberListType.SILENCED, [Capability.SILENCED]);
+    this._banned = new GroupMemberListSection(this.client, this.id, MemberListType.BANNED, [Capability.BANNED]);
+    this._bots = new GroupMemberListSection(this.client, this.id, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
 
     // Members that are not in privilged, regular or banned list will appear here until they are loaded in either list
-    this._misc = new GroupMemberListSection(this.client);
+    this._misc = new GroupMemberListSection(this.client, this.id);
   }
 
   async _get (subscriberId) {
@@ -90,17 +90,6 @@ class GroupMemberList {
     }
 
     return Promise.resolve();
-  }
-
-  toJSON () {
-    return {
-      privileged: this._privileged.members.map((member) => member.toJSON()),
-      regular: this._regular.members.map((member) => member.toJSON()),
-      silenced: this._silenced.members.map((member) => member.toJSON()),
-      banned: this._banned.members.map((member) => member.toJSON()),
-      bots: this._bots.members.map((member) => member.toJSON()),
-      misc: this._misc.members.map((member) => member.toJSON())
-    };
   }
 }
 

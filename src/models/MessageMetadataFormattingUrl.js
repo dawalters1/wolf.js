@@ -11,14 +11,6 @@ class MessageMetadataFormattingUrl extends Base {
   async metadata () {
     return await this.client.misc.metadata(this.url);
   }
-
-  toJSON () {
-    return {
-      start: this.start,
-      end: this.end,
-      url: this.url
-    };
-  }
 }
 
 export default MessageMetadataFormattingUrl;

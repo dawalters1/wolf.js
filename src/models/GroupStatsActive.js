@@ -25,27 +25,6 @@ class GroupStatsActive extends Base {
   async subscriber () {
     return await this.client.subscriber.getById(this.subId);
   }
-
-  toJSON () {
-    return {
-      actionCount: this.actionCount,
-      emoticonCount: this.emoticonCount,
-      groupId: this.groupId,
-      happyEmoticonCount: this.happyEmoticonCount,
-      imageCount: this.imageCount,
-      lineCount: this.lineCount,
-      message: this.message,
-      nickname: this.nickname,
-      randomQuote: this.randomQuote,
-      packCount: this.packCount,
-      sadEmoticonCount: this.sadEmoticonCount,
-      subId: this.subId,
-      swearCount: this.swearCount,
-      textCount: this.textCount,
-      voiceCount: this.voiceCount,
-      wordCount: this.wordCount
-    };
-  }
 }
 
 export default GroupStatsActive;

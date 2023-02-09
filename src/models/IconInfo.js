@@ -12,12 +12,6 @@ class IconInfo extends Base {
   get (size) {
     return this.availableSizes.get(size);
   }
-
-  toJSON () {
-    return {
-      availableSizes: this.availableSizes.toJSON()
-    };
-  }
 }
 
 export default IconInfo;

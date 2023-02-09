@@ -9,14 +9,6 @@ class TipLeaderboardSummary extends Base {
     this.topGroups = (data?.topGroups || []).map((group) => new IdHash(group));
     this.topSpenders = (data?.topSpenders || []).map((subscriber) => new IdHash(subscriber));
   }
-
-  toJSON () {
-    return {
-      topGifters: this.topGifters.map((item) => item.toJSON()),
-      topGroups: this.topGroups.map((item) => item.toJSON()),
-      topSpenders: this.topSpenders.map((item) => item.toJSON())
-    };
-  }
 }
 
 export default TipLeaderboardSummary;

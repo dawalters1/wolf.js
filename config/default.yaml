@@ -13,6 +13,9 @@ connection:
   mocha:
     email:
     password:
+  requests:
+    retryCodes: [500, 502, 503, 504, 408]
+    attempts: 3
 
 avatar:
   endpoint: https://df49rkfq0koe8.cloudfront.net

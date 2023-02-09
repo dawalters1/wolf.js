@@ -17,15 +17,6 @@ class Search extends Base {
 
     return await this.client.subscriber.getById(this.id);
   }
-
-  toJSON () {
-    return {
-      type: this.type,
-      id: this.id,
-      hash: this.hash,
-      reason: this.reason
-    };
-  }
 }
 
 export default Search;
