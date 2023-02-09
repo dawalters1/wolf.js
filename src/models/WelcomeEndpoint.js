@@ -6,13 +6,6 @@ class WelcomeEndpoint extends Base {
     this.avatarEndpoint = data?.avatarEndpoint;
     this.mmsUploadEndpoint = data?.mmsUploadEndpoint;
   }
-
-  toJSON () {
-    return {
-      avatarEndpoint: this.avatarEndpoint,
-      mmsUploadEndpoint: this.mmsUploadEndpoint
-    };
-  }
 }
 
 export default WelcomeEndpoint;

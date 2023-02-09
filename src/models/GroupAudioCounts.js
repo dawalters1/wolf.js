@@ -7,14 +7,6 @@ class GroupAudioCounts extends Base {
     this.consumerCount = data?.consumerCount;
     this.id = data?.id;
   }
-
-  toJSON () {
-    return {
-      broadcasterCount: this.broadcasterCount,
-      consumerCount: this.consumerCount,
-      id: this.id
-    };
-  }
 }
 
 export default GroupAudioCounts;

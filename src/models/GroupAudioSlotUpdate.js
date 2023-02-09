@@ -7,13 +7,6 @@ class GroupAudioSlotUpdate extends Base {
     this.id = data?.id;
     this.slot = new GroupAudioSlot(client, data?.slot);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      slot: this.slot.toJSON()
-    };
-  }
 }
 
 export default GroupAudioSlotUpdate;

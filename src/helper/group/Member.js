@@ -94,7 +94,7 @@ class Member extends Base {
     );
 
     group.members._bots.complete = response.body.length < this.client._frameworkConfig.get('members.bots.batch.size');
-    group.members._bots.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+    group.members._bots.members = response.body?.map((member) => new GroupMember(this.client, { ...member, targetGroupId })) ?? [];
 
     return group.members._bots.members;
   }
@@ -142,7 +142,7 @@ class Member extends Base {
     );
 
     group.members._silenced.complete = response.body?.length < this.client._frameworkConfig.get('members.silenced.batch.size');
-    group.members._silenced.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+    group.members._silenced.members = response.body?.map((member) => new GroupMember(this.client, { ...member, targetGroupId })) ?? [];
 
     return group.members._silenced.members;
   }
@@ -197,7 +197,7 @@ class Member extends Base {
     );
 
     group.members._banned.complete = response.body?.length < this.client._frameworkConfig.get('members.banned.batch.size');
-    group.members._banned.members = response.body?.map((member) => new GroupMember(this.client, { ...member, capabilities: Capability.BANNED })) ?? [];
+    group.members._banned.members = response.body?.map((member) => new GroupMember(this.client, { ...member, capabilities: Capability.BANNED, targetGroupId })) ?? [];
 
     return group.members._banned.members;
   }
@@ -238,7 +238,7 @@ class Member extends Base {
     }
 
     group.members._privileged.complete = true; // 2,500 is the max supported, however some groups still have more than this
-    group.members._privileged.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+    group.members._privileged.members = response.body?.map((member) => new GroupMember(this.client, { ...member, targetGroupId })) ?? [];
 
     response.body?.forEach((member) => group.members._misc.remove(member));
 
@@ -282,7 +282,7 @@ class Member extends Base {
     }
 
     group.members._regular.complete = response.body.length < this.client._frameworkConfig.get('members.regular.batch.size');
-    group.members._regular.members = response.body?.map((member) => new GroupMember(this.client, member)) ?? [];
+    group.members._regular.members = response.body?.map((member) => new GroupMember(this.client, { ...member, targetGroupId })) ?? [];
 
     response.body?.forEach((member) => group.members._misc.remove(member));
 

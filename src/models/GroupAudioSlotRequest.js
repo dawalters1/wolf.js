@@ -20,15 +20,6 @@ class GroupAudioSlotRequest extends Base {
   async reject () {
     return this.delete();
   }
-
-  toJSON () {
-    return {
-      slotId: this.slotId,
-      groupId: this.groupId,
-      reservedOccupierId: this.reservedOccupierId,
-      reservedExpiresAt: this.reservedExpiresAt
-    };
-  }
 }
 
 export default GroupAudioSlotRequest;

@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.0-rc16",
+  "version": "2.0.0-rc17",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "type": "module",
@@ -66,6 +66,7 @@
     "socket.io-client": "^4.4.1",
     "superagent": "^8.0.8",
     "tldts": "^5.7.104",
+    "tokenbucket": "^0.3.2",
     "url-regex-safe": "^3.0.0",
     "wrtc": "^0.4.7",
     "yaml": "^2.2.1"

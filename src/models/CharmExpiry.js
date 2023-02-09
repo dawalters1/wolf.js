@@ -22,16 +22,6 @@ class CharmExpiry extends Base {
   async delete () {
     return await this.client.charm.delete(this.id);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      charmId: this.charmId,
-      subscriberId: this.subscriberId,
-      sourceSubscriberId: this.sourceSubscriberId,
-      expireTime: this.expireTime
-    };
-  }
 }
 
 export default CharmExpiry;

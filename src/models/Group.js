@@ -68,31 +68,6 @@ class Group extends Base {
   async update ({ description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     return await this.client.group.update(this.id, { description: description || this.description, peekable: peekable || this.peekable, disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink, disableImage: disableImage || this.messageConfig.disableImage, disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter, disableVoice: disableVoice || this.messageConfig.disableVoice, longDescription: longDescription || this.extended.longDescription, discoverable: discoverable || this.extended.discoverable, language: language || this.extended.language, category: category || this.extended.category, advancedAdmin: advancedAdmin || this.extended.advancedAdmin, questionable: questionable || this.extended.questionable, locked: locked || this.extended.locked, closed: closed || this.extended.closed, entryLevel: entryLevel || this.extended.entryLevel, avatar });
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      hash: this.hash,
-      name: this.name,
-      description: this.description,
-      reputation: this.reputation,
-      owner: this.owner.toJSON(),
-      membersCount: this.membersCount,
-      official: this.official,
-      peekable: this.peekable,
-      premium: this.premium,
-      icon: this.icon,
-      iconHash: this.iconHash,
-      iconInfo: this.iconInfo.toJSON(),
-      extended: this.extended.toJSON(),
-      audioCounts: this.audioCounts.toJSON(),
-      audioConfig: this.audioConfig.toJSON(),
-      messageConfig: this.messageConfig.toJSON(),
-      inGroup: this.inGroup,
-      capabilities: this.capabilities,
-      exists: this.exists
-    };
-  }
 }
 
 export default Group;

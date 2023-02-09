@@ -19,22 +19,6 @@ class GroupExtended extends Base {
   async update ({ longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
     return await this.client.group.update(this.id, { longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel });
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      longDescription: this.longDescription,
-      discoverable: this.discoverable,
-      language: this.language,
-      category: this.category,
-      advancedAdmin: this.advancedAdmin,
-      questionable: this.questionable,
-      locked: this.locked,
-      closed: this.closed,
-      passworded: this.passworded,
-      entryLevel: this.entryLevel
-    };
-  }
 }
 
 export default GroupExtended;

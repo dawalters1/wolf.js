@@ -10,13 +10,6 @@ class MessageEdit extends Base {
   async subscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }
-
-  toJSON () {
-    return {
-      subscriberId: this.subscriberId,
-      timestamp: this.timestamp
-    };
-  }
 }
 
 export default MessageEdit;

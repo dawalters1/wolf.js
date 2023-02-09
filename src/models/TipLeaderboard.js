@@ -6,12 +6,6 @@ class TipLeaderboard extends Base {
     super(client);
     this.leaderboard = data?.leaderboard.map((leaderboard) => new TipLeaderboardItem(client, leaderboard)) ?? [];
   }
-
-  toJSON () {
-    return {
-      leaderboard: this.leaderboard.map((item) => item.toJSON())
-    };
-  }
 }
 
 export default TipLeaderboard;

@@ -14,17 +14,6 @@ class GroupStatsTop extends Base {
   async subscriber () {
     return await this.client.subscriber.getById(this.subId);
   }
-
-  toJSON () {
-    return {
-      nickname: this.nickname,
-      randomQuote: this.randomQuote,
-      subId: this.subId,
-      value: this.value,
-      wpl: this.wpl,
-      percentage: this.percentage
-    };
-  }
 }
 
 export default GroupStatsTop;

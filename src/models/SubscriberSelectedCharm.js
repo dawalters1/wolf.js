@@ -6,12 +6,6 @@ class SubscriberSelectedCharm extends Base {
     super(client);
     this.selectedList = (data?.selectedList ?? []).map((selected) => new CharmSelected(client, selected));
   }
-
-  toJSON () {
-    return {
-      selectedList: this.selectedList.map((item) => item.toJSON())
-    };
-  }
 }
 
 export default SubscriberSelectedCharm;

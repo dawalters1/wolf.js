@@ -35,24 +35,6 @@ class Event extends Base {
   async updateThumbnail (thumbnail) {
     return this.client.event.group.updateThumbnail(this.id, thumbnail);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      groupId: this.groupId,
-      createdBy: this.createdBy,
-      title: this.title,
-      category: this.category,
-      shortDescription: this.shortDescription,
-      longDescription: this.shortDescription,
-      imageUrl: this.imageUrl,
-      startsAt: this.startsAt,
-      endsAt: this.endsAt,
-      isRemoved: this.isRemoved,
-      attendanceCount: this.attendanceCount,
-      exists: this.exists
-    };
-  }
 }
 
 export default Event;

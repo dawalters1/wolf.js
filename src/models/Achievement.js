@@ -16,22 +16,6 @@ class Achievement extends Base {
 
     this.exists = Object.keys(data).length > 1;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      parentId: this.parentId,
-      typeId: this.typeId,
-      name: this.name,
-      description: this.description,
-      imageUrl: this.imageUrl,
-      category: this.category,
-      levelId: this.levelId,
-      levelName: this.levelName,
-      acquisitionPercentage: this.acquisitionPercentage,
-      exists: this.exists
-    };
-  }
 }
 
 export default Achievement;

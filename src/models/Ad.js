@@ -13,14 +13,6 @@ class Ad extends Base {
   async group () {
     return await this.client.group.getByName(this.ad);
   }
-
-  toJSON () {
-    return {
-      start: this.start,
-      end: this.end,
-      ad: this.ad
-    };
-  }
 }
 
 export default Ad;

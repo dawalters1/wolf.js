@@ -12,14 +12,6 @@ class StoreProductDuration extends Base {
   async purchase (quanitity, targetIds) {
     return await this.client.store.purchase(this.id, quanitity, targetIds);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      days: this.days,
-      credits: this.credits
-    };
-  }
 }
 
 export default StoreProductDuration;

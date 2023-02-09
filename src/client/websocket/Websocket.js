@@ -1,6 +1,5 @@
 import Processor from './events/Processor.js';
 import RequestQueue from './RequestQueue.js';
-import Response from '../../models/Response.js';
 import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
 import io from 'socket.io-client';
 
@@ -12,18 +11,18 @@ class Websocket {
     this._messageQueue = new RequestQueue(
       this.client,
       {
-        capacity: 15,
-        regenerationPeriod: (15 / 60) * 1000,
-        name: 'message'
+        size: 15,
+        interval: (15 / 60) * 1000,
+        name: 'Message'
       }
     );
 
     this._genericQueue = new RequestQueue(
       this.client,
       {
-        capacity: 50,
-        regenerationPeriod: (180 / 60) * 1000,
-        name: 'generic'
+        size: 50,
+        interval: (180 / 60) * 1000,
+        name: 'Generic'
       }
     );
   }
@@ -66,9 +65,9 @@ class Websocket {
     };
 
     if (command === ServerEvents.MESSAGE.MESSAGE_SEND) {
-      return new Response(await this._messageQueue.enqueue(request));
+      return await this._messageQueue.enqueue(request);
     } else {
-      return new Response(await this._genericQueue.enqueue(request));
+      return await this._genericQueue.enqueue(request);
     }
   }
 }

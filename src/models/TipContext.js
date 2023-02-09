@@ -6,13 +6,6 @@ class TipContext extends Base {
     this.type = data?.type;
     this.id = data?.id;
   }
-
-  toJSON () {
-    return {
-      type: this.type,
-      id: this.id
-    };
-  }
 }
 
 export default TipContext;

@@ -15,16 +15,6 @@ class TipCharm extends Base {
   async charm () {
     return await this.client.charm.getById(this.charmId);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      quantity: this.quantity,
-      credits: this.credits,
-      magnitude: this.magnitude,
-      subscriber: this.subscriber.toJSON()
-    };
-  }
 }
 
 export default TipCharm;

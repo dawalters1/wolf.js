@@ -16,15 +16,6 @@ class StorePage extends Base {
 
     return section ? await section.get(offset) : undefined;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      title: this.title,
-      languageId: this.languageId,
-      sections: this.sections.map((section) => section.toJSON())
-    };
-  }
 }
 
 export default StorePage;

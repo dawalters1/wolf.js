@@ -15,17 +15,6 @@ class WolfstarsProfile extends Base {
   async subscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }
-
-  toJSON () {
-    return {
-      maxListeners: this.maxListeners,
-      shows: this.shows,
-      subscriberId: this.subscriberId,
-      talentList: this.talentList,
-      totalListeners: this.totalListeners,
-      exists: this.exists
-    };
-  }
 }
 
 export default WolfstarsProfile;

@@ -36,28 +36,6 @@ class StoreProduct extends Base {
 
     return await this.client.store.purchase(duration, quanitity, targetIds);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      languageId: this.languageId,
-      durationList: this.durationList.map((duration) => duration.toJSON()),
-      extraInfo: this.extraInfo,
-      heroImageUrl: this.heroImageUrl,
-      imageList: this.imageList?.map((image) => image.toJSON()),
-      isLimited: this.isLimited,
-      isRemoved: this.isRemoved,
-      isStocked: this.isStocked,
-      name: this.name,
-      promotionText: this.promotionText,
-      recipeId: this.recipeId,
-      reputationLevel: this.reputationLevel,
-      targetType: this.targetType,
-      typeId: this.typeId,
-      userLevel: this.userLevel,
-      webContentUrl: this.webContentUrl
-    };
-  }
 }
 
 export default StoreProduct;

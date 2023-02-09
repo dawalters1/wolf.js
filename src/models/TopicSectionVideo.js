@@ -11,16 +11,6 @@ class TopicSectionVideo extends Base {
     this.muted = data?.muted;
     this.url = data?.url;
   }
-
-  toJSON () {
-    return {
-      aspect: this.aspect.toJSON(),
-      autoplay: this.autoplay,
-      loop: this.loop,
-      muted: this.muted,
-      url: this.url
-    };
-  }
 }
 
 export default TopicSectionVideo;

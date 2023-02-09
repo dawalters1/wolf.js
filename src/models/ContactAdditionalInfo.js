@@ -9,15 +9,6 @@ class ContactAdditionalInfo extends Base {
     this.onlineState = data?.onlineState ?? OnlineState.OFFLINE;
     this.privileges = data?.privileges ?? 0;
   }
-
-  toJSON () {
-    return {
-      hash: this.hash,
-      nicknameShort: this.nicknameShort,
-      onlineState: this.onlineState,
-      privileges: this.privileges
-    };
-  }
 }
 
 export default ContactAdditionalInfo;

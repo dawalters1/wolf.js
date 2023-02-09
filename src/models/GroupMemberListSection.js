@@ -3,10 +3,11 @@ import GroupMember from './GroupMember.js';
 import WOLFAPIError from './WOLFAPIError.js';
 
 class GroupMemberListSection extends Base {
-  constructor (client, list, capabilities, privileges) {
+  constructor (client, targetGroupId, list, capabilities, privileges) {
     super(client);
 
     this.list = list;
+    this.targetGroupId = targetGroupId;
 
     this.capabilities = capabilities ? Array.isArray(capabilities) ? capabilities : [capabilities] : undefined;
     this.privileges = privileges ? Array.isArray(privileges) ? privileges : [privileges] : undefined;
@@ -52,7 +53,7 @@ class GroupMemberListSection extends Base {
       return true;
     }
 
-    this.members.push(new GroupMember(this.client, { id: subscriber.id, capabilities, hash: subscriber.hash }));
+    this.members.push(new GroupMember(this.client, { id: subscriber.id, capabilities, hash: subscriber.hash, targetGroupId: this.targetGroupId }));
 
     return true;
   }

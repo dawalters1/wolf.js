@@ -7,14 +7,6 @@ class GroupStatsTrend extends Base {
     this.hour = data?.hour;
     this.lineCount = data?.lineCount;
   }
-
-  toJSON () {
-    return {
-      day: this.day,
-      hour: this.hour,
-      lineCount: this.lineCount
-    };
-  }
 }
 
 export default GroupStatsTrend;

@@ -6,13 +6,6 @@ class Validity extends Base {
     this.fromTime = data.fromTime;
     this.endTime = data.endTime;
   }
-
-  toJSON () {
-    return {
-      fromTime: this.fromTime,
-      endTime: this.endTime
-    };
-  }
 }
 
 export default Validity;

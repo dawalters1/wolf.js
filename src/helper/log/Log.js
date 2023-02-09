@@ -12,13 +12,7 @@ class Log extends Base {
   constructor (client) {
     super(client);
 
-    process.on('unhandledRejection', (error) => {
-      // Print to console if no log event exists
-      if (!client.eventNames().includes('log')) {
-        return console.log(error?.stack ? error.stack : error.message);
-      }
-      this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error?.stack ? error.stack : error.message });
-    });
+    process.on('unhandledRejection', (error) => !client.eventNames().includes('log') ? console.log(error?.stack ? error.stack : error.message) : this.client.emit(Event.LOG, { level: LogLevel.FATAL, message: error?.stack ? error.stack : error.message }));
   }
 
   debug (message) {

@@ -6,13 +6,6 @@ class AchievementCategory extends Base {
     this.id = data?.id;
     this.name = data?.name;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      name: this.name
-    };
-  }
 }
 
 export default AchievementCategory;

@@ -11,17 +11,6 @@ class StoreProductCredits extends Base {
     this.name = data.name;
     this.description = data.description;
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      credits: this.credits,
-      code: this.code,
-      imageUrl: this.imageUrl,
-      name: this.name,
-      description: this.description
-    };
-  }
 }
 
 export default StoreProductCredits;

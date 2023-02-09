@@ -1,6 +1,4 @@
 import Base from './Base.js';
-import models from './index.js';
-import validator from '../validator/index.js';
 
 class CharmSelected extends Base {
   constructor (client, data) {
@@ -15,13 +13,6 @@ class CharmSelected extends Base {
 
   async deselect () {
     return await this.client.charm.set();
-  }
-
-  toJSON () {
-    return {
-      charmId: this.charmId,
-      position: this.position
-    };
   }
 }
 

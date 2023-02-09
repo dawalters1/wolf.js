@@ -50,20 +50,6 @@ class GroupAudioSlot extends Base {
   async cancelRequet () {
     return await this.client.stage.request.delete(this.groupId, this.id);
   }
-
-  toJSON () {
-    return {
-      id: this.id,
-      groupId: this.groupId,
-      locked: this.locked,
-      occupierId: this.occupierId,
-      occupierMuted: this.occupierMuted,
-      uuid: this.uuid,
-      connectionState: this.connectionState,
-      reservedOccupierId: this.reservedOccupierId,
-      reservedExpiresAt: this.reservedExpiresAt
-    };
-  }
 }
 
 export default GroupAudioSlot;

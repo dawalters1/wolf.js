@@ -7,13 +7,6 @@ class TopicSectionVideoAspect extends Base {
     this.width = data?.width;
     this.height = data?.height;
   }
-
-  toJSON () {
-    return {
-      width: this.width,
-      height: this.height
-    };
-  }
 }
 
 export default TopicSectionVideoAspect;
