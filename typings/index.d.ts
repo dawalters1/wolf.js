@@ -1592,9 +1592,8 @@ export class TimerUtility {
     /**
      * Initialise the timer utility
      * @param handlers - The handlers
-     * @param args - The args
      */
-    public initialise(handlers: { [key: string]: any }, ...args: any): Promise<void>;
+    public register(handlers: { [key: string]: Function },): Promise<void>;
     /**
      * Create a event timer
      * @param name - The name of the event
