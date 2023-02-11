@@ -1018,7 +1018,7 @@ export class PhraseHelper extends Base {
      * @param command - The command
      * @param name - The name
      */
-    public getByCommandAndName(command: Command, name: string): string;
+    public getByCommandAndName(command: CommandContext, name: string): string;
     /**
      * Check whether or not a string is a specific phrase
      * @param name - The name
