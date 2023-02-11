@@ -128,7 +128,7 @@ class Phrase extends Base {
       throw new models.WOLFAPIError('language cannot be null or empty', { command });
     }
 
-    return this.getByCommandAndName(command.language, name);
+    return this.getByLanguageAndName(command.language, name);
   }
 
   isRequestedPhrase (name, input) {
