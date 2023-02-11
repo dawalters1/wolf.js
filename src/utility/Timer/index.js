@@ -6,15 +6,18 @@ import validator from '../../validator/index.js';
 class Timer {
   constructor (client) {
     this.client = client;
+    this._handlers = {};
+    this._initialised = false;
   }
 
-  async initialise (handlers, ...args) {
+  async register (handlers) {
     if (typeof handlers !== 'object') {
       throw new WOLFAPIError('handlers must be an object!', { handlers });
     } else if (!Object.keys(handlers).length > 0) {
       throw new WOLFAPIError('handlers must contain at least 1 handler', { handlers });
+    } else if (Object.values(handlers).some((handler) => typeof handler !== 'function')) {
+      throw new WOLFAPIError('handler must be a function', { handlerName: Object.entries(handlers).find((handler) => typeof handler[1] !== 'function')[0] });
     }
-    this._handlers = handlers;
 
     this._timerQueue = new BullQueue(
       'bull-timer',
@@ -25,19 +28,17 @@ class Timer {
     );
 
     this._timerQueue.process('*', (job) => {
-      if (!Object.keys(handlers).includes(job.name)) {
+      if (!Object.keys(this._handlers).includes(job.name)) {
         throw new WOLFAPIError('handler does not exist in handlers', { handler: job.name, handlers: Object.keys(this._handlers) });
       }
 
-      handlers[job.name](this.client, job.data, ...args);
+      this._handlers[job.name].call(this, job.data);
 
       return Promise.resolve();
     });
 
-    await this._timerQueue.isReady();
+    this._handlers = handlers;
     this._initialised = true;
-
-    return Promise.resolve();
   }
 
   async add (name, handler, data, duration) {
