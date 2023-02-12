@@ -41,6 +41,15 @@ class IconInfoAvailableSize extends Base {
       }
     );
   }
+
+  toJSON () {
+    return {
+      small: this.small,
+      medium: this.medium,
+      large: this.large,
+      xlarge: this.xlarge
+    };
+  }
 }
 
 export default IconInfoAvailableSize;
