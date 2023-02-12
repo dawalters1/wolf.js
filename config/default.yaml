@@ -18,7 +18,6 @@ connection:
     attempts: 3
 
 avatar:
-  endpoint: https://df49rkfq0koe8.cloudfront.net
   placeholder: https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
 
 members:
