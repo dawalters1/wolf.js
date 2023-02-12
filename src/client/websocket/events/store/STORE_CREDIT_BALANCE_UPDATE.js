@@ -6,6 +6,7 @@ export default async (client, body) => {
   client.store._balance = body.balance;
 
   return await client.emit(
-    Event.SUBSCRIBER_BLOCK_ADD,
-    oldBalance >= 0 ? oldBalance : 0, body.balance);
+    Event.STORE_CREDIT_BALANCE_UPDATE,
+    oldBalance >= 0 ? oldBalance : 0, body.balance
+  );
 };
