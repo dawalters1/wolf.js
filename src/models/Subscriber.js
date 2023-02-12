@@ -1,4 +1,5 @@
 import Language from '../constants/Language.js';
+import patch from '../utils/patch.js';
 import Base from './Base.js';
 import IconInfo from './IconInfo.js';
 import SubscriberExtended from './SubscriberExtended.js';
@@ -6,7 +7,7 @@ import SubscriberSelectedCharm from './SubscriberSelectedCharm.js';
 import WOLFAPIError from './WOLFAPIError.js';
 
 class Subscriber extends Base {
-  constructor (client, data) {
+  constructor (client, data, subscribed) {
     super(client);
     this.charms = new SubscriberSelectedCharm(client, data?.charms);
     this.deviceType = data?.deviceType;
@@ -24,6 +25,7 @@ class Subscriber extends Base {
     this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
 
     this.exists = Object.keys(data)?.length > 1;
+    this.subscribed = subscribed;
   }
 
   getAvatarUrl (size) {
@@ -72,6 +74,22 @@ class Subscriber extends Base {
         privilieges: this.privilieges
       }
     };
+  }
+
+  async subscribe () {
+    const response = await this.client.subscriber.getById(this.id, true, true);
+
+    patch(this, response);
+
+    return response;
+  }
+
+  async unsubscribe () {
+    if (!this.subscribed) {
+      throw new WOLFAPIError('not subscribed to profile updates', { id: this.id });
+    }
+
+    return await this.client.subscriber._unsubscribe(this.id);
   }
 }
 

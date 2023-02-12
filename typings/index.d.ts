@@ -3966,7 +3966,17 @@ export class Subscriber extends Base {
         language: string;
 
         exists: boolean;
+        subscribed: boolean;
     };
+
+    /**
+     * Subscribe to profile updates
+     */
+    public subscribe(): Promise<Subscriber>;
+    /**
+     * Unsubscribe from profile updates
+     */
+    public unsubscribe(): Promise<Response>;
 }
 
 export class SubscriberEvent extends Base {

@@ -77,6 +77,7 @@ export const SUBSCRIBER_GROUP_EVENT_LIST = 'subscriber group event list';
 export const SUBSCRIBER_GROUP_LIST = 'subscriber group list';
 export const SUBSCRIBER_PRESENCE = 'subscriber presence';
 export const SUBSCRIBER_PROFILE = 'subscriber profile';
+export const SUBSCRIBER_PROFILE_UNSUBSCRIBE = 'subscriber profile unsubscribe';
 export const SUBSCRIBER_PROFILE_UPDATE = 'subscriber profile update';
 export const SUBSCRIBER_SETTINGS_UPDATE = 'subscriber settings update';
 export const TIP_ADD = 'tip add';
