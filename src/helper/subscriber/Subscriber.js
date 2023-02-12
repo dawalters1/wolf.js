@@ -15,6 +15,27 @@ class Subscriber extends Base {
     this.wolfstars = new Wolfstars(this.client);
   }
 
+  async _unsubscribe (id) {
+    if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
+
+    return await this.client.websocket.emit(
+      Command.SUBSCRIBER_PROFILE_UNSUBSCRIBE, {
+        headers: {
+          version: 1
+        },
+        body: {
+          idList: [parseInt(id)]
+        }
+      }
+    );
+  }
+
   async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -84,13 +105,13 @@ class Subscriber extends Base {
         );
 
         if (response.success) {
-          const groupResponses = Object.values(response.body).map((subscriberResponse) => new models.Response(subscriberResponse));
+          const subscriberResponses = Object.values(response.body).map((subscriberResponse) => new models.Response(subscriberResponse));
 
-          for (const [index, subscriberResponse] of groupResponses.entries()) {
-            subscribers.push(subscriberResponse.success ? this._process(new models.Subscriber(this.client, subscriberResponse.body)) : new models.Subscriber(this.client, { id: idList[index] }));
+          for (const [index, subscriberResponse] of subscriberResponses.entries()) {
+            subscribers.push(subscriberResponse.success ? this._process(new models.Subscriber(this.client, subscriberResponse.body, subscribe)) : new models.Subscriber(this.client, { id: idList[index] }, false));
           }
         } else {
-          subscribers.push(...idList.map((id) => new models.Subscriber(this.client, { id })));
+          subscribers.push(...idList.map((id) => new models.Subscriber(this.client, { id }, false)));
         }
       }
     }
