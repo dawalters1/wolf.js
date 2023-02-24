@@ -404,6 +404,19 @@ class Messaging extends Base {
     );
   }
 
+  async getConversationList () {
+    const response = await this.client.websocket.emit(
+      Command.MESSAGE_CONVERSATION_LIST,
+      {
+        headers: {
+          version: 3
+        }
+      }
+    );
+
+    return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
+  }
+
   _cleanUp (reconnection = false) {
     this.subscription._cleanUp(reconnection);
   }

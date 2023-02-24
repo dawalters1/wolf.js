@@ -37,10 +37,10 @@
     "lib": [
       "ESNext"
     ],
-    "target": "ES2020",
+    "target": "ES6",
     "useDefineForClassFields": true,
     // Output Formatting
-    "pretty": false,
+    "pretty": true,
     // Completeness
     "skipLibCheck": false,
     "skipDefaultLibCheck": true

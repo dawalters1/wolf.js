@@ -6,6 +6,7 @@ import StageClient from '../../client/stage/Client.js';
 import { Command, Event, StageBroadcastState, StageConnectionState } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models, { StageClientDurationUpdate, StageClientGeneralUpdate, StageClientViewerCountUpdate } from '../../models/index.js';
+import commandExists from 'command-exists-promise';
 
 class Stage extends Base {
   constructor (client) {
@@ -46,9 +47,13 @@ class Stage extends Base {
     });
   }
 
-  _getClient (targetGroupId, createIfNotExists = false) {
+  async _getClient (targetGroupId, createIfNotExists = false) {
     if (this.clients[targetGroupId]) {
       return this.clients[targetGroupId];
+    }
+
+    if (!await commandExists('ffmpeg')) {
+      throw new WOLFAPIError('ffmpeg must be installed on this device to create or use a stage client', { download: 'https://ffmpeg.org/download.html' });
     }
 
     if (createIfNotExists) {
@@ -145,7 +150,6 @@ class Stage extends Base {
       }
     );
   }
-  // Implement updateAudioConfig
 
   async getAudioCount (targetGroupId) {
     if (validator.isNullOrUndefined(targetGroupId)) {

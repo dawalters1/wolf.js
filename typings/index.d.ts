@@ -907,6 +907,11 @@ export class MessagingHelper extends Base {
      * @param timestamp - The timestamp of the message
      */
     public restoreGroupMessage(targetGroupId: number, timestamp: number): Promise<Response>;
+
+    /**
+     * Get the bots conversation list
+     */
+    public getConversationList(): Promise<Array<Message>>;
 }
 
 export class MessagingSubscriptionHelper extends Base {
@@ -1647,6 +1652,16 @@ export class Utility {
      * Exposes the Timer utility methods
      */
     public timer: TimerUtility;
+    /**
+     * Join a group
+     * @param command - The command
+     */
+    public join(command: CommandContext): Promise<MessageResponse>;
+    /**
+     * Leave a group
+     * @param command - The command
+     */
+    public leave(command: CommandContext): Promise<MessageResponse>;
     /**
      * Download data from a url
      * @param url - The URL

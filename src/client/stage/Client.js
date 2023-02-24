@@ -47,7 +47,7 @@ class Client extends EventEmitter {
     this.completed = false;
     this.samples = [];
     this.emittedPlaying = false;
-    this.duration = 10;
+    this.duration = 0;
     this.volume = 1;
 
     const broadcast = () => setTimeout(async () => {
@@ -200,12 +200,14 @@ class Client extends EventEmitter {
   }
 
   async createSDP () {
-    const offer = await this.client.createOffer({
-      offerToSendAudio: true,
-      offerToSendVideo: false,
-      offerToReceiveAudio: false,
-      offerToReceiveVideo: false
-    });
+    const offer = await this.client.createOffer(
+      {
+        offerToSendAudio: true,
+        offerToSendVideo: false,
+        offerToReceiveAudio: false,
+        offerToReceiveVideo: false
+      }
+    );
 
     this.client.setLocalDescription(offer);
 

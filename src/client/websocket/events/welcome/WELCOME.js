@@ -59,6 +59,7 @@ const login = async (client) => {
 
     return await login(client);
   }
+
   client.currentSubscriber = response.body.subscriber;
 
   client.emit(
@@ -78,6 +79,10 @@ export default async (client, body) => {
     Event.WELCOME,
     welcome
   );
+
+  if (welcome.subscriber?.id !== client.currentSubscriber?.id) {
+    this.client.cognito = undefined;
+  }
 
   client.config.endpointConfig = welcome.endpointConfig;
   client.currentSubscriber = welcome.subscriber;

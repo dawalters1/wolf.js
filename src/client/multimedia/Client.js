@@ -1,79 +1,65 @@
 import axios from 'axios';
-import aws4Axios from 'aws4-axios';
-import AWS from 'aws-sdk';
-import { Event } from '../../constants/index.js';
+import { aws4Interceptor } from 'aws4-axios';
+import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
+import { fromCognitoIdentity } from '@aws-sdk/credential-provider-cognito-identity';
 import Response from '../../models/Response.js';
-
-const { aws4Interceptor } = aws4Axios;
 
 class Multimedia {
   constructor (client) {
     this.client = client;
 
-    this.credentialProvider = {
-      getCredentials: async () => {
-        if (AWS.config.credentials && !AWS.config.credentials.needsRefresh()) {
-          return AWS.config.credentials;
-        }
+    axios.interceptors.request.use(
+      aws4Interceptor(
+        {
+          region: 'eu-west-1',
+          service: 'execute-api'
+        },
+        {
+          getCredentials: async () => {
+            const getCredentials = async (forceNew = false) => {
+              try {
+                const cognito = await this.client.misc.getSecurityToken(forceNew);
 
-        const cognito = await this.client.misc.getSecurityToken(true);
+                const cognitoIdentity = new CognitoIdentityClient({
+                  credentials: fromCognitoIdentity(
+                    {
+                      client: new CognitoIdentityClient(
+                        {
+                          region: 'eu-west-1'
+                        }
+                      ),
+                      identityId: cognito.identity,
+                      logins: {
+                        'cognito-identity.amazonaws.com': cognito.token
+                      }
+                    })
+                });
 
-        if (!AWS.config.credentials) {
-          AWS.config.credentials = new AWS.CognitoIdentityCredentials(
-            {
-              IdentityId: cognito.identity,
-              Logins: {
-                'cognito-identity.amazonaws.com': cognito.token
+                return await cognitoIdentity.config.credentials();
+              } catch (error) {
+                if (error instanceof (await import('@aws-sdk/client-sso-oidc/dist-cjs/models/models_0.js')).ExpiredTokenException) {
+                  return await getCredentials(true);
+                }
+
+                throw error;
               }
-            },
-            {
-              region: 'eu-west-1'
-            }
-          );
+            };
 
-          return await new Promise((resolve, reject) => {
-            AWS.config.getCredentials((error) => {
-              if (error) {
-                this.client.emit(Event.INTERNAL_ERROR, error);
-                reject(error);
-              } else {
-                resolve(AWS.config.credentials);
-              }
-            });
-          });
+            return await getCredentials();
+          }
         }
-
-        AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
-
-        return await new Promise((resolve, reject) => {
-          AWS.config.credentials.refresh((error) => {
-            if (error) {
-              this.client.emit(Event.INTERNAL_ERROR, error);
-              reject(error);
-            } else {
-              resolve(AWS.config.credentials);
-            }
-          });
-        });
-      }
-    };
+      )
+    );
   }
 
   async upload (config, body) {
-    const interceptor = aws4Interceptor(
-      {
-        region: 'eu-west-1',
-        service: 'execute-api'
-      },
-      this.credentialProvider
-    );
-
-    axios.interceptors.request.use(interceptor);
-
     return await new Promise((resolve) => {
       axios.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
-        .then((res) => { resolve(new Response(res.data)); })
-        .catch((error) => resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers })));
+        .then((res) => resolve(new Response(res.data)))
+        .catch((error) => {
+          console.log(error);
+          resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
+        });
     });
   }
 }
