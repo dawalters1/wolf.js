@@ -9,6 +9,8 @@ import StringUtility from './string/index.js';
 import Subscriber from './subscriber/Subscriber.js';
 import Timer from './timer/index.js';
 import superagent from 'superagent';
+import Join from './Join/index.js';
+import Leave from './Leave/index.js';
 
 class Utility {
   constructor (client) {
@@ -19,6 +21,14 @@ class Utility {
     this.string = new StringUtility(client);
     this.subscriber = new Subscriber(client);
     this.timer = new Timer(client);
+  }
+
+  async join (command) {
+    return await Join(this.client, command);
+  }
+
+  async leave (command) {
+    return await Leave(this.client, command);
   }
 
   async download (url) {
@@ -153,8 +163,6 @@ class Utility {
       throw new WOLFAPIError('languageId cannot be null or undefined', { languageId });
     } else if (!validator.isValidNumber(languageId)) {
       throw new WOLFAPIError('languageId must be a valid number', { languageId });
-    } else if (!Object.values(Language).includes(languageId)) {
-      throw new WOLFAPIError('languageId is invalid', { languageId });
     }
 
     switch (languageId) {

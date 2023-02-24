@@ -68,18 +68,18 @@ class Misc extends Base {
 
   async getSecurityToken (requestNew = false) {
     if (!requestNew && this.cognito) {
-      return this.cognito;
+      return this.client.cognito;
     }
 
     const response = await this.client.websocket.emit(Command.SECURITY_TOKEN_REFRESH);
 
     if (response.success) {
-      this.cognito = response.body;
+      this.client.cognito = response.body;
     } else {
       throw new WOLFAPIError(response.headers.message || 'Error occurred while requesting new security token');
     }
 
-    return this.cognito;
+    return this.client.cognito;
   }
 
   async getMessageSettings () {

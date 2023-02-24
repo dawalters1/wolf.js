@@ -268,7 +268,7 @@ class Slot extends Base {
     }
 
     if (!sdp) {
-      sdp = await this.client.stage._getClient(targetGroupId, true).createSDP();
+      sdp = await (await this.client.stage._getClient(targetGroupId, true)).createSDP();
     }
 
     const response = await this.client.websocket.emit(
@@ -281,7 +281,7 @@ class Slot extends Base {
     );
 
     if (response.success) {
-      await this.client.stage._getClient(targetGroupId, true).setResponse(slotId, response.body.sdp);
+      await (await this.client.stage._getClient(targetGroupId, true)).setResponse(slotId, response.body.sdp);
     }
 
     return response;

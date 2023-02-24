@@ -49,7 +49,7 @@ const isValidNumber = (arg, acceptDecimals = false) => (acceptDecimals ? /^-?\d+
 const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'number' && (arg === 1 || arg === 0));
 const isValidDate = (arg) => !isNaN(new Date(arg).getDate());
 const isValidHex = (arg) => !isNullOrWhitespace(arg) && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/giu.test(`${arg.startsWith('#') ? '' : '#'}${arg}`);
-const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.text(arg);
+const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.test(arg);
 
 const isValidUrl = (client, arg) => {
   if (!arg) {
