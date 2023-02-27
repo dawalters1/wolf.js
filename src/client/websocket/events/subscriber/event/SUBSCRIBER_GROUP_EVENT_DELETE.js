@@ -4,8 +4,9 @@ export default async (client, body) => {
   const cached = await client.event.subscription.subscriptions.find((event) => event.id === body.id);
 
   if (!cached) {
-    return;
+    return Promise.resolve();
   }
+
   client.event.subscription.subscriptions.splice(client.event.subscription.subscriptions.indexOf(cached), 1);
 
   return client.emit(

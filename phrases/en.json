@@ -64,6 +64,30 @@
         "value": "(N) The group entry level is too high, please lower it to {reputationLevel} and try again\n\n{nickname} (ID {subscriberId})"
     },
     {
+        "name": "{keyword}_join_group_error_too_few_message",
+        "value": "(N) There are not enough members in this group for me to join (Minimum Required: {minimum})\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_join_group_error_too_many_message",
+        "value": "(N) There are too many members in this group for me to join (Maximum Required: {maximum})\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_join_group_error_permission_2_message",
+        "value": "(N) Only the owner of the requested group can ask me to join\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_join_group_error_permission_3_message",
+        "value": "(N) Only authorized users can join me to groups\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_join_group_error_permission_4_without_details_message",
+        "value": "(N) Only the bot developer can join me to groups\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_join_group_error_permission_4_with_details_message",
+        "value": "(N) Only {developerNickname} (ID {developerSubscriberId}) can join me to groups\n\n{nickname} (ID {subscriberId})"
+    },
+    {
         "name": "{keyword}_join_group_error_passworded_message",
         "value": "(N) The group has a password\n\n{nickname} (ID {subscriberId})"
     },
@@ -102,5 +126,9 @@
     {
         "name": "{keyword}_leave_failed_message",
         "value": "(N) I was unable to leave the requested group\nReason: {reason}\n\n{nickname} (ID {subscriberId})"
+    },
+    {
+        "name": "{keyword}_leave_error_permissions_message",
+        "value": "(N) You are not allowed to use this command\n\n{nickname} (ID {subscriberId})"
     }
 ]

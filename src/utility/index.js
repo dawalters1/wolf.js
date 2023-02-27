@@ -23,12 +23,12 @@ class Utility {
     this.timer = new Timer(client);
   }
 
-  async join (command) {
-    return await Join(this.client, command);
+  async join (command, onPermissionErrorCallback) {
+    return await Join(this.client, command, onPermissionErrorCallback);
   }
 
-  async leave (command) {
-    return await Leave(this.client, command);
+  async leave (command, onPermissionErrorCallback) {
+    return await Leave(this.client, command, onPermissionErrorCallback);
   }
 
   async download (url) {

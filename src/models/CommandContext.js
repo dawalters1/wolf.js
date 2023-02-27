@@ -52,6 +52,10 @@ class CommandContext {
   async hasPrivilege (privilege, requireAll = false) {
     return await this.client.utility.subscriber.privilege.has(this.sourceSubscriberId, privilege, requireAll);
   }
+
+  async isAuthorized () {
+    return await this.client.authorization.isAuthorized(this.sourceSubscriberId);
+  }
 }
 
 export default CommandContext;
