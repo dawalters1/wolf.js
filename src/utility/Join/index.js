@@ -38,6 +38,17 @@ export default async (client, command, onPermissionErrorCallback) => {
     );
   }
 
+  if ((await client.group.list()).length >= joinConfiguration.limit) {
+    return command.reply(
+      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_limit_message`),
+        {
+          nickname: (await command.subscriber()).nickname,
+          subscriberId: command.sourceSubscriberId
+        }
+      )
+    );
+  }
+
   if (!args.length) {
     return command.reply(
       client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_provide_arguments_message`),
