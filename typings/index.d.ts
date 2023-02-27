@@ -1655,13 +1655,15 @@ export class Utility {
     /**
      * Join a group
      * @param command - The command
+     * @param onPermissionErrorCallback - An override method to be called if a permission check fails (Default: undefined)
      */
-    public join(command: CommandContext): Promise<MessageResponse>;
+    public join(command: CommandContext, onPermissionErrorCallback: Function | undefined): Promise<MessageResponse>;
     /**
      * Leave a group
      * @param command - The command
+     * @param onPermissionErrorCallback - An override method to be called if a permission check fails (Default: undefined)
      */
-    public leave(command: CommandContext): Promise<MessageResponse>;
+    public leave(command: CommandContext, onPermissionErrorCallback: Function | undefined): Promise<MessageResponse>;
     /**
      * Download data from a url
      * @param url - The URL
@@ -2002,6 +2004,11 @@ export class CommandContext extends Base {
      * @param requireAll - Whether or not the subscriber should have them all
      */
     public hasPrivilege(privilege: Privilege | Array<Privilege>, requireAll: boolean): Promise<boolean>;
+
+    /**
+     * Check if a user is authorized
+     */
+    public isAuthorized(): Promise<boolean>;
 
     toJSON(): {
         isGroup: boolean;

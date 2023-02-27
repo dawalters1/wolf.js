@@ -56,10 +56,7 @@ class Multimedia {
     return await new Promise((resolve) => {
       axios.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
         .then((res) => resolve(new Response(res.data)))
-        .catch((error) => {
-          console.log(error);
-          resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
-        });
+        .catch((error) => resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers })));
     });
   }
 }

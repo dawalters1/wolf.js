@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.0.0-rc25",
+  "version": "2.0.0-rc26",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "type": "module",
@@ -36,9 +36,9 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^18.13.0",
+    "@types/node": "^18.14.2",
     "chai": "^4.3.7",
-    "eslint": "^8.33.0",
+    "eslint": "^8.35.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",

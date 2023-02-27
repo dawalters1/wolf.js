@@ -1,12 +1,42 @@
 import validator from '../../validator/index.js';
+import { JoinLockType } from '../../constants/index.js';
 
-// TODO: finish implementation
+const canBypass = async (client, required, subscriberId) => {
+  switch (required) {
+    case JoinLockType.DEVELOPER:
+      return client.config.framework.developer === subscriberId;
+    default:
+      return client.config.framework.developer === subscriberId || await client.authorization.isAuthorized(subscriberId);
+  }
+};
 
 /**
+ * @param {import('../../client/WOLF.js').default} client
  * @param {import('../../models/CommandContext.js').default} command
  */
-export default async (client, command) => {
+export default async (client, command, onPermissionErrorCallback) => {
   const args = command.argument.split(client.SPLIT_REGEX);
+
+  const joinConfiguration = client.config.get('framework.join');
+
+  const bypassChecks = await canBypass(client, joinConfiguration.lock, command.sourceSubscriberId);
+
+  if (!bypassChecks && ![JoinLockType.EVERYONE, JoinLockType.GROUP_OWNER].includes(joinConfiguration.lock)) {
+    if (!validator.isNullOrUndefined(onPermissionErrorCallback)) {
+      return onPermissionErrorCallback();
+    }
+
+    return command.reply(
+      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_permission_${joinConfiguration.lock}${joinConfiguration.lock === JoinLockType.DEVELOPER ? `_with${client.config.framework.developer ? '' : 'out'}_details` : ''}_message`),
+        {
+          developerNickname: joinConfiguration.lock === JoinLockType.DEVELOPER && client.config.framework.developer ? (await client.subscriber.getById(client.config.framework.developer)).nickname : '',
+          developerSubscriberId: joinConfiguration.lock === JoinLockType.DEVELOPER && client.config.framework.developer ? client.config.framework.developer : '',
+          nickname: (await command.subscriber()).nickname,
+          subscriberId: command.sourceSubscriberId
+        }
+      )
+    );
+  }
 
   if (!args.length) {
     return command.reply(
@@ -45,10 +75,39 @@ export default async (client, command) => {
     );
   }
 
+  if (!bypassChecks && joinConfiguration.lock === JoinLockType.GROUP_OWNER && group.owner.id !== command.sourceSubscriberId) {
+    if (!validator.isNullOrUndefined(onPermissionErrorCallback)) {
+      return onPermissionErrorCallback();
+    }
+
+    return command.reply(
+      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_permission_${joinConfiguration.lock}_message`),
+        {
+          nickname: (await command.subscriber()).nickname,
+          subscriberId: command.sourceSubscriberId
+        }
+      )
+    );
+  }
+
   if (group.inGroup) {
     return command.reply(
       client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_in_group_message`),
         {
+          nickname: (await command.subscriber()).nickname,
+          subscriberId: command.sourceSubscriberId
+        }
+      )
+    );
+  }
+
+  if (group.membersCount < joinConfiguration.members.min || group.membersCount > joinConfiguration.members.max) {
+    return command.reply(
+      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_group_error_too_${group.membersCount < joinConfiguration.members.min ? 'few' : 'many'}_members_message`),
+        {
+          minimum: client.utility.number.addCommas(joinConfiguration.members.min),
+          maximum: client.utility.number.addCommas(joinConfiguration.members.max),
+
           nickname: (await command.subscriber()).nickname,
           subscriberId: command.sourceSubscriberId
         }

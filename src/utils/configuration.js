@@ -1,7 +1,7 @@
 import path, { dirname } from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
-import { Language, OnlineState } from '../constants/index.js';
+import { JoinCommandType, Language, OnlineState } from '../constants/index.js';
 import _ from 'lodash';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
@@ -22,7 +22,7 @@ const internalGet = (config, path) => {
       const target = result[value];
 
       if (['undefined', 'function'].includes(typeof (target))) {
-        throw new WOLFAPIError('non-existant path requested in config', { path });
+        throw new WOLFAPIError('non-existant path requested in config', { path, route: path.split('.') });
       }
 
       return target;
@@ -42,6 +42,14 @@ const developerConfig = (client) => {
         password: typeof config?.framework?.login?.password === 'string' ? config.framework.login.password : undefined,
         onlineState: typeof config?.framework?.login?.onlineState === 'number' && Object.values(OnlineState).includes(config.framework.login.onlineState) ? config.framework.login.onlineState : OnlineState.ONLINE,
         token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : `WJS${nanoid(32)}`
+      },
+      join: {
+        limit: typeof config?.framework?.join?.limit === 'number' ? config.framework.join.limit : Infinity,
+        lock: typeof config?.framework?.join?.lock === 'number' && Object.values(JoinCommandType).includes(config.framework.join.lock) ? config.framework.join.lock : JoinCommandType.DEVELOPER,
+        members: {
+          min: typeof config?.framework?.join?.members?.min === 'number' && config.framework.join.members.min > 0 ? config.framework.join.members.min : 0,
+          max: typeof config?.framework?.join?.members?.max === 'number' && config.framework.join.members.max > (config?.framework?.join?.members?.min ?? 0) ? config.framework.join.members.max : Infinity
+        }
       },
       commands: {
         ignore: {
