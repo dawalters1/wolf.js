@@ -1,7 +1,7 @@
 import path, { dirname } from 'path';
 import fs from 'fs';
 import yaml from 'yaml';
-import { JoinCommandType, Language, OnlineState } from '../constants/index.js';
+import { JoinLockType, Language, OnlineState } from '../constants/index.js';
 import _ from 'lodash';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
@@ -45,7 +45,7 @@ const developerConfig = (client) => {
       },
       join: {
         limit: typeof config?.framework?.join?.limit === 'number' ? config.framework.join.limit : Infinity,
-        lock: typeof config?.framework?.join?.lock === 'number' && Object.values(JoinCommandType).includes(config.framework.join.lock) ? config.framework.join.lock : JoinCommandType.DEVELOPER,
+        lock: typeof config?.framework?.join?.lock === 'number' && Object.values(JoinLockType).includes(config.framework.join.lock) ? config.framework.join.lock : JoinLockType.DEVELOPER,
         members: {
           min: typeof config?.framework?.join?.members?.min === 'number' && config.framework.join.members.min > 0 ? config.framework.join.members.min : 0,
           max: typeof config?.framework?.join?.members?.max === 'number' && config.framework.join.members.max > (config?.framework?.join?.members?.min ?? 0) ? config.framework.join.members.max : Infinity
