@@ -53,6 +53,7 @@ import Notification from './Notification.js';
 import NotificationAction from './NotificationAction.js';
 import Phrase from '../helper/phrase/Phrase.js';
 import PhraseCount from './PhraseCount.js';
+import PhraseRoute from './PhraseRoute.js';
 import Presence from './Presence.js';
 import Response from './Response.js';
 import Search from './Search.js';
@@ -147,6 +148,7 @@ export {
   NotificationAction,
   Phrase,
   PhraseCount,
+  PhraseRoute,
   Presence,
   Response,
   Search,
@@ -242,6 +244,7 @@ export default {
   NotificationAction,
   Phrase,
   PhraseCount,
+  PhraseRoute,
   Presence,
   Response,
   Search,

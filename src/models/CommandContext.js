@@ -15,6 +15,7 @@ class CommandContext {
     this.sourceSubscriberId = data?.sourceSubscriberId ?? undefined;
     this.timestamp = data?.timestamp;
     this.type = data?.type;
+    this.route = data?.route;
   }
 
   async subscriber () {

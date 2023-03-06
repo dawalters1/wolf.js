@@ -2,6 +2,9 @@ import { Event } from '../../../../../constants/index.js';
 import models, { GroupAudioSlotUpdate } from '../../../../../models/index.js';
 import { patch } from '../../../../../utils/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const group = client.group.groups.find((group) => group.id === body.id);
 
@@ -9,13 +12,15 @@ export default async (client, body) => {
     return Promise.resolve();
   }
 
-  const cached = new models.GroupAudioSlot(client, group.slots.find((slot) => slot.id === body.slot.id));
+  const cached = new models.GroupAudioSlot(client, group.slots.find((slot) => slot.id === body.slot.id), group.id);
 
   patch(group.slots.find((slot) => slot.id === body.slot.id), body.slot);
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
-    client.emit(
-      new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Event.GROUP_AUDIO_REQUEST_EXPIRE : Event.GROUP_AUDIO_REQUEST_DELETE,
+    return client.emit(
+      new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+        ? Event.GROUP_AUDIO_REQUEST_EXPIRE
+        : Event.GROUP_AUDIO_REQUEST_DELETE,
       group,
       new models.GroupAudioSlotRequest(client,
         {
@@ -27,7 +32,7 @@ export default async (client, body) => {
   }
 
   if (!cached.reservedOccupierId && body.slot.reservedOccupierId) {
-    client.emit(
+    return client.emit(
       Event.GROUP_AUDIO_REQUEST_ADD,
       group,
       new models.GroupAudioSlotRequest(client,

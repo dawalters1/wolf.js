@@ -5,6 +5,9 @@ import { fromCognitoIdentity } from '@aws-sdk/credential-provider-cognito-identi
 import Response from '../../models/Response.js';
 
 class Multimedia {
+  /**
+   * @param {import('../WOLF').default} client
+   */
   constructor (client) {
     this.client = client;
 
@@ -20,20 +23,23 @@ class Multimedia {
               try {
                 const cognito = await this.client.misc.getSecurityToken(forceNew);
 
-                const cognitoIdentity = new CognitoIdentityClient({
-                  credentials: fromCognitoIdentity(
-                    {
-                      client: new CognitoIdentityClient(
-                        {
-                          region: 'eu-west-1'
+                const cognitoIdentity = new CognitoIdentityClient(
+                  {
+                    credentials: fromCognitoIdentity(
+                      {
+                        client: new CognitoIdentityClient(
+                          {
+                            region: 'eu-west-1'
+                          }
+                        ),
+                        identityId: cognito.identity,
+                        logins: {
+                          'cognito-identity.amazonaws.com': cognito.token
                         }
-                      ),
-                      identityId: cognito.identity,
-                      logins: {
-                        'cognito-identity.amazonaws.com': cognito.token
                       }
-                    })
-                });
+                    )
+                  }
+                );
 
                 return await cognitoIdentity.config.credentials();
               } catch (error) {

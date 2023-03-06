@@ -1967,6 +1967,7 @@ export class CommandContext extends Base {
     public sourceSubscriberId: number | undefined;
     public timestamp: number;
     public type: MessageType;
+    public route: Array<PhraseRoute>
 
     /**
      * Gets the command subscriber
@@ -3519,6 +3520,11 @@ export class Phrase extends Base {
     };
 }
 
+export class PhraseRoute {
+    public name: string;
+    public language: string;
+}
+
 export class PhraseCount extends Base {
     private constructor(client: WOLF, data: object)
 
@@ -4653,7 +4659,8 @@ export enum MemberListType {
     REGULAR = "regular",
     SILENCED = "silenced",
     BANNED = "banned",
-    BOTS = "bots"
+    BOTS = "bots",
+    MISCELLANEOUS = "miscellaneous"
 }
 
 export enum MessageFilterTier {

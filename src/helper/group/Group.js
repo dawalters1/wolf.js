@@ -41,13 +41,15 @@ class Group extends Base {
       if (response.success) {
         this.fetched = true;
 
-        if (response.body.length > 0) {
-          const groups = await this.getByIds(response.body.map((group) => group.id), true);
+        if (response.body.length) {
+          return this.groups.filter((group) => group.inGroup);
+        }
 
-          for (const group of groups) {
-            group.inGroup = true;
-            group.capabilities = response.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
-          }
+        const groups = await this.getByIds(response.body.map((group) => group.id), true);
+
+        for (const group of groups) {
+          group.inGroup = true;
+          group.capabilities = response.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
         }
       }
     }
@@ -414,7 +416,7 @@ class Group extends Base {
           id: parseInt(id),
           limit: parseInt(limit),
           chronological,
-          timestampEnd: timestamp === 0 ? undefined : parseInt(timestamp)
+          timestampEnd: !timestamp ? undefined : parseInt(timestamp)
         }
       }
     );

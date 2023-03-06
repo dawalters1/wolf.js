@@ -106,6 +106,9 @@ const handleApplicationPalringoGroupAction = async (client, message) => {
   }
 };
 
+/**
+ * @param {import('../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const message = new models.Message(client, body);
 

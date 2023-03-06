@@ -2,6 +2,9 @@ import { Event, ServerEvents } from '../../../constants/index.js';
 import WOLFAPIError from '../../../models/WOLFAPIError.js';
 
 class Processor {
+  /**
+   * @param {import('../../WOLF.js').default} client
+   */
   constructor (client) {
     this.client = client;
 

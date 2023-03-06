@@ -1,6 +1,9 @@
 import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const cached = client.group.groups.find((group) => group.id === body.id);
 
@@ -9,7 +12,7 @@ export default async (client, body) => {
   }
 
   const oldGroup = new models.Group(client, cached);
-  const newGroup = await client.group.getById(body.id, true);
+  const newGroup = await client.group.getById(body.id, true, true);
 
   return client.emit(
     Event.GROUP_UPDATE,

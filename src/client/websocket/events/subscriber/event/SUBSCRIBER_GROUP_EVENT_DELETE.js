@@ -1,5 +1,8 @@
 import { Event } from '../../../../../constants/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const cached = await client.event.subscription.subscriptions.find((event) => event.id === body.id);
 

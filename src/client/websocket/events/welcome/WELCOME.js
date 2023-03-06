@@ -70,6 +70,9 @@ const login = async (client) => {
   return await fininaliseConnection(client, false);
 };
 
+/**
+ * @param {import('../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   await client._cleanUp(body.loggedInUser === undefined);
 

@@ -14,7 +14,7 @@ class GroupMemberList {
     this._bots = new GroupMemberListSection(this.client, this.id, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
 
     // Members that are not in privilged, regular or banned list will appear here until they are loaded in either list
-    this._misc = new GroupMemberListSection(this.client, this.id);
+    this._misc = new GroupMemberListSection(this.client, this.id, MemberListType.MISCELLANEOUS);
   }
 
   async _get (subscriberId) {

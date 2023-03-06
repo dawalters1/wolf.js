@@ -6,8 +6,8 @@ import _ from 'lodash';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 const EventEmitter = events.EventEmitter;
-const { RTCSessionDescription, RTCPeerConnection } = wrtc;
-const { RTCAudioSource } = wrtc.nonstandard;
+const { RTCSessionDescription, RTCPeerConnection, nonstandard } = wrtc;
+const { RTCAudioSource } = nonstandard;
 const MediaStream = wrtc.MediaStream;
 
 const SAMPLE_RATE = 48000;
@@ -21,10 +21,13 @@ const createUInt8Array = (buffer, volume) => {
     buffer[i] = 0;
   }
 
-  return new Int8Array(buffer).map((samples) => (volume === 1 || samples === 0) ? samples : samples * volume);
+  return new Int8Array(buffer).map((samples) => (volume === 1 || !samples) ? samples : samples * volume);
 };
 
 class Client extends EventEmitter {
+  /**
+   * @param {import('../WOLF').default} client
+   */
   constructor (client) {
     super();
 
@@ -125,13 +128,15 @@ class Client extends EventEmitter {
   }
 
   reset (disconnect = false) {
+    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
+
+    clearInterval(this.durationUpdater);
+
     this.ffmpeg?.destroy();
     this.completed = false;
     this.samples = [];
     this.emittedPlaying = false;
     this.duration = 0;
-    clearInterval(this.durationUpdater);
-    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
     if (disconnect) {
       this.connectionState = StageConnectionState.DISCONNECTED;
@@ -155,14 +160,6 @@ class Client extends EventEmitter {
   play (data) {
     this.reset();
 
-    this.durationUpdater = setInterval(() => {
-      if (this.broadcastState === StageBroadcastState.PLAYING) {
-        this.duration += 1000;
-      }
-
-      return Promise.resolve();
-    }, 1000);
-
     this.ffmpeg = ffmpeg(data)
       .toFormat('wav')
       .native()
@@ -183,6 +180,14 @@ class Client extends EventEmitter {
       .on('finish', () => { this.completed = true; });
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;
+
+    this.durationUpdater = setInterval(() => {
+      if (this.broadcastState === StageBroadcastState.PLAYING) {
+        this.duration += 1000;
+      }
+
+      return Promise.resolve();
+    }, 1000);
   }
 
   stop () {
