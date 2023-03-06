@@ -16,7 +16,7 @@ export default async (client, body) => {
   }
 
   const oldSubscriber = new models.Subscriber(client, cached);
-  const newSubscriber = await client.subscriber.getById(body.id, true);
+  const newSubscriber = await client.subscriber.getById(body.id, true, true);
 
   if (client.contact.contacts.some((contact) => contact.id === newSubscriber.id)) {
     patch(client.contact.contacts.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());

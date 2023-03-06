@@ -1,6 +1,9 @@
 import { Event } from '../../../../../constants/index.js';
 import patch from '../../../../../utils/patch.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const group = await client.group.getById(body.groupId);
   const oldEvent = group.events.find((event) => event.id === body.id);

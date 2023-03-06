@@ -19,28 +19,42 @@ class Phrase extends Base {
       .filter((file) => file.endsWith('.json'))
       .forEach((file) =>
         this.load(JSON.parse(fs.readFileSync(path.join(__dirname, `../../../phrases/${file}`), 'utf8'))
-          .map((phrase) => ({ ...phrase, language: path.parse(file).name }))));
+          .map((phrase) =>
+            (
+              {
+                ...phrase,
+                language: path.parse(file).name
+              }
+            )
+          )
+        )
+      );
 
     this.load();
   }
 
   _local () {
     if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) {
-      throw new models.WOLFAPIError('Phrases folder missing in base folder');
+      return Promise.resolve();
     }
 
     const files = fs.readdirSync(path.join(process.cwd(), '/phrases')).filter((file) => file.endsWith('.json'));
 
-    if (files.length === 0) {
-      throw new models.WOLFAPIError('Missing phrase json in phrases folder', { path: path.join(process.cwd(), '/phrases') });
+    if (!files.length) {
+      return Promise.resolve();
     }
 
     for (const file of files) {
       const language = path.parse(file).name;
-      const phrases = JSON.parse(fs.readFileSync(path.join(process.cwd(), `/phrases/${file}`), 'utf8')).map((phrase) => ({
-        ...phrase,
-        language
-      }));
+      const phrases = JSON.parse(fs.readFileSync(path.join(process.cwd(), `/phrases/${file}`), 'utf8'))
+        .map((phrase) =>
+          (
+            {
+              ...phrase,
+              language
+            }
+          )
+        );
 
       this.load(phrases);
     }
@@ -53,7 +67,7 @@ class Phrase extends Base {
 
     phrases = Array.isArray(phrases) ? phrases : [phrases];
 
-    if (phrases.length === 0) {
+    if (!phrases.length) {
       throw new models.WOLFAPIError('phrases cannot be an empty array', { phrases });
     }
 

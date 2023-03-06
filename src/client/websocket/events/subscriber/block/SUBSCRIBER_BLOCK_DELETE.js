@@ -1,5 +1,8 @@
 import { Event } from '../../../../../constants/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const contact = client.contact.blocked.blocked.find((blocked) => blocked.id === body.targetId);
 

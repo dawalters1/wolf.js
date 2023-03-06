@@ -1,6 +1,9 @@
 import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const subscriber = await client.subscriber.getById(body.id, body.targetId);
 

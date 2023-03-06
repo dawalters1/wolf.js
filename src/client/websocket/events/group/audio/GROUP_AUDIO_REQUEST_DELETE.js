@@ -1,6 +1,9 @@
 import { Event } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
 
+/**
+ * @param {import('../../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const group = client.group.groups.find((group) => group.id === body.groupId);
 
@@ -19,7 +22,9 @@ export default async (client, body) => {
   group.audioRequests.splice(group.audioRequests.indexOf(request), 1);
 
   return client.emit(
-    new Date(cached.reservedExpiresAt).getTime() >= Date.now() ? Event.GROUP_AUDIO_REQUEST_EXPIRE : Event.GROUP_AUDIO_REQUEST_DELETE,
+    new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+      ? Event.GROUP_AUDIO_REQUEST_EXPIRE
+      : Event.GROUP_AUDIO_REQUEST_DELETE,
     group,
     request
   );

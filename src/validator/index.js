@@ -42,11 +42,11 @@ const isType = (arg, type) => {
 
 const isNull = (arg) => arg === null;
 const isNullOrUndefined = (arg) => arg === null || arg === undefined;
-const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 'string' && arg.trim().length === 0);
+const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 'string' && !arg.trim().length);
 const isLessThanOrEqualZero = (arg) => isValidNumber(arg) && !(parseInt(arg) > 0);
 const isLessThanZero = (arg) => isValidNumber(arg) && !(parseInt(arg) >= 0);
 const isValidNumber = (arg, acceptDecimals = false) => (acceptDecimals ? /^-?\d+(\.\d+)?$/ : /^-?\d+$/).test(arg);
-const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'number' && (arg === 1 || arg === 0));
+const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'number' && (arg === 1 || !arg));
 const isValidDate = (arg) => !isNaN(new Date(arg).getDate());
 const isValidHex = (arg) => !isNullOrWhitespace(arg) && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/giu.test(`${arg.startsWith('#') ? '' : '#'}${arg}`);
 const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.test(arg);

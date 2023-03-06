@@ -39,7 +39,6 @@ class Websocket {
       {
         transports: ['websocket'],
         reconnection: true
-
       }
     );
 
@@ -64,11 +63,7 @@ class Websocket {
       body: body && !body.headers && !body.body ? { body } : body
     };
 
-    if (command === ServerEvents.MESSAGE.MESSAGE_SEND) {
-      return await this._messageQueue.enqueue(request);
-    } else {
-      return await this._genericQueue.enqueue(request);
-    }
+    return await this[`_${command === ServerEvents.MESSAGE.MESSAGE_SEND ? 'message' : 'generic'}Queue`].enqueue(request);
   }
 }
 

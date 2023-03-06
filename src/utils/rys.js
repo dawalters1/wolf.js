@@ -25,8 +25,7 @@ export default async (client, command) => {
 
   const displayDeveloperDetails = !!client.config.framework.developer;
 
-  return await client.messaging.sendMessage(
-    command,
+  return await command.reply(
     client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${client._frameworkConfig.get('commandKey')}_with${displayDeveloperDetails ? '' : 'out'}_details_message`),
       {
         version: JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'))).version,

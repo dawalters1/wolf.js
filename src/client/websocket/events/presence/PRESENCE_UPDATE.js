@@ -2,6 +2,9 @@ import { Event } from '../../../../constants/index.js';
 import { Presence } from '../../../../models/index.js';
 import patch from '../../../../utils/patch.js';
 
+/**
+ * @param {import('../../../WOLF.js').default} client
+ */
 export default async (client, body) => {
   const subscriber = client.subscriber.subscribers.find((subscriber) => subscriber.id === body.id);
   const old = new Presence(client, { subscriberId: body.id });

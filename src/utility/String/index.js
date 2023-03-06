@@ -95,7 +95,7 @@ class StringUtility extends Base {
 
     const lines = string.split(splitChar).filter(Boolean);
 
-    if (lines.length === 0) {
+    if (!lines.length) {
       throw new WOLFAPIError(`string is longer than ${length} characters and contains no ${splitChar} characters`, { length, splitChar });
     }
 
@@ -121,7 +121,7 @@ class StringUtility extends Base {
     const matches = [...stringA.matchAll(/((\[+)(.+?)(\]+))/gs)]
       .filter(Boolean);
 
-    if (matches.length === 0) {
+    if (!matches.length) {
       return stringA;
     }
 
