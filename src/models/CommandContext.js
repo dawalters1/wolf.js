@@ -57,6 +57,14 @@ class CommandContext {
   async isAuthorized () {
     return await this.client.authorization.isAuthorized(this.sourceSubscriberId);
   }
+
+  getPhrase (language, name = undefined) {
+    if (!name) { // In this case language is the phrase name
+      return this.client.phrase.getByLanguageAndName(this.language, language);
+    }
+
+    return this.client.phrase.getByLanguageAndName(language, name);
+  }
 }
 
 export default CommandContext;
