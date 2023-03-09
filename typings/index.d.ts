@@ -2011,6 +2011,19 @@ export class CommandContext extends Base {
      */
     public isAuthorized(): Promise<boolean>;
 
+    /**
+     * Get a phrase using the commands language
+     * @param name - The phrase name
+     */
+    public getPhrase(name: string): string;
+
+    /**
+     * Get a phrase in a specific language
+     * @param language - The language to get
+     * @param name - The name of the phrase
+     */
+    public getPhrase(language: string, name: string): string;
+
     toJSON(): {
         isGroup: boolean;
         argument: string;
@@ -4902,11 +4915,11 @@ export interface ClientEvents {
     /**
      * Fires when login fails
      */
-    loginFailed: [response: Response],
+    loginFailed: [response: Response<any>],
     /**
      * Fires when login succeeds
      */
-    loginSuccess: [response: Response<Subscriber>],
+    loginSuccess: [subscriber: Subscriber],
     /**
      * Fires when a notification is received
      */
