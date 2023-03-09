@@ -30,6 +30,8 @@ const internalGet = (config, path) => {
 };
 
 const developerConfig = (client) => {
+  console.log(fs.existsSync(path.join(process.cwd(), '/config/default.yaml')));
+
   const config = fs.existsSync(path.join(process.cwd(), '/config/default.yaml')) ? yaml.parse(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8')) : {};
 
   client.config = {

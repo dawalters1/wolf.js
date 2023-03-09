@@ -72,19 +72,19 @@
         "value": "(N) There are too many members in this group for me to join (Maximum Required: {maximum})\n\n{nickname} (ID {subscriberId})"
     },
     {
-        "name": "{keyword}_join_group_error_permission_2_message",
+        "name": "{keyword}_join_group_error_permission_1_message",
         "value": "(N) Only the owner of the requested group can ask me to join\n\n{nickname} (ID {subscriberId})"
     },
     {
-        "name": "{keyword}_join_group_error_permission_3_message",
+        "name": "{keyword}_join_group_error_permission_2_message",
         "value": "(N) Only authorized users can join me to groups\n\n{nickname} (ID {subscriberId})"
     },
     {
-        "name": "{keyword}_join_group_error_permission_4_without_details_message",
+        "name": "{keyword}_join_group_error_permission_3_without_details_message",
         "value": "(N) Only the bot developer can join me to groups\n\n{nickname} (ID {subscriberId})"
     },
     {
-        "name": "{keyword}_join_group_error_permission_4_with_details_message",
+        "name": "{keyword}_join_group_error_permission_3_with_details_message",
         "value": "(N) Only {developerNickname} (ID {developerSubscriberId}) can join me to groups\n\n{nickname} (ID {subscriberId})"
     },
     {
