@@ -123,8 +123,6 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
   content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString();
   content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
 
-  let stamp;
-
   let offset = 0;
 
   let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
