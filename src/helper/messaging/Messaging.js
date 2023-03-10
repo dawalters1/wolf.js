@@ -13,11 +13,17 @@ const validateOptions = (options) => {
 
   _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
   _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : true;
+  _options.formatting.success = typeof _options.formatting.success === 'boolean' ? _options.formatting.success : false;
+  _options.formatting.failed = typeof _options.formatting.failed === 'boolean' ? _options.formatting.failed : false;
   _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
   _options.formatting.alert = typeof _options.formatting.alert === 'boolean' ? _options.formatting.alert : false;
 
   if (_options.formatting.me && _options.formatting.alert) {
     throw new models.WOLFAPIError('you cannot /me and /alert the same message', _options.formatting);
+  }
+
+  if (_options.formatting.success && _options.formatting.failed) {
+    throw new models.WOLFAPIError('you cannot (Y) and (N) the same message', _options.formatting);
   }
 
   return _options;
@@ -114,6 +120,7 @@ const getEmbedData = async (client, formatting, options) => {
 };
 
 const buildMessages = async (client, recipient, isGroup, content, options) => {
+  content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString();
   content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
 
   let offset = 0;
