@@ -123,6 +123,8 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
   content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString();
   content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
 
+  let stamp;
+
   let offset = 0;
 
   let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
@@ -185,8 +187,8 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
       (
         {
           ...link,
-          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0),
-          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0)
+          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0) + (options.formatting.success || options.formatting.failed ? 4 : 0),
+          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0) + (options.formatting.success || options.formatting.failed ? 4 : 0)
         }
       )
     );
