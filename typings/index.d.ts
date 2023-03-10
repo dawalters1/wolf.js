@@ -3394,6 +3394,8 @@ export class MessageSettings extends Base {
 export class MessageSendOptions {
     public formatting: {
         includeEmbeds: boolean,
+        success : boolean,
+        failed : boolean,
         me: boolean,
         alert: boolean
     }
