@@ -185,8 +185,8 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
       (
         {
           ...link,
-          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0) + (options.formatting.success || options.formatting.failed ? 4 : 0),
-          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0) + (options.formatting.success || options.formatting.failed ? 4 : 0)
+          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0),
+          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0)
         }
       )
     );
