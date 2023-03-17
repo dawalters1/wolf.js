@@ -6,6 +6,8 @@ const { Events } = require('../../../constants');
 
 const crypto = require('crypto');
 
+const { version } = require('../../../../package.json');
+
 /**
  * {@hideconstructor}
  */
@@ -24,7 +26,7 @@ module.exports = class Websocket {
   _init () {
     const connectionSettings = this._api._botConfig.get('connection');
     const loginSettings = this._api.config.get('_loginSettings');
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=wolfjsframework&state=${loginSettings.onlineState}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
       {
         transports: ['websocket'],
         reconnection: true,

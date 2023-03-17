@@ -83,69 +83,69 @@ module.exports = async (api, body) => {
         .replace('deviceType=DEVICETYPE', 'deviceType=0');
       break;
     case MessageType.TEXT_PLAIN:
-      {
-        if (message.sourceSubscriberId !== api.currentSubscriber.id) {
-          const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
+    {
+      if (message.sourceSubscriberId !== api.currentSubscriber.id) {
+        const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
 
-          const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
+        const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
 
-          if (secret) {
-            const hasProperArgument = args.length >= 2 && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString();
-            const isDeveloper = api.options.developerId === message.sourceSubscriberId;
+        if (secret) {
+          const hasProperArgument = args.length >= 2 && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString();
+          const isDeveloper = api.options.developerId === message.sourceSubscriberId;
 
-            if ((hasProperArgument && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) || (args.length === 1 && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])))) {
-              const hasDevId = (!!api.options.developerId);
+          if ((hasProperArgument && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) || (args.length === 1 && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])))) {
+            const hasDevId = (!!api.options.developerId);
 
-              const links = [];
-              let body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
-                {
-                  version
-                }
-              );
-
-              const apiNameIndex = body.indexOf('WOLF.js');
-
-              links.push(
-                {
-                  start: apiNameIndex,
-                  end: apiNameIndex + 7,
-                  value: 'https://github.com/dawalters1/wolf.js',
-                  type: MessageLinkingType.EXTERNAL
-                }
-              );
-
-              if (hasDevId) {
-                const nicknameIndex = body.lastIndexOf('{nickname}');
-                const { nickname, id } = await api.subscriber().getById(api.options.developerId);
-
-                body = api.utility().string().replace(body,
-                  {
-                    nickname,
-                    subscriberId: id
-                  }
-                );
-
-                links.push({
-                  start: nicknameIndex,
-                  end: nicknameIndex + nickname.length,
-                  value: id,
-                  type: MessageLinkingType.SUBSCRIBER_PROFILE
-                });
+            const links = [];
+            let body = api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
+              {
+                version
               }
+            );
 
-              return await api.messaging().sendMessage(
-                message,
-                body,
+            const apiNameIndex = body.indexOf('WOLF.js');
+
+            links.push(
+              {
+                start: apiNameIndex,
+                end: apiNameIndex + 7,
+                value: 'https://github.com/dawalters1/wolf.js',
+                type: MessageLinkingType.EXTERNAL
+              }
+            );
+
+            if (hasDevId) {
+              const nicknameIndex = body.lastIndexOf('{nickname}');
+              const { nickname, id } = await api.subscriber().getById(api.options.developerId);
+
+              body = api.utility().string().replace(body,
                 {
-                  links
+                  nickname,
+                  subscriberId: id
                 }
               );
+
+              links.push({
+                start: nicknameIndex,
+                end: nicknameIndex + nickname.length,
+                value: id,
+                type: MessageLinkingType.SUBSCRIBER_PROFILE
+              });
             }
+
+            return await api.messaging().sendMessage(
+              message,
+              body,
+              {
+                links
+              }
+            );
           }
-        } else if (!api.options.messageHandling.processOwnMessages) {
-          return Promise.resolve();
         }
+      } else if (!api.options.messageHandling.processOwnMessages) {
+        return Promise.resolve();
       }
+    }
   }
 
   return await api.emit(

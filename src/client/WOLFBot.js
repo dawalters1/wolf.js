@@ -48,7 +48,7 @@ class WOLFBot extends EventEmitter {
       validateUserConfig(this, yaml.parse(fs.readFileSync(`${configPath}/default.yaml`, 'utf-8')));
     } else {
       validateUserConfig(this, {});
-      this._api.emit(Events.INTERNAL_ERROR, !fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
+      this.emit(Events.INTERNAL_ERROR, !fs.existsSync(configPath) ? '[WARNING]: mising config folder\nSee https://github.com/dawalters1/Bot-Template/tree/main/config' : '[WARNING]: missing default.yaml missing in config folder\nSee https://github.com/dawalters1/Bot-Template/blob/main/config/default.yaml');
     }
 
     validateBotConfig(this, yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')));

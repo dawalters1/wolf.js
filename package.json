@@ -30,7 +30,9 @@
   ],
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "dependencies": {
-    "aws-sdk": "2.1261.0",
+    "@aws-sdk/client-cognito-identity": "^3.279.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.279.0",
+    "aws4-axios": "^2.4.9",
     "bull": "4.10.2",
     "command-exists-promise": "2.0.2",
     "config": "3.3.8",
@@ -44,14 +46,15 @@
     "tldts": "5.7.101",
     "uuid": "8.3.2",
     "wrtc": "0.4.7",
-    "yaml": "2.1.3"
+    "yaml": "2.1.3",
+    "axios": "0.27.2"
   },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^17.0.45",
-    "eslint": "^8.31.0",
-    "eslint-config-standard": "^7.1.0",
-    "eslint-plugin-import": "^1.11.0",
+    "eslint": "^8.35.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1"
   },

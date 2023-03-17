@@ -1,5 +1,8 @@
-const AWS = require('aws-sdk');
-const Signer = AWS.Signers.V4;
+const axios = require('axios');
+const { aws4Interceptor } = require('aws4-axios');
+const { CognitoIdentityClient } = require('@aws-sdk/client-cognito-identity');
+const { fromCognitoIdentity } = require('@aws-sdk/credential-provider-cognito-identity');
+
 const Response = require('../../../models/ResponseObject');
 
 const validator = require('../../../validator');
@@ -8,8 +11,6 @@ const imageSize = require('image-size');
 const fileType = require('file-type');
 
 const { v4: uuidv4 } = require('uuid');
-
-const { Events } = require('../../../constants');
 
 const buildRoute = (route) => {
   return `/v${route.version}/${route.route}`;
@@ -21,109 +22,60 @@ const buildRoute = (route) => {
 module.exports = class MultiMediaServiceClient {
   constructor (api) {
     this._api = api;
-    this._client = new AWS.HttpClient();
-  }
 
-  async _getCredentials () {
-    if (AWS.config.credentials && !AWS.config.credentials.needsRefresh()) {
-      return AWS.config.credentials;
-    }
-
-    const cognito = await this._api.getSecurityToken(true);
-
-    if (!AWS.config.credentials) {
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials(
+    axios.interceptors.request.use(
+      aws4Interceptor(
         {
-          IdentityId: cognito.identity,
-          Logins: {
-            'cognito-identity.amazonaws.com': cognito.token
-          }
+          region: 'eu-west-1',
+          service: 'execute-api'
         },
         {
-          region: 'eu-west-1'
-        }
-      );
+          getCredentials: async () => {
+            const getCredentials = async (forceNew = false) => {
+              try {
+                const cognito = await this._api.getSecurityToken(forceNew);
 
-      return await new Promise((resolve, reject) => {
-        AWS.config.getCredentials(function (error) {
-          if (error) {
-            this._api.emit(Events.INTERNAL_ERROR, error);
-            reject(error);
-          } else {
-            resolve(AWS.config.credentials);
+                const cognitoIdentity = new CognitoIdentityClient(
+                  {
+                    credentials: fromCognitoIdentity(
+                      {
+                        client: new CognitoIdentityClient(
+                          {
+                            region: 'eu-west-1'
+                          }
+                        ),
+                        identityId: cognito.identity,
+                        logins: {
+                          'cognito-identity.amazonaws.com': cognito.token
+                        }
+                      }
+                    )
+                  }
+                );
+
+                return await cognitoIdentity.config.credentials();
+              } catch (error) {
+                if (error instanceof (await import('@aws-sdk/client-sso-oidc/dist-cjs/models/models_0.js')).ExpiredTokenException) {
+                  return await getCredentials(true);
+                }
+
+                throw error;
+              }
+            };
+
+            return await getCredentials();
           }
-        });
-      });
-    }
-
-    AWS.config.credentials.params.Logins['cognito-identity.amazonaws.com'] = cognito.token;
-
-    return await new Promise((resolve, reject) => {
-      AWS.config.credentials.refresh(function (error) {
-        if (error) {
-          this._api.emit(Events.INTERNAL_ERROR, error);
-          reject(error);
-        } else {
-          resolve(AWS.config.credentials);
         }
-      });
-    });
+      )
+    );
   }
 
-  async _sendRequest (route, body, attempt = 1) {
-    try {
-      const data = JSON.stringify({ body });
-
-      const awsRequest = new AWS.HttpRequest(`${this._api.endpointConfig.mmsUploadEndpoint}${route}`, 'eu-west-1');
-      awsRequest.method = 'POST';
-      awsRequest.headers = {
-        'Content-Length': data.length,
-        'Content-Type': 'application/json',
-        Host: awsRequest.endpoint.host
-      };
-
-      awsRequest.body = data;
-
-      new Signer(awsRequest, 'execute-api').addAuthorization(await this._getCredentials(), new Date());
-
-      return await new Promise((resolve, reject) => {
-        this._client.handleRequest(awsRequest, null, function (response) {
-          let responseBody = '';
-          response.on('data', function (chunk) { responseBody += chunk; });
-
-          response.on('end', function () {
-            resolve(new Response(JSON.parse(responseBody), route));
-          });
-        }, function (error) {
-          reject(error);
-        });
-      });
-    } catch (error) {
-      if (attempt >= 3) {
-        throw error;
-      }
-
-      const mmsSettings = this._api._botConfig.multimedia;
-
-      switch (route) {
-        case buildRoute(mmsSettings.messaging):
-          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error sending message to ${body.isGroup ? 'group' : 'private'} message to: ${body.recipient} with error ${error}, retrying...`);
-          break;
-        case buildRoute(mmsSettings.avatar.group):
-          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating group ${body.id} avatar with error ${error}, retrying...`);
-          break;
-        case buildRoute(mmsSettings.avatar.subscriber):
-          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating subscriber ${body.id} avatar with error ${error}, retrying...`);
-          break;
-        case buildRoute(mmsSettings.event):
-          this._api.emit(Events.INTERNAL_ERROR, `[MultiMediaService]: Error updating event ${body.id} thumbnail with error ${error}, retrying...`);
-          break;
-      }
-
-      await this._getCredentials();
-
-      return await this._sendRequest(route, body, attempt + 1);
-    }
+  async _upload (route, body) {
+    return await new Promise((resolve) => {
+      axios.post(`${this._api.endpointConfig.mmsUploadEndpoint}${route}`, { body })
+        .then((res) => resolve(new Response(res.data)))
+        .catch((error) => resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers })));
+    });
   }
 
   async sendMessage (targetType, targetId, content, mimeType) {
@@ -163,7 +115,7 @@ module.exports = class MultiMediaServiceClient {
       flightId: uuidv4()
     };
 
-    return this._sendRequest(buildRoute(messagingSettings), data);
+    return this._upload(buildRoute(messagingSettings), data);
   }
 
   async uploadGroupAvatar (targetGroupId, avatar, mimeType) {
@@ -202,7 +154,7 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest(buildRoute(groupAvatarSettings), body);
+    return this._upload(buildRoute(groupAvatarSettings), body);
   }
 
   async uploadSubscriberAvatar (avatar, mimeType) {
@@ -232,7 +184,7 @@ module.exports = class MultiMediaServiceClient {
       mimeType
     };
 
-    return this._sendRequest(buildRoute(subscriberAvatarSettings), body);
+    return this._upload(buildRoute(subscriberAvatarSettings), body);
   }
 
   async uploadEventThumbnail (eventId, thumbnail, mimeType) {
@@ -259,6 +211,6 @@ module.exports = class MultiMediaServiceClient {
       source: this._api.currentSubscriber.id
     };
 
-    return this._sendRequest(buildRoute(eventThumbnailSettings), body);
+    return this._upload(buildRoute(eventThumbnailSettings), body);
   }
 };

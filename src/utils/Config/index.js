@@ -76,11 +76,11 @@ const validateUserConfig = (api, opts) => {
   api._options = {
     keyword: _opts.keyword,
     commandHandling: {
-      processOwnMessages: opts.app.commandSettings.processOwnMessages
+      processOwnMessages: _opts.app.commandSettings.processOwnMessages
     },
     messageHandling: {
-      processOwnMessages: opts.app.messageSettings.processOwnMessages,
-      subscriptions: opts.app.messageSettings.subscriptions
+      processOwnMessages: _opts.app.messageSettings.processOwnMessages,
+      subscriptions: _opts.app.messageSettings.subscriptions
     },
     ignoreOfficialBots: _opts.app.commandSettings.ignoreOfficialBots,
     ignoreUnofficialBots: _opts.app.commandSettings.ignoreUnofficialBots,
