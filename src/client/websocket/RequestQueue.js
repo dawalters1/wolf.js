@@ -57,13 +57,14 @@ class RequestQueue {
           const response = new Response(resp);
 
           if (!response.success) {
-            if (this.client._frameworkConfig.get('connection.requests.retryCodes').includes(response.code) && item.request?.attempts < this.client._frameworkConfig.get('connection.requests.attempts')) {
+            if (this.client._frameworkConfig.get('connection.requests.retryCodes').includes(response.code) && (this.client._frameworkConfig.get('connection.requests.essential').includes(command.toLowerCase()) || item.request?.attempts < this.client._frameworkConfig.get('connection.requests.attempts'))) {
               item.request.attempts = item.request.attempts ? item.request.attempts += 1 : 1;
 
               return await sendRequest(item);
             }
             this.client.emit(Event.PACKET_FAILED, item.request.command, item.request.body);
           }
+
           item.resolve(response);
           this._processing = false;
           this.dequeue();

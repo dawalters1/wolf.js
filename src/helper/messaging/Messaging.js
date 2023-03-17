@@ -23,13 +23,13 @@ const validateOptions = (options) => {
   }
 
   if (_options.formatting.success && _options.formatting.failed) {
-    throw new models.WOLFAPIError('you cannot (Y) and (N) the same message', _options.formatting);
+    throw new models.WOLFAPIError('you cannot success and fail the same message', _options.formatting);
   }
 
   return _options;
 };
 
-const getFormattingData = async (client, message, ads, links) => {
+const getFormattingData = async (client, ads, links) => {
   const data = {
     formatting: {
       groupLinks: await ads.reduce(async (result, ad) => {
@@ -157,7 +157,7 @@ const buildMessages = async (client, recipient, isGroup, content, options) => {
     })()).trim();
 
     // Get formatting data for the chunk
-    const formatting = await getFormattingData(client, messageChunk, client.utility.string.getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...client.utility.string.getLinks(messageChunk)]);
+    const formatting = await getFormattingData(client, client.utility.string.getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...client.utility.string.getLinks(messageChunk)]);
 
     const embeds = embedsAttached ? undefined : await getEmbedData(client, formatting, options);
 
