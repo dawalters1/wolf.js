@@ -16,7 +16,7 @@ connection:
   requests:
     retryCodes: [500, 502, 503, 504, 408]
     attempts: 3
-
+    essential: [message group subscribe, message private subscribe, security login, security logout]
 avatar:
   placeholder: https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
 

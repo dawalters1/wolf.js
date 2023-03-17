@@ -1,7 +1,13 @@
 import Processor from './events/Processor.js';
 import RequestQueue from './RequestQueue.js';
 import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
+import fs from 'fs';
 import io from 'socket.io-client';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class Websocket {
   constructor (client) {
@@ -32,10 +38,11 @@ class Websocket {
   }
 
   _create () {
-    const connectionSettings = this.client._frameworkConfig.get('connection');
+    const { host, port, query } = this.client._frameworkConfig.get('connection');
+    const { device, version } = query;
     const { onlineState, token } = this.client.config.get('framework.login');
 
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${token}&device=${connectionSettings.query.device}&state=${onlineState}`,
+    this.socket = io(`${host}:${port}/?token=${token}&device=${device}&state=${onlineState}&version=${version || JSON.parse(fs.readFileSync(path.join(__dirname, '../../../package.json'))).version}`,
       {
         transports: ['websocket'],
         reconnection: true

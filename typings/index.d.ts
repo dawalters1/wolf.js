@@ -3393,10 +3393,25 @@ export class MessageSettings extends Base {
 
 export class MessageSendOptions {
     public formatting: {
+        /**
+         * Whether or not the message should show a link/ad preview
+         */
         includeEmbeds: boolean,
-        success : boolean,
-        failed : boolean,
+        /**
+         * Whether or not the bot should append (Y) to the start of the message
+         */
+        success: boolean,
+        /**
+         * Whether or not the bot should append (N) to the start of the message
+         */
+        failed: boolean,
+        /**
+         * Whether or not the bot should send the message with /me formatting
+         */
         me: boolean,
+        /**
+         * Whether or not the bot should send the message with /alert formatting
+         */
         alert: boolean
     }
 }
