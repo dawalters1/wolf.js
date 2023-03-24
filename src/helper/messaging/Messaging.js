@@ -84,10 +84,12 @@ const getEmbedData = async (client, formatting, options) => {
         continue;
       }
 
-      return {
-        type: EmbedType.GROUP_PREVIEW,
-        groupId: item.groupId
-      };
+      return [
+        {
+          type: EmbedType.GROUP_PREVIEW,
+          groupId: item.groupId
+        }
+      ];
     }
 
     if (Reflect.has(item, 'url')) {
