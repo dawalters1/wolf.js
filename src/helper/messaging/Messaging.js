@@ -8,33 +8,61 @@ const { v4: uuidv4 } = require('uuid');
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
 const ResponseObject = require('../../models/ResponseObject');
+const _ = require('lodash');
 
 const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
 
-const getDefaultOptions = (api, opts) => {
-  const _opts = Object.assign({}, opts);
+const validateV2Options = (options) => {
+  const _options = Object.assign({}, options);
 
-  _opts.chunkSize = typeof _opts.chunkSize === 'number' ? parseInt(_opts.chunkSize) : 1000;
+  _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
+  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : true;
+  _options.formatting.success = typeof _options.formatting.success === 'boolean' ? _options.formatting.success : false;
+  _options.formatting.failed = typeof _options.formatting.failed === 'boolean' ? _options.formatting.failed : false;
+  _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
+  _options.formatting.alert = typeof _options.formatting.alert === 'boolean' ? _options.formatting.alert : false;
 
-  _opts.chunk = typeof _opts.chunk === 'boolean' ? _opts.chunk : true;
-
-  _opts.includeEmbeds = typeof _opts.includeEmbeds === 'boolean' ? _opts.includeEmbeds : false;
-
-  _opts.links = _opts.links && Array.isArray(_opts.links) ? _opts.links : [];
-
-  _opts.formatting = typeof _opts.formatting === 'object' ? _opts.formatting : {};
-
-  _opts.formatting.includeEmbeds = typeof _opts.formatting.includeEmbeds === 'boolean' ? _opts.formatting.includeEmbeds : false;
-
-  _opts.formatting.me = typeof _opts.formatting.me === 'boolean' ? _opts.formatting.me : false;
-
-  _opts.formatting.alert = typeof _opts.formatting.alert === 'boolean' ? _opts.formatting.alert : false;
-
-  if (_opts.formatting.me && _opts.formatting.alert) {
-    throw new Error('you cannot /me and /alert the same message');
+  if (_options.formatting.me && _options.formatting.alert) {
+    throw new Error('you cannot /me and /alert the same message', _options.formatting);
   }
 
-  _opts.links.forEach(link => {
+  if (_options.formatting.success && _options.formatting.failed) {
+    throw new Error('you cannot success and fail the same message', _options.formatting);
+  }
+
+  return _options;
+};
+
+const getDefaultOptions = (api, opts) => {
+  const _options = Object.assign({}, opts);
+
+  if(_options.chunk || _options.chunkSize) {
+    console.warn('[WARNING]: Message Helper - opts.chunk and opts.chunkSize are deprecated and will be removed in 2.0')
+  }
+
+  _options.chunkSize = typeof _options.chunkSize === 'number' ? parseInt(_options.chunkSize) : 1000;
+
+  _options.chunk = typeof _options.chunk === 'boolean' ? _options.chunk : true;
+
+  if(_options.links){
+    console.warn('[WARNING]: Message Helper - opts.links is deprecated please use [content](url) approach instead')
+  }
+
+  _options.links = _options.links && Array.isArray(_options.links) ? _options.links : [];
+
+  _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
+
+  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : false;
+
+  _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
+
+  _options.formatting.alert = typeof _options.formatting.alert === 'boolean' ? _options.formatting.alert : false;
+
+  if (_options.formatting.me && _options.formatting.alert) {
+    throw new Error('Message Helper - you cannot /me and /alert the same message');
+  }
+
+  _options.links.forEach(link => {
     if (validator.isNullOrUndefined(link.start)) {
       throw new Error('start cannot be null or undefined');
     } else if (!validator.isValidNumber(link.start)) {
@@ -73,15 +101,181 @@ const getDefaultOptions = (api, opts) => {
 
   const lengthValidation = api._botConfig.get('validation.messaging.length');
 
-  if (_opts.chunkSize < lengthValidation.min) {
+  if (_options.chunkSize < lengthValidation.min) {
     this._api.emit(Events.INTERNAL_ERROR, `[WARNING]: Message Helper - Minimum chunk size is ${lengthValidation.min}`);
-    _opts.chunkSize = lengthValidation.min;
-  } else if (_opts.chunkSize > lengthValidation.max) {
+    _options.chunkSize = lengthValidation.min;
+  } else if (_options.chunkSize > lengthValidation.max) {
     this._api.emit(Events.INTERNAL_ERROR, `[WARNING]: Message Helper - Maximum chunk size is  ${lengthValidation.min}`);
-    _opts.chunkSize = lengthValidation.max;
+    _options.chunkSize = lengthValidation.max;
   }
 
-  return _opts;
+  return _options;
+};
+
+const getFormattingData = async (api, ads, links) => {
+  const data = {
+    formatting: {
+      groupLinks: await ads.reduce(async (result, ad) => {
+        if ((await result).length >= 25) {
+          return result;
+        }
+
+        (await result).push(
+          {
+            start: ad.index,
+            end: ad.index + ad[1].length,
+            groupId: (await api.group().getByName(ad[2]))?.id
+          }
+        );
+
+        return result;
+      }, []),
+
+      links: links.map((link) =>
+        (
+          {
+            start: link.start,
+            end: link.end,
+            url: link.link
+          }
+        )
+      )
+    }
+  };
+
+  if (!data.formatting.groupLinks.length) {
+    Reflect.deleteProperty(data.formatting, 'groupLinks');
+  }
+
+  if (!data.formatting.links.length) {
+    Reflect.deleteProperty(data.formatting, 'links');
+  }
+
+  return Object.values(data.formatting).length ? data : undefined;
+};
+
+const getEmbedData = async (api, formatting, options) => {
+  if (!formatting || !options.formatting.includeEmbeds) {
+    return undefined;
+  }
+
+  const { groupLinks, links } = formatting?.formatting;
+
+  for (const item of [...groupLinks ?? [], ...links ?? []].flat().filter(Boolean)) {
+    if (Reflect.has(item, 'groupId')) {
+      if (item.groupId === undefined) {
+        continue;
+      }
+
+      return [{
+        type: EmbedType.GROUP_PREVIEW,
+        groupId: item.groupId
+      }];
+    }
+
+    if (Reflect.has(item, 'url')) {
+      if (item.url.startsWith('wolf://')) {
+        continue;
+      }
+
+      const response = await api.getLinkMetadata(item.url);
+
+      if (!response.success) {
+        continue;
+      }
+
+      const metadata = response.body;
+
+      const preview = {
+        type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
+        url: api._botConfig.get('validation.link.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
+      };
+
+      if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
+        preview.title = metadata?.title ?? '-';
+
+        preview.body = metadata?.description ?? '-';
+      }
+
+      return [preview];
+    }
+  }
+};
+
+const buildMessages = async (api, recipient, isGroup, content, options) => {
+  content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString();
+  content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
+
+  let offset = 0;
+
+  let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)]?.reduce((results, link) => {
+    content = content.replace(link[0], link[1]);
+
+    results.push(
+      {
+        start: link.index - offset,
+        end: (link.index + link[1].length) - offset,
+        link: link[2]
+      }
+    );
+
+    offset += (link[0].length - link[1].length);
+
+    return results;
+  }, []);
+
+  const messages = [];
+  let embedsAttached = false;
+
+  while (true) { // While loop... probably not the best approach ¯\_(ツ)_/¯
+    const messageChunk = content.substr(0, developerInjectedLinks.find((link) => link.start < 1000 && link.end > 1000)?.start || api.utility().string().getAds(content)?.find((ad) => ad.start < 1000 && ad.end > 1000)?.start || api.utility().string().getLinks(content)?.find((link) => link.start < 1000 && link.end > 1000)?.start || (() => {
+      if (content.length < 1000) {
+        return content.length;
+      }
+
+      // Ensure splitting is done at a space and not mid word
+      const index = content.lastIndexOf(' ', 1000);
+
+      return index === -1 ? 1000 : index;
+    })()).trim();
+
+    // Get formatting data for the chunk
+    const formatting = await getFormattingData(api, api.utility().string().getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...api.utility().string().getLinks(messageChunk)]);
+
+    const embeds = embedsAttached ? undefined : await getEmbedData(api, formatting, options);
+
+    messages.push(
+      {
+        recipient,
+        isGroup,
+        mimeType: 'text/plain',
+        data: Buffer.from(messageChunk, 'utf8'),
+        flightId: uuidv4(),
+        metadata: formatting,
+        embeds
+      }
+    );
+
+    if (messageChunk.length === content.length) {
+      break;
+    }
+
+    embedsAttached = embedsAttached || (embeds?.length ?? false);
+
+    content = (options.formatting.alert ? `/alert ${content.slice(messageChunk.length)}` : options.formatting.me ? `/me ${content.slice(messageChunk.length)}` : content.slice(messageChunk.length)).trim();
+
+    developerInjectedLinks = developerInjectedLinks.filter((developerInjectedLinks) => developerInjectedLinks.start >= messageChunk.length).map((link) =>
+      (
+        {
+          ...link,
+          start: (link.start - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0),
+          end: (link.end - messageChunk.length - 1) + (options.formatting.alert ? 8 : options.formatting.me ? 5 : 0)
+        }
+      )
+    );
+  }
+
+  return messages;
 };
 
 class Messaging extends BaseHelper {
@@ -168,7 +362,34 @@ class Messaging extends BaseHelper {
     }
   }
 
-  async _sendMessage (targetType, targetId, content, opts = {}) {
+
+
+  async _sendMessageV2 (targetType, targetId, content, opts = {}) {
+    opts = validateV2Options(opts);
+
+    if (opts.links && opts.links.some((link) => link.start > content.length || link.end > content.length)) {
+      throw new models.WOLFAPIError('deeplinks start index and end index must be less than or equal to the contents length', { faults: opts.links.filter((link) => link.start > content.length || link.end > content.length) });
+    }
+
+    const messages = await buildMessages(this._api, targetId, targetType === MessageTypes.GROUP, content, opts);
+
+    const responses = [];
+
+    for (const message of messages) {
+      responses.push(await this._websocket.emit(Commands.MESSAGE_SEND, message));
+    }
+
+    return responses.length > 1
+      ? new ResponseObject(
+        {
+          code: 207,
+          body: responses
+        }
+      )
+      : responses[0];
+  }
+
+  async _sendMessageV1 (targetType, targetId, content, opts = {}) {
     const mimeType = Buffer.isBuffer(content) ? (await fileType.fromBuffer(content)).mime : 'text/plain';
 
     if (this._api._botConfig.get('multimedia.messaging.validation.mimes').includes(mimeType)) {
@@ -177,6 +398,10 @@ class Messaging extends BaseHelper {
 
     if (!this._api._botConfig.get('validation.messaging.mimes').includes(mimeType)) {
       throw new Error(`${mimeType} is not a supported mimetype`);
+    }
+
+    if(!Reflect.has(opts, 'links') && !Reflect.has(opts, 'chunk')) {
+      return await this._sendMessageV2(targetType, targetId, content, opts);
     }
 
     const _opts = getDefaultOptions(this._api, opts);
@@ -424,7 +649,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(MessageTypes.GROUP, targetGroupId, content, opts);
+      return await this._sendMessageV1(MessageTypes.GROUP, targetGroupId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendGroupMessage(targetGroupId=${JSON.stringify(targetGroupId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -448,7 +673,7 @@ class Messaging extends BaseHelper {
         throw new Error('content cannot be null or empty');
       }
 
-      return await this._sendMessage(MessageTypes.PRIVATE, targetSubscriberId, content, opts);
+      return await this._sendMessageV1(MessageTypes.PRIVATE, targetSubscriberId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendPrivateMessage(targetSubscriberId=${JSON.stringify(targetSubscriberId)}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;
@@ -470,7 +695,7 @@ class Messaging extends BaseHelper {
         throw new Error('commandOrMessage must contain propery isGroup');
       }
 
-      return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
+      return await this._sendMessageV1(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, opts);
     } catch (error) {
       error.internalErrorMessage = `api.messaging().sendMessage(commandOrMessage=${commandOrMessage}, content=${JSON.stringify(validator.isBuffer(content) ? 'Buffer -- Too long to display' : content)}, opts=${JSON.stringify(opts)})`;
       throw error;

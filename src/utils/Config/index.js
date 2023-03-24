@@ -26,7 +26,7 @@ const get = (configType, config, path) => {
 
       return target;
     },
-    config);
+      config);
   } catch (error) {
     error.internalErrorMessage = `api.${configType}.get(path=${JSON.stringify(path)})`;
     throw error;

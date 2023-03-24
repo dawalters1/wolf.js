@@ -1,4 +1,7 @@
 const validator = require('../../validator');
+const urlRegexSafe = require('url-regex-safe');
+const _ = require('lodash');
+const { isValidUrl } = require('../../validator');
 
 const tlds = require('tldts');
 // eslint-disable-next-line prefer-regex-literals
@@ -13,20 +16,20 @@ const trimPunctuation = (string) => {
   return string;
 };
 
-function escapeRegExp (string) {
+function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function replaceRange (string, start, end, substitute) {
+function replaceRange(string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
 }
 
 class String {
-  constructor (api) {
+  constructor(api) {
     this._api = api;
   }
 
-  replace (string, replacements) {
+  replace(string, replacements) {
     try {
       if (typeof (string) !== 'string') {
         throw new Error('string must be type string');
@@ -55,7 +58,7 @@ class String {
     }
   }
 
-  isEqual (sideA, sideB) {
+  isEqual(sideA, sideB) {
     if (typeof (sideA) !== 'string') {
       return false;
     }
@@ -83,7 +86,7 @@ class String {
     return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
   }
 
-  chunk (string, max = 1000, splitChar = '\n', joinChar = '\n') {
+  chunk(string, max = 1000, splitChar = '\n', joinChar = '\n') {
     try {
       if (typeof (string) !== 'string') {
         throw new Error('string must be type string');
@@ -134,7 +137,7 @@ class String {
     }
   };
 
-  trimAds (string) {
+  trimAds(string) {
     try {
       if (typeof (string) !== 'string') {
         throw new Error('name must be a string');
@@ -164,7 +167,26 @@ class String {
     }
   }
 
-  getValidUrl (url) {
+  getLinks(string) {
+    if (validator.isNullOrUndefined(string)) {
+      throw new Error('string cannot be null or undefined', { string });
+    }
+
+    return string.match(urlRegexSafe({ localhost: true, returnString: false }))?.map((url) => url.replace(/\.+$/, ''))
+      .sort((a, b) => b.length - a.length)
+      .reduce((results, url) => {
+        results.push(...[...string.matchAll(new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu'))].filter((match) => !results.some((existingMatch) => existingMatch.index === match.index) && isValidUrl(this._api, match[0])));
+
+        return results;
+      }, [])
+      .map((url) => ({
+        start: url.index,
+        end: url.index + url[0].length,
+        link: url[0]
+      })) ?? [];
+  }
+
+  getValidUrl(url) {
     try {
       if (typeof (url) !== 'string') {
         throw new Error('url must be a string');
@@ -229,7 +251,7 @@ class String {
     }
   }
 
-  getAds (arg) {
+  getAds(arg) {
     try {
       if (typeof (arg) !== 'string') {
         throw new Error('url must be a string');

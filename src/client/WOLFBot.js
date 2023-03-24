@@ -39,7 +39,7 @@ const Utility = require('../utils');
 const { validateUserConfig, validateBotConfig } = require('../utils/Config');
 
 class WOLFBot extends EventEmitter {
-  constructor () {
+  constructor() {
     super();
 
     const configPath = path.join(path.dirname(require.main.filename), '/config/');
@@ -82,28 +82,28 @@ class WOLFBot extends EventEmitter {
     this._blacklist = [];
   }
 
-  get SPLIT_REGEX () {
+  get SPLIT_REGEX() {
     return /[\n\t,،\s+]/g;
   }
 
   /**
    * The current account logged in
    */
-  get currentSubscriber () {
+  get currentSubscriber() {
     return this._currentSubscriber;
   }
 
   /**
    * The config settings
    */
-  get config () {
+  get config() {
     return this._config;
   }
 
   /**
    * Simplified config settings
    */
-  get options () {
+  get options() {
     return this._options;
   }
 
@@ -112,7 +112,7 @@ class WOLFBot extends EventEmitter {
   /**
    * The websocket client
    */
-  get websocket () {
+  get websocket() {
     return this._websocket;
   }
 
@@ -120,7 +120,7 @@ class WOLFBot extends EventEmitter {
    *  Exposes the multiMediaService methods
    * @returns {MultiMediaService}
    */
-  multiMediaService () {
+  multiMediaService() {
     return this._multiMediaService;
   }
 
@@ -130,7 +130,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the commandHandler methods
    * @returns {CommandHandler}
    */
-  commandHandler () {
+  commandHandler() {
     return this._commandHandler;
   }
 
@@ -140,7 +140,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the achievement methods
    * @returns {Achievement}
    */
-  achievement () {
+  achievement() {
     return this._achievement;
   }
 
@@ -148,7 +148,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the authorization methods
    * @returns {Authorization}
    */
-  authorization () {
+  authorization() {
     return this._authorization;
   }
 
@@ -156,7 +156,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the banned methods
    * @returns {Banned}
    */
-  banned () {
+  banned() {
     return this._banned;
   }
 
@@ -164,7 +164,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the blocked methods
    * @returns {Blocked}
    */
-  blocked () {
+  blocked() {
     return this._blocked;
   }
 
@@ -172,7 +172,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the contact methods
    * @returns {Contact}
    */
-  contact () {
+  contact() {
     return this._contact;
   }
 
@@ -180,7 +180,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the charm methods
    * @returns {Charm}
    */
-  charm () {
+  charm() {
     return this._charm;
   }
 
@@ -188,7 +188,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the discovery methods
    * @returns {Discovery}
    */
-  discovery () {
+  discovery() {
     return this._discovery;
   }
 
@@ -196,7 +196,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the event methods
    * @returns {Event}
    */
-  event () {
+  event() {
     return this._event;
   }
 
@@ -204,7 +204,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the group methods
    * @returns {Group}
    */
-  group () {
+  group() {
     return this._group;
   }
 
@@ -212,7 +212,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the messaging methods
    * @returns {Messaging}
    */
-  messaging () {
+  messaging() {
     return this._messaging;
   }
 
@@ -220,7 +220,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the notification methods
    * @returns {Notification}
    */
-  notification () {
+  notification() {
     return this._notification;
   }
 
@@ -228,7 +228,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the phrase methods
    * @returns {Phrase}
    */
-  phrase () {
+  phrase() {
     return this._phrase;
   }
 
@@ -236,7 +236,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the stage methods
    * @returns {Stage}
    */
-  stage () {
+  stage() {
     return this._stage;
   }
 
@@ -244,7 +244,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the store methods
    * @returns {Store}
    */
-  store () {
+  store() {
     return this._store;
   }
 
@@ -252,7 +252,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the subscriber methods
    * @returns {Subscriber}
    */
-  subscriber () {
+  subscriber() {
     return this._subscriber;
   }
 
@@ -260,7 +260,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the tipping methods
    * @returns {Tipping}
    */
-  tipping () {
+  tipping() {
     return this._tipping;
   }
 
@@ -268,7 +268,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the Topic methods
    * @returns {Topic}
    */
-  topic () {
+  topic() {
     return this._topic;
   }
   // #endregion
@@ -277,7 +277,7 @@ class WOLFBot extends EventEmitter {
    * Exposes the utility methods
    * @returns {Utility}
    */
-  utility () {
+  utility() {
     return this._utility;
   }
 
@@ -289,7 +289,7 @@ class WOLFBot extends EventEmitter {
    * @param {String} loginType - The account type
    * @param {String} token - The token to use to log in (Automatically generated if not provided)
    */
-  login (email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
+  login(email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
         throw new Error('email cannot be null or empty');
@@ -334,7 +334,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  logout () {
+  logout() {
     this.websocket.emit(Commands.SECURITY_LOGOUT);
 
     this.websocket.socket.disconnect();
@@ -344,7 +344,7 @@ class WOLFBot extends EventEmitter {
 
   // #region Methods
 
-  async getSecurityToken (requestNew = false) {
+  async getSecurityToken(requestNew = false) {
     try {
       if (!requestNew && this.cognito) {
         return this.cognito;
@@ -365,7 +365,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async setOnlineState (onlineState) {
+  async setOnlineState(onlineState) {
     try {
       if (validator.isNullOrUndefined(onlineState)) {
         throw new Error('onlineState cannot be null or undefined');
@@ -388,7 +388,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async search (query) {
+  async search(query) {
     try {
       if (validator.isNullOrWhitespace(query)) {
         throw new Error('query cannot be null or empty');
@@ -404,7 +404,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async getLinkMetadata (link) {
+  async getLinkMetadata(link) {
     try {
       if (validator.isNullOrWhitespace(link)) {
         throw new Error('link cannot be null or empty');
@@ -425,7 +425,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async getLinkBlacklist (requestNew = false) {
+  async getLinkBlacklist(requestNew = false) {
     try {
       if (!validator.isValidBoolean(requestNew)) {
         throw new Error('requestNew must be a valid boolean');
@@ -448,11 +448,11 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async getMessageSettings () {
+  async getMessageSettings() {
     return await this.websocket.emit(Commands.MESSAGE_SETTING);
   }
 
-  async setMessageSettings (messageFilterTier) {
+  async setMessageSettings(messageFilterTier) {
     try {
       if (validator.isNullOrUndefined(messageFilterTier)) {
         throw new Error('messageFilterTier cannot be null or undefined');
@@ -479,7 +479,7 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  async updateAvatar (avatar) {
+  async updateAvatar(avatar) {
     try {
       return await this.multiMediaService().uploadSubscriberAvatar(avatar, (await fileType.fromBuffer(avatar)).mime);
     } catch (error) {
@@ -488,12 +488,12 @@ class WOLFBot extends EventEmitter {
     }
   }
 
-  updateProfile () {
+  updateProfile() {
     return new SubscriberProfileBuilder(this, this.currentSubscriber);
   }
   // #endregion
 
-  async _cleanup (disconnected = false) {
+  async _cleanup(disconnected = false) {
     await Promise.all([
       this._achievement._cleanup(disconnected),
       this._blocked._cleanup(disconnected),

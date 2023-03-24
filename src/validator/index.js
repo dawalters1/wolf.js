@@ -55,49 +55,67 @@ const isValidDate = arg => !isNaN(new Date(arg).getDate());
 
 const isBuffer = arg => Buffer.isBuffer(arg);
 
-const isValidUrl = (api, arg) => {
-  if (arg && !(arg.startsWith('[') && arg.endsWith(']'))) {
-    if ((arg.includes('.') || arg.includes(':'))) {
-      let link = trimPunctuation(arg.toLowerCase());
-
-      const protocol = api._botConfig.get('validation.link.protocols').sort((a, b) => b.length - a.length).find((proto) => arg.toLowerCase().startsWith(proto));
-
-      if (protocol) {
-        link = link.slice(protocol ? protocol.length : 0);
-      }
-
-      const args = link.split(protocol === 'wolf://' ? '/' : /[.:]/g).filter(Boolean);
-
-      if (protocol === 'wolf://') {
-        return args.length > 0;
-      }
-
-      if (args.length >= 2) {
-        try {
-          const data = new URL(`${protocol || 'http://'}${link.trim()}`);
-
-          const parsed = tlds.parse(data.host);
-
-          if (parsed) {
-            if (parsed.isIp) {
-              return false;
-            }
-
-            if (parsed.domain && parsed.publicSuffix.split('.').every((tld) => this._api._botConfig.get('validation.link.tld').includes(tld))) {
-              return true;
-            }
-          }
-
-          return false;
-        } catch (error) {
-          return false;
-        }
-      }
-    }
+const isValidUrl = (client, arg) => {
+  if (!arg) {
+    return false;
   }
-  return false;
-};
 
+  if (typeof arg !== 'string') {
+    return false;
+  }
+
+  if (arg.startsWith('[') && arg.endsWith(']')) {
+    return false;
+  }
+
+  if (!(arg.includes('.') || arg.includes(':'))) {
+    return false;
+  }
+
+  let sanitised = trimPunctuation(arg).trim();
+
+  const validationConfig = client._botConfig.get('validation.link');
+
+  const protocol = validationConfig.protocols.sort((a, b) => b.length - a.length).find((prot) => sanitised.toLowerCase().startsWith(prot));
+
+  sanitised = sanitised.slice(protocol?.length ?? 0);
+
+  const domainArgs = sanitised.split(protocol === 'wolf://' ? '/' : /[.:]/g).filter(Boolean);
+
+  if (protocol === 'wolf://' && domainArgs.length) {
+    return true;
+  }
+
+  if (domainArgs.length < 2) {
+    return false;
+  }
+
+  try {
+    const data = new URL(`${protocol || 'http://'}${sanitised}`);
+    const parsed = tlds.parse(data.host);
+
+    if (!parsed) {
+      return false;
+    }
+
+    if (parsed.isIp) {
+      return !!protocol;
+    }
+
+    if (!parsed.isIcann) {
+      return false;
+    }
+
+    if (!parsed.domain && !parsed.publicSuffix.split('.').every((tld) => validationConfig.tlds.includes(tld.toLowerCase()))) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // if something is malformed with provided data to URL it will throw an error
+    return false;
+  }
+};
 const isValidAd = arg => arg.startsWith('[') && arg.endsWith(']') && arg.split('\n').length === 1;
 
 module.exports = {

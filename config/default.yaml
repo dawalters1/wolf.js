@@ -77,20 +77,20 @@ secrets:
     commands: ['>rys']
     responses:
       - hasDevId: true
-        response: "I am an Unofficial Bot using WOLF.js {version}\n\nOwned By: {nickname} ({subscriberId})"
+        response: "I am an Unofficial Bot using [WOLF.js](https://github.com/dawalters1/wolf.js) {version}\n\nOwned By: [{nickname}](wolf://user/{subscriberId}) ({subscriberId})"
       - hasDevId: false
-        response: "I am an Unofficial Bot using WOLF.js {version}"
+        response: "I am an Unofficial Bot using [WOLF.js](https://github.com/dawalters1/wolf.js) {version}"
   - language: tr
     commands: ['>sırlarını', '>sırrını']
     responses:
       - hasDevId: true
-        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum.\n\nSahibim: {nickname} ({subscriberId})"
+        response: "Ben [WOLF.js](https://github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahibim: [{nickname}](wolf://user/{subscriberId}) ({subscriberId})"
       - hasDevId: false
-        response: "Ben WOLF.js {version} kullanan resmi olmayan bir botum."
+        response: "Ben [WOLF.js](https://github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum."
   - language: en
     commands: ['>كشف']
     responses:
       - hasDevId: true
-        response: "انا بوت غير رسمي نسخة WOLF.js {version}\n\nمالك البوت: {nickname} ({subscriberId})"
+        response: "انا بوت غير رسمي نسخة [WOLF.js](https://github.com/dawalters1/wolf.js) {version}\n\nمالك البوت: [{nickname}](wolf://user/{subscriberId} ({subscriberId})"
       - hasDevId: false
-        response: "انا بوت غير رسمي نسخة WOLF.js {version}"
+        response: "انا بوت غير رسمي نسخة [WOLF.js](https://github.com/dawalters1/wolf.js) {version}"
