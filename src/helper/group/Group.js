@@ -41,7 +41,7 @@ class Group extends Base {
       if (response.success) {
         this.fetched = true;
 
-        if (response.body.length) {
+        if (!response.body?.length) {
           return this.groups.filter((group) => group.inGroup);
         }
 

@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 class Websocket {
-  constructor(client) {
+  constructor (client) {
     this.client = client;
     this._processor = new Processor(this.client);
 
@@ -33,11 +33,11 @@ class Websocket {
     );
   }
 
-  _disconnect() {
+  _disconnect () {
     return this.socket?.disconnect();
   }
 
-  _create() {
+  _create () {
     const { host, port, query } = this.client._frameworkConfig.get('connection');
     const { device, version } = query;
     const { onlineState, token } = this.client.config.get('framework.login');
@@ -54,11 +54,11 @@ class Websocket {
     this.socket.on(SocketEvent.CONNECT_ERROR, error => this.client.emit(Event.CONNECTION_ERROR, error));
     this.socket.on(SocketEvent.CONNECT_TIMEOUT, error => this.client.emit(Event.CONNECTION_TIMEOUT, error));
     this.socket.on(SocketEvent.DISCONNECT, reason => {
-      if (reason === "io server disconnect") {
+      if (reason === 'io server disconnect') {
         this.socket.connect();
       }
 
-      this.client.emit(Event.DISCONNECTED, reason)
+      this.client.emit(Event.DISCONNECTED, reason);
     });
     this.socket.on(SocketEvent.ERROR, error => this.client.emit(Event.ERROR, error));
     this.socket.io.on(SocketEvent.RECONNECT_ATTEMPT, reconnectNumber => this.client.emit(Event.RECONNECTING, reconnectNumber));
@@ -70,7 +70,7 @@ class Websocket {
     this.socket.onAny((eventName, data) => this._processor.process(eventName, data));
   }
 
-  async emit(command, body) {
+  async emit (command, body) {
     const request = {
       command,
       body: body && !body.headers && !body.body ? { body } : body
