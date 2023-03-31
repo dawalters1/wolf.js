@@ -6,7 +6,7 @@ const TRIM_START_PUNC = new RegExp(/^\p{Punctuation}+/, 'gui');
 // eslint-disable-next-line prefer-regex-literals
 const TRIM_END_PUNC = new RegExp(/\p{Punctuation}+$/, 'gui');
 
-const trimPunctuation = (string) => string?.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '');
+const trimPunctuation = (string) => string?.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '').trim();
 
 const isType = (arg, type) => {
   const typeOf = typeof arg;
@@ -68,7 +68,7 @@ const isValidUrl = (client, arg) => {
     return false;
   }
 
-  let sanitised = trimPunctuation(arg).trim();
+  let sanitised = trimPunctuation(arg);
 
   const validationConfig = client._frameworkConfig.get('validation.links');
 

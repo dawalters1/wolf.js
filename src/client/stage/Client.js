@@ -116,7 +116,7 @@ class Client extends EventEmitter {
         this.emit(slot.occupierMuted ? Event.STAGE_CLIENT_MUTED : Event.STAGE_CLIENT_UNMUTED, { sourceSubscriberId });
       } else if (slot.locked) {
         this.reset(true);
-      } else if (this.connectionState !== StageConnectionState.READY && slot.connectionState === 'CONNECTED') {
+      } else if (this.connectionState !== StageConnectionState.READY && slot.connectionState === StageConnectionState.CONNECTED.toUpperCase()) {
         this.connectionState = StageConnectionState.READY;
         this.emit(Event.STAGE_CLIENT_READY);
       }
