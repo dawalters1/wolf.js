@@ -7,7 +7,7 @@ charms:
 
 connection:
   host: https://v3-rc.palringo.com
-  port: 3051
+  port: 443
   query:
     device: wjsframework
   mocha:

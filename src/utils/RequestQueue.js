@@ -1,5 +1,5 @@
-import { Event } from '../../constants/index.js';
-import { Response } from '../../models/index.js';
+import { Event } from '../constants/index.js';
+import { Response } from '../models/index.js';
 import TokenBucket from 'tokenbucket';
 
 class RequestQueue {
@@ -13,6 +13,16 @@ class RequestQueue {
         interval
       }
     );
+
+    this.client.on('disconnect', () => {
+      this.bucket = new TokenBucket(
+        {
+          size,
+          tokensToAddPerInterval,
+          interval
+        }
+      );
+    });
 
     this.queue = [];
 
@@ -34,7 +44,7 @@ class RequestQueue {
     this._processing = true;
 
     const sendRequest = async (item) => {
-      if (!this.bucket.removeTokensSync(1)) {
+      if (!this.bucket.removeTokensSync(1)) { // This doesn't actually work apparently.
         const msFromNow = (this.bucket.lastFill + this.bucket.interval) - Date.now();
 
         this.client.emit(

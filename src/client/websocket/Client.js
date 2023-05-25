@@ -1,5 +1,5 @@
 import Processor from './events/Processor.js';
-import RequestQueue from './RequestQueue.js';
+import RequestQueue from '../../utils/RequestQueue.js';
 import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
 import fs from 'fs';
 import io from 'socket.io-client';

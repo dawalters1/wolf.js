@@ -418,7 +418,7 @@ class Messaging extends Base {
       Command.MESSAGE_CONVERSATION_LIST,
       {
         headers: {
-          version: 3
+          version: 4
         }
       }
     );
