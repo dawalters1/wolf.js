@@ -347,7 +347,7 @@ class Utility {
       parts.push(`${info.minutes}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_minutes`)}`);
     }
 
-    if (info.seconds >= 0) {
+    if ((!info.seconds && !parts.length) || info.seconds > 0) {
       parts.push(`${info.seconds}${this.client.phrase.getByLanguageAndName(language, `${this.client.config.keyword}_time_type_seconds`)}`);
     }
 
