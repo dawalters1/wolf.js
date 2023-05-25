@@ -122,8 +122,8 @@ const getEmbedData = async (client, formatting, options) => {
 };
 
 const buildMessages = async (client, recipient, isGroup, content, options) => {
-  content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString();
-  content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString();
+  content = (options.formatting.success ? `(Y) ${content}` : options.formatting.failed ? `(N) ${content}` : content).toString().trim();
+  content = (options.formatting.alert ? `/alert ${content}` : options.formatting.me ? `/me ${content}` : content).toString().trim();
 
   let offset = 0;
 
@@ -418,7 +418,7 @@ class Messaging extends Base {
       Command.MESSAGE_CONVERSATION_LIST,
       {
         headers: {
-          version: 3
+          version: 4
         }
       }
     );

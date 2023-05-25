@@ -14,44 +14,47 @@ class Multimedia {
     axios.interceptors.request.use(
       aws4Interceptor(
         {
-          region: 'eu-west-1',
-          service: 'execute-api'
-        },
-        {
-          getCredentials: async () => {
-            const getCredentials = async (forceNew = false) => {
-              try {
-                const cognito = await this.client.misc.getSecurityToken(forceNew);
+          instance: axios,
+          options: {
+            region: 'eu-west-1',
+            service: 'execute-api'
+          },
+          credentials: {
+            getCredentials: async () => {
+              const getCredentials = async (forceNew = false) => {
+                try {
+                  const cognito = await this.client.misc.getSecurityToken(forceNew);
 
-                const cognitoIdentity = new CognitoIdentityClient(
-                  {
-                    credentials: fromCognitoIdentity(
-                      {
-                        client: new CognitoIdentityClient(
-                          {
-                            region: 'eu-west-1'
+                  const cognitoIdentity = new CognitoIdentityClient(
+                    {
+                      credentials: fromCognitoIdentity(
+                        {
+                          client: new CognitoIdentityClient(
+                            {
+                              region: 'eu-west-1'
+                            }
+                          ),
+                          identityId: cognito.identity,
+                          logins: {
+                            'cognito-identity.amazonaws.com': cognito.token
                           }
-                        ),
-                        identityId: cognito.identity,
-                        logins: {
-                          'cognito-identity.amazonaws.com': cognito.token
                         }
-                      }
-                    )
+                      )
+                    }
+                  );
+
+                  return await cognitoIdentity.config.credentials();
+                } catch (error) {
+                  if (error instanceof (await import('@aws-sdk/client-sso-oidc/dist-cjs/models/models_0.js')).ExpiredTokenException) {
+                    return await getCredentials(true);
                   }
-                );
 
-                return await cognitoIdentity.config.credentials();
-              } catch (error) {
-                if (error instanceof (await import('@aws-sdk/client-sso-oidc/dist-cjs/models/models_0.js')).ExpiredTokenException) {
-                  return await getCredentials(true);
+                  throw error;
                 }
+              };
 
-                throw error;
-              }
-            };
-
-            return await getCredentials();
+              return await getCredentials();
+            }
           }
         }
       )
