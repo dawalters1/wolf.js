@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
-import Websocket from './websocket/Websocket.js';
+import Websocket from './websocket/Client.js';
 import Multimedia from './multimedia/Client.js';
 import CommandHandler from '../command/CommandHandler.js';
 import Achievement from '../helper/achievement/Achievement.js';
