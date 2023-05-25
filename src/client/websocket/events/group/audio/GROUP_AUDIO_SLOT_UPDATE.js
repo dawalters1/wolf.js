@@ -1,6 +1,6 @@
 import { Event } from '../../../../../constants/index.js';
 import models, { GroupAudioSlotUpdate } from '../../../../../models/index.js';
-import { patch } from '../../../../../utils/index.js';
+import patch from '../../../../../utils/patch.js';
 
 /**
  * @param {import('../../../../WOLF.js').default} client
