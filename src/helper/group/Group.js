@@ -256,7 +256,7 @@ class Group extends Base {
     const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.group');
 
     if (avatar) {
-      if (Buffer.isBuffer(avatar)) {
+      if (!Buffer.isBuffer(avatar)) {
         throw new models.WOLFAPIError('avatar must be a valid buffer', { avatar });
       }
 
@@ -273,24 +273,24 @@ class Group extends Base {
       Command.GROUP_PROFILE_UPDATE,
       {
         id: parseInt(id),
-        description: description || this.description,
-        peekable: peekable || this.peekable,
+        description,
+        peekable,
         messageConfig: {
-          disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink,
-          disableImage: disableImage || this.messageConfig.disableImage,
-          disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter,
-          disableVoice: disableVoice || this.messageConfig.disableVoice
+          disableHyperlink,
+          disableImage,
+          disableImageFilter,
+          disableVoice
         },
         extended: {
-          longDescription: longDescription || this.extended.longDescription,
-          discoverable: discoverable || this.extended.discoverable,
-          language: parseInt(language) || this.extended.language,
-          category: parseInt(category) || this.extended.category,
-          advancedAdmin: advancedAdmin || this.extended.advancedAdmin,
-          questionable: questionable || this.extended.questionable,
-          locked: locked || this.extended.locked,
-          closed: closed || this.extended.closed,
-          entryLevel: parseInt(entryLevel) || this.extended.entryLevel
+          longDescription,
+          discoverable,
+          language: parseInt(language),
+          category: parseInt(category),
+          advancedAdmin,
+          questionable,
+          locked,
+          closed,
+          entryLevel: parseInt(entryLevel)
         }
       }
     );
