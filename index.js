@@ -6,6 +6,7 @@ import {
 } from './src/builders/index.js';
 import {
   AdminAction,
+  Avatar,
   Capability,
   Category,
   ContextType,
@@ -30,6 +31,7 @@ import {
   TipDirection,
   TipPeriod,
   TipType,
+  VerificationTier,
   WolfstarTalent
 } from './src/constants/index.js';
 import {
@@ -133,6 +135,7 @@ const exports = {
   Command,
   CharmSelectedBuilder,
   AdminAction,
+  Avatar,
   Capability,
   Category,
   ContextType,
@@ -157,6 +160,7 @@ const exports = {
   TipDirection,
   TipPeriod,
   TipType,
+  VerificationTier,
   WolfstarTalent,
   Achievement,
   AchievementCategory,
@@ -259,6 +263,7 @@ export {
   Command,
   CharmSelectedBuilder,
   AdminAction,
+  Avatar,
   Capability,
   Category,
   ContextType,
@@ -283,6 +288,7 @@ export {
   TipDirection,
   TipPeriod,
   TipType,
+  VerificationTier,
   WolfstarTalent,
   Achievement,
   AchievementCategory,

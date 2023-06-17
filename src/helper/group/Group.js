@@ -273,24 +273,24 @@ class Group extends Base {
       Command.GROUP_PROFILE_UPDATE,
       {
         id: parseInt(id),
-        description,
-        peekable,
+        description: (description === null || description) ? description : group.description,
+        peekable: (peekable === null || peekable) ? peekable : group.peekable,
         messageConfig: {
-          disableHyperlink,
-          disableImage,
-          disableImageFilter,
-          disableVoice
+          disableHyperlink: (disableHyperlink === null || disableHyperlink) ? disableHyperlink : group.messageConfig.disableHyperlink,
+          disableImage: (disableImage === null || disableImage) ? disableImage : group.messageConfig.disableImage,
+          disableImageFilter: (disableImageFilter === null || disableImageFilter) ? disableImageFilter : group.messageConfig.disableImageFilter,
+          disableVoice: (disableVoice === null || disableVoice) ? disableVoice : group.messageConfig.disableVoice
         },
         extended: {
-          longDescription,
-          discoverable,
-          language: parseInt(language),
-          category: parseInt(category),
-          advancedAdmin,
-          questionable,
-          locked,
-          closed,
-          entryLevel: parseInt(entryLevel)
+          longDescription: (longDescription === null || longDescription) ? longDescription : group.extended.longDescription,
+          discoverable: (discoverable === null || discoverable) ? discoverable : group.extended.discoverable,
+          language: (language === null || language) ? parseInt(language) : group.extended.language,
+          category: (category === null || category) ? parseInt(category) : group.extended.category,
+          advancedAdmin: (advancedAdmin === null || advancedAdmin) ? advancedAdmin : group.extended.advancedAdmin,
+          questionable: (questionable === null || questionable) ? questionable : group.extended.questionable,
+          locked: (locked === null || locked) ? locked : group.extended.locked,
+          closed: (closed === null || closed) ? closed : group.extended.closed,
+          entryLevel: (entryLevel === null || entryLevel) ? parseInt(entryLevel) : group.extended.entryLevel
         }
       }
     );

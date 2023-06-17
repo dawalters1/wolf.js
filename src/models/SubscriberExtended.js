@@ -5,6 +5,7 @@ class SubscriberExtended extends Base {
   constructor (client, data) {
     super(client);
     this.about = data?.about;
+    this.dateOfBirth = data?.dateOfBirth;
     this.gender = data?.gender;
     this.language = data?.language;
     this.lookingFor = data?.lookingFor ?? LookingFor.NOT_SPECIFIED;
