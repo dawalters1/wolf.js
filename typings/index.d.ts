@@ -157,7 +157,7 @@ export class WOLF {
      * Update the current logged in account profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
 }
 
@@ -335,7 +335,7 @@ export class Command {
      * @param callbackObject - The command callbacks
      * @param children - The sub commands for the command
      */
-    constructor(phraseName: string, callbackObject: { group: (command: Command, ...args: any) => void, private: (command: Command, ...args: any) => void, both: (command: Command, ...args: any) => void }, children: Array<Command>)
+    constructor(phraseName: string, callbackObject: { group: (command: CommandContext, ...args: any) => void, private: (command: CommandContext, ...args: any) => void, both: (command: CommandContext, ...args: any) => void }, children: Array<Command>)
 }
 export class Base {
     public constructor(client: WOLF);
@@ -2299,6 +2299,7 @@ export class Group extends Base {
     public audioConfig: GroupAudioConfig;
     public messageConfig: GroupMessageConfig;
     public members: GroupMemberList;
+    public verificationTier: VerificationTier;
 
     public inGroup: boolean;
     public capabilities: Capability;
@@ -2357,7 +2358,9 @@ export class Group extends Base {
         peekable: boolean;
         premium: boolean;
         icon: number;
+        verificationTier: VerificationTier,
         iconInfo: {
+            availableTypes: Array<Avatar>,
             availableSizes: {
                 small: string;
                 medium: string;
@@ -3050,6 +3053,7 @@ export class IconInfo extends Base {
     public get(size: IconSize): string;
 
     toJSON(): {
+        availableTypes: Array<Avatar>,
         availableSizes: {
             small: string;
             medium: string;
@@ -3988,12 +3992,13 @@ export class Subscriber extends Base {
      * Update the bots profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
     toJSON(): {
         charms: SubscriberSelectedCharm;
         deviceType: DeviceType;
         extended: {
+            dateOfBirth: Date,
             about: string;
             gender: Gender;
             language: Language;
@@ -4008,6 +4013,7 @@ export class Subscriber extends Base {
         icon: number;
         iconHash: string;
         iconInfo: {
+            availableTypes: Array<Avatar>,
             availableSizes: {
                 small: string;
                 medium: string;
@@ -4085,6 +4091,7 @@ export class SubscriberEventAdditionalInfo extends Base {
 export class SubscriberExtended extends Base {
     private constructor(client: WOLF, data: object)
     public about: string;
+    public dateOfBirth: Date;
     public gender: Gender;
     public language: Language;
     public lookinFor: LookingFor;
@@ -4522,6 +4529,7 @@ export class WolfstarsProfile extends Base {
 
 export const Constants: {
     AdminAction: AdminAction;
+    Avatar: Avatar,
     Capability: Capability;
     Category: Category;
     ContextType: ContextType;
@@ -4545,6 +4553,7 @@ export const Constants: {
     TipPeriod: TipPeriod;
     TipType: TipType;
     TopicPageRecipeType: TopicPageRecipeType;
+    VerificationTier: VerificationTier,
     WolfstarTalent: WolfstarTalent;
 }
 
@@ -4558,6 +4567,14 @@ export enum AdminAction {
     JOIN = 17,
     LEAVE = 18,
     OWNER = 32,
+}
+
+export enum Avatar {
+    GIF = 'gif',
+    JPG = 'jpg',
+    JPEG = 'jpeg',
+    M4A = 'm4a',
+    MP4 = 'mp4'
 }
 
 export enum Capability {
@@ -4802,6 +4819,12 @@ export enum TopicPageRecipeType {
     EVENT = "event",
     GROUP = "group",
     PRODUCT = "product"
+}
+
+export enum VerificationTier {
+    NONE = 'none',
+    PREMIUM = 'premium',
+    VERIFIED = 'verified'
 }
 
 export enum WolfstarTalent {

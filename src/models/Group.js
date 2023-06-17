@@ -30,6 +30,7 @@ class Group extends Base {
     this.audioConfig = new GroupAudioConfig(client, data?.audioConfig);
     this.messageConfig = new GroupMessageConfig(client, data?.messageConfig);
     this.members = new GroupMemberList(client, data?.id);
+    this.verificationTier = data?.verificationTier;
 
     this.inGroup = false;
     this.capabilities = Capability.NOT_MEMBER;

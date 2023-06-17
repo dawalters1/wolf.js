@@ -7,6 +7,7 @@ class IconInfo extends Base {
     super(client);
 
     this.availableSizes = new IconInfoAvailableSize(client, data?.availableSizes, targetType, targetId);
+    this.availableTypes = data?.availableTypes ?? [];
   }
 
   get (size) {

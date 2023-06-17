@@ -1,4 +1,5 @@
 import AdminAction from './AdminAction.js';
+import Avatar from './Avatar.js';
 import Capability from './Capability.js';
 import Category from './Category.js';
 import Command from './Command.js';
@@ -28,10 +29,12 @@ import StageConnectionState from './StageConnectionState.js';
 import TipDirection from './TipDirection.js';
 import TipPeriod from './TipPeriod.js';
 import TipType from './TipType.js';
+import VerificationTier from './VerificationTier.js';
 import WolfstarTalent from './WolfstarTalent.js';
 
 const exports = {
   AdminAction,
+  Avatar,
   Capability,
   Category,
   Command,
@@ -61,11 +64,13 @@ const exports = {
   TipDirection,
   TipPeriod,
   TipType,
+  VerificationTier,
   WolfstarTalent
 };
 
 export {
   AdminAction,
+  Avatar,
   Capability,
   Category,
   Command,
@@ -95,6 +100,7 @@ export {
   TipDirection,
   TipPeriod,
   TipType,
+  VerificationTier,
   WolfstarTalent,
 
   exports as default

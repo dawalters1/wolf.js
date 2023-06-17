@@ -129,7 +129,7 @@ class WOLF extends EventEmitter {
     );
   }
 
-  async update ({ nickname, status, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
+  async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
     if (nickname) {
       if (!validator.isType(nickname, 'string')) {
         throw new WOLFAPIError('nickname must be a valid string', { nickname });
@@ -174,9 +174,15 @@ class WOLF extends EventEmitter {
       }
     }
 
+    if (dateOfBirth) {
+      if (!validator.isValidDate(dateOfBirth)) {
+        throw new WOLFAPIError('dateOfBirth must be a valid date', { dateOfBirth });
+      }
+    }
+
     if (gender) {
       if (!validator.isValidNumber(gender)) {
-        throw new WOLFAPIError('onlineState must be a valid number', { gender });
+        throw new WOLFAPIError('gender must be a valid number', { gender });
       } else if (!Object.values(Gender).includes(parseInt(gender))) {
         throw new WOLFAPIError('gender is not valid', { gender });
       }
@@ -220,15 +226,16 @@ class WOLF extends EventEmitter {
       Command.SUBSCRIBER_PROFILE_UPDATE,
       {
         nickname: nickname || this.currentSubscriber.nickname,
-        status: status || this.currentSubscriber.status,
+        status: (status === null || status) ? status : this.currentSubscriber.status,
         extended: {
-          about: about || this.currentSubscriber.extended.about,
-          gender: gender || this.currentSubscriber.extended.gender,
-          language: language || this.currentSubscriber.extended.language,
-          lookingFor: lookingFor || this.currentSubscriber.extended.lookingFor,
-          name: name || this.currentSubscriber.extended.name,
-          relationship: relationship || this.currentSubscriber.extended.relationship,
-          urls: urls || this.currentSubscriber.extended.urls || []
+          dateOfBirth: (dateOfBirth === null || dateOfBirth) ? dateOfBirth : this.currentSubscriber.extended.dateOfBirth,
+          about: (about === null || about) ? about : this.currentSubscriber.extended.about,
+          gender: (gender === null || gender) ? gender : this.currentSubscriber.extended.gender,
+          language: (language === null || language) ? language : this.currentSubscriber.extended.language,
+          lookingFor: (lookingFor === null || lookingFor) ? lookingFor : this.currentSubscriber.extended.lookingFor,
+          name: (name === null || name) ? name : this.currentSubscriber.extended.name,
+          relationship: (relationship === null || relationship) ? relationship : this.currentSubscriber.extended.relationship,
+          urls: (urls === null || urls) ? urls : this.currentSubscriber.extended.urls
         }
       }
     );
