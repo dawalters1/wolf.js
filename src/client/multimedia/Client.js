@@ -10,8 +10,9 @@ class Multimedia {
    */
   constructor (client) {
     this.client = client;
+    this.axiosClient = axios.create();
 
-    axios.interceptors.request.use(
+    this.axiosClient.interceptors.request.use(
       aws4Interceptor(
         {
           instance: axios,
@@ -63,7 +64,7 @@ class Multimedia {
 
   async upload (config, body) {
     return await new Promise((resolve) => {
-      axios.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
+      this.axiosClient.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
         .then((res) => resolve(new Response(res.data)))
         .catch((error) => resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers })));
     });
