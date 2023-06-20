@@ -12,20 +12,6 @@
         </p>
 </div>
 
-# CONTAINS BREAKING CHANGES
-- Migrate from CommonJS to ESM
-- Helpers and utilities are now getters rather than methods and are now accessed as client.helperName.method()
-- Multiple helpers have been broken down into various sub helpers
-- Methods have been moved around, use typings as a reference as shown in [Command](#command---srcmeindexjs) to verify methods still exist
-
-# What's New
-- Add Group Message Config
-- Fully Object-Oriented
-- Large Groups
-- Log Helper
-- Misc Helper
-- Use typings as a reference as shown in [Command](#command---srcmeindexjs) to view additional changes
-
 ## Introduction
 
 WOLF.js is a community maintained javascript library used to create Unofficial Bots
@@ -57,7 +43,7 @@ framework:
   login:
     email: # bot email here
     password: # bot password here
-    onlineState: 1 # online state here 
+    onlineState: 1 # online state here
   command:
     ignore:
       official: true # whether or not an official bot will trigger a command (internal)
