@@ -25,6 +25,7 @@ class Stage extends Base {
       return this.client.emit(
         Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
         new StageClientViewerCountUpdate(
+          this.client,
           {
             targetGroupId: oldCount.id,
             oldBroadcastCount: oldCount.broadcasterCount,
@@ -59,25 +60,25 @@ class Stage extends Base {
     if (createIfNotExists) {
       const client = new StageClient();
 
-      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
       client.on(Event.STAGE_CLIENT_DISCONNECTED, async (data) => {
         this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate({ ...data, targetGroupId }));
+        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId }));
       });
       client.on(Event.STAGE_CLIENT_KICKED, async (data) => {
         this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate({ ...data, targetGroupId }));
+        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId }));
       });
-      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate({ ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate({ ...data, targetGroupId })));
+      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate(this.client, { ...data, targetGroupId })));
 
       this.clients[targetGroupId] = client;
     }

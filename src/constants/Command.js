@@ -6,6 +6,7 @@ export const CHARM_LIST = 'charm list';
 export const CHARM_SUBSCRIBER_ACTIVE_LIST = 'charm subscriber active list';
 export const CHARM_SUBSCRIBER_DELETE = 'charm subscriber delete';
 export const CHARM_SUBSCRIBER_EXPIRED_LIST = 'charm subscriber expired list';
+export const CHARM_SUBSCRIBER_SELECTED_LIST = 'charm subscriber selected list';
 export const CHARM_SUBSCRIBER_SET_SELECTED = 'charm subscriber set selected';
 export const CHARM_SUBSCRIBER_STATISTICS = 'charm subscriber statistics';
 export const CHARM_SUBSCRIBER_SUMMARY_LIST = 'charm subscriber summary list';
@@ -102,6 +103,7 @@ export default {
   CHARM_SUBSCRIBER_ACTIVE_LIST,
   CHARM_SUBSCRIBER_DELETE,
   CHARM_SUBSCRIBER_EXPIRED_LIST,
+  CHARM_SUBSCRIBER_SELECTED_LIST,
   CHARM_SUBSCRIBER_SET_SELECTED,
   CHARM_SUBSCRIBER_STATISTICS,
   CHARM_SUBSCRIBER_SUMMARY_LIST,

@@ -65,6 +65,19 @@ class CommandContext {
 
     return this.client.phrase.getByLanguageAndName(language, name);
   }
+
+  toJSON () {
+    return {
+      isGroup: this.isGroup,
+      argument: this.argument,
+      language: this.language,
+      targetGroupId: this.targetGroupId,
+      sourceSubscriberId: this.sourceSubscriberId,
+      timestamp: this.timestamp,
+      type: this.type,
+      route: this.route
+    };
+  }
 }
 
 export default CommandContext;

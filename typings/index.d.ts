@@ -506,6 +506,11 @@ export class CharmHelper extends Base {
      */
     public getSubscriberExpiredList(subscriberId: number, limit?: number, offset?: number): Promise<Array<CharmExpiry>>
     /**
+     * Get the list of charms a subscriber has selected
+     * @param subscriberId - The ID of the subscriber
+     */
+    public getSubscriberSelectedList(subscriberId: number): Promise<SubscriberSelectedCharm>
+    /**
      * Delete charms from the bots Active or Expired list
      * @param charmIds - The ID or IDs of the charms to delete
      */
@@ -3557,6 +3562,11 @@ export class Phrase extends Base {
 export class PhraseRoute {
     public name: string;
     public language: string;
+
+    toJSON(): {
+        name: string;
+        language: string;
+    }
 }
 
 export class PhraseCount extends Base {
@@ -3613,28 +3623,184 @@ export class Search extends Base {
     };
 }
 
-export class StageClientDurationUpdate {
-    private constructor(data: object);
+export class StageClientDurationUpdate extends Base {
+    private constructor(client: WOLF, data: object);
 
     public targetGroupId: number;
     public duration: number;
+
+    /**
+     * Play audio on stage
+     * @param data - The audio stream
+     */
+    public play(data: Stream): Promise<void>;
+    /**
+     * Stop playing audio on a stage (Will remain on stage)
+     */
+    public stop(): Promise<void>;
+    /**
+     * Pause the current broadcast (Download continues in background)
+     */
+    public pause(): Promise<void>;
+    /**
+     * Resume the current broadcast
+     */
+    public resume(): Promise<void>;
+    /**
+     * Get the current broadcast state of the client for a group
+     */
+    public getBroadcastState(): Promise<StageBroadcastState>;
+    /**
+     * Whether or not the client for the group is ready to broadcast
+     */
+    public isReady(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is broadcasting
+     */
+    public isPlaying(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is paused
+     */
+    public isPaused(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is idling
+     */
+    public isIdle(): Promise<boolean>;
+    /**
+     * Get the duration of the current broadcast
+     */
+    public duration(): Promise<number>;
+    /**
+     * Get the slot the bot is on
+     */
+    public getSlotId(): Promise<number>;
+
+    toJSON(): {
+        targetGroupId: number,
+        duration: number;
+    }
 }
 
-export class StageClientGeneralUpdate {
-    private constructor(data: object);
+export class StageClientGeneralUpdate extends Base {
+    private constructor(client: WOLF, data: object);
 
     public targetGroupId: number;
     public sourceSubscriberId: number;
+
+    /**
+     * Play audio on stage
+     * @param data - The audio stream
+     */
+    public play(data: Stream): Promise<void>;
+    /**
+     * Stop playing audio on a stage (Will remain on stage)
+     */
+    public stop(): Promise<void>;
+    /**
+     * Pause the current broadcast (Download continues in background)
+     */
+    public pause(): Promise<void>;
+    /**
+     * Resume the current broadcast
+     */
+    public resume(): Promise<void>;
+    /**
+     * Get the current broadcast state of the client for a group
+     */
+    public getBroadcastState(): Promise<StageBroadcastState>;
+    /**
+     * Whether or not the client for the group is ready to broadcast
+     */
+    public isReady(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is broadcasting
+     */
+    public isPlaying(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is paused
+     */
+    public isPaused(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is idling
+     */
+    public isIdle(): Promise<boolean>;
+    /**
+     * Get the duration of the current broadcast
+     */
+    public duration(): Promise<number>;
+    /**
+     * Get the slot the bot is on
+     */
+    public getSlotId(): Promise<number>;
+
+    toJSON(): {
+        targetGroupId: number;
+        sourceSubscriberId: number;
+    }
 }
 
-export class StageClientViewerCountUpdate {
-    private constructor(data: object);
+export class StageClientViewerCountUpdate extends Base {
+    private constructor(client: WOLF, data: object);
 
     public targetGroupId: number;
     public oldBroadcasterCount: number;
     public newBroadcasterCount: number;
     public oldConsumerCount: number;
     public newConsumerCount: number;
+
+    /**
+     * Play audio on stage
+     * @param data - The audio stream
+     */
+    public play(data: Stream): Promise<void>;
+    /**
+     * Stop playing audio on a stage (Will remain on stage)
+     */
+    public stop(): Promise<void>;
+    /**
+     * Pause the current broadcast (Download continues in background)
+     */
+    public pause(): Promise<void>;
+    /**
+     * Resume the current broadcast
+     */
+    public resume(): Promise<void>;
+    /**
+     * Get the current broadcast state of the client for a group
+     */
+    public getBroadcastState(): Promise<StageBroadcastState>;
+    /**
+     * Whether or not the client for the group is ready to broadcast
+     */
+    public isReady(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is broadcasting
+     */
+    public isPlaying(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is paused
+     */
+    public isPaused(): Promise<boolean>;
+    /**
+     * Whether or not the client for the group is idling
+     */
+    public isIdle(): Promise<boolean>;
+    /**
+     * Get the duration of the current broadcast
+     */
+    public duration(): Promise<number>;
+    /**
+     * Get the slot the bot is on
+     */
+    public getSlotId(): Promise<number>;
+
+    toJSON(): {
+        targetGroupId: number;
+        oldBroadcasterCount: number;
+        newBroadcasterCount: number;
+        oldConsumerCount: number;
+        newConsumerCount: number;
+    }
 }
 
 export class Store extends Base {
