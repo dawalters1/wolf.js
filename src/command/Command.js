@@ -38,6 +38,17 @@ const validation = async (command) => {
     throw new WOLFAPIError('children must be an array', { children });
   }
 
+  const childPhraseNameCountMap = children.map((child) => child.phraseName)
+    .reduce((previous, value) => {
+      previous[value] = previous[value] ? previous[value] += 1 : 1;
+
+      return previous;
+    }, {});
+
+  if (Object.entries(childPhraseNameCountMap).some((result) => result[1] > 1)) {
+    throw new WOLFAPIError('children commands must be unique and cannot share phrase names', { parent: command.phraseName, children: Object.entries(childPhraseNameCountMap).filter((entry) => entry[1] > 1).map((entry) => entry[0]) });
+  }
+
   return children.forEach(cmd => validation(cmd));
 };
 

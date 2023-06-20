@@ -215,6 +215,30 @@ class Charm extends Base {
   }
 
   /**
+   * Request a subscribers expired charms list
+   * @param {Number|Array<Number>} subscriberIds - The ID of the subscriber
+   * @returns {Promise<models.SubscriberSelectedCharm>} - The list of expired charms
+   */
+  async getSubscriberSelectedList (subscriberId) {
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.CHARM_SUBSCRIBER_SELECTED_LIST,
+      {
+        id: subscriberId
+      }
+    );
+
+    return new models.SubscriberSelectedCharm(this.client, response.body ? response.body[subscriberId] : null);
+  }
+
+  /**
    * Delete owned charms
    * @param {Number|Number[]} charmIds - The ID or IDs of the charms to delete
    * @returns {Promise<models.Response} - Response
