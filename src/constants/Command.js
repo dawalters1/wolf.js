@@ -53,8 +53,16 @@ export const MESSAGE_UPDATE = 'message update';
 export const MESSAGE_UPDATE_LIST = 'message update list';
 export const METADATA_URL = 'metadata url';
 export const METADATA_URL_BLACKLIST = 'metadata url blacklist';
-export const NOTIFICATION_LIST = 'notification list';
-export const NOTIFICATION_LIST_CLEAR = 'notification list clear';
+export const NOTIFICATION_LIST = 'notification list'; // Legacy
+export const NOTIFICATION_LIST_CLEAR = 'notification list clear'; // Legacy
+export const NOTIFICATION_SUBSCRIBER_LIST = 'notification subscriber list';
+export const NOTIFICATION_SUBSCRIBER_DELETE = 'notification subscriber delete';
+export const NOTIFICATION_SUBSCRIBER_CLEAR = 'notification subscriber clear';
+export const NOTIFICATION_SUBSCRIBER = 'notification subscriber';
+export const NOTIFICATION_GLOBAL_LIST = 'notification global list';
+export const NOTIFICATION_GLOBAL_DELETE = 'notification global delete';
+export const NOTIFICATION_GLOBAL_CLEAR = 'notification global clear';
+export const NOTIFICATION_GLOBAL = 'notification global';
 export const SEARCH = 'search';
 export const SECURITY_LOGIN = 'security login';
 export const SECURITY_LOGOUT = 'security logout';
@@ -152,6 +160,14 @@ export default {
   METADATA_URL_BLACKLIST,
   NOTIFICATION_LIST,
   NOTIFICATION_LIST_CLEAR,
+  NOTIFICATION_GLOBAL,
+  NOTIFICATION_GLOBAL_CLEAR,
+  NOTIFICATION_GLOBAL_DELETE,
+  NOTIFICATION_GLOBAL_LIST,
+  NOTIFICATION_SUBSCRIBER,
+  NOTIFICATION_SUBSCRIBER_CLEAR,
+  NOTIFICATION_SUBSCRIBER_DELETE,
+  NOTIFICATION_SUBSCRIBER_LIST,
   SEARCH,
   SECURITY_LOGIN,
   SECURITY_LOGOUT,

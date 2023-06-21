@@ -989,15 +989,32 @@ export class MiscHelper extends Base {
 export class NotificationHelper extends Base {
     private constructor(client);
 
+    public subscriber: NotificationSubscriberHelper;
+    public global: NotificationGlobalHelper;
+
     /**
      * Get notifications
      * @param forceNew - Whether or not to request new from the server
+     * @deprecated
      */
-    public list(forceNew?: boolean): Promise<Array<Notification>>;
+    public list(forceNew?: boolean): Promise<Array<LegacyNotification>>;
     /**
      * Clear notifications list
+     * @deprecated
      */
     public clear(): Promise<Response>;
+}
+
+export class NotificationSubscriberHelper extends Base {
+    private constructor(client);
+
+    //TODO:
+}
+
+export class NotificationGlobalHelper extends Base {
+    private constructor(client);
+
+    //TODO:
 }
 
 export class PhraseHelper extends Base {
@@ -3483,7 +3500,7 @@ export class MessageUpdate extends Base {
 }
 
 
-export class Notification extends Base {
+export class LegacyNotification extends Base {
     private constructor(client: WOLF, data: object)
 
     public actions: Array<NotificationAction>;
@@ -5129,7 +5146,7 @@ export interface ClientEvents {
     /**
      * Fires when a notification is received
      */
-    notificationReceived: [Notification: Notification],
+    notificationReceived: [Notification: LegacyNotification | Notification],
     /**
      * Fires when a packet is received from the server
      */

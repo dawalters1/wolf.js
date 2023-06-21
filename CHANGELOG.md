@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.1.2 *Unreleased*
 ### Added
+- implement new notification commands and events
 - client.charm.getSubscriberSelectedList(subscriberId)
 - Stage client events model methods
   - play(data)
