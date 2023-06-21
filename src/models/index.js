@@ -49,7 +49,9 @@ import MessageResponse from './MessageResponse.js';
 import MessageSettings from './MessageSettings.js';
 import MessageSettingFilter from './MessageSettingFilter.js';
 import MessageUpdate from './MessageUpdate.js';
+import LegacyNotification from './LegacyNotification.js';
 import Notification from './Notification.js';
+import NotificationFeed from './NotificationFeed.js';
 import NotificationAction from './NotificationAction.js';
 import Phrase from '../helper/phrase/Phrase.js';
 import PhraseCount from './PhraseCount.js';
@@ -144,7 +146,9 @@ export {
   MessageSettingFilter,
   MessageSettings,
   MessageUpdate,
+  LegacyNotification,
   Notification,
+  NotificationFeed,
   NotificationAction,
   Phrase,
   PhraseCount,
@@ -240,7 +244,9 @@ export default {
   MessageSettingFilter,
   MessageSettings,
   MessageUpdate,
+  LegacyNotification,
   Notification,
+  NotificationFeed,
   NotificationAction,
   Phrase,
   PhraseCount,
