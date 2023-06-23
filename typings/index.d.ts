@@ -47,6 +47,10 @@ export class WOLF {
     */
     public charm: CharmHelper;
     /**
+     * Exposes the Channel methods
+     */
+    public channel: ChannelHelper;
+    /**
     * Exposes the Command Handler methods
     */
     public commandHandler: CommandHandler;
@@ -64,8 +68,9 @@ export class WOLF {
     public event: EventHelper;
     /**
     * Exposes the Group methods
+    * @deprecated use channel instead
     */
-    public group: GroupHelper;
+    public group: ChannelHelper;
     /**
      * Expoes the Logging methods
      */
@@ -335,7 +340,15 @@ export class Command {
      * @param callbackObject - The command callbacks
      * @param children - The sub commands for the command
      */
-    constructor(phraseName: string, callbackObject: { group: (command: CommandContext, ...args: any) => void, private: (command: CommandContext, ...args: any) => void, both: (command: CommandContext, ...args: any) => void }, children: Array<Command>)
+    constructor(phraseName: string, callbackObject: {
+        /**
+         * @deprecated use channel instead
+         */
+        group: (command: CommandContext, ...args: any) => void,
+        channel: (command: CommandContext, ...args: any) => void,
+        private: (command: CommandContext, ...args: any) => void,
+        both: (command: CommandContext, ...args: any) => void
+    }, children: Array<Command>)
 }
 export class Base {
     public constructor(client: WOLF);
@@ -352,9 +365,14 @@ export class AchievementHelper extends Base {
      */
     public category: AchievementCategoryHelper;
     /**
-     * Exposes the Group Achievement methods
+     * Exposes the Channel Achievement methods
      */
-    public group: AchievementGroupHelper;
+    public channel: AchievementChannelHelper;
+    /**
+     * Exposes the Group Achievement methods
+     * @deprecated use channel instead
+     */
+    public group: AchievementChannelHelper;
     /**
      * Exposes the Subscriber Achievement methods
      */
@@ -386,11 +404,11 @@ export class AchievementCategoryHelper extends Base {
     public getList(language: Language, forceNew?: boolean): Promise<Array<Achievement>>;
 }
 
-export class AchievementGroupHelper extends Base {
+export class AchievementChannelHelper extends Base {
     private constructor(client);
 
     /**
-     * Request Achievement list for a group
+     * Request Achievement list for a channel
      * @param targetGroupId - The ID of the group to request
      * @param parentId - Provide if requesting child achievements (Optional)
      */
@@ -590,7 +608,12 @@ export class EventHelper extends Base {
     /**
      * Exposes the group event methods
      */
-    public group: GroupEventHelper;
+    public channel: ChannelEventHelper;
+    /**
+     * Exposes the group event methods
+     * @deprecated use channel instead
+     */
+    public group: ChannelEventHelper;
     /**
      * Exposes the subscriber event subscription methods
      */
@@ -608,7 +631,7 @@ export class EventHelper extends Base {
     public getByIds(ids: number | Array<number>): Promise<Event | Array<Event>>;
 }
 
-export class GroupEventHelper extends Base {
+export class ChannelEventHelper extends Base {
     private constructor(client);
 
     /**
@@ -682,38 +705,38 @@ export class EventSubscriptionHelper extends Base {
     public remove(eventId: number): Promise<Response>;
 }
 
-export class GroupHelper extends Base {
+export class ChannelHelper extends Base {
     private constructor(client);
 
     /**
      * Exposes the Group Member methods
      */
-    public member: GroupMemberHelper;
+    public member: ChannelMemberHelper;
     /**
      * Get list of joined groups
      */
-    public list(): Promise<Array<Group>>;
+    public list(): Promise<Array<Channel>>;
     /**
      * Get a group profile
      * @param id - The ID of the group
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
-    public getById(id: number, subscribe?: boolean, forceNew?: boolean): Promise<Group>;
+    public getById(id: number, subscribe?: boolean, forceNew?: boolean): Promise<Channel>;
     /**
      * Get groups profiles
      * @param ids - The list of group IDs
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
-    public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Group | Array<Group>>;
+    public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Channel | Array<Channel>>;
     /**
      * Get a group
      * @param name - The name of the group
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
-    public getByName(name: string, subscribe?: boolean, forceNew?: boolean): Promise<Group>;
+    public getByName(name: string, subscribe?: boolean, forceNew?: boolean): Promise<Channel>;
     /**
      * Update a group profile
      * @param id - The ID of the group
@@ -754,11 +777,11 @@ export class GroupHelper extends Base {
      * Get stats
      * @param id - The ID of the group
      */
-    public getStats(id: number): Promise<GroupStats>;
+    public getStats(id: number): Promise<ChannelStats>;
     /**
      * Get group recommendations based on bot activity
      */
-    public getRecommendationList(): Promise<Array<Group>>;
+    public getRecommendationList(): Promise<Array<Channel>>;
     /**
      * Search for a group
      * @param query - The search params
@@ -766,7 +789,7 @@ export class GroupHelper extends Base {
     public search(query: string): Promise<Array<Search>>;
 }
 
-export class GroupMemberHelper extends Base {
+export class ChannelMemberHelper extends Base {
     private constructor(client);
 
     /**
@@ -774,37 +797,37 @@ export class GroupMemberHelper extends Base {
      * @param targetGroupId - The ID of the group
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getBotList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<GroupMember>>;
+    public getBotList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a groups silenced list
      * @param targetGroupId - The ID of the group
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getSilencedList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<GroupMember>>;
+    public getSilencedList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a groups banned list (Mod required)
      * @param targetGroupId - The ID of the group
      * @param limit - How many should be returned (Default: 100)
      */
-    public getBannedList(targetGroupId: number, limit?: number): Promise<Array<GroupMember>>;
+    public getBannedList(targetGroupId: number, limit?: number): Promise<Array<ChannelMember>>;
     /**
      * Get a groups privileged list
      * @param targetGroupId - The ID of the group
      */
-    public getPrivilegedList(targetGroupId: number): Promise<Array<GroupMember>>;
+    public getPrivilegedList(targetGroupId: number): Promise<Array<ChannelMember>>;
     /**
      * Get a groups regular list
      * -- NOT BOT FRIENDLY, BATCHES OF 100 --
      * @param targetGroupId - The ID of the group
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getRegularList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<GroupMember>>;
+    public getRegularList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a subscriber
      * @param targetGroupId - The ID of the group
      * @param subscriberId - The ID of the subscriber
      */
-    public get(targetGroupId: number, subscriberId: number): Promise<GroupMember>;
+    public get(targetGroupId: number, subscriberId: number): Promise<ChannelMember>;
     /**
      * Admin a subscriber
      * @param targetGroupId - The ID of the group
@@ -1842,7 +1865,7 @@ export class Ad extends Base {
     /**
      * Get the group profile
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
 
     toJSON(): {
         start: number;
@@ -1982,7 +2005,11 @@ export class CharmSummary extends Base {
 export class CommandContext extends Base {
     private constructor(client: WOLF, data: object)
 
+    /**
+     * @deprecated use isChannel instead
+     */
     public isGroup: boolean;
+    public isChannel: boolean;
     public argument: string;
     public language: string;
     public targetGroupId: number | undefined;
@@ -1998,7 +2025,7 @@ export class CommandContext extends Base {
     /**
      * Gets the command group
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
 
     /**
      * Reply to the command
@@ -2048,6 +2075,7 @@ export class CommandContext extends Base {
 
     toJSON(): {
         isGroup: boolean;
+        isChannel: boolean;
         argument: string;
         language: string;
         targetGroupId: number | undefined;
@@ -2124,7 +2152,7 @@ export class Discovery extends Base {
      * @param value - The page, name or ID
      * @param offset - The product, event or group offset
      */
-    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2170,7 +2198,7 @@ export class DiscoveryPage extends Base {
      * @param value - The page or ID
      * @param offset - The product, event or group offset
      */
-    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2222,7 +2250,7 @@ export class DiscoverySection extends Base {
      * Get the page, event, product or groups belonging to the section
      * @param offset - The Page, Event, Product or group offset
      */
-    public get(offset: number): Promise<DiscoveryPage | Array<Group> | Array<StoreProductPartial> | Array<Event>>;
+    public get(offset: number): Promise<DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2301,7 +2329,7 @@ export class Event extends Base {
     };
 }
 
-export class Group extends Base {
+export class Channel extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2350,7 +2378,7 @@ export class Group extends Base {
     /**
      * Get the groups stats
      */
-    public stats(): Promise<GroupStats>;
+    public stats(): Promise<ChannelStats>;
     /**
      * Get the groups audio slots
      */
@@ -2455,7 +2483,11 @@ export class Group extends Base {
             }>
         };
 
+        /**
+         * @deprecated use inChannel instead
+         */
         inGroup: boolean;
+        inChannel: boolean;
         capabilities: Capability;
         exists: boolean;
     };
@@ -2646,7 +2678,7 @@ export class GroupExtended extends Base {
     };
 }
 
-export class GroupMember extends Base {
+export class ChannelMember extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2753,7 +2785,7 @@ export class GroupMessageConfig extends Base {
     };
 }
 
-export class GroupStats extends Base {
+export class ChannelStats extends Base {
     private constructor(client: WOLF, data: object)
 
     public details: GroupStatsDetail;
@@ -3045,7 +3077,7 @@ export class GroupSubscriberUpdate extends Base {
     /**
      * Get the profile of the group the action was performed in
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
     /**
      * Get the profile of the user who performed the action
      */
@@ -3169,7 +3201,11 @@ export class Message extends Base {
     public targetGroupId: number;
     public embeds: Array<MessageEmbed>;
     public metadata: MessageMetadata;
+    /**
+     * @deprecated use isChannel instead
+     */
     public isGroup: boolean;
+    public isChannel: boolean;
     public timestamp: number;
     public edited: MessageEdit;
     public type: MessageType;
@@ -3214,7 +3250,7 @@ export class Message extends Base {
     /**
      * Get the group profile
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
 
     toJSON(): {
         id: string;
@@ -3249,6 +3285,7 @@ export class Message extends Base {
             isTipped: boolean;
         };
         isGroup: boolean;
+        isChannel: boolean;
         timestamp: number;
         edited: {
             subscriberId: number;
@@ -3363,7 +3400,7 @@ export class MessageMetadataFormattingGroupLink extends Base {
     /**
      * Get the group profile
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
 
     toJSON(): {
         start: number;
@@ -3630,7 +3667,7 @@ export class Search extends Base {
     /**
      * Get the group or subscriber profile
      */
-    public getProfile(): Promise<Subscriber | Group>;
+    public getProfile(): Promise<Subscriber | Channel>;
 
     toJSON(): {
         searchType: SearchType;
@@ -4345,7 +4382,11 @@ export class Tip extends Base {
 
     public charmList: Array<TipCharm>;
     public groupId: number;
+    /**
+    * @deprecated use isChannel instead
+    */
     public isGroup: boolean;
+    public isChannel: boolean;
     public sourceSubscriberId: number;
     public subscriberId: number;
     public context: TipContext;
@@ -4357,7 +4398,7 @@ export class Tip extends Base {
     /**
      * Get the group the tip happened in
      */
-    public group(): Promise<Group>;
+    public group(): Promise<Channel>;
     /**
      * Get the subscriber who tipped
      */
@@ -4381,6 +4422,7 @@ export class Tip extends Base {
         }>;
         groupId: number;
         isGroup: boolean;
+        isChannel: boolean;
         sourceSubscriberId: number;
         subscriberId: number;
         context: {
@@ -5062,15 +5104,15 @@ export interface ClientEvents {
     /**
      * Fired when a group audio request list is cleared
      */
-    groupAudioRequestListClear: [group: Group, subscriberId: number],
+    groupAudioRequestListClear: [group: Channel, subscriberId: number],
     /**
      * Fired when a group audio request is deleted
      */
-    groupAudioRequestDelete: [group: Group, request: GroupAudioSlotRequest],
+    groupAudioRequestDelete: [group: Channel, request: GroupAudioSlotRequest],
     /**
      * Fired when a group audio request expires
      */
-    groupAudioRequestExpire: [group: Group, request: GroupAudioSlotRequest],
+    groupAudioRequestExpire: [group: Channel, request: GroupAudioSlotRequest],
     /**
      * Fired when a group audio slot is updated
      */
@@ -5082,27 +5124,27 @@ export interface ClientEvents {
     /**
      * Fired when a group event is created
      */
-    groupEventCreate: [group: Group, event: Event],
+    groupEventCreate: [group: Channel, event: Event],
     /**
      * Fired when a group event is deleted
      */
-    groupEventDelete: [group: Group, event: Event],
+    groupEventDelete: [group: Channel, event: Event],
     /**
      * Fired when a group event is updated
      */
-    groupEventUpdate: [group: Group, oldEvent: Event, newEvent: Event],
+    groupEventUpdate: [group: Channel, oldEvent: Event, newEvent: Event],
     /**
      * Fired when a group member joins
      */
-    groupMemberAdd: [group: Group, subscriber: Subscriber],
+    groupMemberAdd: [group: Channel, subscriber: Subscriber],
     /**
      * Fired when a group member leaves
      */
-    groupMemberDelete: [group: Group, subscriber: Subscriber],
+    groupMemberDelete: [group: Channel, subscriber: Subscriber],
     /**
      * Fired when a group member is updated
      */
-    groupMemberUpdate: [group: Group, update: GroupSubscriberUpdate],
+    groupMemberUpdate: [group: Channel, update: GroupSubscriberUpdate],
     /**
      * Fired when a group message is received
      */
@@ -5118,7 +5160,7 @@ export interface ClientEvents {
     /**
      * Fired when a group profile is updated
      */
-    groupUpdate: [oldGroup: Group, newGroup: Group],
+    groupUpdate: [oldGroup: Channel, newGroup: Channel],
     /**
      * Fired when an internal framework error occurs
      */
@@ -5126,11 +5168,11 @@ export interface ClientEvents {
     /**
      * Fires when the bot joins a group
      */
-    joinedGroup: [group: Group, subscriber: Subscriber],
+    joinedGroup: [group: Channel, subscriber: Subscriber],
     /**
      * Fires when the bot leaves a group
      */
-    leftGroup: [group: Group, subscriber: Subscriber],
+    leftGroup: [group: Channel, subscriber: Subscriber],
     /**
      * Fires when a log is saved
      */

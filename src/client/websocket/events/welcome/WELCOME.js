@@ -2,7 +2,7 @@ import { Command, Event } from '../../../../constants/index.js';
 import { Welcome } from '../../../../models/index.js';
 
 const subscriptions = async (client) => {
-  if (client.config.framework.subscriptions.messages.group.enabled) {
+  if (client.config.framework.subscriptions.messages.channel.enabled) {
     await client.messaging._subscribeToGroup();
   }
 
@@ -10,14 +10,14 @@ const subscriptions = async (client) => {
     await client.messaging._subscribeToPrivate();
   }
 
-  if (client.config.framework.subscriptions.messages.group.tipping) {
+  if (client.config.framework.subscriptions.messages.channel.tipping) {
     await client.tipping._subscribeToGroup();
   }
 };
 
 const fininaliseConnection = async (client, resume = false) => {
   await Promise.all([
-    client.group.list(),
+    client.channel.list(),
     client.subscriber.getById(client.currentSubscriber.id)
   ]);
 

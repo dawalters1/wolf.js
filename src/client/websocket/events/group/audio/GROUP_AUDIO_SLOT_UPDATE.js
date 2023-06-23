@@ -1,28 +1,28 @@
 import { Event } from '../../../../../constants/index.js';
-import models, { GroupAudioSlotUpdate } from '../../../../../models/index.js';
+import models, { ChannelAudioSlotUpdate } from '../../../../../models/index.js';
 import patch from '../../../../../utils/patch.js';
 
 /**
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.id);
+  const channel = client.channel.channels.find((group) => group.id === body.id);
 
-  if (!group || !group.slots) {
+  if (!channel || !channel.slots) {
     return Promise.resolve();
   }
 
-  const cached = new models.GroupAudioSlot(client, group.slots.find((slot) => slot.id === body.slot.id), group.id);
+  const cached = new models.ChannelAudioSlot(client, channel.slots.find((slot) => slot.id === body.slot.id), channel.id);
 
-  patch(group.slots.find((slot) => slot.id === body.slot.id), body.slot);
+  patch(channel.slots.find((slot) => slot.id === body.slot.id), body.slot);
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
     return client.emit(
       new Date(cached.reservedExpiresAt).getTime() >= Date.now()
         ? Event.GROUP_AUDIO_REQUEST_EXPIRE
         : Event.GROUP_AUDIO_REQUEST_DELETE,
-      group,
-      new models.GroupAudioSlotRequest(client,
+      channel,
+      new models.ChannelAudioSlotRequest(client,
         {
           slotId: body.slot.id,
           reservedOccupierId: body.slot.reservedOccupierId
@@ -34,8 +34,8 @@ export default async (client, body) => {
   if (!cached.reservedOccupierId && body.slot.reservedOccupierId) {
     return client.emit(
       Event.GROUP_AUDIO_REQUEST_ADD,
-      group,
-      new models.GroupAudioSlotRequest(client,
+      channel,
+      new models.ChannelAudioSlotRequest(client,
         {
           slotId: body.slot.id,
           reservedOccupierId: body.slot.reservedOccupierId,
@@ -48,11 +48,11 @@ export default async (client, body) => {
   return client.emit(
     Event.GROUP_AUDIO_SLOT_UPDATE,
     cached,
-    new GroupAudioSlotUpdate(client,
+    new ChannelAudioSlotUpdate(client,
       {
         id: body.id,
         slot:
-        group.slots.find((slot) => slot.id === body.slot.id)
+        channel.slots.find((slot) => slot.id === body.slot.id)
       }
     )
   );

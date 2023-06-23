@@ -26,8 +26,8 @@ export default async (client, body) => {
     patch(client.contact.blocked.blocked.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
   }
 
-  for (const group of await client.group.list()) {
-    await group.members?._onSubscriberUpdate(newSubscriber);
+  for (const channel of await client.channel.list()) {
+    await channel.members?._onSubscriberUpdate(newSubscriber);
   }
 
   return client.emit(

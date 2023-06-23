@@ -5,11 +5,17 @@ class MessageMetadataFormattingGroupLink extends Base {
     super(client);
     this.start = data?.start;
     this.end = data?.end;
-    this.groupId = data?.groupId;
+
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
   }
 
   async group () {
-    return await this.client.group.getById(this.groupId);
+    return await this.channel();
+  }
+
+  async channel () {
+    return await this.client.channel.getById(this.channelId);
   }
 }
 

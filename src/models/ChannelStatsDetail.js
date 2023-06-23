@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupStatsDetail extends Base {
+class ChannelStatsDetail extends Base {
   constructor (client, data) {
     super(client);
     this.actionCount = data?.actionCount;
@@ -24,4 +24,4 @@ class GroupStatsDetail extends Base {
   }
 }
 
-export default GroupStatsDetail;
+export default ChannelStatsDetail;

@@ -1,17 +1,22 @@
 import Base from './Base.js';
 
-class GroupSubscriberUpdate extends Base {
+class ChannelSubscriberUpdate extends Base {
   constructor (client, data) {
     super(client);
 
-    this.groupId = data?.groupId;
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
     this.sourceId = data?.sourceId;
     this.targetId = data?.targetId;
     this.action = data?.action;
   }
 
   async group () {
-    return await this.client.group.getById(this.groupId);
+    return await this.channel();
+  }
+
+  async channel () {
+    return await this.client.channel.getById(this.channelId);
   }
 
   async sourceSubscriber () {
@@ -23,4 +28,4 @@ class GroupSubscriberUpdate extends Base {
   }
 }
 
-export default GroupSubscriberUpdate;
+export default ChannelSubscriberUpdate;

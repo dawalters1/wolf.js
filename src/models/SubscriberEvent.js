@@ -5,7 +5,8 @@ class SubscriberEvent extends Base {
   constructor (client, data) {
     super(client);
     this.id = data?.id;
-    this.groupId = data?.groupId;
+    this.channelId = data?.channelId;
+    this.groupId = this.channelId;
     this.additionalInfo = new SubscriberEventAdditionalInfo(client, data?.additionalInfo);
   }
 

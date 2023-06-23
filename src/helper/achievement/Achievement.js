@@ -1,6 +1,6 @@
 import Base from '../Base.js';
 import Category from './Category.js';
-import Group from './Group.js';
+import Channel from './Channel.js';
 import Subscriber from './Subscriber.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
@@ -17,7 +17,8 @@ class Achievement extends Base {
     this.achievements = {};
 
     this.category = new Category(this.client);
-    this.group = new Group(client);
+    this.channel = new Channel(client);
+    this.group = this.channel;
     this.subscriber = new Subscriber(client);
   }
 
@@ -137,7 +138,7 @@ class Achievement extends Base {
   _cleanUp (reconnection = false) {
     this.achievements = {};
     this.category._cleanUp(reconnection);
-    this.group._cleanUp(reconnection);
+    this.channel._cleanUp(reconnection);
     this.subscriber._cleanUp(reconnection);
   }
 }

@@ -131,7 +131,7 @@ describe('Helpers', () => {
 
     describe('Group Helper', () => {
       it('should return an array of unlocked achievements regardless if the group exists', async () => {
-        const unlockedList = await client.achievement.group.getById(18448720);
+        const unlockedList = await client.achievement.channel.getById(18448720);
 
         expect(unlockedList).to.not.equal(undefined);
         expect(unlockedList).to.not.equal(null);
@@ -918,7 +918,7 @@ describe('Helpers', () => {
     describe('Group Helper', () => {
       describe('getList', async () => {
         it('should return an empty array if there are no events', async () => {
-          const events = await client.event.group.getList(18448720);
+          const events = await client.event.channel.getList(18448720);
 
           expect(events).to.not.equal(undefined);
           expect(events).to.not.equal(null);
@@ -926,7 +926,7 @@ describe('Helpers', () => {
         });
 
         it('should return an array if there are events', async () => {
-          const events = await client.event.group.getList(1915722);
+          const events = await client.event.channel.getList(1915722);
 
           expect(events).to.not.equal(undefined);
           expect(events).to.not.equal(null);
@@ -956,7 +956,7 @@ describe('Helpers', () => {
 
       describe('create', async () => {
         it('should create an event', async () => {
-          const response = await client.event.group.create(18448720,
+          const response = await client.event.channel.create(18448720,
             {
               title: 'This is a test event',
               shortDescription: 'This is a short desc',
@@ -976,7 +976,7 @@ describe('Helpers', () => {
 
       describe('update', () => {
         it('should update an event', async () => {
-          const response = await client.event.group.update(
+          const response = await client.event.channel.update(
             18448720,
             eventId,
             {
@@ -994,7 +994,7 @@ describe('Helpers', () => {
 
       describe('updateThumbnail', () => {
         it('should update an event thumbnail', async () => {
-          const response = await client.event.group.updateThumbnail(
+          const response = await client.event.channel.updateThumbnail(
             eventId,
             fs.readFileSync('D:/Images/testavi.jpg')
           );
@@ -1007,7 +1007,7 @@ describe('Helpers', () => {
 
       describe('delete', () => {
         it('should delete an event', async () => {
-          const response = await client.event.group.delete(18448720, eventId);
+          const response = await client.event.channel.delete(18448720, eventId);
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
@@ -1065,7 +1065,7 @@ describe('Helpers', () => {
 
         describe('list', () => {
           it('should return a list of all joined groups', async () => {
-            const groups = await client.group.list();
+            const groups = await client.channel.list();
 
             expect(groups).to.not.equal(undefined);
             expect(groups).to.not.equal(null);
@@ -1074,7 +1074,7 @@ describe('Helpers', () => {
             for (const group of groups) {
               expect(group).to.not.equal(undefined);
               expect(group).to.not.equal(null);
-              expect(group.inGroup).to.equal(true);
+              expect(group.inChannel).to.equal(true);
               expect(group.exists).to.equal(true);
             }
           });
@@ -1082,7 +1082,7 @@ describe('Helpers', () => {
 
         describe('getById', () => {
           it('should return a group if it does not exist', async () => {
-            const group = await client.group.getById(43242342);
+            const group = await client.channel.getById(43242342);
 
             expect(group).to.not.equal(undefined);
             expect(group).to.not.equal(null);
@@ -1090,7 +1090,7 @@ describe('Helpers', () => {
           });
 
           it('should return a group if it exists', async () => {
-            const group = await client.group.getById(18448720);
+            const group = await client.channel.getById(18448720);
 
             expect(group).to.not.equal(undefined);
             expect(group).to.not.equal(null);
@@ -1152,7 +1152,7 @@ describe('Helpers', () => {
 
         describe('getByIds', () => {
           it('should return a group if it exists', async () => {
-            const groups = await client.group.getByIds([18448720, 432423423]);
+            const groups = await client.channel.getByIds([18448720, 432423423]);
 
             const existent = groups.find((group) => group.id === 18448720);
 
@@ -1222,7 +1222,7 @@ describe('Helpers', () => {
 
         describe('getByName', () => {
           it('should return a group if it does not exist', async () => {
-            const group = await client.group.getByName('boobs');
+            const group = await client.channel.getByName('boobs');
 
             expect(group).to.not.equal(undefined);
             expect(group).to.not.equal(null);
@@ -1230,7 +1230,7 @@ describe('Helpers', () => {
           });
 
           it('should return a group if it exists', async () => {
-            const group = await client.group.getByName('unofficial bots', true, true);
+            const group = await client.channel.getByName('unofficial bots', true, true);
 
             expect(group).to.not.equal(undefined);
             expect(group).to.not.equal(null);
@@ -1292,9 +1292,9 @@ describe('Helpers', () => {
 
         describe('joinById', async () => {
           it('should join a group if it exists and does not have a password', async () => {
-            const response = await client.group.joinById(18448720);
+            const response = await client.channel.joinById(18448720);
 
-            await client.group.leaveById(18448720);
+            await client.channel.leaveById(18448720);
             expect(response).to.not.equal(undefined);
             expect(response).to.not.equal(null);
             expect(response.success).to.equal(true);
@@ -1303,9 +1303,9 @@ describe('Helpers', () => {
 
         describe('joinByName', async () => {
           it('should join a group if it exists and does not have a password', async () => {
-            const response = await client.group.joinByName('unofficial bots');
+            const response = await client.channel.joinByName('unofficial bots');
 
-            await client.group.leaveByName('unofficial bots');
+            await client.channel.leaveByName('unofficial bots');
             expect(response).to.not.equal(undefined);
             expect(response).to.not.equal(null);
             expect(response.success).to.equal(true);
@@ -1314,13 +1314,13 @@ describe('Helpers', () => {
 
         describe('getStats', async () => {
           it('should return undefined if a group doesnt exist', async () => {
-            const stats = await client.group.getStats(431432421);
+            const stats = await client.channel.getStats(431432421);
 
             expect(stats).to.equal(undefined);
           });
 
           it('should return a group status object if a group doesnt exist', async () => {
-            const stats = await client.group.getStats(18448720);
+            const stats = await client.channel.getStats(18448720);
 
             expect(stats).to.not.equal(undefined);
             expect(stats).to.not.equal(null);
@@ -1398,7 +1398,7 @@ describe('Helpers', () => {
 
         describe('getRecommendationList', async () => {
           it('should return an array of group profiles', async () => {
-            const recommendations = await client.group.getRecommendationList();
+            const recommendations = await client.channel.getRecommendationList();
 
             expect(recommendations).to.not.equal(undefined);
             expect(recommendations).to.not.equal(null);
@@ -1413,7 +1413,7 @@ describe('Helpers', () => {
 
         describe('getChatHistory', async () => {
           it('should return an empty array if no history is available', async () => {
-            const history = await client.group.getChatHistory(431432421);
+            const history = await client.channel.getChatHistory(431432421);
 
             expect(history).to.not.equal(undefined);
             expect(history).to.not.equal(null);
@@ -1421,7 +1421,7 @@ describe('Helpers', () => {
           });
 
           it('should return an array of messages history is available', async () => {
-            const history = await client.group.getChatHistory(18448720);
+            const history = await client.channel.getChatHistory(18448720);
 
             expect(history).to.not.equal(undefined);
             expect(history).to.not.equal(null);
@@ -1433,7 +1433,7 @@ describe('Helpers', () => {
               expect(message).to.be.an.instanceOf(Message);
             }
 
-            const historyAfter = await client.group.getChatHistory(18448720, false, history.slice(-1)[0].timestamp);
+            const historyAfter = await client.channel.getChatHistory(18448720, false, history.slice(-1)[0].timestamp);
 
             expect(historyAfter).to.not.equal(undefined);
             expect(historyAfter).to.not.equal(null);
@@ -1450,7 +1450,7 @@ describe('Helpers', () => {
 
       describe('search', async () => {
         it('should return an empty array if no search results exist', async () => {
-          const results = await client.group.search('fgfdgdgdgfdgfdgfdgfdgfdgfdgfhgjhgjhgjh');
+          const results = await client.channel.search('fgfdgdgdgfdgfdgfdgfdgfdgfdgfhgjhgjhgjh');
 
           expect(results).to.not.equal(undefined);
           expect(results).to.not.equal(null);
@@ -1458,7 +1458,7 @@ describe('Helpers', () => {
         });
 
         it('should return an array if search results exist', async () => {
-          const results = await client.group.search('unofficial bots');
+          const results = await client.channel.search('unofficial bots');
 
           expect(results).to.not.equal(undefined);
           expect(results).to.not.equal(null);

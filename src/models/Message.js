@@ -12,10 +12,11 @@ class Message extends Base {
     this.id = data?.id;
     this.body = data?.data?.toString().trim();
     this.sourceSubscriberId = data?.originator?.id ?? data?.originator ?? data.subscriberId;
-    this.targetGroupId = data?.isGroup ? data.targetGroupId ?? data?.recipient?.id ?? data?.recipient.id : null;
+    this.targetGroupId = data?.isChannel ? data.targetGroupId ?? data?.recipient?.id ?? data?.recipient.id : null;
     this.embeds = data?.embeds ? data?.embeds.map((embed) => new MessageEmbed(client, embed)) : null;
     this.metadata = data?.metadata ? new MessageMetadata(client, data?.metadata) : null;
-    this.isGroup = data?.isGroup;
+    this.isChannel = data?.isChannel;
+    this.isGroup = this.isChannel;
     this.timestamp = data?.timestamp;
     this.edited = data?.edited ? new MessageEdit(client, data?.edited) : null;
     this.type = data?.mimeType;
@@ -31,7 +32,7 @@ class Message extends Base {
   }
 
   async delete () {
-    if (!this.isGroup) {
+    if (!this.isChannel) {
       throw new WOLFAPIError('editing private messages is currently not supported');
     }
 
@@ -39,7 +40,7 @@ class Message extends Base {
   }
 
   async restore () {
-    if (!this.isGroup) {
+    if (!this.isChannel) {
       throw new WOLFAPIError('editing private messages is currently not supported');
     }
 
@@ -47,7 +48,7 @@ class Message extends Base {
   }
 
   async getEditHistory () {
-    if (!this.isGroup) {
+    if (!this.isChannel) {
       throw new WOLFAPIError('editing private messages is currently not supported');
     }
 
@@ -63,15 +64,15 @@ class Message extends Base {
   }
 
   async group () {
-    if (!this.isGroup) {
+    if (!this.isChannel) {
       throw new WOLFAPIError('cannot request group for non-group command', { ...this.toJSON() });
     }
 
-    return await this.client.group.getById(this.targetGroupId);
+    return await this.client.channel.getById(this.targetGroupId);
   }
 
   async tip (charm) {
-    if (!this.isGroup) {
+    if (!this.isChannel) {
       throw new WOLFAPIError('tipping private messages is currently not supported');
     }
 

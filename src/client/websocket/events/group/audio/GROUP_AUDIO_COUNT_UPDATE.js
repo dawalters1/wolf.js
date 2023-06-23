@@ -5,19 +5,19 @@ import models from '../../../../../models/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.id);
+  const channel = client.channel.channels.find((channel) => channel.id === body.id);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
 
-  const oldAudioCount = new models.GroupAudioCounts(client, group.audioCounts);
+  const oldAudioCount = new models.ChannelAudioCounts(client, channel.audioCounts);
 
-  group.audioCounts = new models.GroupAudioCounts(client, body);
+  channel.audioCounts = new models.ChannelAudioCounts(client, body);
 
   return client.emit(
     Event.GROUP_AUDIO_COUNT_UPDATE,
     oldAudioCount,
-    group.audioCounts
+    channel.audioCounts
   );
 };

@@ -10,7 +10,6 @@ class Global extends Base {
   constructor (client) {
     super(client);
 
-    this.list = [];
     this.notifications = [];
   }
 
@@ -103,8 +102,23 @@ class Global extends Base {
       throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
     }
 
-    // TODO: make call
-    // TODO: update cache accordingly
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.NOTIFICATION_GLOBAL_LIST,
+      {
+        subscribe,
+        limit: parseInt(limit),
+        offset: parseInt(offset)
+      }
+    );
+
+    // TODO: handle caching of this...
+    // Somehow? that supports offsets....
+
+    return response.success ? await this.getByIds(response.body?.map((notification) => notification.id)) : [];
   }
 
   async clear () {
@@ -118,7 +132,7 @@ class Global extends Base {
   }
 
   async delete (ids) {
-    const values = Array.isArray(ids) ? ids : [ids];
+    const values = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!values.length) {
       throw new models.WOLFAPIError('values cannot be null or empty', { ids });
@@ -138,8 +152,18 @@ class Global extends Base {
       }
     }
 
-    // TODO: make call
-    // TODO: update cache accordingly
+    const response = await this.client.websocket.emit(
+      Command.NOTIFICATION_GLOBAL_DELETE,
+      {
+        idList: values
+      }
+    );
+
+    if (response.success) {
+      this.notifications = this.notifications.filter((notification) => !values.includes(notification.id));
+    }
+
+    return response;
   }
 
   _process (value) {

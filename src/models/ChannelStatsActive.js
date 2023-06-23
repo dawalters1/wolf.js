@@ -1,12 +1,13 @@
 import Base from './Base.js';
 
-class GroupStatsActive extends Base {
+class ChannelStatsActive extends Base {
   constructor (client, data) {
     super(client);
 
     this.actionCount = data?.actionCount;
     this.emoticonCount = data?.emoticonCount;
-    this.groupId = data?.groupId;
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
     this.happyEmoticonCount = data?.happyEmoticonCount;
     this.imageCount = data?.imageCount;
     this.lineCount = data?.lineCount;
@@ -27,4 +28,4 @@ class GroupStatsActive extends Base {
   }
 }
 
-export default GroupStatsActive;
+export default ChannelStatsActive;
