@@ -23,14 +23,14 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Unknown channel', { targetGroupId });
     }
 
-    if (!forceNew && group.events?.length) {
-      return group.events;
+    if (!forceNew && channel.events?.length) {
+      return channel.events;
     }
 
     const response = await this.client.websocket.emit(
@@ -42,10 +42,10 @@ class Group extends Base {
     );
 
     if (response.success) {
-      group.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+      channel.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
     }
 
-    return group.events;
+    return channel.events;
   }
 
   async create (targetGroupId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {

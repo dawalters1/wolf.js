@@ -4,7 +4,8 @@ class MessageEmbed extends Base {
   constructor (client, data) {
     super(client);
     this.type = data?.type;
-    this.groupId = data?.groupId;
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
     this.url = data?.url;
     this.title = data?.title;
     this.image = data?.image;

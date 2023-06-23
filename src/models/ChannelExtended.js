@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupExtended extends Base {
+class ChannelExtended extends Base {
   constructor (client, data) {
     super(client);
     this.id = data?.id;
@@ -17,8 +17,8 @@ class GroupExtended extends Base {
   }
 
   async update ({ longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
-    return await this.client.group.update(this.id, { longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel });
+    return await this.client.channel.update(this.id, { longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel });
   }
 }
 
-export default GroupExtended;
+export default ChannelExtended;

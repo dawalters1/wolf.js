@@ -77,7 +77,7 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
-    return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId, timeout);
+    return await this.nextMessage((message) => message.isChannel && message.targetGroupId === targetGroupId, timeout);
   }
 
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
@@ -91,10 +91,14 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
     }
 
-    return await this.nextMessage((message) => !message.isGroup && message.sourceSubscriberId === sourceSubscriberId, timeout);
+    return await this.nextMessage((message) => !message.isChannel && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
 
   async nextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
+    return await this.nextGroupSubscriberMessage(targetGroupId, sourceSubscriberId, timeout);
+  }
+
+  async nextChannelSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -115,7 +119,7 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
     }
 
-    return await this.nextMessage((message) => message.isGroup && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
+    return await this.nextMessage((message) => message.isChannel && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
 
   _cleanUp (reconnection = false) {

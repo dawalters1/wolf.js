@@ -5,7 +5,8 @@ class Event extends Base {
     super(client);
 
     this.id = data?.id;
-    this.groupId = data?.groupId;
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
     this.createdBy = data?.createdBy;
     this.title = data?.title;
     this.category = data?.category;
@@ -29,11 +30,11 @@ class Event extends Base {
   }
 
   async update ({ title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
-    return this.client.event.group.update(this.groupId, this.id, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail });
+    return this.client.event.channel.update(this.channelId, this.id, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail });
   }
 
   async updateThumbnail (thumbnail) {
-    return this.client.event.group.updateThumbnail(this.id, thumbnail);
+    return this.client.event.channel.updateThumbnail(this.id, thumbnail);
   }
 }
 

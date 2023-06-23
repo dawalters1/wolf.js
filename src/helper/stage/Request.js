@@ -21,10 +21,10 @@ class Request extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!forceNew && group._requestListFetched) {
-      return group.audioRequests;
+    if (!forceNew && channel._requestListFetched) {
+      return channel.audioRequests;
     }
 
     const response = await this.client.websocket.emit(
@@ -36,11 +36,11 @@ class Request extends Base {
     );
 
     if (response.success) {
-      group._requestListFetched = true;
-      group.audioRequests = response.body.map((request) => new models.GroupAudioSlotRequest(this.client, request));
+      channel._requestListFetched = true;
+      channel.audioRequests = response.body.map((request) => new models.GroupAudioSlotRequest(this.client, request));
     }
 
-    return group.audioRequests || [];
+    return channel.audioRequests || [];
   }
 
   async add (targetGroupId, slotId = undefined, subscriberId = undefined) {
@@ -70,21 +70,21 @@ class Request extends Base {
       }
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('No such group', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('No such channel', { targetGroupId });
     }
 
-    if (!group.inGroup) {
-      throw new models.WOLFAPIError('Not in group', { targetGroupId });
+    if (!channel.inChannel) {
+      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
     }
 
-    if (!group.audioConfig.enabled) {
+    if (!channel.audioConfig.enabled) {
       throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
     }
 
-    const slots = await group.getStageSlots();
+    const slots = await channel.getStageSlots();
 
     if (slotId) {
       const slot = slots.find((slot) => slot.id === parseInt(slotId));
@@ -98,11 +98,11 @@ class Request extends Base {
       }
 
       if (slots.some((slot) => slot.occupierId === parseInt(subscriberId))) {
-        throw new models.WOLFAPIError('subscriber already occupies a slot in this group', { targetGroupId, subscriberId });
+        throw new models.WOLFAPIError('subscriber already occupies a slot in this channel', { targetGroupId, subscriberId });
       }
 
       if (slots.some((slot) => slot.reservedOccupierId === parseInt(subscriberId))) {
-        throw new models.WOLFAPIError('subscriber already has a slot request in this group', { targetGroupId, subscriberId });
+        throw new models.WOLFAPIError('subscriber already has a slot request in this channel', { targetGroupId, subscriberId });
       }
 
       return await this.client.websocket.emit(
@@ -117,11 +117,11 @@ class Request extends Base {
     }
 
     if (slots.some((slot) => slot.occupierId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('bot already occupies a slot in this group', { targetGroupId });
+      throw new models.WOLFAPIError('bot already occupies a slot in this channel', { targetGroupId });
     }
 
     if (slots.some((slot) => slot.reservedOccupierId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('bot already has a slot request in this group', { targetGroupId });
+      throw new models.WOLFAPIError('bot already has a slot request in this channel', { targetGroupId });
     }
 
     return await this.client.websocket.emit(
@@ -151,21 +151,21 @@ class Request extends Base {
       }
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('No such group', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('No such channel', { targetGroupId });
     }
 
-    if (!group.inGroup) {
-      throw new models.WOLFAPIError('Not in group', { targetGroupId });
+    if (!channel.inChannel) {
+      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
     }
 
-    if (!group.audioConfig.enabled) {
+    if (!channel.audioConfig.enabled) {
       throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
     }
 
-    const slots = await group.slots();
+    const slots = await channel.slots();
 
     if (slotId) {
       const slot = slots.find((slot) => slot.id === parseInt(slotId));
@@ -193,7 +193,7 @@ class Request extends Base {
       );
     }
 
-    const requests = await group.getRequestList();
+    const requests = await channel.getRequestList();
 
     if (!requests.some((request) => request.subscriberId === this.client.currentSubscriber.id)) {
       throw new models.WOLFAPIError('bot is not in the mic request list', { targetGroupId });
@@ -218,21 +218,21 @@ class Request extends Base {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('No such group', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('No such channel', { targetGroupId });
     }
 
-    if (!group.inGroup) {
-      throw new models.WOLFAPIError('Not in group', { targetGroupId });
+    if (!channel.inChannel) {
+      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
     }
 
-    if (!group.audioConfig.enabled) {
+    if (!channel.audioConfig.enabled) {
       throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
     }
 
-    const requests = await group.getRequestList();
+    const requests = await channel.getRequestList();
 
     if (!requests.length) {
       throw new models.WOLFAPIError('request list is already empty', { targetGroupId });

@@ -65,7 +65,7 @@ class Member extends Base {
       return true;
     }
 
-    const groupMember = await this.client.group.member.get(targetGroupId, targetSubscriberId);
+    const groupMember = await this.client.channel.member.get(targetGroupId, targetSubscriberId);
 
     if (!groupMember) {
       return false;

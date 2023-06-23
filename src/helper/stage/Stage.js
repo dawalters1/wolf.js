@@ -101,13 +101,13 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Channel does not exist', { targetGroupId });
     }
 
-    return group.audioConfig;
+    return channel.audioConfig;
   }
 
   async updateAudioConfig (targetGroupId, { stageId, enabled, minRepLevel }) {
@@ -139,7 +139,7 @@ class Stage extends Base {
       }
     }
 
-    const audioConfig = await this.client.group.getById(targetGroupId);
+    const audioConfig = await this.client.channel.getById(targetGroupId);
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_UPDATE,
@@ -161,13 +161,13 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Channel does not exist', { targetGroupId });
     }
 
-    return group.audioCounts;
+    return channel.audioCounts;
   }
 
   async play (targetGroupId, data) {

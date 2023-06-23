@@ -5,18 +5,18 @@ import models from '../../../../../models/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const cached = client.group.groups.find((group) => group.id === body.id);
+  const cached = client.channel.channels.find((channel) => channel.id === body.id);
 
   if (!cached || cached.hash === body.hash) {
     return Promise.resolve();
   }
 
-  const oldGroup = new models.Group(client, cached);
-  const newGroup = await client.group.getById(body.id, true, true);
+  const oldChannel = new models.Channel(client, cached);
+  const newChannel = await client.channel.getById(body.id, true, true);
 
   return client.emit(
     Event.GROUP_UPDATE,
-    oldGroup,
-    newGroup
+    oldChannel,
+    newChannel
   );
 };

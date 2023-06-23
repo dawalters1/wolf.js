@@ -16,23 +16,23 @@ import Discovery from './Discovery.js';
 import DiscoveryPage from './DiscoveryPage.js';
 import DiscoverySection from './DiscoverySection.js';
 import Event from './Event.js';
-import Group from './Group.js';
-import GroupExtended from './GroupExtended.js';
-import GroupAudioConfig from './GroupAudioConfig.js';
-import GroupAudioCounts from './GroupAudioCounts.js';
-import GroupAudioSlot from './GroupAudioSlot.js';
-import GroupAudioSlotRequest from './GroupAudioSlotRequest.js';
-import GroupAudioSlotUpdate from './GroupAudioSlotUpdate.js';
-import GroupMember from './GroupMember.js';
-import GroupMemberList from './GroupMemberList.js';
-import GroupMemberListSection from './GroupMemberListSection.js';
-import GroupMessageConfig from './GroupMessageConfig.js';
-import GroupStats from './GroupStats.js';
-import GroupStatsActive from './GroupStatsActive.js';
-import GroupStatsDetail from './GroupStatsDetail.js';
-import GroupStatsTop from './GroupStatsTop.js';
-import GroupStatsTrend from './GroupStatsTrend.js';
-import GroupSubscriberUpdate from './GroupSubscriberUpdate.js';
+import Channel from './Channel.js';
+import ChannelExtended from './ChannelExtended.js';
+import ChannelAudioConfig from './ChannelAudioConfig.js';
+import ChannelAudioCounts from './ChannelAudioCounts.js';
+import ChannelAudioSlot from './ChannelAudioSlot.js';
+import ChannelAudioSlotRequest from './ChannelAudioSlotRequest.js';
+import ChannelAudioSlotUpdate from './ChannelAudioSlotUpdate.js';
+import ChannelMember from './ChannelMember.js';
+import ChannelMemberList from './ChannelMemberList.js';
+import ChannelMemberListSection from './ChannelMemberListSection.js';
+import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelStats from './ChannelStats.js';
+import ChannelStatsActive from './ChannelStatsActive.js';
+import ChannelStatsDetail from './ChannelStatsDetail.js';
+import ChannelStatsTop from './ChannelStatsTop.js';
+import ChannelStatsTrend from './ChannelStatsTrend.js';
+import ChannelSubscriberUpdate from './ChannelSubscriberUpdate.js';
 import IconInfo from './IconInfo.js';
 import IconInfoAvailableSize from './IconInfoAvailableSize.js';
 import IdHash from './IdHash.js';
@@ -113,23 +113,40 @@ export {
   DiscoveryPage,
   DiscoverySection,
   Event,
-  Group,
-  GroupAudioConfig,
-  GroupAudioCounts,
-  GroupAudioSlot,
-  GroupAudioSlotRequest,
-  GroupAudioSlotUpdate,
-  GroupExtended,
-  GroupMember,
-  GroupMemberList,
-  GroupMemberListSection,
-  GroupMessageConfig,
-  GroupStats,
-  GroupStatsActive,
-  GroupStatsDetail,
-  GroupStatsTop,
-  GroupStatsTrend,
-  GroupSubscriberUpdate,
+  Channel,
+  ChannelAudioConfig,
+  ChannelAudioCounts,
+  ChannelAudioSlot,
+  ChannelAudioSlotRequest,
+  ChannelAudioSlotUpdate,
+  ChannelExtended,
+  ChannelMember,
+  ChannelMemberList,
+  ChannelMemberListSection,
+  ChannelMessageConfig,
+  ChannelStats,
+  ChannelStatsActive,
+  ChannelStatsDetail,
+  ChannelStatsTop,
+  ChannelStatsTrend,
+  ChannelSubscriberUpdate,
+  Channel as Group,
+  ChannelAudioConfig as GroupAudioConfig,
+  ChannelAudioCounts as GroupAudioCounts,
+  ChannelAudioSlot as GroupAudioSlot,
+  ChannelAudioSlotRequest as GroupAudioSlotRequest,
+  ChannelAudioSlotUpdate as GroupAudioSlotUpdate,
+  ChannelExtended as GroupExtended,
+  ChannelMember as GroupMember,
+  ChannelMemberList as GroupMemberList,
+  ChannelMemberListSection as GroupMemberListSection,
+  ChannelMessageConfig as GroupMessageConfig,
+  ChannelStats as GroupStats,
+  ChannelStatsActive as GroupStatsActive,
+  ChannelStatsDetail as GroupStatsDetail,
+  ChannelStatsTop as GroupStatsTop,
+  ChannelStatsTrend as GroupStatsTrend,
+  ChannelSubscriberUpdate as GroupSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
@@ -211,23 +228,40 @@ export default {
   DiscoveryPage,
   DiscoverySection,
   Event,
-  Group,
-  GroupAudioConfig,
-  GroupAudioCounts,
-  GroupAudioSlot,
-  GroupAudioSlotRequest,
-  GroupAudioSlotUpdate,
-  GroupExtended,
-  GroupMember,
-  GroupMemberList,
-  GroupMemberListSection,
-  GroupMessageConfig,
-  GroupStats,
-  GroupStatsActive,
-  GroupStatsDetail,
-  GroupStatsTop,
-  GroupStatsTrend,
-  GroupSubscriberUpdate,
+  Channel,
+  ChannelAudioConfig,
+  ChannelAudioCounts,
+  ChannelAudioSlot,
+  ChannelAudioSlotRequest,
+  ChannelAudioSlotUpdate,
+  ChannelExtended,
+  ChannelMember,
+  ChannelMemberList,
+  ChannelMemberListSection,
+  ChannelMessageConfig,
+  ChannelStats,
+  ChannelStatsActive,
+  ChannelStatsDetail,
+  ChannelStatsTop,
+  ChannelStatsTrend,
+  ChannelSubscriberUpdate,
+  Group: Channel,
+  GroupAudioConfig: ChannelAudioConfig,
+  GroupAudioCounts: ChannelAudioCounts,
+  GroupAudioSlot: ChannelAudioSlot,
+  GroupAudioSlotRequest: ChannelAudioSlotRequest,
+  GroupAudioSlotUpdate: ChannelAudioSlotUpdate,
+  GroupExtended: ChannelExtended,
+  GroupMember: ChannelMember,
+  GroupMemberList: ChannelMemberList,
+  GroupMemberListSection: ChannelMemberListSection,
+  GroupMessageConfig: ChannelMessageConfig,
+  GroupStats: ChannelStats,
+  GroupStatsActive: ChannelStatsActive,
+  GroupStatsDetail: ChannelStatsDetail,
+  GroupStatsTop: ChannelStatsTop,
+  GroupStatsTrend: ChannelStatsTrend,
+  GroupSubscriberUpdate: ChannelSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,

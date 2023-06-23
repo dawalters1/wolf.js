@@ -37,7 +37,8 @@ class CommandHandler {
       const context = this._getCommand(
         this._commands,
         {
-          isGroup: message.isGroup,
+          isChannel: message.isChannel,
+          isGroup: message.isChannel,
           argument: message.body,
           targetGroupId: message.targetGroupId,
           sourceSubscriberId: message.sourceSubscriberId,
@@ -89,10 +90,10 @@ class CommandHandler {
     const command = commands.find((command) => {
       const phrase = this.client.phrase.getAllByName(command.phraseName).find((phrase) => this.client.utility.string.isEqual(phrase.value, context.argument.split(this.client.SPLIT_REGEX)[0]));
 
-      if (phrase && (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (context.isGroup && command.commandCallbackTypes.includes(Command.getCallback.GROUP)) || (!context.isGroup && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE)))) {
+      if (phrase && (command.commandCallbackTypes.includes(Command.getCallback.BOTH) || (context.isChannel && (command.commandCallbackTypes.includes(Command.getCallback.GROUP) || command.commandCallbackTypes.includes(Command.getCallback.CHANNEL))) || (!context.isChannel && command.commandCallbackTypes.includes(Command.getCallback.PRIVATE)))) {
         context.argument = context.argument.substr(phrase.value.length).trim();
         context.language = context.language || phrase.language;
-        context.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.callbackObject.both : !context.isGroup ? command.callbackObject.private : command.callbackObject.group;
+        context.callback = command.commandCallbackTypes.includes(Command.getCallback.BOTH) ? command.callbackObject.both : !context.isChannel ? command.callbackObject.private : (command.commandCallbackTypes.includes(Command.getCallback.CHANNEL) ? command.callbackObject.channel : command.callbackObject.group);
         context.route.push(_.omit(phrase, ['value']));
 
         return command;

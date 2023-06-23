@@ -93,7 +93,7 @@ class Discovery extends Base {
       case TopicPageRecipeType.LIVE_EVENT:
         return await this.client.event.getByIds(topicRecipeIds, languageId);
       case TopicPageRecipeType.GROUP:
-        return await this.client.group.getByIds(topicRecipeIds);
+        return await this.client.channel.getByIds(topicRecipeIds);
       case TopicPageRecipeType.PRODUCT:
         return await this.client.store.getProducts(topicRecipeIds, languageId);
       default:

@@ -6,8 +6,10 @@ class Tip extends Base {
   constructor (client, data) {
     super(client);
     this.charmList = data?.charmList.map((charm) => new TipCharm(client, charm)) ?? [];
-    this.groupId = data?.groupId;
-    this.isGroup = !!this.groupId;
+    this.channelId = data?.groupId;
+    this.groupId = this.channelId;
+    this.isChannel = !!this.channelId;
+    this.isGroup = this.isChannel;
     this.sourceSubscriberId = data?.sourceSubscriberId;
     this.subscriberId = data?.subscriberId;
     this.context = new TipContext(client, data?.context);
@@ -18,7 +20,11 @@ class Tip extends Base {
   }
 
   async group () {
-    return await this.client.group.getById(this.groupId);
+    return await this.channel();
+  }
+
+  async channel () {
+    return await this.client.channel.getById(this.channelId);
   }
 
   async sourceSubscriber () {

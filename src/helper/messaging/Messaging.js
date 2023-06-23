@@ -41,7 +41,7 @@ const getFormattingData = async (client, ads, links) => {
           {
             start: ad.start,
             end: ad.end,
-            groupId: (await client.group.getByName(ad.ad))?.id
+            groupId: (await client.channel.getByName(ad.ad))?.id
           }
         );
 

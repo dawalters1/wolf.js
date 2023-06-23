@@ -17,14 +17,14 @@ class Slot extends Base {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetGroupId);
 
-    if (!group.exists) {
+    if (!channel.exists) {
       throw new models.WOLFAPIError('Group does not exist', { targetGroupId });
     }
 
-    if (group.slots?.length) {
-      return group.slots;
+    if (channel.slots?.length) {
+      return channel.slots;
     }
 
     const response = await this.client.websocket.emit(
@@ -35,9 +35,9 @@ class Slot extends Base {
       }
     );
 
-    group.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot, targetGroupId)) ?? [];
+    channel.slots = response.body?.map((slot) => new models.GroupAudioSlot(this.client, slot, targetGroupId)) ?? [];
 
-    return group.slots;
+    return channel.slots;
   }
 
   async get (targetGroupId, slotId) {
@@ -240,11 +240,11 @@ class Slot extends Base {
       throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
-    const audioConfig = group.audioConfig;
+    const channel = await this.client.channel.getById(targetGroupId);
+    const audioConfig = channel.audioConfig;
 
     if (!audioConfig.enabled) {
-      throw new models.WOLFAPIError('Stage is not enabled for Group', { targetGroupId });
+      throw new models.WOLFAPIError('Stage is not enabled for channel', { targetGroupId });
     }
 
     if (audioConfig.minRepLevel > Math.floor(this.client.currentSubscriber.reputation)) {
@@ -254,11 +254,11 @@ class Slot extends Base {
     const slots = await this.list(targetGroupId);
 
     if (slots.some((slot) => slot.occupierId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('Bot already occupies a slot in this Group', { targetGroupId, slot: slots.find((slot) => slot.occupierId === this.client.currentSubscriber.id) });
+      throw new models.WOLFAPIError('Bot already occupies a slot in this channel', { targetGroupId, slot: slots.find((slot) => slot.occupierId === this.client.currentSubscriber.id) });
     }
 
     if (slots.every((slot) => !!slot.occupierId)) {
-      throw new models.WOLFAPIError('All slots in group are occupied', { targetGroupId });
+      throw new models.WOLFAPIError('All slots in channel are occupied', { targetGroupId });
     }
 
     const slot = await this.get(targetGroupId, slotId);
@@ -286,40 +286,6 @@ class Slot extends Base {
 
     return response;
   }
-  // eslint-disable-next-line no-warning-comments
-  /*
-  async consume (targetGroupId, slotId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
-    }
-
-    if (validator.isNullOrUndefined(slotId)) {
-      throw new models.WOLFAPIError('slotId cannot be null or undefined', { slotId });
-    } else if (!validator.isValidNumber(slotId)) {
-      throw new models.WOLFAPIError('slotId must be a valid number', { slotId });
-    } else if (validator.isLessThanOrEqualZero(slotId)) {
-      throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
-    }
-
-    const group = await this.client.group.getById(targetGroupId);
-    const audioConfig = group.audioConfig;
-
-    if (!audioConfig.enabled) {
-      throw new models.WOLFAPIError('Stage is not enabled for Group', { targetGroupId });
-    }
-
-    const slot = await this.get(targetGroupId, slotId);
-
-    if (!slot.occupierId) {
-      throw new models.WOLFAPIError('Slot is not occupied', { targetGroupId, slotId });
-    }
-
-    // TODO: check for client
-  } */
 
   async leave (targetGroupId, slotId) {
     if (validator.isNullOrUndefined(targetGroupId)) {

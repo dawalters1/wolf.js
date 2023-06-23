@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupAudioCounts extends Base {
+class ChannelAudioCounts extends Base {
   constructor (client, data) {
     super(client);
     this.broadcasterCount = data?.broadcasterCount;
@@ -9,4 +9,4 @@ class GroupAudioCounts extends Base {
   }
 }
 
-export default GroupAudioCounts;
+export default ChannelAudioCounts;
