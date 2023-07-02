@@ -17,45 +17,39 @@ export default async (client, body) => {
   patch(channel.slots.find((slot) => slot.id === body.slot.id), body.slot);
 
   if (cached.reservedOccupierId && !body.slot.reservedOccupierId) {
-    return client.emit(
-      new Date(cached.reservedExpiresAt).getTime() >= Date.now()
-        ? Event.GROUP_AUDIO_REQUEST_EXPIRE
-        : Event.GROUP_AUDIO_REQUEST_DELETE,
-      channel,
-      new models.ChannelAudioSlotRequest(client,
-        {
-          slotId: body.slot.id,
-          reservedOccupierId: body.slot.reservedOccupierId
-        }
-      )
-    );
+    return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+      ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]
+      : [Event.GROUP_AUDIO_REQUEST_DELETE, Event.CHANNEL_AUDIO_REQUEST_DELETE])
+      .forEach((event) =>
+        client.emit(
+          event,
+          channel,
+          new models.ChannelAudioSlotRequest(client,
+            {
+              slotId: body.slot.id,
+              reservedOccupierId: body.slot.reservedOccupierId
+            }
+          )
+        )
+      );
   }
 
   if (!cached.reservedOccupierId && body.slot.reservedOccupierId) {
-    return client.emit(
-      Event.GROUP_AUDIO_REQUEST_ADD,
-      channel,
-      new models.ChannelAudioSlotRequest(client,
-        {
-          slotId: body.slot.id,
-          reservedOccupierId: body.slot.reservedOccupierId,
-          reservedExpiresAt: new Date(body.slot.reservedExpiresAt)
-        }
-      )
-    );
+    return [Event.GROUP_AUDIO_REQUEST_ADD, Event.CHANNEL_AUDIO_REQUEST_ADD]
+      .forEach((event) =>
+        client.emit(
+          event,
+          channel,
+          new models.ChannelAudioSlotRequest(client,
+            {
+              slotId: body.slot.id,
+              reservedOccupierId: body.slot.reservedOccupierId,
+              reservedExpiresAt: new Date(body.slot.reservedExpiresAt)
+            }
+          )
+        )
+      );
   }
-
-  client.emit(
-    Event.GROUP_AUDIO_SLOT_UPDATE,
-    cached,
-    new ChannelAudioSlotUpdate(client,
-      {
-        id: body.id,
-        slot:
-        channel.slots.find((slot) => slot.id === body.slot.id)
-      }
-    )
-  );
 
   return [Event.GROUP_AUDIO_SLOT_UPDATE, Event.CHANNEL_AUDIO_SLOT_UPDATE]
     .forEach((event) =>
