@@ -464,7 +464,7 @@ class Channel extends Base {
       Command.SEARCH,
       {
         query,
-        types: ['channels']
+        types: ['groups']
       }
     );
 
