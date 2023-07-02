@@ -5065,6 +5065,7 @@ export enum DeviceType {
     IPAD = 6,
     ANDROID = 7,
     WEB = 8,
+    VR = 11,
 }
 
 export enum EmbedType {
