@@ -3,7 +3,7 @@ import { Welcome } from '../../../../models/index.js';
 
 const subscriptions = async (client) => {
   if (client.config.framework.subscriptions.messages.channel.enabled) {
-    await client.messaging._subscribeToGroup();
+    await client.messaging._subscribeToChannel();
   }
 
   if (client.config.framework.subscriptions.messages.private.enabled) {
@@ -11,7 +11,7 @@ const subscriptions = async (client) => {
   }
 
   if (client.config.framework.subscriptions.messages.channel.tipping) {
-    await client.tipping._subscribeToGroup();
+    await client.tipping._subscribeToChannel();
   }
 };
 

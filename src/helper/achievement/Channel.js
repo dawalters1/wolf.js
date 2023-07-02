@@ -3,12 +3,12 @@ import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
-class Group extends Base {
+class Channel extends Base {
   /**
-   * Request the unlocked achievements for the group
-   * @param {Number} targetGroupId - The ID of the group
+   * Request the unlocked achievements for the channel
+   * @param {Number} targetGroupId - The ID of the channel
    * @param {Number} parentId - The ID of the parent achievement (Optional)
-   * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the group
+   * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the channel
    */
   async getById (targetGroupId, parentId = undefined) {
     if (validator.isNullOrUndefined(targetGroupId)) {
@@ -44,4 +44,4 @@ class Group extends Base {
   }
 }
 
-export default Group;
+export default Channel;

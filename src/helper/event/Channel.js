@@ -5,7 +5,7 @@ import models from '../../models/index.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
 
-class Group extends Base {
+class Channel extends Base {
   async getList (targetGroupId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
@@ -215,4 +215,4 @@ class Group extends Base {
   }
 }
 
-export default Group;
+export default Channel;

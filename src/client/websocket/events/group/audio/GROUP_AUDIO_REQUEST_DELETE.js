@@ -21,11 +21,14 @@ export default async (client, body) => {
 
   channel.audioRequests.splice(channel.audioRequests.indexOf(request), 1);
 
-  return client.emit(
-    new Date(cached.reservedExpiresAt).getTime() >= Date.now()
-      ? Event.GROUP_AUDIO_REQUEST_EXPIRE
-      : Event.GROUP_AUDIO_REQUEST_DELETE,
-    channel,
-    request
-  );
+  return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+    ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]
+    : [Event.GROUP_AUDIO_REQUEST_DELETE, Event.CHANNEL_AUDIO_REQUEST_DELETE])
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        request
+      )
+    );
 };

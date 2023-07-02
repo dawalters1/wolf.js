@@ -45,7 +45,7 @@ export default async (client, body) => {
     );
   }
 
-  return client.emit(
+  client.emit(
     Event.GROUP_AUDIO_SLOT_UPDATE,
     cached,
     new ChannelAudioSlotUpdate(client,
@@ -56,4 +56,18 @@ export default async (client, body) => {
       }
     )
   );
+
+  return [Event.GROUP_AUDIO_SLOT_UPDATE, Event.CHANNEL_AUDIO_SLOT_UPDATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        cached,
+        new ChannelAudioSlotUpdate(client,
+          {
+            id: body.id,
+            slot: channel.slots.find((slot) => slot.id === body.slot.id)
+          }
+        )
+      )
+    );
 };

@@ -4,8 +4,12 @@ import { Command, TipPeriod, TipType, TipDirection, ContextType } from '../../co
 import models from '../../models/index.js';
 
 class Tipping extends Base {
-  async _subscribeToGroup () {
+  async _subscribeToChannel () {
     return await this.client.websocket.emit(Command.TIP_GROUP_SUBSCRIBE);
+  }
+
+  async _subscribeToGroup () {
+    return await this._subscribeToChannel();
   }
 
   async _subscribeToPrivate () {
@@ -167,7 +171,7 @@ class Tipping extends Base {
     return response.success ? new models.TipSummary(this.client, response.body) : undefined;
   }
 
-  async getGroupLeaderboard (targetGroupId, tipPeriod, tipType, tipDirection) {
+  async getChannelLeaderboard (targetGroupId, tipPeriod, tipType, tipDirection) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -209,7 +213,11 @@ class Tipping extends Base {
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
-  async getGroupLeaderboardSummary (targetGroupId, tipPeriod, tipType, tipDirection) {
+  async getGroupLeaderboard (targetGroupId, tipPeriod, tipType, tipDirection) {
+    return await this.getChannelLeaderboard(targetGroupId, tipPeriod, tipType, tipDirection);
+  }
+
+  async getChannelLeaderboardSummary (targetGroupId, tipPeriod, tipType, tipDirection) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -249,6 +257,10 @@ class Tipping extends Base {
     );
 
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
+  }
+
+  async getGroupLeaderboardSummary (targetGroupId, tipPeriod, tipType, tipDirection) {
+    return this.getChannelLeaderboardSummary(targetGroupId, tipPeriod, tipType, tipDirection);
   }
 
   async getGlobalLeaderboard (tipPeriod, tipType, tipDirection = undefined) {

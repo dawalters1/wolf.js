@@ -15,9 +15,12 @@ export default async (client, body) => {
 
   channel.audioRequests.push(request);
 
-  return client.emit(
-    Event.GROUP_AUDIO_REQUEST_ADD,
-    channel,
-    request
-  );
+  return [Event.GROUP_AUDIO_REQUEST_ADD, Event.CHANNEL_AUDIO_REQUEST_ADD]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        request
+      )
+    );
 };
