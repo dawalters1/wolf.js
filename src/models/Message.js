@@ -16,7 +16,7 @@ class Message extends Base {
     this.targetGroupId = this.targetChannelId;
     this.embeds = data?.embeds ? data?.embeds.map((embed) => new MessageEmbed(client, embed)) : null;
     this.metadata = data?.metadata ? new MessageMetadata(client, data?.metadata) : null;
-    this.isChannel = data?.isChannel;
+    this.isChannel = data?.isGroup;
     this.isGroup = this.isChannel;
     this.timestamp = data?.timestamp;
     this.edited = data?.edited ? new MessageEdit(client, data?.edited) : null;
