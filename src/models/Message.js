@@ -12,7 +12,7 @@ class Message extends Base {
     this.id = data?.id;
     this.body = data?.data?.toString().trim();
     this.sourceSubscriberId = data?.originator?.id ?? data?.originator ?? data.subscriberId;
-    this.targetChannelId = data?.isChannel ? data.targetGroupId ?? data?.recipient?.id ?? data?.recipient.id : null;
+    this.targetChannelId = data?.isGroup ? data.targetGroupId ?? data?.recipient?.id ?? data?.recipient.id : null;
     this.targetGroupId = this.targetChannelId;
     this.embeds = data?.embeds ? data?.embeds.map((embed) => new MessageEmbed(client, embed)) : null;
     this.metadata = data?.metadata ? new MessageMetadata(client, data?.metadata) : null;
