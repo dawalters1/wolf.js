@@ -29,6 +29,10 @@ class Channel extends Base {
     this.member = new Member(this.client);
   }
 
+  get groups () {
+    return this.channels;
+  }
+
   async list () {
     if (!this.fetched) {
       const response = await this.client.websocket.emit(

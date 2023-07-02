@@ -27,7 +27,7 @@ class Stage extends Base {
         new StageClientViewerCountUpdate(
           this.client,
           {
-            targetGroupId: oldCount.id,
+            targetChannelId: oldCount.id,
             oldBroadcastCount: oldCount.broadcasterCount,
             newBroadcasterCount: newCount.broadcasterCount,
             oldConsumerCount: oldCount.consumerCount,
@@ -40,17 +40,17 @@ class Stage extends Base {
     this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {
       const client = this.clients[newSlot.id];
 
-      if (client && client.slotId === newSlot.slot.id) {
-        return client.handleSlotUpdate(newSlot.slot, newSlot.sourceSubscriberId);
+      if (client?.slotId !== newSlot.slot.id) {
+        return Promise.resolve();
       }
 
-      return Promise.resolve();
+      return client.handleSlotUpdate(newSlot.slot, newSlot.sourceSubscriberId);
     });
   }
 
-  async _getClient (targetGroupId, createIfNotExists = false) {
-    if (this.clients[targetGroupId]) {
-      return this.clients[targetGroupId];
+  async _getClient (targetChannelId, createIfNotExists = false) {
+    if (this.clients[targetChannelId]) {
+      return this.clients[targetChannelId];
     }
 
     if (!await commandExists('ffmpeg')) {
@@ -60,63 +60,63 @@ class Stage extends Base {
     if (createIfNotExists) {
       const client = new StageClient();
 
-      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
       client.on(Event.STAGE_CLIENT_DISCONNECTED, async (data) => {
-        this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId }));
+        this._deleteClient(targetChannelId);
+        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId }));
       });
       client.on(Event.STAGE_CLIENT_KICKED, async (data) => {
-        this._deleteClient(targetGroupId);
-        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId }));
+        this._deleteClient(targetChannelId);
+        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId }));
       });
-      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate(this.client, { ...data, targetGroupId })));
-      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate(this.client, { ...data, targetGroupId })));
+      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
+      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate(this.client, { ...data, targetChannelId })));
 
-      this.clients[targetGroupId] = client;
+      this.clients[targetChannelId] = client;
     }
 
-    return this.clients[targetGroupId];
+    return this.clients[targetChannelId];
   }
 
-  _deleteClient (targetGroupId) {
-    this.clients[targetGroupId]?.stop();
+  _deleteClient (targetChannelId) {
+    this.clients[targetChannelId]?.stop();
 
-    Reflect.deleteProperty(this.clients, targetGroupId);
+    Reflect.deleteProperty(this.clients, targetChannelId);
   }
 
-  async getAudioConfig (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async getAudioConfig (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!channel.exists) {
-      throw new models.WOLFAPIError('Channel does not exist', { targetGroupId });
+      throw new models.WOLFAPIError('Channel does not exist', { targetChannelId });
     }
 
     return channel.audioConfig;
   }
 
-  async updateAudioConfig (targetGroupId, { stageId, enabled, minRepLevel }) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async updateAudioConfig (targetChannelId, { stageId, enabled, minRepLevel }) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (stageId) {
@@ -139,12 +139,12 @@ class Stage extends Base {
       }
     }
 
-    const audioConfig = await this.client.channel.getById(targetGroupId);
+    const audioConfig = await this.client.channel.getById(targetChannelId);
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_UPDATE,
       {
-        id: parseInt(targetGroupId),
+        id: parseInt(targetChannelId),
         stageId: parseInt(stageId) || audioConfig.stageId,
         enabled: enabled || audioConfig.enabled,
         minRepLevel: parseInt(minRepLevel) || audioConfig.minRepLevel
@@ -152,211 +152,211 @@ class Stage extends Base {
     );
   }
 
-  async getAudioCount (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async getAudioCount (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!channel.exists) {
-      throw new models.WOLFAPIError('Channel does not exist', { targetGroupId });
+      throw new models.WOLFAPIError('Channel does not exist', { targetChannelId });
     }
 
     return channel.audioCounts;
   }
 
-  async play (targetGroupId, data) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async play (targetChannelId, data) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].play(data);
+    return await this.clients[targetChannelId].play(data);
   }
 
-  async stop (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async stop (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].stop();
+    return await this.clients[targetChannelId].stop();
   }
 
-  async pause (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async pause (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].pause();
+    return await this.clients[targetChannelId].pause();
   }
 
-  async resume (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async resume (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].resume();
+    return await this.clients[targetChannelId].resume();
   }
 
-  async getBroadcastState (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async getBroadcastState (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].broadcastState;
+    return await this.clients[targetChannelId].broadcastState;
   }
 
-  async onStage (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async onStage (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return !!this.clients[targetGroupId];
+    return !!this.clients[targetChannelId];
   }
 
-  async isReady (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async isReady (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].connectionState === StageConnectionState.READY;
+    return await this.clients[targetChannelId].connectionState === StageConnectionState.READY;
   }
 
-  async isPlaying (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async isPlaying (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PLAYING;
+    return await this.getBroadcastState(targetChannelId) === StageBroadcastState.PLAYING;
   }
 
-  async isPaused (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async isPaused (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.PAUSED;
+    return await this.getBroadcastState(targetChannelId) === StageBroadcastState.PAUSED;
   }
 
-  async isIdle (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async isIdle (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return await this.getBroadcastState(targetGroupId) === StageBroadcastState.IDLE;
+    return await this.getBroadcastState(targetChannelId) === StageBroadcastState.IDLE;
   }
 
-  async duration (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async duration (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].duration;
+    return await this.clients[targetChannelId].duration;
   }
 
-  async getVolume (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async getVolume (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].volume;
+    return await this.clients[targetChannelId].volume;
   }
 
-  async setVolume (targetGroupId, volume) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async setVolume (targetChannelId, volume) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
     if (validator.isNullOrUndefined(volume)) {
@@ -367,23 +367,23 @@ class Stage extends Base {
       throw new models.WOLFAPIError('volume cannot be less than 0', { volume });
     }
 
-    return await this.clients[targetGroupId].setVolume(volume);
+    return await this.clients[targetChannelId].setVolume(volume);
   }
 
-  async getSlotId (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async getSlotId (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetGroupId]) {
-      throw new WOLFAPIError('bot is not on stage', { targetGroupId });
+    if (!this.clients[targetChannelId]) {
+      throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetGroupId].slotId;
+    return await this.clients[targetChannelId].slotId;
   }
 
   _cleanUp (reconnection = false) {
@@ -391,7 +391,7 @@ class Stage extends Base {
       return Promise.resolve();
     }
 
-    Object.keys(this.clients).forEach((targetGroupId) => this._deleteClient(targetGroupId));
+    Object.keys(this.clients).forEach((targetChannelId) => this._deleteClient(targetChannelId));
     this.request._cleanUp(reconnection);
     this.slot._cleanUp(reconnection);
   }

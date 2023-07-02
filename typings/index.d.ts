@@ -301,12 +301,12 @@ export class Configuration {
                 },
                 channel: {
                     /**
-                     * Whether or not the bot should receive group messages
+                     * Whether or not the bot should receive channel messages
                      * Default: true
                      */
                     enabled: boolean;
                     /**
-                     * Whether or not the bot should receive group messages tip events
+                     * Whether or not the bot should receive channel messages tip events
                      * Default: true
                      */
                     tipping: boolean;
@@ -422,10 +422,10 @@ export class AchievementChannelHelper extends Base {
 
     /**
      * Request Achievement list for a channel
-     * @param targetGroupId - The ID of the group to request
+     * @param targetChannelId - The ID of the channel to request
      * @param parentId - Provide if requesting child achievements (Optional)
      */
-    public getById(targetGroupId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
+    public getById(targetChannelId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
 }
 
 export class AchievementSubscriberHelper extends Base {
@@ -619,7 +619,7 @@ export class DiscoveryHelper extends Base {
 export class EventHelper extends Base {
     private constructor(client);
     /**
-     * Exposes the group event methods
+     * Exposes the channel event methods
      */
     public channel: ChannelEventHelper;
     /**
@@ -648,40 +648,40 @@ export class ChannelEventHelper extends Base {
     private constructor(client);
 
     /**
-     * Get the groups event list
-     * @param targetGroupId - The ID of the group
-     * @param subscribe - Whether or not to subscribe to the groups event list
+     * Get the channels event list
+     * @param targetChannelId - The ID of the channel
+     * @param subscribe - Whether or not to subscribe to the channels event list
      * @param forceNew - Whether or not to request new from the server
      */
-    public getList(targetGroupId: number, subscribe?: boolean, forceNew?: false): Promise<Array<Event>>;
+    public getList(targetChannelId: number, subscribe?: boolean, forceNew?: false): Promise<Array<Event>>;
 
     /**
      * Create an event without a thumbnail
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param eventData - The event data
      */
-    public create(targetGroupId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
+    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
     /**
      * Create an event with a thumbnail
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param eventData - The event data
      */
-    public create(targetGroupId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
+    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
 
     /**
      * Update an existing event using the existing thumbnail
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param eventId - The ID of the event
      * @param eventData - The new event data
      */
-    public update(targetGroupId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
+    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
     /**
      * Update an existing event using a new thumbnail
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param eventId - The ID of the event
      * @param eventData - The new event data
      */
-    public update(targetGroupId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
+    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
 
     /**
      * Update an events thumbnail
@@ -692,10 +692,10 @@ export class ChannelEventHelper extends Base {
 
     /**
      * Cancel an event
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param eventId - The ID of the event
      */
-    public delete(targetGroupId: number, eventId: number): Promise<Response>
+    public delete(targetChannelId: number, eventId: number): Promise<Response>
 }
 
 export class EventSubscriptionHelper extends Base {
@@ -726,61 +726,61 @@ export class ChannelHelper extends Base {
      */
     public member: ChannelMemberHelper;
     /**
-     * Get list of joined groups
+     * Get list of joined channels
      */
     public list(): Promise<Array<Channel>>;
     /**
-     * Get a group profile
-     * @param id - The ID of the group
+     * Get a channel profile
+     * @param id - The ID of the channel
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
     public getById(id: number, subscribe?: boolean, forceNew?: boolean): Promise<Channel>;
     /**
-     * Get groups profiles
-     * @param ids - The list of group IDs
+     * Get channels profiles
+     * @param ids - The list of channel IDs
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
     public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Channel | Array<Channel>>;
     /**
-     * Get a group
-     * @param name - The name of the group
+     * Get a channel
+     * @param name - The name of the channel
      * @param subscribe - Whether or not to subscribe to profile updates
      * @param forceNew - Whether or not to request new from the server
      */
     public getByName(name: string, subscribe?: boolean, forceNew?: boolean): Promise<Channel>;
     /**
-     * Update a group profile
-     * @param id - The ID of the group
-     * @param groupData - The new group data
+     * Update a channel profile
+     * @param id - The ID of the channel
+     * @param channelData - The new channel data
      */
-    public update(id: number, groupData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar: Buffer }): Promise<Response>;
+    public update(id: number, channelData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar: Buffer }): Promise<Response>;
     /**
-     * Join a group
-     * @param id - The ID of the group
+     * Join a channel
+     * @param id - The ID of the channel
      * @param password - The password
      */
     public joinById(id: number, password?: string): Promise<Response>;
     /**
-     * Join a group
-     * @param name - The name of the group
+     * Join a channel
+     * @param name - The name of the channel
      * @param password - The password
      */
     public joinByName(name: string, password?: string): Promise<Response>;
     /**
-     * Leave a group
-     * @param id - The ID of the group
+     * Leave a channel
+     * @param id - The ID of the channel
      */
     public leaveById(id: number): Promise<Response>;
     /**
-     * Leave a group
-     * @param name - The name of the group
+     * Leave a channel
+     * @param name - The name of the channel
      */
     public leaveByName(name: string): Promise<Response>;
     /**
      * Get chat history
-     * @param id - The ID of the group
+     * @param id - The ID of the channel
      * @param chronological - Whether or not the messages should be in order
      * @param timestamp - The timestamp to start at
      * @param limit - How many messages to request (Default: 15)
@@ -788,15 +788,15 @@ export class ChannelHelper extends Base {
     public getChatHistory(id: number, chronological: boolean, timestamp?: number, limit?: number): Promise<Array<Message>>;
     /**
      * Get stats
-     * @param id - The ID of the group
+     * @param id - The ID of the channel
      */
     public getStats(id: number): Promise<ChannelStats>;
     /**
-     * Get group recommendations based on bot activity
+     * Get channel recommendations based on bot activity
      */
     public getRecommendationList(): Promise<Array<Channel>>;
     /**
-     * Search for a group
+     * Search for a channel
      * @param query - The search params
      */
     public search(query: string): Promise<Array<Search>>;
@@ -806,77 +806,77 @@ export class ChannelMemberHelper extends Base {
     private constructor(client);
 
     /**
-     * Get list of bots in the group
-     * @param targetGroupId - The ID of the group
+     * Get list of bots in the channel
+     * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getBotList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getBotList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
-     * Get a groups silenced list
-     * @param targetGroupId - The ID of the group
+     * Get a channels silenced list
+     * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getSilencedList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getSilencedList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
-     * Get a groups banned list (Mod required)
-     * @param targetGroupId - The ID of the group
+     * Get a channels banned list (Mod required)
+     * @param targetChannelId - The ID of the channel
      * @param limit - How many should be returned (Default: 100)
      */
-    public getBannedList(targetGroupId: number, limit?: number): Promise<Array<ChannelMember>>;
+    public getBannedList(targetChannelId: number, limit?: number): Promise<Array<ChannelMember>>;
     /**
-     * Get a groups privileged list
-     * @param targetGroupId - The ID of the group
+     * Get a channels privileged list
+     * @param targetChannelId - The ID of the channel
      */
-    public getPrivilegedList(targetGroupId: number): Promise<Array<ChannelMember>>;
+    public getPrivilegedList(targetChannelId: number): Promise<Array<ChannelMember>>;
     /**
-     * Get a groups regular list
+     * Get a channels regular list
      * -- NOT BOT FRIENDLY, BATCHES OF 100 --
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getRegularList(targetGroupId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getRegularList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public get(targetGroupId: number, subscriberId: number): Promise<ChannelMember>;
+    public get(targetChannelId: number, subscriberId: number): Promise<ChannelMember>;
     /**
      * Admin a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public admin(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public admin(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Mod a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public mod(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public mod(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Reset a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public regular(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public regular(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Silence a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public silence(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public silence(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Ban a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public ban(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public ban(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Kick a subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      */
-    public kick(targetGroupId: number, subscriberId: number): Promise<Response>;
+    public kick(targetChannelId: number, subscriberId: number): Promise<Response>;
 }
 
 export class LogHelper extends Base {
@@ -912,18 +912,18 @@ export class MessagingHelper extends Base {
     /**
      * Send a group message
      * @deprecated use sendChannelMessage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param content - The message
      * @param options - The sending options
      */
-    public sendGroupMessage(targetGroupId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendGroupMessage(targetChannelId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
-     * Send a group message
-     * @param targetGroupId - The ID of the channel
+     * Send a channel message
+     * @param targetChannelId - The ID of the channel
      * @param content - The message
      * @param options - The sending options
      */
-    public sendChannelMessage(targetGroupId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendChannelMessage(targetChannelId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
 
     /**
      * Send a private message
@@ -942,42 +942,42 @@ export class MessagingHelper extends Base {
     /**
      * Get message edit history
      * @deprecated use getChannelMessageEditHistory
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
-    public getGroupMessageEditHistory(targetGroupId: number, timestamp: number): Promise<Array<MessageUpdate>>;
+    public getGroupMessageEditHistory(targetChannelId: number, timestamp: number): Promise<Array<MessageUpdate>>;
     /**
     * Get message edit history
-    * @param targetGroupId - The ID of the channel
+    * @param targetChannelId - The ID of the channel
     * @param timestamp - The timestamp of the message
     */
-    public getChannelMessageEditHistory(targetGroupId: number, timestamp: number): Promise<Array<MessageUpdate>>;
+    public getChannelMessageEditHistory(targetChannelId: number, timestamp: number): Promise<Array<MessageUpdate>>;
     /**
      * Delete a group message
      * @deprecated use deleteChannelMessage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
-    public deleteGroupMessage(targetGroupId: number, timestamp: number): Promise<Response>;
+    public deleteGroupMessage(targetChannelId: number, timestamp: number): Promise<Response>;
     /**
      * Delete a channel message
-     * @param targetGroupId - The ID of the channel
+     * @param targetChannelId - The ID of the channel
      * @param timestamp - The timestamp of the message
      */
-    public deleteChannelMessage(targetGroupId: number, timestamp: number): Promise<Response>;
+    public deleteChannelMessage(targetChannelId: number, timestamp: number): Promise<Response>;
     /**
      * Restore a delete group message
      * @deprecated use restoreChannelMessage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
-    public restoreGroupMessage(targetGroupId: number, timestamp: number): Promise<Response>;
+    public restoreGroupMessage(targetChannelId: number, timestamp: number): Promise<Response>;
     /**
      * Restore a delete channel message
-     * @param targetGroupId - The ID of the channel
+     * @param targetChannelId - The ID of the channel
      * @param timestamp - The timestamp of the message
      */
-    public restoreChannelMessage(targetGroupId: number, timestamp: number): Promise<Response>;
+    public restoreChannelMessage(targetChannelId: number, timestamp: number): Promise<Response>;
 
     /**
      * Get the bots conversation list
@@ -1005,16 +1005,16 @@ export class MessagingSubscriptionHelper extends Base {
     /**
      * Wait for the next group message
      * @deprecated use nextChannelMessage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param timeout - How long to wait
      */
-    public nextGroupMessage(targetGroupId: number, timeout: Number): Promise<Message | undefined>
+    public nextGroupMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
     /**
      * Wait for the next channel message
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param timeout - How long to wait
      */
-    public nextChannelMessage(targetGroupId: number, timeout: Number): Promise<Message | undefined>
+    public nextChannelMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
     /**
      * Wait for the next subscriber message
      * @param sourceSubscriberId - The ID of the subscriber
@@ -1024,15 +1024,15 @@ export class MessagingSubscriptionHelper extends Base {
     /**
      * Wait for the next message in a group by a specific subscriber
      * @deprecated use nextChannelSubscriberMessage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
-    public nextGroupSubscriberMessage(targetGroupId: number, sourceSubscriberId: number, timeout: Number): Promise<Message | undefined>
+    public nextGroupSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout: Number): Promise<Message | undefined>
 
     /**
-     * Wait for the next message in a group by a specific subscriber
-     * @param targetGroupId - The ID of the channel
+     * Wait for the next message in a channel by a specific subscriber
+     * @param targetChannelId - The ID of the channel
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
@@ -1149,93 +1149,93 @@ export class StageHelper extends Base {
      */
     public slot: StageSlotHelper;
     /**
-     * Get a groups stage settings
-     * @param targetGroupId - The ID of the group
+     * Get a channels stage settings
+     * @param targetChannelId - The ID of the channel
      */
-    public getAudioConfig(targetGroupId: number): Promise<ChannelAudioConfig>;
+    public getAudioConfig(targetChannelId: number): Promise<ChannelAudioConfig>;
     /**
-     * Update the groups audio config
-     * @param targetGroupId - The ID of the group
+     * Update the channels audio config
+     * @param targetChannelId - The ID of the channel
      * @param audioConfig - The new audio config
      */
-    public updateAudioConfig(targetGroupId: number, audioConfig: { stageId?: number, enabled?: boolean, minRepLevel?: number }): Promise<Response>;
+    public updateAudioConfig(targetChannelId: number, audioConfig: { stageId?: number, enabled?: boolean, minRepLevel?: number }): Promise<Response>;
     /**
-     * Get a groups stage settings
-     * @param targetGroupId - The ID of the group
+     * Get a channels stage settings
+     * @param targetChannelId - The ID of the channel
      */
-    public getAudioCount(targetGroupId: number): Promise<ChannelAudioCounts>;
+    public getAudioCount(targetChannelId: number): Promise<ChannelAudioCounts>;
     /**
      * Play audio on stage
-     * @param targetGroupId - The ID of the group (Must join first)
+     * @param targetChannelId - The ID of the channel (Must join first)
      * @param data - The audio stream
      */
-    public play(targetGroupId: number, data: Stream): Promise<void>;
+    public play(targetChannelId: number, data: Stream): Promise<void>;
     /**
      * Stop playing audio on a stage (Will remain on stage)
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public stop(targetGroupId: number): Promise<void>;
+    public stop(targetChannelId: number): Promise<void>;
     /**
      * Pause the current broadcast (Download continues in background)
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public pause(targetGroupId: number): Promise<void>;
+    public pause(targetChannelId: number): Promise<void>;
     /**
      * Resume the current broadcast
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public resume(targetGroupId: number): Promise<void>;
+    public resume(targetChannelId: number): Promise<void>;
     /**
      * Whether or not the bot is on stage
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public onStage(targetGroupId: number): Promise<boolean>
+    public onStage(targetChannelId: number): Promise<boolean>
     /**
-     * Get the current broadcast state of the client for a group
-     * @param targetGroupId - The ID of the group
+     * Get the current broadcast state of the client for a channel
+     * @param targetChannelId - The ID of the channel
      */
-    public getBroadcastState(targetGroupId: number): Promise<StageBroadcastState>;
+    public getBroadcastState(targetChannelId: number): Promise<StageBroadcastState>;
     /**
-     * Whether or not the client for the group is ready to broadcast
-     * @param targetGroupId - The ID of the group
+     * Whether or not the client for the channel is ready to broadcast
+     * @param targetChannelId - The ID of the channel
      */
-    public isReady(targetGroupId: number): Promise<boolean>;
+    public isReady(targetChannelId: number): Promise<boolean>;
     /**
-     * Whether or not the client for the group is broadcasting
-     * @param targetGroupId - The ID of the group
+     * Whether or not the client for the channel is broadcasting
+     * @param targetChannelId - The ID of the channel
      */
-    public isPlaying(targetGroupId: number): Promise<boolean>;
+    public isPlaying(targetChannelId: number): Promise<boolean>;
     /**
-     * Whether or not the client for the group is paused
-     * @param targetGroupId - The ID of the group
+     * Whether or not the client for the channel is paused
+     * @param targetChannelId - The ID of the channel
      */
-    public isPaused(targetGroupId: number): Promise<boolean>;
+    public isPaused(targetChannelId: number): Promise<boolean>;
     /**
-     * Whether or not the client for the group is idling
-     * @param targetGroupId - The ID of the group
+     * Whether or not the client for the channel is idling
+     * @param targetChannelId - The ID of the channel
      */
-    public isIdle(targetGroupId: number): Promise<boolean>;
+    public isIdle(targetChannelId: number): Promise<boolean>;
     /**
      * Get the duration of the current broadcast
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public duration(targetGroupId: number): Promise<number>;
+    public duration(targetChannelId: number): Promise<number>;
     /**
      * Get the volume of the current broadcast
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      */
-    public getVolume(targetGroupId: number): Promise<number>
+    public getVolume(targetChannelId: number): Promise<number>
     /**
      * Change the volume of the current broadcast (Causes static :()
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param volume - The volume value
      */
-    public setVolume(targetGroupId: number, volume: number): Promise<void>;
+    public setVolume(targetChannelId: number, volume: number): Promise<void>;
     /**
     * Get the slot the bot is on
-    * @param targetGroupId - The ID of the group
+    * @param targetChannelId - The ID of the channel
     */
-    public getSlotId(targetGroupId: number): Promise<number>;
+    public getSlotId(targetChannelId: number): Promise<number>;
 }
 
 export class StageRequestHelper extends Base {
@@ -1243,29 +1243,29 @@ export class StageRequestHelper extends Base {
 
     /**
      * Get list of current stage slot requests
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscribe - Whether or not to subscribe to list updates
      * @param forceNew - Whether or not to fetch new from the server
      */
-    public list(targetGroupId: number, subscribe?: boolean, forceNew?: boolean): Promise<ChannelAudioSlotRequest>;
+    public list(targetChannelId: number, subscribe?: boolean, forceNew?: boolean): Promise<ChannelAudioSlotRequest>;
     /**
      * Add request to stage request list
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      * @param subscriberId - The ID of the subscriber (Leave blank if bot is requesting for self)
      */
-    public add(targetGroupId: number, slotId: number, subscriberId?: number): Promise<Response>
+    public add(targetChannelId: number, slotId: number, subscriberId?: number): Promise<Response>
     /**
      * Remove a request from stage request list
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public delete(targetGroupId: number, slotId: number): Promise<Response>
+    public delete(targetChannelId: number, slotId: number): Promise<Response>
     /**
-     * Clear the groups current stage slot requests
-     * @param targetGroupId - The ID of the group
+     * Clear the channels current stage slot requests
+     * @param targetChannelId - The ID of the channel
      */
-    public clear(targetGroupId: number): Promise<Response>
+    public clear(targetChannelId: number): Promise<Response>
 }
 
 export class StageSlotHelper extends Base {
@@ -1273,58 +1273,58 @@ export class StageSlotHelper extends Base {
 
     /**
      * Get list of slots
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param subscribe - Whether or not to subscribe to slot updates
      */
-    public list(targetGroupId: number, subscribe?: boolean): Promise<Array<ChannelAudioSlot>>
+    public list(targetChannelId: number, subscribe?: boolean): Promise<Array<ChannelAudioSlot>>
     /**
-     * Get a group slot
-     * @param targetGroupId - The ID of the group
+     * Get a channel slot
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public get(targetGroupId: number, slotId: number): Promise<ChannelAudioSlot>;
+    public get(targetChannelId: number, slotId: number): Promise<ChannelAudioSlot>;
     /**
      * Lock a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public lock(targetGroupId: number, slotId: number): Promise<Response>;
+    public lock(targetChannelId: number, slotId: number): Promise<Response>;
     /**
      * Unlock a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public unlock(targetGroupId: number, slotId: number): Promise<Response>;
+    public unlock(targetChannelId: number, slotId: number): Promise<Response>;
     /**
      * Mute a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public mute(targetGroupId: number, slotId: number): Promise<Response>;
+    public mute(targetChannelId: number, slotId: number): Promise<Response>;
     /**
      * Unmute a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public unmute(targetGroupId: number, slotId: number): Promise<Response>;
+    public unmute(targetChannelId: number, slotId: number): Promise<Response>;
     /**
      * Kick a user from a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public kick(targetGroupId: number, slotId: number): Promise<Response>;
+    public kick(targetChannelId: number, slotId: number): Promise<Response>;
     /**
      * Join a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public join(targetGroupId: number, slotId: number): Promise<Response<Object>>;
+    public join(targetChannelId: number, slotId: number): Promise<Response<Object>>;
     /**
      * Leave a slot
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param slotId - The ID of the slot
      */
-    public leave(targetGroupId: number, slotId: number): Promise<Response<Object>>;
+    public leave(targetChannelId: number, slotId: number): Promise<Response<Object>>;
 }
 
 export class StoreHelper extends Base {
@@ -1361,7 +1361,7 @@ export class StoreHelper extends Base {
      * Purchase a product
      * @param productDurationId - The ID of the product duration
      * @param quanitity - The quanitity to purchase
-     * @param ids - The ID of group or users to purchase for
+     * @param ids - The ID of channel or users to purchase for
      */
     public purchase(productDurationId: number, quanitity: number, ids: number | Array<number>): Promise<Response>;
     /**
@@ -1446,61 +1446,61 @@ export class TippingHelper extends Base {
     /**
      * Tip a subscriber
      * @param targetSubscriberId - The ID of the subscriber
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param context - The context
      * @param charms - The charms to tip
      */
-    public tip(targetSubscriberId: number, targetGroupId: number, context: { type: ContextType, id: number | undefined }, charms: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
+    public tip(targetSubscriberId: number, targetChannelId: number, context: { type: ContextType, id: number | undefined }, charms: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
     /**
      * Get a messages tip details
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param timestamp - The timestamp of the message
      * @param limit - How many should be requested (Default: 20)
      * @param offset - Where the request should start at (Default: 0)
      */
-    public getDetails(targetGroupId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipDetail>>;
+    public getDetails(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipDetail>>;
     /**
      * Get a messages tip summary
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param timestamp - The timestamp of the message
      * @param limit - How many should be requested (Default: 20)
      * @param offset - Where the request should start at (Default: 0)
      */
-    public getSummary(targetGroupId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipSummary>>;
+    public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipSummary>>;
     /**
-     * Get a groups tipping leaderboard
+     * Get a channels tipping leaderboard
      * @deprecated use getChannelLeaderboard
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGroupLeaderboard(targetGroupId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getGroupLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
-    * Get a groups tipping leaderboard
-    * @param targetGroupId - The ID of the channel
+    * Get a channels tipping leaderboard
+    * @param targetChannelId - The ID of the channel
     * @param tipPeriod - The tipping period
     * @param tipType - The tipping type
     * @param tipDirection - The tipping direction
     */
-    public getChannelLeaderboard(targetGroupId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
      * Get a groups tipping leaderboard summary
      * @deprecated use getChannelLeaderboardSummary
-     * @param targetGroupId - The ID of the group
+     * @param targetChannelId - The ID of the group
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGroupLeaderboardSummary(targetGroupId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
+    public getGroupLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
     /**
-     * Get a groups tipping leaderboard summary
-     * @param targetGroupId - The ID of the channel
+     * Get a channels tipping leaderboard summary
+     * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getChannelLeaderboardSummary(targetGroupId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
+    public getChannelLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
 
     /**
      * Get the global tipping leaderboard
@@ -1588,25 +1588,25 @@ export class ChannelUtility extends Base {
      */
     public member: ChannelMemberUtility;
     /**
-     * Get a groups avatar
-     * @param groupId - The ID of the group
+     * Get a channels avatar
+     * @param channelId - The ID of the channel
      * @param size - The size to request
      */
-    public avatar(groupId: number, size: IconSize): Buffer;
+    public avatar(channelId: number, size: IconSize): Buffer;
 }
 
 export class ChannelMemberUtility extends Base {
     private constructor(client: WOLF);
 
     /**
-     * Check if a subscriber has a capability in group
-     * @param targetGroupId - The ID of the group
+     * Check if a subscriber has a capability in channel
+     * @param targetChannelId - The ID of the channel
      * @param targetSubscriberId - The ID of the subscriber
      * @param capability - The minimum capbility required
      * @param checkStaff - Check if user is staff (Bypasses capability)
      * @param checkAuthorized - Check if user is authorized (Bypasses capability)
      */
-    public hasCapability(targetGroupId: number, targetSubscriberId: number, capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>
+    public hasCapability(targetChannelId: number, targetSubscriberId: number, capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>
 }
 
 export class NumberUtility {
@@ -1782,13 +1782,13 @@ export class Utility {
      */
     public timer: TimerUtility;
     /**
-     * Join a group
+     * Join a channel
      * @param command - The command
      * @param onPermissionErrorCallback - An override method to be called if a permission check fails (Default: undefined)
      */
     public join(command: CommandContext, onPermissionErrorCallback: Function | undefined): Promise<MessageResponse>;
     /**
-     * Leave a group
+     * Leave a channel
      * @param command - The command
      * @param onPermissionErrorCallback - An override method to be called if a permission check fails (Default: undefined)
      */
@@ -1952,7 +1952,7 @@ export class Ad extends Base {
      */
     public group(): Promise<Channel>;
     /**
-     * Get the group profile
+     * Get the channel profile
      */
     public channel(): Promise<Channel>;
 
@@ -2101,6 +2101,10 @@ export class CommandContext extends Base {
     public isChannel: boolean;
     public argument: string;
     public language: string;
+    public targetChannelId: number | undefined;
+    /**
+     * @deprecated use targetChannelId
+     */
     public targetGroupId: number | undefined;
     public sourceSubscriberId: number | undefined;
     public timestamp: number;
@@ -2173,6 +2177,7 @@ export class CommandContext extends Base {
         isChannel: boolean;
         argument: string;
         language: string;
+        targetChannelId: number | undefined;
         targetGroupId: number | undefined;
         sourceSubscriberId: number | undefined;
         timestamp: number;
@@ -2243,9 +2248,9 @@ export class Discovery extends Base {
     public sections: Array<DiscoverySection>;
 
     /**
-     * Get the page, product, event or groups
+     * Get the page, product, event or channels
      * @param value - The page, name or ID
-     * @param offset - The product, event or group offset
+     * @param offset - The product, event or channel offset
      */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
@@ -2289,9 +2294,9 @@ export class DiscoveryPage extends Base {
     public sections: Array<DiscoverySection>;
 
     /**
-     * Get the page, product, event or groups
+     * Get the page, product, event or channels
      * @param value - The page or ID
-     * @param offset - The product, event or group offset
+     * @param offset - The product, event or channel offset
      */
     public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
@@ -2342,8 +2347,8 @@ export class DiscoverySection extends Base {
     public additionalDescriptions: Array<string>
 
     /**
-     * Get the page, event, product or groups belonging to the section
-     * @param offset - The Page, Event, Product or group offset
+     * Get the page, event, product or channels belonging to the section
+     * @param offset - The Page, Event, Product or channel offset
      */
     public get(offset: number): Promise<DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
@@ -2376,6 +2381,10 @@ export class Event extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
+    public channelId: number;
+    /**
+     * @deprecated use channelId
+     */
     public groupId: number;
     public createdBy: number;
     public title: string;
@@ -2410,6 +2419,7 @@ export class Event extends Base {
 
     toJSON(): {
         id: number;
+        channelId: number;
         groupId: number;
         createdBy: number;
         title: string;
@@ -2455,42 +2465,42 @@ export class Channel extends Base {
     public exists: boolean;
 
     /**
-     * Get the group avatar URL
+     * Get the channel avatar URL
      * @param size - The size
      */
     public getAvatarUrl(size: IconSize): string;
     /**
-     * Get the group avatar
+     * Get the channel avatar
      * @param size - The size
      */
     public getAvatar(size: IconSize): Promise<Buffer>;
 
     /**
-     * Join the group
-     * @param password - The groups password if it has one
+     * Join the channel
+     * @param password - The channels password if it has one
      */
     public join(password: string | undefined): Promise<Response>;
     /**
-     * Leave the group
+     * Leave the channel
      */
     public leave(): Promise<Response>;
     /**
-     * Get the groups stats
+     * Get the channels stats
      */
     public stats(): Promise<ChannelStats>;
     /**
-     * Get the groups audio slots
+     * Get the channels audio slots
      */
     public slots(): Promise<Array<ChannelAudioSlot>>;
 
     /**
-     * Send a message in the group
+     * Send a message in the channel
      * @param content - The message
      * @param options - The send options
      */
     public sendMessage(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
     /**
-     * Update the groups profile
+     * Update the channels profile
      * @param profileData - The new profile data
      */
     public update(profileData: { description: string, peekable: boolean, disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean, longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number, avatar: Buffer }): Promise<Response>;
@@ -2598,7 +2608,7 @@ export class ChannelAudioConfig extends Base {
     public minRepLevel: number;
 
     /**
-     * Update the groups audio config
+     * Update the channels audio config
      * @param configData - The new audio config
      */
     public update(configData: { enabled: boolean, stageId: number, minRepLevel: number }): Promise<Response>;
@@ -2765,7 +2775,7 @@ export class ChannelExtended extends Base {
     public entryLevel: number;
 
     /**
-     * Update the groups extended profile
+     * Update the channels extended profile
      * @param extendedData - The new extended profile
      */
     public update(extendedData: { longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number }): Promise<Response>;
@@ -2940,6 +2950,7 @@ export class ChannelStats extends Base {
         next30: Array<{
             actionCount: number;
             emoticonCount: number;
+            channelId: number;
             groupId: number;
             happyEmoticonCount: number;
             imageCount: number;
@@ -3320,6 +3331,10 @@ export class Message extends Base {
     public id: string;
     public body: string;
     public sourceSubscriberId: number;
+    public targetChannelId: number;
+    /**
+     * @deprecated use targetChannelId
+     */
     public targetGroupId: number;
     public embeds: Array<MessageEmbed>;
     public metadata: MessageMetadata;
@@ -3371,17 +3386,24 @@ export class Message extends Base {
     public subscriber(): Promise<Subscriber>;
     /**
      * Get the group profile
+     * @deprecated use channel
      */
     public group(): Promise<Channel>;
+    /**
+     * Get the channel profile
+     */
+    public channel(): Promise<Channel>;
 
     toJSON(): {
         id: string;
         body: string;
         sourceSubscriberId: number;
+        targetChannelId: number;
         targetGroupId: number;
         embeds: Array<{
             type: EmbedType;
             groupId: number;
+            channelId: number;
             url: string;
             title: string;
             image: Buffer;
@@ -3393,6 +3415,12 @@ export class Message extends Base {
                     start: number;
                     end: number;
                     groupId: number;
+
+                }>;
+                channelLinks: Array<{
+                    start: number;
+                    end: number;
+                    channelId: number;
 
                 }>;
                 links: Array<{
@@ -3815,7 +3843,7 @@ export class Search extends Base {
     public reason: string;
 
     /**
-     * Get the group or subscriber profile
+     * Get the channel or subscriber profile
      */
     public getProfile(): Promise<Subscriber | Channel>;
 
@@ -3830,6 +3858,10 @@ export class Search extends Base {
 export class StageClientDurationUpdate extends Base {
     private constructor(client: WOLF, data: object);
 
+    public targetChannelId: number;
+    /**
+     * @deprecated use targetChannelId
+     */
     public targetGroupId: number;
     public duration: number;
 
@@ -3851,23 +3883,23 @@ export class StageClientDurationUpdate extends Base {
      */
     public resume(): Promise<void>;
     /**
-     * Get the current broadcast state of the client for a group
+     * Get the current broadcast state of the client for a channel
      */
     public getBroadcastState(): Promise<StageBroadcastState>;
     /**
-     * Whether or not the client for the group is ready to broadcast
+     * Whether or not the client for the channel is ready to broadcast
      */
     public isReady(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is broadcasting
+     * Whether or not the client for the channel is broadcasting
      */
     public isPlaying(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is paused
+     * Whether or not the client for the channel is paused
      */
     public isPaused(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is idling
+     * Whether or not the client for the channel is idling
      */
     public isIdle(): Promise<boolean>;
     /**
@@ -3881,6 +3913,7 @@ export class StageClientDurationUpdate extends Base {
 
     toJSON(): {
         targetGroupId: number,
+        targetChannelId: number,
         duration: number;
     }
 }
@@ -3888,6 +3921,10 @@ export class StageClientDurationUpdate extends Base {
 export class StageClientGeneralUpdate extends Base {
     private constructor(client: WOLF, data: object);
 
+    public targetChannelId: number;
+    /**
+     * @deprecated use targetChannelId
+     */
     public targetGroupId: number;
     public sourceSubscriberId: number;
 
@@ -3909,23 +3946,23 @@ export class StageClientGeneralUpdate extends Base {
      */
     public resume(): Promise<void>;
     /**
-     * Get the current broadcast state of the client for a group
+     * Get the current broadcast state of the client for a channel
      */
     public getBroadcastState(): Promise<StageBroadcastState>;
     /**
-     * Whether or not the client for the group is ready to broadcast
+     * Whether or not the client for the channel is ready to broadcast
      */
     public isReady(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is broadcasting
+     * Whether or not the client for the channel is broadcasting
      */
     public isPlaying(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is paused
+     * Whether or not the client for the channel is paused
      */
     public isPaused(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is idling
+     * Whether or not the client for the channel is idling
      */
     public isIdle(): Promise<boolean>;
     /**
@@ -3939,6 +3976,7 @@ export class StageClientGeneralUpdate extends Base {
 
     toJSON(): {
         targetGroupId: number;
+        targetChannelId: number;
         sourceSubscriberId: number;
     }
 }
@@ -3946,6 +3984,10 @@ export class StageClientGeneralUpdate extends Base {
 export class StageClientViewerCountUpdate extends Base {
     private constructor(client: WOLF, data: object);
 
+    public targetChannelId: number;
+    /**
+     * @deprecated use targetChannelId
+     */
     public targetGroupId: number;
     public oldBroadcasterCount: number;
     public newBroadcasterCount: number;
@@ -3970,23 +4012,23 @@ export class StageClientViewerCountUpdate extends Base {
      */
     public resume(): Promise<void>;
     /**
-     * Get the current broadcast state of the client for a group
+     * Get the current broadcast state of the client for a channel
      */
     public getBroadcastState(): Promise<StageBroadcastState>;
     /**
-     * Whether or not the client for the group is ready to broadcast
+     * Whether or not the client for the channel is ready to broadcast
      */
     public isReady(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is broadcasting
+     * Whether or not the client for the channel is broadcasting
      */
     public isPlaying(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is paused
+     * Whether or not the client for the channel is paused
      */
     public isPaused(): Promise<boolean>;
     /**
-     * Whether or not the client for the group is idling
+     * Whether or not the client for the channel is idling
      */
     public isIdle(): Promise<boolean>;
     /**
@@ -3999,6 +4041,7 @@ export class StageClientViewerCountUpdate extends Base {
     public getSlotId(): Promise<number>;
 
     toJSON(): {
+        targetChannelId: number;
         targetGroupId: number;
         oldBroadcasterCount: number;
         newBroadcasterCount: number;
@@ -4136,15 +4179,15 @@ export class StoreProduct extends Base {
      * Purchase an item
      * @param duration - The duration ID
      * @param quanitity - How many to buy
-     * @param targetGroupIds - The target user or group IDs
+     * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(duration: StoreProductDuration | number, quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
+    public purchase(duration: StoreProductDuration | number, quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
     /**
      * Purchase an item
      * @param quanitity - How many to buy
-     * @param targetGroupIds - The target user or group IDs
+     * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
+    public purchase(quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
 
     toJSON(): {
         languageId: Language;
@@ -4203,7 +4246,7 @@ export class StoreProductDuration extends Base {
     /**
      * Purchase an item
      * @param quanitity - How many to buy
-     * @param targetGroupIds - The target user or group IDs
+     * @param targetChannelIds - The target user or channel IDs
      */
     public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
 
@@ -5301,7 +5344,7 @@ export interface ClientEvents {
      */
     groupAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
     /**
-     * Fires when a group audio count updates
+     * Fires when a channel audio count updates
      */
     channelAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
     /**
@@ -5310,7 +5353,7 @@ export interface ClientEvents {
      */
     groupAudioRequestAdd: [request: ChannelAudioSlotRequest],
     /**
-     * Fired when a group audio request is added
+     * Fired when a channel audio request is added
      */
     channelAudioRequestAdd: [request: ChannelAudioSlotRequest],
     /**
@@ -5319,7 +5362,7 @@ export interface ClientEvents {
      */
     groupAudioRequestListClear: [group: Channel, subscriberId: number],
     /**
-     * Fired when a group audio request list is cleared
+     * Fired when a channel audio request list is cleared
      */
     channelAudioRequestListClear: [channel: Channel, subscriberId: number],
     /**
@@ -5328,7 +5371,7 @@ export interface ClientEvents {
      */
     groupAudioRequestDelete: [group: Channel, request: ChannelAudioSlotRequest],
     /**
-     * Fired when a group audio request is deleted
+     * Fired when a channel audio request is deleted
      */
     channelAudioRequestDelete: [channel: Channel, request: ChannelAudioSlotRequest],
     /**
@@ -5337,7 +5380,7 @@ export interface ClientEvents {
      */
     groupAudioRequestExpire: [group: Channel, request: ChannelAudioSlotRequest],
     /**
-     * Fired when a group audio request expires
+     * Fired when a channel audio request expires
      */
     channelAudioRequestExpire: [channel: Channel, request: ChannelAudioSlotRequest],
     /**
@@ -5346,7 +5389,7 @@ export interface ClientEvents {
      */
     groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
     /**
-     * Fired when a group audio slot is updated
+     * Fired when a channel audio slot is updated
      */
     channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
     /**
@@ -5355,7 +5398,7 @@ export interface ClientEvents {
      */
     groupAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
     /**
-     * Fired when a groups audio configuration is updated
+     * Fired when a channels audio configuration is updated
      */
     channelAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
     /**
@@ -5364,7 +5407,7 @@ export interface ClientEvents {
      */
     groupEventCreate: [group: Channel, event: Event],
     /**
-     * Fired when a group event is created
+     * Fired when a channel event is created
      */
     channelEventCreate: [channel: Channel, event: Event],
     /**
@@ -5373,7 +5416,7 @@ export interface ClientEvents {
      */
     groupEventDelete: [group: Channel, event: Event],
     /**
-     * Fired when a group event is deleted
+     * Fired when a channel event is deleted
      */
     channelEventDelete: [channel: Channel, event: Event],
     /**
@@ -5382,7 +5425,7 @@ export interface ClientEvents {
      */
     groupEventUpdate: [group: Channel, oldEvent: Event, newEvent: Event],
     /**
-     * Fired when a group event is updated
+     * Fired when a channel event is updated
      */
     channelEventUpdate: [channel: Channel, oldEvent: Event, newEvent: Event],
     /**
@@ -5391,7 +5434,7 @@ export interface ClientEvents {
      */
     groupMemberAdd: [group: Channel, subscriber: Subscriber],
     /**
-     * Fired when a group member joins
+     * Fired when a channel member joins
      */
     channelMemberAdd: [channel: Channel, subscriber: Subscriber],
     /**
@@ -5400,7 +5443,7 @@ export interface ClientEvents {
      */
     groupMemberDelete: [group: Channel, subscriber: Subscriber],
     /**
-     * Fired when a group member leaves
+     * Fired when a channel member leaves
      */
     channelMemberDelete: [channel: Channel, subscriber: Subscriber],
     /**
@@ -5409,7 +5452,7 @@ export interface ClientEvents {
      */
     groupMemberUpdate: [group: Channel, update: GroupSubscriberUpdate],
     /**
-     * Fired when a group member is updated
+     * Fired when a channel member is updated
      */
     channelMemberUpdate: [channel: Channel, update: GroupSubscriberUpdate],
     /**
@@ -5418,7 +5461,7 @@ export interface ClientEvents {
      */
     groupMessage: [message: Message],
     /**
-     * Fired when a group message is received
+     * Fired when a channel message is received
      */
     channelMessage: [message: Message],
     /**
@@ -5427,7 +5470,7 @@ export interface ClientEvents {
      */
     groupMessageUpdate: [message: Message],
     /**
-     * Fired when a group message is updated
+     * Fired when a channel message is updated
      */
     channelMessageUpdate: [message: Message],
     /**
@@ -5436,7 +5479,7 @@ export interface ClientEvents {
      */
     groupTipAdd: [tip: Tip],
     /**
-     * Fired when a group message is tipped
+     * Fired when a channel message is tipped
      */
     channelTipAdd: [tip: Tip],
     /**
@@ -5445,7 +5488,7 @@ export interface ClientEvents {
      */
     groupUpdate: [oldGroup: Channel, newGroup: Channel],
     /**
-     * Fired when a group profile is updated
+     * Fired when a channel profile is updated
      */
     channelUpdate: [oldChannel: Channel, newChannel: Channel],
     /**
@@ -5458,7 +5501,7 @@ export interface ClientEvents {
      */
     joinedGroup: [group: Channel, subscriber: Subscriber],
     /**
-     * Fires when the bot joins a group
+     * Fires when the bot joins a channel
      */
     joinedChannel: [channel: Channel, subscriber: Subscriber],
     /**

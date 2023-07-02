@@ -1,11 +1,11 @@
 import Base from './Base.js';
 
 class ChannelAudioSlot extends Base {
-  constructor (client, data, targetGroupId) {
+  constructor (client, data, channelId) {
     super(client);
 
     this.id = data?.id;
-    this.channelId = targetGroupId;
+    this.channelId = channelId;
     this.groupId = this.channelId;
     this.locked = data?.locked;
     this.occupierId = data?.occupierId;

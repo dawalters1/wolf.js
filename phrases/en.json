@@ -45,63 +45,63 @@
     },
     {
         "name": "{keyword}_join_channel_error_provide_arguments_message",
-        "value": "(N) You must provide the GroupID you want me to join\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) You must provide the ID of the Channel you want me to join\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_invalid_channel_id_message",
-        "value": "(N) {arg} is not a valid GroupID\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) {arg} is not a valid Channel ID\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_no_such_channel_message",
-        "value": "(N) No such channel exists with ID {channelId}\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) No such Channel exists with ID {channelId}\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_in_channel_message",
-        "value": "(N) I am already in this channel\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) I am already in this Channel\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_higher_reputation_message",
-        "value": "(N) The channel entry level is too high, please lower it to {reputationLevel} and try again\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) The Channel entry level is too high, please lower it to {reputationLevel} and try again\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_too_few_message",
-        "value": "(N) There are not enough members in this channel for me to join (Minimum Required: {minimum})\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) There are not enough members in this Channel for me to join (Minimum Required: {minimum})\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_too_many_message",
-        "value": "(N) There are too many members in this channel for me to join (Maximum Required: {maximum})\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) There are too many members in this Channel for me to join (Maximum Required: {maximum})\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_permission_1_message",
-        "value": "(N) Only the owner of the requested channel can ask me to join\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) Only the owner of the requested Channel can ask me to join\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_permission_2_message",
-        "value": "(N) Only authorized users can join me to channels\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) Only authorized users can join me to Channels\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_permission_3_without_details_message",
-        "value": "(N) Only the bot developer can join me to channels\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) Only the bot developer can join me to Channels\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_permission_3_with_details_message",
-        "value": "(N) Only {developerNickname} (ID {developerSubscriberId}) can join me to channels\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) Only {developerNickname} (ID {developerSubscriberId}) can join me to Channels\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_limit_message",
-        "value": "(N) I am in the maximum allowed channels\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) I am in the maximum allowed Channels\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_error_passworded_message",
-        "value": "(N) The channel has a password\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) The Channel has a password\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_success_message",
-        "value": "(Y) I have joined the requested channel\n\n{nickname} (ID {subscriberId})"
+        "value": "(Y) I have joined the requested Channel\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_join_channel_failed_message",
-        "value": "(N) I was unable to join the requested channel\nReason: {reason}\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) I was unable to join the requested Channel\nReason: {reason}\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_error_unknown_reason_message",
@@ -113,23 +113,23 @@
     },
     {
         "name": "{keyword}_leave_error_unsupported_message",
-        "value": "(N) you must provide the channel ID you want me to leave\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) you must provide the Channel ID you want me to leave\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_leave_message",
-        "value": "(Y) I will now leave this channel\n\n{nickname} (ID {subscriberId})"
+        "value": "(Y) I will now leave this Channel\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_leave_error_invalid_channel_id_message",
-        "value": "(N) '{arg}' is not a valid channel ID\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) '{arg}' is not a valid Channel ID\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_leave_success_message",
-        "value": "(Y)  I have left the requested channel\n\n{nickname} (ID {subscriberId})"
+        "value": "(Y)  I have left the requested Channel\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_leave_failed_message",
-        "value": "(N) I was unable to leave the requested channel\nReason: {reason}\n\n{nickname} (ID {subscriberId})"
+        "value": "(N) I was unable to leave the requested Channel\nReason: {reason}\n\n{nickname} (ID {subscriberId})"
     },
     {
         "name": "{keyword}_leave_error_permissions_message",
