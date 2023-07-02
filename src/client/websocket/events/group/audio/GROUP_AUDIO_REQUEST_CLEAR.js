@@ -11,9 +11,12 @@ export default async (client, body) => {
   }
   channel.audioRequests = [];
 
-  return client.emit(
-    Event.GROUP_AUDIO_REQUEST_CLEAR,
-    channel,
-    body.subscriberId
-  );
+  return [Event.GROUP_AUDIO_REQUEST_CLEAR, Event.CHANNEL_AUDIO_REQUEST_CLEAR]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        body.subscriberId
+      )
+    );
 };

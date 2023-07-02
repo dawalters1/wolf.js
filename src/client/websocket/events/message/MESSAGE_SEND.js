@@ -42,17 +42,14 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
 
       channel.membersCount++;
 
-      client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.JOINED_GROUP : Event.GROUP_MEMBER_ADD,
-        channel,
-        subscriber
-      );
-
-      return client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.JOINED_CHANNEL : Event.CHANNEL_MEMBER_ADD,
-        channel,
-        subscriber
-      );
+      return (subscriber.id === client.currentSubscriber.id ? [Event.JOINED_GROUP, Event.JOINED_CHANNEL] : [Event.GROUP_MEMBER_ADD, Event.CHANNEL_MEMBER_ADD])
+        .forEach((event) =>
+          client.emit(
+            event,
+            channel,
+            subscriber
+          )
+        );
     }
     case 'leave':
     case 'kick': // eslint-disable-line padding-line-between-statements
@@ -70,17 +67,14 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
       await channel.members._onLeave(subscriber, capabilities);
       channel.membersCount--;
 
-      client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.LEFT_GROUP : Event.GROUP_MEMBER_DELETE,
-        channel,
-        subscriber
-      );
-
-      return client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.LEFT_CHANNEL : Event.CHANNEL_MEMBER_DELETE,
-        channel,
-        subscriber
-      );
+      return (subscriber.id === client.currentSubscriber.id ? [Event.LEFT_GROUP, Event.LEFT_CHANNEL] : [Event.GROUP_MEMBER_DELETE, Event.CHANNEL_MEMBER_DELETE])
+        .forEach((event) =>
+          client.emit(
+            event,
+            channel,
+            subscriber
+          )
+        );
     }
 
     case 'owner': // eslint-disable-line padding-line-between-statements
@@ -102,31 +96,19 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
         await channel.members._banned.reset();
       }
 
-      client.emit(
-        Event.GROUP_MEMBER_UPDATE,
-        channel,
-        new ChannelSubscriberUpdate(client,
-          {
-            groupId: channel.id,
-            channelId: channel.id,
-            sourceId: action.instigatorId,
-            targetId: message.sourceSubscriberId,
-            action: action.type
-          }
-        )
-      );
-
-      return client.emit(
-        Event.CHANNEL_MEMBER_UPDATE,
-        channel,
-        new ChannelSubscriberUpdate(client,
-          {
-            groupId: channel.id,
-            channelId: channel.id,
-            sourceId: action.instigatorId,
-            targetId: message.sourceSubscriberId,
-            action: action.type
-          }
+      return [Event.GROUP_MEMBER_UPDATE, Event.CHANNEL_MEMBER_UPDATE].forEach((event) =>
+        client.emit(
+          event,
+          channel,
+          new ChannelSubscriberUpdate(client,
+            {
+              groupId: channel.id,
+              channelId: channel.id,
+              sourceId: action.instigatorId,
+              targetId: message.sourceSubscriberId,
+              action: action.type
+            }
+          )
         )
       );
     }
@@ -141,7 +123,7 @@ export default async (client, body) => {
 
   switch (message.type) {
     // Why is this its own message type? Flags dammit 🤬
-    case MessageType.APPLICATION_PALRINGO_GROUP_ACTION:
+    case MessageType.APPLICATION_PALRINGO_CHANNEL_ACTION:
       await handleApplicationPalringoChannelAction(client, message);
       break;
       // Why is this its own message type? Flags dammit 🤬
@@ -166,18 +148,11 @@ export default async (client, body) => {
       break;
   }
 
-  // Internal
-  client.emit('message', message);
-
-  if (message.isGroup) {
-    client.emit(
-      Event.GROUP_MESSAGE,
-      message
+  return (message.isChannel ? ['message', Event.GROUP_MESSAGE, Event.CHANNEL_MESSAGE] : ['message', Event.PRIVATE_MESSAGE])
+    .forEach((event) =>
+      client.emit(
+        event,
+        message
+      )
     );
-  }
-
-  return client.emit(
-    message.isChannel ? Event.CHANNEL_MESSAGE : Event.PRIVATE_MESSAGE,
-    message
-  );
 };

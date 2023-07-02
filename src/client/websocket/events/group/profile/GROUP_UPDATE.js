@@ -14,9 +14,12 @@ export default async (client, body) => {
   const oldChannel = new models.Channel(client, cached);
   const newChannel = await client.channel.getById(body.id, true, true);
 
-  return client.emit(
-    Event.GROUP_UPDATE,
-    oldChannel,
-    newChannel
-  );
+  return [Event.GROUP_UPDATE, Event.CHANNEL_UPDATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        oldChannel,
+        newChannel
+      )
+    );
 };

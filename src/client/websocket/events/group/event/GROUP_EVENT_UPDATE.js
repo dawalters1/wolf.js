@@ -17,18 +17,24 @@ export default async (client, body) => {
   if (body.isRemoved) {
     channel.events.splice(channel.events.indexOf(oldEvent), 1);
 
-    return client.emit(
-      Event.GROUP_EVENT_DELETE,
-      channel,
-      newEvent
-    );
+    return [Event.GROUP_EVENT_DELETE, Event.CHANNEL_EVENT_DELETE]
+      .forEach((event) =>
+        client.emit(
+          event,
+          channel,
+          newEvent
+        )
+      );
   }
   patch(oldEvent, newEvent);
 
-  return client.emit(
-    Event.GROUP_EVENT_UPDATE,
-    channel,
-    oldEvent,
-    newEvent
-  );
+  return [Event.GROUP_EVENT_UPDATE, Event.CHANNEL_EVENT_UPDATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        oldEvent,
+        newEvent
+      )
+    );
 };

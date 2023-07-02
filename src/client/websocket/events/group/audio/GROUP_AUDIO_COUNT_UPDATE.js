@@ -15,9 +15,12 @@ export default async (client, body) => {
 
   channel.audioCounts = new models.ChannelAudioCounts(client, body);
 
-  return client.emit(
-    Event.GROUP_AUDIO_COUNT_UPDATE,
-    oldAudioCount,
-    channel.audioCounts
-  );
+  return [Event.GROUP_AUDIO_COUNT_UPDATE, Event.CHANNEL_AUDIO_COUNT_UPDATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        oldAudioCount,
+        channel.audioCounts
+      )
+    );
 };

@@ -39,7 +39,7 @@ class Notification extends Base {
   }
 
   _process (value) {
-    const existing = this.notifications.find((group) => group.id === value);
+    const existing = this.notifications.find((notification) => notification.id === value);
 
     existing ? patch(existing, value) : this.notifications.push(value);
 

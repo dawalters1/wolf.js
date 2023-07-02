@@ -14,9 +14,12 @@ export default async (client, body) => {
 
   channel.events.push(event);
 
-  return client.emit(
-    Event.GROUP_EVENT_CREATE,
-    channel,
-    event
-  );
+  return [Event.GROUP_EVENT_CREATE, Event.CHANNEL_EVENT_CREATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        event
+      )
+    );
 };

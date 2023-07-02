@@ -43,7 +43,7 @@ import MessageEdit from './MessageEdit.js';
 import MessageEmbed from './MessageEmbed.js';
 import MessageMetadata from './MessageMetadata.js';
 import MessageMetadataFormatting from './MessageMetadataFormatting.js';
-import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
+import MessageMetadataFormattingChannelLink from './MessageMetadataFormattingChannelLink.js';
 import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
 import MessageResponse from './MessageResponse.js';
 import MessageSettings from './MessageSettings.js';
@@ -157,7 +157,8 @@ export {
   MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
-  MessageMetadataFormattingGroupLink,
+  MessageMetadataFormattingChannelLink,
+  MessageMetadataFormattingChannelLink as MessageMetadataFormattingGroupLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
   MessageSettingFilter,
@@ -272,7 +273,8 @@ export default {
   MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
-  MessageMetadataFormattingGroupLink,
+  MessageMetadataFormattingChannelLink,
+  MessageMetadataFormattingGroupLink: MessageMetadataFormattingChannelLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
   MessageSettingFilter,

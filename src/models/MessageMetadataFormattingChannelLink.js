@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class MessageMetadataFormattingGroupLink extends Base {
+class MessageMetadataFormattingChannelLink extends Base {
   constructor (client, data) {
     super(client);
     this.start = data?.start;
@@ -19,4 +19,4 @@ class MessageMetadataFormattingGroupLink extends Base {
   }
 }
 
-export default MessageMetadataFormattingGroupLink;
+export default MessageMetadataFormattingChannelLink;

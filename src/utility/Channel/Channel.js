@@ -4,7 +4,7 @@ import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import IconSize from '../../constants/IconSize.js';
 
-class Group extends Base {
+class Channel extends Base {
   constructor (client) {
     super(client);
 
@@ -30,4 +30,4 @@ class Group extends Base {
   }
 }
 
-export default Group;
+export default Channel;

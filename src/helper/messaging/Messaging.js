@@ -203,7 +203,7 @@ class Messaging extends Base {
     this.subscription = new Subscription(client);
   }
 
-  async _subscribeToGroup () {
+  async _subscribeToChannel () {
     return await this.client.websocket.emit(
       Command.MESSAGE_GROUP_SUBSCRIBE,
       {
@@ -214,7 +214,11 @@ class Messaging extends Base {
     );
   }
 
-  async _unsubscribeFromGroup (targetGroupId) {
+  async _subscribeToGroup () {
+    return this._subscribeToChannel();
+  }
+
+  async _unsubscribeFromChannel (targetGroupId) {
     return await this.client.websocket.emit(
       Command.MESSAGE_GROUP_UNSUBSCRIBE, {
         headers: {
@@ -225,6 +229,10 @@ class Messaging extends Base {
         }
       }
     );
+  }
+
+  async _unsubscribeFromGroup (targetGroupId) {
+    return this._unsubscribeFromChannel(targetGroupId);
   }
 
   async _subscribeToPrivate () {
@@ -278,7 +286,7 @@ class Messaging extends Base {
           data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
           mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,
           recipient: parseInt(targetId),
-          isGroup: targetType === MessageTypes.GROUP,
+          isGroup: targetType === MessageTypes.CHANNEL,
           flightId: nanoid(32)
         }
       );
@@ -290,7 +298,7 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('deeplinks start index and end index must be less than or equal to the contents length', { faults: options.links.filter((link) => link.start > content.length || link.end > content.length) });
     }
 
-    const messages = await buildMessages(this.client, targetId, targetType === MessageTypes.GROUP, content, options);
+    const messages = await buildMessages(this.client, targetId, targetType === MessageTypes.CHANNEL, content, options);
 
     const responses = [];
 
@@ -308,8 +316,12 @@ class Messaging extends Base {
       : responses[0];
   }
 
+  async sendChannelMessage (targetGroupId, content, options = undefined) {
+    return await this._sendMessage(MessageTypes.CHANNEL, targetGroupId, content, options);
+  }
+
   async sendGroupMessage (targetGroupId, content, options = undefined) {
-    return await this._sendMessage(MessageTypes.GROUP, targetGroupId, content, options);
+    return await this.sendChannelMessage(targetGroupId, content, options);
   }
 
   async sendPrivateMessage (targetSubscriberId, content, options = undefined) {
@@ -324,7 +336,7 @@ class Messaging extends Base {
     return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetGroupId : commandOrMessage.sourceSubscriberId, content, options);
   }
 
-  async getGroupMessageEditHistory (targetGroupId, timestamp) {
+  async getChannelMessageEditHistory (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -353,7 +365,11 @@ class Messaging extends Base {
     return response.body?.map((data) => new models.MessageUpdate(this.client, data)) ?? [];
   }
 
-  async deleteGroupMessage (targetGroupId, timestamp) {
+  async getGroupMessageEditHistory (targetGroupId, timestamp) {
+    return await this.getChannelMessageEditHistory(targetGroupId, timestamp);
+  }
+
+  async deleteChannelMessage (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -383,7 +399,11 @@ class Messaging extends Base {
     );
   }
 
-  async restoreGroupMessage (targetGroupId, timestamp) {
+  async deleteGroupMessage (targetGroupId, timestamp) {
+    return await this.deleteChannelMessage(targetGroupId, timestamp);
+  }
+
+  async restoreChannelMessage (targetGroupId, timestamp) {
     if (validator.isNullOrUndefined(targetGroupId)) {
       throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
     } else if (!validator.isValidNumber(targetGroupId)) {
@@ -411,6 +431,10 @@ class Messaging extends Base {
         timestamp
       }
     );
+  }
+
+  async restoreGroupMessage (targetGroupId, timestamp) {
+    return await this.restoreChannelMessage(targetGroupId, timestamp);
   }
 
   async getConversationList () {
