@@ -8,11 +8,13 @@ class CommandContext {
    */
   constructor (client, data) {
     this.client = client;
-    this.isGroup = data?.isGroup;
+
     this.isChannel = data?.isGroup;
+    this.isGroup = this.isChannel;
     this.argument = data?.argument;
     this.language = data?.language;
-    this.targetGroupId = data?.targetGroupId ?? undefined;
+    this.targetChannelId = data?.targetGroupId ?? undefined;
+    this.targetGroupId = this.targetChannelId;
     this.sourceSubscriberId = data?.sourceSubscriberId ?? undefined;
     this.timestamp = data?.timestamp;
     this.type = data?.type;
@@ -32,12 +34,12 @@ class CommandContext {
       throw new WOLFAPIError('cannot request channel for non-channel command', { ...this.toJSON() });
     }
 
-    return await this.client.channel.getById(this.targetGroupId);
+    return await this.client.channel.getById(this.targetChannelId);
   }
 
   async reply (content, options) {
     if (this.isChannel) {
-      return await this.client.messaging.sendGroupMessage(this.targetGroupId, content, options);
+      return await this.client.messaging.sendChannelMessage(this.targetChannelId, content, options);
     }
 
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
@@ -52,7 +54,7 @@ class CommandContext {
       throw new WOLFAPIError('hasCapability can only be used on a channel message', { ...this.toJSON() });
     }
 
-    return await this.client.utility.channel.member.hasCapability(this.targetGroupId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
+    return await this.client.utility.channel.member.hasCapability(this.targetChannelId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
   }
 
   async hasPrivilege (privilege, requireAll = false) {
@@ -77,6 +79,7 @@ class CommandContext {
       isChannel: this.isChannel,
       argument: this.argument,
       language: this.language,
+      targetChannelId: this.targetChannelId,
       targetGroupId: this.targetGroupId,
       sourceSubscriberId: this.sourceSubscriberId,
       timestamp: this.timestamp,

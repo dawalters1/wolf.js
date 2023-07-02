@@ -4,13 +4,13 @@ import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 
 class Request extends Base {
-  async list (targetGroupId, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async list (targetChannelId, subscribe = true, forceNew = false) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (!validator.isValidBoolean(subscribe)) {
@@ -21,7 +21,7 @@ class Request extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!forceNew && channel._requestListFetched) {
       return channel.audioRequests;
@@ -30,7 +30,7 @@ class Request extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
-        id: parseInt(targetGroupId),
+        id: parseInt(targetChannelId),
         subscribe
       }
     );
@@ -43,13 +43,13 @@ class Request extends Base {
     return channel.audioRequests || [];
   }
 
-  async add (targetGroupId, slotId = undefined, subscriberId = undefined) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async add (targetChannelId, slotId = undefined, subscriberId = undefined) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (slotId) {
@@ -70,18 +70,18 @@ class Request extends Base {
       }
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!channel.exists) {
-      throw new models.WOLFAPIError('No such channel', { targetGroupId });
+      throw new models.WOLFAPIError('No such channel', { targetChannelId });
     }
 
     if (!channel.inChannel) {
-      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
+      throw new models.WOLFAPIError('Not in channel', { targetChannelId });
     }
 
     if (!channel.audioConfig.enabled) {
-      throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
+      throw new models.WOLFAPIError('Stage is disabled', { targetChannelId });
     }
 
     const slots = await channel.getStageSlots();
@@ -90,25 +90,25 @@ class Request extends Base {
       const slot = slots.find((slot) => slot.id === parseInt(slotId));
 
       if (!slot) {
-        throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });
+        throw new models.WOLFAPIError('slot does not exist', { targetChannelId, slotId });
       }
 
       if (slot.locked) {
-        throw new models.WOLFAPIError('slot is locked', { targetGroupId, slotId });
+        throw new models.WOLFAPIError('slot is locked', { targetChannelId, slotId });
       }
 
       if (slots.some((slot) => slot.occupierId === parseInt(subscriberId))) {
-        throw new models.WOLFAPIError('subscriber already occupies a slot in this channel', { targetGroupId, subscriberId });
+        throw new models.WOLFAPIError('subscriber already occupies a slot in this channel', { targetChannelId, subscriberId });
       }
 
       if (slots.some((slot) => slot.reservedOccupierId === parseInt(subscriberId))) {
-        throw new models.WOLFAPIError('subscriber already has a slot request in this channel', { targetGroupId, subscriberId });
+        throw new models.WOLFAPIError('subscriber already has a slot request in this channel', { targetChannelId, subscriberId });
       }
 
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_BROADCAST_UPDATE,
         {
-          id: parseInt(targetGroupId),
+          id: parseInt(targetChannelId),
           slotId: parseInt(slotId),
           reservedExpiresAt: Date.now() + 30000,
           reservedOccupierId: parseInt(subscriberId)
@@ -117,28 +117,28 @@ class Request extends Base {
     }
 
     if (slots.some((slot) => slot.occupierId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('bot already occupies a slot in this channel', { targetGroupId });
+      throw new models.WOLFAPIError('bot already occupies a slot in this channel', { targetChannelId });
     }
 
     if (slots.some((slot) => slot.reservedOccupierId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('bot already has a slot request in this channel', { targetGroupId });
+      throw new models.WOLFAPIError('bot already has a slot request in this channel', { targetChannelId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_ADD,
       {
-        id: parseInt(targetGroupId)
+        id: parseInt(targetChannelId)
       }
     );
   }
 
-  async delete (targetGroupId, slotId = undefined) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async delete (targetChannelId, slotId = undefined) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (slotId) {
@@ -151,18 +151,18 @@ class Request extends Base {
       }
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!channel.exists) {
-      throw new models.WOLFAPIError('No such channel', { targetGroupId });
+      throw new models.WOLFAPIError('No such channel', { targetChannelId });
     }
 
     if (!channel.inChannel) {
-      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
+      throw new models.WOLFAPIError('Not in channel', { targetChannelId });
     }
 
     if (!channel.audioConfig.enabled) {
-      throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
+      throw new models.WOLFAPIError('Stage is disabled', { targetChannelId });
     }
 
     const slots = await channel.slots();
@@ -171,21 +171,21 @@ class Request extends Base {
       const slot = slots.find((slot) => slot.id === parseInt(slotId));
 
       if (!slot) {
-        throw new models.WOLFAPIError('slot does not exist', { targetGroupId, slotId });
+        throw new models.WOLFAPIError('slot does not exist', { targetChannelId, slotId });
       }
 
       if (slot.locked) {
-        throw new models.WOLFAPIError('slot is locked', { targetGroupId, slotId });
+        throw new models.WOLFAPIError('slot is locked', { targetChannelId, slotId });
       }
 
       if (slot.occupierId) {
-        throw new models.WOLFAPIError('slot request has already been accepted', { targetGroupId, slotId });
+        throw new models.WOLFAPIError('slot request has already been accepted', { targetChannelId, slotId });
       }
 
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_BROADCAST_UPDATE,
         {
-          id: parseInt(targetGroupId),
+          id: parseInt(targetChannelId),
           slotId: parseInt(slotId),
           reservedExpiresAt: undefined,
           reservedOccupierId: undefined
@@ -196,52 +196,52 @@ class Request extends Base {
     const requests = await channel.getRequestList();
 
     if (!requests.some((request) => request.subscriberId === this.client.currentSubscriber.id)) {
-      throw new models.WOLFAPIError('bot is not in the mic request list', { targetGroupId });
+      throw new models.WOLFAPIError('bot is not in the mic request list', { targetChannelId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_DELETE,
       {
-        id: parseInt(targetGroupId)
+        id: parseInt(targetChannelId)
       }
     );
   }
 
-  async clear (targetGroupId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (!validator.isType(targetGroupId, 'number')) {
-      throw new models.WOLFAPIError('targetGroupId must be type of number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async clear (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (!validator.isType(targetChannelId, 'number')) {
+      throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    const channel = await this.client.channel.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
     if (!channel.exists) {
-      throw new models.WOLFAPIError('No such channel', { targetGroupId });
+      throw new models.WOLFAPIError('No such channel', { targetChannelId });
     }
 
     if (!channel.inChannel) {
-      throw new models.WOLFAPIError('Not in channel', { targetGroupId });
+      throw new models.WOLFAPIError('Not in channel', { targetChannelId });
     }
 
     if (!channel.audioConfig.enabled) {
-      throw new models.WOLFAPIError('Stage is disabled', { targetGroupId });
+      throw new models.WOLFAPIError('Stage is disabled', { targetChannelId });
     }
 
     const requests = await channel.getRequestList();
 
     if (!requests.length) {
-      throw new models.WOLFAPIError('request list is already empty', { targetGroupId });
+      throw new models.WOLFAPIError('request list is already empty', { targetChannelId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_CLEAR,
       {
-        id: parseInt(targetGroupId)
+        id: parseInt(targetChannelId)
       }
     );
   }

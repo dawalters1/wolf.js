@@ -66,18 +66,18 @@ class Subscription extends Base {
     return await this._create(predicate, timeout);
   }
 
-  async nextGroupMessage (targetGroupId, timeout = Infinity) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (!validator.isType(targetGroupId, 'number')) {
-      throw new models.WOLFAPIError('targetGroupId must be type of number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async nextGroupMessage (targetChannelId, timeout = Infinity) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (!validator.isType(targetChannelId, 'number')) {
+      throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return await this.nextMessage((message) => message.isChannel && message.targetGroupId === targetGroupId, timeout);
+    return await this.nextMessage((message) => message.isChannel && message.targetChannelId === targetChannelId, timeout);
   }
 
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
@@ -94,19 +94,19 @@ class Subscription extends Base {
     return await this.nextMessage((message) => !message.isChannel && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
 
-  async nextGroupSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
-    return await this.nextGroupSubscriberMessage(targetGroupId, sourceSubscriberId, timeout);
+  async nextGroupSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
+    return await this.nextGroupSubscriberMessage(targetChannelId, sourceSubscriberId, timeout);
   }
 
-  async nextChannelSubscriberMessage (targetGroupId, sourceSubscriberId, timeout = Infinity) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (!validator.isType(targetGroupId, 'number')) {
-      throw new models.WOLFAPIError('targetGroupId must be type of number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async nextChannelSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (!validator.isType(targetChannelId, 'number')) {
+      throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (validator.isNullOrUndefined(sourceSubscriberId)) {
@@ -119,7 +119,7 @@ class Subscription extends Base {
       throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
     }
 
-    return await this.nextMessage((message) => message.isChannel && message.targetGroupId === targetGroupId && message.sourceSubscriberId === sourceSubscriberId, timeout);
+    return await this.nextMessage((message) => message.isChannel && message.targetChannelId === targetChannelId && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
 
   _cleanUp (reconnection = false) {
