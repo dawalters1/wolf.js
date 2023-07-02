@@ -78,7 +78,7 @@ multimedia:
         - type: 'image/gif'
           size: 2097152
       square: true
-    group:
+    channel:
       route: group-avatar-update
       version: 1
       mimes:

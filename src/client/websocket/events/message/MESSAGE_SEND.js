@@ -25,10 +25,12 @@ const toCapability = (subscriber, channel, type) => {
 };
 
 const handleApplicationPalringoChannelAction = async (client, message) => {
+  console.log(message);
+
   const [subscriber, channel] = await Promise.all(
     [
       client.subscriber.getById(message.sourceSubscriberId),
-      client.channel.getById(message.targetGroupId)
+      client.channel.getById(message.targetChannelId)
     ]
   );
 
