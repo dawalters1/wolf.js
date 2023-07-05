@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class NotificationAction extends Base {
+class LegacyNotificationAction extends Base {
   constructor (client, data) {
     super(client);
     this.id = data?.id;
@@ -11,4 +11,4 @@ class NotificationAction extends Base {
   }
 }
 
-export default NotificationAction;
+export default LegacyNotificationAction;

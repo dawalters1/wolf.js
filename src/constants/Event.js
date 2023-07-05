@@ -4,6 +4,9 @@ export const CONNECTION_ERROR = 'connectError';
 export const CONNECTION_TIMEOUT = 'connectTimeout';
 export const DISCONNECTED = 'disconnected';
 export const ERROR = 'error';
+export const GLOBAL_NOTIFICATION_LIST_ADD = 'globalNotificationListAdd';
+export const GLOBAL_NOTIFICATION_LIST_CLEAR = 'globalNotificationListClear';
+export const GLOBAL_NOTIFICATION_LIST_DELETE = 'globalNotificationListDelete';
 export const GROUP_AUDIO_COUNT_UPDATE = 'groupAudioCountUpdate';
 export const GROUP_AUDIO_REQUEST_ADD = 'groupAudioRequestAdd';
 export const GROUP_AUDIO_REQUEST_CLEAR = 'groupAudioRequestListClear';
@@ -63,6 +66,9 @@ export const SUBSCRIBER_BLOCK_ADD = 'subscriberBlockAdd';
 export const SUBSCRIBER_BLOCK_DELETE = 'subscriberBlockDelete';
 export const SUBSCRIBER_CONTACT_ADD = 'subscriberContactAdd';
 export const SUBSCRIBER_CONTACT_DELETE = 'subscriberContactDelete';
+export const SUBSCRIBER_NOTIFICATION_LIST_ADD = 'subscriberNotificationListAdd';
+export const SUBSCRIBER_NOTIFICATION_LIST_CLEAR = 'subscriberNotificationListClear';
+export const SUBSCRIBER_NOTIFICATION_LIST_DELETE = 'subscriberNotificationListDelete';
 export const SUBSCRIBER_GROUP_EVENT_ADD = 'subscriberGroupEventAdd';
 export const SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriberGroupEventDelete';
 export const SUBSCRIBER_UPDATE = 'subscriberUpdate';
@@ -75,6 +81,9 @@ export default {
   CONNECTION_TIMEOUT,
   DISCONNECTED,
   ERROR,
+  GLOBAL_NOTIFICATION_LIST_ADD,
+  GLOBAL_NOTIFICATION_LIST_CLEAR,
+  GLOBAL_NOTIFICATION_LIST_DELETE,
   GROUP_AUDIO_COUNT_UPDATE,
   GROUP_AUDIO_REQUEST_ADD,
   GROUP_AUDIO_REQUEST_CLEAR,
@@ -134,6 +143,9 @@ export default {
   SUBSCRIBER_BLOCK_DELETE,
   SUBSCRIBER_CONTACT_ADD,
   SUBSCRIBER_CONTACT_DELETE,
+  SUBSCRIBER_NOTIFICATION_LIST_ADD,
+  SUBSCRIBER_NOTIFICATION_LIST_CLEAR,
+  SUBSCRIBER_NOTIFICATION_LIST_DELETE,
   SUBSCRIBER_GROUP_EVENT_ADD,
   SUBSCRIBER_GROUP_EVENT_DELETE,
   SUBSCRIBER_UPDATE,
