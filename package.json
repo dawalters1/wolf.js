@@ -50,8 +50,8 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity": "^3.347.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.347.0",
+    "@aws-sdk/client-cognito-identity": "^3.363.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.363.0",
     "aws4-axios": "3.2.24",
     "axios": "1.4.0",
     "bull": "^4.10.4",
@@ -65,9 +65,9 @@
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
     "node-pre-gyp": "^0.17.0",
-    "socket.io-client": "^4.6.2",
+    "socket.io-client": "^4.7.1",
     "superagent": "^8.0.9",
-    "tldts": "^6.0.6",
+    "tldts": "^6.0.9",
     "tokenbucket": "^0.3.2",
     "url-regex-safe": "^3.0.0",
     "wrtc": "^0.4.7",

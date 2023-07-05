@@ -86,32 +86,11 @@ class Subscriber extends Base {
 
     return notifications;
   }
-
-  async list (languageId, limit = 50, offset = 0, subscribe = true, forceNew = false) {
+  async list (languageId, subscribe = true, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
       throw new models.WOLFAPIError('languageId is not valid', { languageId });
-    }
-
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
-    }
-
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
-    }
-
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     if (!validator.isValidBoolean(forceNew)) {

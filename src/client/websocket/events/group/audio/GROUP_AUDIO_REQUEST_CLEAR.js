@@ -4,16 +4,19 @@ import { Event } from '../../../../../constants/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.groupId);
+  const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
-  group.audioRequests = [];
+  channel.audioRequests = [];
 
-  return client.emit(
-    Event.GROUP_AUDIO_REQUEST_CLEAR,
-    group,
-    body.subscriberId
-  );
+  return [Event.GROUP_AUDIO_REQUEST_CLEAR, Event.CHANNEL_AUDIO_REQUEST_CLEAR]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        body.subscriberId
+      )
+    );
 };

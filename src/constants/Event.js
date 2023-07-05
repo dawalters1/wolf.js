@@ -4,29 +4,26 @@ export const CONNECTION_ERROR = 'connectError';
 export const CONNECTION_TIMEOUT = 'connectTimeout';
 export const DISCONNECTED = 'disconnected';
 export const ERROR = 'error';
-export const GLOBAL_NOTIFICATION_LIST_ADD = 'globalNotificationListAdd';
-export const GLOBAL_NOTIFICATION_LIST_CLEAR = 'globalNotificationListClear';
-export const GLOBAL_NOTIFICATION_LIST_DELETE = 'globalNotificationListDelete';
-export const GROUP_AUDIO_COUNT_UPDATE = 'groupAudioCountUpdate';
-export const GROUP_AUDIO_REQUEST_ADD = 'groupAudioRequestAdd';
-export const GROUP_AUDIO_REQUEST_CLEAR = 'groupAudioRequestListClear';
-export const GROUP_AUDIO_REQUEST_DELETE = 'groupAudioRequestDelete';
-export const GROUP_AUDIO_REQUEST_EXPIRE = 'groupAudioRequestExpire';
-export const GROUP_AUDIO_SLOT_UPDATE = 'groupAudioSlotUpdate';
-export const GROUP_AUDIO_UPDATE = 'groupAudioUpdate';
-export const GROUP_EVENT_CREATE = 'groupEventCreate';
-export const GROUP_EVENT_DELETE = 'groupEventDelete';
-export const GROUP_EVENT_UPDATE = 'groupEventUpdate';
-export const GROUP_MEMBER_ADD = 'groupMemberAdd';
-export const GROUP_MEMBER_DELETE = 'groupMemberDelete';
-export const GROUP_MEMBER_UPDATE = 'groupMemberUpdate';
-export const GROUP_MESSAGE = 'groupMessage';
-export const GROUP_MESSAGE_UPDATE = 'groupMessageUpdate';
-export const GROUP_TIP_ADD = 'groupTipAdd';
-export const GROUP_UPDATE = 'groupUpdate';
+export const CHANNEL_AUDIO_COUNT_UPDATE = 'channelAudioCountUpdate';
+export const CHANNEL_AUDIO_REQUEST_ADD = 'channelAudioRequestAdd';
+export const CHANNEL_AUDIO_REQUEST_CLEAR = 'channelAudioRequestListClear';
+export const CHANNEL_AUDIO_REQUEST_DELETE = 'channelAudioRequestDelete';
+export const CHANNEL_AUDIO_REQUEST_EXPIRE = 'channelAudioRequestExpire';
+export const CHANNEL_AUDIO_SLOT_UPDATE = 'channelAudioSlotUpdate';
+export const CHANNEL_AUDIO_UPDATE = 'channelAudioUpdate';
+export const CHANNEL_EVENT_CREATE = 'channelEventCreate';
+export const CHANNEL_EVENT_DELETE = 'channelEventDelete';
+export const CHANNEL_EVENT_UPDATE = 'channelEventUpdate';
+export const CHANNEL_MEMBER_ADD = 'channelMemberAdd';
+export const CHANNEL_MEMBER_DELETE = 'channelMemberDelete';
+export const CHANNEL_MEMBER_UPDATE = 'channelMemberUpdate';
+export const CHANNEL_MESSAGE = 'channelMessage';
+export const CHANNEL_MESSAGE_UPDATE = 'channelMessageUpdate';
+export const CHANNEL_TIP_ADD = 'channelTipAdd';
+export const CHANNEL_UPDATE = 'channelUpdate';
 export const INTERNAL_ERROR = 'internalError';
-export const JOINED_GROUP = 'joinedGroup';
-export const LEFT_GROUP = 'leftGroup';
+export const JOINED_CHANNEL = 'joinedChannel';
+export const LEFT_CHANNEL = 'leftChannel';
 export const LOG = 'log';
 export const LOGIN_FAILED = 'loginFailed';
 export const LOGIN_SUCCESS = 'loginSuccess';
@@ -66,13 +63,39 @@ export const SUBSCRIBER_BLOCK_ADD = 'subscriberBlockAdd';
 export const SUBSCRIBER_BLOCK_DELETE = 'subscriberBlockDelete';
 export const SUBSCRIBER_CONTACT_ADD = 'subscriberContactAdd';
 export const SUBSCRIBER_CONTACT_DELETE = 'subscriberContactDelete';
+
+export const SUBSCRIBER_CHANNEL_EVENT_ADD = 'subscriberChannelEventAdd';
+export const SUBSCRIBER_CHANNEL_EVENT_DELETE = 'subscriberChannelEventDelete';
 export const SUBSCRIBER_NOTIFICATION_LIST_ADD = 'subscriberNotificationListAdd';
 export const SUBSCRIBER_NOTIFICATION_LIST_CLEAR = 'subscriberNotificationListClear';
 export const SUBSCRIBER_NOTIFICATION_LIST_DELETE = 'subscriberNotificationListDelete';
-export const SUBSCRIBER_GROUP_EVENT_ADD = 'subscriberGroupEventAdd';
-export const SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriberGroupEventDelete';
 export const SUBSCRIBER_UPDATE = 'subscriberUpdate';
 export const WELCOME = 'welcome';
+
+// #endregion Deprecated
+export const GROUP_AUDIO_COUNT_UPDATE = 'groupAudioCountUpdate';
+export const GROUP_AUDIO_REQUEST_ADD = 'groupAudioRequestAdd';
+export const GROUP_AUDIO_REQUEST_CLEAR = 'groupAudioRequestListClear';
+export const GROUP_AUDIO_REQUEST_DELETE = 'groupAudioRequestDelete';
+export const GROUP_AUDIO_REQUEST_EXPIRE = 'groupAudioRequestExpire';
+export const GROUP_AUDIO_SLOT_UPDATE = 'groupAudioSlotUpdate';
+export const GROUP_AUDIO_UPDATE = 'groupAudioUpdate';
+export const GROUP_EVENT_CREATE = 'groupEventCreate';
+export const GROUP_EVENT_DELETE = 'groupEventDelete';
+export const GROUP_EVENT_UPDATE = 'groupEventUpdate';
+export const GROUP_MEMBER_ADD = 'groupMemberAdd';
+export const GROUP_MEMBER_DELETE = 'groupMemberDelete';
+export const GROUP_MEMBER_UPDATE = 'groupMemberUpdate';
+export const GROUP_MESSAGE = 'groupMessage';
+export const GROUP_MESSAGE_UPDATE = 'groupMessageUpdate';
+export const GROUP_TIP_ADD = 'groupTipAdd';
+export const GROUP_UPDATE = 'groupUpdate';
+export const JOINED_GROUP = 'joinedGroup';
+export const LEFT_GROUP = 'leftGroup';
+export const SUBSCRIBER_GROUP_EVENT_ADD = 'subscriberGroupEventAdd';
+export const SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriberGroupEventDelete';
+
+// #endregion
 
 export default {
   CONNECTED,
@@ -81,6 +104,23 @@ export default {
   CONNECTION_TIMEOUT,
   DISCONNECTED,
   ERROR,
+  CHANNEL_AUDIO_COUNT_UPDATE,
+  CHANNEL_AUDIO_REQUEST_ADD,
+  CHANNEL_AUDIO_REQUEST_CLEAR,
+  CHANNEL_AUDIO_REQUEST_DELETE,
+  CHANNEL_AUDIO_REQUEST_EXPIRE,
+  CHANNEL_AUDIO_SLOT_UPDATE,
+  CHANNEL_AUDIO_UPDATE,
+  CHANNEL_EVENT_CREATE,
+  CHANNEL_EVENT_DELETE,
+  CHANNEL_EVENT_UPDATE,
+  CHANNEL_MEMBER_ADD,
+  CHANNEL_MEMBER_DELETE,
+  CHANNEL_MEMBER_UPDATE,
+  CHANNEL_MESSAGE,
+  CHANNEL_MESSAGE_UPDATE,
+  CHANNEL_TIP_ADD,
+  CHANNEL_UPDATE,
   GLOBAL_NOTIFICATION_LIST_ADD,
   GLOBAL_NOTIFICATION_LIST_CLEAR,
   GLOBAL_NOTIFICATION_LIST_DELETE,
@@ -148,6 +188,8 @@ export default {
   SUBSCRIBER_NOTIFICATION_LIST_DELETE,
   SUBSCRIBER_GROUP_EVENT_ADD,
   SUBSCRIBER_GROUP_EVENT_DELETE,
+  SUBSCRIBER_CHANNEL_EVENT_ADD,
+  SUBSCRIBER_CHANNEL_EVENT_DELETE,
   SUBSCRIBER_UPDATE,
   WELCOME
 };

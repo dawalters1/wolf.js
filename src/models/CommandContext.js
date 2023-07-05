@@ -8,10 +8,13 @@ class CommandContext {
    */
   constructor (client, data) {
     this.client = client;
-    this.isGroup = data?.isGroup;
+
+    this.isChannel = data?.isGroup;
+    this.isGroup = this.isChannel;
     this.argument = data?.argument;
     this.language = data?.language;
-    this.targetGroupId = data?.targetGroupId ?? undefined;
+    this.targetChannelId = data?.targetGroupId ?? undefined;
+    this.targetGroupId = this.targetChannelId;
     this.sourceSubscriberId = data?.sourceSubscriberId ?? undefined;
     this.timestamp = data?.timestamp;
     this.type = data?.type;
@@ -23,16 +26,20 @@ class CommandContext {
   }
 
   async group () {
-    if (!this.isGroup) {
-      throw new WOLFAPIError('cannot request group for non-group command', { ...this.toJSON() });
+    return await this.channel();
+  }
+
+  async channel () {
+    if (!this.isChannel) {
+      throw new WOLFAPIError('cannot request channel for non-channel command', { ...this.toJSON() });
     }
 
-    return await this.client.group.getById(this.targetGroupId);
+    return await this.client.channel.getById(this.targetChannelId);
   }
 
   async reply (content, options) {
-    if (this.isGroup) {
-      return await this.client.messaging.sendGroupMessage(this.targetGroupId, content, options);
+    if (this.isChannel) {
+      return await this.client.messaging.sendChannelMessage(this.targetChannelId, content, options);
     }
 
     return await this.client.messaging.sendPrivateMessage(this.sourceSubscriberId, content, options);
@@ -43,11 +50,11 @@ class CommandContext {
   }
 
   async hasCapability (capability, checkStaff = true, checkAuthorized = true) {
-    if (!this.isGroup) {
-      throw new WOLFAPIError('hasCapability can only be used on a group message', { ...this.toJSON() });
+    if (!this.isChannel) {
+      throw new WOLFAPIError('hasCapability can only be used on a channel message', { ...this.toJSON() });
     }
 
-    return await this.client.utility.group.member.hasCapability(this.targetGroupId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
+    return await this.client.utility.channel.member.hasCapability(this.targetChannelId, this.sourceSubscriberId, capability, checkStaff, checkAuthorized);
   }
 
   async hasPrivilege (privilege, requireAll = false) {
@@ -69,8 +76,10 @@ class CommandContext {
   toJSON () {
     return {
       isGroup: this.isGroup,
+      isChannel: this.isChannel,
       argument: this.argument,
       language: this.language,
+      targetChannelId: this.targetChannelId,
       targetGroupId: this.targetGroupId,
       sourceSubscriberId: this.sourceSubscriberId,
       timestamp: this.timestamp,

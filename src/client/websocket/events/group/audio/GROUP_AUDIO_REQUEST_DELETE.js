@@ -5,27 +5,30 @@ import models from '../../../../../models/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.groupId);
+  const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
 
-  const cached = group.audioRequests.find((request) => request.subscriberId === body.subscriberId);
+  const cached = channel.audioRequests.find((request) => request.subscriberId === body.subscriberId);
 
   if (!cached) {
     return Promise.resolve();
   }
 
-  const request = new models.GroupAudioSlotRequest(client, body);
+  const request = new models.ChannelAudioSlotRequest(client, body);
 
-  group.audioRequests.splice(group.audioRequests.indexOf(request), 1);
+  channel.audioRequests.splice(channel.audioRequests.indexOf(request), 1);
 
-  return client.emit(
-    new Date(cached.reservedExpiresAt).getTime() >= Date.now()
-      ? Event.GROUP_AUDIO_REQUEST_EXPIRE
-      : Event.GROUP_AUDIO_REQUEST_DELETE,
-    group,
-    request
-  );
+  return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+    ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]
+    : [Event.GROUP_AUDIO_REQUEST_DELETE, Event.CHANNEL_AUDIO_REQUEST_DELETE])
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        request
+      )
+    );
 };

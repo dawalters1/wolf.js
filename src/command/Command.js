@@ -3,6 +3,7 @@ import validator from '../validator/index.js';
 
 const callbacks = {
   GROUP: 'group',
+  CHANNEL: 'channel',
   PRIVATE: 'private',
   BOTH: 'both'
 };

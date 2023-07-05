@@ -5,14 +5,14 @@ import models from '../../models/index.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
 
-class Group extends Base {
-  async getList (targetGroupId, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+class Channel extends Base {
+  async getList (targetChannelId, subscribe = true, forceNew = false) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (!validator.isValidBoolean(subscribe)) {
@@ -23,38 +23,38 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const group = await this.client.group.getById(targetGroupId);
+    const channel = await this.client.channel.getById(targetChannelId);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Unknown Group', { targetGroupId });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
     }
 
-    if (!forceNew && group.events?.length) {
-      return group.events;
+    if (!forceNew && channel.events?.length) {
+      return channel.events;
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_LIST,
       {
-        id: parseInt(targetGroupId),
+        id: parseInt(targetChannelId),
         subscribe
       }
     );
 
     if (response.success) {
-      group.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+      channel.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
     }
 
-    return group.events;
+    return channel.events;
   }
 
-  async create (targetGroupId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async create (targetChannelId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (validator.isNullOrWhitespace(title)) {
@@ -78,7 +78,7 @@ class Group extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_CREATE,
       {
-        groupId: parseInt(targetGroupId),
+        groupId: parseInt(targetChannelId),
         title,
         longDescription,
         shortDescription,
@@ -94,13 +94,13 @@ class Group extends Base {
     return response;
   }
 
-  async update (targetGroupId, eventId, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail }) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async update (targetChannelId, eventId, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail }) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (validator.isNullOrUndefined(eventId)) {
@@ -142,7 +142,7 @@ class Group extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_UPDATE,
       {
-        groupId: parseInt(targetGroupId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(eventId),
         title: title ?? event.title,
         longDescription: longDescription ?? undefined,
@@ -187,13 +187,13 @@ class Group extends Base {
     );
   }
 
-  async delete (targetGroupId, eventId) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new models.WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async delete (targetChannelId, eventId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (validator.isNullOrUndefined(eventId)) {
@@ -207,7 +207,7 @@ class Group extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_EVENT_UPDATE,
       {
-        groupId: parseInt(targetGroupId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(eventId),
         isRemoved: true
       }
@@ -215,4 +215,4 @@ class Group extends Base {
   }
 }
 
-export default Group;
+export default Channel;

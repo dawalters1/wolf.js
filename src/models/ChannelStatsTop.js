@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupStatsTop extends Base {
+class ChannelStatsTop extends Base {
   constructor (client, data) {
     super(client);
     this.nickname = data?.nickname;
@@ -16,4 +16,4 @@ class GroupStatsTop extends Base {
   }
 }
 
-export default GroupStatsTop;
+export default ChannelStatsTop;

@@ -1,4 +1,5 @@
 export const APPLICATION_PALRINGO_GROUP_ACTION = 'application/palringo-group-action';
+export const APPLICATION_PALRINGO_CHANNEL_ACTION = 'application/palringo-group-action';
 export const APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK = 'application/palringo-interactive-message-pack';
 export const AUDIO_AAC = 'audio/aac';
 export const AUDIO_SPEEX = 'audio/x-speex';
@@ -13,6 +14,7 @@ export const TEXT_VOICE = 'text/voice_link';
 
 export default {
   APPLICATION_PALRINGO_GROUP_ACTION,
+  APPLICATION_PALRINGO_CHANNEL_ACTION,
   APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK,
   AUDIO_AAC,
   AUDIO_SPEEX,

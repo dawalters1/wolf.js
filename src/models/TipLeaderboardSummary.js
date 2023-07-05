@@ -6,7 +6,8 @@ class TipLeaderboardSummary extends Base {
     super(client);
 
     this.topGifters = (data?.topGifters || []).map((subscriber) => new IdHash(subscriber));
-    this.topGroups = (data?.topGroups || []).map((group) => new IdHash(group));
+    this.topChannels = (data?.topGroups || []).map((group) => new IdHash(group));
+    this.topGroups = this.topChannels;
     this.topSpenders = (data?.topSpenders || []).map((subscriber) => new IdHash(subscriber));
   }
 }
