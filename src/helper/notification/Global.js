@@ -38,10 +38,24 @@ class Global extends Base {
   }
 
   async getByIds (ids, languageId, forceNew = false) {
-    if (!validator.isValidNumber(languageId)) {
-      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-    } else if (!Object.values(Language).includes(parseInt(languageId))) {
-      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
+
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
+
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
     }
 
     if (!validator.isValidNumber(languageId)) {

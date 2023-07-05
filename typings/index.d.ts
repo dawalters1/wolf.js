@@ -3800,6 +3800,8 @@ export class Notification extends Base {
     public notificationId: number;
     public presentationType: string;
     public typeId: number;
+
+    public exists: boolean;
 }
 
 export class NotificationFeed extends Base {

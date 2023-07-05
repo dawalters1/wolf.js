@@ -11,6 +11,7 @@ export default async (client, body) => {
   }
 
   client.notification.global.notifications = client.notification.global.notifications.filter((notification) => notification.id !== body.id);
+  client.notification.global._list = client.notification.global._list.filter((id) => id !== body.id);
 
   return client.emit(
     Event.GLOBAL_NOTIFICATION_LIST_DELETE,
