@@ -10,6 +10,8 @@ class Subscriber extends Base {
   constructor (client) {
     super(client);
 
+    this._list = [];
+    this._requested = false;
     this.notifications = [];
   }
 
@@ -84,48 +86,48 @@ class Subscriber extends Base {
 
     return notifications;
   }
-
-  async list (limit = 50, offset = 0, subscribe = true) {
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+  async list (languageId, subscribe = true, forceNew = false) {
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+    const getNotificationList = async (batchNumber = 0) => {
+      const response = await this.client.websocket.emit(
+        Command.NOTIFICATION_SUBSCRIBER_LIST,
+        {
+          subscribe,
+          limit: 100,
+          offset: batchNumber
+        }
+      );
 
-    const response = await this.client.websocket.emit(
-      Command.NOTIFICATION_SUBSCRIBER_LIST,
-      {
-        subscribe,
-        limit: parseInt(limit),
-        offset: parseInt(offset)
+      if (response.success) {
+        this._list.push(...response.body.map((notification) => notification.id));
       }
-    );
 
-    // TODO: handle caching of this...
-    // Somehow? that supports offsets....
+      if (response.body.length >= 100) {
+        return await getNotificationList(batchNumber + 100);
+      }
 
-    return response.success ? await this.getByIds(response.body?.map((notification) => notification.id)) : [];
+      this._requested = true;
+
+      return this._list.length ? await this.getByIds(this._list, languageId, forceNew) : [];
+    };
+
+    return getNotificationList();
   }
 
   async clear () {
     const response = await this.client.websocket.emit(Command.NOTIFICATION_SUBSCRIBER_CLEAR);
 
     if (response.success) {
-      this.notifications = [];
+      this._list = [];
     }
 
     return response;
@@ -176,6 +178,8 @@ class Subscriber extends Base {
 
   _cleanUp (reconnection = false) {
     this.notifications = [];
+    this._list = [];
+    this._requested = false;
   }
 }
 

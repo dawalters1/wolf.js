@@ -1091,13 +1091,88 @@ export class NotificationHelper extends Base {
 export class NotificationSubscriberHelper extends Base {
     private constructor(client);
 
-    //TODO:
+    /**
+     * Get a subscriber notification
+     * @param id - The id of the notification
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getById(id: number, languageId: Language, forceNew: boolean): Promise<Notification>;
+
+    /**
+     * Get multiple subscriber notifications
+     * @param ids - The ids of the notifications
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getByIds(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Notification | Array<Notification>>;
+
+    /**
+     * Get your accounts subscriber notifications list
+     * @param languageId - The language to request in
+     * @param limit - How many to request
+     * @param offset - Where to request at
+     * @param subscribe - Whether or not to subscribe to updates (Default: true)
+     * @param forceNew - Whether or not to request new form the server
+     */
+    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew: boolean): Promise<Array<Notification>>;
+
+    /**
+     * Clear the accounts subscriber notifications list
+     */
+    public clear(): Promise<Response>;
+
+    /**
+     * Delete subscriber notifications
+     * @param ids - The ids of the notifications
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public delete(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Array<Response>>;
+
 }
 
 export class NotificationGlobalHelper extends Base {
     private constructor(client);
 
-    //TODO:
+    /**
+     * Get a global notification
+     * @param id - The id of the notification
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getById(id: number, languageId: Language, forceNew: boolean): Promise<Notification>;
+
+    /**
+     * Get multiple global notifications
+     * @param ids - The ids of the notifications
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getByIds(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Notification | Array<Notification>>;
+
+    /**
+     * Get your accounts global notifications list
+     * @param languageId - The language to request in
+     * @param limit - How many to request
+     * @param offset - Where to request at
+     * @param subscribe - Whether or not to subscribe to updates (Default: true)
+     * @param forceNew - Whether or not to request new form the server
+     */
+    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew: boolean): Promise<Array<Notification>>;
+
+    /**
+     * Clear the accounts global notifications list
+     */
+    public clear(): Promise<Response>;
+
+    /**
+     * Delete global notifications
+     * @param ids - The ids of the notifications
+     * @param languageId - The language to request in
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public delete(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Array<Response>>;
 }
 
 export class PhraseHelper extends Base {
@@ -3714,6 +3789,29 @@ export class MessageUpdate extends Base {
     };
 }
 
+export class Notification extends Base {
+    private constructor(client: WOLF, data: object)
+
+    public context: string;
+    public createdAt: Date;
+    public expiresAt: Date;
+    public feed: NotificationFeed;
+    public id: number;
+    public notificationId: number;
+    public presentationType: string;
+    public typeId: number;
+}
+
+export class NotificationFeed extends Base {
+    private constructor(client: WOLF, data: object)
+
+    public body: string;
+    public imageUrl: string;
+    public languageId: Language;
+    public link: string;
+    public title: string;
+}
+
 
 export class LegacyNotification extends Base {
     private constructor(client: WOLF, data: object)
@@ -5340,6 +5438,18 @@ export interface ClientEvents {
      */
     error: [error: Error],
     /**
+     * Fires when a global notification has been received
+     */
+    globalNotificationAdd: [notification: Notification],
+    /**
+     * Fires when the global notification list has been cleared
+     */
+    globalNotificationClear: [],
+    /**
+     * Fires when a global notification has been deleted
+     */
+    globalNotificationDelete: [notification: Notification],
+    /**
      * Fires when a group audio count updates
      * @deprecated use channelAudioCountUpdate
      */
@@ -5670,6 +5780,19 @@ export interface ClientEvents {
      * Fires when a user is removed as a contact
      */
     subscriberContactDelete: [contact: Contact],
+    /**
+    * Fires when a  subscriber notification has been received
+    */
+    subscriberNotificationAdd: [notification: Notification],
+    /**
+     * Fires when the  subscriber notification list has been cleared
+     */
+    subscriberNotificationClear: [],
+    /**
+     * Fires when a  subscriber notification has been deleted
+     */
+    subscriberNotificationDelete: [notification: Notification],
+
     /**
      * Fires when the bot subscribes to an event
      * @deprecated use subscriberChannelEventAdd
