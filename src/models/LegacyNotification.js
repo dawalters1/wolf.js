@@ -1,10 +1,10 @@
 import Base from './Base.js';
-import NotificationAction from './NotificationAction.js';
+import LegacyNotificationAction from './LegacyNotificationAction.js';
 
 class LegacyNotification extends Base {
   constructor (client, data) {
     super(client);
-    this.actions = data?.actions.map((action) => new NotificationAction(client, action)) ?? null;
+    this.actions = data?.actions.map((action) => new LegacyNotificationAction(client, action)) ?? null;
     this.endAt = data?.endAt;
     this.favourite = data?.favourite;
     this.global = data?.global;

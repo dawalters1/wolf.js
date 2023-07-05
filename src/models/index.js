@@ -52,7 +52,7 @@ import MessageUpdate from './MessageUpdate.js';
 import LegacyNotification from './LegacyNotification.js';
 import Notification from './Notification.js';
 import NotificationFeed from './NotificationFeed.js';
-import NotificationAction from './NotificationAction.js';
+import LegacyNotificationAction from './LegacyNotificationAction.js';
 import Phrase from '../helper/phrase/Phrase.js';
 import PhraseCount from './PhraseCount.js';
 import PhraseRoute from './PhraseRoute.js';
@@ -149,7 +149,7 @@ export {
   LegacyNotification,
   Notification,
   NotificationFeed,
-  NotificationAction,
+  LegacyNotificationAction,
   Phrase,
   PhraseCount,
   PhraseRoute,
@@ -247,7 +247,7 @@ export default {
   LegacyNotification,
   Notification,
   NotificationFeed,
-  NotificationAction,
+  LegacyNotificationAction,
   Phrase,
   PhraseCount,
   PhraseRoute,
