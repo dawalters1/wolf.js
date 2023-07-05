@@ -7,7 +7,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.2.0 *Unreleased*
 ### Added
-- implement new notification commands and events
 - client.charm.getSubscriberSelectedList(subscriberId)
 - Stage client events model methods
   - play(data)
@@ -22,10 +21,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - duration()
   - getSlotId()
 - Change Log
+- client.notification.subscriber helper
+    - **Methods**
+      - getByIds(ids, languageId, forceNew = false)
+      - getById(id, languageId, forceNew = false)
+      - list(languageId, subscribe= true, forceNew = false)
+      - clear()
+      - delete(ids)
+    - **Events**
+      - subscriberNotificationListAdd
+      - subscriberNoticicationListClear
+      - subscriberNotificationListDelete
+
+- client.notification.global helper
+    - **Methods**
+      - getByIds(ids, languageId, forceNew = false)
+      - getById(id, languageId, forceNew = false)
+      - list(languageId, subscribe= true, forceNew = false)
+      - clear()
+      - delete(ids)
+    - **Events**
+      - globalNotificationListAdd
+      - globalNoticicationListClear
+      - globalNotificationListDelete
+
 
 ### Fixed
 - Fixed various models lacking toJSON() method
 - Multiple children in the same command can share a phrase name
+
+### Deprecated
+  - **Methods**
+    - client.notification.list()
+    - client.notification.clear()
+  - **Events**
+    - notificationReceived
 
 # 2.1.1 (2023-06-19)
 ### Fixed

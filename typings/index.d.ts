@@ -5640,6 +5640,7 @@ export interface ClientEvents {
     loginSuccess: [subscriber: Subscriber],
     /**
      * Fires when a notification is received
+     * @deprecated use newer notification methods & events.
      */
     notificationReceived: [Notification: LegacyNotification | Notification],
     /**
