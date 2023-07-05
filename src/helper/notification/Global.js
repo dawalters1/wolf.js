@@ -10,7 +10,8 @@ class Global extends Base {
   constructor (client) {
     super(client);
 
-    this.list = [];
+    this._list = [];
+    this._requested = false;
     this.notifications = [];
   }
 
@@ -86,39 +87,63 @@ class Global extends Base {
     return notifications;
   }
 
-  async list (limit = 50, offset = 0, subscribe = true) {
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+  async list (languageId, subscribe = true, forceNew = false) {
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
-    // TODO: make call
-    // TODO: update cache accordingly
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
+    if (!forceNew && this._requested) {
+      return this._list.length ? await this.getByIds(this._list, languageId, forceNew) : [];
+    }
+
+    const getNotificationList = async (batchNumber = 0) => {
+      const response = await this.client.websocket.emit(
+        Command.NOTIFICATION_GLOBAL_LIST,
+        {
+          subscribe,
+          limit: 100,
+          offset: batchNumber
+        }
+      );
+
+      if (response.success) {
+        this._list.push(...response.body.map((notification) => notification.id));
+      }
+
+      if (response.body.length >= 100) {
+        return await getNotificationList(batchNumber + 100);
+      }
+
+      this._requested = true;
+
+      return this._list.length ? await this.getByIds(this._list, languageId, forceNew) : [];
+    };
+
+    return getNotificationList();
   }
 
   async clear () {
     const response = await this.client.websocket.emit(Command.NOTIFICATION_GLOBAL_CLEAR);
 
     if (response.success) {
-      this.notifications = [];
+      this._list = [];
     }
 
     return response;
   }
 
   async delete (ids) {
-    const values = Array.isArray(ids) ? ids : [ids];
+    const values = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!values.length) {
       throw new models.WOLFAPIError('values cannot be null or empty', { ids });
@@ -138,8 +163,18 @@ class Global extends Base {
       }
     }
 
-    // TODO: make call
-    // TODO: update cache accordingly
+    const response = await this.client.websocket.emit(
+      Command.NOTIFICATION_GLOBAL_DELETE,
+      {
+        idList: values
+      }
+    );
+
+    if (response.success) {
+      this.notifications = this.notifications.filter((notification) => !values.includes(notification.id));
+    }
+
+    return response;
   }
 
   _process (value) {
@@ -152,6 +187,8 @@ class Global extends Base {
 
   _cleanUp (reconnection = false) {
     this.notifications = [];
+    this._list = [];
+    this._requested = false;
   }
 }
 
