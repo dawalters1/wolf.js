@@ -12,8 +12,11 @@ export default async (client, body) => {
 
   client.event.subscription.subscriptions.splice(client.event.subscription.subscriptions.indexOf(cached), 1);
 
-  return client.emit(
-    Event.SUBSCRIBER_GROUP_EVENT_DELETE,
-    cached
-  );
+  return [Event.SUBSCRIBER_GROUP_EVENT_DELETE, Event.SUBSCRIBER_CHANNEL_EVENT_DELETE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        cached
+      )
+    );
 };

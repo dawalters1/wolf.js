@@ -8,25 +8,29 @@ import patch from '../../utils/patch.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
 
-const buildGroupFromModule = (groupModule) => {
-  const base = groupModule.base;
+const buildChannelFromModule = (channelModule) => {
+  const base = channelModule.base;
 
   base.memberCount = base.members;
   Reflect.deleteProperty(base, 'members');
-  base.extended = groupModule.extended;
-  base.audioConfig = groupModule.audioConfig;
-  base.audioCounts = groupModule.audioCounts;
-  base.messageConfig = groupModule.messageConfig;
+  base.extended = channelModule.extended;
+  base.audioConfig = channelModule.audioConfig;
+  base.audioCounts = channelModule.audioCounts;
+  base.messageConfig = channelModule.messageConfig;
 
   return base;
 };
 
-class Group extends Base {
+class Channel extends Base {
   constructor (client) {
     super(client);
     this.fetched = false;
-    this.groups = [];
+    this.channels = [];
     this.member = new Member(this.client);
+  }
+
+  get groups () {
+    return this.channels;
   }
 
   async list () {
@@ -42,19 +46,19 @@ class Group extends Base {
         this.fetched = true;
 
         if (!response.body?.length) {
-          return this.groups.filter((group) => group.inGroup);
+          return this.channels.filter((channel) => channel.inChannel);
         }
 
-        const groups = await this.getByIds(response.body.map((group) => group.id), true);
+        const channels = await this.getByIds(response.body.map((channel) => channel.id), true);
 
-        for (const group of groups) {
-          group.inGroup = true;
-          group.capabilities = response.body.find((grp) => group.id === grp.id).capabilities || Capability.REGULAR;
+        for (const channel of channels) {
+          channel.inChannel = true;
+          channel.capabilities = response.body.find((grp) => channel.id === grp.id).capabilities || Capability.REGULAR;
         }
       }
     }
 
-    return this.groups.filter((group) => group.inGroup);
+    return this.channels.filter((channel) => channel.inChannel);
   }
 
   /**
@@ -62,7 +66,7 @@ class Group extends Base {
    * @param {*} id
    * @param {*} subscribe
    * @param {*} forceNew
-   * @returns {Promise<import('../../models/index.js').Group>} Group
+   * @returns {Promise<import('../../models/index.js').Channel>} Channel
    */
   async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
@@ -113,10 +117,10 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const groups = !forceNew ? this.groups.filter((group) => ids.includes(group.id)) : [];
+    const channels = !forceNew ? this.channels.filter((channel) => ids.includes(channel.id)) : [];
 
-    if (groups.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((groupId) => !groups.some((group) => group.id === groupId)), this.client._frameworkConfig.get('batching.length'));
+    if (channels.length !== ids.length) {
+      const idLists = _.chunk(ids.filter((channelId) => !channels.some((channel) => channel.id === channelId)), this.client._frameworkConfig.get('batching.length'));
 
       for (const idList of idLists) {
         const response = await this.client.websocket.emit(
@@ -134,18 +138,18 @@ class Group extends Base {
         );
 
         if (response.success) {
-          const groupResponses = Object.values(response.body).map((groupResponse) => new models.Response(groupResponse));
+          const channelResponses = Object.values(response.body).map((channelResponse) => new models.Response(channelResponse));
 
-          for (const [index, groupResponse] of groupResponses.entries()) {
-            groups.push(groupResponse.success ? this._process(new models.Group(this.client, buildGroupFromModule(groupResponse.body))) : new models.Group(this.client, { id: idList[index] }));
+          for (const [index, channelResponse] of channelResponses.entries()) {
+            channels.push(channelResponse.success ? this._process(new models.Channel(this.client, buildChannelFromModule(channelResponse.body))) : new models.Channel(this.client, { id: idList[index] }));
           }
         } else {
-          groups.push(...idList.map((id) => new models.Group(this.client, { id })));
+          channels.push(...idList.map((id) => new models.Channel(this.client, { id })));
         }
       }
     }
 
-    return groups;
+    return channels;
   }
 
   async getByName (name, subscribe = true, forceNew = false) {
@@ -163,12 +167,12 @@ class Group extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    if (!forceNew && this.groups.some((group) => this.client.utility.string.isEqual(group.name, name))) {
-      return this.groups.find((group) => this.client.utility.string.isEqual(group.name, name));
+    if (!forceNew && this.channels.some((channel) => this.client.utility.string.isEqual(channel.name, name))) {
+      return this.channels.find((channel) => this.client.utility.string.isEqual(channel.name, name));
     }
 
-    if (!forceNew && this.groups.some((group) => this.client.utility.string.isEqual(group.name, name))) {
-      return this.groups.find((group) => this.client.utility.string.isEqual(group.name, name));
+    if (!forceNew && this.channels.some((channel) => this.client.utility.string.isEqual(channel.name, name))) {
+      return this.channels.find((channel) => this.client.utility.string.isEqual(channel.name, name));
     }
 
     const response = await this.client.websocket.emit(
@@ -185,7 +189,7 @@ class Group extends Base {
       }
     );
 
-    return response.success ? this._process(new models.Group(this.client, buildGroupFromModule(response.body))) : new models.Group(this.client, { name });
+    return response.success ? this._process(new models.Channel(this.client, buildChannelFromModule(response.body))) : new models.Channel(this.client, { name });
   }
 
   async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
@@ -253,7 +257,7 @@ class Group extends Base {
       }
     }
 
-    const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.group');
+    const avatarConfig = this.client._frameworkConfig.get('multimedia.avatar.channel');
 
     if (avatar) {
       if (!Buffer.isBuffer(avatar)) {
@@ -263,34 +267,34 @@ class Group extends Base {
       validateMultimediaConfig(avatarConfig, avatar);
     }
 
-    const group = await this.getById(parseInt(id));
+    const channel = await this.getById(parseInt(id));
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Unknown Group', { id });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Unknown Channel', { id });
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_PROFILE_UPDATE,
       {
         id: parseInt(id),
-        description: (description === null || description) ? description : group.description,
-        peekable: (peekable === null || peekable) ? peekable : group.peekable,
+        description: (description === null || description) ? description : channel.description,
+        peekable: (peekable === null || peekable) ? peekable : channel.peekable,
         messageConfig: {
-          disableHyperlink: (disableHyperlink === null || disableHyperlink) ? disableHyperlink : group.messageConfig.disableHyperlink,
-          disableImage: (disableImage === null || disableImage) ? disableImage : group.messageConfig.disableImage,
-          disableImageFilter: (disableImageFilter === null || disableImageFilter) ? disableImageFilter : group.messageConfig.disableImageFilter,
-          disableVoice: (disableVoice === null || disableVoice) ? disableVoice : group.messageConfig.disableVoice
+          disableHyperlink: (disableHyperlink === null || disableHyperlink) ? disableHyperlink : channel.messageConfig.disableHyperlink,
+          disableImage: (disableImage === null || disableImage) ? disableImage : channel.messageConfig.disableImage,
+          disableImageFilter: (disableImageFilter === null || disableImageFilter) ? disableImageFilter : channel.messageConfig.disableImageFilter,
+          disableVoice: (disableVoice === null || disableVoice) ? disableVoice : channel.messageConfig.disableVoice
         },
         extended: {
-          longDescription: (longDescription === null || longDescription) ? longDescription : group.extended.longDescription,
-          discoverable: (discoverable === null || discoverable) ? discoverable : group.extended.discoverable,
-          language: (language === null || language) ? parseInt(language) : group.extended.language,
-          category: (category === null || category) ? parseInt(category) : group.extended.category,
-          advancedAdmin: (advancedAdmin === null || advancedAdmin) ? advancedAdmin : group.extended.advancedAdmin,
-          questionable: (questionable === null || questionable) ? questionable : group.extended.questionable,
-          locked: (locked === null || locked) ? locked : group.extended.locked,
-          closed: (closed === null || closed) ? closed : group.extended.closed,
-          entryLevel: (entryLevel === null || entryLevel) ? parseInt(entryLevel) : group.extended.entryLevel
+          longDescription: (longDescription === null || longDescription) ? longDescription : channel.extended.longDescription,
+          discoverable: (discoverable === null || discoverable) ? discoverable : channel.extended.discoverable,
+          language: (language === null || language) ? parseInt(language) : channel.extended.language,
+          category: (category === null || category) ? parseInt(category) : channel.extended.category,
+          advancedAdmin: (advancedAdmin === null || advancedAdmin) ? advancedAdmin : channel.extended.advancedAdmin,
+          questionable: (questionable === null || questionable) ? questionable : channel.extended.questionable,
+          locked: (locked === null || locked) ? locked : channel.extended.locked,
+          closed: (closed === null || closed) ? closed : channel.extended.closed,
+          entryLevel: (entryLevel === null || entryLevel) ? parseInt(entryLevel) : channel.extended.entryLevel
         }
       }
     );
@@ -322,7 +326,7 @@ class Group extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_ADD,
       {
-        groupId: id,
+        channelId: id,
         password
       }
     );
@@ -356,7 +360,7 @@ class Group extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
       {
-        groupId: id
+        channelId: id
       }
     );
   }
@@ -368,13 +372,13 @@ class Group extends Base {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
     }
 
-    const group = await this.getByName(name);
+    const channel = await this.getByName(name);
 
-    if (!group.exists) {
-      throw new models.WOLFAPIError('Unknown Group', { name });
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Unknown Channel', { name });
     }
 
-    return await this.leaveById(group.id);
+    return await this.leaveById(channel.id);
   }
 
   async getChatHistory (id, chronological = false, timestamp = 0, limit = 15) {
@@ -440,7 +444,7 @@ class Group extends Base {
       }
     );
 
-    return response.success ? new models.GroupStats(this.client, response.body) : undefined;
+    return response.success ? new models.ChannelStats(this.client, response.body) : undefined;
   }
 
   async getRecommendationList () {
@@ -468,18 +472,18 @@ class Group extends Base {
   }
 
   _process (value) {
-    const existing = this.groups.find((group) => group.id === value.id);
+    const existing = this.channels.find((channel) => channel.id === value.id);
 
-    existing ? patch(existing, value) : this.groups.push(value);
+    existing ? patch(existing, value) : this.channels.push(value);
 
     return value;
   }
 
   _cleanUp (reconnection = false) {
-    this.groups = [];
+    this.channels = [];
     this.fetched = false;
     this.member._cleanUp(reconnection);
   }
 }
 
-export default Group;
+export default Channel;

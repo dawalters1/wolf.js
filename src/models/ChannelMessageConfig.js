@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupMessageConfig extends Base {
+class ChannelMessageConfig extends Base {
   constructor (client, data) {
     super(client);
     this.disableHyperlink = data?.disableHyperlink;
@@ -12,8 +12,8 @@ class GroupMessageConfig extends Base {
   }
 
   async update ({ disableHyperlink, disableImage, disableImageFilter, disableVoice }) {
-    return await this.client.group.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter });
+    return await this.client.channel.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter });
   }
 }
 
-export default GroupMessageConfig;
+export default ChannelMessageConfig;

@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupAudioConfig extends Base {
+class ChannelAudioConfig extends Base {
   constructor (client, data) {
     super(client);
     this.id = data?.id;
@@ -14,4 +14,4 @@ class GroupAudioConfig extends Base {
   }
 }
 
-export default GroupAudioConfig;
+export default ChannelAudioConfig;

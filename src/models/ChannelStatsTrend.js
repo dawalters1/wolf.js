@@ -1,6 +1,6 @@
 import Base from './Base.js';
 
-class GroupStatsTrend extends Base {
+class ChannelStatsTrend extends Base {
   constructor (client, data) {
     super(client);
     this.day = data?.day;
@@ -9,4 +9,4 @@ class GroupStatsTrend extends Base {
   }
 }
 
-export default GroupStatsTrend;
+export default ChannelStatsTrend;

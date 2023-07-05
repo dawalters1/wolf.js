@@ -5,19 +5,22 @@ import models from '../../../../../models/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.groupId);
+  const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
 
-  const request = new models.GroupAudioSlotRequest(client, body);
+  const request = new models.ChannelAudioSlotRequest(client, body);
 
-  group.audioRequests.push(request);
+  channel.audioRequests.push(request);
 
-  return client.emit(
-    Event.GROUP_AUDIO_REQUEST_ADD,
-    group,
-    request
-  );
+  return [Event.GROUP_AUDIO_REQUEST_ADD, Event.CHANNEL_AUDIO_REQUEST_ADD]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        request
+      )
+    );
 };

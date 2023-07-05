@@ -1,13 +1,13 @@
 import Base from './Base.js';
-import GroupMember from './GroupMember.js';
+import ChannelMember from './ChannelMember.js';
 import WOLFAPIError from './WOLFAPIError.js';
 
-class GroupMemberListSection extends Base {
-  constructor (client, targetGroupId, list, capabilities, privileges) {
+class ChannelMemberListSection extends Base {
+  constructor (client, targetChannelId, list, capabilities, privileges) {
     super(client);
 
     this.list = list;
-    this.targetGroupId = targetGroupId;
+    this.targetChannelId = targetChannelId;
 
     this.capabilities = capabilities ? Array.isArray(capabilities) ? capabilities : [capabilities] : undefined;
     this.privileges = privileges ? Array.isArray(privileges) ? privileges : [privileges] : undefined;
@@ -53,7 +53,7 @@ class GroupMemberListSection extends Base {
       return true;
     }
 
-    this.members.push(new GroupMember(this.client, { id: subscriber.id, capabilities, hash: subscriber.hash, targetGroupId: this.targetGroupId }));
+    this.members.push(new ChannelMember(this.client, { id: subscriber.id, capabilities, hash: subscriber.hash, targetChannelId: this.targetChannelId }));
 
     return true;
   }
@@ -101,4 +101,4 @@ class GroupMemberListSection extends Base {
   }
 }
 
-export default GroupMemberListSection;
+export default ChannelMemberListSection;

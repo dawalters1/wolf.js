@@ -16,23 +16,23 @@ import Discovery from './Discovery.js';
 import DiscoveryPage from './DiscoveryPage.js';
 import DiscoverySection from './DiscoverySection.js';
 import Event from './Event.js';
-import Group from './Group.js';
-import GroupExtended from './GroupExtended.js';
-import GroupAudioConfig from './GroupAudioConfig.js';
-import GroupAudioCounts from './GroupAudioCounts.js';
-import GroupAudioSlot from './GroupAudioSlot.js';
-import GroupAudioSlotRequest from './GroupAudioSlotRequest.js';
-import GroupAudioSlotUpdate from './GroupAudioSlotUpdate.js';
-import GroupMember from './GroupMember.js';
-import GroupMemberList from './GroupMemberList.js';
-import GroupMemberListSection from './GroupMemberListSection.js';
-import GroupMessageConfig from './GroupMessageConfig.js';
-import GroupStats from './GroupStats.js';
-import GroupStatsActive from './GroupStatsActive.js';
-import GroupStatsDetail from './GroupStatsDetail.js';
-import GroupStatsTop from './GroupStatsTop.js';
-import GroupStatsTrend from './GroupStatsTrend.js';
-import GroupSubscriberUpdate from './GroupSubscriberUpdate.js';
+import Channel from './Channel.js';
+import ChannelExtended from './ChannelExtended.js';
+import ChannelAudioConfig from './ChannelAudioConfig.js';
+import ChannelAudioCounts from './ChannelAudioCounts.js';
+import ChannelAudioSlot from './ChannelAudioSlot.js';
+import ChannelAudioSlotRequest from './ChannelAudioSlotRequest.js';
+import ChannelAudioSlotUpdate from './ChannelAudioSlotUpdate.js';
+import ChannelMember from './ChannelMember.js';
+import ChannelMemberList from './ChannelMemberList.js';
+import ChannelMemberListSection from './ChannelMemberListSection.js';
+import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelStats from './ChannelStats.js';
+import ChannelStatsActive from './ChannelStatsActive.js';
+import ChannelStatsDetail from './ChannelStatsDetail.js';
+import ChannelStatsTop from './ChannelStatsTop.js';
+import ChannelStatsTrend from './ChannelStatsTrend.js';
+import ChannelSubscriberUpdate from './ChannelSubscriberUpdate.js';
 import IconInfo from './IconInfo.js';
 import IconInfoAvailableSize from './IconInfoAvailableSize.js';
 import IdHash from './IdHash.js';
@@ -43,7 +43,7 @@ import MessageEdit from './MessageEdit.js';
 import MessageEmbed from './MessageEmbed.js';
 import MessageMetadata from './MessageMetadata.js';
 import MessageMetadataFormatting from './MessageMetadataFormatting.js';
-import MessageMetadataFormattingGroupLink from './MessageMetadataFormattingGroupLink.js';
+import MessageMetadataFormattingChannelLink from './MessageMetadataFormattingChannelLink.js';
 import MessageMetadataFormattingUrl from './MessageMetadataFormattingUrl.js';
 import MessageResponse from './MessageResponse.js';
 import MessageSettings from './MessageSettings.js';
@@ -113,23 +113,23 @@ export {
   DiscoveryPage,
   DiscoverySection,
   Event,
-  Group,
-  GroupAudioConfig,
-  GroupAudioCounts,
-  GroupAudioSlot,
-  GroupAudioSlotRequest,
-  GroupAudioSlotUpdate,
-  GroupExtended,
-  GroupMember,
-  GroupMemberList,
-  GroupMemberListSection,
-  GroupMessageConfig,
-  GroupStats,
-  GroupStatsActive,
-  GroupStatsDetail,
-  GroupStatsTop,
-  GroupStatsTrend,
-  GroupSubscriberUpdate,
+  Channel,
+  ChannelAudioConfig,
+  ChannelAudioCounts,
+  ChannelAudioSlot,
+  ChannelAudioSlotRequest,
+  ChannelAudioSlotUpdate,
+  ChannelExtended,
+  ChannelMember,
+  ChannelMemberList,
+  ChannelMemberListSection,
+  ChannelMessageConfig,
+  ChannelStats,
+  ChannelStatsActive,
+  ChannelStatsDetail,
+  ChannelStatsTop,
+  ChannelStatsTrend,
+  ChannelSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
@@ -140,7 +140,7 @@ export {
   MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
-  MessageMetadataFormattingGroupLink,
+  MessageMetadataFormattingChannelLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
   MessageSettingFilter,
@@ -211,23 +211,23 @@ export default {
   DiscoveryPage,
   DiscoverySection,
   Event,
-  Group,
-  GroupAudioConfig,
-  GroupAudioCounts,
-  GroupAudioSlot,
-  GroupAudioSlotRequest,
-  GroupAudioSlotUpdate,
-  GroupExtended,
-  GroupMember,
-  GroupMemberList,
-  GroupMemberListSection,
-  GroupMessageConfig,
-  GroupStats,
-  GroupStatsActive,
-  GroupStatsDetail,
-  GroupStatsTop,
-  GroupStatsTrend,
-  GroupSubscriberUpdate,
+  Channel,
+  ChannelAudioConfig,
+  ChannelAudioCounts,
+  ChannelAudioSlot,
+  ChannelAudioSlotRequest,
+  ChannelAudioSlotUpdate,
+  ChannelExtended,
+  ChannelMember,
+  ChannelMemberList,
+  ChannelMemberListSection,
+  ChannelMessageConfig,
+  ChannelStats,
+  ChannelStatsActive,
+  ChannelStatsDetail,
+  ChannelStatsTop,
+  ChannelStatsTrend,
+  ChannelSubscriberUpdate,
   IconInfo,
   IconInfoAvailableSize,
   IdHash,
@@ -238,7 +238,7 @@ export default {
   MessageEmbed,
   MessageMetadata,
   MessageMetadataFormatting,
-  MessageMetadataFormattingGroupLink,
+  MessageMetadataFormattingChannelLink,
   MessageMetadataFormattingUrl,
   MessageResponse,
   MessageSettingFilter,

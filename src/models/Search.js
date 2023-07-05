@@ -11,8 +11,8 @@ class Search extends Base {
   }
 
   async getProfile () {
-    if (this.type === SearchType.GROUP) {
-      return await this.client.group.getById(this.id);
+    if (this.type === SearchType.CHANNEL) {
+      return await this.client.channel.getById(this.id);
     }
 
     return await this.client.subscriber.getById(this.id);

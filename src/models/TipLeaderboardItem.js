@@ -8,7 +8,8 @@ class TipLeaderboardItem extends Base {
     this.charmId = data?.charmId;
     this.quantity = data?.quantity;
     this.credits = data?.credits;
-    this.group = data?.group ? new IdHash(data.group) : null;
+    this.channel = data?.group ? new IdHash(data.group) : null;
+    this.group = this.channel;
     this.subscriber = data?.subscriber ? new IdHash(data.subscriber) : null;
   }
 

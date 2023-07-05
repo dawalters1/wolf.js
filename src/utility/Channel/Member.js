@@ -65,13 +65,13 @@ class Member extends Base {
       return true;
     }
 
-    const groupMember = await this.client.group.member.get(targetGroupId, targetSubscriberId);
+    const channelMember = await this.client.channel.member.get(targetGroupId, targetSubscriberId);
 
-    if (!groupMember) {
+    if (!channelMember) {
       return false;
     }
 
-    return checkCapability(capability, groupMember.capabilities);
+    return checkCapability(capability, channelMember.capabilities);
   }
 }
 
