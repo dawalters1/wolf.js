@@ -55,8 +55,8 @@ keyword: keyword # keyword #single word only
 ***REMOVED***
   ***REMOVED***
 ***REMOVED***
-        enabled: true #subscribe to group messages  (server)
-    ***REMOVED*** true # subscribe to group message tip events  (server)
+        enabled: true #subscribe to channel messages  (server)
+    ***REMOVED*** true # subscribe to channel message tip events  (server)
       private:
         enabled: true # subscribe to private messages (server)
     ***REMOVED*** false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
