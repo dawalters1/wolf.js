@@ -54,7 +54,7 @@ framework:
       self: true # whether or not the bot will process its own messages (internal)
   subscriptions:
     messages:
-      group:
+      channel:
         enabled: true #subscribe to group messages  (server)
         tipping: true # subscribe to group message tip events  (server)
       private:
