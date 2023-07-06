@@ -17,13 +17,13 @@ const checkCapability = (capability, subscriberCapability) => {
 };
 
 class Member extends Base {
-  async hasCapability (targetGroupId, targetSubscriberId, capability, checkStaff = true, checkAuthorized = true) {
-    if (validator.isNullOrUndefined(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be null or undefined', { targetGroupId });
-    } else if (!validator.isValidNumber(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId must be a valid number', { targetGroupId });
-    } else if (validator.isLessThanOrEqualZero(targetGroupId)) {
-      throw new WOLFAPIError('targetGroupId cannot be less than or equal to 0', { targetGroupId });
+  async hasCapability (targetChannelId, targetSubscriberId, capability, checkStaff = true, checkAuthorized = true) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
     if (validator.isNullOrUndefined(targetSubscriberId)) {
@@ -65,7 +65,7 @@ class Member extends Base {
       return true;
     }
 
-    const channelMember = await this.client.channel.member.get(targetGroupId, targetSubscriberId);
+    const channelMember = await this.client.channel.member.get(targetChannelId, targetSubscriberId);
 
     if (!channelMember) {
       return false;

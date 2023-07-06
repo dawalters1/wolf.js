@@ -11,13 +11,13 @@ class Channel extends Base {
     this.member = new Member(client);
   }
 
-  async avatar (groupId, size) {
-    if (validator.isNullOrUndefined(groupId)) {
-      throw new WOLFAPIError('groupId cannot be null or undefined', { groupId });
-    } else if (!validator.isValidNumber(groupId)) {
-      throw new WOLFAPIError('groupId must be a valid number', { groupId });
-    } else if (validator.isLessThanOrEqualZero(groupId)) {
-      throw new WOLFAPIError('groupId cannot be less than or equal to 0', { groupId });
+  async avatar (channelId, size) {
+    if (validator.isNullOrUndefined(channelId)) {
+      throw new WOLFAPIError('channelId cannot be null or undefined', { channelId });
+    } else if (!validator.isValidNumber(channelId)) {
+      throw new WOLFAPIError('channelId must be a valid number', { channelId });
+    } else if (validator.isLessThanOrEqualZero(channelId)) {
+      throw new WOLFAPIError('channelId cannot be less than or equal to 0', { channelId });
     }
 
     if (validator.isNullOrUndefined(size)) {
@@ -26,7 +26,7 @@ class Channel extends Base {
       throw new WOLFAPIError('size is not valid', { size });
     }
 
-    return await this.client.utility.download((await this.client.channel.getById(groupId)).getAvatarUrl(size));
+    return await this.client.utility.download((await this.client.channel.getById(channelId)).getAvatarUrl(size));
   }
 }
 

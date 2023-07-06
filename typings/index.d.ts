@@ -2860,7 +2860,7 @@ export class ChannelExtended extends Base {
         longDescription: string;
         discoverable: boolean;
         language: Language;
-        category: Category;
+        category: Category; channelId
         advancedAdmin: boolean;
         questionable: boolean;
         locked: boolean;
