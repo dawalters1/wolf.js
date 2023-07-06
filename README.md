@@ -54,9 +54,9 @@ framework:
       self: true # whether or not the bot will process its own messages (internal)
   subscriptions:
     messages:
-      group:
-        enabled: true #subscribe to group messages  (server)
-        tipping: true # subscribe to group message tip events  (server)
+      channel:
+        enabled: true #subscribe to channel messages  (server)
+        tipping: true # subscribe to channel message tip events  (server)
       private:
         enabled: true # subscribe to private messages (server)
         tipping: false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
@@ -112,16 +112,14 @@ client.commandHandler.register([
         ])
 ]);
 
-client.on('groupMessage', async (message) => {
-    if (message.body === '!ping') {
-        return await client.messaging.sendGroupMessage(message.targetGroupId, 'Pong!');
-    }
+client.on('channelMessage', async (message) => {
+    if (message.body !== '!ping') { return false; };
+
+    return await client.messaging.sendChannelMessage(message.targetChannelId, 'Pong!');
 });
 
 client.on('privateMessage', async (message) => {
-    if (message.isCommand) {
-        return Promise.resolve();
-    }
+    if (message.isCommand) { return false; }
 
     const { language } = await client.subscriber.getById(message.sourceSubscriberId);
 
