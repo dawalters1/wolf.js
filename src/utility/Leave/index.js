@@ -44,7 +44,7 @@ export default async (client, command, onPermissionErrorCallback) => {
       )
     );
 
-    return await client.channel.leaveById(command.targetGroupId);
+    return await client.channel.leaveById(command.targetChannelId);
   }
 
   const userInput = command.argument.split(client.SPLIT_REGEX).filter(Boolean)[0];
