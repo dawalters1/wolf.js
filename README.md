@@ -55,8 +55,8 @@ framework:
   subscriptions:
     messages:
       channel:
-        enabled: true #subscribe to group messages  (server)
-        tipping: true # subscribe to group message tip events  (server)
+        enabled: true #subscribe to channel messages  (server)
+        tipping: true # subscribe to channel message tip events  (server)
       private:
         enabled: true # subscribe to private messages (server)
         tipping: false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
