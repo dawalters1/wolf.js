@@ -54,7 +54,7 @@ keyword: keyword # keyword #single word only
 ***REMOVED*** # whether or not the bot will process its own messages (internal)
 ***REMOVED***
   ***REMOVED***
-      group:
+***REMOVED***
         enabled: true #subscribe to group messages  (server)
     ***REMOVED*** true # subscribe to group message tip events  (server)
       private:
