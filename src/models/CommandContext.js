@@ -13,7 +13,7 @@ class CommandContext {
     this.isGroup = this.isChannel;
     this.argument = data?.argument;
     this.language = data?.language;
-    this.targetChannelId = data?.targetGroupId ?? undefined;
+    this.targetChannelId = data?.targetChannelId ?? undefined;
     this.targetGroupId = this.targetChannelId;
     this.sourceSubscriberId = data?.sourceSubscriberId ?? undefined;
     this.timestamp = data?.timestamp;
