@@ -3,14 +3,15 @@ import validator from '../../validator/index.js';
 import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import Group from './Group.js';
+import Channel from './Channel.js';
 import Subscription from './Subscription.js';
 import patch from '../../utils/patch.js';
 
 class Event extends Base {
   constructor (client) {
     super(client);
-    this.group = new Group(this.client);
+    this.channel = new Channel(this.client);
+    this.group = this.channel;
     this.subscription = new Subscription(this.client);
     this.events = [];
   }
@@ -99,7 +100,7 @@ class Event extends Base {
 
   _cleanUp (reconnection = false) {
     this.events = [];
-    this.group._cleanUp(reconnection);
+    this.channel._cleanUp(reconnection);
     this.subscription._cleanUp(reconnection);
   }
 }

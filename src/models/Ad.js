@@ -11,8 +11,11 @@ class Ad extends Base {
   }
 
   async group () {
-    return await this.client.group.getByName(this.ad);
+    return await this.channel();
+  }
+
+  async channel () {
+    return await this.client.channel.getByName(this.ad);
   }
 }
-
 export default Ad;

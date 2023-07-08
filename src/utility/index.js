@@ -3,7 +3,7 @@ import WOLFAPIError from '../models/WOLFAPIError.js';
 import { Language } from '../constants/index.js';
 import moment from 'moment';
 import ArrayUtility from './Array/index.js';
-import Group from './Group/Group.js';
+import Channel from './Channel/Channel.js';
 import NumberUtility from './Number/index.js';
 import StringUtility from './String/index.js';
 import Subscriber from './Subscriber/Subscriber.js';
@@ -16,7 +16,8 @@ class Utility {
   constructor (client) {
     this.client = client;
     this.array = new ArrayUtility();
-    this.group = new Group(client);
+    this.channel = new Channel(client);
+    this.group = this.channel;
     this.number = new NumberUtility();
     this.string = new StringUtility(client);
     this.subscriber = new Subscriber(client);

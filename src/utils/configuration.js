@@ -66,8 +66,12 @@ const developerConfig = (client) => {
       subscriptions: {
         messages: {
           group: {
-            enabled: typeof config?.framework?.subscriptions?.messages?.group?.enabled === 'boolean' ? config.framework.subscriptions.messages.group.enabled : true,
-            tipping: typeof config?.framework?.subscriptions?.messages?.group?.tipping === 'boolean' ? config.framework.subscriptions.messages.group.tipping : true
+            enabled: typeof config?.framework?.subscriptions?.messages?.group?.enabled === 'boolean' || typeof config?.framework?.subscriptions?.messages?.channel?.enabled === 'boolean' ? config.framework.subscriptions.messages.group?.enabled ?? config.framework.subscriptions.messages.channel.enabled : true,
+            tipping: typeof config?.framework?.subscriptions?.messages?.group?.tipping === 'boolean' || typeof config?.framework?.subscriptions?.messages?.channel?.tipping === 'boolean' ? config.framework.subscriptions.messages.group?.tipping ?? config.framework.subscriptions.messages.channel.tipping : true
+          },
+          channel: {
+            enabled: typeof config?.framework?.subscriptions?.messages?.group?.enabled === 'boolean' || typeof config?.framework?.subscriptions?.messages?.channel?.enabled === 'boolean' ? config.framework.subscriptions.messages.group?.enabled ?? config.framework.subscriptions.messages.channel.enabled : true,
+            tipping: typeof config?.framework?.subscriptions?.messages?.group?.tipping === 'boolean' || typeof config?.framework?.subscriptions?.messages?.channel?.tipping === 'boolean' ? config.framework.subscriptions.messages.group?.tipping ?? config.framework.subscriptions.messages.channel.tipping : true
           },
           private: {
             enabled: typeof config?.framework?.subscriptions?.messages?.private?.enabled === 'boolean' ? config.framework.subscriptions.messages.private.enabled : true,

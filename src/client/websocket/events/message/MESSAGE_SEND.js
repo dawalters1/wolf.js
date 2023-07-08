@@ -1,10 +1,10 @@
 import { MessageType, Event, Language, Capability } from '../../../../constants/index.js';
-import models, { GroupMemberList, GroupSubscriberUpdate } from '../../../../models/index.js';
+import models, { ChannelMemberList, ChannelSubscriberUpdate } from '../../../../models/index.js';
 
-const toCapability = (subscriber, group, type) => {
+const toCapability = (subscriber, channel, type) => {
   switch (type) {
     case 'join':
-      return group.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
+      return channel.owner.id === subscriber.id ? Capability.OWNER : Capability.REGULAR;
     case 'leave':
     case 'kick':
       return Capability.NOT_MEMBER;
@@ -24,29 +24,32 @@ const toCapability = (subscriber, group, type) => {
   }
 };
 
-const handleApplicationPalringoGroupAction = async (client, message) => {
-  const [subscriber, group] = await Promise.all(
+const handleApplicationPalringoChannelAction = async (client, message) => {
+  const [subscriber, channel] = await Promise.all(
     [
       client.subscriber.getById(message.sourceSubscriberId),
-      client.group.getById(message.targetGroupId)
+      client.channel.getById(message.targetChannelId)
     ]
   );
 
   const action = JSON.parse(message.body);
-  const capabilities = toCapability(subscriber, group, action.type);
+  const capabilities = toCapability(subscriber, channel, action.type);
 
   switch (action.type) {
     case 'join':
     {
-      await group.members._onJoin(subscriber, capabilities);
+      await channel.members._onJoin(subscriber, capabilities);
 
-      group.membersCount++;
+      channel.membersCount++;
 
-      return client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.JOINED_GROUP : Event.GROUP_MEMBER_ADD,
-        group,
-        subscriber
-      );
+      return (subscriber.id === client.currentSubscriber.id ? [Event.JOINED_GROUP, Event.JOINED_CHANNEL] : [Event.GROUP_MEMBER_ADD, Event.CHANNEL_MEMBER_ADD])
+        .forEach((event) =>
+          client.emit(
+            event,
+            channel,
+            subscriber
+          )
+        );
     }
     case 'leave':
     case 'kick': // eslint-disable-line padding-line-between-statements
@@ -56,19 +59,22 @@ const handleApplicationPalringoGroupAction = async (client, message) => {
       }
 
       if (subscriber.id === client.currentSubscriber.id) {
-        group.capabilities = capabilities;
-        group.inGroup = false;
-        group.members = new GroupMemberList(client, group.id);
+        channel.capabilities = capabilities;
+        channel.inChannel = false;
+        channel.members = new ChannelMemberList(client, channel.id);
       }
 
-      await group.members._onLeave(subscriber, capabilities);
-      group.membersCount--;
+      await channel.members._onLeave(subscriber, capabilities);
+      channel.membersCount--;
 
-      return client.emit(
-        subscriber.id === client.currentSubscriber.id ? Event.LEFT_GROUP : Event.GROUP_MEMBER_DELETE,
-        group,
-        subscriber
-      );
+      return (subscriber.id === client.currentSubscriber.id ? [Event.LEFT_GROUP, Event.LEFT_CHANNEL] : [Event.GROUP_MEMBER_DELETE, Event.CHANNEL_MEMBER_DELETE])
+        .forEach((event) =>
+          client.emit(
+            event,
+            channel,
+            subscriber
+          )
+        );
     }
 
     case 'owner': // eslint-disable-line padding-line-between-statements
@@ -79,27 +85,30 @@ const handleApplicationPalringoGroupAction = async (client, message) => {
     case 'ban':// eslint-disable-line padding-line-between-statements
     {
       if (subscriber.id === client.currentSubscriber.id) {
-        group.capabilities = capabilities;
+        channel.capabilities = capabilities;
       }
-      await group.members._onUpdate(subscriber, capabilities);
+      await channel.members._onUpdate(subscriber, capabilities);
 
       // non-mod+ users do not have access to banned lists
       if (action.type === 'reset' && subscriber.id === client.currentSubscriber.id) {
-        group.members._misc.members.push(...group.members._banned.members);
+        channel.members._misc.members.push(...channel.members._banned.members);
 
-        await group.members._banned.reset();
+        await channel.members._banned.reset();
       }
 
-      return client.emit(
-        Event.GROUP_MEMBER_UPDATE,
-        group,
-        new GroupSubscriberUpdate(client,
-          {
-            groupId: group.id,
-            sourceId: action.instigatorId,
-            targetId: message.sourceSubscriberId,
-            action: action.type
-          }
+      return [Event.GROUP_MEMBER_UPDATE, Event.CHANNEL_MEMBER_UPDATE].forEach((event) =>
+        client.emit(
+          event,
+          channel,
+          new ChannelSubscriberUpdate(client,
+            {
+              groupId: channel.id,
+              channelId: channel.id,
+              sourceId: action.instigatorId,
+              targetId: message.sourceSubscriberId,
+              action: action.type
+            }
+          )
         )
       );
     }
@@ -114,8 +123,8 @@ export default async (client, body) => {
 
   switch (message.type) {
     // Why is this its own message type? Flags dammit 🤬
-    case MessageType.APPLICATION_PALRINGO_GROUP_ACTION:
-      await handleApplicationPalringoGroupAction(client, message);
+    case MessageType.APPLICATION_PALRINGO_CHANNEL_ACTION:
+      await handleApplicationPalringoChannelAction(client, message);
       break;
       // Why is this its own message type? Flags dammit 🤬
     case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
@@ -139,11 +148,11 @@ export default async (client, body) => {
       break;
   }
 
-  // Internal
-  client.emit('message', message);
-
-  return await client.emit(
-    message.isGroup ? Event.GROUP_MESSAGE : Event.PRIVATE_MESSAGE,
-    message
-  );
+  return (message.isChannel ? ['message', Event.GROUP_MESSAGE, Event.CHANNEL_MESSAGE] : ['message', Event.PRIVATE_MESSAGE])
+    .forEach((event) =>
+      client.emit(
+        event,
+        message
+      )
+    );
 };

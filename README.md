@@ -12,20 +12,6 @@
         </p>
 </div>
 
-# CONTAINS BREAKING CHANGES
-- Migrate from CommonJS to ESM
-- Helpers and utilities are now getters rather than methods and are now accessed as client.helperName.method()
-- Multiple helpers have been broken down into various sub helpers
-- Methods have been moved around, use typings as a reference as shown in [Command](#command---srcmeindexjs) to verify methods still exist
-
-# What's New
-- Add Group Message Config
-- Fully Object-Oriented
-- Large Groups
-- Log Helper
-- Misc Helper
-- Use typings as a reference as shown in [Command](#command---srcmeindexjs) to view additional changes
-
 ## Introduction
 
 WOLF.js is a community maintained javascript library used to create Unofficial Bots
@@ -57,7 +43,7 @@ framework:
   login:
     email: # bot email here
     password: # bot password here
-    onlineState: 1 # online state here 
+    onlineState: 1 # online state here
   command:
     ignore:
       official: true # whether or not an official bot will trigger a command (internal)
@@ -68,9 +54,9 @@ framework:
       self: true # whether or not the bot will process its own messages (internal)
   subscriptions:
     messages:
-      group:
-        enabled: true #subscribe to group messages  (server)
-        tipping: true # subscribe to group message tip events  (server)
+      channel:
+        enabled: true #subscribe to channel messages  (server)
+        tipping: true # subscribe to channel message tip events  (server)
       private:
         enabled: true # subscribe to private messages (server)
         tipping: false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
@@ -126,16 +112,14 @@ client.commandHandler.register([
         ])
 ]);
 
-client.on('groupMessage', async (message) => {
-    if (message.body === '!ping') {
-        return await client.messaging.sendGroupMessage(message.targetGroupId, 'Pong!');
-    }
+client.on('channelMessage', async (message) => {
+    if (message.body !== '!ping') { return false; };
+
+    return await client.messaging.sendChannelMessage(message.targetChannelId, 'Pong!');
 });
 
 client.on('privateMessage', async (message) => {
-    if (message.isCommand) {
-        return Promise.resolve();
-    }
+    if (message.isCommand) { return false; }
 
     const { language } = await client.subscriber.getById(message.sourceSubscriberId);
 
