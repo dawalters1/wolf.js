@@ -4,6 +4,7 @@ export const IPHONE = 5;
 export const IPAD = 6;
 export const ANDROID = 7;
 export const WEB = 8;
+export const VR = 11;
 
 export default {
   OTHER,
@@ -11,5 +12,6 @@ export default {
   IPHONE,
   IPAD,
   ANDROID,
-  WEB
+  WEB,
+  VR
 };

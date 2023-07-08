@@ -5,19 +5,22 @@ import models from '../../../../../models/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.id);
+  const channel = client.channel.channels.find((channel) => channel.id === body.id);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
 
-  const oldAudioConfig = new models.GroupAudioConfig(client, group.audioConfig);
+  const oldAudioConfig = new models.ChannelAudioConfig(client, channel.audioConfig);
 
-  group.audioConfig = new models.GroupAudioConfig(client, body);
+  channel.audioConfig = new models.ChannelAudioConfig(client, body);
 
-  return client.emit(
-    Event.GROUP_AUDIO_UPDATE,
-    oldAudioConfig,
-    group.audioConfig
-  );
+  return [Event.GROUP_AUDIO_UPDATE, Event.CHANNEL_AUDIO_UPDATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        oldAudioConfig,
+        channel.audioConfig
+      )
+    );
 };

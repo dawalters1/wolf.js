@@ -10,6 +10,14 @@ class Response {
   get success () {
     return this.code >= StatusCodes.OK && this.code < StatusCodes.MULTIPLE_CHOICES;
   }
+
+  toJSON () {
+    return {
+      code: this.code,
+      body: this.body,
+      headers: JSON.stringify(this.headers)
+    };
+  }
 }
 
 export default Response;

@@ -24,7 +24,7 @@ export default async (client, command, onPermissionErrorCallback) => {
   }
 
   if (!command.argument) {
-    if (!command.isGroup) {
+    if (!command.isChannel) {
       return await command.reply(
         client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_leave_error_unsupported_message`),
           {
@@ -44,14 +44,14 @@ export default async (client, command, onPermissionErrorCallback) => {
       )
     );
 
-    return await client.group.leaveById(command.targetGroupId);
+    return await client.channel.leaveById(command.targetChannelId);
   }
 
   const userInput = command.argument.split(client.SPLIT_REGEX).filter(Boolean)[0];
 
   if (validator.isLessThanOrEqualZero(userInput)) {
     return await command.reply(
-      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_leave_error_invalid_group_id_message`),
+      client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_leave_error_invalid_channel_id_message`),
         {
           nickname: (await command.subscriber()).nickname,
           subscriberId: command.sourceSubscriberId,
@@ -61,7 +61,7 @@ export default async (client, command, onPermissionErrorCallback) => {
     );
   }
 
-  const result = await client.group.leaveById(parseInt(userInput));
+  const result = await client.channel.leaveById(parseInt(userInput));
 
   return await command.reply(
     client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_leave_${result.success ? 'success' : 'failed'}_message`),

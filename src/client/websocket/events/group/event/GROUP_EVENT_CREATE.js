@@ -4,19 +4,22 @@ import { Event } from '../../../../../constants/index.js';
  * @param {import('../../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  const group = client.group.groups.find((group) => group.id === body.groupId);
+  const channel = client.channel.channels.find((channel) => channel.id === body.channelId);
 
-  if (!group) {
+  if (!channel) {
     return Promise.resolve();
   }
 
   const event = await client.event.getById(body.id);
 
-  group.events.push(event);
+  channel.events.push(event);
 
-  return client.emit(
-    Event.GROUP_EVENT_CREATE,
-    group,
-    event
-  );
+  return [Event.GROUP_EVENT_CREATE, Event.CHANNEL_EVENT_CREATE]
+    .forEach((event) =>
+      client.emit(
+        event,
+        channel,
+        event
+      )
+    );
 };

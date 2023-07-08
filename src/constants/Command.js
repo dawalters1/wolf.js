@@ -6,6 +6,7 @@ export const CHARM_LIST = 'charm list';
 export const CHARM_SUBSCRIBER_ACTIVE_LIST = 'charm subscriber active list';
 export const CHARM_SUBSCRIBER_DELETE = 'charm subscriber delete';
 export const CHARM_SUBSCRIBER_EXPIRED_LIST = 'charm subscriber expired list';
+export const CHARM_SUBSCRIBER_SELECTED_LIST = 'charm subscriber selected list';
 export const CHARM_SUBSCRIBER_SET_SELECTED = 'charm subscriber set selected';
 export const CHARM_SUBSCRIBER_STATISTICS = 'charm subscriber statistics';
 export const CHARM_SUBSCRIBER_SUMMARY_LIST = 'charm subscriber summary list';
@@ -52,8 +53,16 @@ export const MESSAGE_UPDATE = 'message update';
 export const MESSAGE_UPDATE_LIST = 'message update list';
 export const METADATA_URL = 'metadata url';
 export const METADATA_URL_BLACKLIST = 'metadata url blacklist';
-export const NOTIFICATION_LIST = 'notification list';
-export const NOTIFICATION_LIST_CLEAR = 'notification list clear';
+export const NOTIFICATION_LIST = 'notification list'; // Legacy
+export const NOTIFICATION_LIST_CLEAR = 'notification list clear'; // Legacy
+export const NOTIFICATION_SUBSCRIBER_LIST = 'notification subscriber list';
+export const NOTIFICATION_SUBSCRIBER_DELETE = 'notification subscriber delete';
+export const NOTIFICATION_SUBSCRIBER_CLEAR = 'notification subscriber clear';
+export const NOTIFICATION_SUBSCRIBER = 'notification subscriber';
+export const NOTIFICATION_GLOBAL_LIST = 'notification global list';
+export const NOTIFICATION_GLOBAL_DELETE = 'notification global delete';
+export const NOTIFICATION_GLOBAL_CLEAR = 'notification global clear';
+export const NOTIFICATION_GLOBAL = 'notification global';
 export const SEARCH = 'search';
 export const SECURITY_LOGIN = 'security login';
 export const SECURITY_LOGOUT = 'security logout';
@@ -102,6 +111,7 @@ export default {
   CHARM_SUBSCRIBER_ACTIVE_LIST,
   CHARM_SUBSCRIBER_DELETE,
   CHARM_SUBSCRIBER_EXPIRED_LIST,
+  CHARM_SUBSCRIBER_SELECTED_LIST,
   CHARM_SUBSCRIBER_SET_SELECTED,
   CHARM_SUBSCRIBER_STATISTICS,
   CHARM_SUBSCRIBER_SUMMARY_LIST,
@@ -150,6 +160,14 @@ export default {
   METADATA_URL_BLACKLIST,
   NOTIFICATION_LIST,
   NOTIFICATION_LIST_CLEAR,
+  NOTIFICATION_GLOBAL,
+  NOTIFICATION_GLOBAL_CLEAR,
+  NOTIFICATION_GLOBAL_DELETE,
+  NOTIFICATION_GLOBAL_LIST,
+  NOTIFICATION_SUBSCRIBER,
+  NOTIFICATION_SUBSCRIBER_CLEAR,
+  NOTIFICATION_SUBSCRIBER_DELETE,
+  NOTIFICATION_SUBSCRIBER_LIST,
   SEARCH,
   SECURITY_LOGIN,
   SECURITY_LOGOUT,
