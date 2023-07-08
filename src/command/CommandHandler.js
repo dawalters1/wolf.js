@@ -40,7 +40,7 @@ class CommandHandler {
           isChannel: message.isChannel,
           isGroup: message.isChannel,
           argument: message.body,
-          targetGroupId: message.targetGroupId,
+          targetChannelId: message.targetChannelId,
           sourceSubscriberId: message.sourceSubscriberId,
           timestamp: message.timestamp,
           type: message.type,

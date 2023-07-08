@@ -1011,7 +1011,7 @@ export class MessagingSubscriptionHelper extends Base {
     public nextGroupMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
     /**
      * Wait for the next channel message
-     * @param targetChannelId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param timeout - How long to wait
      */
     public nextChannelMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
@@ -1024,7 +1024,7 @@ export class MessagingSubscriptionHelper extends Base {
     /**
      * Wait for the next message in a group by a specific subscriber
      * @deprecated use nextChannelSubscriberMessage
-     * @param targetChannelId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
@@ -1545,7 +1545,7 @@ export class TippingHelper extends Base {
     /**
      * Get a channels tipping leaderboard
      * @deprecated use getChannelLeaderboard
-     * @param targetChannelId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
@@ -1560,9 +1560,9 @@ export class TippingHelper extends Base {
     */
     public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
-     * Get a groups tipping leaderboard summary
+     * Get a channels tipping leaderboard summary
      * @deprecated use getChannelLeaderboardSummary
-     * @param targetChannelId - The ID of the group
+     * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
@@ -4679,6 +4679,7 @@ export class Tip extends Base {
     private constructor(client: WOLF, data: object)
 
     public charmList: Array<TipCharm>;
+    public channelId: number;
     /**
      * @deprecated use channelId
      */

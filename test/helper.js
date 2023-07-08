@@ -7,7 +7,7 @@ import fs from 'fs';
 const contactIds = [25129067, 29976610];
 const blockedIds = [81175317, 26517517];
 
-const groupId = 18448720;
+const channelId = 18448720;
 const subscriberId = 80280172;
 const timestamp = 1672331025173759;
 
@@ -25,7 +25,7 @@ describe('Helpers', () => {
       client.on('loginFailed', (reason) => reject(reason));
 
       client.on('message', (msg) => {
-        if (message.targetGroupId === groupId && message.sourceSubscriberId === client.currentSubscriber.id) {
+        if (message.targetChannelId === channelId && message.sourceSubscriberId === client.currentSubscriber.id) {
           message = msg;
         }
       });
@@ -1532,14 +1532,14 @@ describe('Helpers', () => {
     describe('Messaging Helper', () => {
       describe('sendGroupMessage', () => {
         it('should send a text message', async () => {
-          const response = await client.messaging.sendGroupMessage(groupId, 'hello from V2');
+          const response = await client.messaging.sendGroupMessage(channelId, 'hello from V2');
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
           expect(response.success).to.equal(true);
         });
         it('should send a image message', async () => {
-          const response = await client.messaging.sendGroupMessage(groupId, fs.readFileSync('D:/images/testavi.jpg'));
+          const response = await client.messaging.sendGroupMessage(channelId, fs.readFileSync('D:/images/testavi.jpg'));
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
@@ -1547,7 +1547,7 @@ describe('Helpers', () => {
         });
 
         it('should send a voice message', async () => {
-          const response = await client.messaging.sendGroupMessage(groupId, fs.readFileSync('D:/audio/testvm.m4a'));
+          const response = await client.messaging.sendGroupMessage(channelId, fs.readFileSync('D:/audio/testvm.m4a'));
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
@@ -1586,7 +1586,7 @@ describe('Helpers', () => {
 
       describe('getGroupMessageEditHistory', () => {
         it('should return an empty array if no history exists', async () => {
-          const history = await client.messaging.getGroupMessageEditHistory(groupId, timestamp - 100);
+          const history = await client.messaging.getGroupMessageEditHistory(channelId, timestamp - 100);
 
           expect(history).to.not.equal(undefined);
           expect(history).to.not.equal(null);
@@ -1594,7 +1594,7 @@ describe('Helpers', () => {
         });
 
         it('should return an empty array of edits if history exists', async () => {
-          const history = await client.messaging.getGroupMessageEditHistory(groupId, timestamp);
+          const history = await client.messaging.getGroupMessageEditHistory(channelId, timestamp);
 
           expect(history).to.not.equal(undefined);
           expect(history).to.not.equal(null);
@@ -1604,7 +1604,7 @@ describe('Helpers', () => {
 
       describe('deleteGroupMessage', () => {
         it('should delete the message', async () => {
-          const response = await client.messaging.deleteGroupMessage(groupId, timestamp);
+          const response = await client.messaging.deleteGroupMessage(channelId, timestamp);
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
@@ -1614,7 +1614,7 @@ describe('Helpers', () => {
 
       describe('restoreGroupMessage', () => {
         it('should restore the message', async () => {
-          const response = await client.messaging.restoreGroupMessage(groupId, timestamp);
+          const response = await client.messaging.restoreGroupMessage(channelId, timestamp);
 
           expect(response).to.not.equal(undefined);
           expect(response).to.not.equal(null);
@@ -1643,15 +1643,15 @@ describe('Helpers', () => {
 
       describe('nextGroupMessage', () => {
         it('should get the next group message', async () => {
-          const message = await client.messaging.subscription.nextGroupMessage(groupId);
+          const message = await client.messaging.subscription.nextGroupMessage(channelId);
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
-          expect(message.targetGroupId).to.equal(groupId);
+          expect(message.targetChannelId).to.equal(channelId);
         });
 
         it('should timeout the next group message', async () => {
-          const message = await client.messaging.subscription.nextGroupMessage(groupId, 1000);
+          const message = await client.messaging.subscription.nextGroupMessage(channelId, 1000);
 
           expect(message).to.not.equal(undefined);
           expect(message).to.equal(null);
@@ -1677,7 +1677,7 @@ describe('Helpers', () => {
 
       describe('nextGroupSubscriberMessage', () => {
         it('should get the next private message', async () => {
-          const message = await client.messaging.subscription.nextGroupSubscriberMessage(groupId, subscriberId);
+          const message = await client.messaging.subscription.nextGroupSubscriberMessage(channelId, subscriberId);
 
           expect(message).to.not.equal(undefined);
           expect(message).to.not.equal(null);
@@ -1685,7 +1685,7 @@ describe('Helpers', () => {
         });
 
         it('should timeout the next private message', async () => {
-          const message = await client.messaging.subscription.nextGroupSubscriberMessage(groupId, subscriberId, 1000);
+          const message = await client.messaging.subscription.nextGroupSubscriberMessage(channelId, subscriberId, 1000);
 
           expect(message).to.not.equal(undefined);
           expect(message).to.equal(null);

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.2.0 *Unreleased*
+## 2.2.0 (2023-07-08)
 ### Added
 - client.charm.getSubscriberSelectedList(subscriberId)
 - Stage client events model methods
@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
       - globalNotificationListAdd
       - globalNoticicationListClear
       - globalNotificationListDelete
-
+- "VR" DeviceType
 
 ### Fixed
 - Fixed various models lacking toJSON() method

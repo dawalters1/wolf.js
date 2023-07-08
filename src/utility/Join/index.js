@@ -78,7 +78,7 @@ export default async (client, command, onPermissionErrorCallback) => {
     return command.reply(
       client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_join_channel_error_no_such_channel_message`),
         {
-          groupId: channel.id,
+          channelId: channel.id,
           nickname: (await command.subscriber()).nickname,
           subscriberId: command.sourceSubscriberId
         }
