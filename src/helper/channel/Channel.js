@@ -7,7 +7,6 @@ import Member from './Member.js';
 import patch from '../../utils/patch.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
-import { ChannelStats } from '../../../typings/index.js';
 
 const buildChannelFromModule = (channelModule) => {
   const base = channelModule.base;

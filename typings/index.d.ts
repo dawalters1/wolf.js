@@ -721,7 +721,7 @@ export class ChannelHelper extends Base {
     private constructor(client);
 
     /**
-     * Exposes the Group Member methods
+     * Exposes the Channel Member methods
      */
     public member: ChannelMemberHelper;
     /**
