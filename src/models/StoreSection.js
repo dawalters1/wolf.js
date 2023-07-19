@@ -2,7 +2,6 @@ import Base from './Base.js';
 import TopicSectionVideo from './TopicSectionVideo.js';
 import Validity from './Validity.js';
 import WOLFAPIError from './WOLFAPIError.js';
-import { StorePage, StoreProductPartial } from '../../typings/index.js';
 
 class StoreSection extends Base {
   constructor (client, data, languageId, fromSubPage = false) {
