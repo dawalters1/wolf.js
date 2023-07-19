@@ -151,7 +151,7 @@ class Subscription extends Base {
    * @returns {Promise<Message|undefined>}
    */
   async nextGroupSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
-    return await this.nextGroupSubscriberMessage(targetChannelId, sourceSubscriberId, timeout);
+    return await this.nextChannelSubscriberMessage(targetChannelId, sourceSubscriberId, timeout);
   }
 
   _cleanUp (reconnection = false) {
