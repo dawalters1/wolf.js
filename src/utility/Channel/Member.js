@@ -3,6 +3,12 @@ import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import { Capability, Privilege } from '../../constants/index.js';
 
+/**
+ * Check Capability
+ * @param {Capability} capability
+ * @param {Capability} subscriberCapability
+ * @returns {boolean}
+ */
 const checkCapability = (capability, subscriberCapability) => {
   switch (capability) {
     case Capability.OWNER:
@@ -17,6 +23,15 @@ const checkCapability = (capability, subscriberCapability) => {
 };
 
 class Member extends Base {
+  /**
+   * Check if a subscriber has a capability in channel
+   * @param {Number} targetChannelId
+   * @param {Number} targetSubscriberId
+   * @param {Capability} capability
+   * @param {Boolean} checkStaff
+   * @param {Boolean} checkAuthorized
+   * @returns {Promise<boolean>}
+   */
   async hasCapability (targetChannelId, targetSubscriberId, capability, checkStaff = true, checkAuthorized = true) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

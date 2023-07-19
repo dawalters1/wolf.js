@@ -10,6 +10,11 @@ class Subscription extends Base {
     this.subscriptions = [];
   }
 
+  /**
+   * Get list of Bots event subscriptions
+   * @param {Boolean} subscribe
+   * @returns {Promise<Array<Event>>}
+   */
   async getList (subscribe = true) {
     if (!validator.isValidBoolean(subscribe)) {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
@@ -31,6 +36,11 @@ class Subscription extends Base {
     return this.subscriptions;
   }
 
+  /**
+   * Add an event to the bots event subscription list
+   * @param {Number} eventId
+   * @returns {Promise<Response>}
+   */
   async add (eventId) {
     if (validator.isNullOrUndefined(eventId)) {
       throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
@@ -48,6 +58,11 @@ class Subscription extends Base {
     );
   }
 
+  /**
+   * Remove an event from the bots event subscription list
+   * @param {Number} eventId
+   * @returns {Promise<Response>}
+   */
   async remove (eventId) {
     if (validator.isNullOrUndefined(eventId)) {
       throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });

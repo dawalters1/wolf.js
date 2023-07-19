@@ -72,7 +72,7 @@ export class WOLF {
     */
     public group: ChannelHelper;
     /**
-     * Expoes the Logging methods
+     * Exposes the Logging methods
      */
     public log: LogHelper;
     /**
@@ -134,7 +134,7 @@ export class WOLF {
      * @param password - The password belonging to the account
      * @param onlineState - The onlineState to appear as
      */
-    public login(email: string, password: string, onlineState: OnlineState): Promise<void>;
+    public login(email: string, password: string, onlineState?: OnlineState): Promise<void>;
 
     /**
      * Logout of WOLF
@@ -162,7 +162,7 @@ export class WOLF {
      * Update the current logged in account profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, language: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
 }
 
@@ -361,7 +361,7 @@ export class Command {
         channel: (command: CommandContext, ...args: any) => void,
         private: (command: CommandContext, ...args: any) => void,
         both: (command: CommandContext, ...args: any) => void
-    }, children: Array<Command>)
+    }, children?: Array<Command>)
 }
 export class Base {
     public constructor(client: WOLF);
@@ -462,7 +462,7 @@ export class AuthorizationHelper extends Base {
     public authorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
     /**
      * Remove subscriber ID or IDs from the authorization list
-     * @param targetSubscriberIds - The ID or IDs to unauthorize
+     * @param targetSubscriberIds - The ID or IDs to unauthorized
      */
     public unauthorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
 }
@@ -563,7 +563,7 @@ export class ContactHelper extends Base {
     /**
      * Get the Bots contacts list
      */
-    public list(): Promise<Array<Contact>>;
+    public list(subscribe: boolean): Promise<Array<Contact>>;
     /**
      * Check whether or not a subscriber is a contact
      * @param subscriberIds - The ID of the subscriber
@@ -587,7 +587,7 @@ export class BlockedHelper extends Base {
     /**
      * Get the Bots blocked list
      */
-    public list(): Promise<Array<Contact>>;
+    public list(subscribe: boolean): Promise<Array<Contact>>;
     /**
      * Check whether or not a subscriber is blocked
      * @param subscriberIds - The ID of the subscriber
@@ -653,7 +653,7 @@ export class ChannelEventHelper extends Base {
      * @param subscribe - Whether or not to subscribe to the channels event list
      * @param forceNew - Whether or not to request new from the server
      */
-    public getList(targetChannelId: number, subscribe?: boolean, forceNew?: false): Promise<Array<Event>>;
+    public getList(targetChannelId: number, subscribe?: boolean, forceNew?: boolean): Promise<Array<Event>>;
 
     /**
      * Create an event without a thumbnail
@@ -667,7 +667,6 @@ export class ChannelEventHelper extends Base {
      * @param eventData - The event data
      */
     public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
-
     /**
      * Update an existing event using the existing thumbnail
      * @param targetChannelId - The ID of the channel
@@ -707,7 +706,7 @@ export class EventSubscriptionHelper extends Base {
      */
     public getList(subscribe?: boolean): Promise<Array<Event>>;
     /**
-     * Add a event to the bots event subscription list
+     * Add an event to the bots event subscription list
      * @param eventId - The ID of the event
      */
     public add(eventId: number): Promise<Response>;
@@ -785,7 +784,7 @@ export class ChannelHelper extends Base {
      * @param timestamp - The timestamp to start at
      * @param limit - How many messages to request (Default: 15)
      */
-    public getChatHistory(id: number, chronological: boolean, timestamp?: number, limit?: number): Promise<Array<Message>>;
+    public getChatHistory(id: number, chronological?: boolean, timestamp?: number, limit?: number): Promise<Array<Message>>;
     /**
      * Get stats
      * @param id - The ID of the channel
@@ -810,13 +809,13 @@ export class ChannelMemberHelper extends Base {
      * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getBotList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getBotList(targetChannelId: number, returnCurrentList?: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a channels silenced list
      * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getSilencedList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getSilencedList(targetChannelId: number, returnCurrentList?: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a channels banned list (Mod required)
      * @param targetChannelId - The ID of the channel
@@ -834,7 +833,7 @@ export class ChannelMemberHelper extends Base {
      * @param targetChannelId - The ID of the channel
      * @param returnCurrentList - Whether or not to return the currently fetched list
      */
-    public getRegularList(targetChannelId: number, returnCurrentList: boolean): Promise<Array<ChannelMember>>;
+    public getRegularList(targetChannelId: number, returnCurrentList?: boolean): Promise<Array<ChannelMember>>;
     /**
      * Get a subscriber
      * @param targetChannelId - The ID of the channel
@@ -888,20 +887,20 @@ export class LogHelper extends Base {
      */
     public debug(message: string): void;
     /**
-     * Log a error message
+     * Log a info message
      * @param message - The message
      */
-    public error(message: string): void;
+    public info(message: string): void;
     /**
      * Log a warn message
      * @param message - The message
      */
     public warn(message: string): void;
     /**
-     * Log a info message
+     * Log a error message
      * @param message - The message
      */
-    public info(message: string): void;
+    public error(message: string): void;
 }
 
 export class MessagingHelper extends Base {
@@ -916,14 +915,14 @@ export class MessagingHelper extends Base {
      * @param content - The message
      * @param options - The sending options
      */
-    public sendGroupMessage(targetChannelId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendGroupMessage(targetChannelId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Send a channel message
      * @param targetChannelId - The ID of the channel
      * @param content - The message
      * @param options - The sending options
      */
-    public sendChannelMessage(targetChannelId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendChannelMessage(targetChannelId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
 
     /**
      * Send a private message
@@ -931,14 +930,14 @@ export class MessagingHelper extends Base {
      * @param content - The message
      * @param options - The sending options
      */
-    public sendPrivateMessage(targetSubscriberId: number, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendPrivateMessage(targetSubscriberId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Send a message based on command or message
      * @param commandOrMessage - The command or message to send from
      * @param content - The message
      * @param options - The sending options
      */
-    public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
+    public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Get message edit history
      * @deprecated use getChannelMessageEditHistory
@@ -1001,26 +1000,26 @@ export class MessagingSubscriptionHelper extends Base {
      * @param predicate - Predicate to match
      * @param timeout - How long to wait
      */
-    public nextMessage(predicate: Function, timeout: Number): Promise<Message | undefined>
+    public nextMessage(predicate: Function, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next group message
      * @deprecated use nextChannelMessage
      * @param targetChannelId - The ID of the group
      * @param timeout - How long to wait
      */
-    public nextGroupMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
+    public nextGroupMessage(targetChannelId: number, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next channel message
      * @param targetChannelId - The ID of the channel
      * @param timeout - How long to wait
      */
-    public nextChannelMessage(targetChannelId: number, timeout: Number): Promise<Message | undefined>
+    public nextChannelMessage(targetChannelId: number, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next subscriber message
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
-    public nextPrivateMessage(sourceSubscriberId: number, timeout: Number): Promise<Message | undefined>
+    public nextPrivateMessage(sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next message in a group by a specific subscriber
      * @deprecated use nextChannelSubscriberMessage
@@ -1028,7 +1027,7 @@ export class MessagingSubscriptionHelper extends Base {
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
-    public nextGroupSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout: Number): Promise<Message | undefined>
+    public nextGroupSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
 
     /**
      * Wait for the next message in a channel by a specific subscriber
@@ -1036,7 +1035,7 @@ export class MessagingSubscriptionHelper extends Base {
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
      */
-    public nextChannelSubscriberMessage(targetGroupId: number, sourceSubscriberId: number, timeout: Number): Promise<Message | undefined>
+    public nextChannelSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
 
 }
 
@@ -1097,7 +1096,7 @@ export class NotificationSubscriberHelper extends Base {
      * @param languageId - The language to request in
      * @param forceNew - Whether or not to request new from the server
      */
-    public getById(id: number, languageId: Language, forceNew: boolean): Promise<Notification>;
+    public getById(id: number, languageId: Language, forceNew?: boolean): Promise<Notification>;
 
     /**
      * Get multiple subscriber notifications
@@ -1105,7 +1104,7 @@ export class NotificationSubscriberHelper extends Base {
      * @param languageId - The language to request in
      * @param forceNew - Whether or not to request new from the server
      */
-    public getByIds(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Notification | Array<Notification>>;
+    public getByIds(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Notification | Array<Notification>>;
 
     /**
      * Get your accounts subscriber notifications list
@@ -1115,7 +1114,7 @@ export class NotificationSubscriberHelper extends Base {
      * @param subscribe - Whether or not to subscribe to updates (Default: true)
      * @param forceNew - Whether or not to request new form the server
      */
-    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew: boolean): Promise<Array<Notification>>;
+    public list(languageId: Language, limit?: number, offset?: number, subscribe?: boolean, forceNew?: boolean): Promise<Array<Notification>>;
 
     /**
      * Clear the accounts subscriber notifications list
@@ -1128,7 +1127,7 @@ export class NotificationSubscriberHelper extends Base {
      * @param languageId - The language to request in
      * @param forceNew - Whether or not to request new from the server
      */
-    public delete(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Array<Response>>;
+    public delete(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Array<Response>>;
 
 }
 
@@ -1149,7 +1148,7 @@ export class NotificationGlobalHelper extends Base {
      * @param languageId - The language to request in
      * @param forceNew - Whether or not to request new from the server
      */
-    public getByIds(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Notification | Array<Notification>>;
+    public getByIds(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Notification | Array<Notification>>;
 
     /**
      * Get your accounts global notifications list
@@ -1159,7 +1158,7 @@ export class NotificationGlobalHelper extends Base {
      * @param subscribe - Whether or not to subscribe to updates (Default: true)
      * @param forceNew - Whether or not to request new form the server
      */
-    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew: boolean): Promise<Array<Notification>>;
+    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew?: boolean): Promise<Array<Notification>>;
 
     /**
      * Clear the accounts global notifications list
@@ -1172,7 +1171,7 @@ export class NotificationGlobalHelper extends Base {
      * @param languageId - The language to request in
      * @param forceNew - Whether or not to request new from the server
      */
-    public delete(ids: number | Array<number>, languageId: Language, forceNew: boolean): Promise<Array<Response>>;
+    public delete(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Array<Response>>;
 }
 
 export class PhraseHelper extends Base {
@@ -1500,7 +1499,7 @@ export class SubscriberPresenceHelper extends Base {
     private constructor(client);
 
     /**
-     * Get a subscribers presence
+     * Get a subscriber presence
      * @param id - The ID of the subscriber
      * @param subscribe - Whether or not to subscribe to presence updates
      * @param forceNew - Whether or not to request new from the server
@@ -1543,7 +1542,7 @@ export class TippingHelper extends Base {
      */
     public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipSummary>>;
     /**
-     * Get a channels tipping leaderboard
+     * Get a groups tipping leaderboard
      * @deprecated use getChannelLeaderboard
      * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
@@ -1560,7 +1559,7 @@ export class TippingHelper extends Base {
     */
     public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
-     * Get a channels tipping leaderboard summary
+     * Get a groups tipping leaderboard summary
      * @deprecated use getChannelLeaderboardSummary
      * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
@@ -1583,7 +1582,7 @@ export class TippingHelper extends Base {
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
      * Get the global tipping leaderboard summary
      * @param tipPeriod - The tipping period
@@ -1601,7 +1600,7 @@ export class TopicHelper extends Base {
      */
     public getTopicPageLayout(name: string, languageId: Language): Promise<Response<object>>;
     /**
-     *
+     * Get a topic page recipe list
      * @param id - The recipe ID
      * @param languageId - The language to request in
      * @param maxResults - How many items should be returned
@@ -1677,11 +1676,11 @@ export class ChannelMemberUtility extends Base {
      * Check if a subscriber has a capability in channel
      * @param targetChannelId - The ID of the channel
      * @param targetSubscriberId - The ID of the subscriber
-     * @param capability - The minimum capbility required
+     * @param capability - The minimum capability required
      * @param checkStaff - Check if user is staff (Bypasses capability)
      * @param checkAuthorized - Check if user is authorized (Bypasses capability)
      */
-    public hasCapability(targetChannelId: number, targetSubscriberId: number, capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>
+    public hasCapability(targetChannelId: number, targetSubscriberId: number, capability: Capability, checkStaff?: boolean, checkAuthorized?: boolean): Promise<boolean>
 }
 
 export class NumberUtility {
@@ -1742,7 +1741,7 @@ export class StringUtility {
      * @param splitChar - The character to split at
      * @param joinChar - The character to join at
      */
-    public chunk(string: string, length: string, splitChar: string, joinChar: string): Array<string>;
+    public chunk(string: string, length?: string, splitChar?: string, joinChar?: string): Array<string>;
     /**
      * Trim all ads from a string
      * @param string - The string
@@ -1789,7 +1788,7 @@ export class SubscriberPrivilegeUtility extends Base {
      * @param privileges - The privilege or privileges
      * @param requireAll - Whether or not the subscriber should have all of the provided privileges
      */
-    public has(subscriberId: number, privileges: Privilege | Array<Privilege>, requireAll: boolean): Promise<boolean>
+    public has(subscriberId: number, privileges: Privilege | Array<Privilege>, requireAll?: boolean): Promise<boolean>
 }
 
 export class TimerUtility {
@@ -1799,7 +1798,7 @@ export class TimerUtility {
      */
     public register(handlers: { [key: string]: Function },): Promise<void>;
     /**
-     * Create a event timer
+     * Create an event timer
      * @param name - The name of the event
      * @param handler - The handler
      * @param data - The timer data
@@ -1888,14 +1887,14 @@ export class Utility {
      * @param time - How long to wait
      * @param type - Time type to wait in
      */
-    public delay(time: number, type: 'milliseconds' | 'seconds'): Promise<void>
+    public delay(time: number, type?: 'milliseconds' | 'seconds'): Promise<void>
     /**
      * Convert a number to a readable time format
      * @param language - The language
      * @param time - The time
      * @param type - Time type
      */
-    public toReadableTime(language: string, time: number, type: 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): string;
+    public toReadableTime(language: string, time: number, type?: 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): string;
 
 }
 
@@ -1907,7 +1906,7 @@ export namespace Validator {
     export function isNullOrWhitespace(arg: String): Boolean;
     export function isLessThanOrEqualZero(arg: Number): Boolean;
     export function isLessThanZero(arg: Number): Boolean;
-    export function isValidNumber(arg: String | Number, acceptDecimals: Boolean): Boolean;
+    export function isValidNumber(arg: String | Number, acceptDecimals?: Boolean): Boolean;
     export function isValidBoolean(arg: Number | Boolean): Boolean
     export function isValidDate(arg: Date | Number): Boolean;
     export function isValidHex(arg: string): Boolean;
@@ -2206,13 +2205,13 @@ export class CommandContext extends Base {
      * @param content - The message
      * @param options - The send options
      */
-    public reply(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    public reply(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
     /**
      * Send the subscriber who used the command a private message
      * @param content - The message
      * @param options - The send options
      */
-    public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    public replyPrivate(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
 
     /**
      * Check if a user has a capability
@@ -2220,14 +2219,14 @@ export class CommandContext extends Base {
      * @param checkStaff - Whether or not to check if user is staff (Default: true)
      * @param checkAuthorized - Whether or not to check if a user is authorized (Default: true)
      */
-    public hasCapability(capability: Capability, checkStaff: boolean, checkAuthorized: boolean): Promise<boolean>;
+    public hasCapability(capability: Capability, checkStaff?: boolean, checkAuthorized?: boolean): Promise<boolean>;
 
     /**
      * Check if a user has a privilege or privileges
      * @param privilege - The privilege or privileges to check
      * @param requireAll - Whether or not the subscriber should have them all
      */
-    public hasPrivilege(privilege: Privilege | Array<Privilege>, requireAll: boolean): Promise<boolean>;
+    public hasPrivilege(privilege: Privilege | Array<Privilege>, requireAll?: boolean): Promise<boolean>;
 
     /**
      * Check if a user is authorized
@@ -2327,7 +2326,7 @@ export class Discovery extends Base {
      * @param value - The page, name or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2373,7 +2372,7 @@ export class DiscoveryPage extends Base {
      * @param value - The page or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2425,7 +2424,7 @@ export class DiscoverySection extends Base {
      * Get the page, event, product or channels belonging to the section
      * @param offset - The Page, Event, Product or channel offset
      */
-    public get(offset: number): Promise<DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(offset?: number): Promise<DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
 
     toJSON(): {
         id: number;
@@ -2554,7 +2553,7 @@ export class Channel extends Base {
      * Join the channel
      * @param password - The channels password if it has one
      */
-    public join(password: string | undefined): Promise<Response>;
+    public join(password?: string | undefined): Promise<Response>;
     /**
      * Leave the channel
      */
@@ -2573,7 +2572,7 @@ export class Channel extends Base {
      * @param content - The message
      * @param options - The send options
      */
-    public sendMessage(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    public sendMessage(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
     /**
      * Update the channels profile
      * @param profileData - The new profile data
@@ -3186,7 +3185,7 @@ export class ChannelStatsDetail extends Base {
     public emoticonCount: number;
     public id: number;
     public happyCount: number;
-    public imageCOunt: number;
+    public imageCount: number;
     public lineCount: number;
     public memberCount: number;
     public name: string;
@@ -3206,7 +3205,7 @@ export class ChannelStatsDetail extends Base {
         emoticonCount: number;
         id: number;
         happyCount: number;
-        imageCOunt: number;
+        imageCount: number;
         lineCount: number;
         memberCount: number;
         name: string;
@@ -3231,7 +3230,7 @@ export class ChannelStatsTop extends Base {
     private constructor(client: WOLF, data: object)
 
     public nickname: string;
-    public randomQoute: string;
+    public randomQuote: string;
     public subId: number;
     public value: number;
     public percentage: number;
@@ -3243,7 +3242,7 @@ export class ChannelStatsTop extends Base {
 
     toJSON(): {
         nickname: string;
-        randomQoute: string;
+        randomQuote: string;
         subId: number;
         value: number;
         percentage: number;
@@ -3428,14 +3427,13 @@ export class Message extends Base {
      * @param content - The message
      * @param options - The message send options
      */
-    public reply(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    public reply(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
     /**
      * Send the subscriber who sent the message a private message
      * @param content - The message
      * @param options - The message send options
      */
-    public replyPrivate(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
-
+    public replyPrivate(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
     /**
      * Delete the current message
      */
@@ -3444,17 +3442,10 @@ export class Message extends Base {
      * Restore the current message
      */
     public restore(): Promise<Response>;
-
     /**
-     * Get the edit history for the messagte
+     * Get the edit history for the message
      */
     public getEditHistory(): Promise<Array<MessageUpdate>>
-
-    /**
-     * Tip the message
-     * @param charm - The charm to tip
-     */
-    public tip(charm: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
     /**
      * Get the subscriber profile
      */
@@ -3468,6 +3459,11 @@ export class Message extends Base {
      * Get the channel profile
      */
     public channel(): Promise<Channel>;
+    /**
+     * Tip the message
+     * @param charm - The charm to tip
+     */
+    public tip(charm: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
 
     toJSON(): {
         id: string;
@@ -3864,14 +3860,14 @@ export class NotificationAction extends Base {
 
     public id: number;
     public titleText: string;
-    public actionurl: string;
+    public actionUrl: string;
     public external: boolean;
     public imageUrl: string;
 
     toJSON(): {
         id: number;
         titleText: string;
-        actionurl: string;
+        actionUrl: string;
         external: boolean;
         imageUrl: string;
     };
@@ -3963,7 +3959,6 @@ export class StageClientDurationUpdate extends Base {
      * @deprecated use targetChannelId
      */
     public targetGroupId: number;
-    public duration: number;
 
     /**
      * Play audio on stage
@@ -3982,6 +3977,10 @@ export class StageClientDurationUpdate extends Base {
      * Resume the current broadcast
      */
     public resume(): Promise<void>;
+    /**
+     * Leave the slot that bot was on
+     */
+    public leave (): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4045,6 +4044,10 @@ export class StageClientGeneralUpdate extends Base {
      * Resume the current broadcast
      */
     public resume(): Promise<void>;
+    /**
+     * Leave the slot that bot was on
+     */
+    public leave (): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4112,6 +4115,10 @@ export class StageClientViewerCountUpdate extends Base {
      */
     public resume(): Promise<void>;
     /**
+     * Leave the slot that bot was on
+     */
+    public leave (): Promise<Response>;
+    /**
      * Get the current broadcast state of the client for a channel
      */
     public getBroadcastState(): Promise<StageBroadcastState>;
@@ -4164,7 +4171,7 @@ export class Store extends Base {
      * @param value - The page or ID
      * @param offset - The product or page offset
      */
-    public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
+    public get(value: number | string, offset?: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
 
     /**
      * Get the available credit list
@@ -4204,7 +4211,7 @@ export class Store extends Base {
                 muted: boolean;
                 url: string;
             }>;
-            addtionalDescriptions: Array<string>
+            additionalDescriptions: Array<string>
         }>;
     };
 }
@@ -4222,7 +4229,7 @@ export class StorePage extends Base {
      * @param value - Page Name, ID
      * @param offset - Product or page offset
      */
-    public get(value: number | string, offset: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
+    public get(value: number | string, offset?: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
 
     toJSON(): {
         id: number;
@@ -4249,7 +4256,7 @@ export class StorePage extends Base {
                 muted: boolean;
                 url: string;
             }>;
-            addtionalDescriptions: Array<string>
+            additionalDescriptions: Array<string>
         }>;
     };
 }
@@ -4348,7 +4355,7 @@ export class StoreProductDuration extends Base {
      * @param quanitity - How many to buy
      * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(quanitity: number, targetGroupIds: number | Array<number>): Promise<Response>;
+    public purchase(quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
 
     toJSON(): {
         id: number;
@@ -4377,7 +4384,7 @@ export class StoreProductPartial extends Base {
     public isLimited: boolean;
     public name: string;
     public promotionText: string;
-    public reputatationLevel: number;
+    public reputationLevel: number;
     public targetType: string;
     public charmId: number;
     public botId: number;
@@ -4396,7 +4403,7 @@ export class StoreProductPartial extends Base {
         isLimited: boolean;
         name: string;
         promotionText: string;
-        reputatationLevel: number;
+        reputationLevel: number;
         targetType: string;
         charmId: number;
         botId: number;
@@ -4414,13 +4421,13 @@ export class StoreSection extends Base {
     public images: Array<string>
     public description: string;
     public videos: Array<TopicSectionVideo>;
-    public addtionalDescriptions: Array<string>
+    public additionalDescriptions: Array<string>
 
     /**
      * Get the page or products on the store section
      * @param offset - Page or product ID offset
      */
-    public get(offset: number): Promise<StorePage | Array<StoreProductPartial>>;
+    public get(offset?: number): Promise<StorePage | Array<StoreProductPartial>>;
 
     toJSON(): {
         id: number;
@@ -4443,7 +4450,7 @@ export class StoreSection extends Base {
             muted: boolean;
             url: string;
         }>;
-        addtionalDescriptions: Array<string>
+        additionalDescriptions: Array<string>
     };
 }
 
@@ -4479,7 +4486,7 @@ export class Subscriber extends Base {
     public getAvatar(size: IconSize): Promise<Buffer>;
 
     /**
-     * Add the sbscriber to the bots blocked list
+     * Add the subscriber to the bots blocked list
      */
     public block(): Promise<Response>;
     /**
@@ -4499,13 +4506,13 @@ export class Subscriber extends Base {
      * @param content - The message
      * @param options - The message send options
      */
-    public sendMessage(content: string | Buffer, options: MessageSendOptions): Promise<Response<MessageResponse>>;
+    public sendMessage(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
 
     /**
      * Update the bots profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, langauge: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, language: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
 
     toJSON(): {
         charms: SubscriberSelectedCharm;
@@ -4515,7 +4522,7 @@ export class Subscriber extends Base {
             about: string;
             gender: Gender;
             language: Language;
-            lookinFor: LookingFor;
+            lookingFor: LookingFor;
             lookingForExtended: Array<LookingFor>;
             name: string;
             relationship: Relationship;
@@ -4612,7 +4619,7 @@ export class SubscriberExtended extends Base {
     public dateOfBirth: Date;
     public gender: Gender;
     public language: Language;
-    public lookinFor: LookingFor;
+    public lookingFor: LookingFor;
     public lookingForExtended: Array<LookingFor>;
     public name: string;
     public relationship: Relationship;
@@ -4623,7 +4630,7 @@ export class SubscriberExtended extends Base {
         about: string;
         gender: Gender;
         language: Language;
-        lookinFor: LookingFor;
+        lookingFor: LookingFor;
         lookingForExtended: Array<LookingFor>;
         name: string;
         relationship: Relationship;
@@ -4744,7 +4751,7 @@ export class TipCharm extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
-    public quanitity: number;
+    public quantity: number;
     public credits: number;
     public magnitude: number;
     public subscriber: IdHash;
@@ -4756,7 +4763,7 @@ export class TipCharm extends Base {
 
     toJSON(): {
         id: number;
-        quanitity: number;
+        quantity: number;
         credits: number;
         magnitude: number;
         subscriber: {
@@ -4795,7 +4802,7 @@ export class TipDetail extends Base {
         id: number;
         list: Array<{
             id: number;
-            quanitity: number;
+            quantity: number;
             credits: number;
             magnitude: number;
             subscriber: {
@@ -4817,7 +4824,7 @@ export class TipLeaderboard extends Base {
         leaderboard: Array<{
             rank: number;
             charmId: number;
-            quanitity: number;
+            quantity: number;
             credits: number;
             group: {
                 id: number,
@@ -4838,7 +4845,7 @@ export class TipLeaderboardItem extends Base {
 
     public rank: number;
     public charmId: number;
-    public quanitity: number;
+    public quantity: number;
     public credits: number;
     /**
      * @deprecated use channel
@@ -4855,7 +4862,7 @@ export class TipLeaderboardItem extends Base {
     toJSON(): {
         rank: number;
         charmId: number;
-        quanitity: number;
+        quantity: number;
         credits: number;
         group: {
             id: number,
@@ -4926,7 +4933,7 @@ export class TipSummary extends Base {
         id: number;
         charmList: Array<{
             id: number;
-            quanitity: number;
+            quantity: number;
             credits: number;
             magnitude: number;
             subscriber: {
@@ -5725,7 +5732,7 @@ export interface ClientEvents {
      */
     stageClientConnecting: [data: StageClientGeneralUpdate],
     /**
-     * Fires when a stage client disconencts
+     * Fires when a stage client disconnects
      */
     stageClientDisconnected: [data: StageClientGeneralUpdate],
     /**

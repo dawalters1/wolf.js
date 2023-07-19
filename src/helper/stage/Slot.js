@@ -4,6 +4,12 @@ import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 
 class Slot extends Base {
+  /**
+   * Get list of slots
+   * @param {Number} targetChannelId
+   * @param {Boolean} subscribe
+   * @returns {Promise<() => Promise<Array<ChannelAudioSlot>>>}
+   */
   async list (targetChannelId, subscribe = true) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -40,6 +46,12 @@ class Slot extends Base {
     return channel.slots;
   }
 
+  /**
+   * Get a channel slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<ChannelAudioSlot>}
+   */
   async get (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -66,6 +78,12 @@ class Slot extends Base {
     return slot;
   }
 
+  /**
+   * Lock a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response>}
+   */
   async lock (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -96,6 +114,12 @@ class Slot extends Base {
     );
   }
 
+  /**
+   * Unlock a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response>}
+   */
   async unlock (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -126,6 +150,12 @@ class Slot extends Base {
     );
   }
 
+  /**
+   * Mute a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response>}
+   */
   async mute (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -156,6 +186,12 @@ class Slot extends Base {
     );
   }
 
+  /**
+   * Unmute a slot
+   * @param targetChannelId
+   * @param slotId
+   * @returns {Promise<Response>}
+   */
   async unmute (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -190,6 +226,12 @@ class Slot extends Base {
     );
   }
 
+  /**
+   * Kick a user from a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response>}
+   */
   async kick (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -223,6 +265,13 @@ class Slot extends Base {
     );
   }
 
+  /**
+   * Join a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @param {String} sdp
+   * @returns {Promise<Response<Object>>}
+   */
   async join (targetChannelId, slotId, sdp = undefined) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -287,6 +336,12 @@ class Slot extends Base {
     return response;
   }
 
+  /**
+   * Leave a slot
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response<Object>>}
+   */
   async leave (targetChannelId, slotId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

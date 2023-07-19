@@ -9,6 +9,12 @@ class StoreProductDuration extends Base {
     this.credits = data.credits;
   }
 
+  /**
+   * Purchase an item
+   * @param {Number} quanitity
+   * @param {Number | Number[]} targetIds
+   * @returns {Promise<Response>}
+   */
   async purchase (quanitity, targetIds) {
     return await this.client.store.purchase(this.id, quanitity, targetIds);
   }

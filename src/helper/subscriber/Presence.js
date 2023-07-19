@@ -12,6 +12,12 @@ class Presence extends Base {
     this.presences = [];
   }
 
+  /**
+   * Get a subscriber presence
+   * @param {Number} id
+   * @param {Boolean} forceNew
+   * @returns {Promise<Presence>}
+   */
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -28,6 +34,13 @@ class Presence extends Base {
     return (await this.getByIds([id]))[0];
   }
 
+  /**
+   * Get subscribers presences
+   * @param {Number | Number[]} ids
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Presence|Array<Presence>>}
+   */
   async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 

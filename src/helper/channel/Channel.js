@@ -7,6 +7,7 @@ import Member from './Member.js';
 import patch from '../../utils/patch.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
+import { ChannelStats } from '../../../typings/index.js';
 
 const buildChannelFromModule = (channelModule) => {
   const base = channelModule.base;
@@ -33,6 +34,10 @@ class Channel extends Base {
     return this.channels;
   }
 
+  /**
+   * Get list of joined channels
+   * @returns {Promise<Array<Channel>>}
+   */
   async list () {
     if (!this.fetched) {
       const response = await this.client.websocket.emit(
@@ -62,11 +67,11 @@ class Channel extends Base {
   }
 
   /**
-   *
-   * @param {*} id
-   * @param {*} subscribe
-   * @param {*} forceNew
-   * @returns {Promise<import('../../models/index.js').Channel>} Channel
+   * Get a channel profile
+   * @param {Number} id
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Channel>}
    */
   async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
@@ -88,6 +93,13 @@ class Channel extends Base {
     return (await this.getByIds([id], subscribe, forceNew))[0];
   }
 
+  /**
+   * Get channels profiles
+   * @param {Number | Number[]} ids
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Channel | Array<Channel>>}
+   */
   async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -152,6 +164,13 @@ class Channel extends Base {
     return channels;
   }
 
+  /**
+   * Get a channel
+   * @param {String} name
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Channel>}
+   */
   async getByName (name, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(name)) {
       throw new models.WOLFAPIError('name cannot be null or undefined', { name });
@@ -192,6 +211,27 @@ class Channel extends Base {
     return response.success ? this._process(new models.Channel(this.client, buildChannelFromModule(response.body))) : new models.Channel(this.client, { name });
   }
 
+  /**
+   * Update a channel profile
+   * @param {Number} id
+   * @param {String} description
+   * @param {Boolean} peekable
+   * @param {Boolean} disableHyperlink
+   * @param {Boolean} disableImage
+   * @param {Boolean} disableImageFilter
+   * @param {Boolean} disableVoice
+   * @param {String} longDescription
+   * @param {Boolean} discoverable
+   * @param {Language} language
+   * @param {Category} category
+   * @param {Boolean} advancedAdmin
+   * @param {Boolean} questionable
+   * @param {Boolean} locked
+   * @param {Boolean} closed
+   * @param {Number} entryLevel
+   * @param {Buffer} avatar
+   * @returns { Promise<Response>}
+   */
   async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -314,6 +354,12 @@ class Channel extends Base {
     return response;
   }
 
+  /**
+   * Join a channel
+   * @param {Number} id
+   * @param {String} password
+   * @returns {Promise<Response>}
+   */
   async joinById (id, password = undefined) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -332,6 +378,12 @@ class Channel extends Base {
     );
   }
 
+  /**
+   * Join a channel
+   * @param {String} name
+   * @param {String} password
+   * @returns {Promise<Response>}
+   */
   async joinByName (name, password = undefined) {
     if (validator.isNullOrUndefined(name)) {
       throw new models.WOLFAPIError('name cannot be null or undefined', { name });
@@ -348,6 +400,11 @@ class Channel extends Base {
     );
   }
 
+  /**
+   * Leave a channel
+   * @param {Number} id
+   * @returns {Promise<Response>}
+   */
   async leaveById (id) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -365,6 +422,11 @@ class Channel extends Base {
     );
   }
 
+  /**
+   * Leave a channel
+   * @param {String} name
+   * @returns {Promise<Response>}
+   */
   async leaveByName (name) {
     if (validator.isNullOrUndefined(name)) {
       throw new models.WOLFAPIError('name cannot be null or undefined', { name });
@@ -381,6 +443,14 @@ class Channel extends Base {
     return await this.leaveById(channel.id);
   }
 
+  /**
+   * Get chat history
+   * @param {Number} id
+   * @param {Boolean} chronological
+   * @param {Number} timestamp
+   * @param {Number} limit
+   * @returns {Promise<Array<Message>>}
+   */
   async getChatHistory (id, chronological = false, timestamp = 0, limit = 15) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -428,6 +498,11 @@ class Channel extends Base {
     return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
   }
 
+  /**
+   * Get stats
+   * @param {number} id
+   * @returns {Promise<ChannelStats>}
+   */
   async getStats (id) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -447,12 +522,21 @@ class Channel extends Base {
     return response.success ? new models.ChannelStats(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get channel recommendations based on bot activity
+   * @returns {Promise<Array<Channel>>}
+   */
   async getRecommendationList () {
     const response = await this.client.websocket.emit(Command.GROUP_RECOMMENDATION_LIST);
 
     return response.success ? await this.getByIds(response.body.map((idHash) => idHash.id)) : [];
   }
 
+  /**
+   * Search for a channel
+   * @param {String} query
+   * @returns {Promise<Array<Search>>}
+   */
   async search (query) {
     if (validator.isNullOrUndefined(query)) {
       throw new models.WOLFAPIError('query cannot be null or undefined', { query });

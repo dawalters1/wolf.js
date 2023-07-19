@@ -10,6 +10,10 @@ class Link extends Base {
     this.link = data.link;
   }
 
+  /**
+   * Get the link metadata
+   * @returns {Promise<LinkMetadata>}
+   */
   async metadata () {
     return await this.client.misc.metadata(this.link);
   }

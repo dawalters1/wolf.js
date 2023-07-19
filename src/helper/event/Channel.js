@@ -6,6 +6,13 @@ import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
 
 class Channel extends Base {
+  /**
+   * Get the channels event list
+   * @param {Number} targetChannelId
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Array<Event>>}
+   */
   async getList (targetChannelId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -48,6 +55,17 @@ class Channel extends Base {
     return channel.events;
   }
 
+  /**
+   * Create an event
+   * @param {Number} targetChannelId
+   * @param {String} title
+   * @param {Date} startsAt
+   * @param {Date} endsAt
+   * @param {String} shortDescription
+   * @param {String} longDescription
+   * @param {Buffer} thumbnail
+   * @returns {Promise<[Response<Event>, Response]>}
+   */
   async create (targetChannelId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -94,6 +112,18 @@ class Channel extends Base {
     return response;
   }
 
+  /**
+   * Update an existing event
+   * @param {Number} targetChannelId
+   * @param {Number} eventId
+   * @param {String} title
+   * @param {Date} startsAt
+   * @param {Date} endsAt
+   * @param {String} shortDescription
+   * @param {String} longDescription
+   * @param {Buffer} thumbnail
+   * @returns {Promise<[Response<Event>, Response]>}
+   */
   async update (targetChannelId, eventId, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail }) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -160,6 +190,12 @@ class Channel extends Base {
     return response;
   }
 
+  /**
+   * Update an events thumbnail
+   * @param {Number} eventId
+   * @param {Buffer} thumbnail
+   * @returns {Promise<Response>}
+   */
   async updateThumbnail (eventId, thumbnail) {
     if (validator.isNullOrUndefined(eventId)) {
       throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
@@ -187,6 +223,12 @@ class Channel extends Base {
     );
   }
 
+  /**
+   * Delete an event
+   * @param {Number} targetChannelId
+   * @param {Number} eventId
+   * @returns {Promise<Response>}
+   */
   async delete (targetChannelId, eventId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

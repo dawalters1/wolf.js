@@ -10,6 +10,11 @@ class Blocked extends Base {
     this.blocked = [];
   }
 
+  /**
+   * Get the Bots blocked list
+   * @param {Boolean} subscribe
+   * @returns {Promise<Array<Contact>>}
+   */
   async list (subscribe = true) {
     if (!validator.isValidBoolean(subscribe)) {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
@@ -31,6 +36,11 @@ class Blocked extends Base {
     return this.blocked;
   }
 
+  /**
+   * Check whether or not a subscriber is blocked
+   * @param {Number | Number[]} subscriberIds
+   * @returns {Promise<boolean | Array<boolean>>}
+   */
   async isBlocked (subscriberIds) {
     const values = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -62,6 +72,11 @@ class Blocked extends Base {
     return Array.isArray(subscriberIds) ? results : results[0];
   }
 
+  /**
+   * Block a subscriber
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async block (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
@@ -79,6 +94,11 @@ class Blocked extends Base {
     );
   }
 
+  /**
+   * Unblock a subscriber
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async unblock (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });

@@ -9,6 +9,13 @@ class ChannelAudioConfig extends Base {
     this.minRepLevel = data?.minRepLevel;
   }
 
+  /**
+   * Update the channels audio config
+   * @param {Boolean} enabled
+   * @param {Number} stageId
+   * @param {Number} minRepLevel
+   * @returns {Promise<Response>}
+   */
   async update ({ enabled, stageId, minRepLevel }) {
     return await this.client.stage.updateAudioConfig(this.id, { enabled, stageId, minRepLevel });
   }

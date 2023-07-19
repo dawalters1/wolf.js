@@ -60,6 +60,12 @@ const canPerformGroupAction = async (client, channel, targetGroupMember, newCapa
  * CANCEROUS ASS APPROACH, like wtf is this shit???
  */
 class Member extends Base {
+  /**
+   * Get list of bots in the channel
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getBotList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -99,6 +105,12 @@ class Member extends Base {
     return channel.members._bots.members;
   }
 
+  /**
+   * Get a channels silenced lists
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getSilencedList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -147,6 +159,12 @@ class Member extends Base {
     return channel.members._silenced.members;
   }
 
+  /**
+   * Get a channels banned list (Mod required)
+   * @param {Number} targetChannelId
+   * @param {number} limit
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getBannedList (targetChannelId, limit = 100) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -202,6 +220,11 @@ class Member extends Base {
     return channel.members._banned.members;
   }
 
+  /**
+   * Get a channels privileged list
+   * @param {Number} targetChannelId
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getPrivilegedList (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -245,6 +268,12 @@ class Member extends Base {
     return channel.members._privileged.members;
   }
 
+  /**
+   * Get a channels regular list
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<WOLFAPIError|*|[]|*[]>}
+   */
   async getRegularList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -289,6 +318,12 @@ class Member extends Base {
     return channel.members._regular.members;
   }
 
+  /**
+   * Get a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<ChannelMember>}
+   */
   async get (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -335,6 +370,12 @@ class Member extends Base {
     return undefined;
   }
 
+  /**
+   * Admin a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async admin (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -378,6 +419,12 @@ class Member extends Base {
     );
   }
 
+  /**
+   * Mod a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async mod (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -421,6 +468,12 @@ class Member extends Base {
     );
   }
 
+  /**
+   * Reset a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async regular (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -464,6 +517,12 @@ class Member extends Base {
     );
   }
 
+  /**
+   * Silence a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async silence (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -507,6 +566,12 @@ class Member extends Base {
     );
   }
 
+  /**
+   * Ban a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async ban (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -550,6 +615,12 @@ class Member extends Base {
     );
   }
 
+  /**
+   * Kick a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async kick (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

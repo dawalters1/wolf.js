@@ -16,6 +16,20 @@ class ChannelExtended extends Base {
     this.entryLevel = data?.entryLevel;
   }
 
+  /**
+   * Update the channels extended profile
+   * @param {String} description
+   * @param {String} longDescription
+   * @param {Boolean} discoverable
+   * @param {Number} language
+   * @param {Category} category
+   * @param {Boolean} advancedAdmin
+   * @param {Boolean} questionable
+   * @param {Boolean} locked
+   * @param {Boolean} closed
+   * @param {Number} entryLevel
+   * @returns {Promise<Response>}
+   */
   async update ({ longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel }) {
     return await this.client.channel.update(this.id, { longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel });
   }

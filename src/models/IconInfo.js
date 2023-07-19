@@ -10,6 +10,11 @@ class IconInfo extends Base {
     this.availableTypes = data?.availableTypes ?? [];
   }
 
+  /**
+   * Get the url for the specified size if it exists, else the closest available
+   * @param {IconSize} size
+   * @returns {string}
+   */
   get (size) {
     return this.availableSizes.get(size);
   }

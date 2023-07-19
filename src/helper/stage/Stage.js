@@ -92,6 +92,11 @@ class Stage extends Base {
     Reflect.deleteProperty(this.clients, targetChannelId);
   }
 
+  /**
+   * Get a channels stage settings
+   * @param {Number} targetChannelId
+   * @returns {Promise<ChannelAudioConfig>}
+   */
   async getAudioConfig (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -110,6 +115,14 @@ class Stage extends Base {
     return channel.audioConfig;
   }
 
+  /**
+   * Update the channels audio config
+   * @param {Number} targetChannelId
+   * @param {Number} stageId
+   * @param {Boolean} enabled
+   * @param {Number} minRepLevel
+   * @returns {Promise<Response>}
+   */
   async updateAudioConfig (targetChannelId, { stageId, enabled, minRepLevel }) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -152,6 +165,11 @@ class Stage extends Base {
     );
   }
 
+  /**
+   * Get a channels stage settings
+   * @param {Number} targetChannelId
+   * @returns {Promise<ChannelAudioCounts>}
+   */
   async getAudioCount (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -170,6 +188,12 @@ class Stage extends Base {
     return channel.audioCounts;
   }
 
+  /**
+   * Play audio on stage
+   * @param {Number} targetChannelId
+   * @param {Stream} data
+   * @returns {Promise<void>}
+   */
   async play (targetChannelId, data) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -186,6 +210,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].play(data);
   }
 
+  /**
+   * Stop playing audio on a stage (Will remain on stage)
+   * @param {Number} targetChannelId
+   * @returns {Promise<void>}
+   */
   async stop (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -202,6 +231,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].stop();
   }
 
+  /**
+   * Pause the current broadcast (Download continues in background)
+   * @param {Number} targetChannelId
+   * @returns {Promise<void>}
+   */
   async pause (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -218,6 +252,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].pause();
   }
 
+  /**
+   * Resume the current broadcast
+   * @param {Number} targetChannelId
+   * @returns {Promise<void>}
+   */
   async resume (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -234,6 +273,28 @@ class Stage extends Base {
     return await this.clients[targetChannelId].resume();
   }
 
+  /**
+   * Whether or not the bot is on stage
+   * @param {Number} targetChannelId
+   * @returns {Promise<boolean>}
+   */
+  async onStage (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    return !!this.clients[targetChannelId];
+  }
+
+  /**
+   * Get the current broadcast state of the client for a channel
+   * @param {Number} targetChannelId
+   * @returns {Promise<StageBroadcastState>}
+   */
   async getBroadcastState (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -250,18 +311,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].broadcastState;
   }
 
-  async onStage (targetChannelId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    return !!this.clients[targetChannelId];
-  }
-
+  /**
+   * Whether or not the client for the channel is ready to broadcast
+   * @param {Number} targetChannelId
+   * @returns {Promise<boolean>}
+   */
   async isReady (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -278,6 +332,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].connectionState === StageConnectionState.READY;
   }
 
+  /**
+   * Whether or not the client for the channel is broadcasting
+   * @param {Number} targetChannelId
+   * @returns {Promise<boolean>}
+   */
   async isPlaying (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -290,6 +349,11 @@ class Stage extends Base {
     return await this.getBroadcastState(targetChannelId) === StageBroadcastState.PLAYING;
   }
 
+  /**
+   * Whether or not the client for the channel is paused
+   * @param {Number} targetChannelId
+   * @returns {Promise<boolean>}
+   */
   async isPaused (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -302,6 +366,11 @@ class Stage extends Base {
     return await this.getBroadcastState(targetChannelId) === StageBroadcastState.PAUSED;
   }
 
+  /**
+   * Whether or not the client for the channel is idling
+   * @param {Number} targetChannelId
+   * @returns {Promise<boolean>}
+   */
   async isIdle (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -314,6 +383,11 @@ class Stage extends Base {
     return await this.getBroadcastState(targetChannelId) === StageBroadcastState.IDLE;
   }
 
+  /**
+   * Get the duration of the current broadcast
+   * @param {Number} targetChannelId
+   * @returns {Promise<Number>}
+   */
   async duration (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -330,6 +404,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].duration;
   }
 
+  /**
+   * Get the volume of the current broadcast
+   * @param {Number} targetChannelId
+   * @returns {Promise<number>}
+   */
   async getVolume (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -346,6 +425,12 @@ class Stage extends Base {
     return await this.clients[targetChannelId].volume;
   }
 
+  /**
+   * Change the volume of the current broadcast (Causes static :()
+   * @param {Number} targetChannelId
+   * @param {Number} volume
+   * @returns {Promise<void>}
+   */
   async setVolume (targetChannelId, volume) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -370,6 +455,11 @@ class Stage extends Base {
     return await this.clients[targetChannelId].setVolume(volume);
   }
 
+  /**
+   * Get the slot the bot is on
+   * @param {Number} targetChannelId
+   * @returns {Promise<Number>}
+   */
   async getSlotId (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

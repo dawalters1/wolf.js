@@ -2,6 +2,7 @@ import Base from './Base.js';
 import TopicSectionVideo from './TopicSectionVideo.js';
 import Validity from './Validity.js';
 import WOLFAPIError from './WOLFAPIError.js';
+import { StorePage, StoreProductPartial } from '../../typings/index.js';
 
 class StoreSection extends Base {
   constructor (client, data, languageId, fromSubPage = false) {
@@ -38,6 +39,11 @@ class StoreSection extends Base {
     }
   }
 
+  /**
+   * Get the page or products on the store section
+   * @param {Number} offset
+   * @returns {Promise<StorePage | Array<StoreProductPartial>>}
+   */
   async get (offset = 0) {
     if (!this.page && !this.recipe) {
       throw new WOLFAPIError(`${this.title} is not a collection section`, { page: this.toJSON() });

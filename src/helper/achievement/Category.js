@@ -14,8 +14,9 @@ class Category extends Base {
 
   /**
    * Request achievements category list by Language
-   * @param {Language} language - The language of achievement category list
-   * @returns {Promise<Array<models.AchievementCategory>} - The achievement category list
+   * @param {Number} language - The language of achievement category list
+   * @param {Boolean} forceNew
+   * @returns {Promise<Array<AchievementCategory>>} - The achievement category list
    */
   async getList (language, forceNew = false) {
     if (!validator.isValidNumber(language)) {
