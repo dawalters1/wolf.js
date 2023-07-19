@@ -563,7 +563,7 @@ export class ContactHelper extends Base {
     /**
      * Get the Bots contacts list
      */
-    public list(subscribe: boolean): Promise<Array<Contact>>;
+    public list(subscribe?: boolean): Promise<Array<Contact>>;
     /**
      * Check whether or not a subscriber is a contact
      * @param subscriberIds - The ID of the subscriber
@@ -587,7 +587,7 @@ export class BlockedHelper extends Base {
     /**
      * Get the Bots blocked list
      */
-    public list(subscribe: boolean): Promise<Array<Contact>>;
+    public list(subscribe?: boolean): Promise<Array<Contact>>;
     /**
      * Check whether or not a subscriber is blocked
      * @param subscriberIds - The ID of the subscriber
