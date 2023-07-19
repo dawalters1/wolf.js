@@ -12,6 +12,10 @@ class WolfstarsProfile extends Base {
     this.exists = Object.values(data)?.length > 1;
   }
 
+  /**
+   * Get the subscriber linked to the wolfstar profile
+   * @returns {Promise<Subscriber>}
+   */
   async subscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }

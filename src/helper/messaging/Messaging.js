@@ -7,7 +7,11 @@ import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { nanoid } from 'nanoid';
 
-// eslint-disable-next-line no-unused-vars
+/**
+ *
+ * @param {MessageSendOptions | {}} options
+ * @returns {MessageSendOptions}
+ */
 const validateOptions = (options) => {
   const _options = Object.assign({}, options);
 
@@ -257,6 +261,15 @@ class Messaging extends Base {
     );
   }
 
+  /**
+   * Send a message
+   * @param {string} targetType
+   * @param {Number} targetId
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response>}
+   * @private
+   */
   async _sendMessage (targetType, targetId, content, options = undefined) {
     if (!Object.values(MessageTypes).includes(targetType)) {
       throw new models.WOLFAPIError('Unknown Message Target', { targetType });
@@ -316,18 +329,46 @@ class Messaging extends Base {
       : responses[0];
   }
 
+  /**
+   * Send a channel message
+   * @param {Number} targetChannelId
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response>}
+   */
   async sendChannelMessage (targetChannelId, content, options = undefined) {
     return await this._sendMessage(MessageTypes.CHANNEL, targetChannelId, content, options);
   }
 
+  /**
+   * Send a group message
+   * @param {Number} targetChannelId
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response>}
+   */
   async sendGroupMessage (targetChannelId, content, options = undefined) {
     return await this.sendChannelMessage(targetChannelId, content, options);
   }
 
+  /**
+   * Send a private message
+   * @param {Number} targetSubscriberId
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response>}
+   */
   async sendPrivateMessage (targetSubscriberId, content, options = undefined) {
     return await this._sendMessage(MessageTypes.PRIVATE, targetSubscriberId, content, options);
   }
 
+  /**
+   * Send a message based on command or message
+   * @param {Command | Message} commandOrMessage
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response>}
+   */
   async sendMessage (commandOrMessage, content, options = undefined) {
     if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).default)) {
       throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
@@ -336,6 +377,12 @@ class Messaging extends Base {
     return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetChannelId : commandOrMessage.sourceSubscriberId, content, options);
   }
 
+  /**
+   * Get message edit history
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Array<MessageUpdate>>}
+   */
   async getChannelMessageEditHistory (targetChannelId, timestamp) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -365,10 +412,22 @@ class Messaging extends Base {
     return response.body?.map((data) => new models.MessageUpdate(this.client, data)) ?? [];
   }
 
+  /**
+   * Get message edit history
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Array<MessageUpdate>>}
+   */
   async getGroupMessageEditHistory (targetChannelId, timestamp) {
     return await this.getChannelMessageEditHistory(targetChannelId, timestamp);
   }
 
+  /**
+   * Delete a channel message
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Response>}
+   */
   async deleteChannelMessage (targetChannelId, timestamp) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -399,10 +458,22 @@ class Messaging extends Base {
     );
   }
 
+  /**
+   * Delete a group message
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Response>}
+   */
   async deleteGroupMessage (targetChannelId, timestamp) {
     return await this.deleteChannelMessage(targetChannelId, timestamp);
   }
 
+  /**
+   * Restore a delete channel message
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Response>}
+   */
   async restoreChannelMessage (targetChannelId, timestamp) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -433,10 +504,20 @@ class Messaging extends Base {
     );
   }
 
+  /**
+   * Restore a delete group message
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @returns {Promise<Response>}
+   */
   async restoreGroupMessage (targetChannelId, timestamp) {
     return await this.restoreChannelMessage(targetChannelId, timestamp);
   }
 
+  /**
+   * Get the bots conversation list
+   * @returns {Promise<Array<Message>>}
+   */
   async getConversationList () {
     const response = await this.client.websocket.emit(
       Command.MESSAGE_CONVERSATION_LIST,

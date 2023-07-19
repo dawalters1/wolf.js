@@ -60,7 +60,7 @@ class Banned extends Base {
 
   /**
    * Ban a single user or multiple users by ID
-   * @param {Number| Number[]} values - The ID or IDs of the subscribers
+   * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
    * @returns {Promise<Array.<Boolean>|Boolean>}
    */
   async ban (targetSubscriberIds) {

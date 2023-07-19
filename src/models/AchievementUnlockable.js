@@ -8,6 +8,10 @@ class AchievementUnlockable extends Base {
     this.additionalInfo = new AchievementUnlockableAdditionalInfo(client, data?.additionalInfo);
   }
 
+  /**
+   * Get the achievement
+   * @returns {Promise<Achievement>}
+   */
   async achievement () {
     return await this.client.achievement.getById(this.id);
   }

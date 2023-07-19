@@ -25,6 +25,13 @@ class StoreProduct extends Base {
     this.webContentUrl = data.webContentUrl;
   }
 
+  /**
+   * Purchase an item
+   * @param {StoreProductDuration | number} duration
+   * @param {Number} quanitity
+   * @param {Number | Number[]} targetIds
+   * @returns {Promise<Response>}
+   */
   async purchase (duration, quanitity, targetIds) {
     if (!(duration instanceof (await import('./StoreProductDuration.js')).default)) {
       return await duration.purchase(quanitity, targetIds);

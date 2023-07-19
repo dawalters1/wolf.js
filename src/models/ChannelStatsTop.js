@@ -11,6 +11,10 @@ class ChannelStatsTop extends Base {
     this.percentage = data?.percentage;
   }
 
+  /**
+   * Get the subscribers profile
+   * @returns {Promise<Subscriber>}
+   */
   async subscriber () {
     return await this.client.subscriber.getById(this.subId);
   }

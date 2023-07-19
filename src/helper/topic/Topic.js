@@ -5,6 +5,12 @@ import models from '../../models/index.js';
 import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
 
 class Topic extends Base {
+  /**
+   * Get a topic page
+   * @param {String} name
+   * @param {Number} languageId
+   * @returns {Promise<Response<object>>}
+   */
   async getTopicPageLayout (name, languageId) {
     if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
@@ -27,6 +33,15 @@ class Topic extends Base {
     );
   }
 
+  /**
+   * Get a topic page recipe list
+   * @param {Number} id
+   * @param {Number} languageId
+   * @param {Number} maxResults
+   * @param {Number} offset
+   * @param {TopicPageRecipeType} type
+   * @returns {Promise<Response<Array<object>>>}
+   */
   async getTopicPageRecipeList (id, languageId, maxResults, offset, type) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });

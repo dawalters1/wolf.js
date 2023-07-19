@@ -11,6 +11,12 @@ class Subscriber extends Base {
     this.privilege = new PrivilegeUtility(client);
   }
 
+  /**
+   * Get a subscriber avatar
+   * @param {Number} subscriberId
+   * @param {IconSize} size
+   * @returns {Promise<Buffer>}
+   */
   async avatar (subscriberId, size) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });

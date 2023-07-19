@@ -4,6 +4,13 @@ import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 
 class Request extends Base {
+  /**
+   * Get list of current stage slot requests
+   * @param {Number} targetChannelId
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<ChannelAudioSlotRequest>}
+   */
   async list (targetChannelId, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -43,6 +50,13 @@ class Request extends Base {
     return channel.audioRequests || [];
   }
 
+  /**
+   * Add request to stage request list
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async add (targetChannelId, slotId = undefined, subscriberId = undefined) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -132,6 +146,12 @@ class Request extends Base {
     );
   }
 
+  /**
+   * Remove a request from stage request list
+   * @param {Number} targetChannelId
+   * @param {Number} slotId
+   * @returns {Promise<Response>}
+   */
   async delete (targetChannelId, slotId = undefined) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -207,6 +227,11 @@ class Request extends Base {
     );
   }
 
+  /**
+   * Clear the channels current stage slot requests
+   * @param {Number} targetChannelId
+   * @returns {Promise<Request>}
+   */
   async clear (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });

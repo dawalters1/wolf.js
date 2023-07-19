@@ -67,6 +67,13 @@ class WOLF extends EventEmitter {
     this.currentSubscriber = undefined;
   }
 
+  /**
+   * Login to WOLF using credentials stored in configuration
+   * @param {String} email
+   * @param {String} password
+   * @param {OnlineState | Number} onlineState
+   * @returns {Promise<void>}
+   */
   login (email, password, onlineState = OnlineState.ONLINE) {
     if (!email) {
       const loginDetails = this.config.framework.login;
@@ -103,6 +110,11 @@ class WOLF extends EventEmitter {
     return Promise.resolve();
   }
 
+  /**
+   * Logout of WOLF
+   * @param {Boolean} disconnect
+   * @returns {Promise<void>}
+   */
   async logout (disconnect = true) {
     this.websocket.emit(Command.SECURITY_LOGOUT);
 
@@ -130,6 +142,21 @@ class WOLF extends EventEmitter {
     );
   }
 
+  /**
+   * Update the current logged in account profile
+   * @param {String} nickname
+   * @param {String} status
+   * @param {Date} dateOfBirth
+   * @param {String} about
+   * @param {Gender} gender
+   * @param {Language} language
+   * @param {LookingFor} lookingFor
+   * @param {String} name
+   * @param {Relationship} relationship
+   * @param {String[]} urls
+   * @param {Buffer} avatar
+   * @returns {Promise<Response>}
+   */
   async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
     if (nickname) {
       if (!validator.isType(nickname, 'string')) {
