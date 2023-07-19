@@ -44,7 +44,7 @@ class Request extends Base {
 
     if (response.success) {
       channel._requestListFetched = true;
-      channel.audioRequests = response.body.map((request) => new models.GroupAudioSlotRequest(this.client, request));
+      channel.audioRequests = response.body.map((request) => new models.ChannelAudioSlotRequest(this.client, request));
     }
 
     return channel.audioRequests || [];
