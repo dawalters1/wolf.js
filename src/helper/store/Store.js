@@ -233,11 +233,11 @@ class Store extends Base {
   /**
    * Purchase a product
    * @param {Number} productDurationId
-   * @param {Number} quanitity
+   * @param {Number} quantity
    * @param {Number | Number[]} ids
    * @returns {Promise<Response>}
    */
-  async purchase (productDurationId, quanitity, ids) {
+  async purchase (productDurationId, quantity, ids) {
     if (validator.isNullOrUndefined(productDurationId)) {
       throw new models.WOLFAPIError('productDurationId cannot be null or undefined', { productDurationId });
     } else if (!validator.isValidNumber(productDurationId)) {
@@ -246,12 +246,12 @@ class Store extends Base {
       throw new models.WOLFAPIError('productDurationId cannot be less than or equal to 0', { productDurationId });
     }
 
-    if (validator.isNullOrUndefined(quanitity)) {
-      throw new models.WOLFAPIError('quanitity cannot be null or undefined', { quanitity });
-    } else if (!validator.isValidNumber(quanitity)) {
-      throw new models.WOLFAPIError('quanitity must be a valid number', { quanitity });
-    } else if (validator.isLessThanOrEqualZero(quanitity)) {
-      throw new models.WOLFAPIError('quanitity cannot be less than or equal to 0', { quanitity });
+    if (validator.isNullOrUndefined(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be null or undefined', { quantity });
+    } else if (!validator.isValidNumber(quantity)) {
+      throw new models.WOLFAPIError('quantity must be a valid number', { quantity });
+    } else if (validator.isLessThanOrEqualZero(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be less than or equal to 0', { quantity });
     }
 
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
@@ -280,7 +280,7 @@ class Store extends Base {
         productList: [
           {
             id: parseInt(productDurationId),
-            quanitity: parseInt(quanitity)
+            quantity: parseInt(quantity)
           }
         ]
       }

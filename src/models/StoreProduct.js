@@ -28,20 +28,20 @@ class StoreProduct extends Base {
   /**
    * Purchase an item
    * @param {StoreProductDuration | number} duration
-   * @param {Number} quanitity
+   * @param {Number} quantity
    * @param {Number | Number[]} targetIds
    * @returns {Promise<Response>}
    */
-  async purchase (duration, quanitity, targetIds) {
+  async purchase (duration, quantity, targetIds) {
     if (!(duration instanceof (await import('./StoreProductDuration.js')).default)) {
-      return await duration.purchase(quanitity, targetIds);
+      return await duration.purchase(quantity, targetIds);
     }
 
     if (this.durationList.length === 1) {
-      return await this.client.store.purchase(this.durationList[0].id, duration, quanitity);
+      return await this.client.store.purchase(this.durationList[0].id, duration, quantity);
     }
 
-    return await this.client.store.purchase(duration, quanitity, targetIds);
+    return await this.client.store.purchase(duration, quantity, targetIds);
   }
 }
 

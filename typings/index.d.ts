@@ -1434,10 +1434,10 @@ export class StoreHelper extends Base {
     /**
      * Purchase a product
      * @param productDurationId - The ID of the product duration
-     * @param quanitity - The quanitity to purchase
+     * @param quantity - The quantity to purchase
      * @param ids - The ID of channel or users to purchase for
      */
-    public purchase(productDurationId: number, quanitity: number, ids: number | Array<number>): Promise<Response>;
+    public purchase(productDurationId: number, quantity: number, ids: number | Array<number>): Promise<Response>;
     /**
      * Get the Bots credit balance
      * @param forceNew - Whether or not to request new from the server
@@ -4285,16 +4285,16 @@ export class StoreProduct extends Base {
     /**
      * Purchase an item
      * @param duration - The duration ID
-     * @param quanitity - How many to buy
+     * @param quantity - How many to buy
      * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(duration: StoreProductDuration | number, quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
+    public purchase(duration: StoreProductDuration | number, quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
     /**
      * Purchase an item
-     * @param quanitity - How many to buy
+     * @param quantity - How many to buy
      * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
+    public purchase(quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
 
     toJSON(): {
         languageId: Language;
@@ -4352,10 +4352,10 @@ export class StoreProductDuration extends Base {
 
     /**
      * Purchase an item
-     * @param quanitity - How many to buy
+     * @param quantity - How many to buy
      * @param targetChannelIds - The target user or channel IDs
      */
-    public purchase(quanitity: number, targetChannelIds: number | Array<number>): Promise<Response>;
+    public purchase(quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
 
     toJSON(): {
         id: number;
@@ -4725,7 +4725,7 @@ export class Tip extends Base {
     toJSON(): {
         charmList: Array<{
             id: number;
-            quanitity: number;
+            quantity: number;
             credits: number;
             magnitude: number;
             subscriber: {
