@@ -454,7 +454,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.MOD)) {
       throw new models.WOLFAPIError('Insufficient privileges to mod', { targetChannelId, subscriberId });
     }
 
@@ -503,7 +503,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.REGULAR)) {
       throw new models.WOLFAPIError('Insufficient privileges to reset', { targetChannelId, subscriberId });
     }
 
@@ -552,7 +552,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.SILENCED)) {
       throw new models.WOLFAPIError('Insufficient privileges to silence', { targetChannelId, subscriberId });
     }
 
@@ -601,7 +601,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.BANNED)) {
       throw new models.WOLFAPIError('Insufficient privileges to ban', { targetChannelId, subscriberId });
     }
 
