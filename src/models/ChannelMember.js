@@ -5,7 +5,7 @@ class ChannelMember extends Base {
     super(client);
 
     this.id = data?.id;
-    this.targetChannelId = data?.targetGroupId;
+    this.targetChannelId = data?.targetChannelId;
     this.targetGroupId = this.targetChannelId;
     this.hash = data?.hash;
     this.capabilities = data?.capabilities;
