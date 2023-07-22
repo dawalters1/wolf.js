@@ -28,9 +28,9 @@ const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) =>
 
   switch (myCapabilities) {
     case Capability.ADMIN:
-      return [Capability.MOD || Capability.REGULAR || Capability.SILENCED || Capability.BANNED].includes(theirCapability);
+      return [Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     case Capability.MOD:
-      return [Capability.REGULAR || Capability.SILENCED || Capability.BANNED].includes(theirCapability);
+      return [Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     default:
       return false;
   }
