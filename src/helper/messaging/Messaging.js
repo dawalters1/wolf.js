@@ -374,7 +374,7 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
 
-    return await this._sendMessage(commandOrMessage.isGroup ? MessageTypes.GROUP : MessageTypes.PRIVATE, commandOrMessage.isGroup ? commandOrMessage.targetChannelId : commandOrMessage.sourceSubscriberId, content, options);
+    return await this._sendMessage(commandOrMessage.isChannel ? MessageTypes.CHANNEL : MessageTypes.PRIVATE, commandOrMessage.isChannel ? commandOrMessage.targetChannelId : commandOrMessage.sourceSubscriberId, content, options);
   }
 
   /**

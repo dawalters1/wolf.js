@@ -92,7 +92,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_SEARCH,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         filter: 'bots',
         offset: channel.members._bots.members.length,
         limit: this.client._frameworkConfig.get('members.bots.batch.size')
@@ -146,7 +146,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_SEARCH,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         filter: 'silenced',
         offset: channel.members._silenced.members.length,
         limit: this.client._frameworkConfig.get('members.silenced.batch.size')
@@ -356,7 +356,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         subscriberId: parseInt(subscriberId)
       }
     );
@@ -412,7 +412,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.ADMIN
       }
@@ -461,7 +461,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.MOD
       }
@@ -510,7 +510,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.REGULAR
       }
@@ -559,7 +559,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.SILENCED
       }
@@ -608,7 +608,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.BANNED
       }
@@ -657,7 +657,7 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId)
       }
     );
