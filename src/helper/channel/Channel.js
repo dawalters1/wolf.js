@@ -371,7 +371,7 @@ class Channel extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_ADD,
       {
-        channelId: id,
+        groupId: id,
         password
       }
     );

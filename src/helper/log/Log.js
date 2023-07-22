@@ -7,7 +7,7 @@ import Base from '../Base.js';
 class Log extends Base {
   /**
    *
-   * @param {WOLF} client
+   * @param {import('../../client/WOLF.js').default} client
    */
   constructor (client) {
     super(client);

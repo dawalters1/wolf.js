@@ -100,7 +100,7 @@ class Authorization extends Base {
   }
 
   /**
-   * Unauthorized a single user or multiple subscribers by ID
+   * Unauthorize a single user or multiple subscribers by ID
    * @param {Number| Number[]} targetSubscriberIds - The ID or IDs of the subscribers
    * @returns {Promise<Array.<Boolean>|Boolean>}
    */

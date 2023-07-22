@@ -462,7 +462,7 @@ export class AuthorizationHelper extends Base {
     public authorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
     /**
      * Remove subscriber ID or IDs from the authorization list
-     * @param targetSubscriberIds - The ID or IDs to unauthorized
+     * @param targetSubscriberIds - The ID or IDs to unauthorize
      */
     public unauthorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
 }
@@ -5326,7 +5326,8 @@ export enum Privilege {
     PEST = 262144,
     VALID_EMAIL = 524288,
     PREMIUM_ACCOUNT = 1048576,
-    VIP = 2097152,
+    WOLF_STAR=2097152,
+    WOLF_STAR_PRO =8388608,
     ELITECLUB_3 = 4194304,
     USER_ADMIN = 16777216,
     GROUP_ADMIN = 33554432,
