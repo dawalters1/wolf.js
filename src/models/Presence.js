@@ -9,6 +9,10 @@ class Presence extends Base {
     this.subscriberId = data?.subscriberId;
   }
 
+  /**
+   * Get the subscriber profile
+   * @returns {Promise<Subscriber>}
+   */
   async subscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }

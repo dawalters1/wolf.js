@@ -11,14 +11,26 @@ class CharmExpiry extends Base {
     this.expireTime = data?.expireTime;
   }
 
+  /**
+   * Get the charm
+   * @returns {Promise<Charm>}
+   */
   async charm () {
     return await this.client.charm.getById(this.charmId);
   }
 
+  /**
+   * Set the charm on the bots profile
+   * @returns {Promise<Response>}
+   */
   async set () {
     return await this.client.charm.set(new CharmSelectedBuilder(this.charmId, 0));
   }
 
+  /**
+   * Delete the charm from the list
+   * @returns {Promise<Response>}
+   */
   async delete () {
     return await this.client.charm.delete(this.id);
   }

@@ -11,6 +11,11 @@ class Contact extends Base {
     this.contacts = [];
   }
 
+  /**
+   * Get the Bots contacts list
+   * @param {Boolean} subscribe
+   * @returns {Promise<Array<Contact>>}
+   */
   async list (subscribe = true) {
     if (!validator.isValidBoolean(subscribe)) {
       throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
@@ -32,6 +37,11 @@ class Contact extends Base {
     return this.contacts;
   }
 
+  /**
+   * Check whether or not a subscriber is a contact
+   * @param {number | Array<number>} subscriberIds
+   * @returns {Promise<boolean | Array<boolean>>}
+   */
   async isContact (subscriberIds) {
     const values = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -63,6 +73,11 @@ class Contact extends Base {
     return Array.isArray(subscriberIds) ? results : results[0];
   }
 
+  /**
+   * Add a subscriber as a contact
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async add (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
@@ -80,6 +95,11 @@ class Contact extends Base {
     );
   }
 
+  /**
+   * Remove a subscriber as a contact
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async delete (subscriberId) {
     if (validator.isNullOrUndefined(subscriberId)) {
       throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });

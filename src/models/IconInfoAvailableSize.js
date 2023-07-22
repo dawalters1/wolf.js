@@ -13,6 +13,11 @@ class IconInfoAvailableSize extends Base {
     this.xlarge = data?.xlarge;
   }
 
+  /**
+   * Get the url for the specified size if it exists, else the closest available
+   * @param {IconSize | String} size
+   * @returns {String}
+   */
   get (size) {
     if (this[size]) {
       return `${this.client.config.endpointConfig.avatarEndpoint}${this[size]}`;

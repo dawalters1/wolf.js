@@ -12,7 +12,7 @@ class Charm extends Base {
 
   /**
    * Request the charms list
-   * @returns {Promise<Array<models.Charm>>} - The list of charms
+   * @returns {Promise<Array<Charm>>} - The list of charms
    */
   async list () {
     if (this.charms.length) {
@@ -45,7 +45,7 @@ class Charm extends Base {
 
   /**
    * Request multiple charms by ID
-   * @param {Number} ids - The IDs of the charm
+   * @param {Number | Number[]} ids - The IDs of the charm
    * @returns {Promise<Array<models.Charm>>} - The requested charms
    */
   async getByIds (ids) {
@@ -216,7 +216,7 @@ class Charm extends Base {
 
   /**
    * Request a subscribers expired charms list
-   * @param {Number|Array<Number>} subscriberIds - The ID of the subscriber
+   * @param {Number} subscriberId - The ID of the subscriber
    * @returns {Promise<models.SubscriberSelectedCharm>} - The list of expired charms
    */
   async getSubscriberSelectedList (subscriberId) {
@@ -241,7 +241,7 @@ class Charm extends Base {
   /**
    * Delete owned charms
    * @param {Number|Number[]} charmIds - The ID or IDs of the charms to delete
-   * @returns {Promise<models.Response} - Response
+   * @returns {Promise<models.Response>} - Response
    */
   async delete (charmIds) {
     charmIds = (Array.isArray(charmIds) ? charmIds : [charmIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
@@ -275,7 +275,7 @@ class Charm extends Base {
   /**
    * Set selected charms
    * @param {builders.CharmSelectedBuilder} charms - The charm to set
-   * @returns {Promise<models.Response} - Response
+   * @returns {Promise<models.Response>} - Response
    */
   async set (charms) {
     charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm.toCharmSelected()));

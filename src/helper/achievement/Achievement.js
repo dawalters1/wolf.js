@@ -25,7 +25,8 @@ class Achievement extends Base {
   /**
    * Request an achievement by ID & Language
    * @param {Number} id - The ID of the achievement to request
-   * @param {Language} language - The language of the achievement to request
+   * @param {Number} language - The language of the achievement to request
+   * @param {Boolean} forceNew - - Whether or not to request new from the server
    * @returns {Promise<models.Achievement>} - The requested achievement
    */
   async getById (id, language, forceNew = false) {
@@ -53,7 +54,8 @@ class Achievement extends Base {
   /**
    * Request multiple achievements by IDs & Language
    * @param {Number|Number[]} ids - The IDs of the achievements to request
-   * @param {Language} language - The language of the achievement to request
+   * @param {Number} language - The language of the achievement to request
+   * @param {Boolean} forceNew - Whether or not to request new from the server
    * @returns {Promise<Array<models.Achievement>>} - The requested achievements
    */
   async getByIds (ids, language, forceNew = false) {

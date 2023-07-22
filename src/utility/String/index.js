@@ -10,6 +10,12 @@ function replaceRange (string, start, end, substitute) {
 }
 
 class StringUtility extends Base {
+  /**
+   * Replace placeholders in a string
+   * @param {String} string
+   * @param {{ [key: String]: String | Number }} replacements
+   * @returns {String}
+   */
   replace (string, replacements) {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
@@ -40,6 +46,12 @@ class StringUtility extends Base {
       .reduce((result, value) => replaceRange(result, value.startsAt, value.endsAt, value.replaceWith), string);
   }
 
+  /**
+   * Check if two strings are equal
+   * @param {String} sideA
+   * @param {String} sideB
+   * @returns {boolean}
+   */
   isEqual (sideA, sideB) {
     if (typeof sideA !== 'string') {
       return false;
@@ -68,6 +80,14 @@ class StringUtility extends Base {
     return sideA.toLocaleLowerCase().trim() === sideB.toLocaleLowerCase().trim();
   }
 
+  /**
+   * Chunk a string
+   * @param {String} string
+   * @param {Number} length
+   * @param {String} splitChar
+   * @param {String} joinChar
+   * @returns {Array<String>}
+   */
   chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
@@ -113,6 +133,11 @@ class StringUtility extends Base {
     }, []);
   }
 
+  /**
+   * Trim all ads from a string
+   * @param {String} stringA
+   * @returns {String}
+   */
   trimAds (stringA) {
     if (validator.isNullOrUndefined(stringA)) {
       throw new WOLFAPIError('string cannot be null or undefined', { stringA });
@@ -135,6 +160,11 @@ class StringUtility extends Base {
     }, stringA);
   }
 
+  /**
+   * Get all links in a string
+   * @param string
+   * @returns {Array<Link>}
+   */
   getLinks (string) {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
@@ -159,6 +189,11 @@ class StringUtility extends Base {
       ) ?? [];
   }
 
+  /**
+   * Get all ads in a string
+   * @param {String} string
+   * @returns {Array<Ad>}
+   */
   getAds (string) {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });
@@ -178,6 +213,11 @@ class StringUtility extends Base {
     ) ?? [];
   }
 
+  /**
+   * Replaces all accented letters with non-accented letters
+   * @param {String} string
+   * @returns {string}
+   */
   sanitise (string) {
     if (validator.isNullOrUndefined(string)) {
       throw new WOLFAPIError('string cannot be null or undefined', { string });

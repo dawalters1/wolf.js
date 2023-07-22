@@ -8,6 +8,10 @@ class MessageMetadataFormattingUrl extends Base {
     this.url = data?.url;
   }
 
+  /**
+   * Get the link metadata
+   * @returns {Promise<LinkMetadata>}
+   */
   async metadata () {
     return await this.client.misc.metadata(this.url);
   }
