@@ -24,14 +24,31 @@ class Utility {
     this.timer = new Timer(client);
   }
 
+  /**
+   * Join a channel
+   * @param {CommandContext} command
+   * @param {Function | undefined} onPermissionErrorCallback
+   * @returns {Promise<MessageResponse>}
+   */
   async join (command, onPermissionErrorCallback) {
     return await Join(this.client, command, onPermissionErrorCallback);
   }
 
+  /**
+   * Leave a channel
+   * @param {CommandContext} command
+   * @param {Function | undefined} onPermissionErrorCallback
+   * @returns {Promise<MessageResponse>}
+   */
   async leave (command, onPermissionErrorCallback) {
     return await Leave(this.client, command, onPermissionErrorCallback);
   }
 
+  /**
+   * Download data from a url
+   * @param {String} url
+   * @returns {Promise<Buffer>}
+   */
   async download (url) {
     return await superagent
       .get(url)
@@ -40,6 +57,11 @@ class Utility {
       .then(res => res.body);
   }
 
+  /**
+   * Convert string language to LanguageID
+   * @param {String} languageKey
+   * @returns {Number}
+   */
   toLanguageId (languageKey) {
     if (validator.isNullOrUndefined(languageKey)) {
       throw new WOLFAPIError('languageKey cannot be null or undefined', { languageKey });
@@ -159,6 +181,11 @@ class Utility {
     }
   }
 
+  /**
+   * Convert LanguageID to string language
+   * @param {Number} languageId
+   * @returns {String}
+   */
   toLanguageKey (languageId) {
     if (validator.isNullOrUndefined(languageId)) {
       throw new WOLFAPIError('languageId cannot be null or undefined', { languageId });
@@ -280,6 +307,12 @@ class Utility {
     }
   }
 
+  /**
+   * Delay a method
+   * @param {Number} time
+   * @param {'milliseconds' | 'seconds'} type
+   * @returns {Promise<void>}
+   */
   delay (time, type = 'milliseconds') {
     if (validator.isNullOrUndefined(time)) {
       throw new WOLFAPIError('time cannot be null or undefined', { time });
@@ -300,6 +333,13 @@ class Utility {
     );
   }
 
+  /**
+   * Convert a number to a readable time format
+   * @param {String} language
+   * @param {Number} time
+   * @param {'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'} type
+   * @returns {string}
+   */
   toReadableTime (language, time, type = 'milliseconds') {
     if (typeof language !== 'string') {
       throw new WOLFAPIError('language must be a string', { language });

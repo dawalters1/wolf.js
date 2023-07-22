@@ -9,6 +9,11 @@ class MessageSettingFilter extends Base {
     this.tier = data?.tier ?? MessageFilterTier.OFF;
   }
 
+  /**
+   * Update the message filter settings
+   * @param {MessageFilterTier} messageFilterTier
+   * @returns {Promise<Response>}
+   */
   async update (messageFilterTier) {
     return await this.client.misc.updateMessageSettings(messageFilterTier);
   }

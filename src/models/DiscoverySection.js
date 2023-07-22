@@ -40,6 +40,11 @@ class DiscoverySection extends Base {
     }
   }
 
+  /**
+   * Get the page, event, product or channels belonging to the section
+   * @param offset
+   * @returns {Promise<DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>}
+   */
   async get (offset = 0) {
     if (!this.page && !this.recipe) {
       throw new WOLFAPIError(`${this.title} is not a collection section`, { page: this.toJSON() });

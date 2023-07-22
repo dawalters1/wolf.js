@@ -60,6 +60,11 @@ class Phrase extends Base {
     }
   }
 
+  /**
+   * Load list of phrases
+   * @param {Phrase[]} phrases
+   * @returns {Promise<void>}
+   */
   load (phrases) {
     if (!phrases) {
       return this._local();
@@ -97,6 +102,10 @@ class Phrase extends Base {
     }
   }
 
+  /**
+   * Get total phrase count and phrases per language
+   * @returns {PhraseCount}
+   */
   count () {
     const languageCounts = this.phrases.reduce((result, value) => {
       result[value.language] = result[value.language] ? result[value.language]++ : 1;
@@ -107,6 +116,11 @@ class Phrase extends Base {
     return new models.PhraseCount(this.phrases.length, languageCounts);
   }
 
+  /**
+   * Get all phrases with a specific name
+   * @param {String} name
+   * @returns {Array<Phrase>}
+   */
   getAllByName (name) {
     if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
@@ -115,6 +129,12 @@ class Phrase extends Base {
     return this.phrases.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'giu').test(phrase.name));
   }
 
+  /**
+   * Get a phrase by language and name
+   * @param {String} language
+   * @param {String} name
+   * @returns {String}
+   */
   getByLanguageAndName (language, name) {
     if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });
@@ -133,6 +153,12 @@ class Phrase extends Base {
     return this.getByLanguageAndName(this.client.config.framework.language, name);
   }
 
+  /**
+   * Get a phrase by command and name
+   * @param {CommandContext} command
+   * @param {String} name
+   * @returns {String}
+   */
   getByCommandAndName (command, name) {
     if (!(command instanceof models.CommandContext)) {
       throw new models.WOLFAPIError('command must be type CommandContext', { command });
@@ -145,6 +171,12 @@ class Phrase extends Base {
     return this.getByLanguageAndName(command.language, name);
   }
 
+  /**
+   * Check whether or not a string is a specific phrase
+   * @param {String} name
+   * @param {String} input
+   * @returns {boolean}
+   */
   isRequestedPhrase (name, input) {
     if (validator.isNullOrWhitespace(name)) {
       throw new models.WOLFAPIError('name cannot be null or empty', { name });

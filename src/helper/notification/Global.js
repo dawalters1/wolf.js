@@ -15,6 +15,13 @@ class Global extends Base {
     this.notifications = [];
   }
 
+  /**
+   * Get a global notification
+   * @param {Number} id
+   * @param {Number} languageId
+   * @param {Boolean} forceNew
+   * @returns {Promise<Notification>}
+   */
   async getById (id, languageId, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -37,6 +44,13 @@ class Global extends Base {
     return (await this.getByIds(id, languageId, forceNew))[0];
   }
 
+  /**
+   * Get multiple global notifications
+   * @param {Number | Number[]} ids
+   * @param {Number} languageId
+   * @param {Boolean} forceNew
+   * @returns {Promise<Notification | Array<Notification>>}
+   */
   async getByIds (ids, languageId, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -101,6 +115,13 @@ class Global extends Base {
     return notifications;
   }
 
+  /**
+   * Get your accounts global notifications list
+   * @param {Number} languageId
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<*|[]|Notification|Array<Notification>|*[]>}
+   */
   async list (languageId, subscribe = true, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
@@ -146,6 +167,10 @@ class Global extends Base {
     return getNotificationList();
   }
 
+  /**
+   * Clear the accounts global notifications list
+   * @returns {Promise<Response>}
+   */
   async clear () {
     const response = await this.client.websocket.emit(Command.NOTIFICATION_GLOBAL_CLEAR);
 
@@ -156,6 +181,11 @@ class Global extends Base {
     return response;
   }
 
+  /**
+   * Delete global notifications
+   * @param {Number | Number[]} ids
+   * @returns {Promise<Response>}
+   */
   async delete (ids) {
     const values = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
