@@ -15,22 +15,42 @@ class Tip extends Base {
     this.context = new TipContext(client, data?.context);
   }
 
+  /**
+   * Get all the charms tipped
+   * @returns {Promise<Array<Charm>>}
+   */
   async charms () {
     return await this.client.charm.getByIds(this.charmList.map((charm) => charm.charmId));
   }
 
+  /**
+   * Get the group the tip happened in
+   * @returns {Promise<Channel>}
+   */
   async group () {
     return await this.channel();
   }
 
+  /**
+   * Get the channel the tip happened in
+   * @returns {Promise<Channel>}
+   */
   async channel () {
     return await this.client.channel.getById(this.channelId);
   }
 
+  /**
+   * Get the subscriber who tipped
+   * @returns {Promise<Subscriber>}
+   */
   async sourceSubscriber () {
     return await this.client.subscriber.getById(this.sourceSubscriberId);
   }
 
+  /**
+   * Get the subscriber that was tipped
+   * @returns {Promise<Subscriber>}
+   */
   async targetSubscriber () {
     return await this.client.subscriber.getById(this.subscriberId);
   }

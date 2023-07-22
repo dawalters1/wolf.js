@@ -23,6 +23,10 @@ class ChannelStatsActive extends Base {
     this.wordCount = data?.wordCount;
   }
 
+  /**
+   * Get the subscribers profile
+   * @returns {Promise<Subscriber>}
+   */
   async subscriber () {
     return await this.client.subscriber.getById(this.subId);
   }

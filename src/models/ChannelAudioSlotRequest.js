@@ -11,14 +11,26 @@ class ChannelAudioSlotRequest extends Base {
     this.reservedExpiresAt = data?.reservedExpiresAt;
   }
 
+  /**
+   * Delete the audio slot request
+   * @returns {Promise<Response>}
+   */
   async delete () {
     return await this.client.stage.request.delete(this.channelId, this.slotId);
   }
 
+  /**
+   * Accept the audio slot request
+   * @returns {Promise<Response<Object>>}
+   */
   async accept () {
     return await this.client.stage.slot.join(this.channelId, this.slotId);
   }
 
+  /**
+   * Reject the audio slot request
+   * @returns {Promise<Response>}
+   */
   async reject () {
     return this.delete();
   }

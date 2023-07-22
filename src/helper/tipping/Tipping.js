@@ -16,6 +16,14 @@ class Tipping extends Base {
     return await this.client.websocket.emit(Command.TIP_PRIVATE_SUBSCRIBE);
   }
 
+  /**
+   * Tip a subscriber
+   * @param {Number} targetSubscriberId
+   * @param {Number} targetChannelId
+   * @param {{type:ContextType | String,id:Number|undefined}} context
+   * @param {{ id: Number, quantity: Number } | Array<{ id: Number, quantity: Number }>} charms
+   * @returns {Promise<Response>}
+   */
   async tip (targetSubscriberId, targetChannelId, context, charms) {
     charms = Array.isArray(charms) ? charms : [charms];
 
@@ -93,6 +101,14 @@ class Tipping extends Base {
     );
   }
 
+  /**
+   * Get a messages tip details
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @param {Number} limit
+   * @param {Number} offset
+   * @returns {Promise<TipDetail>}
+   */
   async getDetails (targetChannelId, timestamp, limit = 20, offset = 0) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -132,6 +148,14 @@ class Tipping extends Base {
     return response.success ? new models.TipDetail(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get a messages tip summary
+   * @param {Number} targetChannelId
+   * @param {Number} timestamp
+   * @param {Number} limit
+   * @param {Number} offset
+   * @returns {Promise<TipSummary>}
+   */
   async getSummary (targetChannelId, timestamp, limit = 20, offset = 0) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -171,6 +195,14 @@ class Tipping extends Base {
     return response.success ? new models.TipSummary(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get a channels tipping leaderboard
+   * @param {Number} targetChannelId
+   * @param {TipPeriod} tipPeriod
+   * @param {TipType} tipType
+   * @param {TipDirection} tipDirection
+   * @returns {Promise<TipLeaderboard>}
+   */
   async getChannelLeaderboard (targetChannelId, tipPeriod, tipType, tipDirection) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -213,10 +245,26 @@ class Tipping extends Base {
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get a group tipping leaderboard
+   * @param {Number} targetChannelId
+   * @param {TipPeriod} tipPeriod
+   * @param {TipType} tipType
+   * @param {TipDirection} tipDirection
+   * @returns {Promise<TipLeaderboard>}
+   */
   async getGroupLeaderboard (targetChannelId, tipPeriod, tipType, tipDirection) {
     return await this.getChannelLeaderboard(targetChannelId, tipPeriod, tipType, tipDirection);
   }
 
+  /**
+   * Get a channels tipping leaderboard summary
+   * @param {Number} targetChannelId
+   * @param {TipPeriod} tipPeriod
+   * @param {TipType} tipType
+   * @param {TipDirection} tipDirection
+   * @returns {Promise<TipLeaderboardSummary>}
+   */
   async getChannelLeaderboardSummary (targetChannelId, tipPeriod, tipType, tipDirection) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -259,10 +307,25 @@ class Tipping extends Base {
     return response.success ? new models.TipLeaderboardSummary(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get a groups tipping leaderboard summary
+   * @param {Number} targetChannelId
+   * @param {TipPeriod} tipPeriod
+   * @param {TipType} tipType
+   * @param {TipDirection} tipDirection
+   * @returns {Promise<TipLeaderboardSummary>}
+   */
   async getGroupLeaderboardSummary (targetChannelId, tipPeriod, tipType, tipDirection) {
     return this.getChannelLeaderboardSummary(targetChannelId, tipPeriod, tipType, tipDirection);
   }
 
+  /**
+   * Get the global tipping leaderboard
+   * @param {TipPeriod} tipPeriod
+   * @param {TipType} tipType
+   * @param {TipDirection} tipDirection
+   * @returns {Promise<TipLeaderboard>}
+   */
   async getGlobalLeaderboard (tipPeriod, tipType, tipDirection = undefined) {
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod cannot be null or empty', { tipPeriod });
@@ -292,6 +355,11 @@ class Tipping extends Base {
     return response.success ? new models.TipLeaderboard(this.client, response.body) : undefined;
   }
 
+  /**
+   * Get the global tipping leaderboard summary
+   * @param {TipPeriod} tipPeriod
+   * @returns {Promise<TipLeaderboardSummary>}
+   */
   async getGlobalLeaderboardSummary (tipPeriod) {
     if (validator.isNullOrWhitespace(tipPeriod)) {
       throw new models.WOLFAPIError('tipPeriod cannot be null or empty', { tipPeriod });

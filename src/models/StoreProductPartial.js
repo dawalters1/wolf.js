@@ -23,6 +23,11 @@ class StoreProductPartial extends Base {
     }
   }
 
+  /**
+   * Get a products full profile
+   * @param {Number} languageId
+   * @returns {Promise<StoreProduct>}
+   */
   async getFullProduct (languageId) {
     return await this.client.store.getFullProduct(this.id, languageId || this.languageId);
   }

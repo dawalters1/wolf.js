@@ -28,9 +28,9 @@ const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) =>
 
   switch (myCapabilities) {
     case Capability.ADMIN:
-      return [Capability.MOD || Capability.REGULAR || Capability.SILENCED || Capability.BANNED].includes(theirCapability);
+      return [Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     case Capability.MOD:
-      return [Capability.REGULAR || Capability.SILENCED || Capability.BANNED].includes(theirCapability);
+      return [Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     default:
       return false;
   }
@@ -60,6 +60,12 @@ const canPerformGroupAction = async (client, channel, targetGroupMember, newCapa
  * CANCEROUS ASS APPROACH, like wtf is this shit???
  */
 class Member extends Base {
+  /**
+   * Get list of bots in the channel
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getBotList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -86,7 +92,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_SEARCH,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         filter: 'bots',
         offset: channel.members._bots.members.length,
         limit: this.client._frameworkConfig.get('members.bots.batch.size')
@@ -99,6 +105,12 @@ class Member extends Base {
     return channel.members._bots.members;
   }
 
+  /**
+   * Get a channels silenced lists
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getSilencedList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -134,7 +146,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER_SEARCH,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         filter: 'silenced',
         offset: channel.members._silenced.members.length,
         limit: this.client._frameworkConfig.get('members.silenced.batch.size')
@@ -147,6 +159,12 @@ class Member extends Base {
     return channel.members._silenced.members;
   }
 
+  /**
+   * Get a channels banned list (Mod required)
+   * @param {Number} targetChannelId
+   * @param {number} limit
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getBannedList (targetChannelId, limit = 100) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -202,6 +220,11 @@ class Member extends Base {
     return channel.members._banned.members;
   }
 
+  /**
+   * Get a channels privileged list
+   * @param {Number} targetChannelId
+   * @returns {Promise<Array<ChannelMember>>}
+   */
   async getPrivilegedList (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -245,6 +268,12 @@ class Member extends Base {
     return channel.members._privileged.members;
   }
 
+  /**
+   * Get a channels regular list
+   * @param {Number} targetChannelId
+   * @param {Boolean} returnCurrentList
+   * @returns {Promise<WOLFAPIError|*|[]|*[]>}
+   */
   async getRegularList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -289,6 +318,12 @@ class Member extends Base {
     return channel.members._regular.members;
   }
 
+  /**
+   * Get a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<ChannelMember>}
+   */
   async get (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -321,7 +356,7 @@ class Member extends Base {
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         subscriberId: parseInt(subscriberId)
       }
     );
@@ -335,6 +370,12 @@ class Member extends Base {
     return undefined;
   }
 
+  /**
+   * Admin a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async admin (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -371,13 +412,19 @@ class Member extends Base {
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.ADMIN
       }
     );
   }
 
+  /**
+   * Mod a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async mod (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -407,20 +454,26 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.MOD)) {
       throw new models.WOLFAPIError('Insufficient privileges to mod', { targetChannelId, subscriberId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.MOD
       }
     );
   }
 
+  /**
+   * Reset a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async regular (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -450,20 +503,26 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.REGULAR)) {
       throw new models.WOLFAPIError('Insufficient privileges to reset', { targetChannelId, subscriberId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.REGULAR
       }
     );
   }
 
+  /**
+   * Silence a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async silence (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -493,20 +552,26 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.SILENCED)) {
       throw new models.WOLFAPIError('Insufficient privileges to silence', { targetChannelId, subscriberId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.SILENCED
       }
     );
   }
 
+  /**
+   * Ban a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async ban (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -536,20 +601,26 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.BANNED)) {
       throw new models.WOLFAPIError('Insufficient privileges to ban', { targetChannelId, subscriberId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId),
         capabilities: Capability.BANNED
       }
     );
   }
 
+  /**
+   * Kick a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
   async kick (targetChannelId, subscriberId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -579,14 +650,14 @@ class Member extends Base {
       throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
     }
 
-    if (!await canPerformGroupAction(this.client, channel, member, Capability.ADMIN)) {
+    if (!await canPerformGroupAction(this.client, channel, member, Capability.NOT_MEMBER)) {
       throw new models.WOLFAPIError('Insufficient privileges to kick', { targetChannelId, subscriberId });
     }
 
     return await this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
       {
-        channelId: parseInt(targetChannelId),
+        groupId: parseInt(targetChannelId),
         id: parseInt(subscriberId)
       }
     );

@@ -11,6 +11,14 @@ class ChannelMessageConfig extends Base {
     this.slowModeRateInSeconds = data?.slowModeRateInSeconds;
   }
 
+  /**
+   * Update the message config
+   * @param {Boolean} disableHyperlink
+   * @param {Boolean} disableImage
+   * @param {Boolean} disableImageFilter
+   * @param {Boolean} disableVoice
+   * @returns {Promise<Response>}
+   */
   async update ({ disableHyperlink, disableImage, disableImageFilter, disableVoice }) {
     return await this.client.channel.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter });
   }

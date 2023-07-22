@@ -12,6 +12,10 @@ class TipCharm extends Base {
     this.subscriber = new IdHash(this.subscriber);
   }
 
+  /**
+   * Get the charm
+   * @returns {Promise<Charm>}
+   */
   async charm () {
     return await this.client.charm.getById(this.charmId);
   }

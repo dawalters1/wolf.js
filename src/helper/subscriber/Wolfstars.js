@@ -7,6 +7,11 @@ import validator from '../../validator/index.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class Wolfstars extends Base {
+  /**
+   * Get a subscriber Wolfstar statistics
+   * @param {Number} id
+   * @returns {Promise<WolfstarsProfile>}
+   */
   async getById (id) {
     if (validator.isNullOrUndefined(id)) {
       throw new WOLFAPIError('id cannot be null or undefined', { id });
@@ -19,6 +24,11 @@ class Wolfstars extends Base {
     return (await this.getByIds([id]))[0];
   }
 
+  /**
+   * Get a subscribers Wolfstar statistics
+   * @param subscriberIds
+   * @returns {Promise<WolfstarsProfile | Array<WolfstarsProfile>>}
+   */
   async getByIds (subscriberIds) {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 

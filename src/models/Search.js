@@ -10,6 +10,10 @@ class Search extends Base {
     this.reason = data?.reason;
   }
 
+  /**
+   * Get the channel or subscriber profile
+   * @returns {Promise<Subscriber | Channel>}
+   */
   async getProfile () {
     if (this.type === SearchType.CHANNEL) {
       return await this.client.channel.getById(this.id);
