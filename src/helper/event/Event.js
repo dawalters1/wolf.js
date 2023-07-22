@@ -16,6 +16,12 @@ class Event extends Base {
     this.events = [];
   }
 
+  /**
+   * Get an event
+   * @param {Number} id
+   * @param {Boolean} forceNew
+   * @returns {Promise<Event>}
+   */
   async getById (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -32,6 +38,12 @@ class Event extends Base {
     return (await this.getByIds([id], forceNew))[0];
   }
 
+  /**
+   * Get events
+   * @param {Number | Number[]} ids
+   * @param {Boolean} forceNew
+   * @returns {Promise<Event | Array<Event>>}
+   */
   async getByIds (ids, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 

@@ -3,6 +3,12 @@ import validator from '../../validator/index.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class ArrayUtility {
+  /**
+   * Chunk an array
+   * @param {Array<*>} array
+   * @param {Number} length
+   * @returns {Array<Array<*>>}
+   */
   chunk (array, length) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });
@@ -21,6 +27,11 @@ class ArrayUtility {
     return _.chunk(array, length);
   }
 
+  /**
+   * Shuffle an array
+   * @param {Array<*>} array
+   * @returns {Array<*>}
+   */
   shuffle (array) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });
@@ -31,6 +42,12 @@ class ArrayUtility {
     return _.shuffle(array);
   }
 
+  /**
+   * Get random item(s) from an array
+   * @param {Array<*>} array
+   * @param {Number} amount
+   * @returns {*}
+   */
   getRandom (array, amount = 1) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });
@@ -49,6 +66,11 @@ class ArrayUtility {
     return amount === 1 ? _.sample(array) : _.sampleSize(array, amount);
   }
 
+  /**
+   * Join multiple arrays
+   * @param {Array<Array<*>>} arrays
+   * @returns {Array<*>}
+   */
   join (arrays) {
     if (validator.isNullOrUndefined(arrays)) {
       throw new WOLFAPIError('array cannot be null or undefined', { arrays });
@@ -59,6 +81,11 @@ class ArrayUtility {
     return _.join(arrays);
   }
 
+  /**
+   * Reverse the order of an array
+   * @param {Array<*>} array
+   * @returns {Array<*>}
+   */
   reverse (array) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });
@@ -69,6 +96,12 @@ class ArrayUtility {
     return _.reverse(array);
   }
 
+  /**
+   * Take nth items from the start of an array
+   * @param {Array<*>} array
+   * @param {Number} length
+   * @returns {Array<*>}
+   */
   take (array, length) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });
@@ -87,6 +120,12 @@ class ArrayUtility {
     return _.take(array, length);
   }
 
+  /**
+   * Check whether an object exists in an array
+   * @param {Array<*>} array
+   * @param {*} object
+   * @returns {boolean}
+   */
   includes (array, object) {
     if (validator.isNullOrUndefined(array)) {
       throw new WOLFAPIError('array cannot be null or undefined', { array });

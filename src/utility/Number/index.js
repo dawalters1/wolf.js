@@ -3,6 +3,11 @@ import validator from '../../validator/index.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 class NumberUtility {
+  /**
+   * Convert a number or string to english numbers
+   * @param {Number | String} arg
+   * @returns {Number | String}
+   */
   toEnglishNumbers (arg) {
     if (validator.isNullOrUndefined(arg)) {
       throw new WOLFAPIError('arg cannot be null or undefined', { arg });
@@ -13,6 +18,11 @@ class NumberUtility {
     return typeof arg === 'number' ? parseInt(arg) : arg;
   }
 
+  /**
+   * Convert a number or string to arabic numbers
+   * @param {Number | String} arg
+   * @returns {Number | String}
+   */
   toArabicNumbers (arg) {
     if (validator.isNullOrUndefined(arg)) {
       throw new WOLFAPIError('arg cannot be null or undefined', { arg });
@@ -21,6 +31,11 @@ class NumberUtility {
     return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '٠١٢٣٤٥٦٧٨٩'[char]);
   }
 
+  /**
+   * Convert a number or string to persian numbers
+   * @param {Number | String} arg
+   * @returns {Number | String}
+   */
   toPersianNumbers (arg) {
     if (validator.isNullOrUndefined(arg)) {
       throw new WOLFAPIError('arg cannot be null or undefined', { arg });
@@ -29,6 +44,11 @@ class NumberUtility {
     return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '۰۱۲۳۴۵۶۷۸۹'[char]);
   }
 
+  /**
+   * Add commas
+   * @param {number | string} arg
+   * @returns {number | string}
+   */
   addCommas (arg) {
     if (validator.isNullOrUndefined(arg)) {
       throw new WOLFAPIError('arg cannot be null or undefined', { arg });
@@ -39,6 +59,12 @@ class NumberUtility {
     return `${args[0].replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}${args[1] ? args[1] : ''}`;
   }
 
+  /**
+   * Get a random number between to number
+   * @param {Number} min
+   * @param {Number} max
+   * @returns {Number}
+   */
   random (min = 0, max = 1) {
     if (validator.isNullOrUndefined(min)) {
       throw new WOLFAPIError('min cannot be null or undefined', { min });
@@ -59,6 +85,13 @@ class NumberUtility {
     return _.random(parseInt(min), parseInt(max));
   }
 
+  /**
+   * Clamp a number between a range
+   * @param {Number} number
+   * @param {Number} lower
+   * @param {Number} upper
+   * @returns {Number}
+   */
   clamp (number, lower, upper) {
     if (validator.isNullOrUndefined(number)) {
       throw new WOLFAPIError('number cannot be null or undefined', { number });

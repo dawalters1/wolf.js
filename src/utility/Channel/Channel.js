@@ -11,6 +11,12 @@ class Channel extends Base {
     this.member = new Member(client);
   }
 
+  /**
+   * Get a channels avatar
+   * @param {Number} channelId
+   * @param {IconSize} size
+   * @returns {Promise<Buffer>}
+   */
   async avatar (channelId, size) {
     if (validator.isNullOrUndefined(channelId)) {
       throw new WOLFAPIError('channelId cannot be null or undefined', { channelId });

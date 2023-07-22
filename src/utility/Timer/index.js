@@ -10,6 +10,11 @@ class Timer {
     this._initialised = false;
   }
 
+  /**
+   * Initialise the timer utility
+   * @param {{ [key: string]: Function }} handlers
+   * @returns {Promise<void>}
+   */
   async register (handlers) {
     if (typeof handlers !== 'object') {
       throw new WOLFAPIError('handlers must be an object!', { handlers });
@@ -41,6 +46,14 @@ class Timer {
     this._initialised = true;
   }
 
+  /**
+   * Create an event timer
+   * @param {String} name
+   * @param {String} handler
+   * @param {Object} data
+   * @param {Number} duration
+   * @returns {Promise<TimerJob>}
+   */
   async add (name, handler, data, duration) {
     if (!this._initialised) {
       throw new WOLFAPIError('timer queue has not been initialised');
@@ -89,6 +102,11 @@ class Timer {
     );
   }
 
+  /**
+   * Cancel an event timer
+   * @param {String} name
+   * @returns {Promise<TimerJob>}
+   */
   async cancel (name) {
     if (!this._initialised) {
       throw new WOLFAPIError('timer queue has not been initialised');
@@ -114,6 +132,11 @@ class Timer {
     return null;
   }
 
+  /**
+   * Get an event timer
+   * @param {String} name
+   * @returns {Promise<TimerJob>}
+   */
   async get (name) {
     if (!this._initialised) {
       throw new WOLFAPIError('timer queue has not been initialised');
@@ -134,6 +157,12 @@ class Timer {
     return null;
   }
 
+  /**
+   * Change when the event should fire
+   * @param {String} name
+   * @param {Number} duration
+   * @returns {Promise<TimerJob>}
+   */
   async delay (name, duration) {
     if (!this._initialised) {
       throw new WOLFAPIError('timer queue has not been initialised');

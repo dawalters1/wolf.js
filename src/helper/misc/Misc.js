@@ -11,6 +11,11 @@ class Misc extends Base {
     this.metadataResults = [];
   }
 
+  /**
+   * Get metadata for a url
+   * @param {String} url
+   * @returns {Promise<Response<LinkMetadata>>}
+   */
   async metadata (url) {
     if (validator.isNullOrUndefined(url)) {
       throw new WOLFAPIError('url cannot be null or empty', { url });
@@ -50,6 +55,11 @@ class Misc extends Base {
     return response;
   }
 
+  /**
+   * Get list of blacklisted links
+   * @param {Boolean} forceNew
+   * @returns {Promise<Array<BlacklistLink>>}
+   */
   async linkBlacklist (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
       throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
@@ -66,6 +76,11 @@ class Misc extends Base {
     return this._blacklist;
   }
 
+  /**
+   * Get the AWS security token
+   * @param {Boolean} requestNew
+   * @returns {Promise<*>}
+   */
   async getSecurityToken (requestNew = false) {
     if (!requestNew && this.cognito) {
       return this.client.cognito;
@@ -82,12 +97,21 @@ class Misc extends Base {
     return this.client.cognito;
   }
 
+  /**
+   * Get Bot message settings
+   * @returns {Promise<Response<MessageSettings>>}
+   */
   async getMessageSettings () {
     const response = await this.client.websocket.emit(Command.MESSAGE_SETTING);
 
     return response.success ? new MessageSettings(this.client, response.body) : null;
   }
 
+  /**
+   * Set the Bot message settings
+   * @param {MessageFilterTier} messageFilterTier
+   * @returns {Promise<Response>}
+   */
   async updateMessageSettings (messageFilterTier) {
     if (!validator.isValidNumber(messageFilterTier)) {
       throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });

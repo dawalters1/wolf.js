@@ -28,34 +28,81 @@ class Subscriber extends Base {
     this.subscribed = subscribed;
   }
 
+  /**
+   * Get the subscribers avatar URL
+   * @param {IconSize} size
+   * @returns {string}
+   */
   getAvatarUrl (size) {
     return this.iconInfo.get(size);
   }
 
+  /**
+   * Get the subscribers avatar
+   * @param {IconSize} size
+   * @returns {Promise<Buffer>}
+   */
   async getAvatar (size) {
     return this.client.utility.subscriber.avatar(this.id, size);
   }
 
+  /**
+   * Add the subscriber to the bots blocked list
+   * @returns {Promise<Response>}
+   */
   async block () {
     return await this.client.contact.blocked.block(this.id);
   }
 
+  /**
+   * Remove the subscriber from the bots blocked list
+   * @returns {Promise<Response>}
+   */
   async unblock () {
     return await this.client.contact.blocked.unblock(this.id);
   }
 
+  /**
+   * Add the subscriber as a contact
+   * @returns {Promise<Response>}
+   */
   async add () {
     return await this.client.contact.add(this.id);
   }
 
+  /**
+   * Delete subscriber as a contact
+   * @returns {Promise<Response>}
+   */
   async delete () {
     return await this.client.contact.delete(this.id);
   }
 
+  /**
+   * Send a message to the subscriber
+   * @param {String | Buffer} content
+   * @param {MessageSendOptions} options
+   * @returns {Promise<Response<MessageResponse>>}
+   */
   async sendMessage (content, options = undefined) {
     return await this.client.messaging.sendPrivateMessage(this.id, content, options);
   }
 
+  /**
+   * Update the bots profile
+   * @param {String} nickname
+   * @param {String} status
+   * @param {String} about
+   * @param {Date} dateOfBirth
+   * @param {Gender} gender
+   * @param {Language} language
+   * @param {LookingFor} lookingFor
+   * @param {String} name
+   * @param {Relationship} relationship
+   * @param {String[]} urls
+   * @param {Buffer} avatar
+   * @returns {Promise<Response<unknown>>}
+   */
   async update ({ nickname, status, about, dateOfBirth, gender, language, lookingFor, name, relationship, urls, avatar }) {
     if (this.id !== this.client.currentSubscriber.id) {
       throw new WOLFAPIError('subscriber is not logged in subscriber', { loggedInSubscriberId: this.client.currentSubscriber.id, currentProfileId: this.id });
@@ -76,6 +123,10 @@ class Subscriber extends Base {
     };
   }
 
+  /**
+   * Subscribe to profile updates
+   * @returns {Promise<Subscriber>}
+   */
   async subscribe () {
     const response = await this.client.subscriber.getById(this.id, true, true);
 
@@ -84,6 +135,10 @@ class Subscriber extends Base {
     return response;
   }
 
+  /**
+   * Unsubscribe from profile updates
+   * @returns {Promise<Response>}
+   */
   async unsubscribe () {
     if (!this.subscribed) {
       throw new WOLFAPIError('not subscribed to profile updates', { id: this.id });

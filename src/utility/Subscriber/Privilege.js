@@ -4,6 +4,13 @@ import validator from '../../validator/index.js';
 import { Privilege } from '../../constants/index.js';
 
 class PrivilegeUtility extends Base {
+  /**
+   * Check if a subscriber has a list of privileges
+   * @param {Number} subscriberId
+   * @param {Constants.Privilege|Constants.Privilege[]} privileges
+   * @param {Boolean} requireAll
+   * @returns {Promise<boolean>}
+   */
   async has (subscriberId, privileges, requireAll = false) {
     privileges = Array.isArray(privileges) ? privileges : [privileges];
 

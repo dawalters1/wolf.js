@@ -36,6 +36,13 @@ class Subscriber extends Base {
     );
   }
 
+  /**
+   * Get a subscriber profile
+   * @param {Number} id
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Subscriber>}
+   */
   async getById (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -56,6 +63,13 @@ class Subscriber extends Base {
     return (await this.getByIds([id], subscribe, forceNew))[0];
   }
 
+  /**
+   * Get subscriber profiles
+   * @param {Number | Number[]} ids
+   * @param {Boolean} subscribe
+   * @param {Boolean} forceNew
+   * @returns {Promise<Subscriber | Array<Subscriber>>}
+   */
   async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -119,6 +133,13 @@ class Subscriber extends Base {
     return subscribers;
   }
 
+  /**
+   * Get chat history
+   * @param {Number} id
+   * @param {Number} timestamp
+   * @param {Number} limit
+   * @returns {Promise<Array<Message>>}
+   */
   async getChatHistory (id, timestamp = 0, limit = 15) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -161,6 +182,11 @@ class Subscriber extends Base {
     return response.body?.map((message) => new models.Message(this.client, message)) ?? [];
   }
 
+  /**
+   * Search for a subscriber
+   * @param {String} query
+   * @returns {Promise<Array<Search>>}
+   */
   async search (query) {
     if (validator.isNullOrUndefined(query)) {
       throw new models.WOLFAPIError('query cannot be null or undefined', { query });

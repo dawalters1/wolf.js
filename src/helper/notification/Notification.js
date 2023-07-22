@@ -15,6 +15,11 @@ class Notification extends Base {
     this.global = new Global(client);
   }
 
+  /**
+   * Get notifications
+   * @param {Boolean} forceNew
+   * @returns {Promise<Array<LegacyNotification>>}
+   */
   async list (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
@@ -34,6 +39,10 @@ class Notification extends Base {
     return response.body?.map((notification) => this._process(new models.Notification(this.client, notification))) ?? [];
   }
 
+  /**
+   * Clear notifications list
+   * @returns {Promise<Response>}
+   */
   async clear () {
     return await this.client.websocket.emit(Command.NOTIFICATION_LIST_CLEAR);
   }

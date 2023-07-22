@@ -58,6 +58,12 @@ class Subscription extends Base {
     return result;
   }
 
+  /**
+   * Watch for a specific message
+   * @param {Function} predicate
+   * @param {Number} timeout
+   * @returns {Promise<Message | undefined>}
+   */
   async nextMessage (predicate, timeout = Infinity) {
     if (!validator.isType(predicate, 'function')) {
       throw new models.WOLFAPIError('predicate must be function', { predicate });
@@ -66,6 +72,12 @@ class Subscription extends Base {
     return await this._create(predicate, timeout);
   }
 
+  /**
+   * Wait for the next channel message
+   * @param {Number} targetChannelId
+   * @param {Number} timeout
+   * @returns {Promise<Message|undefined>}
+   */
   async nextGroupMessage (targetChannelId, timeout = Infinity) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -80,6 +92,12 @@ class Subscription extends Base {
     return await this.nextMessage((message) => message.isChannel && message.targetChannelId === targetChannelId, timeout);
   }
 
+  /**
+   * Wait for the next subscriber message
+   * @param {Number} sourceSubscriberId
+   * @param {Number} timeout
+   * @returns {Promise<Message|undefined>}
+   */
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
     if (validator.isNullOrUndefined(sourceSubscriberId)) {
       throw new models.WOLFAPIError('sourceSubscriberId cannot be null or undefined', { sourceSubscriberId });
@@ -94,10 +112,13 @@ class Subscription extends Base {
     return await this.nextMessage((message) => !message.isChannel && message.sourceSubscriberId === sourceSubscriberId, timeout);
   }
 
-  async nextGroupSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
-    return await this.nextGroupSubscriberMessage(targetChannelId, sourceSubscriberId, timeout);
-  }
-
+  /**
+   * Wait for the next message in a channel by a specific subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} sourceSubscriberId
+   * @param {Number} timeout
+   * @returns {Promise<Message|undefined>}
+   */
   async nextChannelSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -120,6 +141,17 @@ class Subscription extends Base {
     }
 
     return await this.nextMessage((message) => message.isChannel && message.targetChannelId === targetChannelId && message.sourceSubscriberId === sourceSubscriberId, timeout);
+  }
+
+  /**
+   * Wait for the next message in a channel by a specific subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} sourceSubscriberId
+   * @param {Number} timeout
+   * @returns {Promise<Message|undefined>}
+   */
+  async nextGroupSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
+    return await this.nextChannelSubscriberMessage(targetChannelId, sourceSubscriberId, timeout);
   }
 
   _cleanUp (reconnection = false) {

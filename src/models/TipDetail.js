@@ -9,6 +9,10 @@ class TipDetail extends Base {
     this.version = data?.version;
   }
 
+  /**
+   * Get the tipped charm
+   * @returns {Promise<Array<Charm>>}
+   */
   async charms () {
     return await this.client.charm.getByIds(this.list.map((charm) => charm.charmId));
   }

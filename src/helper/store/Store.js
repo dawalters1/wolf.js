@@ -55,6 +55,12 @@ class Store extends Base {
     return this.stores[languageId]?.pages[page];
   }
 
+  /**
+   * Get list of purchasable credits
+   * @param {Number} languageId
+   * @param {Boolean} forceNew
+   * @returns {Promise<StoreProductCredits>}
+   */
   async getCreditList (languageId, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
@@ -78,6 +84,13 @@ class Store extends Base {
     return this._credits[languageId];
   }
 
+  /**
+   * Get store
+   * @param {Number} languageId
+   * @param {Boolean} includeCredits
+   * @param {Boolean} forceNew
+   * @returns {Promise<Store>}
+   */
   async get (languageId, includeCredits = true, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
@@ -111,6 +124,12 @@ class Store extends Base {
     return this.stores[languageId]?.main;
   }
 
+  /**
+   * Request partial products from the server
+   * @param {Number | Number[]} ids
+   * @param {Number} languageId
+   * @returns {Promise<StoreProductPartial | Array<StoreProductPartial>>}
+   */
   async getProducts (ids, languageId) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
@@ -173,6 +192,12 @@ class Store extends Base {
     return products;
   }
 
+  /**
+   * Get products full profile
+   * @param {Number} id
+   * @param {Number} languageId
+   * @returns {Promise<StoreProduct>}
+   */
   async getFullProduct (id, languageId) {
     if (Array.isArray(id)) {
       throw new WOLFAPIError('id cannot be type of array', { id });
@@ -205,7 +230,14 @@ class Store extends Base {
     return response.success ? this._processProductProfile(new StoreProduct(this.client, response.body, languageId)) : undefined;
   }
 
-  async purchase (productDurationId, quanitity, ids) {
+  /**
+   * Purchase a product
+   * @param {Number} productDurationId
+   * @param {Number} quantity
+   * @param {Number | Number[]} ids
+   * @returns {Promise<Response>}
+   */
+  async purchase (productDurationId, quantity, ids) {
     if (validator.isNullOrUndefined(productDurationId)) {
       throw new models.WOLFAPIError('productDurationId cannot be null or undefined', { productDurationId });
     } else if (!validator.isValidNumber(productDurationId)) {
@@ -214,12 +246,12 @@ class Store extends Base {
       throw new models.WOLFAPIError('productDurationId cannot be less than or equal to 0', { productDurationId });
     }
 
-    if (validator.isNullOrUndefined(quanitity)) {
-      throw new models.WOLFAPIError('quanitity cannot be null or undefined', { quanitity });
-    } else if (!validator.isValidNumber(quanitity)) {
-      throw new models.WOLFAPIError('quanitity must be a valid number', { quanitity });
-    } else if (validator.isLessThanOrEqualZero(quanitity)) {
-      throw new models.WOLFAPIError('quanitity cannot be less than or equal to 0', { quanitity });
+    if (validator.isNullOrUndefined(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be null or undefined', { quantity });
+    } else if (!validator.isValidNumber(quantity)) {
+      throw new models.WOLFAPIError('quantity must be a valid number', { quantity });
+    } else if (validator.isLessThanOrEqualZero(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be less than or equal to 0', { quantity });
     }
 
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
@@ -248,13 +280,18 @@ class Store extends Base {
         productList: [
           {
             id: parseInt(productDurationId),
-            quanitity: parseInt(quanitity)
+            quantity: parseInt(quantity)
           }
         ]
       }
     );
   }
 
+  /**
+   * Get the Bots credit balance
+   * @param {Boolean} forceNew
+   * @returns {Promise<number>}
+   */
   async getCreditBalance (forceNew = false) {
     if (!validator.isValidBoolean(forceNew)) {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
