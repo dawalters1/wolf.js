@@ -6,6 +6,8 @@ class StageClientGeneralUpdate extends Base {
     this.targetChannelId = data?.targetChannelId;
     this.targetGroupId = this.targetChannelId;
     this.sourceSubscriberId = data?.sourceSubscriberId;
+    this.slotId = data?.slotId;
+
     this.error = data?.error;
   }
 
@@ -47,7 +49,7 @@ class StageClientGeneralUpdate extends Base {
    * @returns {Promise<Response>}
    */
   async leave () {
-    return await this.client.stage.slot.leave(this.targetChannelId, await this.client.stage.getSlotId(this.targetChannelId));
+    return await this.client.stage.slot.leave(this.targetChannelId, this.slotId);
   }
 
   /**

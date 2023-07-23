@@ -28,6 +28,7 @@ class Stage extends Base {
           this.client,
           {
             targetChannelId: oldCount.id,
+            slotId: this.clients[oldCount.id]?.slotId ?? 0,
             oldBroadcastCount: oldCount.broadcasterCount,
             newBroadcasterCount: newCount.broadcasterCount,
             oldConsumerCount: oldCount.consumerCount,
