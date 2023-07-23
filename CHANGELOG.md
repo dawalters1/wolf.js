@@ -5,7 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.2.0 (2023-07-08)
+# 2.2.3 (2023-07-13)
+### Added
+- slotId to StageClient*Update models
+- sourceSubscriberId to StageClient*Update models
+### Fixed
+- .toPrecision is not a function
+- Incorrect class name in typings
+- Incorrect type appearing in typings for slot updates
+
+# 2.2.1 (2023-07-12)
+### Added
+- JSDoc
+### Fixed
+- canPerformAction
+- joining channels
+- sendMessage 
+- constants lacking "subscriber profile unsubscribe"
+- typos
+- getting members list
+- Incorrect models being called
+- purchasing products
+- Incorrect privileges in typings
+
+# 2.2.0 (2023-07-08)
 ### Added
 - client.charm.getSubscriberSelectedList(subscriberId)
 - Stage client events model methods
