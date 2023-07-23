@@ -2811,11 +2811,12 @@ export class ChannelAudioSlotRequest extends Base {
     };
 }
 
-export class GroupAudioSlotUpdate extends Base {
+export class ChannelAudioSlotUpdate extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
     public slot: ChannelAudioSlot;
+    public sourceSubscriberId: number;
 
     toJSON(): {
         id: number;
@@ -5514,11 +5515,11 @@ export interface ClientEvents {
      * Fired when a group audio slot is updated
      * @deprecated use channelAudioSlotUpdate
      */
-    groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
+    groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
      * Fired when a channel audio slot is updated
      */
-    channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
+    channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
      * Fired when a groups audio configuration is updated
      * @deprecated use channelAudioUpdate
