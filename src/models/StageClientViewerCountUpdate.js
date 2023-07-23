@@ -6,6 +6,7 @@ class StageClientViewerCountUpdate extends Base {
 
     this.targetChannelId = data?.targetChannelId;
     this.targetGroupId = this.targetChannelId;
+    this.slotId = data?.slotId;
 
     this.oldBroadcasterCount = data?.oldBroadcasterCount;
     this.newBroadcasterCount = data?.newBroadcasterCount;
@@ -51,7 +52,7 @@ class StageClientViewerCountUpdate extends Base {
    * @returns {Promise<Response>}
    */
   async leave () {
-    return await this.client.stage.slot.leave(this.targetChannelId, await this.client.stage.getSlotId(this.targetChannelId));
+    return await this.client.stage.slot.leave(this.targetChannelId, this.slotId);
   }
 
   /**
