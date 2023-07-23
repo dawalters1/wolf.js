@@ -3959,6 +3959,8 @@ export class StageClientDurationUpdate extends Base {
      * @deprecated use targetChannelId
      */
     public targetGroupId: number;
+    public slotId: number;
+
 
     /**
      * Play audio on stage
@@ -3980,7 +3982,7 @@ export class StageClientDurationUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4026,6 +4028,7 @@ export class StageClientGeneralUpdate extends Base {
      */
     public targetGroupId: number;
     public sourceSubscriberId: number;
+    public slotId: number;
 
     /**
      * Play audio on stage
@@ -4047,7 +4050,7 @@ export class StageClientGeneralUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4092,6 +4095,8 @@ export class StageClientViewerCountUpdate extends Base {
      * @deprecated use targetChannelId
      */
     public targetGroupId: number;
+    public slotId: number;
+
     public oldBroadcasterCount: number;
     public newBroadcasterCount: number;
     public oldConsumerCount: number;
@@ -4117,7 +4122,7 @@ export class StageClientViewerCountUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -5326,8 +5331,8 @@ export enum Privilege {
     PEST = 262144,
     VALID_EMAIL = 524288,
     PREMIUM_ACCOUNT = 1048576,
-    WOLF_STAR=2097152,
-    WOLF_STAR_PRO =8388608,
+    WOLF_STAR = 2097152,
+    WOLF_STAR_PRO = 8388608,
     ELITECLUB_3 = 4194304,
     USER_ADMIN = 16777216,
     GROUP_ADMIN = 33554432,
