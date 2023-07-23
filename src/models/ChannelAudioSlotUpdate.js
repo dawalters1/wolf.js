@@ -6,6 +6,7 @@ class ChannelAudioSlotUpdate extends Base {
     super(client);
     this.id = data?.id;
     this.slot = new ChannelAudioSlot(client, data?.slot);
+    this.sourceSubscriberId = data?.sourceSubscriberId;
   }
 }
 

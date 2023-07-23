@@ -59,7 +59,8 @@ export default async (client, body) => {
         new ChannelAudioSlotUpdate(client,
           {
             id: body.id,
-            slot: channel.slots.find((slot) => slot.id === body.slot.id)
+            slot: channel.slots.find((slot) => slot.id === body.slot.id),
+            sourceSubscriberId: body.sourceSubscriberId
           }
         )
       )
