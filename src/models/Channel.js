@@ -42,6 +42,10 @@ class Channel extends Base {
     return this.inChannel;
   }
 
+  get stages () {
+    return this._stages?.filter((stage) => !stage.expireTime || new Date(stage.expireTime) > Date.now()) ?? [];
+  }
+
   /**
    * Get the channel avatar URL
    * @param {IconSize} size
