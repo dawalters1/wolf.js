@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.2.4 (2023-07-25)
+### Added
+- client.stage.getAvailableStages(targetGroupId, forceNew)
+### Fixed
+- getStageSlots() not a function in Channel model
+
 # 2.2.3 (2023-07-13)
 ### Added
 - slotId to StageClient*Update models
@@ -20,7 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - canPerformAction
 - joining channels
-- sendMessage 
+- sendMessage
 - constants lacking "subscriber profile unsubscribe"
 - typos
 - getting members list
