@@ -1222,6 +1222,13 @@ export class StageHelper extends Base {
      * Exposes the Stage Slot methods
      */
     public slot: StageSlotHelper;
+
+    /**
+     * Gets all stages available for a channel
+     * @param targetChannelId - The ID of the channel
+     * @param forceNew - Whether or not to get new from the server
+     */
+    public getAvailableStages(targetChannelId: number, forceNew?: boolean): Promise<Array<ChannelStage>>
     /**
      * Get a channels stage settings
      * @param targetChannelId - The ID of the channel
@@ -2975,6 +2982,19 @@ export class ChannelMessageConfig extends Base {
         id: number;
         slowModeRateInSeconds: number;
     };
+}
+
+export class ChannelStage extends Base {
+    private constructor(client: WOLF, data: object, targetChannelId: number)
+
+    public id: number;
+    public expireTime: Date;
+    public targetChannelId: number;
+
+    /**
+     * Set the stage for the channel
+     */
+    public set(): Promise<Response>;
 }
 
 export class ChannelStats extends Base {
