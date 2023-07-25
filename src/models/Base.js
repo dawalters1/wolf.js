@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const EXCLUDE = ['client'];
 
 const toJSON = (object) => {

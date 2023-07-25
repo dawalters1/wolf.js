@@ -98,7 +98,7 @@ class Request extends Base {
       throw new models.WOLFAPIError('Stage is disabled', { targetChannelId });
     }
 
-    const slots = await channel.getStageSlots();
+    const slots = await channel.slots();
 
     if (slotId) {
       const slot = slots.find((slot) => slot.id === parseInt(slotId));
