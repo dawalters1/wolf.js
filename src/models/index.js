@@ -27,6 +27,7 @@ import ChannelMember from './ChannelMember.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMemberListSection from './ChannelMemberListSection.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelStage from './ChannelStage.js';
 import ChannelStats from './ChannelStats.js';
 import ChannelStatsActive from './ChannelStatsActive.js';
 import ChannelStatsDetail from './ChannelStatsDetail.js';
@@ -124,6 +125,7 @@ export {
   ChannelMemberList,
   ChannelMemberListSection,
   ChannelMessageConfig,
+  ChannelStage,
   ChannelStats,
   ChannelStatsActive,
   ChannelStatsDetail,
@@ -222,6 +224,7 @@ export default {
   ChannelMemberList,
   ChannelMemberListSection,
   ChannelMessageConfig,
+  ChannelStage,
   ChannelStats,
   ChannelStatsActive,
   ChannelStatsDetail,
