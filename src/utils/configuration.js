@@ -78,6 +78,9 @@ const developerConfig = (client) => {
             tipping: typeof config?.framework?.subscriptions?.messages?.private?.tipping === 'boolean' ? config.framework.subscriptions.messages.private.tipping : false
           }
         }
+      },
+      rateLimiter: {
+        enabled: typeof config?.framework?.rateLimiter?.enabled === 'boolean' ? config.framework.rateLimiter.enabled : false
       }
     },
     ..._.omit(config, ['keyword', 'framework']) // Load reamining developer config

@@ -327,6 +327,13 @@ export class Configuration {
                     tipping: boolean;
                 }
             }
+        },
+        rateLimiter: {
+            /**
+             * Whether or not the internal rate limiter should be enabled
+             * Default: false (Broken)
+             */
+            enabled: boolean
         }
     }
 }
