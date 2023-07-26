@@ -3,6 +3,9 @@ import { Response } from '../models/index.js';
 import TokenBucket from 'tokenbucket';
 
 class RequestQueue {
+  /**
+   * @param {import('../client/WOLF').default} client
+   */
   constructor (client, { name = 'default', size = 10, tokensToAddPerInterval = 1, interval = 1000 }) {
     this.client = client;
     this.name = name;
@@ -44,7 +47,7 @@ class RequestQueue {
     this._processing = true;
 
     const sendRequest = async (item) => {
-      if (!this.bucket.removeTokensSync(1)) { // This doesn't actually work apparently.
+      if (this.client.config.framework.rateLimiter.enabled && !this.bucket.removeTokensSync(1)) { // This doesn't actually work apparently.
         const msFromNow = (this.bucket.lastFill + this.bucket.interval) - Date.now();
 
         this.client.emit(
