@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.2.6 (2023-07-26)
+### Changed
+- Disable rate limiter by default
+
 # 2.2.4 (2023-07-25)
 ### Added
 - client.stage.getAvailableStages(targetGroupId, forceNew)
