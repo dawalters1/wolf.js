@@ -327,6 +327,13 @@ export class Configuration {
                     tipping: boolean;
                 }
             }
+        },
+        rateLimiter: {
+            /**
+             * Whether or not the internal rate limiter should be enabled
+             * Default: false (Broken)
+             */
+            enabled: boolean
         }
     }
 }
@@ -1222,6 +1229,13 @@ export class StageHelper extends Base {
      * Exposes the Stage Slot methods
      */
     public slot: StageSlotHelper;
+
+    /**
+     * Gets all stages available for a channel
+     * @param targetChannelId - The ID of the channel
+     * @param forceNew - Whether or not to get new from the server
+     */
+    public getAvailableStages(targetChannelId: number, forceNew?: boolean): Promise<Array<ChannelStage>>
     /**
      * Get a channels stage settings
      * @param targetChannelId - The ID of the channel
@@ -2811,11 +2825,12 @@ export class ChannelAudioSlotRequest extends Base {
     };
 }
 
-export class GroupAudioSlotUpdate extends Base {
+export class ChannelAudioSlotUpdate extends Base {
     private constructor(client: WOLF, data: object)
 
     public id: number;
     public slot: ChannelAudioSlot;
+    public sourceSubscriberId: number;
 
     toJSON(): {
         id: number;
@@ -2974,6 +2989,19 @@ export class ChannelMessageConfig extends Base {
         id: number;
         slowModeRateInSeconds: number;
     };
+}
+
+export class ChannelStage extends Base {
+    private constructor(client: WOLF, data: object, targetChannelId: number)
+
+    public id: number;
+    public expireTime: Date;
+    public targetChannelId: number;
+
+    /**
+     * Set the stage for the channel
+     */
+    public set(): Promise<Response>;
 }
 
 export class ChannelStats extends Base {
@@ -3959,6 +3987,8 @@ export class StageClientDurationUpdate extends Base {
      * @deprecated use targetChannelId
      */
     public targetGroupId: number;
+    public slotId: number;
+
 
     /**
      * Play audio on stage
@@ -3980,7 +4010,7 @@ export class StageClientDurationUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4026,6 +4056,7 @@ export class StageClientGeneralUpdate extends Base {
      */
     public targetGroupId: number;
     public sourceSubscriberId: number;
+    public slotId: number;
 
     /**
      * Play audio on stage
@@ -4047,7 +4078,7 @@ export class StageClientGeneralUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -4092,6 +4123,8 @@ export class StageClientViewerCountUpdate extends Base {
      * @deprecated use targetChannelId
      */
     public targetGroupId: number;
+    public slotId: number;
+
     public oldBroadcasterCount: number;
     public newBroadcasterCount: number;
     public oldConsumerCount: number;
@@ -4117,7 +4150,7 @@ export class StageClientViewerCountUpdate extends Base {
     /**
      * Leave the slot that bot was on
      */
-    public leave (): Promise<Response>;
+    public leave(): Promise<Response>;
     /**
      * Get the current broadcast state of the client for a channel
      */
@@ -5326,8 +5359,8 @@ export enum Privilege {
     PEST = 262144,
     VALID_EMAIL = 524288,
     PREMIUM_ACCOUNT = 1048576,
-    WOLF_STAR=2097152,
-    WOLF_STAR_PRO =8388608,
+    WOLF_STAR = 2097152,
+    WOLF_STAR_PRO = 8388608,
     ELITECLUB_3 = 4194304,
     USER_ADMIN = 16777216,
     GROUP_ADMIN = 33554432,
@@ -5509,11 +5542,11 @@ export interface ClientEvents {
      * Fired when a group audio slot is updated
      * @deprecated use channelAudioSlotUpdate
      */
-    groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
+    groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
      * Fired when a channel audio slot is updated
      */
-    channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
+    channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
      * Fired when a groups audio configuration is updated
      * @deprecated use channelAudioUpdate

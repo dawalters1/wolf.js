@@ -17,6 +17,7 @@ const BITRATE = 16;
 const FRAMES = 480;
 
 const createUInt8Array = (buffer, volume) => {
+  // This causes choppiness :shrug: don't like it, fix it yourself.
   for (let i = buffer.length; i < 1920; i++) {
     buffer[i] = 0;
   }
@@ -103,7 +104,7 @@ class Client extends EventEmitter {
         return Promise.resolve();
       }
 
-      return this.emit(this.connectionState === StageConnectionState.CONNECTED ? Event.STAGE_CLIENT_CONNECTED : this.connectionState === StageConnectionState.CONNECTING);
+      return this.emit(this.connectionState === StageConnectionState.CONNECTED ? Event.STAGE_CLIENT_CONNECTED : this.connectionState === StageConnectionState.CONNECTING, { slotId: this.slotId });
     };
 
     broadcast();
@@ -113,17 +114,17 @@ class Client extends EventEmitter {
     if (slot.occupierId !== null) {
       if ((this.muted && !slot.occupierMuted) || (!this.muted && slot.occupierMuted)) {
         this.muted = slot.occupierMuted;
-        this.emit(slot.occupierMuted ? Event.STAGE_CLIENT_MUTED : Event.STAGE_CLIENT_UNMUTED, { sourceSubscriberId });
+        this.emit(slot.occupierMuted ? Event.STAGE_CLIENT_MUTED : Event.STAGE_CLIENT_UNMUTED, { sourceSubscriberId, slotId: this.slotId });
       } else if (slot.locked) {
         this.reset(true);
       } else if (this.connectionState !== StageConnectionState.READY && slot.connectionState === StageConnectionState.CONNECTED.toUpperCase()) {
         this.connectionState = StageConnectionState.READY;
-        this.emit(Event.STAGE_CLIENT_READY);
+        this.emit(Event.STAGE_CLIENT_READY, { slotId: this.slotId });
       }
     } else {
       this.reset(true);
 
-      this.emit(sourceSubscriberId !== undefined ? Event.STAGE_CLIENT_KICKED : Event.STAGE_CLIENT_DISCONNECTED, { sourceSubscriberId });
+      this.emit(sourceSubscriberId !== undefined ? Event.STAGE_CLIENT_KICKED : Event.STAGE_CLIENT_DISCONNECTED, { sourceSubscriberId, slotId: this.slotId });
     }
   }
 
@@ -152,7 +153,7 @@ class Client extends EventEmitter {
       throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
     }
 
-    this.volume = parseFloat(volume.toPrecision(3));
+    this.volume = parseFloat(volume).toPrecision(3);
 
     return this.volume;
   }

@@ -28,6 +28,7 @@ class Stage extends Base {
           this.client,
           {
             targetChannelId: oldCount.id,
+            slotId: this.clients[oldCount.id]?.slotId ?? 0,
             oldBroadcastCount: oldCount.broadcasterCount,
             newBroadcasterCount: newCount.broadcasterCount,
             oldConsumerCount: oldCount.consumerCount,
@@ -90,6 +91,42 @@ class Stage extends Base {
     this.clients[targetChannelId]?.stop();
 
     Reflect.deleteProperty(this.clients, targetChannelId);
+  }
+
+  /**
+   * Gets all stages available for a channel
+   * @param {Number} targetChannelId
+   * @returns {Promise<Array<ChannelStage>>}
+   */
+  async getAvailableStages (targetChannelId, forceNew = false) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    const channel = await this.client.channel.getById(targetChannelId);
+
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Channel does not exist', { targetChannelId });
+    }
+
+    if (!forceNew && channel.stages) {
+      return channel.stages;
+    }
+
+    const result = await this.client.websocket.emit(
+      Command.STAGE_GROUP_ACTIVE_LIST,
+      {
+        id: parseInt(targetChannelId)
+      }
+    );
+
+    channel._stages = result?.body?.map((stage) => new models.ChannelStage(this.client, stage, parseInt(targetChannelId))) ?? [];
+
+    return channel.stages;
   }
 
   /**
