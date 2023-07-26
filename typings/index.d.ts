@@ -327,6 +327,13 @@ export class Configuration {
                 ***REMOVED*** boolean;
                 }
             }
+        },
+        rateLimiter: {
+            /**
+             * Whether or not the internal rate limiter should be enabled
+             * Default: false (Broken)
+             */
+            enabled: boolean
         }
     }
 }
