@@ -82,7 +82,7 @@ class Misc extends Base {
    * @returns {Promise<*>}
    */
   async getSecurityToken (requestNew = false) {
-    if (!requestNew && this.cognito) {
+    if (!requestNew && this.client.cognito) {
       return this.client.cognito;
     }
 
