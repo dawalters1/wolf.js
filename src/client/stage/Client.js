@@ -29,10 +29,8 @@ class Client extends EventEmitter {
   /**
    * @param {import('../WOLF').default} client
    */
-  constructor (client) {
+  constructor () {
     super();
-
-    this.client = client;
 
     this.slotId = undefined;
     this.muted = undefined;
