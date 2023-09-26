@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.2.7 (Unreleased)
+### Fixed
+- Misc calling self cognito instead of client
+### Changed
+- Removed redundant WOLF client set in stage client
+
 # 2.2.6 (2023-07-26)
 ### Changed
 - Disable rate limiter by default
