@@ -10,6 +10,7 @@ class SubscriberExtended extends Base {
     this.language = data?.language;
     this.lookingFor = data?.lookingFor ?? LookingFor.NOT_SPECIFIED;
     this.lookingForExtended = Object.values(LookingFor).filter((value) => (this.lookingFor & value) === value);
+    this.lookingForList = this.lookingForExtended;
     this.name = data?.name;
     this.relationship = data?.relationship;
     this.urls = data?.urls;

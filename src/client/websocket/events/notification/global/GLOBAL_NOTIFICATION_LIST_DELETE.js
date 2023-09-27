@@ -6,9 +6,7 @@ import { Event } from '../../../../../constants/index.js';
 export default async (client, body) => {
   const notification = await client.notification.global.notifications.find((notification) => notification.id === body.id);
 
-  if (!notification) {
-    return Promise.resolve();
-  }
+  if (!notification) { return false; }
 
   client.notification.global.notifications = client.notification.global.notifications.filter((notification) => notification.id !== body.id);
   client.notification.global._list = client.notification.global._list.filter((id) => id !== body.id);

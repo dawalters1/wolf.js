@@ -70,29 +70,34 @@ class Presence extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const presence = !forceNew ? this.presences.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const presence = forceNew ? [] : this.presences.filter((subscriber) => ids.includes(subscriber.id));
 
-    if (presence.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
+    if (presence.length === ids.length) {
+      return presence;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.SUBSCRIBER_PRESENCE,
-          {
-            idList,
-            subscribe
-          }
-        );
+    const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
 
-        if (response.success) {
-          const presenceResponses = Object.values(response.body).map((presenceResponse) => new models.Response(presenceResponse));
-
-          for (const [index, presenceResponse] of presenceResponses.entries()) {
-            presence.push(presenceResponse.success ? this._process(new models.Presence(this.client, presenceResponse.body)) : new models.Presence(this.client, { id: idList[index] }));
-          }
-        } else {
-          presence.push(...idList.map((id) => new models.Presence(this.client, { id })));
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.SUBSCRIBER_PRESENCE,
+        {
+          idList,
+          subscribe
         }
+      );
+
+      if (response.success) {
+        presence.push(...Object.values(response.body)
+          .map((presenceResponse) => new models.Response(presenceResponse))
+          .map((presenceResponse, index) =>
+            presenceResponse.success
+              ? this._process(new models.Presence(this.client, presenceResponse.body))
+              : new models.Presence(this.client, { id: idList[index] })
+          )
+        );
+      } else {
+        presence.push(...idList.map((id) => new models.Presence(this.client, { id })));
       }
     }
 

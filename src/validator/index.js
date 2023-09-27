@@ -72,7 +72,9 @@ const isValidUrl = (client, arg) => {
 
   const validationConfig = client._frameworkConfig.get('validation.links');
 
-  const protocol = validationConfig.protocols.sort((a, b) => b.length - a.length).find((prot) => sanitised.toLowerCase().startsWith(prot));
+  const protocol = validationConfig.protocols
+    .sort((a, b) => b.length - a.length)
+    .find((prot) => sanitised.toLowerCase().startsWith(prot));
 
   sanitised = sanitised.slice(protocol?.length ?? 0);
 

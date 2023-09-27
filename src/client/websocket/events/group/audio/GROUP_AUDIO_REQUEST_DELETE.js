@@ -7,15 +7,11 @@ import models from '../../../../../models/index.js';
 export default async (client, body) => {
   const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  if (!channel) {
-    return Promise.resolve();
-  }
+  if (!channel) { return false; }
 
   const cached = channel.audioRequests.find((request) => request.subscriberId === body.subscriberId);
 
-  if (!cached) {
-    return Promise.resolve();
-  }
+  if (!cached) { return false; }
 
   const request = new models.ChannelAudioSlotRequest(client, body);
 

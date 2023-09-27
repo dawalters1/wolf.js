@@ -30,9 +30,7 @@ class CommandHandler {
     this.client.on('message', async (message) => {
       const commandSettings = client.config.framework.commands;
 
-      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (message.sourceSubscriberId === this.client.currentSubscriber.id && client.config.framework.commands.ignore.self)) {
-        return Promise.resolve();
-      }
+      if (!message.body || await this.client.banned.isBanned(message.sourceSubscriberId) || (message.sourceSubscriberId === this.client.currentSubscriber.id && client.config.framework.commands.ignore.self)) { return false; }
 
       const context = this._getCommand(
         this._commands,
@@ -48,20 +46,14 @@ class CommandHandler {
         }
       );
 
-      if (!context.callback) {
-        return Promise.resolve();
-      }
+      if (!context.callback) { return false; }
 
       if (commandSettings.ignore.official || commandSettings.ignore.unofficial) {
         const subscriber = await this.client.subscriber.getById(context.sourceSubscriberId);
 
-        if (commandSettings.ignore.official && await client.utility.subscriber.privilege.has(subscriber.id, Privilege.BOT)) {
-          return Promise.resolve();
-        }
+        if (commandSettings.ignore.official && await client.utility.subscriber.privilege.has(subscriber.id, Privilege.BOT)) { return false; }
 
-        if (commandSettings.ignore.unofficial && !await client.utility.subscriber.privilege.has(subscriber.id, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) {
-          return Promise.resolve();
-        }
+        if (commandSettings.ignore.unofficial && !await client.utility.subscriber.privilege.has(subscriber.id, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) { return false; }
       }
 
       const callback = context.callback;

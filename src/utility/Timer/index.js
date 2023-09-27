@@ -38,8 +38,6 @@ class Timer {
       }
 
       this._handlers[job.name].call(this, job.data);
-
-      return Promise.resolve();
     });
 
     this._handlers = handlers;

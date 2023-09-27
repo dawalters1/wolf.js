@@ -99,34 +99,39 @@ class Subscriber extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const subscribers = !forceNew ? this.subscribers.filter((subscriber) => ids.includes(subscriber.id)) : [];
+    const subscribers = forceNew ? [] : this.subscribers.filter((subscriber) => ids.includes(subscriber.id));
 
-    if (subscribers.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
+    if (subscribers.length === ids.length) {
+      return subscribers;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.SUBSCRIBER_PROFILE, {
-            headers: {
-              version: 4
-            },
-            body: {
-              idList,
-              extended: true,
-              subscribe
-            }
+    const idLists = _.chunk(ids.filter((subscriberId) => !subscribers.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
+
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.SUBSCRIBER_PROFILE, {
+          headers: {
+            version: 4
+          },
+          body: {
+            idList,
+            extended: true,
+            subscribe
           }
-        );
-
-        if (response.success) {
-          const subscriberResponses = Object.values(response.body).map((subscriberResponse) => new models.Response(subscriberResponse));
-
-          for (const [index, subscriberResponse] of subscriberResponses.entries()) {
-            subscribers.push(subscriberResponse.success ? this._process(new models.Subscriber(this.client, subscriberResponse.body, subscribe)) : new models.Subscriber(this.client, { id: idList[index] }, false));
-          }
-        } else {
-          subscribers.push(...idList.map((id) => new models.Subscriber(this.client, { id }, false)));
         }
+      );
+
+      if (response.success) {
+        subscribers.push(...Object.values(response.body)
+          .map((subscriberResponse) => new models.Response(subscriberResponse))
+          .map((subscriberResponse, index) =>
+            subscriberResponse.success
+              ? this._process(new models.Subscriber(this.client, subscriberResponse.body, subscribe))
+              : new models.Subscriber(this.client, { id: idList[index] }, false)
+          )
+        );
+      } else {
+        subscribers.push(...idList.map((id) => new models.Subscriber(this.client, { id }, false)));
       }
     }
 

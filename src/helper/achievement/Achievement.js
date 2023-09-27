@@ -89,34 +89,40 @@ class Achievement extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const achievements = !forceNew ? this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) ?? [] : [];
+    const achievements = forceNew ? [] : this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) ?? [];
 
-    if (achievements.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));
+    if (achievements.length === ids.length) {
+      return achievements;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.ACHIEVEMENT,
-          {
-            headers: {
-              version: 2
-            },
-            body: {
-              idList,
-              languageId: parseInt(language)
-            }
+    const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));
+
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.ACHIEVEMENT,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            idList,
+            languageId: parseInt(language)
           }
-        );
-
-        if (response.success) {
-          const achievementResponses = Object.values(response.body).map((achievementResponse) => new models.Response(achievementResponse));
-
-          for (const [index, achievementResponse] of achievementResponses.entries()) {
-            achievements.push(achievementResponse.success ? this._process(new models.Achievement(this.client, achievementResponse.body), language) : new models.Achievement(this.client, { id: idList[index] }));
-          }
-        } else {
-          achievements.push(...idList.map((id) => new models.Achievement(this.client, { id })));
         }
+      );
+
+      if (response.success) {
+        achievements.push(...Object.values(response.body)
+          .map((achievementResponse) => new models.Response(achievementResponse))
+          .map((achievementResponse, index) =>
+            achievementResponse.success
+              ? this._process(new models.Achievement(this.client, achievementResponse.body), language)
+              : new models.Achievement(this.client, { id: idList[index] }
+              )
+          )
+        );
+      } else {
+        achievements.push(...idList.map((id) => new models.Achievement(this.client, { id })));
       }
     }
 

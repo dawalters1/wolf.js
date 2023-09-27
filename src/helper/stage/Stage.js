@@ -18,9 +18,7 @@ class Stage extends Base {
     this.clients = {};
 
     this.client.on('groupAudioCountUpdate', (oldCount, newCount) => {
-      if (!this.clients[newCount.id]) {
-        return Promise.resolve();
-      }
+      if (!this.clients[newCount.id]) { return false; }
 
       return this.client.emit(
         Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
@@ -41,9 +39,7 @@ class Stage extends Base {
     this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {
       const client = this.clients[newSlot.id];
 
-      if (client?.slotId !== newSlot.slot.id) {
-        return Promise.resolve();
-      }
+      if (client?.slotId !== newSlot.slot.id) { return false; }
 
       return client.handleSlotUpdate(newSlot.slot, newSlot.sourceSubscriberId);
     });
@@ -514,9 +510,7 @@ class Stage extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) {
-      return Promise.resolve();
-    }
+    if (reconnection) { return false; }
 
     Object.keys(this.clients).forEach((targetChannelId) => this._deleteClient(targetChannelId));
     this.request._cleanUp(reconnection);

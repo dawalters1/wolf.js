@@ -7,15 +7,13 @@ import models from '../../../../../models/index.js';
 export default async (client, body) => {
   const subscriber = await client.subscriber.getById(body.id, body.targetId);
 
-  if (!subscriber.exists) {
-    return Promise.resolve();
-  }
+  if (!subscriber.exists) { return false; }
 
   const contact = new models.Contact(client, subscriber);
 
   client.contact.contacts.push(contact);
 
-  return await client.emit(
+  return client.emit(
     Event.SUBSCRIBER_CONTACT_ADD,
     contact
   );

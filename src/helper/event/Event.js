@@ -69,33 +69,39 @@ class Event extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const events = !forceNew ? this.events.filter((event) => ids.includes(event.id)) : [];
+    const events = forceNew ? [] : this.events.filter((event) => ids.includes(event.id));
 
-    if (events.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId)), this.client._frameworkConfig.get('batching.length'));
+    if (events.length === ids.length) {
+      return events;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.GROUP_EVENT,
-          {
-            headers: {
-              version: 1
-            },
-            body: {
-              idList
-            }
+    const idLists = _.chunk(ids.filter((eventId) => !events.some((event) => event.id === eventId)), this.client._frameworkConfig.get('batching.length'));
+
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_EVENT,
+        {
+          headers: {
+            version: 1
+          },
+          body: {
+            idList
           }
-        );
-
-        if (response.success) {
-          const eventResponses = Object.values(response.body).map((eventResponse) => new models.Response(eventResponse));
-
-          for (const [index, eventResponse] of eventResponses.entries()) {
-            events.push(eventResponse.success ? this._process(new models.Event(this.client, eventResponse.body)) : new models.Event(this.client, { id: idList[index] }));
-          }
-        } else {
-          events.push(...idList.map((id) => new models.Event(this.client, { id })));
         }
+      );
+
+      if (response.success) {
+        events.push(...Object.values(response.body)
+          .map((eventResponse) => new models.Response(eventResponse))
+          .map((eventResponse, index) =>
+            eventResponse.success
+              ? this._process(new models.Event(this.client, eventResponse.body))
+              : new models.Event(this.client, { id: idList[index] })
+          )
+        )
+        ;
+      } else {
+        events.push(...idList.map((id) => new models.Event(this.client, { id })));
       }
     }
 

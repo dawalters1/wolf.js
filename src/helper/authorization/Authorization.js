@@ -50,11 +50,7 @@ class Authorization extends Base {
       }
     }
 
-    const results = values.reduce((result, subscriberId) => {
-      result.push(this.authorized.includes(subscriberId));
-
-      return result;
-    }, []);
+    const results = values.map((subscriberId) => this.authorized.includes(subscriberId));
 
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
@@ -140,9 +136,7 @@ class Authorization extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) {
-      return Promise.resolve();
-    }
+    if (reconnection) { return false; }
 
     this.authorized = [];
   }

@@ -1,9 +1,9 @@
 <div align="center">
     <br />
     <p>
-        <img src= https://i.imgur.com/Rrylen8.png/>
+        <img src= https://i.imgur.com/pd30mGu.png/>
         <p>
-            <a href="https://wolf.live/unofficial+bots"><img src="https://img.shields.io/badge/WOLF-Chat-blue" alt="WOLF Chat" /></a>
+            <a href="https://wolf.live/wolf.js"><img src="https://img.shields.io/badge/WOLF-Chat-blue" alt="WOLF Chat" /></a>
             <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/v/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
             <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/dt/wolf.js.svg?maxAge=3600" alt="NPM downloads" /></a>
         </p>
@@ -104,18 +104,21 @@ import me from './src/me/index.js';
 const client = new WOLF();
 const keyword = client.config.keyword;
 
-client.commandHandler.register([
-    new Command(`${keyword}_command_${keyword}`, { both: async (command) => client.messaging.sendMessage(command, client.phrase.getByLanguageAndName(command.language, `${keyword}_help_message`)) },
-        [
-            new Command(`${keyword}_command_help`, { both: (command) => client.messaging.sendMessage(command, client.phrase.getByLanguageAndName(command.language, `${keyword}_help_message`)) }),
-            new Command(`${keyword}_command_me`, { both: (command) => me(client, command) })
-        ])
-]);
+client.commandHandler.register(
+    [
+        new Command(`${keyword}_command_${keyword}`, { both: async (command) =>  command.reply(command.getPhrase(`${keyword}_help_message`)) },
+            [
+                new Command(`${keyword}_command_help`, { both: (command) => command.reply(command.getPhrase(`${keyword}_help_message`)) }),
+                new Command(`${keyword}_command_me`, { both: (command) => me(client, command) })
+            ]
+        )
+    ]
+);
 
 client.on('channelMessage', async (message) => {
     if (message.body !== '!ping') { return false; };
 
-    return await client.messaging.sendChannelMessage(message.targetChannelId, 'Pong!');
+    return await message.reply('Pong!');
 });
 
 client.on('privateMessage', async (message) => {
@@ -123,7 +126,7 @@ client.on('privateMessage', async (message) => {
 
     const { language } = await client.subscriber.getById(message.sourceSubscriberId);
 
-    return await client.messaging.sendPrivateMessage(message.sourceSubscriberId, client.phrase.getByLanguageAndName(language, `${client.config.keyword}_help_message`));
+    return await message.reply(client.phrase.getByLanguageAndName(language, `${client.config.keyword}_help_message`))
 });
 
 client.on('ready', () => {
@@ -148,9 +151,9 @@ export default async (client, command) => {
 
     const subscriber = await client.subscriber.getById(command.sourceSubscriberId);
 
-    return await client.messaging.sendMessage(
-        command,
-        client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_subscriber_message`),
+    return await command.reply(
+        client.utility.string.replace(
+            command.getPhrase(`${client.config.keyword}_subscriber_message`),
             {
                 nickname: subscriber.nickname,
                 id: subscriber.id,

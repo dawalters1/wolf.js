@@ -107,7 +107,7 @@ class WOLF extends EventEmitter {
 
     this.websocket._create();
 
-    return Promise.resolve();
+    return false;
   }
 
   /**

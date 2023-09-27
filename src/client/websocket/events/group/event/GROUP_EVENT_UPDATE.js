@@ -8,9 +8,7 @@ export default async (client, body) => {
   const channel = await client.channel.getById(body.channelId);
   const oldEvent = channel.events.find((event) => event.id === body.id);
 
-  if (!oldEvent) {
-    return Promise.resolve();
-  }
+  if (!oldEvent) { return false; }
 
   const newEvent = await client.event.getById(body.id, true);
 
