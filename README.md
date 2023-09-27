@@ -1,7 +1,7 @@
 <div align="center">
     <br />
     <p>
-        <img src= https://i.imgur.com/x8lxo2W.png/>
+        <img src= https://i.imgur.com/pd30mGu.png/>
         <p>
             <a href="https://wolf.live/unofficial+bots"><img src="https://img.shields.io/badge/WOLF-Chat-blue" alt="WOLF Chat" /></a>
             <a href="https://www.npmjs.com/package/wolf.js"><img src="https://img.shields.io/npm/v/wolf.js.svg?maxAge=3600" alt="NPM version" /></a>
