@@ -2307,6 +2307,7 @@ export class Contact extends Base {
             nicknameShort: string;
             onlineState: OnlineState;
             privileges: Privilege;
+            privilegeList: Array<Privilege>;
         }
     };
 }
@@ -2318,12 +2319,14 @@ export class ContactAdditionalInfo extends Base {
     public nicknameShort: string;
     public onlineState: OnlineState;
     public privileges: Privilege;
+    public privilegeList: Array<Privilege>;
 
     toJSON(): {
         hash: number;
         nicknameShort: string;
         onlineState: OnlineState;
         privileges: Privilege;
+        privilegeList: Array<Privilege>;
     };
 }
 
@@ -4502,6 +4505,7 @@ export class Subscriber extends Base {
     public onlineState: OnlineState;
     public reputation: number;
     public privileges: Privilege;
+    public privilegeList: Array<Privilege>;
     public status: string;
     public language: string;
 
@@ -4556,7 +4560,11 @@ export class Subscriber extends Base {
             gender: Gender;
             language: Language;
             lookingFor: LookingFor;
+            /**
+             * @deprecated use lookingForList
+             */
             lookingForExtended: Array<LookingFor>;
+            lookingForList: Array<LookingFor>;
             name: string;
             relationship: Relationship;
             urls: Array<string>;
@@ -4579,6 +4587,7 @@ export class Subscriber extends Base {
         onlineState: OnlineState;
         reputation: number;
         privileges: Privilege;
+        privilegeList: Array<Privilege>;
         status: string;
         language: string;
 
@@ -4654,6 +4663,10 @@ export class SubscriberExtended extends Base {
     public language: Language;
     public lookingFor: LookingFor;
     public lookingForExtended: Array<LookingFor>;
+    /**
+     * @deprecated use lookingForList
+     */
+    public lookingForList: Array<LookingFor>;
     public name: string;
     public relationship: Relationship;
     public urls: Array<string>;
@@ -4664,7 +4677,11 @@ export class SubscriberExtended extends Base {
         gender: Gender;
         language: Language;
         lookingFor: LookingFor;
+        /**
+         * @deprecated use lookingForList
+         */
         lookingForExtended: Array<LookingFor>;
+        lookingForList: Array<LookingFor>;
         name: string;
         relationship: Relationship;
         urls: Array<string>;

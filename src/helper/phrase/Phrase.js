@@ -34,15 +34,11 @@ class Phrase extends Base {
   }
 
   _local () {
-    if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) {
-      return Promise.resolve();
-    }
+    if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) { return false; }
 
     const files = fs.readdirSync(path.join(process.cwd(), '/phrases')).filter((file) => file.endsWith('.json'));
 
-    if (!files.length) {
-      return Promise.resolve();
-    }
+    if (!files.length) { return false; }
 
     for (const file of files) {
       const language = path.parse(file).name;

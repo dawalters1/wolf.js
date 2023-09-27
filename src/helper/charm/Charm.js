@@ -71,11 +71,9 @@ class Charm extends Base {
 
     const charms = await this.list();
 
-    return ids.reduce((result, value) => {
-      result.push(charms.find((charm) => charm.id === value) || new models.Charm(this.client, { id: value }));
-
-      return result;
-    }, []);
+    return ids.map((charmId) =>
+      charms.find((charm) => charm.id === charmId) || new models.Charm(this.client, { id: charmId })
+    );
   }
 
   /**
@@ -295,9 +293,7 @@ class Charm extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) {
-      return Promise.resolve();
-    }
+    if (reconnection) { return false; }
 
     this.charms = [];
   }

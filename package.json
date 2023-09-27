@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "type": "module",
@@ -50,27 +50,27 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity": "^3.363.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.363.0",
-    "aws4-axios": "3.2.24",
-    "axios": "1.4.0",
-    "bull": "^4.10.4",
+    "@aws-sdk/client-cognito-identity": "^3.418.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.418.0",
+    "aws4-axios": "3.3.0",
+    "axios": "1.5.1",
+    "bull": "^4.11.3",
     "command-exists-promise": "^2.0.2",
     "config": "^3.3.9",
     "file-type": "^18.5.0",
     "fluent-ffmpeg": "^2.1.2",
-    "http-status-codes": "^2.2.0",
+    "http-status-codes": "^2.3.0",
     "image-size": "^1.0.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "nanoid": "^4.0.2",
+    "nanoid": "^5.0.1",
     "node-pre-gyp": "^0.17.0",
-    "socket.io-client": "^4.7.1",
+    "socket.io-client": "^4.7.2",
     "superagent": "^8.0.9",
-    "tldts": "^6.0.9",
+    "tldts": "^6.0.15",
     "tokenbucket": "^0.3.2",
-    "url-regex-safe": "^3.0.0",
+    "url-regex-safe": "^4.0.0",
     "wrtc": "^0.4.7",
-    "yaml": "^2.3.1"
+    "yaml": "^2.3.2"
   }
 }

@@ -68,11 +68,14 @@ class Wolfstars extends Base {
       );
 
       if (response.success) {
-        const wolfstarResponses = Object.values(response.body).map((wolfstarResponse) => new Response(wolfstarResponse));
-
-        for (const [index, wolfstarResponse] of wolfstarResponses.entries()) {
-          wolfstars.push(wolfstarResponse.success ? new WolfstarsProfile(this.client, wolfstarResponse.body) : new WolfstarsProfile(this.client, { subscriberId: idList[index] }));
-        }
+        wolfstars.push(...Object.values(response.body)
+          .map((wolfstarResponse) => new Response(wolfstarResponse))
+          .map((wolfstarResponse, index) =>
+            wolfstarResponse.success
+              ? new WolfstarsProfile(this.client, wolfstarResponse.body)
+              : new WolfstarsProfile(this.client, { subscriberId: idList[index] })
+          )
+        );
       } else {
         wolfstars.push(...idList.map((subscriberId) => new WolfstarsProfile(this.client, { subscriberId })));
       }

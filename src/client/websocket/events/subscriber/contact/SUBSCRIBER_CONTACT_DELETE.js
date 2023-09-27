@@ -6,13 +6,11 @@ import { Event } from '../../../../../constants/index.js';
 export default async (client, body) => {
   const contact = await client.contact.contacts.find((contact) => contact.id === body.targetId);
 
-  if (!contact) {
-    return Promise.resolve();
-  }
+  if (!contact) { return false; }
 
   client.contact.contacts = client.contact.contacts.filter((contact) => contact.id !== body.targetId);
 
-  return await client.emit(
+  return client.emit(
     Event.SUBSCRIBER_CONTACT_DELETE,
     contact
   );

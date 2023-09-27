@@ -165,27 +165,32 @@ class Store extends Base {
       return result;
     }, []);
 
-    if (products.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((productId) => !products.some((product) => product.id === productId)), this.client._frameworkConfig.get('batching.length'));
+    if (products.length === ids.length) {
+      return products;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.STORE_PRODUCT,
-          {
-            languageId: parseInt(languageId),
-            idList
-          }
-        );
+    const idLists = _.chunk(ids.filter((productId) => !products.some((product) => product.id === productId)), this.client._frameworkConfig.get('batching.length'));
 
-        if (response.success) {
-          const productResponses = Object.values(response.body).map((achievementResponse) => new models.Response(achievementResponse));
-
-          for (const [index, productResponse] of productResponses.entries()) {
-            products.push(productResponse.success ? this._processProduct(new models.StoreProductPartial(this.client, productResponse.body, languageId)) : new models.StoreProductPartial(this.client, { id: idList[index] }));
-          }
-        } else {
-          products.push(...idList.map((id) => new models.StoreProductPartial(this.client, { id })));
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.STORE_PRODUCT,
+        {
+          languageId: parseInt(languageId),
+          idList
         }
+      );
+
+      if (response.success) {
+        products.push(...Object.values(response.body)
+          .map((productResponse) => new models.Response(productResponse))
+          .map((productResponse, index) =>
+            productResponse.success
+              ? this._processProduct(new models.StoreProductPartial(this.client, productResponse.body, languageId))
+              : new models.StoreProductPartial(this.client, { id: idList[index] })
+          )
+        );
+      } else {
+        products.push(...idList.map((id) => new models.StoreProductPartial(this.client, { id })));
       }
     }
 

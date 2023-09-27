@@ -128,35 +128,40 @@ class Channel extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const channels = !forceNew ? this.channels.filter((channel) => ids.includes(channel.id)) : [];
+    const channels = forceNew ? [] : this.channels.filter((channel) => ids.includes(channel.id));
 
-    if (channels.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((channelId) => !channels.some((channel) => channel.id === channelId)), this.client._frameworkConfig.get('batching.length'));
+    if (channels.length === ids.length) {
+      return channels;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.GROUP_PROFILE,
-          {
-            headers: {
-              version: 4
-            },
-            body: {
-              idList,
-              subscribe,
-              entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
-            }
+    const idLists = _.chunk(ids.filter((channelId) => !channels.some((channel) => channel.id === channelId)), this.client._frameworkConfig.get('batching.length'));
+
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_PROFILE,
+        {
+          headers: {
+            version: 4
+          },
+          body: {
+            idList,
+            subscribe,
+            entities: ['base', 'extended', 'audioCounts', 'audioConfig', 'messageConfig']
           }
-        );
-
-        if (response.success) {
-          const channelResponses = Object.values(response.body).map((channelResponse) => new models.Response(channelResponse));
-
-          for (const [index, channelResponse] of channelResponses.entries()) {
-            channels.push(channelResponse.success ? this._process(new models.Channel(this.client, buildChannelFromModule(channelResponse.body))) : new models.Channel(this.client, { id: idList[index] }));
-          }
-        } else {
-          channels.push(...idList.map((id) => new models.Channel(this.client, { id })));
         }
+      );
+
+      if (response.success) {
+        channels.push(...Object.values(response.body)
+          .map((channelResponse) => new models.Response(channelResponse))
+          .map((channelResponse, index) =>
+            channelResponse.success
+              ? this._process(new models.Channel(this.client, buildChannelFromModule(channelResponse.body)))
+              : new models.Channel(this.client, { id: idList[index] })
+          )
+        );
+      } else {
+        channels.push(...idList.map((id) => new models.Channel(this.client, { id })));
       }
     }
 

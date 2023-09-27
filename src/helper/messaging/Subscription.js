@@ -155,9 +155,7 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) {
-      return Promise.resolve();
-    }
+    if (reconnection) { return false; }
 
     this.subscriptions = [];
   }

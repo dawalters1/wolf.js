@@ -16,10 +16,12 @@ const subscriptions = async (client) => {
 };
 
 const fininaliseConnection = async (client, resume = false) => {
-  await Promise.all([
-    client.channel.list(),
-    client.subscriber.getById(client.currentSubscriber.id)
-  ]);
+  await Promise.all(
+    [
+      client.channel.list(),
+      client.subscriber.getById(client.currentSubscriber.id)
+    ]
+  );
 
   await subscriptions(client);
 
@@ -52,9 +54,8 @@ const login = async (client) => {
     );
 
     // Check if code is greater than 1 if so, bot is barred, attempt reconnect
-    if (!(response?.headers?.subCode ?? -1 > 1)) {
-      return Promise.resolve();
-    }
+    if (!(response?.headers?.subCode ?? -1 > 1)) { return false; }
+
     await client.utility.delay(90000);
 
     return await login(client);

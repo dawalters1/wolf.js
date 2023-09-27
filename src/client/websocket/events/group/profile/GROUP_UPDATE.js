@@ -7,9 +7,7 @@ import models from '../../../../../models/index.js';
 export default async (client, body) => {
   const cached = client.channel.channels.find((channel) => channel.id === body.id);
 
-  if (!cached || cached.hash === body.hash) {
-    return Promise.resolve();
-  }
+  if (!cached || cached.hash === body.hash) { return false; }
 
   const oldChannel = new models.Channel(client, cached);
   const newChannel = await client.channel.getById(body.id, true, true);
