@@ -1,4 +1,5 @@
 import Language from '../constants/Language.js';
+import Privilege from '../constants/Privilege.js';
 import patch from '../utils/patch.js';
 import Base from './Base.js';
 import IconInfo from './IconInfo.js';
@@ -20,7 +21,8 @@ class Subscriber extends Base {
     this.nickname = data?.nickname;
     this.onlineState = data?.onlineState;
     this.reputation = data?.reputation;
-    this.privileges = data?.privileges;
+    this.privileges = data?.privileges ?? 0;
+    this.privilegeList = Object.values(Privilege).filter((value) => (this.privileges & value) === value);
     this.status = data?.status;
     this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
 
@@ -118,7 +120,8 @@ class Subscriber extends Base {
         hash: this.hash,
         nicknameShort: this.nickname.slice(0, 6),
         onlineState: this.onlineState,
-        privilieges: this.privilieges
+        privilieges: this.privilieges,
+        privilegeList: this.privilegeList
       }
     };
   }

@@ -23,5 +23,5 @@ export default async (config, buffer) => {
     throw new WOLFAPIError('buffer too large', { allowed: mimeConfig.size, size: Buffer.byteLength(buffer) });
   }
 
-  return Promise.resolve();
+  return true;
 };

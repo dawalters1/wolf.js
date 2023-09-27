@@ -86,29 +86,34 @@ class Global extends Base {
       ? []
       : this.notifications.filter((notification) => ids.includes(notification.id) && notification.feed.languageId === parseInt(languageId));
 
-    if (notifications.length !== ids.length) {
-      const idLists = _.chunk(ids.filter((notificationId) => !notifications.some((notification) => notification.id === notificationId)), this.client._frameworkConfig.get('batching.length'));
+    if (notifications.length === ids.length) {
+      return notifications;
+    }
 
-      for (const idList of idLists) {
-        const response = await this.client.websocket.emit(
-          Command.NOTIFICATION_GLOBAL,
-          {
-            body: {
-              idList,
-              languageId: parseInt(languageId)
-            }
+    const idLists = _.chunk(ids.filter((notificationId) => !notifications.some((notification) => notification.id === notificationId)), this.client._frameworkConfig.get('batching.length'));
+
+    for (const idList of idLists) {
+      const response = await this.client.websocket.emit(
+        Command.NOTIFICATION_GLOBAL,
+        {
+          body: {
+            idList,
+            languageId: parseInt(languageId)
           }
-        );
-
-        if (response.success) {
-          const notificationResponses = Object.values(response.body).map((notificationResponse) => new models.Response(notificationResponse));
-
-          for (const [index, notificationResponse] of notificationResponses.entries()) {
-            notifications.push(notificationResponse.success ? this._process(new models.Notification(this.client, notificationResponse.body)) : new models.Notification(this.client, { id: idList[index] }));
-          }
-        } else {
-          notifications.push(...idList.map((id) => new models.Notification(this.client, { id })));
         }
+      );
+
+      if (response.success) {
+        notifications.push(...Object.values(response.body)
+          .map((notificationResponse) => new models.Response(notificationResponse))
+          .map((notificationResponse, index) =>
+            notificationResponse.success
+              ? this._process(new models.Notification(this.client, notificationResponse.body))
+              : new models.Notification(this.client, { id: idList[index] })
+          )
+        );
+      } else {
+        notifications.push(...idList.map((id) => new models.Notification(this.client, { id })));
       }
     }
 

@@ -11,9 +11,7 @@ import patch from '../../../../../utils/patch.js';
 export default async (client, body) => {
   const cached = client.subscriber.subscribers.find((subscriber) => subscriber.id === body.id);
 
-  if (!cached || cached.hash === body.hash) {
-    return Promise.resolve();
-  }
+  if (!cached || cached.hash === body.hash) { return false; }
 
   const oldSubscriber = new models.Subscriber(client, cached);
   const newSubscriber = await client.subscriber.getById(body.id, true, true);
@@ -26,9 +24,12 @@ export default async (client, body) => {
     patch(client.contact.blocked.blocked.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
   }
 
-  for (const channel of await client.channel.list()) {
-    await channel.members?._onSubscriberUpdate(newSubscriber);
-  }
+  await Promise.all(
+    ...(await client.channel.list())
+      .map((channel) =>
+        channel.members?._onSubscriberUpdate(newSubscriber)
+      )
+  );
 
   return client.emit(
     Event.SUBSCRIBER_UPDATE,

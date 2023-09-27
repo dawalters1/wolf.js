@@ -66,17 +66,13 @@ class ChannelMemberListSection extends Base {
 
     const subscriberId = subscriber?.id ?? subscriber;
 
-    if (!this.members.some((member) => member.id === subscriberId)) {
-      return Promise.resolve();
-    }
+    if (!this.members.some((member) => member.id === subscriberId)) { return false; }
 
     return this.members.splice(this.members.findIndex((member) => member.id === subscriberId), 1);
   }
 
   async updateSubscriber (subscriber) {
-    if (!this.members.some((member) => member.id === subscriber.id)) {
-      return Promise.resolve();
-    }
+    if (!this.members.some((member) => member.id === subscriber.id)) { return false; }
 
     this.members.find((member) => member.id === subscriber.id).hash = subscriber.hash;
   }

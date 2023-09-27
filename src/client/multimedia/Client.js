@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
-import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
+import { CognitoIdentityClient, NotAuthorizedException } from '@aws-sdk/client-cognito-identity';
 import { fromCognitoIdentity } from '@aws-sdk/credential-provider-cognito-identity';
 import Response from '../../models/Response.js';
 
@@ -46,7 +46,7 @@ class Multimedia {
 
                   return await cognitoIdentity.config.credentials();
                 } catch (error) {
-                  if (error instanceof (await import('@aws-sdk/client-sso-oidc/dist-cjs/models/models_0.js')).ExpiredTokenException) {
+                  if (error instanceof NotAuthorizedException) {
                     return await getCredentials(true);
                   }
 

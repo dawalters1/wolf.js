@@ -34,9 +34,7 @@ class ChannelMemberList {
       await this._misc.add(subscriber, capabilities);
     }
 
-    await this._bots.add(subscriber, capabilities);
-
-    return Promise.resolve();
+    return await this._bots.add(subscriber, capabilities);
   }
 
   async _onSubscriberUpdate (subscriber) {
@@ -89,7 +87,7 @@ class ChannelMemberList {
       return await this._misc.update(subscriber, capabilities);
     }
 
-    return Promise.resolve();
+    return false;
   }
 }
 

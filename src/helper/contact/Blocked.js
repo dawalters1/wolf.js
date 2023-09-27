@@ -61,13 +61,11 @@ class Blocked extends Base {
         throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-    await this.list();
 
-    const results = values.reduce((result, subscriberId) => {
-      result.push(this.blocked.some((blocked) => blocked.id === subscriberId));
+    const blockedIds = (await this.list())
+      .map((blocked) => blocked.id);
 
-      return result;
-    }, []);
+    const results = values.map((subscriberId) => blockedIds.includes(subscriberId));
 
     return Array.isArray(subscriberIds) ? results : results[0];
   }

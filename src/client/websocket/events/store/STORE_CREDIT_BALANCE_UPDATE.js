@@ -8,8 +8,9 @@ export default async (client, body) => {
 
   client.store._balance = body.balance;
 
-  return await client.emit(
+  return client.emit(
     Event.STORE_CREDIT_BALANCE_UPDATE,
-    oldBalance >= 0 ? oldBalance : 0, body.balance
+    oldBalance >= 0 ? oldBalance : 0,
+    body.balance
   );
 };

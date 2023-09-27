@@ -7,26 +7,31 @@ class Processor {
    */
   constructor (client) {
     this.client = client;
+    this.handlers = {};
 
     (async () => {
-      this.handlers = await Object.entries(ServerEvents).reduce(async (result, value) => {
-        const groups = Object.entries(value[1]);
-        const processGroup = async (route, group) => {
-          // There are no more subGroups in the grouping
-          if (typeof (group[1]) === 'string') {
-            (await result)[`${group[1]}`] = (await import(`./${route.toLowerCase()}/${group[0]}.js`)).default;
-          } else { // There are more subGroups in the grouping, process them
-            await Object.entries(group[1]).forEach(async (subGroup) => await processGroup(`${route}/${group[0]}`, subGroup));
-          }
-        };
-
-        // Process the groupings
-        for (const group of groups) {
-          await processGroup(value[0], group);
+      const loadEventGroup = async (route, group) => {
+        // There are no more subGroups in the grouping
+        if (typeof (group[1]) === 'string') {
+          this.handlers[`${group[1]}`] = (await import(`./${route.toLowerCase()}/${group[0]}.js`)).default;
+        } else { // There are more subGroups in the grouping, process them
+          await Promise.all(
+            Object.entries(group[1])
+              .map((subGroup) =>
+                loadEventGroup(`${route}/${group[0]}`, subGroup)
+              )
+          );
         }
+      };
 
-        return result;
-      }, {});
+      for (const serverEvent of Object.entries(ServerEvents)) {
+        await Promise.all(
+          Object.entries(serverEvent[1])
+            .map((group) =>
+              loadEventGroup(serverEvent[0], group)
+            )
+        );
+      }
     })();
   }
 

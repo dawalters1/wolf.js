@@ -98,9 +98,7 @@ class Client extends EventEmitter {
         this.connectionState = StageConnectionState.DISCONNECTED;
 
         return this.reset(true);
-      } else {
-        return Promise.resolve();
-      }
+      } else { return false; }
 
       return this.emit(this.connectionState === StageConnectionState.CONNECTED ? Event.STAGE_CLIENT_CONNECTED : this.connectionState === StageConnectionState.CONNECTING, { slotId: this.slotId });
     };
@@ -166,9 +164,7 @@ class Client extends EventEmitter {
       .on('error', (error) => {
         data?.destroy();
 
-        if (this.broadcastState === StageBroadcastState.IDLE) {
-          return Promise.resolve();
-        }
+        if (this.broadcastState === StageBroadcastState.IDLE) { return false; }
 
         this.reset();
 
@@ -185,7 +181,7 @@ class Client extends EventEmitter {
         this.duration += 1000;
       }
 
-      return Promise.resolve();
+      return false;
     }, 1000);
   }
 

@@ -142,9 +142,7 @@ export default async (client, body) => {
         .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
       break;
     default:
-      if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) {
-        return Promise.resolve();
-      }
+      if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) { return false; }
       break;
   }
 
