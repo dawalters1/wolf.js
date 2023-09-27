@@ -6,9 +6,7 @@ import { Event } from '../../../../../constants/index.js';
 export default async (client, body) => {
   const channel = client.channel.channels.find((channel) => channel.id === body.channelId);
 
-  if (!channel) {
-    return Promise.resolve();
-  }
+  if (!channel) { return false; }
 
   const event = await client.event.getById(body.id);
 

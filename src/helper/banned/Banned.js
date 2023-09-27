@@ -49,11 +49,7 @@ class Banned extends Base {
       }
     }
 
-    const results = values.reduce((result, subscriberId) => {
-      result.push(this.banned.includes(subscriberId));
-
-      return result;
-    }, []);
+    const results = values.map((subscriberId) => this.banned.includes(subscriberId));
 
     return Array.isArray(targetSubscriberIds) ? results : results[0];
   }
@@ -139,9 +135,7 @@ class Banned extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) {
-      return Promise.resolve();
-    }
+    if (reconnection) { return false; }
 
     this.banned = [];
   }

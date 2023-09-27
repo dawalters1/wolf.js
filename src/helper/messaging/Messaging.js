@@ -229,7 +229,7 @@ class Messaging extends Base {
           version: 4
         },
         body: {
-          id: targetChannelId
+          id: parseInt(targetChannelId)
         }
       }
     );

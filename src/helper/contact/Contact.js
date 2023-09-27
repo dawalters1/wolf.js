@@ -62,13 +62,11 @@ class Contact extends Base {
         throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
-    await this.list();
 
-    const results = values.reduce((result, subscriberId) => {
-      result.push(this.contacts.some((contact) => contact.id === subscriberId));
+    const contactIds = (await this.list())
+      .map((contact) => contact.id);
 
-      return result;
-    }, []);
+    const results = values.map((subscriberId) => contactIds.includes(subscriberId));
 
     return Array.isArray(subscriberIds) ? results : results[0];
   }

@@ -40,9 +40,7 @@ class RequestQueue {
   }
 
   async dequeue () {
-    if (!this.queue.length || this._processing) {
-      return Promise.resolve();
-    }
+    if (!this.queue.length || this._processing) { return false; }
 
     this._processing = true;
 

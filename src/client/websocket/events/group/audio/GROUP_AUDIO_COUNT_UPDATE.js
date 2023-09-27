@@ -7,9 +7,7 @@ import models from '../../../../../models/index.js';
 export default async (client, body) => {
   const channel = client.channel.channels.find((channel) => channel.id === body.id);
 
-  if (!channel) {
-    return Promise.resolve();
-  }
+  if (!channel) { return false; }
 
   const oldAudioCount = new models.ChannelAudioCounts(client, channel.audioCounts);
 

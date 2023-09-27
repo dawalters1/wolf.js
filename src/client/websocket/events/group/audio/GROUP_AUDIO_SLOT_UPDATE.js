@@ -8,9 +8,7 @@ import patch from '../../../../../utils/patch.js';
 export default async (client, body) => {
   const channel = client.channel.channels.find((group) => group.id === body.id);
 
-  if (!channel || !channel.slots) {
-    return Promise.resolve();
-  }
+  if (!channel || !channel.slots) { return false; }
 
   const cached = new models.ChannelAudioSlot(client, channel.slots.find((slot) => slot.id === body.slot.id), channel.id);
 
