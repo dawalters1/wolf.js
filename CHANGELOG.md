@@ -113,10 +113,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Additional
 - Dependency Updates
 
-# 2.1.1 (2023-06-19)
-### Fixed
-- Multimedia client would misbehave when multiple wolf client instances existed on the same instance
-
 # 2.0.7 (2023-05-31)
 ### Fixed
 - Group profile update method not working
