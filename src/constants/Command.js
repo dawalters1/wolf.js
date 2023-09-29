@@ -38,6 +38,10 @@ export const GROUP_MEMBER_UPDATE = 'group member update';
 export const GROUP_PROFILE = 'group profile';
 export const GROUP_PROFILE_UPDATE = 'group profile update';
 export const GROUP_RECOMMENDATION_LIST = 'group recommendation list';
+export const GROUP_ROLE_SUBSCRIBER_ASSIGN = 'group role subscriber assign';
+export const GROUP_ROLE_SUBSCRIBER_LIST = 'group role subscriber list';
+export const GROUP_ROLE_SUBSCRIBER_UNASSIGN = 'group role subscriber unassign';
+export const GROUP_ROLE_SUMMARY = 'group role summary';
 export const GROUP_STATS = 'group stats';
 export const MESSAGE_CONVERSATION_LIST = 'message conversation list';
 export const MESSAGE_GROUP_HISTORY_LIST = 'message group history list';
@@ -143,6 +147,10 @@ export default {
   GROUP_PROFILE,
   GROUP_PROFILE_UPDATE,
   GROUP_RECOMMENDATION_LIST,
+  GROUP_ROLE_SUBSCRIBER_ASSIGN,
+  GROUP_ROLE_SUBSCRIBER_LIST,
+  GROUP_ROLE_SUBSCRIBER_UNASSIGN,
+  GROUP_ROLE_SUMMARY,
   GROUP_STATS,
   MESSAGE_CONVERSATION_LIST,
   MESSAGE_GROUP_HISTORY_LIST,
