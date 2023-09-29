@@ -16,7 +16,7 @@ export default async (client, body) => {
   }
 
   if (cached.roles._requestedMembers) {
-    cached.roles._members = cached.roles._members.filter((member) => member.roleId !== body.additionalInfo.roleId && member.subscriberId !== member.additionalInfo.subscriberId);
+    cached.roles._members = cached.roles._members.filter((member) => member.roleId !== body.additionalInfo.roleId && member.subscriberId !== body.additionalInfo.subscriberId);
   }
 
   return client.emit(

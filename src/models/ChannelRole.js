@@ -5,7 +5,7 @@ class ChannelRole extends Base {
     super(client);
     this.channelId = channelId;
 
-    this.roleId = data?.id;
+    this.roleId = data?.roleId;
     this.subscriberIdList = data?.subscriberIdList;
     this.maxSeats = data?.maxSeats;
   }
