@@ -98,10 +98,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **Events**
     - notificationReceived
 
-# 2.1.1 (2023-06-19)
-### Fixed
-- Multimedia client would misbehave when multiple wolf client instances existed on the same instance
-
 # 2.1.0 (2023-06-17)
 ### Added
 - Support for group Verification Tiers

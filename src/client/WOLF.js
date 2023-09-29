@@ -106,8 +106,6 @@ class WOLF extends EventEmitter {
     this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
 
     this.websocket._create();
-
-    return false;
   }
 
   /**
@@ -144,17 +142,18 @@ class WOLF extends EventEmitter {
 
   /**
    * Update the current logged in account profile
-   * @param {String} nickname
-   * @param {String} status
-   * @param {Date} dateOfBirth
-   * @param {String} about
-   * @param {Gender} gender
-   * @param {Language} language
-   * @param {LookingFor} lookingFor
-   * @param {String} name
-   * @param {Relationship} relationship
-   * @param {String[]} urls
-   * @param {Buffer} avatar
+   * @param {object} profile
+   * @param {string} profile.nickname
+   * @param {string} profile.status
+   * @param {date} profile.dateOfBirth
+   * @param {string} profile.about
+   * @param {Gender} profile.gender
+   * @param {Language} profile.language
+   * @param {LookingFor} profile.lookingFor
+   * @param {string} profile.name
+   * @param {Relationship} profile.relationship
+   * @param {string[]} profile.urls
+   * @param {Buffer} profile.avatar
    * @returns {Promise<Response>}
    */
   async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
