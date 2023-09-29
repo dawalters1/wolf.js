@@ -294,7 +294,8 @@ class Messaging extends Base {
 
       validateMultimediaConfig(messageConfig, content);
 
-      return await this.client.multimedia.upload(messageConfig,
+      return await this.client.multimedia.request(
+        messageConfig,
         {
           data: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? content : content.toString('base64'),
           mimeType: mimeType === 'audio/x-m4a' || mimeType === 'audio/x-mp4' ? 'audio/aac' : mimeType,

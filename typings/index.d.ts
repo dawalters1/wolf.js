@@ -180,8 +180,17 @@ export class Websocket {
 export class Multimedia {
     private constructor(client: WOLF);
 
+
+    /**
+     * Send a request to the multimedia service
+     * @param config - The route configuration
+     * @param body - The data to uplodate
+     */
+    public request<T>(config: any, body: object): Promise<Response<T>>
+
     /**
      * Upload to the multimedia service
+     * @deprecated Use request
      * @param config - The route configuration
      * @param body - The data to uplodate
      */
