@@ -31,6 +31,13 @@ class ChannelRoleContainer extends Base {
   async unassign (subscriberId, roleId) {
     return await this.client.channel.role.assign(this.channelId, subscriberId, roleId);
   }
+
+  toJSON () {
+    return {
+      members: this._members.map((member) => member.toJSON()),
+      roles: this._roles.map((role) => role.toJSON())
+    };
+  }
 }
 
 export default ChannelRoleContainer;

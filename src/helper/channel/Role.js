@@ -1,9 +1,15 @@
-import validator from '../../validator';
-import Base from '../Base';
+import validator from '../../validator/index.js';
+import Base from '../Base.js';
 import models from '../../models/index.js';
-import { Command } from '../../constants';
+import { Command } from '../../constants/index.js';
 
 class Role extends Base {
+  /**
+   * Request all the available channel roles
+   * @param {number} id - The ID of the channel
+   * @param {boolean} forceNew - Whether or not to request new data from the server
+   * @returns {Promise<Array<models.ChannelRole>>}
+   */
   async roles (id, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -35,11 +41,18 @@ class Role extends Base {
     );
 
     channel.roles._requestedRoles = true;
-    channel.roles._roles = response?.body?.map((role) => new models.ChannelRole(this.client, role)) ?? [];
+    channel.roles._roles = response?.body?.map((role) => new models.ChannelRole(this.client, role, channel.id)) ?? [];
 
     return channel.roles._roles;
   }
 
+  /**
+   * Request all the members assigned Channel Roles
+   * @param {number} id
+   * @param {boolean} subscribe
+   * @param {boolean} forceNew
+   * @returns {Promise<Array<models.ChannelRoleMember>>}
+   */
   async members (id, subscribe = true, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -76,11 +89,18 @@ class Role extends Base {
     );
 
     channel.roles._requestedMembers = true;
-    channel.roles._members = response?.body?.map((roleMember) => new models.ChannelRoleMember(this.client, roleMember)) ?? [];
+    channel.roles._members = response?.body?.map((roleMember) => new models.ChannelRoleMember(this.client, roleMember, channel.id)) ?? [];
 
     return channel.roles._members;
   }
 
+  /**
+   * Assign a Channel Role
+   * @param {number} id
+   * @param {number} subscriberId
+   * @param {number} roleId
+   * @returns {Promise<Response>}
+   */
   async assign (id, subscriberId, roleId) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -114,7 +134,7 @@ class Role extends Base {
 
     const roles = await this.roles(id);
 
-    if (roles.some((role) => role.roleId !== parseInt(roleId))) {
+    if (!roles.some((role) => role.roleId === parseInt(roleId))) {
       throw new models.WOLFAPIError('Unknown channel role', { id, roleId });
     }
 
@@ -132,6 +152,14 @@ class Role extends Base {
     );
   }
 
+  /**
+   * Reassign a Channel Role
+   * @param {number} id
+   * @param {number} oldSubscriberId
+   * @param {number} newSubscriberId
+   * @param {number} roleId
+   * @returns {Promise<Response>}
+   */
   async reassign (id, oldSubscriberId, newSubscriberId, roleId) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -173,7 +201,7 @@ class Role extends Base {
 
     const roles = await this.roles(id);
 
-    if (roles.some((role) => role.roleId !== parseInt(roleId))) {
+    if (!roles.some((role) => role.roleId === parseInt(roleId))) {
       throw new models.WOLFAPIError('Unknown channel role', { id, roleId });
     }
 
@@ -185,17 +213,31 @@ class Role extends Base {
       throw new models.WOLFAPIError('Subscriber can only hold one seat at a time', { id, newSubscriberId });
     }
 
+    console.log({
+      groupId: parseInt(id),
+      roleId: parseInt(roleId),
+      subscriberId: parseInt(oldSubscriberId),
+      replaceSubscriberId: parseInt(newSubscriberId)
+    });
+
     return await this.client.websocket.emit(
       Command.GROUP_ROLE_SUBSCRIBER_ASSIGN,
       {
         groupId: parseInt(id),
         roleId: parseInt(roleId),
-        subscriberId: parseInt(newSubscriberId),
-        replaceSubscriberId: parseInt(oldSubscriberId)
+        subscriberId: parseInt(oldSubscriberId),
+        replaceSubscriberId: parseInt(newSubscriberId)
       }
     );
   }
 
+  /**
+   * Unassign a Channel Role
+   * @param {number} id
+   * @param {number} subscriberId
+   * @param {number} roleId
+   * @returns {Promise<Response>}
+   */
   async unassign (id, subscriberId, roleId) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
@@ -229,7 +271,7 @@ class Role extends Base {
 
     const roles = await this.roles(id);
 
-    if (roles.some((role) => role.roleId !== parseInt(roleId))) {
+    if (!roles.some((role) => role.roleId === parseInt(roleId))) {
       throw new models.WOLFAPIError('Unknown channel role', { id, roleId });
     }
 

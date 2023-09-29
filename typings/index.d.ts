@@ -740,6 +740,12 @@ export class ChannelHelper extends Base {
      * Exposes the Channel Member methods
      */
     public member: ChannelMemberHelper;
+
+    /**
+     * Exposes the Channel Role methods
+     */
+    public role: ChannelRoleHelper;
+
     /**
      * Get list of joined channels
      */
@@ -892,6 +898,51 @@ export class ChannelMemberHelper extends Base {
      * @param subscriberId - The ID of the subscriber
      */
     public kick(targetChannelId: number, subscriberId: number): Promise<Response>;
+}
+
+
+export class ChannelRoleHelper extends Base {
+    private constructor(client);
+
+    /**
+     *
+     * @param id - The ID of the channel
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public roles(id: number, forceNew: boolean): Promise<Array<ChannelRole>>;
+
+    /**
+     * Get the list of members with Channel Roles
+     * @param id - The ID of the channel
+     * @param subscribe - Whether or not to subscribe to member updates
+     * @param forceNew  - Whether or not to request new from the server
+     */
+    public members(id: number, subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
+
+    /**
+     * Assign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The ID of the role to assign
+     */
+    public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Reassign a Channel Role
+     * @param id - The ID of the channel
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The role to reassign
+     */
+    public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Unassign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the role to remove
+     */
+    public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 }
 
 export class LogHelper extends Base {
@@ -2555,6 +2606,7 @@ export class Channel extends Base {
     public messageConfig: ChannelMessageConfig;
     public members: ChannelMemberList;
     public verificationTier: VerificationTier;
+    public roles: ChannelRoleContainer;
 
     /**
      * @deprecated use inChannel
@@ -2691,7 +2743,17 @@ export class Channel extends Base {
                 capabilities: Capability;
             }>
         };
-
+        roles: {
+            members: Array<{
+                roleId: number,
+                subscriberId: number
+            }>,
+            roles: Array<{
+                roleId: number,
+                subscriberIdsList: Array<number>,
+                maxSeats: number
+            }>
+        },
         inGroup: boolean;
         inChannel: boolean;
         capabilities: Capability;
@@ -2933,6 +2995,18 @@ export class ChannelMember extends Base {
      */
     public ban(): Promise<Response>;
 
+
+    /**
+     * Assign a Channel Role
+     * @param roleId - The ID of the role
+     */
+    public assign(roleId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param roleId - The ID of the role
+     */
+    public unassign(roleId): Promise<Response>
+
     toJSON(): {
         id: number;
         hash: string;
@@ -3001,6 +3075,105 @@ export class ChannelMessageConfig extends Base {
         id: number;
         slowModeRateInSeconds: number;
     };
+}
+
+export class ChannelRole extends Base {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public channelId: number;
+    public roleId: number;
+    public subscriberIdList: Array<number>;
+    public maxSeats: number;
+
+    /**
+     * Request the profiles of all subscribers with this role
+     */
+    public subscribers(): Promise<Array<Subscriber>>;
+    /**
+     * Assign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     */
+    public assign(subscriberId: number): Promise<Response>;
+    /**
+     * Reassign a Channel Role
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     */
+    public reassign(oldSubscriberId: number, newSubscriberId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     */
+    public unassign(subscriberId: number): Promise<Response>
+}
+
+export class ChannelRoleMember extends Base {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public channelId: number;
+    public roleId: number;
+    public subscriberId: number;
+
+    /**
+     * Get the subscribers profile
+     */
+    public subscriber(): Promise<Subscriber>;
+    /**
+     * Reassign the Channel Role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     */
+    public reassign(newSubscriberId: number): Promise<Response>;
+    /**
+     * Unassign the Channel Role
+     */
+    public unassign(): Promise<Response>
+}
+
+export class ChannelRoleContainer extends Base {
+    private constructor(client: WOLF, channelId: number);
+
+    /**
+     * Request the Channel Roles
+     * @param forceNew -
+     */
+    public roles(forceNew: boolean): Promise<Array<ChannelRole>>;
+    /**
+     * Request the Channel Role Members list
+     * @param subscribe -
+     * @param forceNew
+     */
+    public members(subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
+    /**
+     * Assign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the role
+     */
+    public assign(subscriberId: number, roleId: number): Promise<Response>;
+    /**
+     * Reassign a Channel Role
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     * @param roleId - The ID of the role
+     */
+    public reassign(oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the Role
+     */
+    public unassign(subscriberId: number, roleId: number): Promise<Response>
+
+    toJSON(): {
+        members: Array<{
+            roleId: number,
+            subscriberId: number
+        }>,
+        roles: Array<{
+            roleId: number,
+            subscriberIdsList: Array<number>,
+            maxSeats: number
+        }>
+    }
 }
 
 export class ChannelStage extends Base {
@@ -5654,6 +5827,14 @@ export interface ClientEvents {
      * Fired when a channel message is updated
      */
     channelMessageUpdate: [message: Message],
+    /**
+     * Fired when a group member has a Channel Role added
+     */
+    channelRoleAssign: [channel: Channel, channelRoleMember: ChannelRoleMember],
+    /**
+     * Fired when a group member has a Channel Role removed
+     */
+    channelRoleUnassign: [channel: Channel, channelRoleMember: ChannelRoleMember],
     /**
      * Fired when a group message is tipped
      * @deprecated use channelTipAdd
