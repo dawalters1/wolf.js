@@ -905,6 +905,22 @@ export class ChannelRoleHelper extends Base {
     private constructor(client);
 
     /**
+     * Get the context of a Channel role
+     * @param roleId - The ID of the role
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getById(roleId: number, languageId: Language, forceNew: false): Promise<ChannelRoleContext>;
+
+    /**
+     * Get the context of Channel roles
+     * @param roleIds - The ID of the roles
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew: false): Promise<Array<ChannelRoleContext>>;
+
+    /**
      *
      * @param id - The ID of the channel
      * @param forceNew - Whether or not to request new from the server
@@ -3105,6 +3121,37 @@ export class ChannelRole extends Base {
      * @param subscriberId - The ID of the subscriber
      */
     public unassign(subscriberId: number): Promise<Response>
+
+    /**
+     * Get the roles context
+     */
+    public role(languageId: Language): Promise<ChannelRoleContext>;
+
+    toJSON(): {
+        channelId: number,
+        roleId: number,
+        subscriberIdList: Array<number>,
+        maxSeats: number,
+    }
+}
+
+
+export class ChannelRoleContext extends Base {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public id: number;
+    public description: string;
+    public emojiUrl: string;
+    public hexColour: string;
+    public name: string;
+
+    toJSON(): {
+        id: number,
+        description: string,
+        emojiUrl: string,
+        hexColour: string,
+        name: string
+    }
 }
 
 export class ChannelRoleMember extends Base {
@@ -3127,6 +3174,17 @@ export class ChannelRoleMember extends Base {
      * Unassign the Channel Role
      */
     public unassign(): Promise<Response>
+
+    /**
+     * Get the roles context
+     */
+    public role(languageId: Language): Promise<ChannelRoleContext>;
+
+    toJSON(): {
+        channelId: number,
+        roleId: number,
+        subscriberId: number
+    }
 }
 
 export class ChannelRoleContainer extends Base {
@@ -3187,6 +3245,12 @@ export class ChannelStage extends Base {
      * Set the stage for the channel
      */
     public set(): Promise<Response>;
+
+    toJSON(): {
+        id: number,
+        expireTime: Date,
+        targetChannelId: number
+    }
 }
 
 export class ChannelStats extends Base {
