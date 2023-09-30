@@ -13,9 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Update README.md to be more up to date
 - Update multimedia to support additional methods
-
-
-
+S
 # 2.2.7 (2023-09-26)
 ### Fixed
 - Misc calling self cognito instead of client
