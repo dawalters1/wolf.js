@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.3.0 (Unreleased)
+### Added
+- Support for Channel Roles
+### Fixed
+- Incorrect JSDocs for updating Channel/Subscriber profiles
+### Changed
+- Update README.md to be more up to date
+- Update multimedia to support additional methods
+
+
+
 # 2.2.7 (2023-09-26)
 ### Fixed
 - Misc calling self cognito instead of client
