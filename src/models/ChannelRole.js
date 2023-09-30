@@ -25,6 +25,10 @@ class ChannelRole extends Base {
   async unassign (subscriberId) {
     return await this.client.channel.role.unassign(this.channelId, subscriberId, this.roleId);
   }
+
+  async role (languageId) {
+    return await this.client.channel.role.getById(this.roleId, languageId);
+  }
 }
 
 export default ChannelRole;

@@ -575,6 +575,7 @@ class Channel extends Base {
     this.channels = [];
     this.fetched = false;
     this.member._cleanUp(reconnection);
+    this.role._cleanUp(reconnection);
   }
 }
 
