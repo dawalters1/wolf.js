@@ -78,7 +78,7 @@ multimedia:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152
+          size: 2621440
       square: true
     channel:
       method: post
@@ -88,7 +88,7 @@ multimedia:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152
+          size: 2621440
       square: true
 
 validation:
