@@ -5,6 +5,7 @@ import ChannelAudioCounts from './ChannelAudioCounts.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelRoleContainer from './ChannelRoleContainer.js';
 import IconInfo from './IconInfo.js';
 import IdHash from './IdHash.js';
 
@@ -31,7 +32,7 @@ class Channel extends Base {
     this.messageConfig = new ChannelMessageConfig(client, data?.messageConfig);
     this.members = new ChannelMemberList(client, data?.id);
     this.verificationTier = data?.verificationTier;
-
+    this.roles = new ChannelRoleContainer(client, data?.id);
     this.inChannel = false;
     this.capabilities = Capability.NOT_MEMBER;
 
