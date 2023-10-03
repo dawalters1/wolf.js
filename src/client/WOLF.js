@@ -1,32 +1,14 @@
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
-import Websocket from './websocket/Client.js';
-import Multimedia from './multimedia/Client.js';
+import { Websocket, Multimedia } from './index.js';
 import CommandHandler from '../command/CommandHandler.js';
-import Achievement from '../helper/achievement/Achievement.js';
-import Banned from '../helper/banned/Banned.js';
-import Charm from '../helper/charm/Charm.js';
-import Channel from '../helper/channel/Channel.js';
-import Contact from '../helper/contact/Contact.js';
-import Discovery from '../helper/discovery/Discovery.js';
-import Event from '../helper/event/Event.js';
-import Log from '../helper/log/Log.js';
-import Messaging from '../helper/messaging/Messaging.js';
-import Misc from '../helper/misc/Misc.js';
-import Notification from '../helper/notification/Notification.js';
-import Phrase from '../helper/phrase/Phrase.js';
-import Stage from '../helper/stage/Stage.js';
-import Store from '../helper/store/Store.js';
-import Subscriber from '../helper/subscriber/Subscriber.js';
-import Tipping from '../helper/tipping/Tipping.js';
-import Topic from '../helper/topic/Topic.js';
+import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
 import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
 import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
-import Authorization from '../helper/authorization/Authorization.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';
 
@@ -106,8 +88,6 @@ class WOLF extends EventEmitter {
     this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
 
     this.websocket._create();
-
-    return false;
   }
 
   /**
@@ -144,17 +124,18 @@ class WOLF extends EventEmitter {
 
   /**
    * Update the current logged in account profile
-   * @param {String} nickname
-   * @param {String} status
-   * @param {Date} dateOfBirth
-   * @param {String} about
-   * @param {Gender} gender
-   * @param {Language} language
-   * @param {LookingFor} lookingFor
-   * @param {String} name
-   * @param {Relationship} relationship
-   * @param {String[]} urls
-   * @param {Buffer} avatar
+   * @param {object} profile
+   * @param {string} profile.nickname
+   * @param {string} profile.status
+   * @param {date} profile.dateOfBirth
+   * @param {string} profile.about
+   * @param {Gender} profile.gender
+   * @param {Language} profile.language
+   * @param {LookingFor} profile.lookingFor
+   * @param {string} profile.name
+   * @param {Relationship} profile.relationship
+   * @param {string[]} profile.urls
+   * @param {Buffer} profile.avatar
    * @returns {Promise<Response>}
    */
   async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
@@ -269,7 +250,7 @@ class WOLF extends EventEmitter {
     );
 
     if (response.success && avatar) {
-      response.body.avatarUpload = await this.multimedia.upload(
+      response.body.avatarUpload = await this.multimedia.request(
         avatarConfig,
         {
           data: avatar.toString('base64'),

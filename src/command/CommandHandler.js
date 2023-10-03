@@ -53,7 +53,7 @@ class CommandHandler {
 
         if (commandSettings.ignore.official && await client.utility.subscriber.privilege.has(subscriber.id, Privilege.BOT)) { return false; }
 
-        if (commandSettings.ignore.unofficial && !await client.utility.subscriber.privilege.has(subscriber.id, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.PEST, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.TRANSLATOR]) && await checkForBotCharm(this.client, subscriber)) { return false; }
+        if (commandSettings.ignore.unofficial && !await client.utility.subscriber.privilege.has(subscriber.id, [Privilege.STAFF, Privilege.ENTERTAINER, Privilege.SELECTCLUB_1, Privilege.SELECTCLUB_2, Privilege.VOLUNTEER, Privilege.DJ, Privilege.GROUP_ADMIN, Privilege.ENTERTAINER, Privilege.RANK_1, Privilege.ELITECLUB_1, Privilege.ELITECLUB_2, Privilege.ELITECLUB_3, Privilege.BOT, Privilege.BOT_TESTER, Privilege.CONTENT_SUBMITER, Privilege.ALPHA_TESTER, Privilege.HOST, Privilege.WELCOMER]) && await checkForBotCharm(this.client, subscriber)) { return false; }
       }
 
       const callback = context.callback;
