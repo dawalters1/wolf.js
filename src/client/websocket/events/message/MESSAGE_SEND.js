@@ -1,5 +1,5 @@
 import { MessageType, Event, Language, Capability } from '../../../../constants/index.js';
-import models, { ChannelMemberList, ChannelSubscriberUpdate } from '../../../../models/index.js';
+import models, { ChannelMemberList, ChannelRoleContainer, ChannelSubscriberUpdate } from '../../../../models/index.js';
 
 const toCapability = (subscriber, channel, type) => {
   switch (type) {
@@ -62,6 +62,7 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
         channel.capabilities = capabilities;
         channel.inChannel = false;
         channel.members = new ChannelMemberList(client, channel.id);
+        channel.roles = new ChannelRoleContainer(client, channel.id);
       }
 
       await channel.members._onLeave(subscriber, capabilities);

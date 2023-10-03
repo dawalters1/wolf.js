@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.3.0 (Unreleased)
+### Added
+- Support for Channel Roles
+### Fixed
+- Incorrect JSDocs for updating Channel/Subscriber profiles
+### Changed
+- Update README.md to be more up to date
+- Update multimedia to support additional methods
+
 # 2.2.7 (2023-09-26)
 ### Fixed
 - Misc calling self cognito instead of client
@@ -98,10 +107,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - **Events**
     - notificationReceived
 
-# 2.1.1 (2023-06-19)
-### Fixed
-- Multimedia client would misbehave when multiple wolf client instances existed on the same instance
-
 # 2.1.0 (2023-06-17)
 ### Added
 - Support for group Verification Tiers
@@ -112,10 +117,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Additional
 - Dependency Updates
-
-# 2.1.1 (2023-06-19)
-### Fixed
-- Multimedia client would misbehave when multiple wolf client instances existed on the same instance
 
 # 2.0.7 (2023-05-31)
 ### Fixed
