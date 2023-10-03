@@ -36,7 +36,7 @@
   "homepage": "https://github.com/dawalters1/wolf.js#readme",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.7.0",
+    "@types/node": "^20.8.0",
     "chai": "^4.3.7",
     "eslint": "^8.43.0",
     "eslint-config-standard": "^17.1.0",
