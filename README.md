@@ -180,4 +180,4 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 
 ## Contact
 
-- You can receive help in [unofficial bots](https://wolf.live/unofficial+bots)
+- You can receive help in [wolf.js](https://wolf.live/wolf.js)
