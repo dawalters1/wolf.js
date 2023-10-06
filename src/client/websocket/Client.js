@@ -1,10 +1,10 @@
 import Processor from './events/Processor.js';
-import RequestQueue from '../../utils/RequestQueue.js';
-import { Event, SocketEvent, ServerEvents } from '../../constants/index.js';
+import { Event, SocketEvent } from '../../constants/index.js';
 import fs from 'fs';
 import io from 'socket.io-client';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { Response } from '../../models/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,24 +13,6 @@ class Websocket {
   constructor (client) {
     this.client = client;
     this._processor = new Processor(this.client);
-
-    this._messageQueue = new RequestQueue(
-      this.client,
-      {
-        size: 15,
-        interval: (15 / 60) * 1000,
-        name: 'Message'
-      }
-    );
-
-    this._genericQueue = new RequestQueue(
-      this.client,
-      {
-        size: 50,
-        interval: (180 / 60) * 1000,
-        name: 'Generic'
-      }
-    );
   }
 
   _disconnect () {
@@ -71,12 +53,30 @@ class Websocket {
   }
 
   async emit (command, body) {
-    const request = {
-      command,
-      body: body && !body.headers && !body.body ? { body } : body
-    };
+    const sendRequest = async (command, body, currentAttempts = 0) => new Promise((resolve) => {
+      this.socket.emit(command, body, async resp => {
+        const response = new Response(resp);
 
-    return await this[`_${command === ServerEvents.MESSAGE.MESSAGE_SEND ? 'message' : 'generic'}Queue`].enqueue(request);
+        if (!response.success) {
+          const { retryCodes, essential, attempts } = this.client._frameworkConfig.get('connection.requests');
+
+          if (retryCodes.includes(response.code) && (essential.includes(command.toLowerCase()) || currentAttempts < attempts)) {
+            return await sendRequest(command, body, currentAttempts++);
+          }
+
+          this.client.emit(Event.PACKET_FAILED, command, body);
+        }
+
+        resolve(response);
+      });
+
+      this.client.emit(currentAttempts ? Event.PACKET_RETRY : Event.PACKET_SENT, command, body, currentAttempts);
+    });
+
+    return await sendRequest(
+      command,
+      body && !body.headers && !body.body ? { body } : body
+    );
   }
 }
 
