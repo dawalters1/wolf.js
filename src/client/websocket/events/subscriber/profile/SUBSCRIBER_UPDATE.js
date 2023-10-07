@@ -25,10 +25,7 @@ export default async (client, body) => {
   }
 
   await Promise.all(
-    ...(await client.channel.list())
-      .map((channel) =>
-        channel.members?._onSubscriberUpdate(newSubscriber)
-      )
+    (await client.channel.list()).map((channel) => channel.members?._onSubscriberUpdate(newSubscriber))
   );
 
   return client.emit(
