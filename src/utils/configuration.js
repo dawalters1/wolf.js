@@ -1,6 +1,6 @@
 import path, { dirname } from 'path';
 import fs from 'fs';
-import yaml from 'yaml';
+import yaml from 'js-yaml';
 import { JoinLockType, Language, OnlineState } from '../constants/index.js';
 import _ from 'lodash';
 import WOLFAPIError from '../models/WOLFAPIError.js';
@@ -30,7 +30,7 @@ const internalGet = (config, path) => {
 };
 
 const developerConfig = (client) => {
-  const config = fs.existsSync(path.join(process.cwd(), '/config/default.yaml')) ? yaml.parse(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8')) : {};
+  const config = fs.existsSync(path.join(process.cwd(), '/config/default.yaml')) ? yaml.load(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8')) : {};
 
   client.config = {
     keyword: config?.keyword ?? 'default',
@@ -90,12 +90,12 @@ const developerConfig = (client) => {
 };
 
 const frameworkConfig = (client) => {
-  client._frameworkConfig = yaml.parse(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+  client._frameworkConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
 
   client._frameworkConfig.get = (path) => internalGet(client._frameworkConfig, path);
 };
 
-export default async (client) => await Promise.all([
+export default (client) => [
   developerConfig(client),
   frameworkConfig(client)
-]);
+];
