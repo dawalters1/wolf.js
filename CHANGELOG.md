@@ -14,6 +14,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Update README.md to be more up to date
 - Update multimedia to support additional methods
 
+# 2.2.11 (2023-10-07)
+### Fixed
+- Revert nanoid to 4.0.2
+
+# 2.2.10 (2023-10-06)
+### Changed
+- Replace yaml with js-yaml, remove config dependency
+
+# 2.2.9 (2023-10-06)
+### Fixed
+- object is not iterable
+
+# 2.2.8 (2023-10-06)
+### Changed
+- Update socket.io version to match server
+- Update Dependencies
+### Removed
+- Request Queue
+
 # 2.2.7 (2023-09-26)
 ### Fixed
 - Misc calling self cognito instead of client
