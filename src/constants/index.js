@@ -1,6 +1,5 @@
 import AdminAction from './AdminAction.js';
 import Avatar from './Avatar.js';
-import CacheType from './CacheType.js';
 import Capability from './Capability.js';
 import Category from './Category.js';
 import Command from './Command.js';
@@ -36,7 +35,6 @@ import WolfstarTalent from './WolfstarTalent.js';
 const exports = {
   AdminAction,
   Avatar,
-  CacheType,
   Capability,
   Category,
   Command,
@@ -73,7 +71,6 @@ const exports = {
 export {
   AdminAction,
   Avatar,
-  CacheType,
   Capability,
   Category,
   Command,
