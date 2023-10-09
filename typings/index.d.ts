@@ -2632,6 +2632,7 @@ export class Channel extends Base {
     public capabilities: Capability;
     public exists: boolean;
 
+    public percentage: string;
     /**
      * Get the channel avatar URL
      * @param size - The size
@@ -2774,6 +2775,7 @@ export class Channel extends Base {
         inChannel: boolean;
         capabilities: Capability;
         exists: boolean;
+        percentage: string;
     };
 }
 
@@ -3629,6 +3631,10 @@ export class IdHash extends Base {
     public id: number;
     public hash: string;
     public nickname: string;
+    public isSubscriber: boolean;
+
+    public subscriber(): Promise<Subscriber>;
+    public group(): Promise<Channel>;
 
     toJSON(): {
         id: number;
@@ -4757,6 +4763,8 @@ export class Subscriber extends Base {
 
     public exists: boolean;
 
+    public percentage: number;
+
     /**
      * Get the subscribers avatar URL
      * @param size - The size
@@ -4839,6 +4847,7 @@ export class Subscriber extends Base {
 
         exists: boolean;
         subscribed: boolean;
+        percentage: number;
     };
 
     /**
