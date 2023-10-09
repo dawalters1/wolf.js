@@ -18,7 +18,7 @@ class Channel extends Base {
     this.name = data?.name;
     this.description = data?.description;
     this.reputation = data?.reputation;
-    this.owner = new IdHash(data?.owner);
+    this.owner = new IdHash(this.client, data?.owner);
     this.membersCount = data?.memberCount;
     this.official = data?.official;
     this.peekable = data?.peekable;
@@ -41,6 +41,12 @@ class Channel extends Base {
 
   get inGroup () {
     return this.inChannel;
+  }
+
+  get percentage () {
+    const reputation = (this.reputation.toString().split('.')[1] ?? '').padEnd(4, '0');
+
+    return parseFloat(`${reputation[1].slice(0, 2)}.${reputation[1].slice(2)}`).toFixed(2);
   }
 
   get stages () {
