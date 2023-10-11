@@ -1,7 +1,7 @@
 import { Capability, Command, Privilege } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import models, { ChannelMember, WOLFAPIError } from '../../models/index.js';
+import models from '../../models/index.js';
 
 const canRequestList = async (client, myCapability, includeAllButBanned = false) => {
   if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
@@ -100,7 +100,7 @@ class Member extends Base {
     );
 
     channel.members._bots.complete = response.body.length < this.client._frameworkConfig.get('members.bots.batch.size');
-    channel.members._bots.members = response.body?.map((member) => new ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._bots.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
 
     return channel.members._bots.members;
   }
@@ -154,7 +154,7 @@ class Member extends Base {
     );
 
     channel.members._silenced.complete = response.body?.length < this.client._frameworkConfig.get('members.silenced.batch.size');
-    channel.members._silenced.members = response.body?.map((member) => new ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._silenced.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
 
     return channel.members._silenced.members;
   }
@@ -215,7 +215,7 @@ class Member extends Base {
     );
 
     channel.members._banned.complete = response.body?.length < this.client._frameworkConfig.get('members.banned.batch.size');
-    channel.members._banned.members = response.body?.map((member) => new ChannelMember(this.client, { ...member, capabilities: Capability.BANNED, targetChannelId })) ?? [];
+    channel.members._banned.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, capabilities: Capability.BANNED, targetChannelId })) ?? [];
 
     return channel.members._banned.members;
   }
@@ -257,11 +257,11 @@ class Member extends Base {
     );
 
     if (!response.success) {
-      return new WOLFAPIError('Privileged members request failed', { response });
+      return new models.WOLFAPIError('Privileged members request failed', { response });
     }
 
     channel.members._privileged.complete = true; // 2,500 is the max supported, however some channels still have more than this
-    channel.members._privileged.members = response.body?.map((member) => new ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._privileged.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
 
     response.body?.forEach((member) => channel.members._misc.remove(member));
 
@@ -307,11 +307,11 @@ class Member extends Base {
     );
 
     if (!response.success) {
-      return new WOLFAPIError('Regular members request failed', { response });
+      return new models.WOLFAPIError('Regular members request failed', { response });
     }
 
     channel.members._regular.complete = response.body.length < this.client._frameworkConfig.get('members.regular.batch.size');
-    channel.members._regular.members = response.body?.map((member) => new ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._regular.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
 
     response.body?.forEach((member) => channel.members._misc.remove(member));
 

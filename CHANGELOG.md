@@ -5,22 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 2.2.9 (2023-10-06)
+# 2.3.0 (Unreleased)
+### Added
+- Support for Channel Roles
+### Fixed
+- Incorrect JSDocs for updating Channel/Subscriber profiles
+### Changed
+- Update README.md to be more up to date
+- Update multimedia to support additional methods
 
+# 2.2.11 (2023-10-07)
+### Fixed
+- Revert nanoid to 4.0.2
+
+# 2.2.10 (2023-10-06)
+### Changed
+- Replace yaml with js-yaml, remove config dependency
+
+# 2.2.9 (2023-10-06)
 ### Fixed
 - object is not iterable
 
-### Changed
-- Removed Request Queue
-- Update socket.io version to match server
-- Update Dependencies
-
 # 2.2.8 (2023-10-06)
-
 ### Changed
-- Removed Request Queue
 - Update socket.io version to match server
 - Update Dependencies
+### Removed
+- Request Queue
 
 # 2.2.7 (2023-09-26)
 ### Fixed
