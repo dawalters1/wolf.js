@@ -66,6 +66,24 @@ class ChannelMember extends Base {
   async ban () {
     return await this.client.channel.member.ban(this.targetChannelId, this.id);
   }
+
+  /**
+   * Assign a Channel Role
+   * @param {number} roleId
+   * @returns {Promise<Response>}
+   */
+  async assign (roleId) {
+    return await this.client.channel.role.assign(this.targetChannelId, this.id, roleId);
+  }
+
+  /**
+   * Remove a Channel Role
+   * @param {number} roleId
+   * @returns {Promise<Response>}
+   */
+  async unassign (roleId) {
+    return await this.client.channel.role.unassign(this.targetChannelId, this.id, roleId);
+  }
 }
 
 export default ChannelMember;

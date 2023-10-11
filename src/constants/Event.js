@@ -19,6 +19,8 @@ export const CHANNEL_MEMBER_DELETE = 'channelMemberDelete';
 export const CHANNEL_MEMBER_UPDATE = 'channelMemberUpdate';
 export const CHANNEL_MESSAGE = 'channelMessage';
 export const CHANNEL_MESSAGE_UPDATE = 'channelMessageUpdate';
+export const CHANNEL_ROLE_SUBSCRIBER_ASSIGN = 'channelRoleAssign';
+export const CHANNEL_ROLE_SUBSCRIBER_UNASSIGN = 'channelRoleUnassign';
 export const CHANNEL_TIP_ADD = 'channelTipAdd';
 export const CHANNEL_UPDATE = 'channelUpdate';
 export const GLOBAL_NOTIFICATION_LIST_ADD = 'globalNotificationListAdd';
@@ -122,6 +124,8 @@ export default {
   CHANNEL_MEMBER_UPDATE,
   CHANNEL_MESSAGE,
   CHANNEL_MESSAGE_UPDATE,
+  CHANNEL_ROLE_SUBSCRIBER_ASSIGN,
+  CHANNEL_ROLE_SUBSCRIBER_UNASSIGN,
   CHANNEL_TIP_ADD,
   CHANNEL_UPDATE,
   GLOBAL_NOTIFICATION_LIST_ADD,
