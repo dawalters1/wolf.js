@@ -5,6 +5,7 @@ import ChannelAudioCounts from './ChannelAudioCounts.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelRoleContainer from './ChannelRoleContainer.js';
 import IconInfo from './IconInfo.js';
 import IdHash from './IdHash.js';
 
@@ -17,7 +18,7 @@ class Channel extends Base {
     this.name = data?.name;
     this.description = data?.description;
     this.reputation = data?.reputation;
-    this.owner = new IdHash(data?.owner);
+    this.owner = new IdHash(this.client, data?.owner);
     this.membersCount = data?.memberCount;
     this.official = data?.official;
     this.peekable = data?.peekable;
@@ -31,7 +32,7 @@ class Channel extends Base {
     this.messageConfig = new ChannelMessageConfig(client, data?.messageConfig);
     this.members = new ChannelMemberList(client, data?.id);
     this.verificationTier = data?.verificationTier;
-
+    this.roles = new ChannelRoleContainer(client, data?.id);
     this.inChannel = false;
     this.capabilities = Capability.NOT_MEMBER;
 
@@ -40,6 +41,12 @@ class Channel extends Base {
 
   get inGroup () {
     return this.inChannel;
+  }
+
+  get percentage () {
+    const reputation = (this.reputation.toString().split('.')[1] ?? '').padEnd(4, '0');
+
+    return parseFloat(`${reputation[1].slice(0, 2)}.${reputation[1].slice(2)}`).toFixed(2);
   }
 
   get stages () {

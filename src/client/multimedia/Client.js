@@ -63,11 +63,20 @@ class Multimedia {
   }
 
   async upload (config, body) {
-    return await new Promise((resolve) => {
-      this.axiosClient.post(`${this.client.config.endpointConfig.mmsUploadEndpoint}/v${config.version}/${config.route}`, { body })
-        .then((res) => resolve(new Response(res.data)))
-        .catch((error) => resolve(new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers })));
-    });
+    return await this.request(config, body);
+  }
+
+  async request (config, body = undefined) {
+    return await this.axiosClient(
+      {
+        method: config?.method ?? 'POST',
+        baseURL: this.client.config.endpointConfig.mmsUploadEndpoint,
+        url: `/v${config.version}/${config.route}`,
+        data: body ? { body } : undefined
+      }
+    )
+      .then((response) => new Response(response.data))
+      .catch((error) => new Response({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
   }
 }
 

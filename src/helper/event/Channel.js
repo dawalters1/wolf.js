@@ -213,7 +213,8 @@ class Channel extends Base {
 
     validateMultimediaConfig(eventConfig, thumbnail);
 
-    return this.client.multimedia.upload(eventConfig,
+    return this.client.multimedia.request(
+      eventConfig,
       {
         data: thumbnail.toString('base64'),
         mimeType: (await fileTypeFromBuffer(thumbnail)).mime,
