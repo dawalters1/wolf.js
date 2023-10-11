@@ -1,12 +1,12 @@
-import Base from '../../models/Base.js';
+
 import PrivilegeUtility from './Privilege.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import IconSize from '../../constants/IconSize.js';
 
-class Subscriber extends Base {
+class Subscriber {
   constructor (client) {
-    super(client);
+    this.client = client;
 
     this.privilege = new PrivilegeUtility(client);
   }

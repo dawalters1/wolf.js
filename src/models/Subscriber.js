@@ -20,7 +20,7 @@ class Subscriber extends Base {
     this.id = data?.id;
     this.nickname = data?.nickname;
     this.onlineState = data?.onlineState;
-    this.reputation = data?.reputation;
+    this.reputation = data?.reputation ?? 0;
     this.privileges = data?.privileges ?? 0;
     this.privilegeList = Object.values(Privilege).filter((value) => (this.privileges & value) === value);
     this.status = data?.status;
@@ -28,6 +28,12 @@ class Subscriber extends Base {
 
     this.exists = Object.keys(data)?.length > 1;
     this.subscribed = subscribed;
+  }
+
+  get percentage () {
+    const reputation = (this.reputation.toString().split('.')[1] ?? '').padEnd(4, '0');
+
+    return parseFloat(`${reputation[1].slice(0, 2)}.${reputation[1].slice(2)}`).toFixed(2);
   }
 
   /**
