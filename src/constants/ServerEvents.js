@@ -13,6 +13,10 @@ export const GROUP = {
   },
   PROFILE: {
     GROUP_UPDATE: 'group update'
+  },
+  ROLE: {
+    GROUP_ROLE_SUBSCRIBER_ASSIGN: 'group role subscriber assign',
+    GROUP_ROLE_SUBSCRIBER_UNASSIGN: 'group role subscriber unassign'
   }
 };
 export const MESSAGE = {

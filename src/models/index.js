@@ -27,6 +27,10 @@ import ChannelMember from './ChannelMember.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMemberListSection from './ChannelMemberListSection.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
+import ChannelRole from './ChannelRole.js';
+import ChannelRoleContext from './ChannelRoleContext.js';
+import ChannelRoleContainer from './ChannelRoleContainer.js';
+import ChannelRoleMember from './ChannelRoleMember.js';
 import ChannelStage from './ChannelStage.js';
 import ChannelStats from './ChannelStats.js';
 import ChannelStatsActive from './ChannelStatsActive.js';
@@ -125,6 +129,10 @@ export {
   ChannelMemberList,
   ChannelMemberListSection,
   ChannelMessageConfig,
+  ChannelRole,
+  ChannelRoleContext,
+  ChannelRoleContainer,
+  ChannelRoleMember,
   ChannelStage,
   ChannelStats,
   ChannelStatsActive,
@@ -224,6 +232,10 @@ export default {
   ChannelMemberList,
   ChannelMemberListSection,
   ChannelMessageConfig,
+  ChannelRole,
+  ChannelRoleContext,
+  ChannelRoleContainer,
+  ChannelRoleMember,
   ChannelStage,
   ChannelStats,
   ChannelStatsActive,
