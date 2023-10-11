@@ -1,32 +1,14 @@
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
-import Websocket from './websocket/Client.js';
-import Multimedia from './multimedia/Client.js';
+import { Websocket, Multimedia } from './index.js';
 import CommandHandler from '../command/CommandHandler.js';
-import Achievement from '../helper/achievement/Achievement.js';
-import Banned from '../helper/banned/Banned.js';
-import Charm from '../helper/charm/Charm.js';
-import Channel from '../helper/channel/Channel.js';
-import Contact from '../helper/contact/Contact.js';
-import Discovery from '../helper/discovery/Discovery.js';
-import Event from '../helper/event/Event.js';
-import Log from '../helper/log/Log.js';
-import Messaging from '../helper/messaging/Messaging.js';
-import Misc from '../helper/misc/Misc.js';
-import Notification from '../helper/notification/Notification.js';
-import Phrase from '../helper/phrase/Phrase.js';
-import Stage from '../helper/stage/Stage.js';
-import Store from '../helper/store/Store.js';
-import Subscriber from '../helper/subscriber/Subscriber.js';
-import Tipping from '../helper/tipping/Tipping.js';
-import Topic from '../helper/topic/Topic.js';
+import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
 import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
 import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
-import Authorization from '../helper/authorization/Authorization.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';
 
@@ -268,7 +250,7 @@ class WOLF extends EventEmitter {
     );
 
     if (response.success && avatar) {
-      response.body.avatarUpload = await this.multimedia.upload(
+      response.body.avatarUpload = await this.multimedia.request(
         avatarConfig,
         {
           data: avatar.toString('base64'),

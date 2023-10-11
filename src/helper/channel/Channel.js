@@ -1,12 +1,13 @@
 import { Capability, Category, Command, Language } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import models, { Search } from '../../models/index.js';
+import models from '../../models/index.js';
 import _ from 'lodash';
 import Member from './Member.js';
 import patch from '../../utils/patch.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
+import Role from './Role.js';
 
 const buildChannelFromModule = (channelModule) => {
   const base = channelModule.base;
@@ -26,7 +27,9 @@ class Channel extends Base {
     super(client);
     this.fetched = false;
     this.channels = [];
+
     this.member = new Member(this.client);
+    this.role = new Role(this.client);
   }
 
   get groups () {
@@ -218,22 +221,23 @@ class Channel extends Base {
   /**
    * Update a channel profile
    * @param {Number} id
-   * @param {String} description
-   * @param {Boolean} peekable
-   * @param {Boolean} disableHyperlink
-   * @param {Boolean} disableImage
-   * @param {Boolean} disableImageFilter
-   * @param {Boolean} disableVoice
-   * @param {String} longDescription
-   * @param {Boolean} discoverable
-   * @param {Language} language
-   * @param {Category} category
-   * @param {Boolean} advancedAdmin
-   * @param {Boolean} questionable
-   * @param {Boolean} locked
-   * @param {Boolean} closed
-   * @param {Number} entryLevel
-   * @param {Buffer} avatar
+   * @param {object} profile
+   * @param {string} profile.description
+   * @param {boolean} profile.peekable
+   * @param {boolean} profile.disableHyperlink
+   * @param {boolean} profile.disableImage
+   * @param {boolean} profile.disableImageFilter
+   * @param {boolean} profile.disableVoice
+   * @param {string} profile.longDescription
+   * @param {boolean} profile.discoverable
+   * @param {Language} profile.language
+   * @param {Category} profile.category
+   * @param {boolean} profile.advancedAdmin
+   * @param {boolean} profile.questionable
+   * @param {boolean} profile.locked
+   * @param {boolean} profile.closed
+   * @param {number} profile.entryLevel
+   * @param {Buffer} profile.avatar
    * @returns { Promise<Response>}
    */
   async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
@@ -344,7 +348,7 @@ class Channel extends Base {
     );
 
     if (response.success && avatar) {
-      response.body.avatarUpload = await this.client.multimedia.upload(
+      response.body.avatarUpload = await this.client.multimedia.request(
         avatarConfig,
         {
           data: avatar.toString('base64'),
@@ -556,7 +560,7 @@ class Channel extends Base {
       }
     );
 
-    return response.body?.map((result) => new Search(this.client, result)) ?? [];
+    return response.body?.map((result) => new models.Search(this.client, result)) ?? [];
   }
 
   _process (value) {
@@ -571,6 +575,7 @@ class Channel extends Base {
     this.channels = [];
     this.fetched = false;
     this.member._cleanUp(reconnection);
+    this.role._cleanUp(reconnection);
   }
 }
 

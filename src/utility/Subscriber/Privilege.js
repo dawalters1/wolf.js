@@ -1,9 +1,12 @@
-import Base from '../../models/Base.js';
 import models from '../../models/index.js';
 import validator from '../../validator/index.js';
 import { Privilege } from '../../constants/index.js';
 
-class PrivilegeUtility extends Base {
+class PrivilegeUtility {
+  constructor (client) {
+    this.client = client;
+  }
+
   /**
    * Check if a subscriber has a list of privileges
    * @param {Number} subscriberId
