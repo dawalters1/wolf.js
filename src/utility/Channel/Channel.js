@@ -1,12 +1,11 @@
-import Base from '../../models/Base.js';
 import Member from './Member.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import IconSize from '../../constants/IconSize.js';
 
-class Channel extends Base {
+class Channel {
   constructor (client) {
-    super(client);
+    this.client = client;
 
     this.member = new Member(client);
   }

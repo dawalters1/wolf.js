@@ -66,7 +66,7 @@ class CommandHandler {
 
   /**
    * Register commands
-   * @param {command[]} commands
+   * @param {Command[]} commands
    */
   register (commands) {
     commands = Array.isArray(commands) ? commands : [commands];
