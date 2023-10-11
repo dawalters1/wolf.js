@@ -9,7 +9,7 @@ class TipCharm extends Base {
     this.quantity = data?.quantity;
     this.credits = data?.credits;
     this.magnitude = data?.magnitude;
-    this.subscriber = new IdHash(this.subscriber);
+    this.subscriber = new IdHash(this.client, this.subscriber);
   }
 
   /**
