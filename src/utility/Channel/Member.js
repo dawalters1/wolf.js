@@ -1,4 +1,3 @@
-import Base from '../../models/Base.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 import validator from '../../validator/index.js';
 import { Capability, Privilege } from '../../constants/index.js';
@@ -22,7 +21,11 @@ const checkCapability = (capability, subscriberCapability) => {
   }
 };
 
-class Member extends Base {
+class Member {
+  constructor (client) {
+    this.client = client;
+  }
+
   /**
    * Check if a subscriber has a capability in channel
    * @param {Number} targetChannelId

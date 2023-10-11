@@ -2,14 +2,17 @@ import _ from 'lodash';
 import validator, { isValidUrl } from '../../validator/index.js';
 import WOLFAPIError from '../../models/WOLFAPIError.js';
 import models from '../../models/index.js';
-import Base from '../../models/Base.js';
 import urlRegexSafe from 'url-regex-safe';
 
 function replaceRange (string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
 }
 
-class StringUtility extends Base {
+class StringUtility {
+  constructor (client) {
+    this.client = client;
+  }
+
   /**
    * Replace placeholders in a string
    * @param {String} string
