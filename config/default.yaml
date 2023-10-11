@@ -43,11 +43,11 @@ members:
       size: 100
 
 batching:
-  members: 5000
   length: 50
 
 multimedia:
   event:
+    method: post
     route: group-event-image-update
     version: 1
     mimes:
@@ -55,6 +55,7 @@ multimedia:
         size: 1048576
     square: true
   messaging:
+    method: post
     route: send-message
     version: 1
     mimes:
@@ -70,22 +71,24 @@ multimedia:
 
   avatar:
     subscriber:
+      method: post
       route: subscriber-avatar-update
       version: 1
       mimes:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152
+          size: 2621440
       square: true
     channel:
+      method: post
       route: group-avatar-update
       version: 1
       mimes:
         - type: 'image/jpeg'
           size: 1048576
         - type: 'image/gif'
-          size: 2097152
+          size: 2621440
       square: true
 
 validation:

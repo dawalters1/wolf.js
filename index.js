@@ -1,9 +1,7 @@
-import WOLF from './src/client/WOLF.js';
+import { WOLF } from './src/client/index.js';
 import Command from './src/command/Command.js';
 import Validator from './src/validator/index.js';
-import {
-  CharmSelectedBuilder
-} from './src/builders/index.js';
+import { CharmSelectedBuilder } from './src/builders/index.js';
 import {
   AdminAction,
   Avatar,
