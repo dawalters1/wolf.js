@@ -29,100 +29,100 @@ export class WOLF {
     /**
      * The bot configuration
      */
-    public config: Configuration;
+    readonly config: Configuration;
     /**
      * Exposes the Achievement methods
      */
-    public achievement: AchievementHelper;
+    readonly achievement: AchievementHelper;
     /**
      * Exposes the Authorization methods
      */
-    public authorization: AuthorizationHelper;
+    readonly authorization: AuthorizationHelper;
     /**
     * Exposes the Banned methods
     */
-    public banned: BannedHelper;
+    readonly banned: BannedHelper;
     /**
     * Exposes the Charm methods
     */
-    public charm: CharmHelper;
+    readonly charm: CharmHelper;
     /**
      * Exposes the Channel methods
      */
-    public channel: ChannelHelper;
+    readonly channel: ChannelHelper;
     /**
     * Exposes the Command Handler methods
     */
-    public commandHandler: CommandHandler;
+    readonly commandHandler: CommandHandler;
     /**
     * Exposes the Contact methods
     */
-    public contact: ContactHelper;
+    readonly contact: ContactHelper;
     /**
     * Exposes the Discovery methods
     */
-    public discovery: DiscoveryHelper;
+    readonly discovery: DiscoveryHelper;
     /**
     * Exposes the Event methods
     */
-    public event: EventHelper;
+    readonly event: EventHelper;
     /**
     * Exposes the Group methods
     * @deprecated use channel instead
     */
-    public group: ChannelHelper;
+    readonly group: ChannelHelper;
     /**
      * Exposes the Logging methods
      */
-    public log: LogHelper;
+    readonly log: LogHelper;
     /**
     * Exposes the Messaging methods
     */
-    public messaging: MessagingHelper;
+    readonly messaging: MessagingHelper;
     /**
     * Exposes the Multimedia methods
     */
-    public multimedia: Multimedia;
+    readonly multimedia: Multimedia;
     /**
     * Exposes the methods that don't fit into any of the existing helpers
     */
-    public misc: MiscHelper;
+    readonly misc: MiscHelper;
     /**
     * Exposes the Notifications methods
     */
-    public notification: NotificationHelper;
+    readonly notification: NotificationHelper;
     /**
     * Exposes the Phrase methods
     */
-    public phrase: PhraseHelper;
+    readonly phrase: PhraseHelper;
     /**
     * Exposes the Stage methods
     */
-    public stage: StageHelper;
+    readonly stage: StageHelper;
     /**
     * Exposes the Store methods
     */
-    public store: StoreHelper;
+    readonly store: StoreHelper;
     /**
     * Exposes the Subscriber methods
     */
-    public subscriber: SubscriberHelper;
+    readonly subscriber: SubscriberHelper;
     /**
     * Exposes the Tipping methods
     */
-    public tipping: TippingHelper;
+    readonly tipping: TippingHelper;
     /**
     * Exposes the Topic methods
     */
-    public topic: TopicHelper;
+    readonly topic: TopicHelper;
     /**
     * Exposes the Utility methods
     */
-    public utility: Utility;
+    readonly utility: Utility;
     /**
     * Exposes the Websocket methods
     */
-    public websocket: Websocket;
+    readonly websocket: Websocket;
 
     /**
      * Login to WOLF using credentials stored in configuration
@@ -151,12 +151,12 @@ export class WOLF {
     /**
      * The account currently logged in
      */
-    public currentSubscriber: Subscriber;
+    readonly currentSubscriber: Subscriber;
 
     /**
      * Split string at commas, newlines, spaces, etc
      */
-    public SPLIT_REGEX: RegExp;
+    readonly SPLIT_REGEX: RegExp;
 
     /**
      * Update the current logged in account profile
@@ -180,8 +180,17 @@ export class Websocket {
 export class Multimedia {
     private constructor(client: WOLF);
 
+
+    /**
+     * Send a request to the multimedia service
+     * @param config - The route configuration
+     * @param body - The data to uplodate
+     */
+    public request<T>(config: any, body: object): Promise<Response<T>>
+
     /**
      * Upload to the multimedia service
+     * @deprecated Use request
      * @param config - The route configuration
      * @param body - The data to uplodate
      */
@@ -370,33 +379,35 @@ export class Command {
         both: (command: CommandContext, ...args: any) => void
     }, children?: Array<Command>)
 }
-export class Base {
+export class BaseHelper {
     public constructor(client: WOLF);
+
+    readonly client: WOLF;
 
     private _cleanUp(reconnection: boolean)
 }
 
 //#region Helpers
-export class AchievementHelper extends Base {
+export class AchievementHelper extends BaseHelper {
     private constructor(client)
 
     /**
      * Exposes the Achievement Category methods
      */
-    public category: AchievementCategoryHelper;
+    readonly category: AchievementCategoryHelper;
     /**
      * Exposes the Channel Achievement methods
      */
-    public channel: AchievementChannelHelper;
+    readonly channel: AchievementChannelHelper;
     /**
      * Exposes the Group Achievement methods
      * @deprecated use channel instead
      */
-    public group: AchievementChannelHelper;
+    readonly group: AchievementChannelHelper;
     /**
      * Exposes the Subscriber Achievement methods
      */
-    public subscriber: AchievementSubscriberHelper;
+    readonly subscriber: AchievementSubscriberHelper;
     /**
      * Get an achievement
      * @param id - The ID of the achievement
@@ -413,7 +424,7 @@ export class AchievementHelper extends Base {
     public getByIds(ids: number | Array<number>, language: Language, forceNew?: boolean): Promise<Array<Achievement>>;
 }
 
-export class AchievementCategoryHelper extends Base {
+export class AchievementCategoryHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -424,7 +435,7 @@ export class AchievementCategoryHelper extends Base {
     public getList(language: Language, forceNew?: boolean): Promise<Array<Achievement>>;
 }
 
-export class AchievementChannelHelper extends Base {
+export class AchievementChannelHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -435,7 +446,7 @@ export class AchievementChannelHelper extends Base {
     public getById(targetChannelId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
 }
 
-export class AchievementSubscriberHelper extends Base {
+export class AchievementSubscriberHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -446,7 +457,7 @@ export class AchievementSubscriberHelper extends Base {
     public getById(subscriberId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
 }
 
-export class AuthorizationHelper extends Base {
+export class AuthorizationHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -474,7 +485,7 @@ export class AuthorizationHelper extends Base {
     public unauthorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
 }
 
-export class BannedHelper extends Base {
+export class BannedHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -502,7 +513,7 @@ export class BannedHelper extends Base {
     public unban(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
 }
 
-export class CharmHelper extends Base {
+export class CharmHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -560,13 +571,13 @@ export class CharmHelper extends Base {
     public set(charms: CharmSelectedBuilder): Promise<Response>;
 }
 
-export class ContactHelper extends Base {
+export class ContactHelper extends BaseHelper {
     private constructor(client);
 
     /**
      * Exposes the Blocked methods
      */
-    public blocked: BlockedHelper;
+    readonly blocked: BlockedHelper;
     /**
      * Get the Bots contacts list
      */
@@ -588,7 +599,7 @@ export class ContactHelper extends Base {
     public delete(subscriberId: number): Promise<Response>;
 }
 
-export class BlockedHelper extends Base {
+export class BlockedHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -612,7 +623,7 @@ export class BlockedHelper extends Base {
     public unblock(subscriberId: number): Promise<Response>;
 }
 
-export class DiscoveryHelper extends Base {
+export class DiscoveryHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -623,21 +634,21 @@ export class DiscoveryHelper extends Base {
     public get(languageId: Language, forceNew?: boolean): Promise<Discovery>;
 }
 
-export class EventHelper extends Base {
+export class EventHelper extends BaseHelper {
     private constructor(client);
     /**
      * Exposes the channel event methods
      */
-    public channel: ChannelEventHelper;
+    readonly channel: ChannelEventHelper;
     /**
      * Exposes the group event methods
      * @deprecated use channel instead
      */
-    public group: ChannelEventHelper;
+    readonly group: ChannelEventHelper;
     /**
      * Exposes the subscriber event subscription methods
      */
-    public subscription: EventSubscriptionHelper;
+    readonly subscription: EventSubscriptionHelper;
 
     /**
      * Get an event
@@ -651,7 +662,7 @@ export class EventHelper extends Base {
     public getByIds(ids: number | Array<number>): Promise<Event | Array<Event>>;
 }
 
-export class ChannelEventHelper extends Base {
+export class ChannelEventHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -704,7 +715,7 @@ export class ChannelEventHelper extends Base {
     public delete(targetChannelId: number, eventId: number): Promise<Response>
 }
 
-export class EventSubscriptionHelper extends Base {
+export class EventSubscriptionHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -724,13 +735,19 @@ export class EventSubscriptionHelper extends Base {
     public remove(eventId: number): Promise<Response>;
 }
 
-export class ChannelHelper extends Base {
+export class ChannelHelper extends BaseHelper {
     private constructor(client);
 
     /**
      * Exposes the Channel Member methods
      */
-    public member: ChannelMemberHelper;
+    readonly member: ChannelMemberHelper;
+
+    /**
+     * Exposes the Channel Role methods
+     */
+    readonly role: ChannelRoleHelper;
+
     /**
      * Get list of joined channels
      */
@@ -808,7 +825,7 @@ export class ChannelHelper extends Base {
     public search(query: string): Promise<Array<Search>>;
 }
 
-export class ChannelMemberHelper extends Base {
+export class ChannelMemberHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -885,7 +902,68 @@ export class ChannelMemberHelper extends Base {
     public kick(targetChannelId: number, subscriberId: number): Promise<Response>;
 }
 
-export class LogHelper extends Base {
+
+export class ChannelRoleHelper extends BaseHelper {
+    private constructor(client);
+
+    /**
+     * Get the context of a Channel role
+     * @param roleId - The ID of the role
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getById(roleId: number, languageId: Language, forceNew: false): Promise<ChannelRoleContext>;
+
+    /**
+     * Get the context of Channel roles
+     * @param roleIds - The ID of the roles
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew: false): Promise<Array<ChannelRoleContext>>;
+
+    /**
+     *
+     * @param id - The ID of the channel
+     * @param forceNew - Whether or not to request new from the server
+     */
+    public roles(id: number, forceNew: boolean): Promise<Array<ChannelRole>>;
+
+    /**
+     * Get the list of members with Channel Roles
+     * @param id - The ID of the channel
+     * @param subscribe - Whether or not to subscribe to member updates
+     * @param forceNew  - Whether or not to request new from the server
+     */
+    public members(id: number, subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
+
+    /**
+     * Assign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The ID of the role to assign
+     */
+    public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Reassign a Channel Role
+     * @param id - The ID of the channel
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The role to reassign
+     */
+    public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Unassign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the role to remove
+     */
+    public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+}
+
+export class LogHelper extends BaseHelper {
     public constructor(client: WOLF);
 
     /**
@@ -910,10 +988,10 @@ export class LogHelper extends Base {
     public error(message: string): void;
 }
 
-export class MessagingHelper extends Base {
+export class MessagingHelper extends BaseHelper {
     private constructor(client);
 
-    public subscription: MessagingSubscriptionHelper;
+    readonly subscription: MessagingSubscriptionHelper;
 
     /**
      * Send a group message
@@ -991,10 +1069,10 @@ export class MessagingHelper extends Base {
     public getConversationList(): Promise<Array<Message>>;
 }
 
-export class MessagingSubscriptionHelper extends Base {
+export class MessagingSubscriptionHelper extends BaseHelper {
     private constructor(client);
 
-    public subscriptions: {
+    readonly subscriptions: {
         [key: string]: {
             id: string,
             predicate: Function,
@@ -1046,7 +1124,7 @@ export class MessagingSubscriptionHelper extends Base {
 
 }
 
-export class MiscHelper extends Base {
+export class MiscHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1075,11 +1153,11 @@ export class MiscHelper extends Base {
     public updateMessageSettings(messageFilterTier: MessageFilterTier): Promise<Response>;
 }
 
-export class NotificationHelper extends Base {
+export class NotificationHelper extends BaseHelper {
     private constructor(client);
 
-    public subscriber: NotificationSubscriberHelper;
-    public global: NotificationGlobalHelper;
+    readonly ubscriber: NotificationSubscriberHelper;
+    readonly global: NotificationGlobalHelper;
 
     /**
      * Get notifications
@@ -1094,7 +1172,7 @@ export class NotificationHelper extends Base {
     public clear(): Promise<Response>;
 }
 
-export class NotificationSubscriberHelper extends Base {
+export class NotificationSubscriberHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1138,7 +1216,7 @@ export class NotificationSubscriberHelper extends Base {
 
 }
 
-export class NotificationGlobalHelper extends Base {
+export class NotificationGlobalHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1181,7 +1259,7 @@ export class NotificationGlobalHelper extends Base {
     public delete(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Array<Response>>;
 }
 
-export class PhraseHelper extends Base {
+export class PhraseHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1218,17 +1296,17 @@ export class PhraseHelper extends Base {
     public isRequestedPhrase(name: string, input: string): boolean;
 }
 
-export class StageHelper extends Base {
+export class StageHelper extends BaseHelper {
     private constructor(client);
 
     /**
      * Exposes the Stage Request methods
      */
-    public request: StageRequestHelper;
+    readonly request: StageRequestHelper;
     /**
      * Exposes the Stage Slot methods
      */
-    public slot: StageSlotHelper;
+    readonly slot: StageSlotHelper;
 
     /**
      * Gets all stages available for a channel
@@ -1326,7 +1404,7 @@ export class StageHelper extends Base {
     public getSlotId(targetChannelId: number): Promise<number>;
 }
 
-export class StageRequestHelper extends Base {
+export class StageRequestHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1356,7 +1434,7 @@ export class StageRequestHelper extends Base {
     public clear(targetChannelId: number): Promise<Response>
 }
 
-export class StageSlotHelper extends Base {
+export class StageSlotHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1415,7 +1493,7 @@ export class StageSlotHelper extends Base {
     public leave(targetChannelId: number, slotId: number): Promise<Response<Object>>;
 }
 
-export class StoreHelper extends Base {
+export class StoreHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1459,17 +1537,17 @@ export class StoreHelper extends Base {
     public getCreditBalance(forceNew?: boolean): Promise<number>
 }
 
-export class SubscriberHelper extends Base {
+export class SubscriberHelper extends BaseHelper {
     private constructor(client);
 
     /**
      * Exposes the Presence methods
      */
-    public presence: SubscriberPresenceHelper;
+    readonly presence: SubscriberPresenceHelper;
     /**
      * Exposes the Wolfstars methods
      */
-    public wolfstars: WolfStarsHelper;
+    readonly wolfstars: WolfStarsHelper;
     /**
      * Get a subscriber profile
      * @param id - The ID of the subscriber
@@ -1499,7 +1577,7 @@ export class SubscriberHelper extends Base {
 }
 
 
-export class WolfStarsHelper extends Base {
+export class WolfStarsHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1509,7 +1587,7 @@ export class WolfStarsHelper extends Base {
     public getProfile(subscriberId: number): Promise<WolfstarsProfile>;
 }
 
-export class SubscriberPresenceHelper extends Base {
+export class SubscriberPresenceHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1528,7 +1606,7 @@ export class SubscriberPresenceHelper extends Base {
     public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Presence | Array<Presence>>;
 }
 
-export class TippingHelper extends Base {
+export class TippingHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1604,7 +1682,7 @@ export class TippingHelper extends Base {
     public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<Response<TipLeaderboardSummary>>;
 }
 
-export class TopicHelper extends Base {
+export class TopicHelper extends BaseHelper {
     private constructor(client);
 
     /**
@@ -1668,13 +1746,13 @@ export class ArrayUtility {
     includes(array: Array<any>, object: any): any;
 }
 
-export class ChannelUtility extends Base {
+export class ChannelUtility {
     private constructor(client: WOLF);
 
     /**
      * Exposes the ChannelMember utility methods
      */
-    public member: ChannelMemberUtility;
+    readonly member: ChannelMemberUtility;
     /**
      * Get a channels avatar
      * @param channelId - The ID of the channel
@@ -1683,7 +1761,7 @@ export class ChannelUtility extends Base {
     public avatar(channelId: number, size: IconSize): Buffer;
 }
 
-export class ChannelMemberUtility extends Base {
+export class ChannelMemberUtility {
     private constructor(client: WOLF);
 
     /**
@@ -1778,13 +1856,13 @@ export class StringUtility {
     public sanitise(string: string): string;
 }
 
-export class SubscriberUtility extends Base {
+export class SubscriberUtility {
     private constructor(client: WOLF);
 
     /**
      * Exposes the Subscriber Privilege utility methods
      */
-    public privilege: SubscriberPrivilegeUtility;
+    readonly privilege: SubscriberPrivilegeUtility;
     /**
      * Get a subscriber avatar
      * @param subscriberId - The ID of the subscriber
@@ -1793,7 +1871,7 @@ export class SubscriberUtility extends Base {
     public avatar(subscriberId: number, size: IconSize): Buffer;
 }
 
-export class SubscriberPrivilegeUtility extends Base {
+export class SubscriberPrivilegeUtility {
     private constructor(client: WOLF);
 
     /**
@@ -1843,32 +1921,32 @@ export class Utility {
     /**
      * Exposes the Array utility methods
      */
-    public array: ArrayUtility;
+    readonly array: ArrayUtility;
     /**
      * Exposes the Channel utility methods
      */
-    public channel: ChannelUtility;
+    readonly channel: ChannelUtility;
     /**
      * Exposes the Group utility methods
      * @deprecated use channel
      */
-    public group: ChannelUtility;
+    readonly group: ChannelUtility;
     /**
      * Exposes the Number utility methods
      */
-    public number: NumberUtility;
+    readonly number: NumberUtility;
     /**
      * Exposes the String utility methods
      */
-    public string: StringUtility;
+    readonly string: StringUtility;
     /**
      * Exposes the Subscriber utility methods
      */
-    public subscriber: SubscriberUtility;
+    readonly subscriber: SubscriberUtility;
     /**
      * Exposes the Timer utility methods
      */
-    public timer: TimerUtility;
+    readonly timer: TimerUtility;
     /**
      * Join a channel
      * @param command - The command
@@ -1920,6 +1998,8 @@ export namespace Validator {
     export function isNullOrWhitespace(arg: String): Boolean;
     export function isLessThanOrEqualZero(arg: Number): Boolean;
     export function isLessThanZero(arg: Number): Boolean;
+    export function isGreaterThanOrEqualZero(arg: Number): Boolean;
+    export function isGreaterThanZero(arg: Number): Boolean;
     export function isValidNumber(arg: String | Number, acceptDecimals?: Boolean): Boolean;
     export function isValidBoolean(arg: Number | Boolean): Boolean
     export function isValidDate(arg: Date | Number): Boolean;
@@ -1983,7 +2063,7 @@ export class Achievement extends BaseModel {
     };
 }
 
-export class AchievementCategory extends Base {
+export class AchievementCategory extends BaseModel {
     private constructor(client: WOLF, data: object);
 
     public id: number;
@@ -1995,7 +2075,7 @@ export class AchievementCategory extends Base {
     };
 }
 
-export class AchievementUnlockable extends Base {
+export class AchievementUnlockable extends BaseModel {
     private constructor(client: WOLF, data: object);
 
     public id: number;
@@ -2015,7 +2095,7 @@ export class AchievementUnlockable extends Base {
     };
 }
 
-export class AchievementUnlockableAdditionalInfo extends Base {
+export class AchievementUnlockableAdditionalInfo extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public awardedAt: Date;
@@ -2027,7 +2107,7 @@ export class AchievementUnlockableAdditionalInfo extends Base {
     };
 }
 
-export class Ad extends Base {
+export class Ad extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public start: number;
@@ -2051,7 +2131,7 @@ export class Ad extends Base {
     };
 }
 
-export class BlacklistLink extends Base {
+export class BlacklistLink extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2063,7 +2143,7 @@ export class BlacklistLink extends Base {
     }
 }
 
-export class Charm extends Base {
+export class Charm extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2091,7 +2171,7 @@ export class Charm extends Base {
     };
 }
 
-export class CharmExpiry extends Base {
+export class CharmExpiry extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2122,7 +2202,7 @@ export class CharmExpiry extends Base {
     };
 }
 
-export class CharmSelected extends Base {
+export class CharmSelected extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public charmId: number;
@@ -2143,7 +2223,7 @@ export class CharmSelected extends Base {
     };
 }
 
-export class CharmStatistics extends Base {
+export class CharmStatistics extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public subscriberId: number;
@@ -2163,7 +2243,7 @@ export class CharmStatistics extends Base {
     };
 }
 
-export class CharmSummary extends Base {
+export class CharmSummary extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public charmId: number;
@@ -2179,7 +2259,7 @@ export class CharmSummary extends Base {
     };
 }
 
-export class CommandContext extends Base {
+export class CommandContext extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     /**
@@ -2273,7 +2353,7 @@ export class CommandContext extends Base {
     };
 }
 
-export class Contact extends Base {
+export class Contact extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2312,7 +2392,7 @@ export class Contact extends Base {
     };
 }
 
-export class ContactAdditionalInfo extends Base {
+export class ContactAdditionalInfo extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public hash: number;
@@ -2330,7 +2410,7 @@ export class ContactAdditionalInfo extends Base {
     };
 }
 
-export class Discovery extends Base {
+export class Discovery extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2376,7 +2456,7 @@ export class Discovery extends Base {
     };
 }
 
-export class DiscoveryPage extends Base {
+export class DiscoveryPage extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2423,7 +2503,7 @@ export class DiscoveryPage extends Base {
     };
 }
 
-export class DiscoverySection extends Base {
+export class DiscoverySection extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2468,7 +2548,7 @@ export class DiscoverySection extends Base {
     }
 }
 
-export class Event extends Base {
+export class Event extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2525,7 +2605,7 @@ export class Event extends Base {
     };
 }
 
-export class Channel extends Base {
+export class Channel extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2546,6 +2626,7 @@ export class Channel extends Base {
     public messageConfig: ChannelMessageConfig;
     public members: ChannelMemberList;
     public verificationTier: VerificationTier;
+    public roles: ChannelRoleContainer;
 
     /**
      * @deprecated use inChannel
@@ -2555,6 +2636,7 @@ export class Channel extends Base {
     public capabilities: Capability;
     public exists: boolean;
 
+    public percentage: string;
     /**
      * Get the channel avatar URL
      * @param size - The size
@@ -2682,15 +2764,26 @@ export class Channel extends Base {
                 capabilities: Capability;
             }>
         };
-
+        roles: {
+            members: Array<{
+                roleId: number,
+                subscriberId: number
+            }>,
+            roles: Array<{
+                roleId: number,
+                subscriberIdsList: Array<number>,
+                maxSeats: number
+            }>
+        },
         inGroup: boolean;
         inChannel: boolean;
         capabilities: Capability;
         exists: boolean;
+        percentage: string;
     };
 }
 
-export class ChannelAudioConfig extends Base {
+export class ChannelAudioConfig extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2712,7 +2805,7 @@ export class ChannelAudioConfig extends Base {
     };
 }
 
-export class ChannelAudioCounts extends Base {
+export class ChannelAudioCounts extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public broadcasterCount: number;
@@ -2726,7 +2819,7 @@ export class ChannelAudioCounts extends Base {
     };
 }
 
-export class ChannelAudioSlot extends Base {
+export class ChannelAudioSlot extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2794,7 +2887,7 @@ export class ChannelAudioSlot extends Base {
     };
 }
 
-export class ChannelAudioSlotRequest extends Base {
+export class ChannelAudioSlotRequest extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public slotId: number;
@@ -2828,7 +2921,7 @@ export class ChannelAudioSlotRequest extends Base {
     };
 }
 
-export class ChannelAudioSlotUpdate extends Base {
+export class ChannelAudioSlotUpdate extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2851,7 +2944,7 @@ export class ChannelAudioSlotUpdate extends Base {
     };
 }
 
-export class ChannelExtended extends Base {
+export class ChannelExtended extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2887,7 +2980,7 @@ export class ChannelExtended extends Base {
     };
 }
 
-export class ChannelMember extends Base {
+export class ChannelMember extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -2924,6 +3017,18 @@ export class ChannelMember extends Base {
      */
     public ban(): Promise<Response>;
 
+
+    /**
+     * Assign a Channel Role
+     * @param roleId - The ID of the role
+     */
+    public assign(roleId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param roleId - The ID of the role
+     */
+    public unassign(roleId): Promise<Response>
+
     toJSON(): {
         id: number;
         hash: string;
@@ -2931,7 +3036,7 @@ export class ChannelMember extends Base {
     };
 }
 
-export class ChannelMemberList extends Base {
+export class ChannelMemberList extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     toJSON(): {
@@ -2968,7 +3073,7 @@ export class ChannelMemberList extends Base {
     };
 }
 
-export class ChannelMessageConfig extends Base {
+export class ChannelMessageConfig extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public disableHyperlink: boolean;
@@ -2994,7 +3099,148 @@ export class ChannelMessageConfig extends Base {
     };
 }
 
-export class ChannelStage extends Base {
+export class ChannelRole extends BaseModel {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public channelId: number;
+    public roleId: number;
+    public subscriberIdList: Array<number>;
+    public maxSeats: number;
+
+    /**
+     * Request the profiles of all subscribers with this role
+     */
+    public subscribers(): Promise<Array<Subscriber>>;
+    /**
+     * Assign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     */
+    public assign(subscriberId: number): Promise<Response>;
+    /**
+     * Reassign a Channel Role
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     */
+    public reassign(oldSubscriberId: number, newSubscriberId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     */
+    public unassign(subscriberId: number): Promise<Response>
+
+    /**
+     * Get the roles context
+     */
+    public role(languageId: Language): Promise<ChannelRoleContext>;
+
+    toJSON(): {
+        channelId: number,
+        roleId: number,
+        subscriberIdList: Array<number>,
+        maxSeats: number,
+    }
+}
+
+
+export class ChannelRoleContext extends BaseModel {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public id: number;
+    public description: string;
+    public emojiUrl: string;
+    public hexColour: string;
+    public name: string;
+
+    toJSON(): {
+        id: number,
+        description: string,
+        emojiUrl: string,
+        hexColour: string,
+        name: string
+    }
+}
+
+export class ChannelRoleMember extends BaseModel {
+    private constructor(client: WOLF, data: object, channelId: number);
+
+    public channelId: number;
+    public roleId: number;
+    public subscriberId: number;
+
+    /**
+     * Get the subscribers profile
+     */
+    public subscriber(): Promise<Subscriber>;
+    /**
+     * Reassign the Channel Role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     */
+    public reassign(newSubscriberId: number): Promise<Response>;
+    /**
+     * Unassign the Channel Role
+     */
+    public unassign(): Promise<Response>
+
+    /**
+     * Get the roles context
+     */
+    public role(languageId: Language): Promise<ChannelRoleContext>;
+
+    toJSON(): {
+        channelId: number,
+        roleId: number,
+        subscriberId: number
+    }
+}
+
+export class ChannelRoleContainer extends BaseModel {
+    private constructor(client: WOLF, channelId: number);
+
+    /**
+     * Request the Channel Roles
+     * @param forceNew -
+     */
+    public roles(forceNew: boolean): Promise<Array<ChannelRole>>;
+    /**
+     * Request the Channel Role Members list
+     * @param subscribe -
+     * @param forceNew
+     */
+    public members(subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
+    /**
+     * Assign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the role
+     */
+    public assign(subscriberId: number, roleId: number): Promise<Response>;
+    /**
+     * Reassign a Channel Role
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to assign the role to
+     * @param roleId - The ID of the role
+     */
+    public reassign(oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
+    /**
+     * Unassign a Channel Role
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the Role
+     */
+    public unassign(subscriberId: number, roleId: number): Promise<Response>
+
+    toJSON(): {
+        members: Array<{
+            roleId: number,
+            subscriberId: number
+        }>,
+        roles: Array<{
+            roleId: number,
+            subscriberIdsList: Array<number>,
+            maxSeats: number
+        }>
+    }
+}
+
+export class ChannelStage extends BaseModel {
     private constructor(client: WOLF, data: object, targetChannelId: number)
 
     public id: number;
@@ -3005,9 +3251,15 @@ export class ChannelStage extends Base {
      * Set the stage for the channel
      */
     public set(): Promise<Response>;
+
+    toJSON(): {
+        id: number,
+        expireTime: Date,
+        targetChannelId: number
+    }
 }
 
-export class ChannelStats extends Base {
+export class ChannelStats extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public details: ChannelStatsDetail;
@@ -3159,7 +3411,7 @@ export class ChannelStats extends Base {
     };
 }
 
-export class ChannelStatsActive extends Base {
+export class ChannelStatsActive extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public actionCount: number;
@@ -3209,7 +3461,7 @@ export class ChannelStatsActive extends Base {
     };
 }
 
-export class ChannelStatsDetail extends Base {
+export class ChannelStatsDetail extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public actionCount: number;
@@ -3257,7 +3509,7 @@ export class ChannelStatsDetail extends Base {
     };
 }
 
-export class ChannelStatsTop extends Base {
+export class ChannelStatsTop extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public nickname: string;
@@ -3280,7 +3532,7 @@ export class ChannelStatsTop extends Base {
     };
 }
 
-export class ChannelStatsTrend extends Base {
+export class ChannelStatsTrend extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public day: number;
@@ -3294,7 +3546,7 @@ export class ChannelStatsTrend extends Base {
     };
 }
 
-export class GroupSubscriberUpdate extends Base {
+export class GroupSubscriberUpdate extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     /**
@@ -3333,7 +3585,7 @@ export class GroupSubscriberUpdate extends Base {
     };
 }
 
-export class IconInfo extends Base {
+export class IconInfo extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public availableSizes: IconInfoAvailableSize;
@@ -3355,7 +3607,7 @@ export class IconInfo extends Base {
     };
 }
 
-export class IconInfoAvailableSize extends Base {
+export class IconInfoAvailableSize extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public small: string;
@@ -3377,12 +3629,16 @@ export class IconInfoAvailableSize extends Base {
     };
 }
 
-export class IdHash extends Base {
+export class IdHash extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
     public hash: string;
     public nickname: string;
+    public isSubscriber: boolean;
+
+    public subscriber(): Promise<Subscriber>;
+    public group(): Promise<Channel>;
 
     toJSON(): {
         id: number;
@@ -3391,7 +3647,7 @@ export class IdHash extends Base {
     };
 }
 
-export class Link extends Base {
+export class Link extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public start: number;
@@ -3410,7 +3666,7 @@ export class Link extends Base {
     };
 }
 
-export class LinkMetadata extends Base {
+export class LinkMetadata extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public description: string;
@@ -3430,7 +3686,7 @@ export class LinkMetadata extends Base {
     };
 }
 
-export class Message extends Base {
+export class Message extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: string;
@@ -3548,7 +3804,7 @@ export class Message extends Base {
     };
 }
 
-export class MessageEdit extends Base {
+export class MessageEdit extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public subscriberId: number;
@@ -3565,7 +3821,7 @@ export class MessageEdit extends Base {
     };
 }
 
-export class MessageEmbed extends Base {
+export class MessageEmbed extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public type: EmbedType;
@@ -3590,7 +3846,7 @@ export class MessageEmbed extends Base {
     };
 }
 
-export class MessageMetadata extends Base {
+export class MessageMetadata extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public formatting: MessageMetadataFormatting;
@@ -3630,7 +3886,7 @@ export class MessageMetadata extends Base {
     };
 }
 
-export class MessageMetadataFormatting extends Base {
+export class MessageMetadataFormatting extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public groupLinks: Array<MessageMetadataFormattingChannelLink>;
@@ -3656,7 +3912,7 @@ export class MessageMetadataFormatting extends Base {
     };
 }
 
-export class MessageMetadataFormattingChannelLink extends Base {
+export class MessageMetadataFormattingChannelLink extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public start: number;
@@ -3685,7 +3941,7 @@ export class MessageMetadataFormattingChannelLink extends Base {
     };
 }
 
-export class MessageMetadataFormattingUrl extends Base {
+export class MessageMetadataFormattingUrl extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public start: number;
@@ -3703,7 +3959,7 @@ export class MessageMetadataFormattingUrl extends Base {
         url: string;
     };
 }
-export class MessageResponse extends Base {
+export class MessageResponse extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public uuid: string;
@@ -3717,7 +3973,7 @@ export class MessageResponse extends Base {
     };
 }
 
-export class MessageSettings extends Base {
+export class MessageSettings extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public spamFilter: MessageSettingFilter;
@@ -3755,7 +4011,7 @@ export class MessageSendOptions {
     }
 }
 
-export class MessageSettingFilter extends Base {
+export class MessageSettingFilter extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public enabled: boolean;
@@ -3773,7 +4029,7 @@ export class MessageSettingFilter extends Base {
     };
 }
 
-export class MessageUpdate extends Base {
+export class MessageUpdate extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public data: string;
@@ -3816,7 +4072,7 @@ export class MessageUpdate extends Base {
     };
 }
 
-export class Notification extends Base {
+export class Notification extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public context: string;
@@ -3831,7 +4087,7 @@ export class Notification extends Base {
     public exists: boolean;
 }
 
-export class NotificationFeed extends Base {
+export class NotificationFeed extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public body: string;
@@ -3842,7 +4098,7 @@ export class NotificationFeed extends Base {
 }
 
 
-export class LegacyNotification extends Base {
+export class LegacyNotification extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public actions: Array<NotificationAction>;
@@ -3886,7 +4142,7 @@ export class LegacyNotification extends Base {
     };
 }
 
-export class NotificationAction extends Base {
+export class NotificationAction extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -3904,7 +4160,7 @@ export class NotificationAction extends Base {
     };
 }
 
-export class Phrase extends Base {
+export class Phrase extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public name: string;
@@ -3928,7 +4184,7 @@ export class PhraseRoute {
     }
 }
 
-export class PhraseCount extends Base {
+export class PhraseCount extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public phrases: number;
@@ -3940,7 +4196,7 @@ export class PhraseCount extends Base {
     };
 }
 
-export class Presence extends Base {
+export class Presence extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public device: DeviceType;
@@ -3961,7 +4217,7 @@ export class Presence extends Base {
     };
 }
 
-export class Search extends Base {
+export class Search extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public searchType: SearchType;
@@ -3982,7 +4238,7 @@ export class Search extends Base {
     };
 }
 
-export class StageClientDurationUpdate extends Base {
+export class StageClientDurationUpdate extends BaseModel {
     private constructor(client: WOLF, data: object);
 
     public targetChannelId: number;
@@ -4050,7 +4306,7 @@ export class StageClientDurationUpdate extends Base {
     }
 }
 
-export class StageClientGeneralUpdate extends Base {
+export class StageClientGeneralUpdate extends BaseModel {
     private constructor(client: WOLF, data: object);
 
     public targetChannelId: number;
@@ -4118,7 +4374,7 @@ export class StageClientGeneralUpdate extends Base {
     }
 }
 
-export class StageClientViewerCountUpdate extends Base {
+export class StageClientViewerCountUpdate extends BaseModel {
     private constructor(client: WOLF, data: object);
 
     public targetChannelId: number;
@@ -4193,7 +4449,7 @@ export class StageClientViewerCountUpdate extends Base {
     }
 }
 
-export class Store extends Base {
+export class Store extends BaseModel {
     private constructor(client: WOLF, data: object, languageId: Language)
 
     public id: number;
@@ -4252,7 +4508,7 @@ export class Store extends Base {
     };
 }
 
-export class StorePage extends Base {
+export class StorePage extends BaseModel {
     private constructor(client: WOLF, data: object, languageId: Language)
 
     public id: number;
@@ -4297,7 +4553,7 @@ export class StorePage extends Base {
     };
 }
 
-export class StoreProduct extends Base {
+export class StoreProduct extends BaseModel {
     private constructor(client: WOLF, data: object, languageId: Language)
 
     public languageId: Language;
@@ -4359,7 +4615,7 @@ export class StoreProduct extends Base {
     };
 }
 
-export class StoreProductCredits extends Base {
+export class StoreProductCredits extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4379,7 +4635,7 @@ export class StoreProductCredits extends Base {
     };
 }
 
-export class StoreProductDuration extends Base {
+export class StoreProductDuration extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4400,7 +4656,7 @@ export class StoreProductDuration extends Base {
     };
 }
 
-export class StoreProductImage extends Base {
+export class StoreProductImage extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public url: string;
@@ -4410,7 +4666,7 @@ export class StoreProductImage extends Base {
     };
 }
 
-export class StoreProductPartial extends Base {
+export class StoreProductPartial extends BaseModel {
     private constructor(client: WOLF, data: object, languageId: Language)
 
     public credits: number;
@@ -4446,7 +4702,7 @@ export class StoreProductPartial extends Base {
     };
 }
 
-export class StoreSection extends Base {
+export class StoreSection extends BaseModel {
     private constructor(client: WOLF, data: object, languageId: Language, fromSubPage: boolean)
 
     public id: number;
@@ -4490,7 +4746,7 @@ export class StoreSection extends Base {
     };
 }
 
-export class Subscriber extends Base {
+export class Subscriber extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public charms: SubscriberSelectedCharm;
@@ -4510,6 +4766,8 @@ export class Subscriber extends Base {
     public language: string;
 
     public exists: boolean;
+
+    public percentage: number;
 
     /**
      * Get the subscribers avatar URL
@@ -4593,6 +4851,7 @@ export class Subscriber extends Base {
 
         exists: boolean;
         subscribed: boolean;
+        percentage: number;
     };
 
     /**
@@ -4605,7 +4864,7 @@ export class Subscriber extends Base {
     public unsubscribe(): Promise<Response>;
 }
 
-export class SubscriberEvent extends Base {
+export class SubscriberEvent extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4641,7 +4900,7 @@ export class SubscriberEvent extends Base {
     };
 }
 
-export class SubscriberEventAdditionalInfo extends Base {
+export class SubscriberEventAdditionalInfo extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public eTag: string;
@@ -4655,7 +4914,7 @@ export class SubscriberEventAdditionalInfo extends Base {
     };
 }
 
-export class SubscriberExtended extends Base {
+export class SubscriberExtended extends BaseModel {
     private constructor(client: WOLF, data: object)
     public about: string;
     public dateOfBirth: Date;
@@ -4689,7 +4948,7 @@ export class SubscriberExtended extends Base {
     };
 }
 
-export class SubscriberSelectedCharm extends Base {
+export class SubscriberSelectedCharm extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public selectedList: Array<CharmSelected>;
@@ -4702,7 +4961,7 @@ export class SubscriberSelectedCharm extends Base {
     };
 }
 
-export class TimerJob extends Base {
+export class TimerJob extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public handler: string;
@@ -4732,7 +4991,7 @@ export class TimerJob extends Base {
     };
 }
 
-export class Tip extends Base {
+export class Tip extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public charmList: Array<TipCharm>;
@@ -4797,7 +5056,7 @@ export class Tip extends Base {
     };
 }
 
-export class TipCharm extends Base {
+export class TipCharm extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4824,7 +5083,7 @@ export class TipCharm extends Base {
     };
 }
 
-export class TipContext extends Base {
+export class TipContext extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public type: ContextType;
@@ -4836,7 +5095,7 @@ export class TipContext extends Base {
     };
 }
 
-export class TipDetail extends Base {
+export class TipDetail extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4865,7 +5124,7 @@ export class TipDetail extends Base {
     };
 }
 
-export class TipLeaderboard extends Base {
+export class TipLeaderboard extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public leaderboard: Array<TipLeaderboardItem>;
@@ -4890,7 +5149,7 @@ export class TipLeaderboard extends Base {
     };
 }
 
-export class TipLeaderboardItem extends Base {
+export class TipLeaderboardItem extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public rank: number;
@@ -4932,7 +5191,7 @@ export class TipLeaderboardItem extends Base {
     };
 }
 
-export class TipLeaderboardSummary extends Base {
+export class TipLeaderboardSummary extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public topGifters: Array<IdHash>;
@@ -4967,7 +5226,7 @@ export class TipLeaderboardSummary extends Base {
     };
 }
 
-export class TipSummary extends Base {
+export class TipSummary extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public id: number;
@@ -4996,7 +5255,7 @@ export class TipSummary extends Base {
     };
 }
 
-export class TopicSectionVideo extends Base {
+export class TopicSectionVideo extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public aspect: TopicSectionVideoAspect;
@@ -5018,7 +5277,7 @@ export class TopicSectionVideo extends Base {
     };
 }
 
-export class TopicSectionVideoAspect extends Base {
+export class TopicSectionVideoAspect extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public width: number;
@@ -5030,7 +5289,7 @@ export class TopicSectionVideoAspect extends Base {
     };
 }
 
-export class Translation extends Base {
+export class Translation extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public languageId: Language;
@@ -5042,7 +5301,7 @@ export class Translation extends Base {
     };
 }
 
-export class Validity extends Base {
+export class Validity extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public fromTime: Date;
@@ -5054,7 +5313,7 @@ export class Validity extends Base {
     };
 }
 
-export class ValidUrl extends Base {
+export class ValidUrl extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public url: string;
@@ -5066,7 +5325,7 @@ export class ValidUrl extends Base {
     };
 }
 
-export class Welcome extends Base {
+export class Welcome extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public ip: string;
@@ -5087,7 +5346,7 @@ export class Welcome extends Base {
     };
 }
 
-export class WelcomeEndpoint extends Base {
+export class WelcomeEndpoint extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public avatarEndpoint: string;
@@ -5105,7 +5364,7 @@ export class WOLFAPIError extends Error {
     public params: any
 }
 
-export class WolfstarsProfile extends Base {
+export class WolfstarsProfile extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public maxListeners: number;
@@ -5361,7 +5620,7 @@ export enum OnlineState {
 export enum Privilege {
     SUBSCRIBER = 1,
     BOT_TESTER = 2,
-    GAME_TESTER = 4,
+    HOST = 4,
     CONTENT_SUBMITER = 8,
     SELECTCLUB_1 = 16,
     ELITECLUB_1 = 64,
@@ -5370,10 +5629,10 @@ export enum Privilege {
     SELECTCLUB_2 = 1024,
     ALPHA_TESTER = 2048,
     STAFF = 4096,
-    TRANSLATOR = 8192,
+    DJ = 8192,
     DEVELOPER = 16384,
     ELITECLUB_2 = 131072,
-    PEST = 262144,
+    WELCOMER = 262144,
     VALID_EMAIL = 524288,
     PREMIUM_ACCOUNT = 1048576,
     WOLF_STAR = 2097152,
@@ -5645,6 +5904,14 @@ export interface ClientEvents {
      * Fired when a channel message is updated
      */
     channelMessageUpdate: [message: Message],
+    /**
+     * Fired when a group member has a Channel Role added
+     */
+    channelRoleAssign: [channel: Channel, channelRoleMember: ChannelRoleMember],
+    /**
+     * Fired when a group member has a Channel Role removed
+     */
+    channelRoleUnassign: [channel: Channel, channelRoleMember: ChannelRoleMember],
     /**
      * Fired when a group message is tipped
      * @deprecated use channelTipAdd

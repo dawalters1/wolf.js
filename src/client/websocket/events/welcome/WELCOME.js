@@ -2,17 +2,21 @@ import { Command, Event } from '../../../../constants/index.js';
 import { Welcome } from '../../../../models/index.js';
 
 const subscriptions = async (client) => {
+  const promiseArray = [];
+
   if (client.config.framework.subscriptions.messages.channel.enabled) {
-    await client.messaging._subscribeToChannel();
+    promiseArray.push(client.messaging._subscribeToChannel());
   }
 
   if (client.config.framework.subscriptions.messages.private.enabled) {
-    await client.messaging._subscribeToPrivate();
+    promiseArray.push(client.messaging._subscribeToPrivate());
   }
 
   if (client.config.framework.subscriptions.messages.channel.tipping) {
-    await client.tipping._subscribeToChannel();
+    promiseArray.push(client.tipping._subscribeToChannel());
   }
+
+  await Promise.all(promiseArray);
 };
 
 const fininaliseConnection = async (client, resume = false) => {
@@ -75,7 +79,7 @@ const login = async (client) => {
  * @param {import('../../../WOLF.js').default} client
  */
 export default async (client, body) => {
-  await client._cleanUp(body.loggedInUser === undefined);
+  client._cleanUp(body.loggedInUser === undefined);
 
   const welcome = new Welcome(client, body);
 

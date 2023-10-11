@@ -50,6 +50,8 @@ const isValidBoolean = (arg) => typeof arg === 'boolean' || (typeof arg === 'num
 const isValidDate = (arg) => !isNaN(new Date(arg).getDate());
 const isValidHex = (arg) => !isNullOrWhitespace(arg) && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/giu.test(`${arg.startsWith('#') ? '' : '#'}${arg}`);
 const isValidEmoji = (arg) => !isNullOrWhitespace(arg) && /\p{Extended_Pictographic}/giu.test(arg);
+const isGreaterThanZero = (arg) => isValidNumber(arg) && parseInt(arg) > 0;
+const isGreaterThanOrEqualZero = (arg) => isValidNumber(arg) && parseInt(arg) >= 0;
 
 const isValidUrl = (client, arg) => {
   if (!arg) {
@@ -119,6 +121,8 @@ const exports = {
   isNull,
   isNullOrUndefined,
   isLessThanOrEqualZero,
+  isGreaterThanOrEqualZero,
+  isGreaterThanZero,
   isNullOrWhitespace,
   isValidNumber,
   isLessThanZero,
@@ -135,6 +139,8 @@ export {
   isNull,
   isNullOrUndefined,
   isLessThanOrEqualZero,
+  isGreaterThanOrEqualZero,
+  isGreaterThanZero,
   isNullOrWhitespace,
   isValidNumber,
   isLessThanZero,
