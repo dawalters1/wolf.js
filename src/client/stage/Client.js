@@ -68,7 +68,7 @@ class Client extends EventEmitter {
         if (!this.muted) {
           this.source.onData(
             {
-              samples: this.volume === 1 ? new Int8Array(sample) : new Int8Array(sample).map((samples) => samples * parseFloat(this.volume).toPrecision(3)),
+              samples: new Int8Array(sample).map((samples) => samples * this.volume),
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
@@ -156,9 +156,7 @@ class Client extends EventEmitter {
       })
       .pipe()
       .on('data', async (data) => {
-        const chunks = _.chunk(data, SLICE_COUNT);
-
-        for (const chunk of chunks) {
+        for (const chunk of _.chunk(data, SLICE_COUNT)) {
           if (this.incompleteSample) {
             const incompleteSample = this.incompleteSample;
 
@@ -169,16 +167,17 @@ class Client extends EventEmitter {
             temp.set(new Uint8Array(incompleteSample), 0);
             temp.set(new Uint8Array(overflowed ? chunk.slice(0, SLICE_COUNT - incompleteSample.length) : chunk), incompleteSample.length);
 
-            if (temp.length < SLICE_COUNT) {
-              if (overflowed) {
-                throw new Error('ERROR CREATING COMPLETE BUFFER');
-              } else {
-                this.incompleteSample = temp;
-              }
-            } else {
-              this.incompleteSample = overflowed ? chunk.slice(SLICE_COUNT - incompleteSample.length) : null;
-              this.samples.push(temp);
+            this.incompleteSample = temp.length < SLICE_COUNT
+              ? temp
+              : overflowed
+                ? chunk.slice(SLICE_COUNT - incompleteSample.length)
+                : null;
+
+            if (temp.length !== SLICE_COUNT) {
+              continue;
             }
+
+            this.samples.push(temp);
           } else {
             chunk.length === SLICE_COUNT
               ? this.samples.push(chunk)
