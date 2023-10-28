@@ -17,10 +17,11 @@ class ChannelMessageConfig extends Base {
    * @param {Boolean} disableImage
    * @param {Boolean} disableImageFilter
    * @param {Boolean} disableVoice
+   * @param {number} slowModeRateInSeconds
    * @returns {Promise<Response>}
    */
-  async update ({ disableHyperlink, disableImage, disableImageFilter, disableVoice }) {
-    return await this.client.channel.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter });
+  async update ({ disableHyperlink, disableImage, disableImageFilter, disableVoice, slowModeRateInSeconds }) {
+    return await this.client.channel.update(this.id, { disableHyperlink, disableImage, disableVoice, disableImageFilter, slowModeRateInSeconds });
   }
 }
 
