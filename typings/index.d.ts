@@ -137,6 +137,19 @@ export class WOLF {
     public login(email: string, password: string, onlineState?: OnlineState): Promise<void>;
 
     /**
+     * Connect to the service without login details
+     * - Note: Will login if details are in config
+     */
+    public connect(): Promise<void>;
+    /**
+     * Reconnect the websocket and relog if possible
+     */
+    public reconnect(): Promise<void>;
+    /**
+     * Disconnect the websocket
+     */
+    public disconnect(): Promise<void>;
+    /**
      * Logout of WOLF
      */
     public logout(): Promise<void>;
@@ -204,7 +217,7 @@ export class Configuration {
     public subscriberId: number;
     /**
      * The keyword belonging to the project
-     * Default: default
+     * - Default: default
      */
     public keyword: string;
     /**
@@ -213,12 +226,12 @@ export class Configuration {
     public framework: {
         /**
          * The ID of the developer
-         * Default: undefined
+         * - Default: undefined
          */
         developer: number;
         /**
          * The default language of responses
-         * Default: en
+         * - Default: en
          */
         language: string;
         /**
@@ -235,12 +248,12 @@ export class Configuration {
             password: string;
             /**
              * The online state the bot should appear as
-             * Default: 1
+             * - Default: 1
              */
             onlineState: OnlineState;
             /**
              * The account token (Automatically generated if none provided)
-             * Default: undefined
+             * - Default: undefined
              */
             token: string
         },
@@ -254,17 +267,17 @@ export class Configuration {
             ignore: {
                 /**
                  * Whether or not the bot should allow official bots to use commands
-                 * Default: false
+                 * - Default: false
                  */
                 official: boolean;
                 /**
                  * Whether or not the bot should allow unofficial bots to use commands
-                 * Default: false
+                 * - Default: false
                  */
                 unofficial: boolean;
                 /**
                  * Whether or not the bot should allow itself to use commands
-                 * Default: true
+                 * - Default: true
                  */
                 self: boolean;
             }
@@ -279,7 +292,7 @@ export class Configuration {
             ignore: {
                 /**
                  * Whether or not the bot should process its own messages
-                 * Default: false
+                 * - Default: false
                  */
                 self: boolean;
             }
@@ -299,24 +312,24 @@ export class Configuration {
                 group: {
                     /**
                      * Whether or not the bot should receive group messages
-                     * Default: true
+                     * - Default: true
                      */
                     enabled: boolean;
                     /**
                      * Whether or not the bot should receive group messages tip events
-                     * Default: true
+                     * - Default: true
                      */
                     tipping: boolean;
                 },
                 channel: {
                     /**
                      * Whether or not the bot should receive channel messages
-                     * Default: true
+                     * - Default: true
                      */
                     enabled: boolean;
                     /**
                      * Whether or not the bot should receive channel messages tip events
-                     * Default: true
+                     * - Default: true
                      */
                     tipping: boolean;
                 },
@@ -326,12 +339,12 @@ export class Configuration {
                 private: {
                     /**
                      * Whether or not the bot should receive private messages
-                     * Default: true
+                     * - Default: true
                      */
                     enabled: boolean;
                     /**
                      * Whether or not the bot should receive private messages tip events (Not Implemented)
-                     * Default: false
+                     * - Default: false
                      */
                     tipping: boolean;
                 }
@@ -340,7 +353,7 @@ export class Configuration {
         rateLimiter: {
             /**
              * Whether or not the internal rate limiter should be enabled
-             * Default: false (Broken)
+             * - Default: false (Broken)
              */
             enabled: boolean
         }
