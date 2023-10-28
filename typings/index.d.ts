@@ -778,7 +778,7 @@ export class ChannelHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param channelData - The new channel data
      */
-    public update(id: number, channelData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar: Buffer }): Promise<Response>;
+    public update(id: number, channelData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, slowModeRateInSeconds?: number, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar: Buffer }): Promise<Response>;
     /**
      * Join a channel
      * @param id - The ID of the channel
@@ -2676,7 +2676,7 @@ export class Channel extends BaseModel {
      * Update the channels profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { description: string, peekable: boolean, disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean, longDescription: string, discoverable: boolean, language: Language, category: Category, advancedAdmin: boolean, questionable: boolean, locked: boolean, closed: boolean, entryLevel: number, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, slowModeRateInSeconds?: number, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar?: Buffer }): Promise<Response>;
 
     toJSON(): {
         id: number;
@@ -3087,7 +3087,7 @@ export class ChannelMessageConfig extends BaseModel {
      * Update the message config
      * @param messageConfig - The new message config settings
      */
-    public update(messageConfig: { disableHyperlink: boolean, disableImage: boolean, disableImageFilter: boolean, disableVoice: boolean }): Promise<Response>;
+    public update(messageConfig: { disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, slowModeRateInSeconds?: number }): Promise<Response>;
 
     toJSON(): {
         disableHyperlink: boolean;

@@ -228,6 +228,7 @@ class Channel extends Base {
    * @param {boolean} profile.disableImage
    * @param {boolean} profile.disableImageFilter
    * @param {boolean} profile.disableVoice
+   * @param {number} profile.slowModeRateInSeconds
    * @param {string} profile.longDescription
    * @param {boolean} profile.discoverable
    * @param {Language} profile.language
@@ -240,7 +241,7 @@ class Channel extends Base {
    * @param {Buffer} profile.avatar
    * @returns { Promise<Response>}
    */
-  async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
+  async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, slowModeRateInSeconds, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -267,6 +268,10 @@ class Channel extends Base {
 
     if (disableVoice && !validator.isValidBoolean(disableVoice)) {
       throw new models.WOLFAPIError('disableVoice must be a valid boolean', { disableVoice });
+    }
+
+    if (!validator.isNullOrUndefined(slowModeRateInSeconds) && (!validator.isType(slowModeRateInSeconds, 'number') || parseInt(slowModeRateInSeconds) < 0 || parseInt(slowModeRateInSeconds) > 30)) {
+      throw new models.WOLFAPIError('slowModeRateInSeconds must be between 0 and 30');
     }
 
     if (discoverable && !validator.isValidBoolean(discoverable)) {
@@ -331,7 +336,8 @@ class Channel extends Base {
           disableHyperlink: (disableHyperlink === null || disableHyperlink) ? disableHyperlink : channel.messageConfig.disableHyperlink,
           disableImage: (disableImage === null || disableImage) ? disableImage : channel.messageConfig.disableImage,
           disableImageFilter: (disableImageFilter === null || disableImageFilter) ? disableImageFilter : channel.messageConfig.disableImageFilter,
-          disableVoice: (disableVoice === null || disableVoice) ? disableVoice : channel.messageConfig.disableVoice
+          disableVoice: (disableVoice === null || disableVoice) ? disableVoice : channel.messageConfig.disableVoice,
+          slowModeRateInSeconds: (slowModeRateInSeconds === null || slowModeRateInSeconds !== undefined) ? slowModeRateInSeconds : channel.messageConfig.slowModeRateInSeconds
         },
         extended: {
           longDescription: (longDescription === null || longDescription) ? longDescription : channel.extended.longDescription,
