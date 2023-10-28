@@ -3,12 +3,10 @@ import events from 'events';
 import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
 import _ from 'lodash';
-import WOLFAPIError from '../../models/WOLFAPIError.js';
 
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection, nonstandard } = wrtc;
 const { RTCAudioSource } = nonstandard;
-const MediaStream = wrtc.MediaStream;
 
 const SAMPLE_RATE = 48000;
 const SLICE_COUNT = 1920;
@@ -16,77 +14,29 @@ const CHANNEL_COUNT = 2;
 const BITRATE = 16;
 const FRAMES = 480;
 
-const createUInt8Array = (buffer, volume) => {
-  // This causes choppiness :shrug: don't like it, fix it yourself.
-  for (let i = buffer.length; i < 1920; i++) {
-    buffer[i] = 0;
-  }
-
-  return new Int8Array(buffer).map((samples) => (volume === 1 || !samples) ? samples : samples * volume);
-};
-
 class Client extends EventEmitter {
-  /**
-   * @param {import('../WOLF').default} client
-   */
   constructor () {
     super();
 
-    this.slotId = undefined;
-    this.muted = undefined;
-
-    this.broadcastState = StageBroadcastState.IDLE;
-    this.connectionState = StageConnectionState.DISCONNECTED;
-    this.client = new RTCPeerConnection();
-    this.source = new RTCAudioSource();
-
-    const stream = new MediaStream();
-
-    this.track = this.source.createTrack();
-    stream.addTrack(this.track);
-    this.sender = this.client.addTrack(this.track, stream);
-
+    this.slotId = 0;
+    this.muted = false;
     this.completed = false;
+
+    this.incompleteSample = null;
     this.samples = [];
     this.emittedPlaying = false;
     this.duration = 0;
     this.volume = 1;
 
-    const broadcast = () => setTimeout(async () => {
-      if (this.broadcastState === StageBroadcastState.PLAYING) {
-        const sample = this.samples?.shift();
+    this.broadcastState = StageBroadcastState.IDLE;
+    this.connectionState = StageConnectionState.DISCONNECTED;
 
-        if (sample) {
-          if (!this.muted) {
-            this.source.onData(
-              {
-                samples: createUInt8Array(sample, this.volume),
-                sampleRate: SAMPLE_RATE,
-                bitsPerSample: BITRATE,
-                channelCount: CHANNEL_COUNT,
-                numberOfFrames: FRAMES,
-                timestamp: Date.now()
-              }
-            );
-          }
-        }
+    this.pc = new RTCPeerConnection();
+    this.source = new RTCAudioSource();
+    this.pc.addTrack(this.source.createTrack());
 
-        if (!this.emittedPlaying) {
-          this.emittedPlaying = true;
-          this.emit(Event.STAGE_CLIENT_START);
-        } else if (!this.samples.length) {
-          if (this.completed) {
-            this.emit(Event.STAGE_CLIENT_END);
-            this.stop();
-          }
-        }
-      }
-
-      return broadcast();
-    }, 9.9);
-
-    this.client.onconnectionstatechange = async () => {
-      const state = this.client.connectionState;
+    this.pc.onconnectionstatechange = async () => {
+      const state = this.pc.connectionState;
 
       if (state === StageConnectionState.CONNECTED) {
         if (this.connectionState === StageConnectionState.INITIALISING || this.connectionState === StageConnectionState.DISCONNECTED) {
@@ -94,7 +44,7 @@ class Client extends EventEmitter {
         } else if (this.connectionState === StageConnectionState.CONNECTING) {
           this.connectionState = StageConnectionState.CONNECTED;
         }
-      } else if (this.client.connectionState === StageConnectionState.DISCONNECTED) {
+      } else if (state === StageConnectionState.DISCONNECTED) {
         this.connectionState = StageConnectionState.DISCONNECTED;
 
         return this.reset(true);
@@ -102,8 +52,45 @@ class Client extends EventEmitter {
 
       return this.emit(this.connectionState === StageConnectionState.CONNECTED ? Event.STAGE_CLIENT_CONNECTED : this.connectionState === StageConnectionState.CONNECTING, { slotId: this.slotId });
     };
+  }
 
-    broadcast();
+  broadcast () {
+    setTimeout(async () => {
+      if (this.broadcastState !== StageBroadcastState.PLAYING) {
+        return this.broadcast();
+      }
+
+      const sample = this.samples?.shift();
+
+      if (sample) {
+        this.duration += 10;
+
+        if (!this.muted) {
+          this.source.onData(
+            {
+              samples: new Int8Array(sample).map((samples) => samples * this.volume),
+              sampleRate: SAMPLE_RATE,
+              bitsPerSample: BITRATE,
+              channelCount: CHANNEL_COUNT,
+              numberOfFrames: FRAMES,
+              timestamp: Date.now()
+            }
+          );
+        }
+      }
+
+      if (!this.emittedPlaying) {
+        this.emittedPlaying = true;
+        this.emit(Event.STAGE_CLIENT_START);
+      } else if (!this.samples.length && this.completed) {
+        this.emit(Event.STAGE_CLIENT_END);
+        this.stop();
+
+        return;
+      }
+
+      return this.broadcast();
+    }, 9.9);
   }
 
   handleSlotUpdate (slot, sourceSubscriberId) {
@@ -125,12 +112,13 @@ class Client extends EventEmitter {
   }
 
   reset (disconnect = false) {
-    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
+    this.pc.getSenders()[0].track.stop();
 
-    clearInterval(this.durationUpdater);
+    this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
     this.ffmpeg?.destroy();
     this.completed = false;
+    this.incompleteSample = null;
     this.samples = [];
     this.emittedPlaying = false;
     this.duration = 0;
@@ -138,18 +126,14 @@ class Client extends EventEmitter {
     if (disconnect) {
       this.connectionState = StageConnectionState.DISCONNECTED;
 
-      this.client.close();
+      this.pc.close();
 
       this.emit(Event.STAGE_CLIENT_DISCONNECTED);
     }
   }
 
   setVolume (volume) {
-    if (volume < 0 || volume > 2) {
-      throw new WOLFAPIError('volume cannot be less than 0 or greater than 2', { volume });
-    }
-
-    this.volume = parseFloat(volume).toPrecision(3);
+    this.volume = volume;
 
     return this.volume;
   }
@@ -171,18 +155,41 @@ class Client extends EventEmitter {
         this.emit(Event.STAGE_CLIENT_ERROR, error);
       })
       .pipe()
-      .on('data', async (data) => _.chunk(data, SLICE_COUNT).forEach(async (chunk) => this.samples.push(chunk)))
+      .on('data', async (data) => {
+        for (const chunk of _.chunk(data, SLICE_COUNT)) {
+          if (this.incompleteSample) {
+            const incompleteSample = this.incompleteSample;
+
+            const overflowed = (incompleteSample.length + chunk.length) > SLICE_COUNT ? (incompleteSample.length + chunk.length) - SLICE_COUNT : 0;
+
+            const temp = new Uint8Array(SLICE_COUNT);
+
+            temp.set(new Uint8Array(incompleteSample), 0);
+            temp.set(new Uint8Array(overflowed ? chunk.slice(0, SLICE_COUNT - incompleteSample.length) : chunk), incompleteSample.length);
+
+            this.incompleteSample = temp.length < SLICE_COUNT
+              ? temp
+              : overflowed
+                ? chunk.slice(SLICE_COUNT - incompleteSample.length)
+                : null;
+
+            if (temp.length !== SLICE_COUNT) {
+              continue;
+            }
+
+            this.samples.push(temp);
+          } else {
+            chunk.length === SLICE_COUNT
+              ? this.samples.push(chunk)
+              : this.incompleteSample = chunk;
+          }
+        }
+      })
       .on('finish', () => { this.completed = true; });
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;
 
-    this.durationUpdater = setInterval(() => {
-      if (this.broadcastState === StageBroadcastState.PLAYING) {
-        this.duration += 1000;
-      }
-
-      return false;
-    }, 1000);
+    this.broadcast();
   }
 
   stop () {
@@ -200,24 +207,24 @@ class Client extends EventEmitter {
   }
 
   async createSDP () {
-    const offer = await this.client.createOffer(
-      {
-        offerToSendAudio: true,
-        offerToSendVideo: false,
-        offerToReceiveAudio: false,
-        offerToReceiveVideo: false
-      }
+    this.pc.setLocalDescription(
+      await this.pc.createOffer(
+        {
+          offerToSendAudio: true,
+          offerToSendVideo: false,
+          offerToReceiveAudio: false,
+          offerToReceiveVideo: false
+        }
+      )
     );
 
-    this.client.setLocalDescription(offer);
-
-    return offer.sdp.replace('a=sendrecv', 'a=recvonly');
+    return this.pc.localDescription.sdp;
   }
 
   async setResponse (slotId, sdp) {
     this.slotId = slotId;
 
-    this.client.setRemoteDescription(
+    this.pc.setRemoteDescription(
       new RTCSessionDescription(
         {
           type: 'answer',
