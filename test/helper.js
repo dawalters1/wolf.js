@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { WOLF, MessageFilterTier, Language, CharmSelectedBuilder, Group, TipPeriod, TipDirection, TipType, Message, StoreProductPartial, Event, LogLevel, WOLFAPIError } from '../index.js';
+import { WOLF, MessageFilterTier, Language, CharmSelectedBuilder, Channel, TipPeriod, TipDirection, TipType, Message, StoreProductPartial, Event, LogLevel, WOLFAPIError } from '../index.js';
 import { describe, before, after, it } from 'mocha';
 import { expect } from 'chai';
 import fs from 'fs';

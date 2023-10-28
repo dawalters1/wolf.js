@@ -11,11 +11,14 @@ import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';
+import { login } from './websocket/events/welcome/WELCOME.js';
 
 // #endregion
 class WOLF extends EventEmitter {
   constructor () {
     super();
+
+    console.log('CREATING');
 
     this.utility = new Utility(this);
 
@@ -47,6 +50,8 @@ class WOLF extends EventEmitter {
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
 
     this.currentSubscriber = undefined;
+
+    console.log('CREATED');
   }
 
   /**
@@ -56,7 +61,11 @@ class WOLF extends EventEmitter {
    * @param {OnlineState | Number} onlineState
    * @returns {Promise<void>}
    */
-  login (email, password, onlineState = OnlineState.ONLINE) {
+  async login (email, password, onlineState = OnlineState.ONLINE) {
+    if (this.websocket?.socket?.connected && this.currentSubscriber) {
+      return false;
+    }
+
     if (!email) {
       const loginDetails = this.config.framework.login;
 
@@ -87,7 +96,29 @@ class WOLF extends EventEmitter {
 
     this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
 
-    this.websocket._create();
+    if (Reflect.has(this.websocket, 'socket')) {
+      if (this.websocket.socket.connected) {
+        return await login(this);
+      }
+
+      return this.connect();
+    }
+
+    return this.connect();
+  }
+
+  async reconnect () {
+    await this.disconnect();
+
+    return await this.connect();
+  }
+
+  async connect () {
+    return this.websocket.connect();
+  }
+
+  async disconnect () {
+    return this.websocket.disconnect();
   }
 
   /**

@@ -20,6 +20,7 @@ const subscriptions = async (client) => {
 };
 
 const fininaliseConnection = async (client, resume = false) => {
+  console.log('FINALIZING');
   await Promise.all(
     [
       client.channel.list(),
@@ -36,6 +37,11 @@ const fininaliseConnection = async (client, resume = false) => {
 
 const login = async (client) => {
   const { email: username, password, loginType: type, onlineState } = client.config.get('framework.login');
+
+  if (!username) {
+    return Promise.resolve();
+  }
+
   const response = await client.websocket.emit(
     Command.SECURITY_LOGIN,
     {
@@ -78,15 +84,10 @@ const login = async (client) => {
 /**
  * @param {import('../../../WOLF.js').default} client
  */
-export default async (client, body) => {
+const handlePacket = async (client, body) => {
   client._cleanUp(body.loggedInUser === undefined);
 
   const welcome = new Welcome(client, body);
-
-  client.emit(
-    Event.WELCOME,
-    welcome
-  );
 
   if (welcome.subscriber?.id !== client.currentSubscriber?.id) {
     this.client.cognito = undefined;
@@ -95,5 +96,18 @@ export default async (client, body) => {
   client.config.endpointConfig = welcome.endpointConfig;
   client.currentSubscriber = welcome.subscriber;
 
-  return client.currentSubscriber ? await fininaliseConnection(client, true) : await login(client);
+  client.currentSubscriber
+    ? fininaliseConnection(client, true)
+    : login(client);
+
+  return client.emit(
+    Event.WELCOME,
+    welcome
+  );
+};
+
+export {
+  login,
+
+  handlePacket as default
 };
