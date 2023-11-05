@@ -15,10 +15,6 @@ class Websocket {
     this._processor = new Processor(this.client);
   }
 
-  _disconnect () {
-    return this.socket?.disconnect();
-  }
-
   _create () {
     const { host, port, query } = this.client._frameworkConfig.get('connection');
     const { device, version } = query;
@@ -27,7 +23,8 @@ class Websocket {
     this.socket = io(`${host}:${port}/?token=${token}&device=${device}&state=${onlineState}&version=${version || JSON.parse(fs.readFileSync(path.join(__dirname, '../../../package.json'))).version}`,
       {
         transports: ['websocket'],
-        reconnection: true
+        reconnection: true,
+        autoConnect: false
       }
     );
 
@@ -50,6 +47,28 @@ class Websocket {
     this.socket.on(SocketEvent.PONG, (latency) => this.client.emit(Event.PONG, latency));
 
     this.socket.onAny((eventName, data) => this._processor.process(eventName, data));
+
+    return this.connect();
+  }
+
+  connect () {
+    if (!this.socket) {
+      return this._create();
+    }
+
+    if (this.socket?.connected) {
+      return;
+    }
+
+    return this.socket?.connect();
+  }
+
+  disconnect () {
+    if (!this.socket?.connected) {
+      return;
+    }
+
+    return this.socket?.disconnect();
   }
 
   async emit (command, body) {
