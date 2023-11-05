@@ -191,11 +191,12 @@ class Client extends EventEmitter {
       })
       .on('finish', () => {
         if (this.incompleteSample) {
-          for (let i = this.incompleteSample.length; i < 1920; i++) {
-            this.incompleteSample[i] = 0;
-          }
+          const sample = new Uint8Array(SLICE_COUNT);
 
-          this.samples.push(this.incompleteSample);
+          sample.set(new Uint8Array(this.incompleteSample), 0);
+          sample.fill(0, this.incompleteSample.length);
+
+          this.samples.push(sample);
         }
         this.completed = true;
       });
