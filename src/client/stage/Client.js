@@ -3,6 +3,7 @@ import events from 'events';
 import wrtc from 'wrtc';
 import ffmpeg from 'fluent-ffmpeg';
 import _ from 'lodash';
+import { Stream } from 'stream';
 
 const EventEmitter = events.EventEmitter;
 const { RTCSessionDescription, RTCPeerConnection, nonstandard } = wrtc;
@@ -63,12 +64,10 @@ class Client extends EventEmitter {
       const sample = this.samples?.shift();
 
       if (sample) {
-        this.duration += 10;
-
         if (!this.muted) {
           this.source.onData(
             {
-              samples: new Int8Array(sample).map((samples) => samples * this.volume),
+              samples: this.volume === 1 ? new Int8Array(sample) : new Int8Array(sample).map((samples) => samples * this.volume),
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
@@ -116,6 +115,8 @@ class Client extends EventEmitter {
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
+    clearInterval(this.broadcastTimeUpdater);
+
     this.ffmpeg?.destroy();
     this.completed = false;
     this.incompleteSample = null;
@@ -141,12 +142,19 @@ class Client extends EventEmitter {
   play (data) {
     this.reset();
 
-    this.ffmpeg = ffmpeg(data)
-      .toFormat('wav')
-      .native()
+    this.ffmpeg = (
+      data instanceof Stream
+        ? ffmpeg(data)
+          .native()
+        : ffmpeg(data)
+    )
+
       .noVideo()
+      .toFormat('wav')
       .on('error', (error) => {
-        data?.destroy();
+        if (data instanceof Stream) {
+          data?.destroy();
+        }
 
         if (this.broadcastState === StageBroadcastState.IDLE) { return false; }
 
@@ -155,41 +163,52 @@ class Client extends EventEmitter {
         this.emit(Event.STAGE_CLIENT_ERROR, error);
       })
       .pipe()
-      .on('data', async (data) => {
-        for (const chunk of _.chunk(data, SLICE_COUNT)) {
-          if (this.incompleteSample) {
-            const incompleteSample = this.incompleteSample;
+      .on('data', (buffer) => {
+        if (this.incompleteSample) {
+          const temp = new Uint8Array(this.incompleteSample.length + buffer.length);
 
-            const overflowed = (incompleteSample.length + chunk.length) > SLICE_COUNT ? (incompleteSample.length + chunk.length) - SLICE_COUNT : 0;
+          temp.set(new Uint8Array(this.incompleteSample), 0);
+          temp.set(new Uint8Array(buffer), this.incompleteSample.length);
 
-            const temp = new Uint8Array(SLICE_COUNT);
+          this.incompleteSample = buffer.length < SLICE_COUNT ? temp : undefined;
 
-            temp.set(new Uint8Array(incompleteSample), 0);
-            temp.set(new Uint8Array(overflowed ? chunk.slice(0, SLICE_COUNT - incompleteSample.length) : chunk), incompleteSample.length);
+          if (this.incompleteSample) { return; }
 
-            this.incompleteSample = temp.length < SLICE_COUNT
-              ? temp
-              : overflowed
-                ? chunk.slice(SLICE_COUNT - incompleteSample.length)
-                : null;
+          buffer = temp;
+        }
 
-            if (temp.length !== SLICE_COUNT) {
-              continue;
-            }
+        const chunks = _.chunk(buffer, SLICE_COUNT);
 
-            this.samples.push(temp);
+        for (const [index, chunk] of chunks.entries()) {
+          if (chunk.length === SLICE_COUNT) {
+            this.samples.push(chunk);
+          } else if (index === (chunks.length - 1)) {
+            this.incompleteSample = chunk;
           } else {
-            chunk.length === SLICE_COUNT
-              ? this.samples.push(chunk)
-              : this.incompleteSample = chunk;
+            throw new Error('Failure to create complete data chunk\nPlease create an issue https://github.com/dawalters1/wolf.js/issues providing the URL/File that is causing this error');
           }
         }
       })
-      .on('finish', () => { this.completed = true; });
+      .on('finish', () => {
+        if (this.incompleteSample) {
+          for (let i = this.incompleteSample.length; i < 1920; i++) {
+            this.incompleteSample[i] = 0;
+          }
+
+          this.samples.push(this.incompleteSample);
+        }
+        this.completed = true;
+      });
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? StageBroadcastState.PAUSED : StageBroadcastState.PLAYING;
 
     this.broadcast();
+
+    this.broadcastTimeUpdater = setInterval(() => {
+      if (this.broadcastState === StageBroadcastState.PLAYING) {
+        this.duration += 1000;
+      }
+    }, 1000);
   }
 
   stop () {

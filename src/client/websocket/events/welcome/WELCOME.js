@@ -20,7 +20,6 @@ const subscriptions = async (client) => {
 };
 
 const fininaliseConnection = async (client, resume = false) => {
-  console.log('FINALIZING');
   await Promise.all(
     [
       client.channel.list(),

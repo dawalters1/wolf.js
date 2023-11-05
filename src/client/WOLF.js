@@ -18,8 +18,6 @@ class WOLF extends EventEmitter {
   constructor () {
     super();
 
-    console.log('CREATING');
-
     this.utility = new Utility(this);
 
     configuration(this);
@@ -50,8 +48,6 @@ class WOLF extends EventEmitter {
     (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
 
     this.currentSubscriber = undefined;
-
-    console.log('CREATED');
   }
 
   /**

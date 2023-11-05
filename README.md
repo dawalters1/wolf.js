@@ -159,7 +159,7 @@ export default async (client, command) => {
                 id: subscriber.id,
                 status: subscriber.status,
                 level: subscriber.reputation.split('.')[0],
-                percentage: subscriber.reputation.split('.')[1], // you may have to pad left with 0s
+                percentage: subscriber.percentage,
             }
         )
     );
