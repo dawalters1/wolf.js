@@ -67,12 +67,11 @@ class Client extends EventEmitter {
         if (!this.muted) {
           this.source.onData(
             {
-              samples: this.volume === 1 ? new Int8Array(sample) : new Int8Array(sample).map((samples) => samples * this.volume),
+              samples: sample.map((samples) => this.volume === 1 ? samples : samples * this.volume),
               sampleRate: SAMPLE_RATE,
               bitsPerSample: BITRATE,
               channelCount: CHANNEL_COUNT,
-              numberOfFrames: FRAMES,
-              timestamp: Date.now()
+              numberOfFrames: FRAMES
             }
           );
         }
@@ -167,7 +166,7 @@ class Client extends EventEmitter {
         if (this.incompleteSample) {
           const temp = new Uint8Array(this.incompleteSample.length + buffer.length);
 
-          temp.set(new Uint8Array(this.incompleteSample), 0);
+          temp.set(this.incompleteSample, 0);
           temp.set(new Uint8Array(buffer), this.incompleteSample.length);
 
           this.incompleteSample = buffer.length < SLICE_COUNT ? temp : undefined;
@@ -177,13 +176,22 @@ class Client extends EventEmitter {
           buffer = temp;
         }
 
-        const chunks = _.chunk(buffer, SLICE_COUNT);
+        const chunks = _.chunk(buffer, SLICE_COUNT)
+          .map((chunk, index, { length }) =>
+            (
+              {
+                isLast: index === length - 1,
+                isComplete: chunk.length === SLICE_COUNT,
+                array: new Int8Array(chunk)
+              }
+            )
+          );
 
-        for (const [index, chunk] of chunks.entries()) {
-          if (chunk.length === SLICE_COUNT) {
-            this.samples.push(chunk);
-          } else if (index === (chunks.length - 1)) {
-            this.incompleteSample = chunk;
+        for (const chunk of chunks) {
+          if (chunk.isComplete) {
+            this.samples.push(chunk.array);
+          } else if (chunk.isLast) {
+            this.incompleteSample = chunk.array;
           } else {
             throw new Error('Failure to create complete data chunk\nPlease create an issue https://github.com/dawalters1/wolf.js/issues providing the URL/File that is causing this error');
           }
@@ -193,7 +201,7 @@ class Client extends EventEmitter {
         if (this.incompleteSample) {
           const sample = new Uint8Array(SLICE_COUNT);
 
-          sample.set(new Uint8Array(this.incompleteSample), 0);
+          sample.set(this.incompleteSample, 0);
           sample.fill(0, this.incompleteSample.length);
 
           this.samples.push(sample);
