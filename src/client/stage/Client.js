@@ -51,7 +51,14 @@ class Client extends EventEmitter {
         return this.reset(true);
       } else { return false; }
 
-      return this.emit(this.connectionState === StageConnectionState.CONNECTED ? Event.STAGE_CLIENT_CONNECTED : this.connectionState === StageConnectionState.CONNECTING, { slotId: this.slotId });
+      return this.emit(
+        this.connectionState === StageConnectionState.CONNECTED
+          ? Event.STAGE_CLIENT_CONNECTED
+          : this.connectionState === StageConnectionState.CONNECTING,
+        {
+          slotId: this.slotId
+        }
+      );
     };
   }
 
@@ -63,19 +70,16 @@ class Client extends EventEmitter {
 
       const sample = this.samples?.shift();
 
-      if (sample) {
-        if (!this.muted) {
-          this.source.onData(
-            {
-              samples: this.volume === 1 ? new Int8Array(sample) : new Int8Array(sample).map((samples) => samples * this.volume),
-              sampleRate: SAMPLE_RATE,
-              bitsPerSample: BITRATE,
-              channelCount: CHANNEL_COUNT,
-              numberOfFrames: FRAMES,
-              timestamp: Date.now()
-            }
-          );
-        }
+      if (sample && !this.muted) {
+        this.source.onData(
+          {
+            samples: sample.map((samples) => this.volume === 1 ? samples : samples * this.volume),
+            sampleRate: SAMPLE_RATE,
+            bitsPerSample: BITRATE,
+            channelCount: CHANNEL_COUNT,
+            numberOfFrames: FRAMES
+          }
+        );
       }
 
       if (!this.emittedPlaying) {
@@ -142,6 +146,11 @@ class Client extends EventEmitter {
   play (data) {
     this.reset();
 
+    /**
+     * Create the appropriate FFMPEG instance
+     * ~ If it is a stream using .native will provide the best in-sync audio
+     * ~ If it is providing a url .native will provide choppy audio, and should not be provided
+     */
     this.ffmpeg = (
       data instanceof Stream
         ? ffmpeg(data)
@@ -164,36 +173,49 @@ class Client extends EventEmitter {
       })
       .pipe()
       .on('data', (buffer) => {
-        if (this.incompleteSample) {
-          const temp = new Uint8Array(this.incompleteSample.length + buffer.length);
+        /**
+         * Ensure that all buffer chunks are 1920 in length and are broadcasted
+         * ~ Any buffer chunks that are left over from the previous processing that are smaller than 1920 will be merged into this processing
+         * ~ If the resulting buffer is still smaller than 1920 it will be
+         *   A) Processed with the next 'data' event
+         *   B) Filled with empty audio with the 'finished' event
+         */
 
-          temp.set(new Uint8Array(this.incompleteSample), 0);
-          temp.set(new Uint8Array(buffer), this.incompleteSample.length);
+        const sample = new Int8Array((this.incompleteSample?.length ?? 0) + buffer.length); // Create a new array with the combined length of the two merged buffers
 
-          this.incompleteSample = buffer.length < SLICE_COUNT ? temp : undefined;
+        sample.set(this.incompleteSample || [], 0); // Set the previous buffer as the beginning of the array
+        sample.set(new Int8Array(buffer), this.incompleteSample?.length ?? 0);// Set the incoming buffer as the remainder of the array
 
-          if (this.incompleteSample) { return; }
+        this.incompleteSample = sample.length < SLICE_COUNT ? sample : undefined; // If the new buffer is still too small set it as incompleted, else set the incomplete array as undefined
 
-          buffer = temp;
-        }
+        if (this.incompleteSample) { return; } // Incompleted sample was set indicating new buffer was too small, do not continue processing (If it is the last buffer it will be handled by finished event)
 
-        const chunks = _.chunk(buffer, SLICE_COUNT);
+        const chunks = _.chunk(sample, SLICE_COUNT)
+          .map((chunk, index, { length }) =>
+            (
+              {
+                isLast: index === length - 1, // Chunk is the last chunk in the array
+                isComplete: chunk.length === SLICE_COUNT, // Chunk is the appropriate length
+                array: new Int8Array(chunk)
+              }
+            )
+          );
 
-        for (const [index, chunk] of chunks.entries()) {
-          if (chunk.length === SLICE_COUNT) {
-            this.samples.push(chunk);
-          } else if (index === (chunks.length - 1)) {
-            this.incompleteSample = chunk;
+        return chunks.forEach((chunk) => {
+          if (chunk.isComplete) {
+            this.samples.push(chunk.array);
+          } else if (chunk.isLast) {
+            this.incompleteSample = chunk.array;
           } else {
             throw new Error('Failure to create complete data chunk\nPlease create an issue https://github.com/dawalters1/wolf.js/issues providing the URL/File that is causing this error');
           }
-        }
+        });
       })
       .on('finish', () => {
         if (this.incompleteSample) {
-          const sample = new Uint8Array(SLICE_COUNT);
+          const sample = new Int8Array(SLICE_COUNT);
 
-          sample.set(new Uint8Array(this.incompleteSample), 0);
+          sample.set(this.incompleteSample, 0);
           sample.fill(0, this.incompleteSample.length);
 
           this.samples.push(sample);
