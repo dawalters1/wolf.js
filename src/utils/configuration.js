@@ -1,7 +1,7 @@
 import path, { dirname } from 'path';
 import fs from 'fs';
 import yaml from 'js-yaml';
-import { JoinLockType, Language, OnlineState } from '../constants/index.js';
+import { JoinLockType, Language, LoginType, OnlineState } from '../constants/index.js';
 import _ from 'lodash';
 import WOLFAPIError from '../models/WOLFAPIError.js';
 import validator from '../validator/index.js';
@@ -41,7 +41,8 @@ const developerConfig = (client) => {
         email: typeof config?.framework?.login?.email === 'string' ? config.framework.login.email : undefined,
         password: typeof config?.framework?.login?.password === 'string' ? config.framework.login.password : undefined,
         onlineState: typeof config?.framework?.login?.onlineState === 'number' && Object.values(OnlineState).includes(config.framework.login.onlineState) ? config.framework.login.onlineState : OnlineState.ONLINE,
-        token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : `WJS${nanoid(32)}`
+        token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : `WJS${nanoid(32)}`,
+        type: typeof config?.framework?.login?.type === 'string' && Object.values(LoginType).includes(config.framework.login.type) ? config.framework.login.type : LoginType.EMAIL
       },
       join: {
         limit: typeof config?.framework?.join?.limit === 'number' ? config.framework.join.limit : Infinity,

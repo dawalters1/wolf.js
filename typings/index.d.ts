@@ -132,9 +132,10 @@ export class WOLF {
      * Login to WOLF
      * @param email - The email belonging to the account
      * @param password - The password belonging to the account
-     * @param onlineState - The onlineState to appear as
+     * @param onlineState - The onlineState to appear as (Default: Online)
+     * @param loginType - The loginType (Default: Email)
      */
-    public login(email: string, password: string, onlineState?: OnlineState): Promise<void>;
+    public login(email: string, password: string, onlineState?: OnlineState, loginType?: LoginType): Promise<void>;
 
     /**
      * Connect to the service without login details
@@ -255,7 +256,13 @@ export class Configuration {
              * The account token (Automatically generated if none provided)
              * - Default: undefined
              */
-            token: string
+            token: string,
+
+            /**
+             * The account login type
+             * - Default: Email
+             */
+            type: LoginType
         },
         /**
          * Command settings
