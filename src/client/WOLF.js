@@ -92,7 +92,7 @@ class WOLF extends EventEmitter {
       throw new WOLFAPIError('onlineState is not valid', { onlineState });
     }
 
-    if (!validator.isNullOrUndefined(loginType)) {
+    if (validator.isNullOrUndefined(loginType)) {
       throw new WOLFAPIError('type is null or undefined', { onlineState });
     } else if (!Object.values(LoginType).includes(loginType)) {
       throw new WOLFAPIError('loginType is not valid', { loginType });
