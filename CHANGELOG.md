@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.3.6 (2023-11-12)
+### Fix
+- Stage Client: Undefined track
+
 # 2.3.6 (2023-11-10)
 ### Fix
 - Stage Client: RangeError: offset is out of bounds
