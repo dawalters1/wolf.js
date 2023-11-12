@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 # 2.4.0 (UNRELEASED)
+### Fix
+- WOLFAPIError not respecting 0 value
 ### Changed
 - Social Sign in Behavior
 

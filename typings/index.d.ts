@@ -4973,6 +4973,16 @@ export class SubscriberSelectedCharm extends BaseModel {
 
     public selectedList: Array<CharmSelected>;
 
+    /**
+     * Set the charm displayed on the profile
+     * @param charm - The new charms to set
+     */
+    public set(charm: CharmSelectedBuilder | Array<CharmSelectedBuilder>): Promise<Response>;
+    /**
+     * Clear the selected charm being displayed on the profile
+     */
+    public clear(): Promise<Response>;
+
     toJSON(): {
         selectedList: Array<{
             charmId: number;

@@ -57,7 +57,8 @@ const developerConfig = (client) => {
           official: typeof config?.framework?.commands?.ignore?.official === 'boolean' ? config.framework.commands.ignore.official : false,
           unofficial: typeof config?.framework?.commands?.ignore?.unofficial === 'boolean' ? config.framework.commands.ignore.unofficial : false,
           self: typeof config?.framework?.commands?.ignore?.self === 'boolean' ? config.framework.commands.ignore.self : true
-        }
+        },
+        rys: typeof config?.framework?.commands?.rys === 'string' && ['enabled', 'disabled'].includes(config.framework.commands.rys) ? config?.framework?.commands?.rys : 'enabled'
       },
       messages: {
         ignore: {

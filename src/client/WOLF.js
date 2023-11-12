@@ -45,9 +45,11 @@ class WOLF extends EventEmitter {
     this.tipping = new Tipping(this);
     this.topic = new Topic(this);
 
-    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
-
     this.currentSubscriber = undefined;
+
+    if (this.config.framework.commands.rys === 'disabled') { return false; }
+
+    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
   }
 
   /**

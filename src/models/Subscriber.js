@@ -10,7 +10,7 @@ import WOLFAPIError from './WOLFAPIError.js';
 class Subscriber extends Base {
   constructor (client, data, subscribed) {
     super(client);
-    this.charms = new SubscriberSelectedCharm(client, data?.charms);
+    this.charms = new SubscriberSelectedCharm(client, data?.charms, this.id);
     this.deviceType = data?.deviceType;
     this.extended = new SubscriberExtended(client, data?.extended);
     this.hash = data?.hash;

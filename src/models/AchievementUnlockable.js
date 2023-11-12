@@ -15,6 +15,13 @@ class AchievementUnlockable extends Base {
   async achievement () {
     return await this.client.achievement.getById(this.id);
   }
+
+  toJSON () {
+    return {
+      id: this.id,
+      additionalInfo: this.additionalInfo.toJSON()
+    };
+  }
 }
 
 export default AchievementUnlockable;

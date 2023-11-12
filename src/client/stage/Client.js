@@ -115,7 +115,7 @@ class Client extends EventEmitter {
   }
 
   reset (disconnect = false) {
-    this.pc.getSenders()[0].track.stop();
+    this.pc?.getSenders()[0]?.track?.stop();
 
     this.broadcastState = this.broadcastState === StageBroadcastState.PAUSED ? this.broadcastState : StageBroadcastState.IDLE;
 
