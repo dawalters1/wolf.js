@@ -68,23 +68,27 @@ class Phrase extends Base {
 
     phrases = Array.isArray(phrases) ? phrases : [phrases];
 
-    if (!phrases.length) {
-      throw new models.WOLFAPIError('phrases cannot be an empty array', { phrases });
+    { // eslint-disable-line no-lone-blocks
+      if (!phrases.length) {
+        throw new models.WOLFAPIError('phrases cannot be an empty array', { phrases });
+      }
+
+      for (const phrase of phrases) {
+        if (validator.isNullOrWhitespace(phrase.name)) {
+          throw new models.WOLFAPIError('name cannot be null or empty', { phrase });
+        }
+
+        if (validator.isNullOrWhitespace(phrase.value)) {
+          throw new models.WOLFAPIError('value cannot be null or empty', { phrase });
+        }
+
+        if (validator.isNullOrWhitespace(phrase.language)) {
+          throw new models.WOLFAPIError('language cannot be null or empty', { phrase });
+        }
+      }
     }
 
     for (const phrase of phrases) {
-      if (validator.isNullOrWhitespace(phrase.name)) {
-        throw new models.WOLFAPIError('name cannot be null or empty', { phrase });
-      }
-
-      if (validator.isNullOrWhitespace(phrase.value)) {
-        throw new models.WOLFAPIError('value cannot be null or empty', { phrase });
-      }
-
-      if (validator.isNullOrWhitespace(phrase.language)) {
-        throw new models.WOLFAPIError('language cannot be null or empty', { phrase });
-      }
-
       phrase.name = this.client.utility.string.replace(
         phrase.name,
         {
@@ -118,8 +122,10 @@ class Phrase extends Base {
    * @returns {Array<Phrase>}
    */
   getAllByName (name) {
-    if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
     }
 
     return this.phrases.filter((phrase) => this.client.utility.string.isEqual(phrase.name, name) || new RegExp(`^${name}_alias([0-9]*)?$`, 'giu').test(phrase.name));
@@ -132,8 +138,14 @@ class Phrase extends Base {
    * @returns {String}
    */
   getByLanguageAndName (language, name) {
-    if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrWhitespace(language)) {
+        throw new models.WOLFAPIError('language cannot be null or empty', { language });
+      }
+
+      if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
     }
 
     const requested = this.phrases.find((phrase) => this.client.utility.string.isEqual(phrase.name, name) && this.client.utility.string.isEqual(phrase.language, language));
@@ -156,12 +168,18 @@ class Phrase extends Base {
    * @returns {String}
    */
   getByCommandAndName (command, name) {
-    if (!(command instanceof models.CommandContext)) {
-      throw new models.WOLFAPIError('command must be type CommandContext', { command });
-    } else if (!Reflect.has(command, 'language')) {
-      throw new models.WOLFAPIError('command must contain a language property', { command });
-    } else if (validator.isNullOrWhitespace(command.language)) {
-      throw new models.WOLFAPIError('language cannot be null or empty', { command });
+    { // eslint-disable-line no-lone-blocks
+      if (!(command instanceof models.CommandContext)) {
+        throw new models.WOLFAPIError('command must be type CommandContext', { command });
+      } else if (!Reflect.has(command, 'language')) {
+        throw new models.WOLFAPIError('command must contain a language property', { command });
+      } else if (validator.isNullOrWhitespace(command.language)) {
+        throw new models.WOLFAPIError('language cannot be null or empty', { command });
+      }
+
+      if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
     }
 
     return this.getByLanguageAndName(command.language, name);
@@ -174,12 +192,14 @@ class Phrase extends Base {
    * @returns {boolean}
    */
   isRequestedPhrase (name, input) {
-    if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
 
-    if (validator.isNullOrWhitespace(input)) {
-      throw new models.WOLFAPIError('input cannot be null or empty', { input });
+      if (validator.isNullOrWhitespace(input)) {
+        throw new models.WOLFAPIError('input cannot be null or empty', { input });
+      }
     }
 
     return this.getAllByName(name).find((phrase) => this.client.utility.string.isEqual(phrase.value, input)) !== undefined;

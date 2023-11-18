@@ -11,7 +11,6 @@ class Event extends Base {
   constructor (client) {
     super(client);
     this.channel = new Channel(this.client);
-    this.group = this.channel;
     this.subscription = new Subscription(this.client);
     this.events = [];
   }
@@ -23,16 +22,18 @@ class Event extends Base {
    * @returns {Promise<Event>}
    */
   async getById (id, forceNew = false) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     return (await this.getByIds([id], forceNew))[0];
@@ -47,21 +48,23 @@ class Event extends Base {
   async getByIds (ids, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!ids.length) {
+        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      }
 
-    if ([...new Set(ids)].length !== ids.length) {
-      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-    }
+      if ([...new Set(ids)].length !== ids.length) {
+        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+      }
 
-    for (const id of ids) {
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      for (const id of ids) {
+        if (validator.isNullOrUndefined(id)) {
+          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+        } else if (!validator.isValidNumber(id)) {
+          throw new models.WOLFAPIError('id must be a valid number', { id });
+        } else if (validator.isLessThanOrEqualZero(id)) {
+          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+        }
       }
     }
 

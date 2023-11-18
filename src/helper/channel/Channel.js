@@ -41,27 +41,29 @@ class Channel extends Base {
    * @returns {Promise<Array<Channel>>}
    */
   async list () {
-    if (!this.fetched) {
-      const response = await this.client.websocket.emit(
-        Command.SUBSCRIBER_GROUP_LIST,
-        {
-          subscribe: true
-        }
-      );
+    if (this.fetched) {
+      return this.channels.filter((channel) => channel.inChannel);
+    }
 
-      if (response.success) {
-        this.fetched = true;
+    const response = await this.client.websocket.emit(
+      Command.SUBSCRIBER_GROUP_LIST,
+      {
+        subscribe: true
+      }
+    );
 
-        if (!response.body?.length) {
-          return this.channels.filter((channel) => channel.inChannel);
-        }
+    if (response.success) {
+      this.fetched = true;
 
-        const channels = await this.getByIds(response.body.map((channel) => channel.id), true);
+      if (!response.body?.length) {
+        return this.channels.filter((channel) => channel.inChannel);
+      }
 
-        for (const channel of channels) {
-          channel.inChannel = true;
-          channel.capabilities = response.body.find((grp) => channel.id === grp.id).capabilities || Capability.REGULAR;
-        }
+      const channels = await this.getByIds(response.body.map((channel) => channel.id), true);
+
+      for (const channel of channels) {
+        channel.inChannel = true;
+        channel.capabilities = response.body.find((grp) => channel.id === grp.id).capabilities || Capability.REGULAR;
       }
     }
 
@@ -76,20 +78,22 @@ class Channel extends Base {
    * @returns {Promise<Channel>}
    */
   async getById (id, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+      if (!validator.isValidBoolean(subscribe)) {
+        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     return (await this.getByIds([id], subscribe, forceNew))[0];
@@ -105,30 +109,32 @@ class Channel extends Base {
   async getByIds (ids, subscribe = true, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-    }
-
-    if ([...new Set(ids)].length !== ids.length) {
-      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-    }
-
-    for (const id of ids) {
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (!ids.length) {
+        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
       }
-    }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+      if ([...new Set(ids)].length !== ids.length) {
+        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      for (const id of ids) {
+        if (validator.isNullOrUndefined(id)) {
+          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+        } else if (!validator.isValidNumber(id)) {
+          throw new models.WOLFAPIError('id must be a valid number', { id });
+        } else if (validator.isLessThanOrEqualZero(id)) {
+          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+        }
+      }
+
+      if (!validator.isValidBoolean(subscribe)) {
+        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+      }
+
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     const channels = forceNew ? [] : this.channels.filter((channel) => ids.includes(channel.id));
@@ -179,18 +185,20 @@ class Channel extends Base {
    * @returns {Promise<Channel>}
    */
   async getByName (name, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(name)) {
-      throw new models.WOLFAPIError('name cannot be null or undefined', { name });
-    } else if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(name)) {
+        throw new models.WOLFAPIError('name cannot be null or undefined', { name });
+      } else if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+      if (!validator.isValidBoolean(subscribe)) {
+        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     if (!forceNew && this.channels.some((channel) => this.client.utility.string.isEqual(channel.name, name))) {
@@ -242,71 +250,73 @@ class Channel extends Base {
    * @returns { Promise<Response>}
    */
   async update (id, { description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, slowModeRateInSeconds, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-    }
-
-    if (peekable && !validator.isValidBoolean(peekable)) {
-      throw new models.WOLFAPIError('peekable must be a valid boolean', { peekable });
-    }
-
-    if (disableHyperlink && !validator.isValidBoolean(disableHyperlink)) {
-      throw new models.WOLFAPIError('disableHyperlink must be a valid boolean', { disableHyperlink });
-    }
-
-    if (disableImage && !validator.isValidBoolean(disableImage)) {
-      throw new models.WOLFAPIError('disableImage must be a valid boolean', { disableImage });
-    }
-
-    if (disableImageFilter && !validator.isValidBoolean(disableImageFilter)) {
-      throw new models.WOLFAPIError('disableImageFilter must be a valid boolean', { disableImageFilter });
-    }
-
-    if (disableVoice && !validator.isValidBoolean(disableVoice)) {
-      throw new models.WOLFAPIError('disableVoice must be a valid boolean', { disableVoice });
-    }
-
-    if (!validator.isNullOrUndefined(slowModeRateInSeconds) && (!validator.isType(slowModeRateInSeconds, 'number') || parseInt(slowModeRateInSeconds) < 0 || parseInt(slowModeRateInSeconds) > 30)) {
-      throw new models.WOLFAPIError('slowModeRateInSeconds must be between 0 and 30');
-    }
-
-    if (discoverable && !validator.isValidBoolean(discoverable)) {
-      throw new models.WOLFAPIError('discoverable must be a valid boolean', { discoverable });
-    }
-
-    if (advancedAdmin && !validator.isValidBoolean(advancedAdmin)) {
-      throw new models.WOLFAPIError('advancedAdmin must be a valid boolean', { advancedAdmin });
-    }
-
-    if (closed && !validator.isValidBoolean(closed)) {
-      throw new models.WOLFAPIError('closed must be a valid boolean', { closed });
-    }
-
-    if (locked && !validator.isValidBoolean(locked)) {
-      throw new models.WOLFAPIError('locked must be a valid boolean', { locked });
-    }
-
-    if (questionable && !validator.isValidBoolean(questionable)) {
-      throw new models.WOLFAPIError('questionable must be a valid boolean', { questionable });
-    }
-
-    if (language) {
-      if (!validator.isValidNumber(language)) {
-        throw new models.WOLFAPIError('language must be a valid number', { language });
-      } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new models.WOLFAPIError('language is not valid', { language });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
-    }
 
-    if (category) {
-      if (!validator.isValidNumber(category)) {
-        throw new models.WOLFAPIError('category must be a valid number', { category });
-      } else if (!Object.values(Category).includes(parseInt(category))) {
-        throw new models.WOLFAPIError('category is not valid', { category });
+      if (peekable && !validator.isValidBoolean(peekable)) {
+        throw new models.WOLFAPIError('peekable must be a valid boolean', { peekable });
+      }
+
+      if (disableHyperlink && !validator.isValidBoolean(disableHyperlink)) {
+        throw new models.WOLFAPIError('disableHyperlink must be a valid boolean', { disableHyperlink });
+      }
+
+      if (disableImage && !validator.isValidBoolean(disableImage)) {
+        throw new models.WOLFAPIError('disableImage must be a valid boolean', { disableImage });
+      }
+
+      if (disableImageFilter && !validator.isValidBoolean(disableImageFilter)) {
+        throw new models.WOLFAPIError('disableImageFilter must be a valid boolean', { disableImageFilter });
+      }
+
+      if (disableVoice && !validator.isValidBoolean(disableVoice)) {
+        throw new models.WOLFAPIError('disableVoice must be a valid boolean', { disableVoice });
+      }
+
+      if (!validator.isNullOrUndefined(slowModeRateInSeconds) && (!validator.isType(slowModeRateInSeconds, 'number') || parseInt(slowModeRateInSeconds) < 0 || parseInt(slowModeRateInSeconds) > 30)) {
+        throw new models.WOLFAPIError('slowModeRateInSeconds must be between 0 and 30');
+      }
+
+      if (discoverable && !validator.isValidBoolean(discoverable)) {
+        throw new models.WOLFAPIError('discoverable must be a valid boolean', { discoverable });
+      }
+
+      if (advancedAdmin && !validator.isValidBoolean(advancedAdmin)) {
+        throw new models.WOLFAPIError('advancedAdmin must be a valid boolean', { advancedAdmin });
+      }
+
+      if (closed && !validator.isValidBoolean(closed)) {
+        throw new models.WOLFAPIError('closed must be a valid boolean', { closed });
+      }
+
+      if (locked && !validator.isValidBoolean(locked)) {
+        throw new models.WOLFAPIError('locked must be a valid boolean', { locked });
+      }
+
+      if (questionable && !validator.isValidBoolean(questionable)) {
+        throw new models.WOLFAPIError('questionable must be a valid boolean', { questionable });
+      }
+
+      if (language) {
+        if (!validator.isValidNumber(language)) {
+          throw new models.WOLFAPIError('language must be a valid number', { language });
+        } else if (!Object.values(Language).includes(parseInt(language))) {
+          throw new models.WOLFAPIError('language is not valid', { language });
+        }
+      }
+
+      if (category) {
+        if (!validator.isValidNumber(category)) {
+          throw new models.WOLFAPIError('category must be a valid number', { category });
+        } else if (!Object.values(Category).includes(parseInt(category))) {
+          throw new models.WOLFAPIError('category is not valid', { category });
+        }
       }
     }
 
@@ -375,12 +385,20 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async joinById (id, password = undefined) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
+
+      if (!validator.isUndefined(password)) {
+        if (validator.isNullOrWhitespace(password)) {
+          throw new models.WOLFAPIError('password cannot be null or whitespace', { id });
+        }
+      }
     }
 
     return await this.client.websocket.emit(
@@ -399,10 +417,18 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async joinByName (name, password = undefined) {
-    if (validator.isNullOrUndefined(name)) {
-      throw new models.WOLFAPIError('name cannot be null or undefined', { name });
-    } else if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(name)) {
+        throw new models.WOLFAPIError('name cannot be null or undefined', { name });
+      } else if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
+
+      if (!validator.isUndefined(password)) {
+        if (validator.isNullOrWhitespace(password)) {
+          throw new models.WOLFAPIError('password cannot be null or whitespace', { password });
+        }
+      }
     }
 
     return await this.client.websocket.emit(
@@ -420,12 +446,14 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async leaveById (id) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
     }
 
     return await this.client.websocket.emit(
@@ -442,10 +470,12 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async leaveByName (name) {
-    if (validator.isNullOrUndefined(name)) {
-      throw new models.WOLFAPIError('name cannot be null or undefined', { name });
-    } else if (validator.isNullOrWhitespace(name)) {
-      throw new models.WOLFAPIError('name cannot be null or empty', { name });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(name)) {
+        throw new models.WOLFAPIError('name cannot be null or undefined', { name });
+      } else if (validator.isNullOrWhitespace(name)) {
+        throw new models.WOLFAPIError('name cannot be null or empty', { name });
+      }
     }
 
     const channel = await this.getByName(name);
@@ -466,32 +496,34 @@ class Channel extends Base {
    * @returns {Promise<Array<Message>>}
    */
   async getChatHistory (id, chronological = false, timestamp = 0, limit = 15) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
 
-    if (!validator.isValidBoolean(chronological)) {
-      throw new models.WOLFAPIError('chronological must be a valid boolean', { chronological });
-    }
+      if (!validator.isValidBoolean(chronological)) {
+        throw new models.WOLFAPIError('chronological must be a valid boolean', { chronological });
+      }
 
-    if (validator.isNullOrUndefined(timestamp)) {
-      throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
-    } else if (!validator.isValidNumber(timestamp)) {
-      throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-    } else if (validator.isLessThanZero(timestamp)) {
-      throw new models.WOLFAPIError('timestamp cannot be less than 0', { timestamp });
-    }
+      if (validator.isNullOrUndefined(timestamp)) {
+        throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
+      } else if (!validator.isValidNumber(timestamp)) {
+        throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
+      } else if (validator.isLessThanZero(timestamp)) {
+        throw new models.WOLFAPIError('timestamp cannot be less than 0', { timestamp });
+      }
 
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+      if (validator.isNullOrUndefined(limit)) {
+        throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
+      } else if (!validator.isValidNumber(limit)) {
+        throw new models.WOLFAPIError('limit must be a valid number', { limit });
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -518,12 +550,14 @@ class Channel extends Base {
    * @returns {Promise<ChannelStats>}
    */
   async getStats (id) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -552,10 +586,12 @@ class Channel extends Base {
    * @returns {Promise<Array<Search>>}
    */
   async search (query) {
-    if (validator.isNullOrUndefined(query)) {
-      throw new models.WOLFAPIError('query cannot be null or undefined', { query });
-    } else if (validator.isNullOrWhitespace(query)) {
-      throw new models.WOLFAPIError('query cannot be null or empty', { query });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(query)) {
+        throw new models.WOLFAPIError('query cannot be null or undefined', { query });
+      } else if (validator.isNullOrWhitespace(query)) {
+        throw new models.WOLFAPIError('query cannot be null or empty', { query });
+      }
     }
 
     const response = await this.client.websocket.emit(

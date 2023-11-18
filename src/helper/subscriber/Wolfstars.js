@@ -13,12 +13,14 @@ class Wolfstars extends Base {
    * @returns {Promise<WolfstarsProfile>}
    */
   async getById (id) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
     }
 
     return (await this.getByIds([id]))[0];
@@ -32,21 +34,23 @@ class Wolfstars extends Base {
   async getByIds (subscriberIds) {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!subscriberIds.length) {
-      throw new WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!subscriberIds.length) {
+        throw new WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
+      }
 
-    if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
-      throw new WOLFAPIError('subscriberIds cannot contain duplicates', { subscriberIds });
-    }
+      if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
+        throw new WOLFAPIError('subscriberIds cannot contain duplicates', { subscriberIds });
+      }
 
-    for (const subscriberId of subscriberIds) {
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be null or undefined', { id: subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new WOLFAPIError('subscriberId must be a valid number', { id: subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { id: subscriberId });
+      for (const subscriberId of subscriberIds) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new WOLFAPIError('subscriberId cannot be null or undefined', { id: subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new WOLFAPIError('subscriberId must be a valid number', { id: subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new WOLFAPIError('subscriberId cannot be less than or equal to 0', { id: subscriberId });
+        }
       }
     }
 

@@ -33,10 +33,12 @@ class Log extends Base {
    * @returns {boolean}
    */
   debug (message) {
-    if (validator.isNullOrUndefined(message)) {
-      throw new WOLFAPIError('message cannot be null or undefined', { message });
-    } else if (validator.isNullOrWhitespace(message)) {
-      throw new WOLFAPIError('message cannot be null or empty', { message });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(message)) {
+        throw new WOLFAPIError('message cannot be null or undefined', { message });
+      } else if (validator.isNullOrWhitespace(message)) {
+        throw new WOLFAPIError('message cannot be null or empty', { message });
+      }
     }
 
     return this.client.emit(Event.LOG, { level: LogLevel.DEBUG, message });
@@ -48,10 +50,12 @@ class Log extends Base {
    * @returns {boolean}
    */
   info (message) {
-    if (validator.isNullOrUndefined(message)) {
-      throw new WOLFAPIError('message cannot be null or undefined', { message });
-    } else if (validator.isNullOrWhitespace(message)) {
-      throw new WOLFAPIError('message cannot be null or empty', { message });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(message)) {
+        throw new WOLFAPIError('message cannot be null or undefined', { message });
+      } else if (validator.isNullOrWhitespace(message)) {
+        throw new WOLFAPIError('message cannot be null or empty', { message });
+      }
     }
 
     return this.client.emit(Event.LOG, { level: LogLevel.INFO, message });
@@ -63,10 +67,12 @@ class Log extends Base {
    * @returns {boolean}
    */
   warn (message) {
-    if (validator.isNullOrUndefined(message)) {
-      throw new WOLFAPIError('message cannot be null or undefined', { message });
-    } else if (validator.isNullOrWhitespace(message)) {
-      throw new WOLFAPIError('message cannot be null or empty', { message });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(message)) {
+        throw new WOLFAPIError('message cannot be null or undefined', { message });
+      } else if (validator.isNullOrWhitespace(message)) {
+        throw new WOLFAPIError('message cannot be null or empty', { message });
+      }
     }
 
     return this.client.emit(Event.LOG, { level: LogLevel.WARN, message });
@@ -78,10 +84,12 @@ class Log extends Base {
    * @returns {boolean}
    */
   error (message) {
-    if (validator.isNullOrUndefined(message)) {
-      throw new WOLFAPIError('message cannot be null or undefined', { message });
-    } else if (validator.isNullOrWhitespace(message)) {
-      throw new WOLFAPIError('message cannot be null or empty', { message });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(message)) {
+        throw new WOLFAPIError('message cannot be null or undefined', { message });
+      } else if (validator.isNullOrWhitespace(message)) {
+        throw new WOLFAPIError('message cannot be null or empty', { message });
+      }
     }
 
     return this.client.emit(Event.LOG, { level: LogLevel.ERROR, message });

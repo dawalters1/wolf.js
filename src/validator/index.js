@@ -41,6 +41,7 @@ const isType = (arg, type) => {
 };
 
 const isNull = (arg) => arg === null;
+const isUndefined = (arg) => arg === undefined;
 const isNullOrUndefined = (arg) => arg === null || arg === undefined;
 const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 'string' && !arg.trim().length);
 const isLessThanOrEqualZero = (arg) => isValidNumber(arg) && !(parseInt(arg) > 0);
@@ -119,6 +120,7 @@ const isValidUrl = (client, arg) => {
 
 const exports = {
   isNull,
+  isUndefined,
   isNullOrUndefined,
   isLessThanOrEqualZero,
   isGreaterThanOrEqualZero,
@@ -137,6 +139,7 @@ const exports = {
 
 export {
   isNull,
+  isUndefined,
   isNullOrUndefined,
   isLessThanOrEqualZero,
   isGreaterThanOrEqualZero,
