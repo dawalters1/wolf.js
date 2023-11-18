@@ -11,6 +11,7 @@ class Event extends Base {
   constructor (client) {
     super(client);
     this.channel = new Channel(this.client);
+    this.group = this.channel;
     this.subscription = new Subscription(this.client);
     this.events = [];
   }
