@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
 import { Websocket, Multimedia } from './index.js';
 import CommandHandler from '../command/CommandHandler.js';
-import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
+import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Role, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
 import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
@@ -39,6 +39,7 @@ class WOLF extends EventEmitter {
     this.misc = new Misc(this);
     this.notification = new Notification(this);
     this.phrase = new Phrase(this);
+    this.role = new Role(this);
     this.stage = new Stage(this);
     this.store = new Store(this);
     this.subscriber = new Subscriber(this);
@@ -314,6 +315,7 @@ class WOLF extends EventEmitter {
     this.messaging._cleanUp(reconnection);
     this.misc._cleanUp(reconnection);
     this.notification._cleanUp(reconnection);
+    this.role._cleanUp(reconnection);
     this.stage._cleanUp(reconnection);
     this.store._cleanUp(reconnection);
     this.subscriber._cleanUp(reconnection);
