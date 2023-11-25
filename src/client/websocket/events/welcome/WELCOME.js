@@ -35,7 +35,7 @@ const fininaliseConnection = async (client, resume = false) => {
 };
 
 const login = async (client) => {
-  const { email: username, password, loginType: type, onlineState } = client.config.get('framework.login');
+  const { email: username, password, type, onlineState } = client.config.get('framework.login');
 
   if (!username) {
     return Promise.resolve();

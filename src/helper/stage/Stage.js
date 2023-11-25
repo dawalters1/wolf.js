@@ -8,6 +8,7 @@ import validator from '../../validator/index.js';
 import models, { StageClientDurationUpdate, StageClientGeneralUpdate, StageClientViewerCountUpdate } from '../../models/index.js';
 import commandExists from 'command-exists-promise';
 
+// Cancer
 class Stage extends Base {
   constructor (client) {
     super(client);

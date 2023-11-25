@@ -79,6 +79,7 @@ import Subscriber from './Subscriber.js';
 import SubscriberExtended from './SubscriberExtended.js';
 import SubscriberEvent from './SubscriberEvent.js';
 import SubscriberEventAdditionalInfo from './SubscriberEventAdditionalInfo.js';
+import SubscriberRole from './SubscriberRole.js';
 import SubscriberSelectedCharm from './SubscriberSelectedCharm.js';
 import TimerJob from './TimerJob.js';
 import Tip from './Tip.js';
@@ -181,6 +182,7 @@ export {
   SubscriberEvent,
   SubscriberEventAdditionalInfo,
   SubscriberExtended,
+  SubscriberRole,
   SubscriberSelectedCharm,
   TimerJob,
   Tip,
@@ -284,6 +286,7 @@ export default {
   SubscriberEvent,
   SubscriberEventAdditionalInfo,
   SubscriberExtended,
+  SubscriberRole,
   SubscriberSelectedCharm,
   TimerJob,
   Tip,

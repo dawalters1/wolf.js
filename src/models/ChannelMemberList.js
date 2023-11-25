@@ -18,12 +18,13 @@ class ChannelMemberList {
   }
 
   async _get (subscriberId) {
-    const member = (await Promise.all([
-      this._privileged.get(subscriberId),
-      this._regular.get(subscriberId),
-      this._banned.get(subscriberId),
-      this._misc.get(subscriberId)
-    ])).filter(Boolean)[0];
+    const member = (
+      await Promise.all(
+        ...['_privileged', '_regular', '_banned', '_misc']
+          .map(async (section) =>
+            await this[section].get(subscriberId))
+      )
+    ).filter(Boolean)[0];
 
     return member?.member;
   }
@@ -38,43 +39,39 @@ class ChannelMemberList {
   }
 
   async _onSubscriberUpdate (subscriber) {
-    await Promise.all([
-      this._privileged.updateSubscriber(subscriber),
-      this._regular.updateSubscriber(subscriber),
-      this._silenced.updateSubscriber(subscriber),
-      this._banned.updateSubscriber(subscriber),
-      this._bots.updateSubscriber(subscriber),
-      this._misc.updateSubscriber(subscriber)
-    ]);
+    await Promise.all(
+      ['_privileged', '_regular', '_silenced', '_banned', '_bots', '_misc']
+        .map(async (section) =>
+          this[section].updateSubscriber(subscriber)
+        )
+    );
   }
 
   async _onLeave (subscriber) {
-    return await Promise.all([
-      this._privileged.remove(subscriber),
-      this._regular.remove(subscriber),
-      this._silenced.remove(subscriber),
-      this._banned.remove(subscriber),
-      this._bots.remove(subscriber),
-      this._misc.remove(subscriber)
-    ]);
+    await Promise.all(
+      ['_privileged', '_regular', '_silenced', '_banned', '_bots', '_misc']
+        .map(async (section) =>
+          this[section].remove(subscriber)
+        )
+    );
   }
 
   async _onUpdate (subscriber, capabilities) {
-    await Promise.all([
-      this._privileged.update(subscriber, capabilities),
-      this._regular.update(subscriber, capabilities),
-      this._silenced.update(subscriber, capabilities),
-      this._banned.update(subscriber, capabilities),
-      this._bots.update(subscriber, capabilities)
-    ]);
+    await Promise.all(
+      ['_privileged', '_regular', '_silenced', '_banned', '_bots']
+        .map(async (section) =>
+          this[section].update(subscriber, capabilities)
+        )
+    );
 
-    const inMainList = (await Promise.all(
-      [
-        this._privileged.get(subscriber),
-        this._regular.get(subscriber),
-        this._banned.get(subscriber)
-      ]
-    )).filter(Boolean).length > 0;
+    const inMainList = (
+      await Promise.all(
+        ['_privileged', '_regular', '_banned']
+          .map(async (section) =>
+            this[section].get(subscriber)
+          )
+      )
+    ).filter(Boolean).length > 0;
 
     const inMisc = !!await this._misc.get(subscriber);
 
