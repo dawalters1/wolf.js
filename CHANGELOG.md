@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 # 2.4.0 (UNRELEASED)
 ### Fix
 - WOLFAPIError not respecting 0 value
+### Add
+- Support for Roles in profile
 ### Changed
 - Social Sign in Behavior
+- Role helpers are now their own dedicated helper
 
 # 2.3.6 (2023-11-10)
 ### Fix
