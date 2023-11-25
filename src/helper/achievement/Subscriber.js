@@ -11,19 +11,21 @@ class Subscriber extends Base {
    * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the subscriber
    */
   async getById (subscriberId, parentId) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
 
-    if (parentId) {
-      if (!validator.isValidNumber(parentId)) {
-        throw new models.WOLFAPIError('parentId must be a valid number', { parentId });
-      } else if (validator.isLessThanOrEqualZero(parentId)) {
-        throw new models.WOLFAPIError('parentId cannot be less than or equal to 0', { parentId });
+      if (!validator.isUndefined(parentId)) {
+        if (!validator.isValidNumber(parentId)) {
+          throw new models.WOLFAPIError('parentId must be a valid number', { parentId });
+        } else if (validator.isLessThanOrEqualZero(parentId)) {
+          throw new models.WOLFAPIError('parentId cannot be less than or equal to 0', { parentId });
+        }
       }
     }
 
