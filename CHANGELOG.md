@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 2.4.0 (UNRELEASED)
+# 2.4.0 (2023-11-25)
 ### Fix
 - WOLFAPIError not respecting 0 value
 ### Add
