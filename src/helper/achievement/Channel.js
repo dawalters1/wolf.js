@@ -11,19 +11,21 @@ class Channel extends Base {
    * @returns {Promise<Array<models.AchievementUnlockable>>} - The list of unlocked achievements for the channel
    */
   async getById (targetChannelId, parentId = undefined) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
 
-    if (parentId) {
-      if (!validator.isValidNumber(parentId)) {
-        throw new models.WOLFAPIError('parentId must be a valid number', { parentId });
-      } else if (validator.isLessThanOrEqualZero(parentId)) {
-        throw new models.WOLFAPIError('parentId cannot be less than or equal to 0', { parentId });
+      if (!validator.isUndefined(parentId)) {
+        if (!validator.isValidNumber(parentId)) {
+          throw new models.WOLFAPIError('parentId must be a valid number', { parentId });
+        } else if (validator.isLessThanOrEqualZero(parentId)) {
+          throw new models.WOLFAPIError('parentId cannot be less than or equal to 0', { parentId });
+        }
       }
     }
 

@@ -96,6 +96,10 @@ export class WOLF {
     */
     readonly phrase: PhraseHelper;
     /**
+     * Exposes the Role methods
+     */
+    readonly role: RoleHelper;
+    /**
     * Exposes the Stage methods
     */
     readonly stage: StageHelper;
@@ -132,9 +136,10 @@ export class WOLF {
      * Login to WOLF
      * @param email - The email belonging to the account
      * @param password - The password belonging to the account
-     * @param onlineState - The onlineState to appear as
+     * @param onlineState - The onlineState to appear as (Default: Online)
+     * @param loginType - The loginType (Default: Email)
      */
-    public login(email: string, password: string, onlineState?: OnlineState): Promise<void>;
+    public login(email: string, password: string, onlineState?: OnlineState, loginType?: LoginType): Promise<void>;
 
     /**
      * Connect to the service without login details
@@ -255,7 +260,13 @@ export class Configuration {
              * The account token (Automatically generated if none provided)
              * - Default: undefined
              */
-            token: string
+            token: string,
+
+            /**
+             * The account login type
+             * - Default: Email
+             */
+            type: LoginType
         },
         /**
          * Command settings
@@ -358,6 +369,12 @@ export class Configuration {
             enabled: boolean
         }
     }
+
+    /**
+     * Get a specific property from the config
+     * @param route - The route to a property EX: x.y.z
+     */
+    public get(route: string): any;
 }
 
 export class CommandHandler {
@@ -758,8 +775,9 @@ export class ChannelHelper extends BaseHelper {
 
     /**
      * Exposes the Channel Role methods
+     * @deprecated use client.role instead
      */
-    readonly role: ChannelRoleHelper;
+    readonly role: ChannelRoleHelperDeprecated;
 
     /**
      * Get list of joined channels
@@ -915,8 +933,10 @@ export class ChannelMemberHelper extends BaseHelper {
     public kick(targetChannelId: number, subscriberId: number): Promise<Response>;
 }
 
-
-export class ChannelRoleHelper extends BaseHelper {
+/**
+ * @deprecated
+ */
+export class ChannelRoleHelperDeprecated extends BaseHelper {
     private constructor(client);
 
     /**
@@ -924,6 +944,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param roleId - The ID of the role
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.getById instead
      */
     public getById(roleId: number, languageId: Language, forceNew: false): Promise<ChannelRoleContext>;
 
@@ -932,6 +953,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param roleIds - The ID of the roles
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.getByIds instead
      */
     public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew: false): Promise<Array<ChannelRoleContext>>;
 
@@ -939,6 +961,7 @@ export class ChannelRoleHelper extends BaseHelper {
      *
      * @param id - The ID of the channel
      * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.list instead
      */
     public roles(id: number, forceNew: boolean): Promise<Array<ChannelRole>>;
 
@@ -947,6 +970,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscribe - Whether or not to subscribe to member updates
      * @param forceNew  - Whether or not to request new from the server
+     * @deprecated use client.role.channel.members instead
      */
     public members(id: number, subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
 
@@ -955,6 +979,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber to give the role to
      * @param roleId - The ID of the role to assign
+     * @deprecated use client.role.channel.assign instead
      */
     public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 
@@ -964,6 +989,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param oldSubscriberId - The ID of the subscriber that currently has the role
      * @param newSubscriberId - The ID of the subscriber to give the role to
      * @param roleId - The role to reassign
+     * @deprecated use client.role.channel.reassign instead
      */
     public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
 
@@ -972,6 +998,7 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      * @param roleId - The ID of the role to remove
+     * @deprecated use client.role.channel.unassign instaed
      */
     public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 }
@@ -1307,6 +1334,92 @@ export class PhraseHelper extends BaseHelper {
      * @param input - The input
      */
     public isRequestedPhrase(name: string, input: string): boolean;
+}
+
+export class RoleHelper extends BaseHelper {
+    private constructor(client);
+
+    /**
+     * The subscriber related methods
+     */
+    public subscriber: SubscriberRoleHelper;
+    /**
+     * The channel related methods
+     */
+    public channel: ChannelRoleHelper;
+
+    /**
+     * Get the context of a Channel role
+     * @param roleId - The ID of the role
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.getById instead
+     */
+    public getById(roleId: number, languageId: Language, forceNew?: Boolean): Promise<ChannelRoleContext>;
+    /**
+     * Get the context of Channel roles
+     * @param roleIds - The ID of the roles
+     * @param languageId - The Language
+     * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.getByIds instead
+     */
+    public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew?: Boolean): Promise<Array<ChannelRoleContext>>;
+}
+
+export class ChannelRoleHelper extends BaseHelper {
+    private constructor(client);
+    /**
+     *
+     * @param id - The ID of the channel
+     * @param forceNew - Whether or not to request new from the server
+     * @deprecated use client.role.channel.list instead
+     */
+    public list(id: number, forceNew?: Boolean): Promise<Array<ChannelRole>>
+    /**
+     * Get the list of members with Channel Roles
+     * @param id - The ID of the channel
+     * @param subscribe - Whether or not to subscribe to member updates
+     * @param forceNew  - Whether or not to request new from the server
+     * @deprecated use client.role.channel.members instead
+     */
+    public members(id: number, forceNew?: Boolean): Promise<Array<ChannelRoleMember>>
+    /**
+     * Assign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The ID of the role to assign
+     * @deprecated use client.role.channel.assign instead
+     */
+    public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Reassign a Channel Role
+     * @param id - The ID of the channel
+     * @param oldSubscriberId - The ID of the subscriber that currently has the role
+     * @param newSubscriberId - The ID of the subscriber to give the role to
+     * @param roleId - The role to reassign
+     * @deprecated use client.role.channel.reassign instead
+     */
+    public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
+
+    /**
+     * Unassign a Channel Role
+     * @param id - The ID of the channel
+     * @param subscriberId - The ID of the subscriber
+     * @param roleId - The ID of the role to remove
+     * @deprecated use client.role.channel.unassign instaed
+     */
+    public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+}
+
+export class SubscriberRoleHelper extends BaseHelper {
+    private constructor(client);
+
+    /**
+     * Get the channels that the subscriber has a role in
+     * @param id The ID of the subscriber
+     */
+    public channels(id: number): Promise<Array<SubscriberRole>>;
 }
 
 export class StageHelper extends BaseHelper {
@@ -4961,10 +5074,36 @@ export class SubscriberExtended extends BaseModel {
     };
 }
 
+export class SubscriberRole extends BaseModel {
+    private constructor(client: WOLF, data: object)
+
+    public roleId: number;
+    public channelIdList: Array<number>;
+
+    /**
+     * Get the role
+     * @param language - The language
+     * @param forceNew - Whether or not to get new data from the server
+     */
+    public role(language: Language, forceNew?: boolean): Promise<ChannelRoleContext>;
+
+    public channels(subscribe?: boolean, forceNew?: boolean): Promise<Array<Channel>>;
+}
+
 export class SubscriberSelectedCharm extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public selectedList: Array<CharmSelected>;
+
+    /**
+     * Set the charm displayed on the profile
+     * @param charm - The new charms to set
+     */
+    public set(charm: CharmSelectedBuilder | Array<CharmSelectedBuilder>): Promise<Response>;
+    /**
+     * Clear the selected charm being displayed on the profile
+     */
+    public clear(): Promise<Response>;
 
     toJSON(): {
         selectedList: Array<{

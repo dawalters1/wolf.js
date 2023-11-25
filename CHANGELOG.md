@@ -5,9 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-# 2.3.6 (2023-11-12)
+# 2.4.0 (UNRELEASED)
 ### Fix
-- Stage Client: Undefined track
+- WOLFAPIError not respecting 0 value
+### Add
+- Support for Roles in profile
+### Changed
+- Social Sign in Behavior
+- Role helpers are now their own dedicated helper
 
 # 2.3.6 (2023-11-10)
 ### Fix

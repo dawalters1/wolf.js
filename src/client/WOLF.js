@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
 import { Websocket, Multimedia } from './index.js';
 import CommandHandler from '../command/CommandHandler.js';
-import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
+import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Role, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
 import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
@@ -39,15 +39,18 @@ class WOLF extends EventEmitter {
     this.misc = new Misc(this);
     this.notification = new Notification(this);
     this.phrase = new Phrase(this);
+    this.role = new Role(this);
     this.stage = new Stage(this);
     this.store = new Store(this);
     this.subscriber = new Subscriber(this);
     this.tipping = new Tipping(this);
     this.topic = new Topic(this);
 
-    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
-
     this.currentSubscriber = undefined;
+
+    if (this.config.framework.commands.rys === 'disabled') { return false; }
+
+    (new CommandHandler(this)).register(new Cmd(`${this.config.keyword}_command_${this._frameworkConfig.get('commandKey')}`, { both: (command) => rys(this, command) }));
   }
 
   /**
@@ -57,7 +60,7 @@ class WOLF extends EventEmitter {
    * @param {OnlineState | Number} onlineState
    * @returns {Promise<void>}
    */
-  async login (email, password, onlineState = OnlineState.ONLINE) {
+  async login (email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL) {
     if (this.websocket?.socket?.connected && this.currentSubscriber) {
       return false;
     }
@@ -68,10 +71,12 @@ class WOLF extends EventEmitter {
       email = loginDetails.email;
       password = loginDetails.password;
       onlineState = loginDetails.onlineState;
+      loginType = loginDetails.type;
     } else {
       this.config.framework.login.email = email;
       this.config.framework.login.password = password;
       this.config.framework.login.onlineState = onlineState;
+      this.config.framework.login.type = loginType;
     }
 
     if (validator.isNullOrWhitespace(email)) {
@@ -90,7 +95,11 @@ class WOLF extends EventEmitter {
       throw new WOLFAPIError('onlineState is not valid', { onlineState });
     }
 
-    this.config.framework.login.loginType = email.toLowerCase().endsWith('@facebook.palringo.com') ? LoginType.FACEBOOK : email.toLowerCase().endsWith('@google.palringo.com') ? LoginType.GOOGLE : email.toLowerCase().endsWith('@apple.palringo.com') ? LoginType.APPLE : email.toLowerCase().endsWith('@snapchat.palringo.com') ? LoginType.SNAPCHAT : email.toLowerCase().endsWith('@twitter.palringo.com') ? LoginType.TWITTER : LoginType.EMAIL;
+    if (validator.isNullOrUndefined(loginType)) {
+      throw new WOLFAPIError('type is null or undefined', { onlineState });
+    } else if (!Object.values(LoginType).includes(loginType)) {
+      throw new WOLFAPIError('loginType is not valid', { loginType });
+    }
 
     if (Reflect.has(this.websocket, 'socket')) {
       if (this.websocket.socket.connected) {
@@ -306,6 +315,7 @@ class WOLF extends EventEmitter {
     this.messaging._cleanUp(reconnection);
     this.misc._cleanUp(reconnection);
     this.notification._cleanUp(reconnection);
+    this.role._cleanUp(reconnection);
     this.stage._cleanUp(reconnection);
     this.store._cleanUp(reconnection);
     this.subscriber._cleanUp(reconnection);
