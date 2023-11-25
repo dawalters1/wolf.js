@@ -9,35 +9,13 @@ const TRIM_END_PUNC = new RegExp(/\p{Punctuation}+$/, 'gui');
 const trimPunctuation = (string) => string?.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '').trim();
 
 const isType = (arg, type) => {
-  const typeOf = typeof arg;
+  const types = ['string', 'function', 'object', 'bigint', 'symbol', 'number', 'boolean', 'undefined'];
 
-  switch (type) {
-    case 'string':
-      return typeOf === 'string';
-
-    case 'function':
-      return typeOf === 'function';
-
-    case 'object':
-      return typeOf === 'object';
-
-    case 'bigint':
-      return typeOf === 'bigint';
-
-    case 'symbol':
-      return typeOf === 'symbol';
-
-    case 'number':
-      return typeOf === 'number';
-
-    case 'boolean':
-      return typeOf === 'boolean';
-
-    case 'undefined':
-      return typeOf === undefined;
+  if (!types.includes(type)) {
+    throw new WOLFAPIError('type is not a valid typeof', { arg, type });
   }
 
-  throw new WOLFAPIError('type is not a valid typeof', { arg, type });
+  return (String)(typeof arg) === type;
 };
 
 const isNull = (arg) => arg === null;

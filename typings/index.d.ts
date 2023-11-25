@@ -369,6 +369,12 @@ export class Configuration {
             enabled: boolean
         }
     }
+
+    /**
+     * Get a specific property from the config
+     * @param route - The route to a property EX: x.y.z
+     */
+    public get(route: string): any;
 }
 
 export class CommandHandler {
@@ -5072,7 +5078,7 @@ export class SubscriberRole extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public roleId: number;
-    public groupIdList: Array<number>;
+    public channelIdList: Array<number>;
 
     /**
      * Get the role

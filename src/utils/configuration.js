@@ -83,7 +83,8 @@ const developerConfig = (client) => {
       },
       rateLimiter: {
         enabled: typeof config?.framework?.rateLimiter?.enabled === 'boolean' ? config.framework.rateLimiter.enabled : false
-      }
+      },
+      beStalky: typeof config?.framework?.beStalky === 'boolean' ? config.framework.beStalky : false
     },
     ..._.omit(config, ['keyword', 'framework']) // Load reamining developer config
   };

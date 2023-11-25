@@ -22,7 +22,14 @@ class Subscriber extends Base {
       }
     );
 
-    return response?.body?.map((role) => new models.SubscriberRole(this.client, role)) ?? [];
+    const beStalky = this.client.config.get('framework.beStalky');
+    const channelIds = beStalky ? [] : (await this.client.channel.list())?.map((channel) => channel.id);
+
+    return response?.body?.map((role) => {
+      role.groupIdList = beStalky ? role.groupIdList : role.groupIdList.filter((groupId) => channelIds.includes(groupId));
+
+      return new models.SubscriberRole(this.client, role);
+    })?.filter((role) => role.channelIdList.length);
   }
 }
 

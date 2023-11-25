@@ -5,7 +5,7 @@ class SubscriberRole extends Base {
     super(client);
 
     this.roleId = data?.roleId;
-    this.groupIdList = data?.groupIdList;
+    this.channelIdList = data?.groupIdList;
   }
 
   async role (language, forceNew = false) {
@@ -13,7 +13,7 @@ class SubscriberRole extends Base {
   }
 
   async channels (subscribe = true, forceNew = false) {
-    return this.client.channel.getByIds(this.groupIdList, subscribe, forceNew);
+    return this.client.channel.getByIds(this.channelIdList, subscribe, forceNew);
   }
 }
 
