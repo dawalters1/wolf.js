@@ -19,10 +19,16 @@ class Category extends Base {
    * @returns {Promise<Array<AchievementCategory>>} - The achievement category list
    */
   async getList (language, forceNew = false) {
-    if (!validator.isValidNumber(language)) {
-      throw new models.WOLFAPIError('language must be a valid number', { language });
-    } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new models.WOLFAPIError('language is not valid', { language });
+    { // eslint-disable-line no-lone-blocks
+      if (!validator.isValidNumber(language)) {
+        throw new models.WOLFAPIError('language must be a valid number', { language });
+      } else if (!Object.values(Language).includes(parseInt(language))) {
+        throw new models.WOLFAPIError('language is not valid', { language });
+      }
+
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     if (!forceNew && this.categories[language]) {

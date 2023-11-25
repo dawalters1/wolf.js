@@ -93,6 +93,7 @@ export const SUBSCRIBER_PRESENCE = 'subscriber presence';
 export const SUBSCRIBER_PROFILE = 'subscriber profile';
 export const SUBSCRIBER_PROFILE_UNSUBSCRIBE = 'subscriber profile unsubscribe';
 export const SUBSCRIBER_PROFILE_UPDATE = 'subscriber profile update';
+export const SUBSCRIBER_ROLE_SUMMARY = 'subscriber role summary';
 export const SUBSCRIBER_SETTINGS_UPDATE = 'subscriber settings update';
 export const TIP_ADD = 'tip add';
 export const TIP_DETAIL = 'tip detail';
@@ -203,6 +204,7 @@ export default {
   SUBSCRIBER_PROFILE,
   SUBSCRIBER_PROFILE_UNSUBSCRIBE,
   SUBSCRIBER_PROFILE_UPDATE,
+  SUBSCRIBER_ROLE_SUMMARY,
   SUBSCRIBER_SETTINGS_UPDATE,
   TIP_ADD,
   TIP_DETAIL,

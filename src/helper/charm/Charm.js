@@ -32,12 +32,14 @@ class Charm extends Base {
    * @returns {Promise<models.Charm>} - The requested charm
    */
   async getById (id) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      }
     }
 
     return (await this.getByIds([id]))[0];
@@ -51,21 +53,23 @@ class Charm extends Base {
   async getByIds (ids) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!ids.length) {
+        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      }
 
-    if ([...new Set(ids)].length !== ids.length) {
-      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-    }
+      if ([...new Set(ids)].length !== ids.length) {
+        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+      }
 
-    for (const id of ids) {
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      for (const id of ids) {
+        if (validator.isNullOrUndefined(id)) {
+          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+        } else if (!validator.isValidNumber(id)) {
+          throw new models.WOLFAPIError('id must be a valid number', { id });
+        } else if (validator.isLessThanOrEqualZero(id)) {
+          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+        }
       }
     }
 
@@ -82,12 +86,14 @@ class Charm extends Base {
    * @returns {Promise<models.CharmSummary>} - The charm summary of a subscriber
    */
   async getSubscriberSummary (subscriberId) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -106,12 +112,14 @@ class Charm extends Base {
    * @returns {Promise<models.CharmStatistics>} - The charm statistics of a subscriber
    */
   async getSubscriberStatistics (subscriberId) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -132,28 +140,30 @@ class Charm extends Base {
    * @returns {Promise<Array<models.CharmExpiry>>} - The list of active charms
    */
   async getSubscriberActiveList (subscriberId, limit = 25, offset = 0) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
 
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
-    }
+      if (validator.isNullOrUndefined(limit)) {
+        throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('limit must be a valid number', { limit });
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+      }
 
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+      if (validator.isNullOrUndefined(offset)) {
+        throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
+      } else if (!validator.isValidNumber(offset)) {
+        throw new models.WOLFAPIError('offset must be a valid number', { offset });
+      } else if (validator.isLessThanZero(offset)) {
+        throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -176,28 +186,30 @@ class Charm extends Base {
    * @returns {Promise<Array<models.CharmExpiry>>} - The list of expired charms
    */
   async getSubscriberExpiredList (subscriberId, limit = 25, offset = 0) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
 
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
-    }
+      if (validator.isNullOrUndefined(limit)) {
+        throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('limit must be a valid number', { limit });
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+      }
 
-    if (validator.isNullOrUndefined(offset)) {
-      throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
-    } else if (!validator.isValidNumber(offset)) {
-      throw new models.WOLFAPIError('offset must be a valid number', { offset });
-    } else if (validator.isLessThanZero(offset)) {
-      throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+      if (validator.isNullOrUndefined(offset)) {
+        throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
+      } else if (!validator.isValidNumber(offset)) {
+        throw new models.WOLFAPIError('offset must be a valid number', { offset });
+      } else if (validator.isLessThanZero(offset)) {
+        throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -218,12 +230,14 @@ class Charm extends Base {
    * @returns {Promise<models.SubscriberSelectedCharm>} - The list of expired charms
    */
   async getSubscriberSelectedList (subscriberId) {
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -244,21 +258,23 @@ class Charm extends Base {
   async delete (charmIds) {
     charmIds = (Array.isArray(charmIds) ? charmIds : [charmIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!charmIds.length) {
-      throw new models.WOLFAPIError('charmIds cannot be null or empty', { charmIds });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!charmIds.length) {
+        throw new models.WOLFAPIError('charmIds cannot be null or empty', { charmIds });
+      }
 
-    if ([...new Set(charmIds)].length !== charmIds.length) {
-      throw new models.WOLFAPIError('charmIds cannot contain duplicates', { charmIds });
-    }
+      if ([...new Set(charmIds)].length !== charmIds.length) {
+        throw new models.WOLFAPIError('charmIds cannot contain duplicates', { charmIds });
+      }
 
-    for (const subscriberId of charmIds) {
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      for (const subscriberId of charmIds) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        }
       }
     }
 
@@ -278,8 +294,10 @@ class Charm extends Base {
   async set (charms) {
     charms = (Array.isArray(charms) ? charms : [charms]).map((charm) => new models.CharmSelected(this.client, charm.toCharmSelected()));
 
-    if ([...new Set(charms.map((charm) => charm.toJSON()))].length !== charms.length) {
-      throw new models.WOLFAPIError('charms cannot contain duplicates', { charms });
+    { // eslint-disable-line no-lone-blocks
+      if ([...new Set(charms.map((charm) => charm.toJSON()))].length !== charms.length) {
+        throw new models.WOLFAPIError('charms cannot contain duplicates', { charms });
+      }
     }
 
     charms.forEach((charm) => charm.validate());

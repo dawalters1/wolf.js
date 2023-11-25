@@ -12,20 +12,22 @@ class Request extends Base {
    * @returns {Promise<ChannelAudioSlotRequest>}
    */
   async list (targetChannelId, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+      if (!validator.isValidBoolean(subscribe)) {
+        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     const channel = await this.client.channel.getById(targetChannelId);
@@ -58,29 +60,31 @@ class Request extends Base {
    * @returns {Promise<Response>}
    */
   async add (targetChannelId, slotId = undefined, subscriberId = undefined) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (slotId) {
-      if (validator.isNullOrUndefined(slotId)) {
-        throw new models.WOLFAPIError('slotId cannot be null or undefined', { slotId });
-      } else if (!validator.isValidNumber(slotId)) {
-        throw new models.WOLFAPIError('slotId must be a valid number', { slotId });
-      } else if (validator.isLessThanOrEqualZero(slotId)) {
-        throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
       }
 
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      if (slotId) {
+        if (validator.isNullOrUndefined(slotId)) {
+          throw new models.WOLFAPIError('slotId cannot be null or undefined', { slotId });
+        } else if (!validator.isValidNumber(slotId)) {
+          throw new models.WOLFAPIError('slotId must be a valid number', { slotId });
+        } else if (validator.isLessThanOrEqualZero(slotId)) {
+          throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
+        }
+
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        }
       }
     }
 
@@ -153,21 +157,23 @@ class Request extends Base {
    * @returns {Promise<Response>}
    */
   async delete (targetChannelId, slotId = undefined) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
 
-    if (slotId) {
-      if (validator.isNullOrUndefined(slotId)) {
-        throw new models.WOLFAPIError('slotId cannot be null or undefined', { slotId });
-      } else if (!validator.isValidNumber(slotId)) {
-        throw new models.WOLFAPIError('slotId must be a valid number', { slotId });
-      } else if (validator.isLessThanOrEqualZero(slotId)) {
-        throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
+      if (slotId) {
+        if (validator.isNullOrUndefined(slotId)) {
+          throw new models.WOLFAPIError('slotId cannot be null or undefined', { slotId });
+        } else if (!validator.isValidNumber(slotId)) {
+          throw new models.WOLFAPIError('slotId must be a valid number', { slotId });
+        } else if (validator.isLessThanOrEqualZero(slotId)) {
+          throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
+        }
       }
     }
 
@@ -233,14 +239,16 @@ class Request extends Base {
    * @returns {Promise<Request>}
    */
   async clear (targetChannelId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (!validator.isType(targetChannelId, 'number')) {
-      throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (!validator.isType(targetChannelId, 'number')) {
+        throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
     }
 
     const channel = await this.client.channel.getById(targetChannelId);

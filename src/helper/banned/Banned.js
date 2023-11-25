@@ -31,21 +31,23 @@ class Banned extends Base {
   async isBanned (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      }
 
-    if ([...new Set(values)].length !== values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-    }
+      if ([...new Set(values)].length !== values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      }
 
-    for (const subscriberId of values) {
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      for (const subscriberId of values) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        }
       }
     }
 
@@ -62,21 +64,23 @@ class Banned extends Base {
   async ban (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      }
 
-    if ([...new Set(values)].length !== values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-    }
+      if ([...new Set(values)].length !== values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      }
 
-    for (const subscriberId of values) {
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      for (const subscriberId of values) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        }
       }
     }
 
@@ -102,21 +106,23 @@ class Banned extends Base {
   async unban (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    if (!values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+      }
 
-    if ([...new Set(values)].length !== values.length) {
-      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-    }
+      if ([...new Set(values)].length !== values.length) {
+        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+      }
 
-    for (const subscriberId of values) {
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+      for (const subscriberId of values) {
+        if (validator.isNullOrUndefined(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+        } else if (!validator.isValidNumber(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+        }
       }
     }
 

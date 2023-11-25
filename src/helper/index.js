@@ -11,6 +11,7 @@ import Messaging from './messaging/Messaging.js';
 import Misc from './misc/Misc.js';
 import Notification from './notification/Notification.js';
 import Phrase from './phrase/Phrase.js';
+import Role from './role/Role.js';
 import Stage from './stage/Stage.js';
 import Store from './store/Store.js';
 import Subscriber from './subscriber/Subscriber.js';
@@ -31,6 +32,7 @@ const exports = {
   Misc,
   Notification,
   Phrase,
+  Role,
   Stage,
   Store,
   Subscriber,
@@ -52,6 +54,7 @@ export {
   Misc,
   Notification,
   Phrase,
+  Role,
   Stage,
   Store,
   Subscriber,

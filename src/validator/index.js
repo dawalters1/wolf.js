@@ -9,38 +9,17 @@ const TRIM_END_PUNC = new RegExp(/\p{Punctuation}+$/, 'gui');
 const trimPunctuation = (string) => string?.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '').trim();
 
 const isType = (arg, type) => {
-  const typeOf = typeof arg;
+  const types = ['string', 'function', 'object', 'bigint', 'symbol', 'number', 'boolean', 'undefined'];
 
-  switch (type) {
-    case 'string':
-      return typeOf === 'string';
-
-    case 'function':
-      return typeOf === 'function';
-
-    case 'object':
-      return typeOf === 'object';
-
-    case 'bigint':
-      return typeOf === 'bigint';
-
-    case 'symbol':
-      return typeOf === 'symbol';
-
-    case 'number':
-      return typeOf === 'number';
-
-    case 'boolean':
-      return typeOf === 'boolean';
-
-    case 'undefined':
-      return typeOf === undefined;
+  if (!types.includes(type)) {
+    throw new WOLFAPIError('type is not a valid typeof', { arg, type });
   }
 
-  throw new WOLFAPIError('type is not a valid typeof', { arg, type });
+  return (String)(typeof arg) === type;
 };
 
 const isNull = (arg) => arg === null;
+const isUndefined = (arg) => arg === undefined;
 const isNullOrUndefined = (arg) => arg === null || arg === undefined;
 const isNullOrWhitespace = (arg) => isNullOrUndefined(arg) || (typeof arg === 'string' && !arg.trim().length);
 const isLessThanOrEqualZero = (arg) => isValidNumber(arg) && !(parseInt(arg) > 0);
@@ -119,6 +98,7 @@ const isValidUrl = (client, arg) => {
 
 const exports = {
   isNull,
+  isUndefined,
   isNullOrUndefined,
   isLessThanOrEqualZero,
   isGreaterThanOrEqualZero,
@@ -137,6 +117,7 @@ const exports = {
 
 export {
   isNull,
+  isUndefined,
   isNullOrUndefined,
   isLessThanOrEqualZero,
   isGreaterThanOrEqualZero,
