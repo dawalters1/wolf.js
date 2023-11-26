@@ -126,7 +126,7 @@ class Subscriber extends Base {
         hash: this.hash,
         nicknameShort: this.nickname.slice(0, 6),
         onlineState: this.onlineState,
-        privilieges: this.privilieges,
+        privilieges: this.privileges,
         privilegeList: this.privilegeList
       }
     };
