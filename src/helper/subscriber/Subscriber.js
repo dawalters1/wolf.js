@@ -14,6 +14,7 @@ class Subscriber extends Base {
     this.subscribers = [];
     this.presence = new Presence(this.client);
     this.wolfstars = new Wolfstars(this.client);
+    this.role = new Role(this.client);
   }
 
   async _unsubscribe (id) {
