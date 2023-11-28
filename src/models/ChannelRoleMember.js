@@ -14,15 +14,15 @@ class ChannelRoleMember extends Base {
   }
 
   async resassign (newSubscriberId) {
-    return await this.client.channel.role.reassign(this.channelId, this.subscriberId, newSubscriberId, this.roleId);
+    return await this.client.role.channel.reassign(this.channelId, this.subscriberId, newSubscriberId, this.roleId);
   }
 
   async unassign () {
-    return await this.client.channel.role.unassign(this.channelId, this.subscriberId, this.roleId);
+    return await this.client.role.channel.unassign(this.channelId, this.subscriberId, this.roleId);
   }
 
   async role (languageId) {
-    return await this.client.channel.role.getById(this.roleId, languageId);
+    return await this.client.role.getById(this.roleId, languageId);
   }
 }
 
