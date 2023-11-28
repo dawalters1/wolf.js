@@ -13,23 +13,23 @@ class ChannelRoleContainer extends Base {
   }
 
   async roles (forceNew = false) {
-    return this.client.channel.role.roles(this.channelId, forceNew);
+    return this.client.role.channel.list(this.channelId, forceNew);
   }
 
   async members (subscribe = true, forceNew = false) {
-    return await this.client.channel.role.members(this.channelId, subscribe, forceNew);
+    return await this.client.role.channel.members(this.channelId, subscribe, forceNew);
   }
 
   async assign (subscriberId, roleId) {
-    return await this.client.channel.role.assign(this.channelId, subscriberId, roleId);
+    return await this.client.role.channel.assign(this.channelId, subscriberId, roleId);
   }
 
   async reassign (oldSubscriberId, newSubscriberId, roleId) {
-    return await this.client.channel.role.reassign(this.channelId, oldSubscriberId, newSubscriberId, roleId);
+    return await this.client.role.channel.reassign(this.channelId, oldSubscriberId, newSubscriberId, roleId);
   }
 
   async unassign (subscriberId, roleId) {
-    return await this.client.channel.role.assign(this.channelId, subscriberId, roleId);
+    return await this.client.role.channel.assign(this.channelId, subscriberId, roleId);
   }
 
   toJSON () {

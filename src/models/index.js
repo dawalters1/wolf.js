@@ -58,7 +58,7 @@ import LegacyNotification from './LegacyNotification.js';
 import Notification from './Notification.js';
 import NotificationFeed from './NotificationFeed.js';
 import LegacyNotificationAction from './LegacyNotificationAction.js';
-import Phrase from '../helper/phrase/Phrase.js';
+import Phrase from './Phrase.js';
 import PhraseCount from './PhraseCount.js';
 import PhraseRoute from './PhraseRoute.js';
 import Presence from './Presence.js';

@@ -73,7 +73,7 @@ class ChannelMember extends Base {
    * @returns {Promise<Response>}
    */
   async assign (roleId) {
-    return await this.client.channel.role.assign(this.targetChannelId, this.id, roleId);
+    return await this.client.role.channel.assign(this.targetChannelId, this.id, roleId);
   }
 
   /**
@@ -82,7 +82,7 @@ class ChannelMember extends Base {
    * @returns {Promise<Response>}
    */
   async unassign (roleId) {
-    return await this.client.channel.role.unassign(this.targetChannelId, this.id, roleId);
+    return await this.client.role.channel.unassign(this.targetChannelId, this.id, roleId);
   }
 }
 
