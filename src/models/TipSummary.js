@@ -14,7 +14,7 @@ class TipSummary extends Base {
    * @returns {Promise<Array<Charm>>}
    */
   async charms () {
-    return await this.client.charm.getByIds(this.list.map((charm) => charm.charmId));
+    return await this.client.charm.getByIds(this.charmList.map((charm) => charm.charmId));
   }
 }
 
