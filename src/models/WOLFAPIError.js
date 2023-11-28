@@ -2,7 +2,7 @@ class WOLFAPIError extends Error {
   constructor (error, param = undefined) {
     super(error);
 
-    this.params = param !== undefined ? this.params : undefined;
+    this.params = param !== undefined ? param : undefined;
   }
 }
 
