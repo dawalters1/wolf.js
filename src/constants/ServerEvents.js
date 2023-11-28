@@ -33,9 +33,7 @@ export const NOTIFICATION = {
     GLOBAL_NOTIFICATION_LIST_ADD: 'global notification list add',
     GLOBAL_NOTIFICATION_LIST_DELETE: 'global notification list delete',
     GLOBAL_NOTIFICATION_LIST_CLEAR: 'global notification list clear'
-  },
-  NOTIFICATION_GLOBAL_UPDATE: 'notification global update',
-  NOTIFICATION_PRIVATE_UPDATE: 'notification private update'
+  }
 };
 export const PRESENCE = {
   PRESENCE_UPDATE: 'presence update'

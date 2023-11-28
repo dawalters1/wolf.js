@@ -18,7 +18,11 @@ class Processor {
     const loadEventGroup = async (route, group) => {
       // There are no more subGroups in the grouping
       if (typeof (group[1]) === 'string') {
-        this.handlers[`${group[1]}`] = (await import(`./${route.toLowerCase()}/${group[0]}.js`)).default;
+        try {
+          this.handlers[`${group[1]}`] = (await import(`./${route.toLowerCase()}/${group[0]}.js`)).default;
+        } catch (error) {
+          return this.client.emit(Event.INTERNAL_ERROR, new WOLFAPIError('Expected event does not have handler', { event: group[0] }));
+        }
       } else { // There are more subGroups in the grouping, process them
         await Promise.all(
           Object.entries(group[1])
