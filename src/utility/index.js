@@ -67,118 +67,46 @@ class Utility {
       throw new WOLFAPIError('languageKey cannot be null or undefined', { languageKey });
     }
 
-    switch (languageKey.toLowerCase()) {
-      case 'ar':
-        return Language.ARABIC;
+    const languageKeyMap = {
+      ar: Language.ARABIC,
+      in: Language.BAHASA_INDONESIA,
+      br: Language.BRAZILIAN_PORTUGUESE,
+      bu: Language.BULGARIAN,
+      ch: Language.CHINESE_SIMPLIFIED,
+      cz: Language.CZECH,
+      da: Language.DANISH,
+      du: Language.DUTCH,
+      en: Language.ENGLISH,
+      et: Language.ESTONIAN,
+      fi: Language.FINNISH,
+      fr: Language.FRENCH,
+      ge: Language.GERMAN,
+      gr: Language.GREEK,
+      hi: Language.HINDI,
+      hu: Language.HUNGARIAN,
+      it: Language.ITALIAN,
+      ja: Language.JAPANESE,
+      ka: Language.KAZAKH,
+      ko: Language.KOREAN,
+      ls: Language.LATIN_SPANISH,
+      la: Language.LATVIAN,
+      li: Language.LITHUANIAN,
+      ma: Language.MALAY,
+      no: Language.NORWEGIAN,
+      fa: Language.PERSIAN_FARSI,
+      po: Language.POLISH,
+      pt: Language.PORTUGUESE,
+      ru: Language.RUSSIAN,
+      sl: Language.SLOVAK,
+      es: Language.SPANISH,
+      sv: Language.SWEDISH,
+      th: Language.THAI,
+      tr: Language.TURKISH,
+      uk: Language.UKRAINIAN,
+      vi: Language.VIETNAMESE
+    };
 
-      case 'in':
-        return Language.BAHASA_INDONESIA;
-
-      case 'br':
-        return Language.BRAZILIAN_PORTUGUESE;
-
-      case 'bu':
-        return Language.BULGARIAN;
-
-      case 'ch':
-        return Language.CHINESE_SIMPLIFIED;
-
-      case 'cz':
-        return Language.CZECH;
-
-      case 'da':
-        return Language.DANISH;
-
-      case 'du':
-        return Language.DUTCH;
-
-      case 'en':
-        return Language.ENGLISH;
-
-      case 'et':
-        return Language.ESTONIAN;
-
-      case 'fi':
-        return Language.FINNISH;
-
-      case 'fr':
-        return Language.FRENCH;
-
-      case 'ge':
-        return Language.GERMAN;
-
-      case 'gr':
-        return Language.GREEK;
-
-      case 'hi':
-        return Language.HINDI;
-
-      case 'hu':
-        return Language.HUNGARIAN;
-
-      case 'it':
-        return Language.ITALIAN;
-
-      case 'ja':
-        return Language.JAPANESE;
-
-      case 'ka':
-        return Language.KAZAKH;
-
-      case 'ko':
-        return Language.KOREAN;
-
-      case 'ls':
-        return Language.LATIN_SPANISH;
-
-      case 'la':
-        return Language.LATVIAN;
-
-      case 'li':
-        return Language.LITHUANIAN;
-
-      case 'ma':
-        return Language.MALAY;
-
-      case 'no':
-        return Language.NORWEGIAN;
-
-      case 'fa':
-        return Language.PERSIAN_FARSI;
-
-      case 'po':
-        return Language.POLISH;
-
-      case 'pt':
-        return Language.PORTUGUESE;
-
-      case 'ru':
-        return Language.RUSSIAN;
-
-      case 'sl':
-        return Language.SLOVAK;
-
-      case 'es':
-        return Language.SPANISH;
-
-      case 'sv':
-        return Language.SWEDISH;
-
-      case 'th':
-        return Language.THAI;
-
-      case 'tr':
-        return Language.TURKISH;
-
-      case 'uk':
-        return Language.UKRAINIAN;
-
-      case 'vi':
-        return Language.VIETNAMESE;
-
-      default:
-        return Language.ENGLISH;
-    }
+    return languageKeyMap[languageKey.toLocaleLowerCase()] ?? Language.ENGLISH;
   }
 
   /**
@@ -193,118 +121,46 @@ class Utility {
       throw new WOLFAPIError('languageId must be a valid number', { languageId });
     }
 
-    switch (languageId) {
-      case Language.ARABIC:
-        return 'ar';
+    const languageIdMap = {
+      14: 'ar',
+      28: 'in',
+      37: 'br',
+      45: 'bu',
+      11: 'ch',
+      22: 'cz',
+      24: 'da',
+      30: 'du',
+      1: 'en',
+      39: 'et',
+      25: 'fi',
+      6: 'fr',
+      3: 'ge',
+      16: 'gr',
+      18: 'hi',
+      27: 'hu',
+      13: 'it',
+      19: 'ja',
+      41: 'ka',
+      36: 'ko',
+      20: 'ls',
+      42: 'la',
+      43: 'li',
+      29: 'ma',
+      31: 'no',
+      15: 'fa',
+      10: 'po',
+      17: 'pt',
+      12: 'ru',
+      21: 'sl',
+      4: 'es',
+      32: 'sv',
+      33: 'th',
+      34: 'tr',
+      44: 'uk',
+      35: 'vi'
+    };
 
-      case Language.BAHASA_INDONESIA:
-        return 'in';
-
-      case Language.BRAZILIAN_PORTUGUESE:
-        return 'br';
-
-      case Language.BULGARIAN:
-        return 'bu';
-
-      case Language.CHINESE_SIMPLIFIED:
-        return 'ch';
-
-      case Language.CZECH:
-        return 'cz';
-
-      case Language.DANISH:
-        return 'da';
-
-      case Language.DUTCH:
-        return 'du';
-
-      case Language.ENGLISH:
-        return 'en';
-
-      case Language.ESTONIAN:
-        return 'et';
-
-      case Language.FINNISH:
-        return 'fi';
-
-      case Language.FRENCH:
-        return 'fr';
-
-      case Language.GERMAN:
-        return 'ge';
-
-      case Language.GREEK:
-        return 'gr';
-
-      case Language.HINDI:
-        return 'hi';
-
-      case Language.HUNGARIAN:
-        return 'hu';
-
-      case Language.ITALIAN:
-        return 'it';
-
-      case Language.JAPANESE:
-        return 'ja';
-
-      case Language.KAZAKH:
-        return 'ka';
-
-      case Language.KOREAN:
-        return 'ko';
-
-      case Language.LATIN_SPANISH:
-        return 'ls';
-
-      case Language.LATVIAN:
-        return 'la';
-
-      case Language.LITHUANIAN:
-        return 'li';
-
-      case Language.MALAY:
-        return 'ma';
-
-      case Language.NORWEGIAN:
-        return 'no';
-
-      case Language.PERSIAN_FARSI:
-        return 'fa';
-
-      case Language.POLISH:
-        return 'po';
-
-      case Language.PORTUGUESE:
-        return 'pt';
-
-      case Language.RUSSIAN:
-        return 'ru';
-
-      case Language.SLOVAK:
-        return 'sl';
-
-      case Language.SPANISH:
-        return 'es';
-
-      case Language.SWEDISH:
-        return 'sv';
-
-      case Language.THAI:
-        return 'th';
-
-      case Language.TURKISH:
-        return 'tr';
-
-      case Language.UKRAINIAN:
-        return 'uk';
-
-      case Language.VIETNAMESE:
-        return 'vi';
-
-      default:
-        return 'en';
-    }
+    return languageIdMap[languageId] ?? 'en';
   }
 
   /**
