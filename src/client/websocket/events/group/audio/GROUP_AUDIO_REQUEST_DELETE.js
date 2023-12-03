@@ -1,30 +1,38 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
+class GroupAudioRequestDelete extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GROUP_AUDIO_REQUEST_DELETE);
+  }
 
-  if (!channel) { return false; }
+  async process (body) {
+    const channel = this.client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  const cached = channel.audioRequests.find((request) => request.subscriberId === body.subscriberId);
+    if (!channel) { return false; }
 
-  if (!cached) { return false; }
+    const cached = channel.audioRequests.find((request) => request.subscriberId === body.subscriberId);
 
-  const request = new models.ChannelAudioSlotRequest(client, body);
+    if (!cached) { return false; }
 
-  channel.audioRequests.splice(channel.audioRequests.indexOf(request), 1);
+    const request = new models.ChannelAudioSlotRequest(this.client, body);
 
-  return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
-    ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]
-    : [Event.GROUP_AUDIO_REQUEST_DELETE, Event.CHANNEL_AUDIO_REQUEST_DELETE])
-    .forEach((event) =>
-      client.emit(
-        event,
-        channel,
-        request
-      )
-    );
-};
+    channel.audioRequests.splice(channel.audioRequests.indexOf(request), 1);
+
+    return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
+      ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]
+      : [Event.GROUP_AUDIO_REQUEST_DELETE, Event.CHANNEL_AUDIO_REQUEST_DELETE])
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          channel,
+          request
+        )
+      );
+  };
+}
+export default GroupAudioRequestDelete;

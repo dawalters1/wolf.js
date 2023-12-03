@@ -1,23 +1,31 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const channel = client.channel.channels.find((channel) => channel.id === body.channelId);
+class GroupEventCreate extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GROUP_EVENT_CREATE);
+  }
 
-  if (!channel) { return false; }
+  async process (body) {
+    const channel = this.client.channel.channels.find((channel) => channel.id === body.channelId);
 
-  const event = await client.event.getById(body.id);
+    if (!channel) { return false; }
 
-  channel.events.push(event);
+    const event = await this.client.event.getById(body.id);
 
-  return [Event.GROUP_EVENT_CREATE, Event.CHANNEL_EVENT_CREATE]
-    .forEach((event) =>
-      client.emit(
-        event,
-        channel,
-        event
-      )
-    );
-};
+    channel.events.push(event);
+
+    return [Event.GROUP_EVENT_CREATE, Event.CHANNEL_EVENT_CREATE]
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          channel,
+          event
+        )
+      );
+  };
+}
+export default GroupEventCreate;

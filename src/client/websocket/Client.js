@@ -1,21 +1,59 @@
-import Processor from './events/Processor.js';
 import { Event, SocketEvent } from '../../constants/index.js';
 import fs from 'fs';
 import io from 'socket.io-client';
 import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { Response } from '../../models/index.js';
+import { pathToFileURL, fileURLToPath } from 'url';
+import { Response, WOLFAPIError } from '../../models/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const isDirectory = filePath => fs.statSync(filePath).isDirectory();
+const getDirectories = filePath =>
+  fs.readdirSync(filePath)
+    .map(name => path.join(filePath, name))
+    .filter(isDirectory);
+
+const isFile = filePath => fs.statSync(filePath)
+  .isFile();
+const getFiles = filePath =>
+  fs.readdirSync(filePath)
+    .map(name => path.join(filePath, name))
+    .filter(isFile);
+
+const getFilesRecursively = (path) => {
+  const files = getDirectories(path)
+    .map(dir => getFilesRecursively(dir)) // go through each directory
+    .reduce((a, b) => a.concat(b), []); // map returns a 2d array (array of file arrays) so flatten
+
+  return files.concat(getFiles(path));
+};
+
+const getHandlers = () => getFilesRecursively(path.join(__dirname, './events/'))
+  .filter((source) =>
+    !fs.lstatSync(source).isDirectory() &&
+  path.parse(source).name !== 'Base'
+  );
+
 class Websocket {
   constructor (client) {
     this.client = client;
-    this._processor = new Processor(this.client);
   }
 
-  _create () {
+  async init () {
+    this.handlers = await getHandlers()
+      .reduce(async (result, source) => {
+        const handler = new (await import(pathToFileURL(source))).default(this.client); // eslint-disable-line new-cap
+
+        if (!(handler instanceof (await import('./events/Base.js')).default)) {
+          return result;
+        }
+
+        (await result)[handler.event] = handler;
+
+        return result;
+      }, {});
+
     const { host, port, query } = this.client._frameworkConfig.get('connection');
     const { device, version } = query;
     const { onlineState, token } = this.client.config.get('framework.login');
@@ -46,27 +84,28 @@ class Websocket {
     this.socket.on(SocketEvent.PING, () => this.client.emit(Event.PING));
     this.socket.on(SocketEvent.PONG, (latency) => this.client.emit(Event.PONG, latency));
 
-    this.socket.onAny((eventName, data) => this._processor.process(eventName, data));
+    this.socket.onAny((eventString, data) => {
+      this.client.emit(Event.PACKET_RECEIVED, eventString, data);
 
-    return this.connect();
+      const handler = this.handlers[eventString];
+      const body = data?.body ?? data;
+
+      return handler === undefined
+        ? this.client.emit(Event.INTERNAL_ERROR, new WOLFAPIError('Unhandled socket event', { eventString, data }))
+        : handler.process(body);
+    });
   }
 
-  connect () {
-    if (!this.socket) {
-      return this._create();
-    }
+  async connect () {
+    if (!this.socket) { await this.init(); }
 
-    if (this.socket?.connected) {
-      return;
-    }
+    if (this.socket?.connected) { return; }
 
     return this.socket?.connect();
   }
 
-  disconnect () {
-    if (!this.socket?.connected) {
-      return;
-    }
+  async disconnect () {
+    if (!this.socket?.connected) { return; }
 
     return this.socket?.disconnect();
   }

@@ -50,16 +50,19 @@
     "fluent-ffmpeg": "^2.1.2",
     "http-status-codes": "^2.3.0",
     "image-size": "^1.0.2",
+    "import-sync": "^2.1.2",
+    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
     "node-pre-gyp": "^0.17.0",
+    "node-recursive-directory": "^1.2.0",
+    "recursive-readdir": "^2.2.3",
     "socket.io-client": "^4.4.1",
     "superagent": "^8.1.2",
     "tldts": "^6.0.21",
     "url-regex-safe": "^4.0.0",
-    "wrtc": "^0.4.7",
-    "js-yaml": "^4.1.0"
+    "wrtc": "^0.4.7"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",

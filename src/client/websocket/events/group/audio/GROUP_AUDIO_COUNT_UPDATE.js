@@ -1,24 +1,30 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
+import Base from '../../Base.js';
 
-/**
- * @param {import('../../../../WOLF.js').default} client
- */
-export default async (client, body) => {
-  const channel = client.channel.channels.find((channel) => channel.id === body.id);
+class GroupAudioCountUpdate extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GROUP_AUDIO_COUNT_UPDATE);
+  }
 
-  if (!channel) { return false; }
+  async process (body) {
+    const channel = this.client.channel.channels.find((channel) => channel.id === body.id);
 
-  const oldAudioCount = new models.ChannelAudioCounts(client, channel.audioCounts);
+    if (!channel) { return false; }
 
-  channel.audioCounts = new models.ChannelAudioCounts(client, body);
+    const oldAudioCount = new models.ChannelAudioCounts(this.client, channel.audioCounts);
 
-  return [Event.GROUP_AUDIO_COUNT_UPDATE, Event.CHANNEL_AUDIO_COUNT_UPDATE]
-    .forEach((event) =>
-      client.emit(
-        event,
-        oldAudioCount,
-        channel.audioCounts
-      )
-    );
-};
+    channel.audioCounts = new models.ChannelAudioCounts(this.client, body);
+
+    return [Event.GROUP_AUDIO_COUNT_UPDATE, Event.CHANNEL_AUDIO_COUNT_UPDATE]
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          oldAudioCount,
+          channel.audioCounts
+        )
+      );
+  }
+}
+
+export default GroupAudioCountUpdate;

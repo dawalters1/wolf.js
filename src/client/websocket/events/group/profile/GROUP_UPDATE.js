@@ -1,23 +1,31 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
 import models from '../../../../../models/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const cached = client.channel.channels.find((channel) => channel.id === body.id);
+class GroupUpdate extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GROUP_UPDATE);
+  }
 
-  if (!cached || cached.hash === body.hash) { return false; }
+  async process (body) {
+    const cached = this.client.channel.channels.find((channel) => channel.id === body.id);
 
-  const oldChannel = new models.Channel(client, cached);
-  const newChannel = await client.channel.getById(body.id, true, true);
+    if (!cached || cached.hash === body.hash) { return false; }
 
-  return [Event.GROUP_UPDATE, Event.CHANNEL_UPDATE]
-    .forEach((event) =>
-      client.emit(
-        event,
-        oldChannel,
-        newChannel
-      )
-    );
-};
+    const oldChannel = new models.Channel(this.client, cached);
+    const newChannel = await this.client.channel.getById(body.id, true, true);
+
+    return [Event.GROUP_UPDATE, Event.CHANNEL_UPDATE]
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          oldChannel,
+          newChannel
+        )
+      );
+  };
+}
+export default GroupUpdate;

@@ -1,5 +1,6 @@
-import { MessageType, Event, Language, Capability } from '../../../../constants/index.js';
+import { MessageType, Event, ServerEvent, Language, Capability } from '../../../../constants/index.js';
 import models, { ChannelMemberList, ChannelRoleContainer, ChannelSubscriberUpdate } from '../../../../models/index.js';
+import Base from '../Base.js';
 
 const toCapability = (subscriber, channel, type) => {
   switch (type) {
@@ -117,41 +118,48 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
 };
 
 /**
- * @param {import('../../../WOLF.js').default} client
+ * @param {import('../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const message = new models.Message(client, body);
-
-  switch (message.type) {
-    // Why is this its own message type? Flags dammit 🤬
-    case MessageType.APPLICATION_PALRINGO_CHANNEL_ACTION:
-      await handleApplicationPalringoChannelAction(client, message);
-      break;
-      // Why is this its own message type? Flags dammit 🤬
-    case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
-      client.emit(
-        Event.PRIVATE_MESSAGE_ACCEPT_RESPONSE,
-        await client.subscriber.getById(message.sourceSubscriberId)
-      );
-      break;
-      // Why is this its own message type? Flags dammit 🤬
-    case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
-      message.body = message.body
-        .replace('token=TOKEN', `token=${client.config.get('framework.login').token}`)
-        .replace('language=LANGUAGE', `language=${client.currentSubscriber?.extended?.language || Language.ENGLISH} `)
-        .replace('platform=PLATFORM', `platform=${client._frameworkConfig.get('connection.query.device')}`) // Replaces deviceType
-        .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
-      break;
-    default:
-      if (message.sourceSubscriberId === client.currentSubscriber.id && client.config.framework.messages.ignore.self) { return false; }
-      break;
+class MessageSend extends Base {
+  constructor (client) {
+    super(client, ServerEvent.MESSAGE_SEND);
   }
 
-  return (message.isChannel ? ['message', Event.GROUP_MESSAGE, Event.CHANNEL_MESSAGE] : ['message', Event.PRIVATE_MESSAGE])
-    .forEach((event) =>
-      client.emit(
-        event,
-        message
-      )
-    );
-};
+  async process (body) {
+    const message = new models.Message(this.client, body);
+
+    switch (message.type) {
+    // Why is this its own message type? Flags dammit 🤬
+      case MessageType.APPLICATION_PALRINGO_CHANNEL_ACTION:
+        await handleApplicationPalringoChannelAction(this.client, message);
+        break;
+      // Why is this its own message type? Flags dammit 🤬
+      case MessageType.TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE:
+        this.client.emit(
+          Event.PRIVATE_MESSAGE_ACCEPT_RESPONSE,
+          await this.client.subscriber.getById(message.sourceSubscriberId)
+        );
+        break;
+      // Why is this its own message type? Flags dammit 🤬
+      case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
+        message.body = message.body
+          .replace('token=TOKEN', `token=${this.client.config.get('framework.login').token}`)
+          .replace('language=LANGUAGE', `language=${this.client.currentSubscriber?.extended?.language || Language.ENGLISH} `)
+          .replace('platform=PLATFORM', `platform=${this.client._frameworkConfig.get('connection.query.device')}`) // Replaces deviceType
+          .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
+        break;
+      default:
+        if (message.sourceSubscriberId === this.client.currentSubscriber.id && this.client.config.framework.messages.ignore.self) { return false; }
+        break;
+    }
+
+    return (message.isChannel ? ['message', Event.GROUP_MESSAGE, Event.CHANNEL_MESSAGE] : ['message', Event.PRIVATE_MESSAGE])
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          message
+        )
+      );
+  };
+}
+export default MessageSend;

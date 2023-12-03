@@ -11,7 +11,6 @@ import Cmd from '../command/Command.js';
 import rys from '../utils/rys.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';
-import { login } from './websocket/events/welcome/WELCOME.js';
 
 // #endregion
 class WOLF extends EventEmitter {
@@ -101,15 +100,9 @@ class WOLF extends EventEmitter {
       throw new WOLFAPIError('loginType is not valid', { loginType });
     }
 
-    if (Reflect.has(this.websocket, 'socket')) {
-      if (this.websocket.socket.connected) {
-        return await login(this);
-      }
-
-      return this.connect();
-    }
-
-    return this.connect();
+    return this.websocket?.socket?.connected
+      ? await this.websocket.handlers.welcome.login()
+      : await this.connect();
   }
 
   async reconnect () {
