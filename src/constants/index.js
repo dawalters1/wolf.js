@@ -22,7 +22,7 @@ import OnlineState from './OnlineState.js';
 import Privilege from './Privilege.js';
 import Relationship from './Relationship.js';
 import SearchType from './SearchType.js';
-import ServerEvents from './ServerEvents.js';
+import ServerEvent from './ServerEvent.js';
 import SocketEvent from './SocketEvent.js';
 import StageBroadcastState from './StageBroadcastState.js';
 import StageConnectionState from './StageConnectionState.js';
@@ -57,7 +57,7 @@ const exports = {
   Privilege,
   Relationship,
   SearchType,
-  ServerEvents,
+  ServerEvent,
   SocketEvent,
   StageBroadcastState,
   StageConnectionState,
@@ -93,7 +93,7 @@ export {
   Privilege,
   Relationship,
   SearchType,
-  ServerEvents,
+  ServerEvent,
   SocketEvent,
   StageBroadcastState,
   StageConnectionState,

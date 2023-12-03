@@ -68,7 +68,7 @@ export class WOLF {
     readonly event: EventHelper;
     /**
     * Exposes the Group methods
-    * @deprecated use channel instead
+    * @deprecated use {@link channel} instead
     */
     readonly group: ChannelHelper;
     /**
@@ -208,7 +208,7 @@ export class Multimedia {
 
     /**
      * Upload to the multimedia service
-     * @deprecated Use request
+     * @deprecated Use {@link request()} instead
      * @param config - The route configuration
      * @param body - The data to uplodate
      */
@@ -318,7 +318,7 @@ export class Configuration {
             messages: {
                 /**
                  * Group settings
-                 * @deprecated use channel instead
+                 * @deprecated use {@link channel} instead
                  */
                 group: {
                     /**
@@ -401,7 +401,7 @@ export class Command {
      */
     constructor(phraseName: string, callbackObject: {
         /**
-         * @deprecated use channel instead
+         * @deprecated use {@link channel} instead
          */
         group: (command: CommandContext, ...args: any) => void,
         channel: (command: CommandContext, ...args: any) => void,
@@ -431,7 +431,7 @@ export class AchievementHelper extends BaseHelper {
     readonly channel: AchievementChannelHelper;
     /**
      * Exposes the Group Achievement methods
-     * @deprecated use channel instead
+     * @deprecated use {@link channel} instead
      */
     readonly group: AchievementChannelHelper;
     /**
@@ -672,7 +672,7 @@ export class EventHelper extends BaseHelper {
     readonly channel: ChannelEventHelper;
     /**
      * Exposes the group event methods
-     * @deprecated use channel instead
+     * @deprecated use {@link channel} instead
      */
     readonly group: ChannelEventHelper;
     /**
@@ -775,7 +775,7 @@ export class ChannelHelper extends BaseHelper {
 
     /**
      * Exposes the Channel Role methods
-     * @deprecated use client.role instead
+     * @deprecated use {@link WOLF.role} instead
      */
     readonly role: ChannelRoleHelperDeprecated;
 
@@ -944,7 +944,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param roleId - The ID of the role
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.getById instead
+     * @deprecated use {@link WOLF.role.getById} instead
      */
     public getById(roleId: number, languageId: Language, forceNew: false): Promise<ChannelRoleContext>;
 
@@ -953,7 +953,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param roleIds - The ID of the roles
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.getByIds instead
+     * @deprecated use {@link WOLF.role.getByIds} instead
      */
     public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew: false): Promise<Array<ChannelRoleContext>>;
 
@@ -961,7 +961,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      *
      * @param id - The ID of the channel
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.list instead
+     * @deprecated use {@link client.role.channel.list} instead
      */
     public roles(id: number, forceNew: boolean): Promise<Array<ChannelRole>>;
 
@@ -970,7 +970,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscribe - Whether or not to subscribe to member updates
      * @param forceNew  - Whether or not to request new from the server
-     * @deprecated use client.role.channel.members instead
+     * @deprecated use {@link client.role.channel.members} instead
      */
     public members(id: number, subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
 
@@ -979,7 +979,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber to give the role to
      * @param roleId - The ID of the role to assign
-     * @deprecated use client.role.channel.assign instead
+     * @deprecated use {@link client.role.channel.assign} instead
      */
     public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 
@@ -989,7 +989,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param oldSubscriberId - The ID of the subscriber that currently has the role
      * @param newSubscriberId - The ID of the subscriber to give the role to
      * @param roleId - The role to reassign
-     * @deprecated use client.role.channel.reassign instead
+     * @deprecated use {@link client.role.channel.reassign} instead
      */
     public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
 
@@ -998,7 +998,7 @@ export class ChannelRoleHelperDeprecated extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      * @param roleId - The ID of the role to remove
-     * @deprecated use client.role.channel.unassign instaed
+     * @deprecated use {@link client.role.channel.unassign} instead
      */
     public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 }
@@ -1035,7 +1035,7 @@ export class MessagingHelper extends BaseHelper {
 
     /**
      * Send a group message
-     * @deprecated use sendChannelMessage
+     * @deprecated use {@link sendChannelMessage} instead
      * @param targetChannelId - The ID of the group
      * @param content - The message
      * @param options - The sending options
@@ -1065,7 +1065,7 @@ export class MessagingHelper extends BaseHelper {
     public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
     /**
      * Get message edit history
-     * @deprecated use getChannelMessageEditHistory
+     * @deprecated use {@link getChannelMessageEditHistory} instead
      * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
@@ -1078,7 +1078,7 @@ export class MessagingHelper extends BaseHelper {
     public getChannelMessageEditHistory(targetChannelId: number, timestamp: number): Promise<Array<MessageUpdate>>;
     /**
      * Delete a group message
-     * @deprecated use deleteChannelMessage
+     * @deprecated use {@link deleteChannelMessage} instead
      * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
@@ -1091,7 +1091,7 @@ export class MessagingHelper extends BaseHelper {
     public deleteChannelMessage(targetChannelId: number, timestamp: number): Promise<Response>;
     /**
      * Restore a delete group message
-     * @deprecated use restoreChannelMessage
+     * @deprecated use {@link restoreChannelMessage} instead
      * @param targetChannelId - The ID of the group
      * @param timestamp - The timestamp of the message
      */
@@ -1128,7 +1128,7 @@ export class MessagingSubscriptionHelper extends BaseHelper {
     public nextMessage(predicate: Function, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next group message
-     * @deprecated use nextChannelMessage
+     * @deprecated use {@link nextChannelMessage} instead
      * @param targetChannelId - The ID of the group
      * @param timeout - How long to wait
      */
@@ -1147,7 +1147,7 @@ export class MessagingSubscriptionHelper extends BaseHelper {
     public nextPrivateMessage(sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
     /**
      * Wait for the next message in a group by a specific subscriber
-     * @deprecated use nextChannelSubscriberMessage
+     * @deprecated use {@link nextChannelSubscriberMessage} instead
      * @param targetChannelId - The ID of the channel
      * @param sourceSubscriberId - The ID of the subscriber
      * @param timeout - How long to wait
@@ -1353,7 +1353,6 @@ export class RoleHelper extends BaseHelper {
      * @param roleId - The ID of the role
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.getById instead
      */
     public getById(roleId: number, languageId: Language, forceNew?: Boolean): Promise<ChannelRoleContext>;
     /**
@@ -1361,7 +1360,6 @@ export class RoleHelper extends BaseHelper {
      * @param roleIds - The ID of the roles
      * @param languageId - The Language
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.getByIds instead
      */
     public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew?: Boolean): Promise<Array<ChannelRoleContext>>;
 }
@@ -1372,7 +1370,6 @@ export class ChannelRoleHelper extends BaseHelper {
      *
      * @param id - The ID of the channel
      * @param forceNew - Whether or not to request new from the server
-     * @deprecated use client.role.channel.list instead
      */
     public list(id: number, forceNew?: Boolean): Promise<Array<ChannelRole>>
     /**
@@ -1380,7 +1377,6 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscribe - Whether or not to subscribe to member updates
      * @param forceNew  - Whether or not to request new from the server
-     * @deprecated use client.role.channel.members instead
      */
     public members(id: number, forceNew?: Boolean): Promise<Array<ChannelRoleMember>>
     /**
@@ -1388,7 +1384,6 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber to give the role to
      * @param roleId - The ID of the role to assign
-     * @deprecated use client.role.channel.assign instead
      */
     public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 
@@ -1398,7 +1393,6 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param oldSubscriberId - The ID of the subscriber that currently has the role
      * @param newSubscriberId - The ID of the subscriber to give the role to
      * @param roleId - The role to reassign
-     * @deprecated use client.role.channel.reassign instead
      */
     public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
 
@@ -1407,7 +1401,6 @@ export class ChannelRoleHelper extends BaseHelper {
      * @param id - The ID of the channel
      * @param subscriberId - The ID of the subscriber
      * @param roleId - The ID of the role to remove
-     * @deprecated use client.role.channel.unassign instaed
      */
     public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
 }
@@ -1761,7 +1754,7 @@ export class TippingHelper extends BaseHelper {
     public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipSummary>>;
     /**
      * Get a groups tipping leaderboard
-     * @deprecated use getChannelLeaderboard
+     * @deprecated use {@link getChannelLeaderboard} instead
      * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
@@ -1778,7 +1771,7 @@ export class TippingHelper extends BaseHelper {
     public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
     /**
      * Get a groups tipping leaderboard summary
-     * @deprecated use getChannelLeaderboardSummary
+     * @deprecated use {@link getChannelLeaderboardSummary} instead
      * @param targetChannelId - The ID of the channel
      * @param tipPeriod - The tipping period
      * @param tipType - The tipping type
@@ -2054,7 +2047,7 @@ export class Utility {
     readonly channel: ChannelUtility;
     /**
      * Exposes the Group utility methods
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     readonly group: ChannelUtility;
     /**
@@ -2242,7 +2235,7 @@ export class Ad extends BaseModel {
 
     /**
      * Get the group profile
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group(): Promise<Channel>;
     /**
@@ -2389,7 +2382,7 @@ export class CommandContext extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     /**
-     * @deprecated use isChannel
+     * @deprecated use {@link isChannel} instead
      */
     public isGroup: boolean;
     public isChannel: boolean;
@@ -2397,7 +2390,7 @@ export class CommandContext extends BaseModel {
     public language: string;
     public targetChannelId: number | undefined;
     /**
-     * @deprecated use targetChannelId
+     * @deprecated use {@link targetChannelId} instead
      */
     public targetGroupId: number | undefined;
     public sourceSubscriberId: number | undefined;
@@ -2680,7 +2673,7 @@ export class Event extends BaseModel {
     public id: number;
     public channelId: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public createdBy: number;
@@ -2755,7 +2748,7 @@ export class Channel extends BaseModel {
     public roles: ChannelRoleContainer;
 
     /**
-     * @deprecated use inChannel
+     * @deprecated use {@link inChannel} instead
      */
     public inGroup: boolean;
     public inChannel: boolean;
@@ -2950,7 +2943,7 @@ export class ChannelAudioSlot extends BaseModel {
 
     public id: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public channelId: number;
@@ -3019,7 +3012,7 @@ export class ChannelAudioSlotRequest extends BaseModel {
     public slotId: number;
     public channelId: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public reservedOccupierId: number;
@@ -3544,7 +3537,7 @@ export class ChannelStatsActive extends BaseModel {
     public emoticonCount: number;
     public channelId: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public happyEmoticonCount: number;
@@ -3676,7 +3669,7 @@ export class GroupSubscriberUpdate extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public channelId: number;
@@ -3686,7 +3679,7 @@ export class GroupSubscriberUpdate extends BaseModel {
 
     /**
      * Get the profile of the group the action was performed in
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group(): Promise<Channel>;
     /**
@@ -3820,13 +3813,13 @@ export class Message extends BaseModel {
     public sourceSubscriberId: number;
     public targetChannelId: number;
     /**
-     * @deprecated use targetChannelId
+     * @deprecated use {@link targetChannelId} instead
      */
     public targetGroupId: number;
     public embeds: Array<MessageEmbed>;
     public metadata: MessageMetadata;
     /**
-     * @deprecated use isChannel instead
+     * @deprecated use {@link isChannel} instead
      */
     public isGroup: boolean;
     public isChannel: boolean;
@@ -3865,7 +3858,7 @@ export class Message extends BaseModel {
     public subscriber(): Promise<Subscriber>;
     /**
      * Get the group profile
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group(): Promise<Channel>;
     /**
@@ -3953,7 +3946,7 @@ export class MessageEmbed extends BaseModel {
     public type: EmbedType;
     public channelId: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public url: string;
@@ -4044,14 +4037,14 @@ export class MessageMetadataFormattingChannelLink extends BaseModel {
     public start: number;
     public end: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public channelId: number;
 
     /**
      * Get the group profile
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group(): Promise<Channel>;
     /**
@@ -4369,7 +4362,7 @@ export class StageClientDurationUpdate extends BaseModel {
 
     public targetChannelId: number;
     /**
-     * @deprecated use targetChannelId
+     * @deprecated use {@link targetChannelId} instead
      */
     public targetGroupId: number;
     public slotId: number;
@@ -4437,7 +4430,7 @@ export class StageClientGeneralUpdate extends BaseModel {
 
     public targetChannelId: number;
     /**
-     * @deprecated use targetChannelId
+     * @deprecated use {@link targetChannelId} instead
      */
     public targetGroupId: number;
     public sourceSubscriberId: number;
@@ -4505,7 +4498,7 @@ export class StageClientViewerCountUpdate extends BaseModel {
 
     public targetChannelId: number;
     /**
-     * @deprecated use targetChannelId
+     * @deprecated use {@link targetChannelId} instead
      */
     public targetGroupId: number;
     public slotId: number;
@@ -4945,7 +4938,7 @@ export class Subscriber extends BaseModel {
             language: Language;
             lookingFor: LookingFor;
             /**
-             * @deprecated use lookingForList
+             * @deprecated use {@link lookingForList} instead
              */
             lookingForExtended: Array<LookingFor>;
             lookingForList: Array<LookingFor>;
@@ -4995,7 +4988,7 @@ export class SubscriberEvent extends BaseModel {
 
     public id: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     public channelId: number;
@@ -5049,7 +5042,7 @@ export class SubscriberExtended extends BaseModel {
     public lookingFor: LookingFor;
     public lookingForExtended: Array<LookingFor>;
     /**
-     * @deprecated use lookingForList
+     * @deprecated use {@link lookingForList} instead
      */
     public lookingForList: Array<LookingFor>;
     public name: string;
@@ -5063,7 +5056,7 @@ export class SubscriberExtended extends BaseModel {
         language: Language;
         lookingFor: LookingFor;
         /**
-         * @deprecated use lookingForList
+         * @deprecated use {@link lookingForList} instead
          */
         lookingForExtended: Array<LookingFor>;
         lookingForList: Array<LookingFor>;
@@ -5149,11 +5142,11 @@ export class Tip extends BaseModel {
     public charmList: Array<TipCharm>;
     public channelId: number;
     /**
-     * @deprecated use channelId
+     * @deprecated use {@link channelId} instead
      */
     public groupId: number;
     /**
-    * @deprecated use isChannel instead
+    * @deprecated use {@link isChannel} instead
     */
     public isGroup: boolean;
     public isChannel: boolean;
@@ -5167,7 +5160,7 @@ export class Tip extends BaseModel {
     public charms(): Promise<Array<Charm>>;
     /**
      * Get the group the tip happened in
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group(): Promise<Channel>;
     /**
@@ -5309,7 +5302,7 @@ export class TipLeaderboardItem extends BaseModel {
     public quantity: number;
     public credits: number;
     /**
-     * @deprecated use channel
+     * @deprecated use {@link channel} instead
      */
     public group: IdHash;
     public channel: IdHash;
@@ -5348,7 +5341,7 @@ export class TipLeaderboardSummary extends BaseModel {
 
     public topGifters: Array<IdHash>;
     /**
-     * @deprecated use topChannels
+     * @deprecated use {@link topChannels} instead
      */
     public topGroups: Array<IdHash>;
     public topChannels: Array<IdHash>;
@@ -5640,7 +5633,7 @@ export enum DeviceType {
 export enum EmbedType {
     IMAGE_PREVIEW = "imagePreview",
     /**
-     * @deprecated use CHANNEL_PREVIEW
+     * @deprecated use {@link CHANNEL_PREVIEW} instead
      */
     GROUP_PREVIEW = "groupPreview",
     CHANNEL_PREVIEW = "groupPreview",
@@ -5752,7 +5745,7 @@ export enum MessageType {
     AUDIO_SPEEX = "audio/x-speex",
     IMAGE_JPEGHTML = "image/jpeghtml",
     /**
-     * @deprecated use APPLICATION_PALRINGO_CHANNEL_ACTION
+     * @deprecated use {@link APPLICATION_PALRINGO_CHANNEL_ACTION} instead
      */
     APPLICATION_PALRINGO_GROUP_ACTION = "application/palringo-group-action",
     APPLICATION_PALRINGO_CHANNEL_ACTION = "application/palringo-group-action",
@@ -5772,6 +5765,9 @@ export enum OnlineState {
 export enum Privilege {
     SUBSCRIBER = 1,
     BOT_TESTER = 2,
+    /**
+     * @deprecated in favor of Channel Roles
+     */
     HOST = 4,
     CONTENT_SUBMITER = 8,
     SELECTCLUB_1 = 16,
@@ -5781,9 +5777,15 @@ export enum Privilege {
     SELECTCLUB_2 = 1024,
     ALPHA_TESTER = 2048,
     STAFF = 4096,
+    /**
+     * @deprecated in favor of Channel Roles
+     */
     DJ = 8192,
     DEVELOPER = 16384,
     ELITECLUB_2 = 131072,
+    /**
+     * @deprecated in favor of Channel Roles
+     */
     WELCOMER = 262144,
     VALID_EMAIL = 524288,
     PREMIUM_ACCOUNT = 1048576,
@@ -5794,6 +5796,9 @@ export enum Privilege {
     GROUP_ADMIN = 33554432,
     BOT = 67108864,
     ENTERTAINER = 536870912,
+    /**
+     * @deprecated no longer used
+     */
     SHADOW_BANNED = 1073741824,
 }
 
@@ -5809,7 +5814,7 @@ export enum Relationship {
 
 export enum SearchType {
     /**
-     * @deprecated use CHANNEL
+     * @deprecated use {@link CHANNEL} instead
      */
     GROUP = "group",
     CHANNEL = "group",
@@ -5846,7 +5851,7 @@ export enum TipType {
     CHARM = "charm",
     SUBSCRIBER = "subscriber",
     /**
-     * @deprecated use CHANNEL
+     * @deprecated use {@link CHANNEL} instead
      */
     GROUP = "group",
     CHANNEL = "group",
@@ -5855,7 +5860,7 @@ export enum TipType {
 export enum TopicPageRecipeType {
     EVENT = "event",
     /**
-     * @deprecated use CHANNEL
+     * @deprecated use {@link CHANNEL} instead
      */
     GROUP = "group",
     CHANNEL = "group",
@@ -5923,7 +5928,7 @@ export interface ClientEvents {
     globalNotificationDelete: [notification: Notification],
     /**
      * Fires when a group audio count updates
-     * @deprecated use channelAudioCountUpdate
+     * @deprecated use {@link channelAudioCountUpdate} instead
      */
     groupAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
     /**
@@ -5932,7 +5937,7 @@ export interface ClientEvents {
     channelAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
     /**
      * Fired when a group audio request is added
-     * @deprecated use channelAudioRequestAdd
+     * @deprecated use {@link channelAudioRequestAdd} instead
      */
     groupAudioRequestAdd: [request: ChannelAudioSlotRequest],
     /**
@@ -5941,7 +5946,7 @@ export interface ClientEvents {
     channelAudioRequestAdd: [request: ChannelAudioSlotRequest],
     /**
      * Fired when a group audio request list is cleared
-     * @deprecated use channelAudioRequestListClear
+     * @deprecated use {@link channelAudioRequestListClear} instead
      */
     groupAudioRequestListClear: [group: Channel, subscriberId: number],
     /**
@@ -5950,7 +5955,7 @@ export interface ClientEvents {
     channelAudioRequestListClear: [channel: Channel, subscriberId: number],
     /**
      * Fired when a group audio request is deleted
-     * @deprecated use channelAudioRequestDelete
+     * @deprecated use {@link channelAudioRequestDelete} instead
      */
     groupAudioRequestDelete: [group: Channel, request: ChannelAudioSlotRequest],
     /**
@@ -5959,7 +5964,7 @@ export interface ClientEvents {
     channelAudioRequestDelete: [channel: Channel, request: ChannelAudioSlotRequest],
     /**
      * Fired when a group audio request expires
-     * @deprecated use channelAudioRequestExpire
+     * @deprecated use {@link channelAudioRequestExpire} instead
      */
     groupAudioRequestExpire: [group: Channel, request: ChannelAudioSlotRequest],
     /**
@@ -5968,7 +5973,7 @@ export interface ClientEvents {
     channelAudioRequestExpire: [channel: Channel, request: ChannelAudioSlotRequest],
     /**
      * Fired when a group audio slot is updated
-     * @deprecated use channelAudioSlotUpdate
+     * @deprecated use {@link channelAudioSlotUpdate} instead
      */
     groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
@@ -5977,7 +5982,7 @@ export interface ClientEvents {
     channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
     /**
      * Fired when a groups audio configuration is updated
-     * @deprecated use channelAudioUpdate
+     * @deprecated use {@link channelAudioUpdate} instead
      */
     groupAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
     /**
@@ -5986,7 +5991,7 @@ export interface ClientEvents {
     channelAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
     /**
      * Fired when a group event is created
-     * @deprecated use channelEventCreate
+     * @deprecated use {@link channelEventCreate} instead
      */
     groupEventCreate: [group: Channel, event: Event],
     /**
@@ -5995,7 +6000,7 @@ export interface ClientEvents {
     channelEventCreate: [channel: Channel, event: Event],
     /**
      * Fired when a group event is deleted
-     * @deprecated use channelEventDelete
+     * @deprecated use {@link channelEventDelete} instead
      */
     groupEventDelete: [group: Channel, event: Event],
     /**
@@ -6004,7 +6009,7 @@ export interface ClientEvents {
     channelEventDelete: [channel: Channel, event: Event],
     /**
      * Fired when a group event is updated
-     * @deprecated use channelEventUpdate
+     * @deprecated use {@link channelEventUpdate} instead
      */
     groupEventUpdate: [group: Channel, oldEvent: Event, newEvent: Event],
     /**
@@ -6022,7 +6027,7 @@ export interface ClientEvents {
     channelMemberAdd: [channel: Channel, subscriber: Subscriber],
     /**
      * Fired when a group member leaves
-     * @deprecated use channelMemberDelete
+     * @deprecated use {@link channelMemberDelete} instead
      */
     groupMemberDelete: [group: Channel, subscriber: Subscriber],
     /**
@@ -6031,7 +6036,7 @@ export interface ClientEvents {
     channelMemberDelete: [channel: Channel, subscriber: Subscriber],
     /**
      * Fired when a group member is updated
-     * @deprecated use channelMemberUpdate
+     * @deprecated use {@link channelMemberUpdate} instead
      */
     groupMemberUpdate: [group: Channel, update: GroupSubscriberUpdate],
     /**
@@ -6066,7 +6071,7 @@ export interface ClientEvents {
     channelRoleUnassign: [channel: Channel, channelRoleMember: ChannelRoleMember],
     /**
      * Fired when a group message is tipped
-     * @deprecated use channelTipAdd
+     * @deprecated use {@link channelTipAdd} instead
      */
     groupTipAdd: [tip: Tip],
     /**
@@ -6075,7 +6080,7 @@ export interface ClientEvents {
     channelTipAdd: [tip: Tip],
     /**
      * Fired when a group profile is updated
-     * @deprecated use channelUpdate
+     * @deprecated use {@link channelUpdate} instead
      */
     groupUpdate: [oldGroup: Channel, newGroup: Channel],
     /**
@@ -6088,7 +6093,7 @@ export interface ClientEvents {
     internalError: [error: Error],
     /**
      * Fires when the bot joins a group
-     * @deprecated use joinedChannel
+     * @deprecated use {@link joinedChannel} instead
      */
     joinedGroup: [group: Channel, subscriber: Subscriber],
     /**
@@ -6097,7 +6102,7 @@ export interface ClientEvents {
     joinedChannel: [channel: Channel, subscriber: Subscriber],
     /**
      * Fires when the bot leaves a group
-     * @deprecated use leftChannel
+     * @deprecated use {@link leftChannel} instead
      */
     leftGroup: [group: Channel, subscriber: Subscriber],
     /**
@@ -6117,10 +6122,16 @@ export interface ClientEvents {
      */
     loginSuccess: [subscriber: Subscriber],
     /**
-     * Fires when a notification is received
-     * @deprecated use newer notification methods & events.
+     * @deprecated This no longer works as the old notification system has been disabled, use newer notification methods & events
+     *  {@link subscriberNotificationAdd}
+     *  {@link subscriberNotificationClear}
+     *  {@link subscriberNotificationDelete}
+     *  {@link globalNotificationAdd}
+     *  {@link globalNotificationClear}
+     *  {@link globalNotificationDelete}
      */
     notificationReceived: [Notification: LegacyNotification | Notification],
+
     /**
      * Fires when a packet is received from the server
      */
@@ -6276,7 +6287,7 @@ export interface ClientEvents {
 
     /**
      * Fires when the bot subscribes to an event
-     * @deprecated use subscriberChannelEventAdd
+     * @deprecated use {@link subscriberChannelEventAdd} instead
      */
     subscriberGroupEventAdd: [event: Event],
     /**
@@ -6285,7 +6296,7 @@ export interface ClientEvents {
     subscriberChannelEventAdd: [event: Event],
     /**
      * Fires when the bot unsubscribes from an event
-     * @deprecated use subscriberChannelEventDelete
+     * @deprecated use {@link subscriberChannelEventDelete} instead
      */
     subscriberGroupEventDelete: [event: Event],
     /**

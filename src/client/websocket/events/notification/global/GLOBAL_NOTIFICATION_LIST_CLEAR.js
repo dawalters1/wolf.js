@@ -1,10 +1,18 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  client.notification.global._list = [];
+class GlobalNotificationListClear extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GLOBAL_NOTIFICATION_LIST_CLEAR);
+  }
 
-  return client.emit(Event.GLOBAL_NOTIFICATION_LIST_CLEAR);
-};
+  async process (body) {
+    this.client.notification.global._list = [];
+
+    return this.client.emit(Event.GLOBAL_NOTIFICATION_LIST_CLEAR);
+  };
+}
+export default GlobalNotificationListClear;

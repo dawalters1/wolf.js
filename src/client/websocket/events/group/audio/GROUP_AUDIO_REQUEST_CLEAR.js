@@ -1,20 +1,28 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const channel = client.channel.channels.find((channel) => channel.id === body.groupId);
+class GroupAudioRequestClear extends Base {
+  constructor (client) {
+    super(client, ServerEvent.GROUP_AUDIO_REQUEST_CLEAR);
+  }
 
-  if (!channel) { return false; }
-  channel.audioRequests = [];
+  async process (body) {
+    const channel = this.client.channel.channels.find((channel) => channel.id === body.groupId);
 
-  return [Event.GROUP_AUDIO_REQUEST_CLEAR, Event.CHANNEL_AUDIO_REQUEST_CLEAR]
-    .forEach((event) =>
-      client.emit(
-        event,
-        channel,
-        body.subscriberId
-      )
-    );
-};
+    if (!channel) { return false; }
+    channel.audioRequests = [];
+
+    return [Event.GROUP_AUDIO_REQUEST_CLEAR, Event.CHANNEL_AUDIO_REQUEST_CLEAR]
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          channel,
+          body.subscriberId
+        )
+      );
+  };
+}
+export default GroupAudioRequestClear;

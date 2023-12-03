@@ -1,5 +1,6 @@
-import { Command, Event } from '../../../../constants/index.js';
-import { Welcome } from '../../../../models/index.js';
+import { Command, Event, ServerEvent } from '../../../../constants/index.js';
+import models from '../../../../models/index.js';
+import Base from '../Base.js';
 
 const subscriptions = async (client) => {
   const promiseArray = [];
@@ -34,16 +35,32 @@ const fininaliseConnection = async (client, resume = false) => {
   return client.emit(resume ? Event.RESUME : Event.READY);
 };
 
-const login = async (client) => {
-  const { email: username, password, type, onlineState } = client.config.get('framework.login');
-
-  if (!username) {
-    return Promise.resolve();
+class Welcome extends Base {
+  constructor (client) {
+    super(client, ServerEvent.WELCOME);
   }
 
-  const response = await client.websocket.emit(
-    Command.SECURITY_LOGIN,
-    {
+  async login () {
+    const { email: username, password, type, onlineState } = this.client.config.get('framework.login');
+
+    if (!username) { return false; }
+
+    const response = await this.client.websocket.emit(
+      Command.SECURITY_LOGIN,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          type,
+          onlineState,
+          username,
+          password
+        }
+      }
+    );
+
+    console.log({
       headers: {
         version: 2
       },
@@ -53,60 +70,53 @@ const login = async (client) => {
         username,
         password
       }
-    }
-  );
+    });
 
-  if (!response.success) {
-    client.emit(
-      Event.LOGIN_FAILED,
-      response
+    if (!response.success) {
+      this.client.emit(
+        Event.LOGIN_FAILED,
+        response
+      );
+
+      // Check if code is greater than 1 if so, bot is barred, attempt reconnect
+      if (!(response?.headers?.subCode ?? -1 > 1)) { return false; }
+
+      await this.client.utility.delay(90000);
+
+      return await this.login(this.client);
+    }
+
+    this.client.currentSubscriber = response.body.subscriber;
+
+    this.client.emit(
+      Event.LOGIN_SUCCESS,
+      this.client.currentSubscriber
     );
 
-    // Check if code is greater than 1 if so, bot is barred, attempt reconnect
-    if (!(response?.headers?.subCode ?? -1 > 1)) { return false; }
+    return await fininaliseConnection(this.client, false);
+  };
 
-    await client.utility.delay(90000);
+  async process (body) {
+    this.client._cleanUp(body.loggedInUser === undefined);
 
-    return await login(client);
+    const welcome = new models.Welcome(this.client, body);
+
+    if (welcome.subscriber?.id !== this.client.currentSubscriber?.id) {
+      this.this.client.cognito = undefined;
+    }
+
+    this.client.config.endpointConfig = welcome.endpointConfig;
+    this.client.currentSubscriber = welcome.subscriber;
+
+    this.client.currentSubscriber
+      ? fininaliseConnection(this.client, true)
+      : this.login(this.client);
+
+    return this.client.emit(
+      Event.WELCOME,
+      welcome
+    );
   }
+}
 
-  client.currentSubscriber = response.body.subscriber;
-
-  client.emit(
-    Event.LOGIN_SUCCESS,
-    client.currentSubscriber
-  );
-
-  return await fininaliseConnection(client, false);
-};
-
-/**
- * @param {import('../../../WOLF.js').default} client
- */
-const handlePacket = async (client, body) => {
-  client._cleanUp(body.loggedInUser === undefined);
-
-  const welcome = new Welcome(client, body);
-
-  if (welcome.subscriber?.id !== client.currentSubscriber?.id) {
-    this.client.cognito = undefined;
-  }
-
-  client.config.endpointConfig = welcome.endpointConfig;
-  client.currentSubscriber = welcome.subscriber;
-
-  client.currentSubscriber
-    ? fininaliseConnection(client, true)
-    : login(client);
-
-  return client.emit(
-    Event.WELCOME,
-    welcome
-  );
-};
-
-export {
-  login,
-
-  handlePacket as default
-};
+export default Welcome;

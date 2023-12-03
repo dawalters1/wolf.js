@@ -1,20 +1,28 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const cached = await client.event.subscription.subscriptions.find((event) => event.id === body.id);
+class SubscriberGroupEventDelete extends Base {
+  constructor (client) {
+    super(client, ServerEvent.SUBSCRIBER_GROUP_EVENT_DELETE);
+  }
 
-  if (!cached) { return false; }
+  async process (body) {
+    const cached = await this.client.event.subscription.subscriptions.find((event) => event.id === body.id);
 
-  client.event.subscription.subscriptions.splice(client.event.subscription.subscriptions.indexOf(cached), 1);
+    if (!cached) { return false; }
 
-  return [Event.SUBSCRIBER_GROUP_EVENT_DELETE, Event.SUBSCRIBER_CHANNEL_EVENT_DELETE]
-    .forEach((event) =>
-      client.emit(
-        event,
-        cached
-      )
-    );
-};
+    this.client.event.subscription.subscriptions.splice(this.client.event.subscription.subscriptions.indexOf(cached), 1);
+
+    return [Event.SUBSCRIBER_GROUP_EVENT_DELETE, Event.SUBSCRIBER_CHANNEL_EVENT_DELETE]
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          cached
+        )
+      );
+  };
+}
+export default SubscriberGroupEventDelete;

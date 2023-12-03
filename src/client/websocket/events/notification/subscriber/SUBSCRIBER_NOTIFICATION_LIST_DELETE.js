@@ -1,18 +1,26 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const notification = client.notification.subscriber.notifications.find((notification) => notification.id === body.id);
+class SubscriberNotificationListDelete extends Base {
+  constructor (client) {
+    super(client, ServerEvent.SUBSCRIBER_NOTIFICATION_LIST_DELETE);
+  }
 
-  if (!notification) { return false; }
+  async process (body) {
+    const notification = this.client.notification.subscriber.notifications.find((notification) => notification.id === body.id);
 
-  client.notification.subscriber.notifications = client.notification.subscriber.notifications.filter((notification) => notification.id !== body.id);
-  client.notification.subscriber._list = client.notification.subscriber._list.filter((id) => id !== body.id);
+    if (!notification) { return false; }
 
-  return client.emit(
-    Event.SUBSCRIBER_NOTIFICATION_LIST_DELETE,
-    notification
-  );
-};
+    this.client.notification.subscriber.notifications = this.client.notification.subscriber.notifications.filter((notification) => notification.id !== body.id);
+    this.client.notification.subscriber._list = this.client.notification.subscriber._list.filter((id) => id !== body.id);
+
+    return this.client.emit(
+      Event.SUBSCRIBER_NOTIFICATION_LIST_DELETE,
+      notification
+    );
+  };
+}
+export default SubscriberNotificationListDelete;

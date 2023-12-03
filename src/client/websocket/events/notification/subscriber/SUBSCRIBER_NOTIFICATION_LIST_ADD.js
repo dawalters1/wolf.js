@@ -1,13 +1,21 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const notification = await client.notification.subscriber.getById(body.id, client.utility.toLanguageId(client.config.framework.language));
+class SubscriberNotificationListAdd extends Base {
+  constructor (client) {
+    super(client, ServerEvent.SUBSCRIBER_NOTIFICATION_LIST_ADD);
+  }
 
-  return client.emit(
-    Event.SUBSCRIBER_NOTIFICATION_LIST_ADD,
-    notification
-  );
-};
+  async process (body) {
+    const notification = await this.client.notification.subscriber.getById(body.id, this.client.utility.toLanguageId(this.client.config.framework.language));
+
+    return this.client.emit(
+      Event.SUBSCRIBER_NOTIFICATION_LIST_ADD,
+      notification
+    );
+  };
+}
+export default SubscriberNotificationListAdd;

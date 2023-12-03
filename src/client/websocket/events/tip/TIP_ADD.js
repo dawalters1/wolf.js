@@ -1,13 +1,24 @@
-import { Event } from '../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../constants/index.js';
 import models from '../../../../models/index.js';
+import Base from '../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => ((body.isGroup || body.groupId) ? [Event.GROUP_TIP_ADD, Event.CHANNEL_TIP_ADD] : [Event.PRIVATE_TIP_ADD])
-  .forEach((event) =>
-    client.emit(
-      event,
-      new models.Tip(client, body)
-    )
-  );
+
+class TipAdd extends Base {
+  constructor (client) {
+    super(client, ServerEvent.TIP_ADD);
+  }
+
+  async process (body) {
+    ((body.isGroup || body.groupId) ? [Event.GROUP_TIP_ADD, Event.CHANNEL_TIP_ADD] : [Event.PRIVATE_TIP_ADD])
+      .forEach((event) =>
+        this.client.emit(
+          event,
+          new models.Tip(this.client, body)
+        )
+      );
+  }
+}
+export default TipAdd;

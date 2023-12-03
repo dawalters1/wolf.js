@@ -1,17 +1,25 @@
-import { Event } from '../../../../../constants/index.js';
+import { Event, ServerEvent } from '../../../../../constants/index.js';
+import Base from '../../Base.js';
 
 /**
- * @param {import('../../../../WOLF.js').default} client
+ * @param {import('../../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const contact = await client.contact.contacts.find((contact) => contact.id === body.targetId);
+class SubscriberContactDelete extends Base {
+  constructor (client) {
+    super(client, ServerEvent.SUBSCRIBER_CONTACT_DELETE);
+  }
 
-  if (!contact) { return false; }
+  async process (body) {
+    const contact = await this.client.contact.contacts.find((contact) => contact.id === body.targetId);
 
-  client.contact.contacts = client.contact.contacts.filter((contact) => contact.id !== body.targetId);
+    if (!contact) { return false; }
 
-  return client.emit(
-    Event.SUBSCRIBER_CONTACT_DELETE,
-    contact
-  );
-};
+    this.client.contact.contacts = this.client.contact.contacts.filter((contact) => contact.id !== body.targetId);
+
+    return this.client.emit(
+      Event.SUBSCRIBER_CONTACT_DELETE,
+      contact
+    );
+  };
+}
+export default SubscriberContactDelete;

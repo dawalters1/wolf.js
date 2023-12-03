@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+# 2.5.0 (UNRELEASED)
+### Added
+- Pagination to group event list (WIP)
+### Changed
+- Deprecated DJ, HOST, WELCOMER & SHADOW BANNED Privileges
+- Refactored Server Event Handling
+
 # 2.4.3 (2023-11-27)
 ### Fix
 - Processor not loading all handlers in rare cases

@@ -1,35 +1,43 @@
-import { Event } from '../../../../constants/index.js';
-import { Presence } from '../../../../models/index.js';
-import patch from '../../../../utils/patch.js';
+import { patch } from '../../../../utils/index.js';
+import { Event, ServerEvent } from '../../../../constants/index.js';
+import models from '../../../../models/index.js';
+import Base from '../Base.js';
 
 /**
- * @param {import('../../../WOLF.js').default} client
+ * @param {import('../../../WOLF.js').default} this.client
  */
-export default async (client, body) => {
-  const subscriber = client.subscriber.subscribers.find((subscriber) => subscriber.id === body.id);
-  const old = new Presence(client, { subscriberId: body.id });
-
-  if (subscriber) {
-    patch(old, subscriber); // Set whatever the cached profile shows
-    subscriber.onlineState = body.onlineState;
-    subscriber.deviceType = body.deviceType;
+class PresenceUpdate extends Base {
+  constructor (client) {
+    super(client, ServerEvent.PRESENCE_UPDATE);
   }
 
-  const existing = client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId);
+  async process (body) {
+    const subscriber = this.client.subscriber.subscribers.find((subscriber) => subscriber.id === body.id);
+    const old = new models.Presence(this.client, { subscriberId: body.id });
 
-  if (existing) {
-    patch(old, existing); // Subscription to presence will most likely be more up to date, set this instead
-    Reflect.deleteProperty(body, 'id');
-    patch(existing, body);
-  }
+    if (subscriber) {
+      patch(old, subscriber); // Set whatever the cached profile shows
+      subscriber.onlineState = body.onlineState;
+      subscriber.deviceType = body.deviceType;
+    }
 
-  if (!subscriber && !existing) {
-    return;
-  }
+    const existing = this.client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId);
 
-  return client.emit(
-    Event.PRESENCE_UPDATE,
-    old,
-    client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId)
-  );
-};
+    if (existing) {
+      patch(old, existing); // Subscription to presence will most likely be more up to date, set this instead
+      Reflect.deleteProperty(body, 'id');
+      patch(existing, body);
+    }
+
+    if (!subscriber && !existing) {
+      return;
+    }
+
+    return this.client.emit(
+      Event.PRESENCE_UPDATE,
+      old,
+      this.client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId)
+    );
+  };
+}
+export default PresenceUpdate;
