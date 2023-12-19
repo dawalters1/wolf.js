@@ -16,10 +16,8 @@ class Blocked extends Base {
    * @returns {Promise<Array<Contact>>}
    */
   async list (subscribe = true) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(subscribe)) {
-        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-      }
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
     if (this.blocked.length) {
@@ -46,23 +44,21 @@ class Blocked extends Base {
   async isBlocked (subscriberIds) {
     const values = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!values.length) {
-        throw new models.WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
-      }
+    if (!values.length) {
+      throw new models.WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
+    }
 
-      if ([...new Set(values)].length !== values.length) {
-        throw new models.WOLFAPIError('values cannot contain duplicates', { subscriberIds });
-      }
+    if ([...new Set(values)].length !== values.length) {
+      throw new models.WOLFAPIError('values cannot contain duplicates', { subscriberIds });
+    }
 
-      for (const subscriberId of values) {
-        if (validator.isNullOrUndefined(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-        } else if (!validator.isValidNumber(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-        }
+    for (const subscriberId of values) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -80,14 +76,12 @@ class Blocked extends Base {
    * @returns {Promise<Response>}
    */
   async block (subscriberId) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-      }
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     return await this.client.websocket.emit(
@@ -104,14 +98,12 @@ class Blocked extends Base {
    * @returns {Promise<Response>}
    */
   async unblock (subscriberId) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-      } else if (!validator.isValidNumber(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-      }
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
     return await this.client.websocket.emit(

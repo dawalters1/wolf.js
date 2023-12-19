@@ -271,22 +271,20 @@ class Messaging extends Base {
    * @private
    */
   async _sendMessage (targetType, targetId, content, options = undefined) {
-    { // eslint-disable-line no-lone-blocks
-      if (!Object.values(MessageTypes).includes(targetType)) {
-        throw new models.WOLFAPIError('Unknown Message Target', { targetType });
-      }
+    if (!Object.values(MessageTypes).includes(targetType)) {
+      throw new models.WOLFAPIError('Unknown Message Target', { targetType });
+    }
 
-      if (validator.isNullOrUndefined(targetId)) {
-        throw new models.WOLFAPIError('targetId cannot be null or undefined', { targetId });
-      } else if (!validator.isValidNumber(targetId)) {
-        throw new models.WOLFAPIError('targetId must be a valid number', { targetId });
-      } else if (validator.isLessThanOrEqualZero(targetId)) {
-        throw new models.WOLFAPIError('targetId cannot be less than or equal to 0', { targetId });
-      }
+    if (validator.isNullOrUndefined(targetId)) {
+      throw new models.WOLFAPIError('targetId cannot be null or undefined', { targetId });
+    } else if (!validator.isValidNumber(targetId)) {
+      throw new models.WOLFAPIError('targetId must be a valid number', { targetId });
+    } else if (validator.isLessThanOrEqualZero(targetId)) {
+      throw new models.WOLFAPIError('targetId cannot be less than or equal to 0', { targetId });
+    }
 
-      if (validator.isNullOrUndefined(content)) {
-        throw new models.WOLFAPIError('content cannot be null or undefined', { content });
-      }
+    if (validator.isNullOrUndefined(content)) {
+      throw new models.WOLFAPIError('content cannot be null or undefined', { content });
     }
 
     const mimeType = Buffer.isBuffer(content) ? (await fileTypeFromBuffer(content)).mime : MessageType.TEXT_PLAIN;
@@ -373,10 +371,8 @@ class Messaging extends Base {
    * @returns {Promise<Response>}
    */
   async sendMessage (commandOrMessage, content, options = undefined) {
-    { // eslint-disable-line no-lone-blocks
-      if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).default)) {
-        throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
-      }
+    if (!(commandOrMessage instanceof (await import('../../models/CommandContext.js')).default) && !(commandOrMessage instanceof (await import('../../models/Message.js')).default)) {
+      throw new models.WOLFAPIError('commandOrMessage must be an instance of command or message', { commandOrMessage });
     }
 
     return await this._sendMessage(commandOrMessage.isChannel ? MessageTypes.CHANNEL : MessageTypes.PRIVATE, commandOrMessage.isChannel ? commandOrMessage.targetChannelId : commandOrMessage.sourceSubscriberId, content, options);
@@ -389,22 +385,20 @@ class Messaging extends Base {
    * @returns {Promise<Array<MessageUpdate>>}
    */
   async getChannelMessageEditHistory (targetChannelId, timestamp) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-      } else if (!validator.isValidNumber(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-      }
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
 
-      if (validator.isNullOrUndefined(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
-      } else if (!validator.isValidNumber(timestamp)) {
-        throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
-      }
+    if (validator.isNullOrUndefined(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
+    } else if (!validator.isValidNumber(timestamp)) {
+      throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     const response = await this.client.websocket.emit(
@@ -436,22 +430,20 @@ class Messaging extends Base {
    * @returns {Promise<Response>}
    */
   async deleteChannelMessage (targetChannelId, timestamp) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-      } else if (!validator.isValidNumber(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-      }
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
 
-      if (validator.isNullOrUndefined(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
-      } else if (!validator.isValidNumber(timestamp)) {
-        throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
-      }
+    if (validator.isNullOrUndefined(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
+    } else if (!validator.isValidNumber(timestamp)) {
+      throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     return await this.client.websocket.emit(
@@ -484,22 +476,20 @@ class Messaging extends Base {
    * @returns {Promise<Response>}
    */
   async restoreChannelMessage (targetChannelId, timestamp) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-      } else if (!validator.isValidNumber(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-      }
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
 
-      if (validator.isNullOrUndefined(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
-      } else if (!validator.isValidNumber(timestamp)) {
-        throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
-      } else if (validator.isLessThanOrEqualZero(timestamp)) {
-        throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
-      }
+    if (validator.isNullOrUndefined(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be null or undefined', { timestamp });
+    } else if (!validator.isValidNumber(timestamp)) {
+      throw new models.WOLFAPIError('timestamp must be a valid number', { timestamp });
+    } else if (validator.isLessThanOrEqualZero(timestamp)) {
+      throw new models.WOLFAPIError('timestamp cannot be less than or equal to 0', { timestamp });
     }
 
     return await this.client.websocket.emit(

@@ -110,7 +110,9 @@ class Stage extends Base {
       throw new models.WOLFAPIError('Channel does not exist', { targetChannelId });
     }
 
-    if (!forceNew && channel.stages) {
+    if (!forceNew && channel._stages) {
+      channel.stages = channel.stages.filter((stage) => !stage.expireTime || new Date(stage.expireTime) > Date.now()) ?? [];
+
       return channel.stages;
     }
 
@@ -123,7 +125,7 @@ class Stage extends Base {
 
     channel._stages = result?.body?.map((stage) => new models.ChannelStage(this.client, stage, parseInt(targetChannelId))) ?? [];
 
-    return channel.stages;
+    return channel._stages;
   }
 
   /**

@@ -26,16 +26,14 @@ class Store extends Base {
    * @returns Returns requested page if exists
    */
   async _getPage (page, languageId, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.stores[languageId]?.pages[page]) {
@@ -64,16 +62,14 @@ class Store extends Base {
    * @returns {Promise<StoreProductCredits>}
    */
   async getCreditList (languageId, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this._credits[languageId]?.length) {
@@ -100,20 +96,18 @@ class Store extends Base {
    * @returns {Promise<Store>}
    */
   async get (languageId, includeCredits = true, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(includeCredits)) {
-        throw new models.WOLFAPIError('includeCredits must be a valid boolean', { includeCredits });
-      }
+    if (!validator.isValidBoolean(includeCredits)) {
+      throw new models.WOLFAPIError('includeCredits must be a valid boolean', { includeCredits });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.stores[languageId]?.main) {
@@ -143,30 +137,28 @@ class Store extends Base {
   async getProducts (ids, languageId) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
 
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
+    }
 
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     const products = ids.reduce((result, productId) => {
@@ -216,22 +208,20 @@ class Store extends Base {
    * @returns {Promise<StoreProduct>}
    */
   async getFullProduct (id, languageId) {
-    { // eslint-disable-line no-lone-blocks
-      if (Array.isArray(id)) {
-        throw new WOLFAPIError('id cannot be type of array', { id });
-      } else if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-      }
+    if (Array.isArray(id)) {
+      throw new WOLFAPIError('id cannot be type of array', { id });
+    } else if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
 
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
     }
 
     if (this._productProfiles[id] && this._productProfiles[id][languageId]) {
@@ -259,39 +249,37 @@ class Store extends Base {
   async purchase (productDurationId, quantity, ids) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(productDurationId)) {
-        throw new models.WOLFAPIError('productDurationId cannot be null or undefined', { productDurationId });
-      } else if (!validator.isValidNumber(productDurationId)) {
-        throw new models.WOLFAPIError('productDurationId must be a valid number', { productDurationId });
-      } else if (validator.isLessThanOrEqualZero(productDurationId)) {
-        throw new models.WOLFAPIError('productDurationId cannot be less than or equal to 0', { productDurationId });
-      }
+    if (validator.isNullOrUndefined(productDurationId)) {
+      throw new models.WOLFAPIError('productDurationId cannot be null or undefined', { productDurationId });
+    } else if (!validator.isValidNumber(productDurationId)) {
+      throw new models.WOLFAPIError('productDurationId must be a valid number', { productDurationId });
+    } else if (validator.isLessThanOrEqualZero(productDurationId)) {
+      throw new models.WOLFAPIError('productDurationId cannot be less than or equal to 0', { productDurationId });
+    }
 
-      if (validator.isNullOrUndefined(quantity)) {
-        throw new models.WOLFAPIError('quantity cannot be null or undefined', { quantity });
-      } else if (!validator.isValidNumber(quantity)) {
-        throw new models.WOLFAPIError('quantity must be a valid number', { quantity });
-      } else if (validator.isLessThanOrEqualZero(quantity)) {
-        throw new models.WOLFAPIError('quantity cannot be less than or equal to 0', { quantity });
-      }
+    if (validator.isNullOrUndefined(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be null or undefined', { quantity });
+    } else if (!validator.isValidNumber(quantity)) {
+      throw new models.WOLFAPIError('quantity must be a valid number', { quantity });
+    } else if (validator.isLessThanOrEqualZero(quantity)) {
+      throw new models.WOLFAPIError('quantity cannot be less than or equal to 0', { quantity });
+    }
 
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
 
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 
@@ -314,10 +302,8 @@ class Store extends Base {
    * @returns {Promise<number>}
    */
   async getCreditBalance (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this._balance >= 0) {

@@ -7,6 +7,7 @@ import ContextType from './ContextType.js';
 import DeviceType from './DeviceType.js';
 import EmbedType from './EmbedType.js';
 import Event from './Event.js';
+import EventCategory from './EventCategory.js';
 import Gender from './Gender.js';
 import IconSize from './IconSize.js';
 import JoinLockType from './JoinLockType.js';
@@ -42,6 +43,7 @@ const exports = {
   DeviceType,
   EmbedType,
   Event,
+  EventCategory,
   Gender,
   IconSize,
   JoinLockType,
@@ -78,6 +80,7 @@ export {
   DeviceType,
   EmbedType,
   Event,
+  EventCategory,
   Gender,
   IconSize,
   JoinLockType,

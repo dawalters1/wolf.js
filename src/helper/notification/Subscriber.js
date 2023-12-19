@@ -23,24 +23,22 @@ class Subscriber extends Base {
    * @returns {Promise<Notification>}
    */
   async getById (id, languageId, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-      }
+    if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
 
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     return (await this.getByIds(id, languageId, forceNew))[0];
@@ -56,34 +54,32 @@ class Subscriber extends Base {
   async getByIds (ids, languageId, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
 
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
+    }
 
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const notifications = forceNew
@@ -132,16 +128,14 @@ class Subscriber extends Base {
    * @returns {Promise<Array<Notification>>}
    */
   async list (languageId, subscribe = true, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const getNotificationList = async (batchNumber = 0) => {
@@ -192,23 +186,21 @@ class Subscriber extends Base {
   async delete (ids) {
     const values = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!values.length) {
-        throw new models.WOLFAPIError('values cannot be null or empty', { ids });
-      }
+    if (!values.length) {
+      throw new models.WOLFAPIError('values cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(values)].length !== values.length) {
-        throw new models.WOLFAPIError('values cannot contain duplicates', { ids });
-      }
+    if ([...new Set(values)].length !== values.length) {
+      throw new models.WOLFAPIError('values cannot contain duplicates', { ids });
+    }
 
-      for (const id of values) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of values) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 

@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated DJ, HOST, WELCOMER & SHADOW BANNED Privileges
 - Refactored Server Event Handling
 
+# 2.4.4 (2023-12-18)
+### Added
+- Tipping Leaderboard methods to Channel model
+### Fix
+- Inability to remove event thumbnails
+- Inability to set event category
+- Inability to set event host
+- Missing event title throws error on update
+
 # 2.4.3 (2023-11-27)
 ### Fix
 - Processor not loading all handlers in rare cases
