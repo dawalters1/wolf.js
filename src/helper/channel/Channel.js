@@ -1,4 +1,4 @@
-import { Capability, Category, Command, Language } from '../../constants/index.js';
+import { Category, Command, Language } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
@@ -25,15 +25,18 @@ const buildChannelFromModule = (channelModule) => {
 class Channel extends Base {
   constructor (client) {
     super(client);
-    this.fetched = false;
-    this.channels = [];
 
+    this.channels = new Map();
     this.member = new Member(this.client);
     this.role = new Role(this.client);
   }
 
+  get channels () {
+    return this.channels?.values() ?? [];
+  }
+
   get groups () {
-    return this.channels;
+    return this.channels?.values() ?? [];
   }
 
   /**
@@ -41,8 +44,8 @@ class Channel extends Base {
    * @returns {Promise<Array<Channel>>}
    */
   async list () {
-    if (this.fetched) {
-      return this.channels.filter((channel) => channel.inChannel);
+    if (this.channels) {
+      return this.channels.values().filter((channel) => channel.inChannel);
     }
 
     const response = await this.client.websocket.emit(
@@ -52,22 +55,18 @@ class Channel extends Base {
       }
     );
 
-    if (response.success) {
-      this.fetched = true;
-
-      if (!response.body?.length) {
-        return this.channels.filter((channel) => channel.inChannel);
-      }
-
-      const channels = await this.getByIds(response.body.map((channel) => channel.id), true);
-
-      for (const channel of channels) {
-        channel.inChannel = true;
-        channel.capabilities = response.body.find((grp) => channel.id === grp.id).capabilities || Capability.REGULAR;
-      }
+    if (!response.success) {
+      return [];
     }
 
-    return this.channels.filter((channel) => channel.inChannel);
+    for (const partial of response.body) {
+      const channel = this.channels.get(partial.id);
+
+      channel.inChannel = true;
+      channel.capabilities = partial.capabilities;
+    }
+
+    return this.channels.values().filter((channel) => channel.inChannel);
   }
 
   /**
@@ -137,7 +136,7 @@ class Channel extends Base {
       }
     }
 
-    const channels = forceNew ? [] : this.channels.filter((channel) => ids.includes(channel.id));
+    const channels = forceNew ? [] : ids.map((id) => this.channels.get(id)).filter(Boolean);
 
     if (channels.length === ids.length) {
       return channels;
@@ -606,11 +605,13 @@ class Channel extends Base {
   }
 
   _process (value) {
-    const existing = this.channels.find((channel) => channel.id === value.id);
+    const existing = this.channels.get(value.id);
 
-    existing ? patch(existing, value) : this.channels.push(value);
+    existing
+      ? patch(existing, value)
+      : this.channels.set(value.id, value);
 
-    return value;
+    return this.channels.get(value.id);
   }
 
   _cleanUp (reconnection = false) {

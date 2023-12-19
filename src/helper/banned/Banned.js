@@ -141,7 +141,7 @@ class Banned extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
     this.banned = [];
   }

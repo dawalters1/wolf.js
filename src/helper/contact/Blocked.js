@@ -7,7 +7,7 @@ class Blocked extends Base {
   constructor (client) {
     super(client);
 
-    this.blocked = [];
+    this.blocked = new Map();
   }
 
   /**
@@ -23,7 +23,7 @@ class Blocked extends Base {
     }
 
     if (this.blocked.length) {
-      return this.blocked;
+      return this.blocked.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -33,9 +33,14 @@ class Blocked extends Base {
       }
     );
 
-    this.blocked = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
+    response.body?.map((contact) =>
+      this.blocked.set(
+        contact.id,
+        new models.Contact(this.client, contact)
+      )
+    );
 
-    return this.blocked;
+    return this.blocked.values();
   }
 
   /**
@@ -66,8 +71,7 @@ class Blocked extends Base {
       }
     }
 
-    const blockedIds = (await this.list())
-      .map((blocked) => blocked.id);
+    const blockedIds = (await this.list()).keys();
 
     const results = values.map((subscriberId) => blockedIds.includes(subscriberId));
 
@@ -123,7 +127,7 @@ class Blocked extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    this.blocked = [];
+    this.blocked.clear();
   }
 }
 

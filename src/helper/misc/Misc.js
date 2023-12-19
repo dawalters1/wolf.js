@@ -7,8 +7,9 @@ class Misc extends Base {
   constructor (client) {
     super(client);
 
-    this.blacklist = [];
-    this.metadataResults = [];
+    this._fetched = false;
+    this._blacklist = new Map();
+    this.metadataResults = new Map();
   }
 
   /**
@@ -25,8 +26,8 @@ class Misc extends Base {
       }
     }
 
-    if (this.metadataResults.some((result) => this.client.utility.string.isEqual(result.url, url))) {
-      return this.metadataResults.find((result) => this.client.utility.string.isEqual(result.url, url)).metadata;
+    if (this.metadataResults.has(url.toLocaleLowerCase())) {
+      return this.metadataResults.get(url.toLocaleLowerCase()).metadata;
     }
 
     const response = await this.client.websocket.emit(
@@ -42,19 +43,13 @@ class Misc extends Base {
     );
 
     if (response.success) {
-      const metadata = new LinkMetadata(this.client, response.body);
-
-      this.metadataResults.push(
-        {
-          url,
-          metadata
-        }
+      this.metadataResults.set(
+        url.toLocaleLowerCase(),
+        new LinkMetadata(this.client, response.body)
       );
-
-      response.body = metadata;
     }
 
-    return response;
+    return this.metadataResults.get(url.toLocaleLowerCase()).metadata;
   }
 
   /**
@@ -73,11 +68,18 @@ class Misc extends Base {
       return this.blacklist;
     }
 
-    const result = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
+    const response = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
 
-    this._blacklist = result.body?.map((item) => new BlacklistLink(this.client, item)) ?? [];
+    this._fetched = response.success;
 
-    return this._blacklist;
+    response.body?.map((item) =>
+      this.blacklist.set(
+        item.id,
+        new BlacklistLink(this.client, item)
+      )
+    );
+
+    return this._blacklist.values();
   }
 
   /**
@@ -114,7 +116,7 @@ class Misc extends Base {
   async getMessageSettings () {
     const response = await this.client.websocket.emit(Command.MESSAGE_SETTING);
 
-    return response.success ? new MessageSettings(this.client, response.body) : null;
+    return new MessageSettings(this.client, response.body);
   }
 
   /**
@@ -143,10 +145,10 @@ class Misc extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
-    this._blacklist = [];
-    this.metadataResults = [];
+    this._blacklist.clear();
+    this.metadataResults.clear();
   }
 }
 

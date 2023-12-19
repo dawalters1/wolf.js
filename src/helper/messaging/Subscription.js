@@ -7,15 +7,18 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this.subscriptions = [];
+    this.subscriptions = new Map();
 
     this.client.on('message', (message) => {
-      const subscriptions = this.subscriptions.filter((subscription) => subscription.predicate(message));
+      const subscriptions = this.subscriptions.entries().filter((subscription) => subscription.predicate(message));
 
-      for (const messageSubscription of subscriptions) {
-        message.subscription = messageSubscription.id;
-        messageSubscription.def.resolve(message);
-      }
+      subscriptions.map((subscription) => this.subscriptions.delete(subscription[0]));
+      subscriptions.map((subscription) => clearTimeout(subscription[1].timeout));
+
+      return subscriptions.forEach((subscription) => {
+        message.id = subscription[0];
+        subscription[1].resolver.resolve({ message });
+      });
     });
   }
 
@@ -36,28 +39,23 @@ class Subscription extends Base {
       }
     }
 
+    const id = nanoid(32);
+
     const subscription = {
-      id: nanoid(32),
-      predicate,
-      def: undefined,
-      timeout: undefined
+      predicate
     };
 
-    if (timeout !== Infinity) {
-      subscription.timeout = setTimeout(() => subscription.def.resolve(null), timeout);
-    }
-
-    this.subscriptions.push(subscription);
-
-    const result = await new Promise((resolve, reject) => {
-      subscription.def = { resolve, reject };
+    const promise = new Promise((resolve, reject) => {
+      subscription.resolver = { resolve, reject };
     });
 
-    clearTimeout(subscription.timeout);
+    subscription.timeout = timeout === Infinity
+      ? undefined
+      : setTimeout(() => subscription.resolver.resolve(null), timeout);
 
-    this.subscriptions.splice(this.subscriptions.findIndex((sub) => sub.id === subscription.id), 1);
+    this.subscriptions.set(id, subscription);
 
-    return result;
+    return await promise;
   }
 
   /**
@@ -163,9 +161,10 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
-    this.subscriptions = [];
+    this.subscriptions.keys().map((subscriptionId) => this.subscriptions.delete(subscriptionId[0]));
+    this.subscriptions.clear();
   }
 }
 

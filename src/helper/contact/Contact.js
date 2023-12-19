@@ -8,7 +8,7 @@ class Contact extends Base {
   constructor (client) {
     super(client);
     this.blocked = new Blocked(client);
-    this.contacts = [];
+    this.contacts = new Map();
   }
 
   /**
@@ -24,7 +24,7 @@ class Contact extends Base {
     }
 
     if (this.contacts.length) {
-      return this.contacts;
+      return this.contacts.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -34,9 +34,14 @@ class Contact extends Base {
       }
     );
 
-    this.contacts = response.body?.map((contact) => new models.Contact(this.client, contact)) ?? [];
+    response.body?.map((contact) =>
+      this.contacts.set(
+        contact.id,
+        new models.Contact(this.client, contact)
+      )
+    );
 
-    return this.contacts;
+    return this.contacts.values();
   }
 
   /**
@@ -67,8 +72,7 @@ class Contact extends Base {
       }
     }
 
-    const contactIds = (await this.list())
-      .map((contact) => contact.id);
+    const contactIds = (await this.list()).keys();
 
     const results = values.map((subscriberId) => contactIds.includes(subscriberId));
 

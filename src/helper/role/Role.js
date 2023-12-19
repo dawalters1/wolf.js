@@ -11,7 +11,7 @@ class Role extends Base {
   constructor (client) {
     super(client);
 
-    this._roles = {};
+    this._roles = new Map();
 
     this.channel = new Channel(this.client);
     this.subscriber = new Subscriber(this.client);
@@ -41,16 +41,16 @@ class Role extends Base {
     return (await this.getByIds(roleId, languageId, forceNew))[0];
   }
 
-  async getByIds (roleIds, languageId, forceNew = false) {
-    roleIds = (Array.isArray(roleIds) ? roleIds : [roleIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+  async getByIds (ids, languageId, forceNew = false) {
+    ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     { // eslint-disable-line no-lone-blocks
-      if (!roleIds.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { roleIds });
+      if (!ids.length) {
+        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
       }
 
-      if ([...new Set(roleIds)].length !== roleIds.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { roleIds });
+      if ([...new Set(ids)].length !== ids.length) {
+        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
       }
 
       if (!validator.isValidNumber(languageId)) {
@@ -59,24 +59,32 @@ class Role extends Base {
         throw new models.WOLFAPIError('languageId is not valid', { languageId });
       }
 
-      for (const roleId of roleIds) {
-        if (validator.isNullOrUndefined(roleId)) {
-          throw new models.WOLFAPIError('roleId cannot be null or undefined', { roleId });
-        } else if (!validator.isValidNumber(roleId)) {
-          throw new models.WOLFAPIError('roleId must be a valid number', { roleId });
-        } else if (validator.isLessThanOrEqualZero(roleId)) {
-          throw new models.WOLFAPIError('roleId cannot be less than or equal to 0', { roleId });
+      for (const id of ids) {
+        if (validator.isNullOrUndefined(id)) {
+          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+        } else if (!validator.isValidNumber(id)) {
+          throw new models.WOLFAPIError('id must be a valid number', { id });
+        } else if (validator.isLessThanOrEqualZero(id)) {
+          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
         }
       }
     }
 
-    const roles = forceNew ? [] : this._roles[languageId]?.filter((role) => roleIds.includes(role.id)) ?? [];
+    const roles = forceNew
+      ? []
+      : (
+          () => {
+            const roles = this._roles.get(languageId);
 
-    if (roles.length === roleIds.length) {
+            return ids.map((id) => roles.get(id)).filter(Boolean);
+          }
+        )();
+
+    if (roles.length === ids.length) {
       return roles;
     }
 
-    const idLists = _.chunk(roleIds.filter((roleId) => !roles.some((role) => role.id === roleId)), this.client._frameworkConfig.get('batching.length'));
+    const idLists = _.chunk(ids.filter((roleId) => !roles.some((role) => role.id === roleId)), this.client._frameworkConfig.get('batching.length'));
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(
@@ -110,21 +118,22 @@ class Role extends Base {
   }
 
   _process (value, language) {
-    if (!this._roles[language]) {
-      this._roles[language] = [];
-    }
-
     (Array.isArray(value) ? value : [value]).forEach((role) => {
-      const existing = this._roles[language].find((cached) => role.id === cached.id);
+      const existing = this._roles.get(language).get(role.id);
 
-      existing ? patch(existing, value) : this._roles[language].push(value);
+      existing
+        ? patch(existing, value)
+        : this._roles.get(language)
+          .set(role.id, role);
     });
 
-    return value;
+    return Array.isArray(value)
+      ? value.map((role) => this._roles.get(language).get(role.id))
+      : this._roles.get(language).get(value.id);
   }
 
   _cleanUp (reconnection) {
-    this._roles = {};
+    this._roles.clear();
   }
 }
 

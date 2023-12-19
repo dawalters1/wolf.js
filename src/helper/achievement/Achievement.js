@@ -7,6 +7,7 @@ import validator from '../../validator/index.js';
 import Constants, { Language } from '../../constants/index.js';
 import _ from 'lodash';
 import patch from '../../utils/patch.js';
+import MapExtended from '../../utils/MapExtended.js';
 
 const { Command } = Constants;
 
@@ -16,6 +17,7 @@ class Achievement extends Base {
 
     this.achievements = {};
 
+    this.achievements = new MapExtended();
     this.category = new Category(this.client);
     this.channel = new Channel(client);
     this.group = this.channel;
@@ -93,7 +95,15 @@ class Achievement extends Base {
       }
     }
 
-    const achievements = forceNew ? [] : this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) ?? [];
+    const achievements = forceNew
+      ? []
+      : (
+          () => {
+            const achievements = this.achievements.get(language);
+
+            return ids.map((id) => achievements.get(id)).filter(Boolean);
+          }
+        )();
 
     if (achievements.length === ids.length) {
       return achievements;
@@ -133,11 +143,8 @@ class Achievement extends Base {
     return achievements;
   }
 
+  // TODO: refactor
   _process (value, language) {
-    if (!this.achievements[language]) {
-      this.achievements[language] = [];
-    }
-
     (Array.isArray(value) ? value : [value]).forEach((achievement) => {
       const existing = this.achievements[language].find((cached) => achievement.id === cached.id);
 

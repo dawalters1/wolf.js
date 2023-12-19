@@ -9,7 +9,15 @@ class Category extends Base {
   constructor (client) {
     super(client);
 
-    this.categories = {};
+    this.categories = new Map(
+      Object.values(Language)
+        .map((langaugeId) =>
+          [
+            langaugeId,
+            new Map()
+          ]
+        )
+    );
   }
 
   /**
@@ -31,7 +39,7 @@ class Category extends Base {
       }
     }
 
-    if (!forceNew && this.categories[language]) {
+    if (!forceNew) {
       return this.categories[language];
     }
 
@@ -46,14 +54,14 @@ class Category extends Base {
   }
 
   _process (categories, language) {
-    this.categories[language] = categories;
+    this.categories.set(language, categories);
 
     return categories;
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
-    this.categories = {};
+    if (reconnection) { return; }
+    this.categories.clear();
   }
 }
 

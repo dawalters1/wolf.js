@@ -3,13 +3,13 @@ import { Command } from '../../constants/index.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
 import _ from 'lodash';
-import patch from '../../utils/patch.js';
+import MapExtended from '../../utils/MapExtended.js';
 
 class Presence extends Base {
   constructor (client) {
     super(client);
 
-    this.presences = [];
+    this.presences = new MapExtended();
   }
 
   /**
@@ -74,7 +74,7 @@ class Presence extends Base {
       }
     }
 
-    const presence = forceNew ? [] : this.presences.filter((subscriber) => ids.includes(subscriber.id));
+    const presence = forceNew ? [] : this.presences.get(ids).filter(Boolean);
 
     if (presence.length === ids.length) {
       return presence;
@@ -96,7 +96,13 @@ class Presence extends Base {
           .map((presenceResponse) => new models.Response(presenceResponse))
           .map((presenceResponse, index) =>
             presenceResponse.success
-              ? this._process(new models.Presence(this.client, presenceResponse.body))
+              ? this.presences.set(
+                presenceResponse.body.subscriberId,
+                new models.Presence(
+                  this.client,
+                  presenceResponse.body
+                )
+              )
               : new models.Presence(this.client, { id: idList[index] })
           )
         );
@@ -108,16 +114,8 @@ class Presence extends Base {
     return presence;
   }
 
-  _process (value) {
-    const existing = this.presences.find((subscriber) => subscriber.id === value);
-
-    existing ? patch(existing, value) : this.presences.push(value);
-
-    return value;
-  }
-
   _cleanUp (reconnection = false) {
-    this.presences = [];
+    this.presences.clear();
   }
 }
 

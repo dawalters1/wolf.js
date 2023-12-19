@@ -7,7 +7,8 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this.subscriptions = [];
+    this._fetched = false;
+    this.subscriptions = new Map();
   }
 
   /**
@@ -22,8 +23,8 @@ class Subscription extends Base {
       }
     }
 
-    if (this.subscriptions.length) {
-      return this.subscriptions;
+    if (this._fetched) {
+      return this.subscriptions.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -33,9 +34,23 @@ class Subscription extends Base {
       }
     );
 
-    this.subscriptions = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+    this._fetched = response.success;
 
-    return this.subscriptions;
+    if (!response.success || !response.body.length) {
+      return [];
+    }
+
+    (
+      await this.client.event.getByIds(
+        response.body
+          .map((event) => event.id)
+      )
+    )
+      .map((event) =>
+        this.subscriptions.set(event.id, event)
+      );
+
+    return this.subscriptions.values();
   }
 
   /**
@@ -87,7 +102,7 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    this.subscriptions = [];
+    this.subscriptions.clear();
   }
 }
 

@@ -16,78 +16,203 @@ class Stage extends Base {
     this.request = new Request(this.client);
     this.slot = new Slot(this.client);
 
-    this.clients = {};
+    this.clients = new Map();
 
     this.client.on('groupAudioCountUpdate', (oldCount, newCount) => {
-      if (!this.clients[newCount.id]) { return false; }
+      const client = this._getClient(oldCount.id);
 
-      return this.client.emit(
-        Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
-        new StageClientViewerCountUpdate(
-          this.client,
-          {
-            targetChannelId: oldCount.id,
-            slotId: this.clients[oldCount.id]?.slotId ?? 0,
-            oldBroadcastCount: oldCount.broadcasterCount,
-            newBroadcasterCount: newCount.broadcasterCount,
-            oldConsumerCount: oldCount.consumerCount,
-            newConsumerCount: newCount.consumerCount
-          }
+      return client
+        ? this.client.emit(
+          Event.STAGE_CLIENT_VIEWER_COUNT_CHANGED,
+          new StageClientViewerCountUpdate(
+            this.client,
+            {
+              targetChannelId: oldCount.id,
+              slotId: client?.slotId ?? 0,
+              oldBroadcastCount: oldCount.broadcasterCount,
+              newBroadcasterCount: newCount.broadcasterCount,
+              oldConsumerCount: oldCount.consumerCount,
+              newConsumerCount: newCount.consumerCount
+            }
+          )
         )
-      );
+        : false;
     });
 
     this.client.on('groupAudioSlotUpdate', (oldSlot, newSlot) => {
-      const client = this.clients[newSlot.id];
+      const client = this._getClient(oldSlot.id);
 
-      if (client?.slotId !== newSlot.slot.id) { return false; }
+      if (!client || client.slotId !== newSlot.slot.id) { return false; }
 
       return client.handleSlotUpdate(newSlot.slot, newSlot.sourceSubscriberId);
     });
   }
 
   async _getClient (targetChannelId, createIfNotExists = false) {
-    if (this.clients[targetChannelId]) {
-      return this.clients[targetChannelId];
+    if (this.clients.has(targetChannelId) || !createIfNotExists) {
+      return !createIfNotExists ? undefined : this.client.get(targetChannelId);
     }
 
     if (!await commandExists('ffmpeg')) {
       throw new WOLFAPIError('ffmpeg must be installed on this device to create or use a stage client', { download: 'https://ffmpeg.org/download.html' });
     }
 
-    if (createIfNotExists) {
-      const client = new StageClient();
+    this.clients.set(
+      targetChannelId,
+      new StageClient()
+        .on(Event.STAGE_CLIENT_CONNECTING, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_CONNECTING,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_CONNECTED, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_CONNECTED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_DISCONNECTED, (data) => {
+          this._deleteClient(targetChannelId);
+          this.client.emit(Event.STAGE_CLIENT_DISCONNECTED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          );
+        })
+        .on(Event.STAGE_CLIENT_KICKED, (data) => {
+          this._deleteClient(targetChannelId);
+          this.client.emit(Event.STAGE_CLIENT_KICKED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          );
+        })
+        .on(Event.READY, (data) =>
+          this.client.emit(Event.READY,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_ERROR, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_ERROR,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_END, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_END,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_STOPPED, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_STOPPED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_MUTED, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_MUTED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_UNMUTED, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_UNMUTED,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_START, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_START,
+            new StageClientGeneralUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_READY, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_READY,
+            new StageClientGeneralUpdate(this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+        .on(Event.STAGE_CLIENT_DURATION, (data) =>
+          this.client.emit(Event.STAGE_CLIENT_DURATION,
+            new StageClientDurationUpdate(
+              this.client,
+              {
+                ...data,
+                targetChannelId
+              }
+            )
+          )
+        )
+    );
 
-      client.on(Event.STAGE_CLIENT_CONNECTING, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTING, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_CONNECTED, (data) => this.client.emit(Event.STAGE_CLIENT_CONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_DISCONNECTED, async (data) => {
-        this._deleteClient(targetChannelId);
-        this.client.emit(Event.STAGE_CLIENT_DISCONNECTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId }));
-      });
-      client.on(Event.STAGE_CLIENT_KICKED, async (data) => {
-        this._deleteClient(targetChannelId);
-        this.client.emit(Event.STAGE_CLIENT_KICKED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId }));
-      });
-      client.on(Event.READY, (data) => this.client.emit(Event.READY, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_ERROR, (data) => this.client.emit(Event.STAGE_CLIENT_ERROR, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_END, (data) => this.client.emit(Event.STAGE_CLIENT_END, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_STOPPED, (data) => this.client.emit(Event.STAGE_CLIENT_STOPPED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_MUTED, (data) => this.client.emit(Event.STAGE_CLIENT_MUTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_UNMUTED, (data) => this.client.emit(Event.STAGE_CLIENT_UNMUTED, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_START, (data) => this.client.emit(Event.STAGE_CLIENT_START, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_READY, (data) => this.client.emit(Event.STAGE_CLIENT_READY, new StageClientGeneralUpdate(this.client, { ...data, targetChannelId })));
-      client.on(Event.STAGE_CLIENT_DURATION, (data) => this.client.emit(Event.STAGE_CLIENT_DURATION, new StageClientDurationUpdate(this.client, { ...data, targetChannelId })));
-
-      this.clients[targetChannelId] = client;
-    }
-
-    return this.clients[targetChannelId];
+    return this.clients.get(targetChannelId);
   }
 
   _deleteClient (targetChannelId) {
-    this.clients[targetChannelId]?.stop();
+    this.clients.get(targetChannelId)?.stop();
 
-    Reflect.deleteProperty(this.clients, targetChannelId);
+    return this.clients.delete(targetChannelId);
   }
 
   /**
@@ -121,6 +246,7 @@ class Stage extends Base {
       }
     );
 
+    // TODO: convert to Map
     channel._stages = result?.body?.map((stage) => new models.ChannelStage(this.client, stage, parseInt(targetChannelId))) ?? [];
 
     return channel.stages;
@@ -237,11 +363,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].play(data);
+    return this.clients.get(targetChannelId).play(data);
   }
 
   /**
@@ -258,11 +384,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].stop();
+    return this.clients.get(targetChannelId).stop();
   }
 
   /**
@@ -279,11 +405,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].pause();
+    return this.clients.get(targetChannelId).pause();
   }
 
   /**
@@ -300,11 +426,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].resume();
+    return this.clients.get(targetChannelId).resume();
   }
 
   /**
@@ -321,7 +447,7 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    return !!this.clients[targetChannelId];
+    return this.clients.has(targetChannelId);
   }
 
   /**
@@ -338,11 +464,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].broadcastState;
+    return this.clients.get(targetChannelId).broadcastState;
   }
 
   /**
@@ -359,11 +485,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].connectionState === StageConnectionState.READY;
+    return this.clients.get(targetChannelId).connectionState === StageConnectionState.READY;
   }
 
   /**
@@ -431,11 +557,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].duration;
+    return this.clients.get(targetChannelId).duration;
   }
 
   /**
@@ -452,11 +578,11 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].volume;
+    return this.clients.get(targetChannelId).volume;
   }
 
   /**
@@ -474,7 +600,7 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
@@ -486,7 +612,7 @@ class Stage extends Base {
       throw new models.WOLFAPIError('volume cannot be less than 0', { volume });
     }
 
-    return await this.clients[targetChannelId].setVolume(volume);
+    return this.clients.get(targetChannelId).setVolume(volume);
   }
 
   /**
@@ -503,17 +629,21 @@ class Stage extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    if (!this.clients[targetChannelId]) {
+    if (!this.clients.has(targetChannelId)) {
       throw new WOLFAPIError('bot is not on stage', { targetChannelId });
     }
 
-    return await this.clients[targetChannelId].slotId;
+    return this.clients.get(targetChannelId).slotId;
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
-    Object.keys(this.clients).forEach((targetChannelId) => this._deleteClient(targetChannelId));
+    this.clients.keys()
+      .map((targetChannelId) =>
+        this._deleteClient(targetChannelId)
+      );
+
     this.request._cleanUp(reconnection);
     this.slot._cleanUp(reconnection);
   }

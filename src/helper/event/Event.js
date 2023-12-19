@@ -13,7 +13,7 @@ class Event extends Base {
     this.channel = new Channel(this.client);
     this.group = this.channel;
     this.subscription = new Subscription(this.client);
-    this.events = [];
+    this.events = new Map();
   }
 
   /**
@@ -73,7 +73,7 @@ class Event extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const events = forceNew ? [] : this.events.filter((event) => ids.includes(event.id));
+    const events = forceNew ? [] : ids.map((id) => this.events.get(id)).filter(Boolean);
 
     if (events.length === ids.length) {
       return events;
@@ -113,15 +113,17 @@ class Event extends Base {
   }
 
   _process (event) {
-    const existing = this.events.find((cached) => event.id === cached.id);
+    const existing = this.events.get(event.id);
 
-    existing ? patch(existing, event) : this.events.push(event);
+    existing
+      ? patch(existing, event)
+      : this.events.set(event.id, event);
 
-    return event;
+    return this.events.get(event.id);
   }
 
   _cleanUp (reconnection = false) {
-    this.events = [];
+    this.events.clear();
     this.channel._cleanUp(reconnection);
     this.subscription._cleanUp(reconnection);
   }

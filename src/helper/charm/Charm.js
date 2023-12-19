@@ -7,7 +7,7 @@ class Charm extends Base {
   constructor (client) {
     super(client);
 
-    this.charms = [];
+    this.charms = new Map();
   }
 
   /**
@@ -21,9 +21,14 @@ class Charm extends Base {
 
     const response = await this.client.websocket.emit(Command.CHARM_LIST);
 
-    this.charms = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
+    response.body?.map((charm) =>
+      this.charms.set(
+        charm.id,
+        new models.Charm(this.client, charm)
+      )
+    );
 
-    return this.charms;
+    return this.charms.values();
   }
 
   /**
@@ -73,11 +78,12 @@ class Charm extends Base {
       }
     }
 
-    const charms = await this.list();
+    await this.list();
 
-    return ids.map((charmId) =>
-      charms.find((charm) => charm.id === charmId) || new models.Charm(this.client, { id: charmId })
-    );
+    return ids
+      .map((id) =>
+        this.charms.get(id) || new models.Charm(this.client, { id })
+      );
   }
 
   /**
@@ -311,7 +317,7 @@ class Charm extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
     this.charms = [];
   }

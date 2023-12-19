@@ -10,7 +10,9 @@ class Global extends Base {
   constructor (client) {
     super(client);
 
-    this._list = [];
+    this._requested = {
+
+    };
     this._requested = false;
     this.notifications = [];
   }
