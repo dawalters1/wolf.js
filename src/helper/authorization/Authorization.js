@@ -32,23 +32,21 @@ class Authorization extends Base {
   async isAuthorized (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-      }
+    if (!values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+    }
 
-      if ([...new Set(values)].length !== values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-      }
+    if ([...new Set(values)].length !== values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+    }
 
-      for (const subscriberId of values) {
-        if (validator.isNullOrUndefined(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-        } else if (!validator.isValidNumber(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-        }
+    for (const subscriberId of values) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -65,23 +63,21 @@ class Authorization extends Base {
   async authorize (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-      }
+    if (!values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+    }
 
-      if ([...new Set(values)].length !== values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-      }
+    if ([...new Set(values)].length !== values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+    }
 
-      for (const subscriberId of values) {
-        if (validator.isNullOrUndefined(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-        } else if (!validator.isValidNumber(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-        }
+    for (const subscriberId of values) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 
@@ -107,23 +103,21 @@ class Authorization extends Base {
   async unauthorize (targetSubscriberIds) {
     const values = (Array.isArray(targetSubscriberIds) ? targetSubscriberIds : [targetSubscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
-      }
+    if (!values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+    }
 
-      if ([...new Set(values)].length !== values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
-      }
+    if ([...new Set(values)].length !== values.length) {
+      throw new models.WOLFAPIError('targetSubscriberIds cannot contain duplicates', { targetSubscriberIds });
+    }
 
-      for (const subscriberId of values) {
-        if (validator.isNullOrUndefined(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-        } else if (!validator.isValidNumber(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-        } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-          throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-        }
+    for (const subscriberId of values) {
+      if (validator.isNullOrUndefined(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+      } else if (!validator.isValidNumber(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+      } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+        throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
       }
     }
 

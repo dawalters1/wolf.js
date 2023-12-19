@@ -17,12 +17,10 @@ class Misc extends Base {
    * @returns {Promise<Response<LinkMetadata>>}
    */
   async metadata (url) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(url)) {
-        throw new WOLFAPIError('url cannot be null or empty', { url });
-      } else if (typeof url !== 'string') {
-        throw new WOLFAPIError('url must be type string', { url });
-      }
+    if (validator.isNullOrUndefined(url)) {
+      throw new WOLFAPIError('url cannot be null or empty', { url });
+    } else if (typeof url !== 'string') {
+      throw new WOLFAPIError('url must be type string', { url });
     }
 
     if (this.metadataResults.some((result) => this.client.utility.string.isEqual(result.url, url))) {
@@ -63,10 +61,8 @@ class Misc extends Base {
    * @returns {Promise<Array<BlacklistLink>>}
    */
   async linkBlacklist (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.blacklist.length) {
@@ -86,10 +82,8 @@ class Misc extends Base {
    * @returns {Promise<*>}
    */
   async getSecurityToken (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.client.cognito) {
@@ -123,12 +117,10 @@ class Misc extends Base {
    * @returns {Promise<Response>}
    */
   async updateMessageSettings (messageFilterTier) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(messageFilterTier)) {
-        throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
-      } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
-        throw new WOLFAPIError('messageFilterTier is not valid', { messageFilterTier });
-      }
+    if (!validator.isValidNumber(messageFilterTier)) {
+      throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
+    } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
+      throw new WOLFAPIError('messageFilterTier is not valid', { messageFilterTier });
     }
 
     return await this.client.websocket.emit(

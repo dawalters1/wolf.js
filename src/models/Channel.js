@@ -50,8 +50,8 @@ class Channel extends Base {
     return parseFloat(`${reputation[1].slice(0, 2)}.${reputation[1].slice(2)}`).toFixed(2);
   }
 
-  get stages () {
-    return this._stages?.filter((stage) => !stage.expireTime || new Date(stage.expireTime) > Date.now()) ?? [];
+  async stages (forceNew = false) {
+    return await this.client.stage.getAvailableStages(this.id, forceNew);
   }
 
   /**
@@ -117,27 +117,40 @@ class Channel extends Base {
 
   /**
    * Update the channels profile
-   * @param {String} description
-   * @param {Boolean} peekable
-   * @param {Boolean} disableHyperlink
-   * @param {Boolean} disableImage
-   * @param {Boolean} disableImageFilter
-   * @param {Boolean} disableVoice
-   * @param {number} slowModeRateInSeconds
-   * @param {String} longDescription
-   * @param {Boolean} discoverable
-   * @param {Number} language
-   * @param {Category} category
-   * @param {Boolean} advancedAdmin
-   * @param {Boolean} questionable
-   * @param {Boolean} locked
-   * @param {Boolean} closed
-   * @param {Number} entryLevel
-   * @param {Buffer} avatar
+   * @param {Object} body
+   * @param {String} body.description
+   * @param {Boolean} body.peekable
+   * @param {Boolean} body.disableHyperlink
+   * @param {Boolean} body.disableImage
+   * @param {Boolean} body.disableImageFilter
+   * @param {Boolean} body.disableVoice
+   * @param {number} body.slowModeRateInSeconds
+   * @param {String} body.longDescription
+   * @param {Boolean} body.discoverable
+   * @param {Number} body.language
+   * @param {Category} body.category
+   * @param {Boolean} body.advancedAdmin
+   * @param {Boolean} body.questionable
+   * @param {Boolean} body.locked
+   * @param {Boolean} body.closed
+   * @param {Number} body.entryLevel
+   * @param {Buffer} body.avatar
    * @returns {Promise<Response>}
    */
   async update ({ description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, slowModeRateInSeconds, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     return await this.client.channel.update(this.id, { description: description || this.description, peekable: peekable || this.peekable, disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink, disableImage: disableImage || this.messageConfig.disableImage, disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter, disableVoice: disableVoice || this.messageConfig.disableVoice, longDescription: longDescription || this.extended.longDescription, discoverable: discoverable || this.extended.discoverable, language: language || this.extended.language, category: category || this.extended.category, advancedAdmin: advancedAdmin || this.extended.advancedAdmin, questionable: questionable || this.extended.questionable, locked: locked || this.extended.locked, closed: closed || this.extended.closed, entryLevel: entryLevel || this.extended.entryLevel, avatar, slowModeRateInSeconds: validator.isNullOrUndefined(slowModeRateInSeconds) ? this.messageConfig.slowModeRateInSeconds : slowModeRateInSeconds });
+  }
+
+  async events (subscribe = true, forceNew = false) {
+    return await this.client.event.channel.getList(this.id, subscribe, forceNew);
+  }
+
+  async tipLeaderboardSummary (tipPeriod, tipType, tipDirection) {
+    return await this.client.tipping.getChannelLeaderboardSummary(this.id, tipPeriod, tipType, tipDirection);
+  }
+
+  async tipLeaderboard (tipPeriod, tipType, tipDirection) {
+    return await this.client.tipping.getChannelLeaderboard(this.id, tipPeriod, tipType, tipDirection);
   }
 }
 

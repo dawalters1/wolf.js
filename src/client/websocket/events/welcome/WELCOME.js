@@ -60,18 +60,6 @@ class Welcome extends Base {
       }
     );
 
-    console.log({
-      headers: {
-        version: 2
-      },
-      body: {
-        type,
-        onlineState,
-        username,
-        password
-      }
-    });
-
     if (!response.success) {
       this.client.emit(
         Event.LOGIN_FAILED,
