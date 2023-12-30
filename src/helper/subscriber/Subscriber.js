@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Presence from './Presence.js';
 import patch from '../../utils/patch.js';
 import Wolfstars from './Wolfstars.js';
-import Role from './Role.js';
 
 class Subscriber extends Base {
   constructor (client) {
@@ -14,7 +13,6 @@ class Subscriber extends Base {
     this.subscribers = [];
     this.presence = new Presence(this.client);
     this.wolfstars = new Wolfstars(this.client);
-    this.role = new Role(this.client);
   }
 
   async _unsubscribe (id) {
@@ -213,7 +211,7 @@ class Subscriber extends Base {
   }
 
   _process (value) {
-    const existing = this.subscribers.find((subscriber) => subscriber.id === value);
+    const existing = this.subscribers.find((subscriber) => subscriber.id === value.id);
 
     existing ? patch(existing, value) : this.subscribers.push(value);
 
