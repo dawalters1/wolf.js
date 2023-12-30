@@ -105,7 +105,7 @@ class Presence extends Base {
   }
 
   _process (value) {
-    const existing = this.presences.find((subscriber) => subscriber.id === value);
+    const existing = this.presences.find((subscriber) => subscriber.id === value.id);
 
     existing ? patch(existing, value) : this.presences.push(value);
 
