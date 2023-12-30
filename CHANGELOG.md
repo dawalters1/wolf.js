@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated DJ, HOST, WELCOMER & SHADOW BANNED Privileges
 - Refactored Server Event Handling
 
+# 2.4.5 (2023-12-30)
+### Fixed
+- Caching related issues
+### Changed
+- Dependency updates
+
 # 2.4.4 (2023-12-18)
 ### Added
 - Tipping Leaderboard methods to Channel model
