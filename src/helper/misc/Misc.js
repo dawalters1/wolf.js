@@ -7,9 +7,8 @@ class Misc extends Base {
   constructor (client) {
     super(client);
 
-    this._fetched = false;
-    this._blacklist = new Map();
-    this.metadataResults = new Map();
+    this.blacklist = [];
+    this.metadataResults = [];
   }
 
   /**
@@ -18,16 +17,14 @@ class Misc extends Base {
    * @returns {Promise<Response<LinkMetadata>>}
    */
   async metadata (url) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(url)) {
-        throw new WOLFAPIError('url cannot be null or empty', { url });
-      } else if (typeof url !== 'string') {
-        throw new WOLFAPIError('url must be type string', { url });
-      }
+    if (validator.isNullOrUndefined(url)) {
+      throw new WOLFAPIError('url cannot be null or empty', { url });
+    } else if (typeof url !== 'string') {
+      throw new WOLFAPIError('url must be type string', { url });
     }
 
-    if (this.metadataResults.has(url.toLocaleLowerCase())) {
-      return this.metadataResults.get(url.toLocaleLowerCase()).metadata;
+    if (this.metadataResults.some((result) => this.client.utility.string.isEqual(result.url, url))) {
+      return this.metadataResults.find((result) => this.client.utility.string.isEqual(result.url, url)).metadata;
     }
 
     const response = await this.client.websocket.emit(
@@ -43,13 +40,19 @@ class Misc extends Base {
     );
 
     if (response.success) {
-      this.metadataResults.set(
-        url.toLocaleLowerCase(),
-        new LinkMetadata(this.client, response.body)
+      const metadata = new LinkMetadata(this.client, response.body);
+
+      this.metadataResults.push(
+        {
+          url,
+          metadata
+        }
       );
+
+      response.body = metadata;
     }
 
-    return this.metadataResults.get(url.toLocaleLowerCase()).metadata;
+    return response;
   }
 
   /**
@@ -58,28 +61,19 @@ class Misc extends Base {
    * @returns {Promise<Array<BlacklistLink>>}
    */
   async linkBlacklist (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.blacklist.length) {
       return this.blacklist;
     }
 
-    const response = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
+    const result = await this.client.websocket.emit(Command.METADATA_URL_BLACKLIST);
 
-    this._fetched = response.success;
+    this._blacklist = result.body?.map((item) => new BlacklistLink(this.client, item)) ?? [];
 
-    response.body?.map((item) =>
-      this.blacklist.set(
-        item.id,
-        new BlacklistLink(this.client, item)
-      )
-    );
-
-    return this._blacklist.values();
+    return this._blacklist;
   }
 
   /**
@@ -88,10 +82,8 @@ class Misc extends Base {
    * @returns {Promise<*>}
    */
   async getSecurityToken (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     if (!forceNew && this.client.cognito) {
@@ -116,7 +108,7 @@ class Misc extends Base {
   async getMessageSettings () {
     const response = await this.client.websocket.emit(Command.MESSAGE_SETTING);
 
-    return new MessageSettings(this.client, response.body);
+    return response.success ? new MessageSettings(this.client, response.body) : null;
   }
 
   /**
@@ -125,12 +117,10 @@ class Misc extends Base {
    * @returns {Promise<Response>}
    */
   async updateMessageSettings (messageFilterTier) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(messageFilterTier)) {
-        throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
-      } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
-        throw new WOLFAPIError('messageFilterTier is not valid', { messageFilterTier });
-      }
+    if (!validator.isValidNumber(messageFilterTier)) {
+      throw new WOLFAPIError('messageFilterTier must be a valid number', { messageFilterTier });
+    } else if (!Object.values(MessageFilterTier).includes(parseInt(messageFilterTier))) {
+      throw new WOLFAPIError('messageFilterTier is not valid', { messageFilterTier });
     }
 
     return await this.client.websocket.emit(
@@ -145,10 +135,10 @@ class Misc extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return; }
+    if (reconnection) { return false; }
 
-    this._blacklist.clear();
-    this.metadataResults.clear();
+    this._blacklist = [];
+    this.metadataResults = [];
   }
 }
 

@@ -7,8 +7,7 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this._fetched = false;
-    this.subscriptions = new Map();
+    this.subscriptions = [];
   }
 
   /**
@@ -17,14 +16,12 @@ class Subscription extends Base {
    * @returns {Promise<Array<Event>>}
    */
   async getList (subscribe = true) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidBoolean(subscribe)) {
-        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-      }
+    if (!validator.isValidBoolean(subscribe)) {
+      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
     }
 
-    if (this._fetched) {
-      return this.subscriptions.values();
+    if (this.subscriptions.length) {
+      return this.subscriptions;
     }
 
     const response = await this.client.websocket.emit(
@@ -34,23 +31,9 @@ class Subscription extends Base {
       }
     );
 
-    this._fetched = response.success;
+    this.subscriptions = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
 
-    if (!response.success || !response.body.length) {
-      return [];
-    }
-
-    (
-      await this.client.event.getByIds(
-        response.body
-          .map((event) => event.id)
-      )
-    )
-      .map((event) =>
-        this.subscriptions.set(event.id, event)
-      );
-
-    return this.subscriptions.values();
+    return this.subscriptions;
   }
 
   /**
@@ -59,14 +42,12 @@ class Subscription extends Base {
    * @returns {Promise<Response>}
    */
   async add (eventId) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(eventId)) {
-        throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
-      } else if (!validator.isValidNumber(eventId)) {
-        throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
-      } else if (validator.isLessThanOrEqualZero(eventId)) {
-        throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
-      }
+    if (validator.isNullOrUndefined(eventId)) {
+      throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
+    } else if (!validator.isValidNumber(eventId)) {
+      throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
+    } else if (validator.isLessThanOrEqualZero(eventId)) {
+      throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
     }
 
     return await this.client.websocket.emit(
@@ -83,14 +64,12 @@ class Subscription extends Base {
    * @returns {Promise<Response>}
    */
   async remove (eventId) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(eventId)) {
-        throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
-      } else if (!validator.isValidNumber(eventId)) {
-        throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
-      } else if (validator.isLessThanOrEqualZero(eventId)) {
-        throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
-      }
+    if (validator.isNullOrUndefined(eventId)) {
+      throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
+    } else if (!validator.isValidNumber(eventId)) {
+      throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
+    } else if (validator.isLessThanOrEqualZero(eventId)) {
+      throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
     }
 
     return await this.client.websocket.emit(
@@ -102,7 +81,7 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    this.subscriptions.clear();
+    this.subscriptions = [];
   }
 }
 

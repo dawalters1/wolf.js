@@ -11,14 +11,52 @@ class Role extends Base {
   constructor (client) {
     super(client);
 
-    this._roles = new Map();
+    this._roles = {};
 
     this.channel = new Channel(this.client);
     this.subscriber = new Subscriber(this.client);
   }
 
   async getById (roleId, languageId, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
+    if (validator.isNullOrUndefined(roleId)) {
+      throw new models.WOLFAPIError('roleId cannot be null or undefined', { roleId });
+    } else if (!validator.isValidNumber(roleId)) {
+      throw new models.WOLFAPIError('roleId must be a valid number', { roleId });
+    } else if (validator.isLessThanOrEqualZero(roleId)) {
+      throw new models.WOLFAPIError('roleId cannot be less than or equal to 0', { roleId });
+    }
+
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
+
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
+    return (await this.getByIds(roleId, languageId, forceNew))[0];
+  }
+
+  async getByIds (roleIds, languageId, forceNew = false) {
+    roleIds = (Array.isArray(roleIds) ? roleIds : [roleIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if (!roleIds.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { roleIds });
+    }
+
+    if ([...new Set(roleIds)].length !== roleIds.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { roleIds });
+    }
+
+    if (!validator.isValidNumber(languageId)) {
+      throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
+    } else if (!Object.values(Language).includes(parseInt(languageId))) {
+      throw new models.WOLFAPIError('languageId is not valid', { languageId });
+    }
+
+    for (const roleId of roleIds) {
       if (validator.isNullOrUndefined(roleId)) {
         throw new models.WOLFAPIError('roleId cannot be null or undefined', { roleId });
       } else if (!validator.isValidNumber(roleId)) {
@@ -26,65 +64,15 @@ class Role extends Base {
       } else if (validator.isLessThanOrEqualZero(roleId)) {
         throw new models.WOLFAPIError('roleId cannot be less than or equal to 0', { roleId });
       }
-
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
-
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
     }
 
-    return (await this.getByIds(roleId, languageId, forceNew))[0];
-  }
+    const roles = forceNew ? [] : this._roles[languageId]?.filter((role) => roleIds.includes(role.id)) ?? [];
 
-  async getByIds (ids, languageId, forceNew = false) {
-    ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-
-    { // eslint-disable-line no-lone-blocks
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
-
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
-
-      if (!validator.isValidNumber(languageId)) {
-        throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
-      } else if (!Object.values(Language).includes(parseInt(languageId))) {
-        throw new models.WOLFAPIError('languageId is not valid', { languageId });
-      }
-
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
-      }
-    }
-
-    const roles = forceNew
-      ? []
-      : (
-          () => {
-            const roles = this._roles.get(languageId);
-
-            return ids.map((id) => roles.get(id)).filter(Boolean);
-          }
-        )();
-
-    if (roles.length === ids.length) {
+    if (roles.length === roleIds.length) {
       return roles;
     }
 
-    const idLists = _.chunk(ids.filter((roleId) => !roles.some((role) => role.id === roleId)), this.client._frameworkConfig.get('batching.length'));
+    const idLists = _.chunk(roleIds.filter((roleId) => !roles.some((role) => role.id === roleId)), this.client._frameworkConfig.get('batching.length'));
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(
@@ -118,22 +106,21 @@ class Role extends Base {
   }
 
   _process (value, language) {
-    (Array.isArray(value) ? value : [value]).forEach((role) => {
-      const existing = this._roles.get(language).get(role.id);
+    if (!this._roles[language]) {
+      this._roles[language] = [];
+    }
 
-      existing
-        ? patch(existing, value)
-        : this._roles.get(language)
-          .set(role.id, role);
+    (Array.isArray(value) ? value : [value]).forEach((role) => {
+      const existing = this._roles[language].find((cached) => role.id === cached.id);
+
+      existing ? patch(existing, value) : this._roles[language].push(value);
     });
 
-    return Array.isArray(value)
-      ? value.map((role) => this._roles.get(language).get(role.id))
-      : this._roles.get(language).get(value.id);
+    return value;
   }
 
   _cleanUp (reconnection) {
-    this._roles.clear();
+    this._roles = {};
   }
 }
 

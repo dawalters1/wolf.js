@@ -7,7 +7,6 @@ import validator from '../../validator/index.js';
 import Constants, { Language } from '../../constants/index.js';
 import _ from 'lodash';
 import patch from '../../utils/patch.js';
-import MapExtended from '../../utils/MapExtended.js';
 
 const { Command } = Constants;
 
@@ -17,7 +16,6 @@ class Achievement extends Base {
 
     this.achievements = {};
 
-    this.achievements = new MapExtended();
     this.category = new Category(this.client);
     this.channel = new Channel(client);
     this.group = this.channel;
@@ -32,24 +30,22 @@ class Achievement extends Base {
    * @returns {Promise<models.Achievement>} - The requested achievement
    */
   async getById (id, language, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-      }
+    if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
 
-      if (!validator.isValidNumber(language)) {
-        throw new models.WOLFAPIError('language must be a valid number', { language });
-      } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new models.WOLFAPIError('language is not valid', { language });
-      }
+    if (!validator.isValidNumber(language)) {
+      throw new models.WOLFAPIError('language must be a valid number', { language });
+    } else if (!Object.values(Language).includes(parseInt(language))) {
+      throw new models.WOLFAPIError('language is not valid', { language });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     return (await this.getByIds([id], language, forceNew))[0];
@@ -65,51 +61,50 @@ class Achievement extends Base {
   async getByIds (ids, language, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
 
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
+    }
 
-      if (!validator.isValidNumber(language)) {
-        throw new models.WOLFAPIError('language must be a valid number', { language });
-      } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new models.WOLFAPIError('language is not valid', { language });
-      }
+    if (!validator.isValidNumber(language)) {
+      throw new models.WOLFAPIError('language must be a valid number', { language });
+    } else if (!Object.values(Language).includes(parseInt(language))) {
+      throw new models.WOLFAPIError('language is not valid', { language });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     const achievements = forceNew
       ? []
-      : (
-          () => {
-            const achievements = this.achievements.get(language);
-
-            return ids.map((id) => achievements.get(id)).filter(Boolean);
-          }
-        )();
+      : this.achievements[language]?.filter((achievement) =>
+        ids.includes(achievement.id)
+      ) ?? [];
 
     if (achievements.length === ids.length) {
       return achievements;
     }
 
-    const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));
+    const idLists = _.chunk(
+      ids.filter(
+        (achievementId) => !achievements.some((achievement) => achievement.id === achievementId)
+      ),
+      this.client._frameworkConfig.get('batching.length')
+    );
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(
@@ -143,8 +138,11 @@ class Achievement extends Base {
     return achievements;
   }
 
-  // TODO: refactor
   _process (value, language) {
+    if (!this.achievements[language]) {
+      this.achievements[language] = [];
+    }
+
     (Array.isArray(value) ? value : [value]).forEach((achievement) => {
       const existing = this.achievements[language].find((cached) => achievement.id === cached.id);
 

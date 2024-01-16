@@ -7,55 +7,55 @@ class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this.subscriptions = new Map();
+    this.subscriptions = [];
 
     this.client.on('message', (message) => {
-      const subscriptions = this.subscriptions.entries().filter((subscription) => subscription.predicate(message));
+      const subscriptions = this.subscriptions.filter((subscription) => subscription.predicate(message));
 
-      subscriptions.map((subscription) => this.subscriptions.delete(subscription[0]));
-      subscriptions.map((subscription) => clearTimeout(subscription[1].timeout));
-
-      return subscriptions.forEach((subscription) => {
-        message.id = subscription[0];
-        subscription[1].resolver.resolve({ message });
-      });
+      for (const messageSubscription of subscriptions) {
+        message.subscription = messageSubscription.id;
+        messageSubscription.def.resolve(message);
+      }
     });
   }
 
   async _create (predicate, timeout = Infinity) {
-    { // eslint-disable-line no-lone-blocks
-      if (this.subscriptions.some((subscription) => subscription.predicate === predicate)) {
-        throw new models.WOLFAPIError('subscription is a duplicate', { predicate });
-      }
+    if (this.subscriptions.some((subscription) => subscription.predicate === predicate)) {
+      throw new models.WOLFAPIError('subscription is a duplicate', { predicate });
+    }
 
-      if (timeout !== Infinity) {
-        if (validator.isNullOrUndefined(timeout)) {
-          throw new models.WOLFAPIError('timeout cannot be null or undefined', { timeout });
-        } else if (!validator.isValidNumber(timeout)) {
-          throw new models.WOLFAPIError('timeout must be a valid number', { timeout });
-        } else if (validator.isLessThanOrEqualZero(timeout)) {
-          throw new models.WOLFAPIError('timeout cannot be less than or equal to 0', { timeout });
-        }
+    if (timeout !== Infinity) {
+      if (validator.isNullOrUndefined(timeout)) {
+        throw new models.WOLFAPIError('timeout cannot be null or undefined', { timeout });
+      } else if (!validator.isValidNumber(timeout)) {
+        throw new models.WOLFAPIError('timeout must be a valid number', { timeout });
+      } else if (validator.isLessThanOrEqualZero(timeout)) {
+        throw new models.WOLFAPIError('timeout cannot be less than or equal to 0', { timeout });
       }
     }
 
-    const id = nanoid(32);
-
     const subscription = {
-      predicate
+      id: nanoid(32),
+      predicate,
+      def: undefined,
+      timeout: undefined
     };
 
-    const promise = new Promise((resolve, reject) => {
-      subscription.resolver = { resolve, reject };
+    if (timeout !== Infinity) {
+      subscription.timeout = setTimeout(() => subscription.def.resolve(null), timeout);
+    }
+
+    this.subscriptions.push(subscription);
+
+    const result = await new Promise((resolve, reject) => {
+      subscription.def = { resolve, reject };
     });
 
-    subscription.timeout = timeout === Infinity
-      ? undefined
-      : setTimeout(() => subscription.resolver.resolve(null), timeout);
+    clearTimeout(subscription.timeout);
 
-    this.subscriptions.set(id, subscription);
+    this.subscriptions.splice(this.subscriptions.findIndex((sub) => sub.id === subscription.id), 1);
 
-    return await promise;
+    return result;
   }
 
   /**
@@ -65,10 +65,8 @@ class Subscription extends Base {
    * @returns {Promise<Message | undefined>}
    */
   async nextMessage (predicate, timeout = Infinity) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isType(predicate, 'function')) {
-        throw new models.WOLFAPIError('predicate must be function', { predicate });
-      }
+    if (!validator.isType(predicate, 'function')) {
+      throw new models.WOLFAPIError('predicate must be function', { predicate });
     }
 
     return await this._create(predicate, timeout);
@@ -101,16 +99,14 @@ class Subscription extends Base {
    * @returns {Promise<Message|undefined>}
    */
   async nextPrivateMessage (sourceSubscriberId, timeout = Infinity) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId cannot be null or undefined', { sourceSubscriberId });
-      } else if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId must be a valid number', { sourceSubscriberId });
-      } else if (!validator.isType(sourceSubscriberId, 'number')) {
-        throw new models.WOLFAPIError('sourceSubscriberId must be type of number', { sourceSubscriberId });
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
-      }
+    if (validator.isNullOrUndefined(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId cannot be null or undefined', { sourceSubscriberId });
+    } else if (!validator.isValidNumber(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId must be a valid number', { sourceSubscriberId });
+    } else if (!validator.isType(sourceSubscriberId, 'number')) {
+      throw new models.WOLFAPIError('sourceSubscriberId must be type of number', { sourceSubscriberId });
+    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
     }
 
     return await this.nextMessage((message) => !message.isChannel && message.sourceSubscriberId === sourceSubscriberId, timeout);
@@ -124,26 +120,24 @@ class Subscription extends Base {
    * @returns {Promise<Message|undefined>}
    */
   async nextChannelSubscriberMessage (targetChannelId, sourceSubscriberId, timeout = Infinity) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-      } else if (!validator.isValidNumber(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-      } else if (!validator.isType(targetChannelId, 'number')) {
-        throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
-      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-      }
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (!validator.isType(targetChannelId, 'number')) {
+      throw new models.WOLFAPIError('targetChannelId must be type of number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
 
-      if (validator.isNullOrUndefined(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId cannot be null or undefined', { sourceSubscriberId });
-      } else if (!validator.isValidNumber(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId must be a valid number', { sourceSubscriberId });
-      } else if (!validator.isType(sourceSubscriberId, 'number')) {
-        throw new models.WOLFAPIError('sourceSubscriberId must be type of number', { sourceSubscriberId });
-      } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
-        throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
-      }
+    if (validator.isNullOrUndefined(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId cannot be null or undefined', { sourceSubscriberId });
+    } else if (!validator.isValidNumber(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId must be a valid number', { sourceSubscriberId });
+    } else if (!validator.isType(sourceSubscriberId, 'number')) {
+      throw new models.WOLFAPIError('sourceSubscriberId must be type of number', { sourceSubscriberId });
+    } else if (validator.isLessThanOrEqualZero(sourceSubscriberId)) {
+      throw new models.WOLFAPIError('sourceSubscriberId cannot be less than or equal to 0', { sourceSubscriberId });
     }
 
     return await this.nextMessage((message) => message.isChannel && message.targetChannelId === targetChannelId && message.sourceSubscriberId === sourceSubscriberId, timeout);
@@ -161,10 +155,9 @@ class Subscription extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return; }
+    if (reconnection) { return false; }
 
-    this.subscriptions.keys().map((subscriptionId) => this.subscriptions.delete(subscriptionId[0]));
-    this.subscriptions.clear();
+    this.subscriptions = [];
   }
 }
 

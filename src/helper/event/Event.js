@@ -13,7 +13,7 @@ class Event extends Base {
     this.channel = new Channel(this.client);
     this.group = this.channel;
     this.subscription = new Subscription(this.client);
-    this.events = new Map();
+    this.events = [];
   }
 
   /**
@@ -23,18 +23,16 @@ class Event extends Base {
    * @returns {Promise<Event>}
    */
   async getById (id, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-      }
+    if (validator.isNullOrUndefined(id)) {
+      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+    } else if (!validator.isValidNumber(id)) {
+      throw new models.WOLFAPIError('id must be a valid number', { id });
+    } else if (validator.isLessThanOrEqualZero(id)) {
+      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+    }
 
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
     return (await this.getByIds([id], forceNew))[0];
@@ -49,23 +47,21 @@ class Event extends Base {
   async getByIds (ids, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
-    { // eslint-disable-line no-lone-blocks
-      if (!ids.length) {
-        throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
-      }
+    if (!ids.length) {
+      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+    }
 
-      if ([...new Set(ids)].length !== ids.length) {
-        throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-      }
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
+    }
 
-      for (const id of ids) {
-        if (validator.isNullOrUndefined(id)) {
-          throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-        } else if (!validator.isValidNumber(id)) {
-          throw new models.WOLFAPIError('id must be a valid number', { id });
-        } else if (validator.isLessThanOrEqualZero(id)) {
-          throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-        }
+    for (const id of ids) {
+      if (validator.isNullOrUndefined(id)) {
+        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
+      } else if (!validator.isValidNumber(id)) {
+        throw new models.WOLFAPIError('id must be a valid number', { id });
+      } else if (validator.isLessThanOrEqualZero(id)) {
+        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
       }
     }
 
@@ -73,7 +69,7 @@ class Event extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const events = forceNew ? [] : ids.map((id) => this.events.get(id)).filter(Boolean);
+    const events = forceNew ? [] : this.events.filter((event) => ids.includes(event.id));
 
     if (events.length === ids.length) {
       return events;
@@ -113,17 +109,15 @@ class Event extends Base {
   }
 
   _process (event) {
-    const existing = this.events.get(event.id);
+    const existing = this.events.find((cached) => event.id === cached.id);
 
-    existing
-      ? patch(existing, event)
-      : this.events.set(event.id, event);
+    existing ? patch(existing, event) : this.events.push(event);
 
-    return this.events.get(event.id);
+    return event;
   }
 
   _cleanUp (reconnection = false) {
-    this.events.clear();
+    this.events = [];
     this.channel._cleanUp(reconnection);
     this.subscription._cleanUp(reconnection);
   }

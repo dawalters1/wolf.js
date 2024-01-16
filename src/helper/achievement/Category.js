@@ -9,15 +9,7 @@ class Category extends Base {
   constructor (client) {
     super(client);
 
-    this.categories = new Map(
-      Object.values(Language)
-        .map((langaugeId) =>
-          [
-            langaugeId,
-            new Map()
-          ]
-        )
-    );
+    this.categories = {};
   }
 
   /**
@@ -27,19 +19,17 @@ class Category extends Base {
    * @returns {Promise<Array<AchievementCategory>>} - The achievement category list
    */
   async getList (language, forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!validator.isValidNumber(language)) {
-        throw new models.WOLFAPIError('language must be a valid number', { language });
-      } else if (!Object.values(Language).includes(parseInt(language))) {
-        throw new models.WOLFAPIError('language is not valid', { language });
-      }
-
-      if (!validator.isValidBoolean(forceNew)) {
-        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-      }
+    if (!validator.isValidNumber(language)) {
+      throw new models.WOLFAPIError('language must be a valid number', { language });
+    } else if (!Object.values(Language).includes(parseInt(language))) {
+      throw new models.WOLFAPIError('language is not valid', { language });
     }
 
-    if (!forceNew) {
+    if (!validator.isValidBoolean(forceNew)) {
+      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    }
+
+    if (!forceNew && this.categories[language]) {
       return this.categories[language];
     }
 
@@ -54,14 +44,14 @@ class Category extends Base {
   }
 
   _process (categories, language) {
-    this.categories.set(language, categories);
+    this.categories[language] = categories;
 
     return categories;
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return; }
-    this.categories.clear();
+    if (reconnection) { return false; }
+    this.categories = {};
   }
 }
 

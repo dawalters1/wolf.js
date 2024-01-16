@@ -9,6 +9,7 @@ import StoreProduct from '../../models/StoreProduct.js';
 class Store extends Base {
   constructor (client) {
     super(client);
+
     this._balance = undefined;
 
     this._credits = {};
