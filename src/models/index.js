@@ -17,6 +17,7 @@ import DiscoveryPage from './DiscoveryPage.js';
 import DiscoverySection from './DiscoverySection.js';
 import Event from './Event.js';
 import Channel from './Channel.js';
+import ChannelCategory from './ChannelCategory.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCounts from './ChannelAudioCounts.js';
@@ -126,6 +127,7 @@ export {
   ChannelAudioSlot,
   ChannelAudioSlotRequest,
   ChannelAudioSlotUpdate,
+  ChannelCategory,
   ChannelExtended,
   ChannelMember,
   ChannelMemberList,
@@ -231,6 +233,7 @@ export default {
   ChannelAudioSlot,
   ChannelAudioSlotRequest,
   ChannelAudioSlotUpdate,
+  ChannelCategory,
   ChannelExtended,
   ChannelMember,
   ChannelMemberList,

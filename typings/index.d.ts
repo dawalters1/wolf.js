@@ -180,7 +180,7 @@ export class WOLF {
      * Update the current logged in account profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, language: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname?: string, status?: string, dateOfBirth?: Date, about?: string, gender?: Gender, language?: Language, lookingFor?: LookingFor, name?: string, relationship?: Relationship, urls?: Array<string>, avatar?: Buffer, categoryIds?: Array<number> }): Promise<Response>;
 
 }
 
@@ -4869,6 +4869,7 @@ export class Subscriber extends BaseModel {
     private constructor(client: WOLF, data: object)
 
     public charms: SubscriberSelectedCharm;
+    public categoryIds: Array<number>;
     public deviceType: DeviceType;
     public extended: SubscriberExtended;
     public hash: string;
@@ -4926,11 +4927,12 @@ export class Subscriber extends BaseModel {
      * Update the bots profile
      * @param profileData - The new profile data
      */
-    public update(profileData: { nickname: string, status: string, dateOfBirth: Date, about: string, gender: Gender, language: Language, lookingFor: LookingFor, name: string, relationship: Relationship, urls: Array<string>, avatar: Buffer }): Promise<Response>;
+    public update(profileData: { nickname?: string, status?: string, dateOfBirth?: Date, about?: string, gender?: Gender, language?: Language, lookingFor?: LookingFor, name?: string, relationship?: Relationship, urls?: Array<string>, avatar?: Buffer, categoryIds?: Array<number> }): Promise<Response>;
 
     toJSON(): {
         charms: SubscriberSelectedCharm;
         deviceType: DeviceType;
+        categoryIds: Array<number>,
         extended: {
             dateOfBirth: Date,
             about: string;

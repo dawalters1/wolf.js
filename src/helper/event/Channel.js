@@ -4,6 +4,7 @@ import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
+import patch from '../../utils/patch.js';
 
 class Channel extends Base {
   /**
@@ -13,7 +14,7 @@ class Channel extends Base {
    * @param {Boolean} forceNew
    * @returns {Promise<Array<Event>>}
    */
-  async getList (targetChannelId, subscribe = true, forceNew = false) {
+  async getList (targetChannelId, limit = 25, offset = 0, subscribe = true, forceNew = false) {
     { // eslint-disable-line no-lone-blocks
       if (validator.isNullOrUndefined(targetChannelId)) {
         throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -21,6 +22,22 @@ class Channel extends Base {
         throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
       } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
         throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
+
+      if (validator.isNullOrUndefined(limit)) {
+        throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
+      } else if (!validator.isValidNumber(limit)) {
+        throw new models.WOLFAPIError('limit must be a valid number', { limit });
+      } else if (validator.isLessThanOrEqualZero(limit)) {
+        throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
+      }
+
+      if (validator.isNullOrUndefined(offset)) {
+        throw new models.WOLFAPIError('offset cannot be null or undefined', { offset });
+      } else if (!validator.isValidNumber(offset)) {
+        throw new models.WOLFAPIError('offset must be a valid number', { offset });
+      } else if (validator.isLessThanZero(offset)) {
+        throw new models.WOLFAPIError('offset cannot be less than 0', { offset });
       }
 
       if (!validator.isValidBoolean(subscribe)) {
@@ -38,23 +55,25 @@ class Channel extends Base {
       throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
     }
 
-    if (!forceNew && channel.events?.length) {
-      return channel.events;
-    }
+    const events = forceNew ? [] : channel.events?.slice(offset, limit); // TODO: this is not ideal, if developer is unaware they will constantly make calls to the server
 
-    const response = await this.client.websocket.emit(
-      Command.GROUP_EVENT_LIST,
-      {
-        id: parseInt(targetChannelId),
-        subscribe
+    if (events.length !== limit) {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_EVENT_LIST,
+        {
+          id: parseInt(targetChannelId),
+          subscribe,
+          offset: parseInt(offset),
+          limit: parseInt(limit)
+        }
+      );
+
+      if (response.success) {
+        this.events.push(...this._process(channel, await this.client.event.getByIds(response.body.map((event) => event.id))));
       }
-    );
-
-    if (response.success) {
-      channel.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
     }
 
-    return channel.events;
+    return events;
   }
 
   /**
@@ -265,6 +284,22 @@ class Channel extends Base {
         isRemoved: true
       }
     );
+  }
+
+  _process (channel, events) {
+    if (!Reflect.has(channel, 'events')) {
+      channel.events = [];
+    }
+
+    events.forEach((event) => {
+      const existing = channel.events?.find((evt) => evt.id === event.id);
+
+      existing
+        ? patch(existing, event)
+        : channel.events.push(event);
+    });
+
+    return events;
   }
 }
 

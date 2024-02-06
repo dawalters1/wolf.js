@@ -40,11 +40,11 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-cognito-identity": "^3.490.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.490.0",
+    "@aws-sdk/client-cognito-identity": "^3.507.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.507.0",
     "aws4-axios": "^3.3.0",
-    "axios": "^1.6.5",
-    "bull": "^4.12.1",
+    "axios": "^1.6.7",
+    "bull": "^4.12.2",
     "command-exists-promise": "^2.0.2",
     "file-type": "^19.0.0",
     "fluent-ffmpeg": "^2.1.2",
@@ -58,13 +58,13 @@
     "node-recursive-directory": "^1.2.0",
     "socket.io-client": "^4.4.1",
     "superagent": "^8.1.2",
-    "tldts": "^6.1.2",
+    "tldts": "^6.1.8",
     "url-regex-safe": "^4.0.0",
     "wrtc": "^0.4.7"
   },
   "devDependencies": {
-    "@types/node": "^20.11.4",
-    "chai": "^5.0.0",
+    "@types/node": "^20.11.6",
+    "chai": "^5.0.3",
     "eslint": "^8.56.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",

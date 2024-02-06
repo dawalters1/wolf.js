@@ -165,9 +165,10 @@ class WOLF extends EventEmitter {
    * @param {Relationship} profile.relationship
    * @param {string[]} profile.urls
    * @param {Buffer} profile.avatar
+   * @param {number[]} profile.categoryIds
    * @returns {Promise<Response>}
    */
-  async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar }) {
+  async update ({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar, categoryIds }) {
     if (nickname) {
       if (!validator.isType(nickname, 'string')) {
         throw new WOLFAPIError('nickname must be a valid string', { nickname });
@@ -200,16 +201,28 @@ class WOLF extends EventEmitter {
       }
     }
 
+    if (categoryIds) {
+      categoryIds = Array.isArray(categoryIds) ? categoryIds : [categoryIds];
+
+      categoryIds.forEach((categoryId) => {
+        if (!validator.isValidNumber(categoryId)) {
+          throw new WOLFAPIError('categoryId must be a valid number', { categoryId });
+        } else if (validator.isLessThanOrEqualZero(categoryId)) {
+          throw new WOLFAPIError('categoryId cannot be less than or equal to 0', { categoryId });
+        }
+      });
+    }
+
     if (urls) {
       urls = Array.isArray(urls) ? urls : [urls];
 
-      for (const url of urls) {
+      urls.forEach((url) => {
         if (!validator.isType(url, 'string')) {
           throw new WOLFAPIError('url must be a valid string', { url });
         } else if (validator.isNullOrWhitespace(url)) {
           throw new WOLFAPIError('url cannot be null or empty', { url });
         }
-      }
+      });
     }
 
     if (dateOfBirth) {
@@ -265,6 +278,7 @@ class WOLF extends EventEmitter {
       {
         nickname: nickname || this.currentSubscriber.nickname,
         status: (status === null || status) ? status : this.currentSubscriber.status,
+        categoryIds: (categoryIds === null || categoryIds) ? categoryIds : this.currentSubscriber.categoryIds,
         extended: {
           dateOfBirth: (dateOfBirth === null || dateOfBirth) ? dateOfBirth : this.currentSubscriber.extended.dateOfBirth,
           about: (about === null || about) ? about : this.currentSubscriber.extended.about,

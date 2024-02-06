@@ -10,7 +10,9 @@ import WOLFAPIError from './WOLFAPIError.js';
 class Subscriber extends Base {
   constructor (client, data, subscribed) {
     super(client);
+
     this.charms = new SubscriberSelectedCharm(client, data?.charms, this.id);
+    this.categoryIds = data?.categoryIds ?? [];
     this.deviceType = data?.deviceType;
     this.extended = new SubscriberExtended(client, data?.extended);
     this.hash = data?.hash;
@@ -109,14 +111,15 @@ class Subscriber extends Base {
    * @param {Relationship} relationship
    * @param {String[]} urls
    * @param {Buffer} avatar
+   * @param {Number[]} categoryIds
    * @returns {Promise<Response<unknown>>}
    */
-  async update ({ nickname, status, about, dateOfBirth, gender, language, lookingFor, name, relationship, urls, avatar }) {
+  async update ({ nickname, status, about, dateOfBirth, gender, language, lookingFor, name, relationship, urls, avatar, categoryIds }) {
     if (this.id !== this.client.currentSubscriber.id) {
       throw new WOLFAPIError('subscriber is not logged in subscriber', { loggedInSubscriberId: this.client.currentSubscriber.id, currentProfileId: this.id });
     }
 
-    return await this.client.update({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar });
+    return await this.client.update({ nickname, status, dateOfBirth, about, gender, language, lookingFor, name, relationship, urls, avatar, categoryIds });
   }
 
   toContact () {

@@ -1,4 +1,4 @@
-import { Capability, Category, Command, Language } from '../../constants/index.js';
+import { Capability, Category as CategoryConstant, Command, Language } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
 import models from '../../models/index.js';
@@ -8,6 +8,7 @@ import patch from '../../utils/patch.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
 import Role from './Role.js';
+import Category from './Category.js';
 
 const buildChannelFromModule = (channelModule) => {
   const base = channelModule.base;
@@ -28,6 +29,7 @@ class Channel extends Base {
     this.fetched = false;
     this.channels = [];
 
+    this.category = new Category(this.client);
     this.member = new Member(this.client);
     this.role = new Role(this.client);
   }
@@ -307,7 +309,7 @@ class Channel extends Base {
     if (category) {
       if (!validator.isValidNumber(category)) {
         throw new models.WOLFAPIError('category must be a valid number', { category });
-      } else if (!Object.values(Category).includes(parseInt(category))) {
+      } else if (!Object.values(CategoryConstant).includes(parseInt(category))) {
         throw new models.WOLFAPIError('category is not valid', { category });
       }
     }
