@@ -128,7 +128,7 @@ class WOLF extends EventEmitter {
     this.websocket.emit(Command.SECURITY_LOGOUT);
 
     if (disconnect) {
-      this.websocket._disconnect();
+      return this.websocket.disconnect();
     }
 
     this._cleanUp(true);
