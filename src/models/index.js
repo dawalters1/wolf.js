@@ -17,6 +17,7 @@ import DiscoveryPage from './DiscoveryPage.js';
 import DiscoverySection from './DiscoverySection.js';
 import Event from './Event.js';
 import Channel from './Channel.js';
+import ChannelCategory from './ChannelCategory.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCounts from './ChannelAudioCounts.js';
@@ -98,6 +99,7 @@ import ValidUrl from './ValidUrl.js';
 import Welcome from './Welcome.js';
 import WelcomeEndpoint from './WelcomeEndpoint.js';
 import WOLFAPIError from './WOLFAPIError.js';
+import WOLFStarTalent from './WOLFStarTalent.js';
 import WolfstarsProfile from './WolfstarsProfile.js';
 
 export {
@@ -125,6 +127,7 @@ export {
   ChannelAudioSlot,
   ChannelAudioSlotRequest,
   ChannelAudioSlotUpdate,
+  ChannelCategory,
   ChannelExtended,
   ChannelMember,
   ChannelMemberList,
@@ -201,6 +204,7 @@ export {
   Welcome,
   WelcomeEndpoint,
   WOLFAPIError,
+  WOLFStarTalent,
   WolfstarsProfile
 };
 
@@ -229,6 +233,7 @@ export default {
   ChannelAudioSlot,
   ChannelAudioSlotRequest,
   ChannelAudioSlotUpdate,
+  ChannelCategory,
   ChannelExtended,
   ChannelMember,
   ChannelMemberList,
@@ -305,5 +310,6 @@ export default {
   Welcome,
   WelcomeEndpoint,
   WOLFAPIError,
+  WOLFStarTalent,
   WolfstarsProfile
 };

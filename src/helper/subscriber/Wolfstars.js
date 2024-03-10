@@ -33,7 +33,7 @@ class Wolfstars extends Base {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!subscriberIds.length) {
-      throw new WOLFAPIError('subscriberIds cannot be null or empty', { subscriberIds });
+      return [];
     }
 
     if ([...new Set(subscriberIds)].length !== subscriberIds.length) {
@@ -81,7 +81,7 @@ class Wolfstars extends Base {
       }
     }
 
-    return Array.isArray(subscriberIds) ? wolfstars : wolfstars[0];
+    return wolfstars;
   }
 
   _cleanUp (reconnection) {

@@ -35,7 +35,8 @@ const developerConfig = (client) => {
   client.config = {
     keyword: config?.keyword ?? 'default',
     framework: {
-      developer: typeof config?.framework?.developer === 'number' && config.framework.developer > 0 ? config.framework.developer : undefined,
+      developer: typeof config?.framework?.developer === 'number' && config.framework.developer ? config.framework.developer : undefined,
+      owner: typeof config?.framework?.owner === 'number' && config.framework.owner ? config.framework.owner : undefined,
       language: typeof config?.framework?.language === 'string' && config.framework.language.length === 2 && Object.values(Language).some((language) => client.utility.toLanguageKey(language) === config.framework.language.toLocaleLowerCase()) ? config.framework.language : 'en',
       login: {
         email: typeof config?.framework?.login?.email === 'string' ? config.framework.login.email : undefined,

@@ -8,6 +8,7 @@ class Discovery extends Base {
   constructor (client) {
     super(client);
 
+    // TODO: MAP
     this.discovery = {};
   }
 
@@ -131,7 +132,7 @@ class Discovery extends Base {
   }
 
   _cleanUp (reconnection = false) {
-    if (reconnection) { return false; }
+    if (reconnection) { return; }
 
     this.discovery = {};
   }

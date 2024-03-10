@@ -62,7 +62,7 @@ class Achievement extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      return [];
     }
 
     if ([...new Set(ids)].length !== ids.length) {
@@ -89,13 +89,22 @@ class Achievement extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const achievements = forceNew ? [] : this.achievements[language]?.filter((achievement) => ids.includes(achievement.id)) ?? [];
+    const achievements = forceNew
+      ? []
+      : this.achievements[language]?.filter((achievement) =>
+        ids.includes(achievement.id)
+      ) ?? [];
 
     if (achievements.length === ids.length) {
       return achievements;
     }
 
-    const idLists = _.chunk(ids.filter((achievementId) => !achievements.some((achievement) => achievement.id === achievementId)), this.client._frameworkConfig.get('batching.length'));
+    const idLists = _.chunk(
+      ids.filter(
+        (achievementId) => !achievements.some((achievement) => achievement.id === achievementId)
+      ),
+      this.client._frameworkConfig.get('batching.length')
+    );
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(

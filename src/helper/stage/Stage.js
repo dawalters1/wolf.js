@@ -515,7 +515,11 @@ class Stage extends Base {
   _cleanUp (reconnection = false) {
     if (reconnection) { return false; }
 
-    Object.keys(this.clients).forEach((targetChannelId) => this._deleteClient(targetChannelId));
+    Object.keys(this.clients)
+      .map((targetChannelId) =>
+        this._deleteClient(targetChannelId)
+      );
+
     this.request._cleanUp(reconnection);
     this.slot._cleanUp(reconnection);
   }

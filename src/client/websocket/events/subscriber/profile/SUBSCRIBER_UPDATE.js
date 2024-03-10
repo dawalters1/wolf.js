@@ -22,13 +22,14 @@ class SubscriberUpdate extends Base {
     const oldSubscriber = new models.Subscriber(this.client, cached);
     const newSubscriber = await this.client.subscriber.getById(body.id, true, true);
 
-    if (this.client.contact.contacts.some((contact) => contact.id === newSubscriber.id)) {
-      patch(this.client.contact.contacts.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
-    }
-
-    if (this.client.contact.blocked.blocked.some((contact) => contact.id === newSubscriber.id)) {
-      patch(this.client.contact.blocked.blocked.find((contact) => contact.id === newSubscriber.id), newSubscriber.toContact());
-    }
+    [
+      this.client.contact.contacts.find((contact) => contact.id === newSubscriber.id),
+      this.client.contact.blocked.blocked.find((contact) => contact.id === newSubscriber.id)
+    ]
+      .filter((Boolean))
+      .map((contact) =>
+        patch(contact, newSubscriber.toContact())
+      );
 
     await Promise.all(
       (await this.client.channel.list())
