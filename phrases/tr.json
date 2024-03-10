@@ -1,18 +1,26 @@
 [
     {
-        "name": "{keyword}_command_xZiPhraemPENcJPIZIKqTomJc",
+        "name": "{keyword}_command_098984a71d03bae4079c602344a52e09920001ca73",
         "value": ">sırlarını"
     },
     {
-        "name": "{keyword}_command_xZiPhraemPENcJPIZIKqTomJc_alias1",
+        "name": "{keyword}_command_098984a71d03bae4079c602344a52e09920001ca73_alias1",
         "value": ">sırrını"
     },
     {
-        "name": "{keyword}_xZiPhraemPENcJPIZIKqTomJc_with_details_message",
-        "value": "Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahibim: [{nickname}](wolf://user/{subscriberId}) (UserId {subscriberId})"
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_basic_message",
+        "value": "Ben [WOLF.js](https://www.github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum."
     },
     {
-        "name": "{keyword}_xZiPhraemPENcJPIZIKqTomJc_without_details_message",
-        "value": "Ben [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version} kullanan resmi olmayan bir botum."
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_owner_message",
+        "value": "Ben [WOLF.js](https://www.github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahip: [{ownerNickname}](wolf://user/{ownerId}/profile) (Kullanıcı Id {ownerId})"
+    },
+    {
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_developer_message",
+        "value": "Ben [WOLF.js](https://www.github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nGeliştirici: [{developerNickname}](wolf://user/{developerId}/profile) (Kullanıcı Id {developerId})"
+    },
+    {
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_both_message",
+        "value": "Ben [WOLF.js](https://www.github.com/dawalters1/wolf.js) {version} kullanan resmi olmayan bir botum.\n\nSahibim: [{ownerNickname}](wolf://user/{ownerId}/profile) (ID {ownerId})\nGeliştiricim: [{developerNickname}](wolf://user/{developerId}/profile) (ID {developerId})"
     }
 ]

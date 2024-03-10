@@ -234,6 +234,12 @@ export class Configuration {
          * - Default: undefined
          */
         developer: number;
+
+        /**
+         * The ID of the owner
+         * - Default: undefined
+         */
+        owner: number;
         /**
          * The default language of responses
          * - Default: en
