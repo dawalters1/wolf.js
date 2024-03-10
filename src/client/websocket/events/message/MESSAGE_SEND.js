@@ -98,21 +98,22 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
         await channel.members._banned.reset();
       }
 
-      return [Event.GROUP_MEMBER_UPDATE, Event.CHANNEL_MEMBER_UPDATE].forEach((event) =>
-        client.emit(
-          event,
-          channel,
-          new ChannelSubscriberUpdate(client,
-            {
-              groupId: channel.id,
-              channelId: channel.id,
-              sourceId: action.instigatorId,
-              targetId: message.sourceSubscriberId,
-              action: action.type
-            }
+      return [Event.GROUP_MEMBER_UPDATE, Event.CHANNEL_MEMBER_UPDATE]
+        .forEach((event) =>
+          client.emit(
+            event,
+            channel,
+            new ChannelSubscriberUpdate(client,
+              {
+                groupId: channel.id,
+                channelId: channel.id,
+                sourceId: action.instigatorId,
+                targetId: message.sourceSubscriberId,
+                action: action.type
+              }
+            )
           )
-        )
-      );
+        );
     }
   }
 };

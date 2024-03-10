@@ -1,15 +1,23 @@
 [
     {
-        "name": "{keyword}_command_xZiPhraemPENcJPIZIKqTomJc",
+        "name": "{keyword}_command_098984a71d03bae4079c602344a52e09920001ca73",
         "value": ">rys"
     },
     {
-        "name": "{keyword}_xZiPhraemPENcJPIZIKqTomJc_with_details_message",
-        "value": "I am an Unofficial Bot using [WOLF.js](http://www.github.com\/dawalters1\/wolf.js) {version}\n\nOwned By: [{nickname}](wolf:\/\/user\/{subscriberId}) (UserId {subscriberId})"
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_both_message",
+        "value": "I am an Unofficial Bot using [WOLF.js](http://www.github.com/dawalters1/wolf.js) {version}\n\nOwned By: [{ownerNickname}](wolf://user/{ownerId}/profile) (UserId {ownerId})\nDeveloped By: [{developerNickname}](wolf://user/{developerId}/profile) (UserId {developerId})"
     },
     {
-        "name": "{keyword}_xZiPhraemPENcJPIZIKqTomJc_without_details_message",
-        "value": "I am an Unofficial Bot using [WOLF.js](https:\/\/www.github.com\/dawalters1\/wolf.js) {version}"
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_developer_message",
+        "value": "I am an Unofficial Bot using [WOLF.js](http://www.github.com/dawalters1/wolf.js) {version}\n\nDeveloped By: [{developerNickname}](wolf://user/{developerId}/profile) (UserId {developerId})"
+    },
+    {
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_owner_message",
+        "value": "I am an Unofficial Bot using [WOLF.js](http://www.github.com/dawalters1/wolf.js) {version}\n\nOwned By: [{ownerNickname}](wolf://user/{ownerId}/profile) (UserId {ownerId})"
+    },
+    {
+        "name": "{keyword}_098984a71d03bae4079c602344a52e09920001ca73_basic_message",
+        "value": "I am an Unofficial Bot using [WOLF.js](https://www.github.com/dawalters1/wolf.js) {version}"
     },
     {
         "name": "{keyword}_time_type_seconds",

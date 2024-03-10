@@ -21,7 +21,7 @@ const checkForBotCharm = async (client, subscriber) => {
 
 class CommandHandler {
   /**
-   * @param {import('../client/WOLF').default} client
+   * @param {import('../client/WOLF.js').default} client
    */
   constructor (client) {
     this.client = client;

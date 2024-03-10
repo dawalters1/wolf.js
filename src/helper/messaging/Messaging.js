@@ -72,7 +72,9 @@ const getFormattingData = async (client, ads, links) => {
     Reflect.deleteProperty(data.formatting, 'links');
   }
 
-  return Object.values(data.formatting).length ? data : undefined;
+  return Object.values(data.formatting).length
+    ? data
+    : undefined;
 };
 
 const getEmbedData = async (client, formatting, options) => {

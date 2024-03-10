@@ -16,7 +16,7 @@ class GroupEventCreate extends Base {
 
     const event = await this.client.event.getById(body.id);
 
-    channel.events.push(event);
+    channel._events.list.push(event);
 
     return [Event.GROUP_EVENT_CREATE, Event.CHANNEL_EVENT_CREATE]
       .forEach((event) =>

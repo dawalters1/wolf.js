@@ -4,7 +4,7 @@ import { Command } from '../../constants/index.js';
 import models from '../../models/index.js';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { fileTypeFromBuffer } from 'file-type';
-import EventCategory from '../../constants/EventCategory.js';
+import patch from '../../utils/patch.js';
 
 class Channel extends Base {
   /**
@@ -15,20 +15,22 @@ class Channel extends Base {
    * @returns {Promise<Array<Event>>}
    */
   async getList (targetChannelId, subscribe = true, forceNew = false) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
 
-    if (!validator.isValidBoolean(subscribe)) {
-      throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
-    }
+      if (!validator.isValidBoolean(subscribe)) {
+        throw new models.WOLFAPIError('subscribe must be a valid boolean', { subscribe });
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      if (!validator.isValidBoolean(forceNew)) {
+        throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+      }
     }
 
     const channel = await this.client.channel.getById(targetChannelId);
@@ -37,80 +39,69 @@ class Channel extends Base {
       throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
     }
 
-    if (!forceNew && channel.events?.length) {
-      return channel.events;
+    if (!forceNew && channel._events.complete) {
+      return channel._events.list;
     }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_EVENT_LIST,
       {
         id: parseInt(targetChannelId),
-        subscribe
+        subscribe,
+        offset: this.event?.list?.length ?? 0,
+        limit: this.client._frameworkConfig.batching.length
       }
     );
 
     if (response.success) {
-      channel.events = response.body?.length ? await this.client.event.getByIds(response.body.map((event) => event.id)) : [];
+      this._process(channel,
+        await this.client.event.getByIds(response.body.map((event) => event.id))
+      );
+
+      channel._events.complete = response.body.length < this.client._frameworkConfig.batching.length;
     }
 
-    return channel.events;
+    return await this.getList(targetChannelId, subscribe, false);
   }
 
   /**
    * Create an event
    * @param {Number} targetChannelId
-   * @param {Object} body
-   * @param {string} body.title
-   * @param {date}  body.startsAt
-   * @param {date}  body.endsAt
-   * @param {number?} body.hostedBy
-   * @param {number?} body.category;
-   * @param {string?}  body.shortDescription
-   * @param {string?}  body.longDescription
-   * @param {Buffer?}  body.thumbnail
+   * @param {String} title
+   * @param {Date} startsAt
+   * @param {Date} endsAt
+   * @param {String} shortDescription
+   * @param {String} longDescription
+   * @param {Buffer} thumbnail
    * @returns {Promise<[Response<Event>, Response]>}
    */
-  async create (targetChannelId, { title, startsAt, endsAt, category = EventCategory.NONE, hostedBy = null, shortDescription = null, longDescription = null, thumbnail = null }) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrWhitespace(title)) {
-      throw new models.WOLFAPIError('title cannot be null or empty', { title });
-    }
-
-    if (!validator.isNullOrUndefined(category)) {
-      if (!validator.isValidNumber(category)) {
-        throw new models.WOLFAPIError('category must be a valid number', { category });
-      } else if (!Object.values(EventCategory).includes(category)) {
-        throw new models.WOLFAPIError('category is not valid', { category });
+  async create (targetChannelId, { title, startsAt, endsAt, shortDescription = undefined, longDescription = undefined, thumbnail = undefined }) {
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
       }
-    }
 
-    if (!validator.isNullOrUndefined(hostedBy)) {
-      if (!validator.isValidNumber(hostedBy)) {
-        throw new models.WOLFAPIError('hostedBy must be a valid number', { hostedBy });
-      } else if (validator.isLessThanOrEqualZero(hostedBy)) {
-        throw new models.WOLFAPIError('hostedBy cannot be less than or equal to 0', { hostedBy });
+      if (validator.isNullOrWhitespace(title)) {
+        throw new models.WOLFAPIError('title cannot be null or empty', { title });
       }
-    }
 
-    if (!validator.isValidDate(startsAt)) {
-      throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
-    } else if (new Date(startsAt) < Date.now()) {
-      throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
-    }
+      if (!validator.isValidDate(startsAt)) {
+        throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
+      } else if (new Date(startsAt) < Date.now()) {
+        throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
+      }
 
-    if (!validator.isValidDate(endsAt)) {
-      throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
-    } else if (new Date(endsAt) < Date.now()) {
-      throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
-    } else if (new Date(endsAt) < new Date(startsAt)) {
-      throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+      if (!validator.isValidDate(endsAt)) {
+        throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
+      } else if (new Date(endsAt) < Date.now()) {
+        throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
+      } else if (new Date(endsAt) < new Date(startsAt)) {
+        throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -120,8 +111,6 @@ class Channel extends Base {
         title,
         longDescription,
         shortDescription,
-        category,
-        hostedBy,
         startsAt: new Date(startsAt),
         endsAt: new Date(endsAt)
       }
@@ -138,75 +127,58 @@ class Channel extends Base {
    * Update an existing event
    * @param {Number} targetChannelId
    * @param {Number} eventId
-   * @param {object} body
-   * @param {string?} body.title
-   * @param {date?}  body.startsAt
-   * @param {date?}  body.endsAt
-   * @param {number?} body.hostedBy
-   * @param {number?} body.category;
-   * @param {string?}  body.shortDescription
-   * @param {string?}  body.longDescription
-   * @param {Buffer?}  body.thumbnail
+   * @param {String} title
+   * @param {Date} startsAt
+   * @param {Date} endsAt
+   * @param {String} shortDescription
+   * @param {String} longDescription
+   * @param {Buffer} thumbnail
    * @returns {Promise<[Response<Event>, Response]>}
    */
-  async update (targetChannelId, eventId, { title, startsAt, endsAt, category, hostedBy, shortDescription, longDescription, thumbnail }) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrUndefined(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
-    } else if (!validator.isValidNumber(eventId)) {
-      throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
-    } else if (validator.isLessThanOrEqualZero(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
-    }
-
-    const event = await this.client.event.getById(eventId);
-
-    if (!event.exists) {
-      throw new models.WOLFAPIError('Unknown Event', { eventId });
-    }
-
-    if (!validator.isUndefined(title) && validator.isNullOrWhitespace(title)) {
-      throw new models.WOLFAPIError('title cannot be null or empty', { title });
-    }
-
-    if (!validator.isNullOrUndefined(category)) {
-      if (!validator.isValidNumber(category)) {
-        throw new models.WOLFAPIError('category must be a valid number', { category });
-      } else if (!Object.values(EventCategory).includes(category)) {
-        throw new models.WOLFAPIError('category is not valid', { category });
+  async update (targetChannelId, eventId, { title, startsAt, endsAt, shortDescription, longDescription, thumbnail }) {
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
       }
-    }
 
-    if (!validator.isNullOrUndefined(hostedBy)) {
-      if (!validator.isValidNumber(hostedBy)) {
-        throw new models.WOLFAPIError('hostedBy must be a valid number', { hostedBy });
-      } else if (validator.isLessThanOrEqualZero(hostedBy)) {
-        throw new models.WOLFAPIError('hostedBy cannot be less than or equal to 0', { hostedBy });
+      if (validator.isNullOrUndefined(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
+      } else if (!validator.isValidNumber(eventId)) {
+        throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
       }
-    }
 
-    if (!validator.isNullOrUndefined(startsAt)) {
-      if (!validator.isValidDate(startsAt)) {
-        throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
-      } else if (new Date(startsAt) < Date.now()) {
-        throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
+      const event = await this.client.event.getById(eventId);
+
+      if (!event.exists) {
+        throw new models.WOLFAPIError('Unknown Event', { eventId });
       }
-    }
 
-    if (!validator.isNullOrUndefined(endsAt)) {
-      if (!validator.isValidDate(endsAt)) {
-        throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
-      } else if (new Date(endsAt) < Date.now()) {
-        throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
-      } else if (new Date(endsAt) < new Date(startsAt)) {
-        throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+      if (title && validator.isNullOrWhitespace(title)) {
+        throw new models.WOLFAPIError('title cannot be null or empty', { title });
+      }
+
+      if (!validator.isNullOrUndefined(startsAt)) {
+        if (!validator.isValidDate(startsAt)) {
+          throw new models.WOLFAPIError('startsAt is not a valid date', { startsAt });
+        } else if (new Date(startsAt) < Date.now()) {
+          throw new models.WOLFAPIError('startsAt must be in the future', { startsAt });
+        }
+      }
+
+      if (!validator.isNullOrUndefined(endsAt)) {
+        if (!validator.isValidDate(endsAt)) {
+          throw new models.WOLFAPIError('endsAt is not a valid date', { endsAt });
+        } else if (new Date(endsAt) < Date.now()) {
+          throw new models.WOLFAPIError('endsAt must be in the future', { endsAt });
+        } else if (new Date(endsAt) < new Date(startsAt)) {
+          throw new models.WOLFAPIError('endsAt must be after startsAt', { startsAt, endsAt });
+        }
       }
     }
 
@@ -216,13 +188,10 @@ class Channel extends Base {
         groupId: parseInt(targetChannelId),
         id: parseInt(eventId),
         title: title ?? event.title,
-        category: category === null || category === undefined ? event.category : category,
-        hostedBy: hostedBy === null ? null : hostedBy ?? event.hostedBy,
-        longDescription: longDescription === null ? null : longDescription ?? event.longDescription,
-        shortDescription: shortDescription === null ? null : shortDescription ?? event.shortDescription,
-        startsAt: startsAt ? new Date(startsAt) : event.startsAt,
-        endsAt: endsAt ? new Date(endsAt) : event.endsAt,
-        imageUrl: thumbnail === null ? null : undefined,
+        longDescription: longDescription ?? undefined,
+        shortDescription: shortDescription ?? undefined,
+        startsAt: startsAt ? new Date(startsAt) : undefined,
+        endsAt: endsAt ? new Date(endsAt) : undefined,
         isRemoved: false
       }
     );
@@ -241,16 +210,18 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async updateThumbnail (eventId, thumbnail) {
-    if (validator.isNullOrUndefined(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
-    } else if (!validator.isValidNumber(eventId)) {
-      throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
-    } else if (validator.isLessThanOrEqualZero(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
+      } else if (!validator.isValidNumber(eventId)) {
+        throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
+      }
 
-    if (!Buffer.isBuffer(thumbnail)) {
-      throw new models.WOLFAPIError('thumbnail must be a buffer', { thumbnail });
+      if (!Buffer.isBuffer(thumbnail)) {
+        throw new models.WOLFAPIError('thumbnail must be a buffer', { thumbnail });
+      }
     }
 
     const eventConfig = this.client._frameworkConfig.get('multimedia.event');
@@ -275,20 +246,22 @@ class Channel extends Base {
    * @returns {Promise<Response>}
    */
   async delete (targetChannelId, eventId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (validator.isNullOrUndefined(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+      } else if (!validator.isValidNumber(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+      } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+        throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+      }
 
-    if (validator.isNullOrUndefined(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
-    } else if (!validator.isValidNumber(eventId)) {
-      throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
-    } else if (validator.isLessThanOrEqualZero(eventId)) {
-      throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
+      if (validator.isNullOrUndefined(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be null or undefined', { eventId });
+      } else if (!validator.isValidNumber(eventId)) {
+        throw new models.WOLFAPIError('eventId must be a valid number', { eventId });
+      } else if (validator.isLessThanOrEqualZero(eventId)) {
+        throw new models.WOLFAPIError('eventId cannot be less than or equal to 0', { eventId });
+      }
     }
 
     return await this.client.websocket.emit(
@@ -299,6 +272,18 @@ class Channel extends Base {
         isRemoved: true
       }
     );
+  }
+
+  _process (channel, events) {
+    events.forEach((event) => {
+      const existing = channel._events.list.find((evt) => evt.id === event.id);
+
+      existing
+        ? patch(existing, event)
+        : channel._events.list.push(event);
+    });
+
+    return events;
   }
 }
 
