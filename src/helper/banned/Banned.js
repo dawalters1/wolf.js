@@ -33,7 +33,7 @@ class Banned extends Base {
 
     { // eslint-disable-line no-lone-blocks
       if (!values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+        throw new models.WOLFAPIError('targetSubscriberIds cannot null or empty', { targetSubscriberIds });
       }
 
       if ([...new Set(values)].length !== values.length) {
@@ -66,7 +66,7 @@ class Banned extends Base {
 
     { // eslint-disable-line no-lone-blocks
       if (!values.length) {
-        throw new models.WOLFAPIError('targetSubscriberIds cannot be null or empty', { targetSubscriberIds });
+        throw new models.WOLFAPIError('targetSubscriberIds cannot null or empty', { targetSubscriberIds });
       }
 
       if ([...new Set(values)].length !== values.length) {

@@ -3,6 +3,7 @@ import validator from '../validator/index.js';
 import Base from './Base.js';
 import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCounts from './ChannelAudioCounts.js';
+import ChannelEventManager from './ChannelEventManager.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
@@ -38,6 +39,7 @@ class Channel extends Base {
     this.capabilities = Capability.NOT_MEMBER;
 
     this.exists = data?.memberCount > 0;
+    this._events = new ChannelEventManager(client);
   }
 
   get inGroup () {
@@ -52,6 +54,10 @@ class Channel extends Base {
 
   get stages () {
     return this._stages?.filter((stage) => !stage.expireTime || new Date(stage.expireTime) > Date.now()) ?? [];
+  }
+
+  async events (subscribe = true, forceNew = false) {
+    return await this.client.event.channel.getList(this.id, subscribe, forceNew);
   }
 
   /**

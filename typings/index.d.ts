@@ -2756,6 +2756,13 @@ export class Channel extends BaseModel {
     public exists: boolean;
 
     public percentage: string;
+
+    /**
+     * Get the events fora channel
+     * @param subscribe
+     * @param forceNew
+     */
+    public events(subscribe?: boolean, forceNew?: boolean): Promise<Event>;
     /**
      * Get the channel avatar URL
      * @param size - The size

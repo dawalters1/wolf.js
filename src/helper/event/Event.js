@@ -48,7 +48,7 @@ class Event extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      return [];
     }
 
     if ([...new Set(ids)].length !== ids.length) {

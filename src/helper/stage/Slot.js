@@ -43,7 +43,6 @@ class Slot extends Base {
       }
     );
 
-    // TODO: replace with MAP
     channel.slots = response.body?.map((slot) => new models.ChannelAudioSlot(this.client, slot, targetChannelId)) ?? [];
 
     return channel.slots;

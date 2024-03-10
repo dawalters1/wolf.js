@@ -1,13 +1,13 @@
 import EventEmitter from 'events';
 import { LoginType, OnlineState, Command, Gender, Language, LookingFor, Relationship } from '../constants/index.js';
 import { Websocket, Multimedia } from './index.js';
-import CommandHandler from '../command/CommandHandler.js';
+import CommandHandler from '../commands/CommandHandler.js';
 import { Achievement, Authorization, Banned, Channel, Charm, Contact, Discovery, Event, Log, Messaging, Misc, Notification, Phrase, Role, Stage, Store, Subscriber, Tipping, Topic } from '../helper/index.js';
 import Utility from '../utility/index.js';
 import { configuration } from '../utils/index.js';
 import validator from '../validator/index.js';
 import { WOLFAPIError } from '../models/index.js';
-import Cmd from '../command/Command.js';
+import Cmd from '../commands/Command.js';
 import rys from '../utils/rys.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../utils/validateMultimediaConfig.js';

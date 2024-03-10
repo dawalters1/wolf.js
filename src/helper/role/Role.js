@@ -43,7 +43,7 @@ class Role extends Base {
     roleIds = (Array.isArray(roleIds) ? roleIds : [roleIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!roleIds.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { roleIds });
+      return [];
     }
 
     if ([...new Set(roleIds)].length !== roleIds.length) {
