@@ -147,10 +147,6 @@ class Channel extends Base {
     return await this.client.channel.update(this.id, { description: description || this.description, peekable: peekable || this.peekable, disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink, disableImage: disableImage || this.messageConfig.disableImage, disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter, disableVoice: disableVoice || this.messageConfig.disableVoice, longDescription: longDescription || this.extended.longDescription, discoverable: discoverable || this.extended.discoverable, language: language || this.extended.language, category: category || this.extended.category, advancedAdmin: advancedAdmin || this.extended.advancedAdmin, questionable: questionable || this.extended.questionable, locked: locked || this.extended.locked, closed: closed || this.extended.closed, entryLevel: entryLevel || this.extended.entryLevel, avatar, slowModeRateInSeconds: validator.isNullOrUndefined(slowModeRateInSeconds) ? this.messageConfig.slowModeRateInSeconds : slowModeRateInSeconds });
   }
 
-  async events (subscribe = true, forceNew = false) {
-    return await this.client.event.channel.getList(this.id, subscribe, forceNew);
-  }
-
   async tipLeaderboardSummary (tipPeriod, tipType, tipDirection) {
     return await this.client.tipping.getChannelLeaderboardSummary(this.id, tipPeriod, tipType, tipDirection);
   }
