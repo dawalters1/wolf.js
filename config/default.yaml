@@ -55,7 +55,7 @@ multimedia:
     mimes:
       - type: image/jpeg
         size: 1048576
-    square: true
+    square: false
   messaging:
     method: post
     route: send-message

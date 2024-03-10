@@ -714,27 +714,27 @@ export class ChannelEventHelper extends BaseHelper {
      * @param targetChannelId - The ID of the channel
      * @param eventData - The event data
      */
-    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
+    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
     /**
      * Create an event with a thumbnail
      * @param targetChannelId - The ID of the channel
      * @param eventData - The event data
      */
-    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
+    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
     /**
      * Update an existing event using the existing thumbnail
      * @param targetChannelId - The ID of the channel
      * @param eventId - The ID of the event
      * @param eventData - The new event data
      */
-    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
+    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
     /**
      * Update an existing event using a new thumbnail
      * @param targetChannelId - The ID of the channel
      * @param eventId - The ID of the event
      * @param eventData - The new event data
      */
-    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
+    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
 
     /**
      * Update an events thumbnail
@@ -1177,7 +1177,7 @@ export class MiscHelper extends BaseHelper {
      * Get metadata for a url
      * @param url - The URL
      */
-    public metadata(url: string): Promise<Response<LinkMetadata>>;
+    public metadata(url: string): Promise<LinkMetadata>;
     /**
      * Get list of blacklisted links
      * @param forceNew - Whether or not to request new from the server
@@ -1191,7 +1191,7 @@ export class MiscHelper extends BaseHelper {
     /**
      * Get Bot message settings
      */
-    public getMessageSettings(): Promise<Response<MessageSettings>>;
+    public getMessageSettings(): Promise<MessageSettings>;
     /**
      * Set the Bot message settings
      * @param messageFilterTier - The spam filter tier
@@ -1749,7 +1749,7 @@ export class TippingHelper extends BaseHelper {
      * @param limit - How many should be requested (Default: 20)
      * @param offset - Where the request should start at (Default: 0)
      */
-    public getDetails(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipDetail>>;
+    public getDetails(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<TipDetail>;
     /**
      * Get a messages tip summary
      * @param targetChannelId - The ID of the channel
@@ -1757,7 +1757,7 @@ export class TippingHelper extends BaseHelper {
      * @param limit - How many should be requested (Default: 20)
      * @param offset - Where the request should start at (Default: 0)
      */
-    public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<Response<TipSummary>>;
+    public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<TipSummary>;
     /**
      * Get a groups tipping leaderboard
      * @deprecated use {@link getChannelLeaderboard} instead
@@ -1766,7 +1766,7 @@ export class TippingHelper extends BaseHelper {
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGroupLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getGroupLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboard>;
     /**
     * Get a channels tipping leaderboard
     * @param targetChannelId - The ID of the channel
@@ -1774,7 +1774,7 @@ export class TippingHelper extends BaseHelper {
     * @param tipType - The tipping type
     * @param tipDirection - The tipping direction
     */
-    public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<ipLeaderboard>;
     /**
      * Get a groups tipping leaderboard summary
      * @deprecated use {@link getChannelLeaderboardSummary} instead
@@ -1783,7 +1783,7 @@ export class TippingHelper extends BaseHelper {
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGroupLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
+    public getGroupLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummary>;
     /**
      * Get a channels tipping leaderboard summary
      * @param targetChannelId - The ID of the channel
@@ -1791,7 +1791,7 @@ export class TippingHelper extends BaseHelper {
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getChannelLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<Response<TipLeaderboardSummary>>;
+    public getChannelLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummary>;
 
     /**
      * Get the global tipping leaderboard
@@ -1799,12 +1799,12 @@ export class TippingHelper extends BaseHelper {
      * @param tipType - The tipping type
      * @param tipDirection - The tipping direction
      */
-    public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<Response<TipLeaderboard>>;
+    public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboard>;
     /**
      * Get the global tipping leaderboard summary
      * @param tipPeriod - The tipping period
      */
-    public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<Response<TipLeaderboardSummary>>;
+    public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSummary>;
 }
 
 export class TopicHelper extends BaseHelper {
@@ -2684,7 +2684,8 @@ export class Event extends BaseModel {
     public groupId: number;
     public createdBy: number;
     public title: string;
-    public category: Number;
+    public category: EventCategory;
+    public hostedBy: number;
     public shortDescription: string;
     public longDescription: string;
     public imageUrl: string;
@@ -2706,7 +2707,7 @@ export class Event extends BaseModel {
      * Update the event profile
      * @param eventData - The new event data
      */
-    public update(eventData: { title: string, startsAt: Date, shortDescription: string, longDescription: string, thumbnail: Buffer }): Promise<Response>;
+    public update(eventData: { title?: string, startsAt?: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<Response>;
     /**
      * Update the event thumbnail
      * @param thumbnail - The thumbnail
@@ -2719,7 +2720,8 @@ export class Event extends BaseModel {
         groupId: number;
         createdBy: number;
         title: string;
-        category: Number;
+        category: EventCategory;
+        hostedBy: number,
         shortDescription: string;
         longDescription: string;
         imageUrl: string;
@@ -2809,6 +2811,24 @@ export class Channel extends BaseModel {
      * @param profileData - The new profile data
      */
     public update(profileData: { description?: string, peekable?: boolean, disableHyperlink?: boolean, disableImage?: boolean, disableImageFilter?: boolean, disableVoice?: boolean, slowModeRateInSeconds?: number, longDescription?: string, discoverable?: boolean, language?: Language, category?: Category, advancedAdmin?: boolean, questionable?: boolean, locked?: boolean, closed?: boolean, entryLevel?: number, avatar?: Buffer }): Promise<Response>;
+
+    public stages(forceNew?: boolean): Promise<Array<ChannelStage>>;
+
+    /**
+     * Get the channels tip leaderboard summary
+     * @param tipPeriod - The tipping period
+     * @param tipType - The tipping type
+     * @param tipDirection - The tipping direction
+     */
+    public tipLeaderboardSummary(tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummary>;
+
+    /**
+     * Get the channels tip leaderboard
+     * @param tipPeriod - The tipping period
+     * @param tipType - The tipping types
+     * @param tipDirection - The tipping direction
+     */
+    public tipLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboard>;
 
     toJSON(): {
         id: number;
@@ -5562,6 +5582,7 @@ export const Constants: {
     ContextType: ContextType;
     DeviceType: DeviceType;
     EmbedType: EmbedType;
+    EventCategory: EventCategory,
     Gender: Gender;
     IconSize: IconSize,
     Language: Language;
@@ -5653,6 +5674,19 @@ export enum EmbedType {
     GROUP_PREVIEW = "groupPreview",
     CHANNEL_PREVIEW = "groupPreview",
     LINK_PREVIEW = "linkPreview",
+}
+
+export enum EventCategory {
+    NONE = 0,
+    CHALLENGES = 1,
+    MUSIC_SHOW = 2,
+    POETRY = 3,
+    TALK_SHOW = 4,
+    WOLFSTAR_EVENT = 5,
+    WOLF_EVENT = 6,
+    COMEDY = 7,
+    SCIENCE_HEALTH = 8,
+    OTHER = 9,
 }
 
 export enum Gender {
