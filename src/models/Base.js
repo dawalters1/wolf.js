@@ -22,11 +22,13 @@ class Base {
   }
 
   toJSON (stringify = false, replacer = null, space = null) {
-    const json = Object.keys(this).filter((propertyName) => !EXCLUDE.includes(propertyName)).reduce((result, propertyName) => {
-      result[propertyName] = toJSON(this[propertyName]);
+    const json = Object.keys(this)
+      .filter((propertyName) => !EXCLUDE.includes(propertyName) && !propertyName.startsWith('_'))
+      .reduce((result, propertyName) => {
+        result[propertyName] = toJSON(this[propertyName]);
 
-      return result;
-    }, {});
+        return result;
+      }, {});
 
     return stringify ? JSON.stringify(json, replacer, space) : json;
   }

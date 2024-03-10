@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+/**
+ * @param {import('../client/WOLF.js').default} client
+ * @param {import('../models/CommandContext.js').default} command
+ */
 export default async (client, command) => {
   if (command.sourceSubscriberId === client.currentSubscriber.id) { return false; }
 
@@ -18,14 +22,32 @@ export default async (client, command) => {
   if (!(isDeveloper || (hasProperArgument && await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER])) || await client.utility.subscriber.privilege.has(command.sourceSubscriberId, [Privilege.STAFF]))) { return false; }
 
   const displayDeveloperDetails = !!client.config.framework.developer;
+  const displayOwnerDetails = !!client.config.framework.owner;
+
+  const phrase = !displayDeveloperDetails && !displayOwnerDetails
+    ? 'basic'
+    : displayDeveloperDetails && displayOwnerDetails
+      ? 'both'
+      : displayDeveloperDetails
+        ? 'developer'
+        : 'owner';
 
   return await command.reply(
-    client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${client._frameworkConfig.get('commandKey')}_with${displayDeveloperDetails ? '' : 'out'}_details_message`),
+    client.utility.string.replace(client.phrase.getByLanguageAndName(command.language, `${client.config.keyword}_${client._frameworkConfig.get('commandKey')}_${phrase}_message`),
       {
         version: JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'))).version,
-        nickname: displayDeveloperDetails ? (await client.subscriber.getById(client.config.framework.developer)).nickname : '',
-        subscriberId: displayDeveloperDetails ? client.config.framework.developer : ''
+        developerNickname: displayDeveloperDetails ? (await client.subscriber.getById(client.config.framework.developer)).nickname : '',
+        developerId: displayDeveloperDetails ? client.config.framework.developer : '',
+
+        ownerNickname: displayOwnerDetails ? (await client.subscriber.getById(client.config.framework.owner)).nickname : '',
+        ownerId: displayOwnerDetails ? client.config.framework.owner : ''
       }
-    )
+    ),
+    {
+      formatting: {
+        includeEmbeds: false
+      }
+    }
+
   );
 };

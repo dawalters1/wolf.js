@@ -52,7 +52,7 @@ class Charm extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      return [];
     }
 
     if ([...new Set(ids)].length !== ids.length) {
@@ -142,7 +142,7 @@ class Charm extends Base {
 
     if (validator.isNullOrUndefined(limit)) {
       throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(subscriberId)) {
+    } else if (!validator.isValidNumber(limit)) {
       throw new models.WOLFAPIError('limit must be a valid number', { limit });
     } else if (validator.isLessThanOrEqualZero(limit)) {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
@@ -186,7 +186,7 @@ class Charm extends Base {
 
     if (validator.isNullOrUndefined(limit)) {
       throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(subscriberId)) {
+    } else if (!validator.isValidNumber(limit)) {
       throw new models.WOLFAPIError('limit must be a valid number', { limit });
     } else if (validator.isLessThanOrEqualZero(limit)) {
       throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });

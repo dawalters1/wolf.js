@@ -9,7 +9,6 @@ class Base {
   }
 
   _cleanUp (reconnection = false) {
-
   }
 }
 

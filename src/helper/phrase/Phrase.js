@@ -12,6 +12,7 @@ const __dirname = dirname(__filename);
 class Phrase extends Base {
   constructor (client) {
     super(client);
+
     this.phrases = [];
 
     // Load premade phrases

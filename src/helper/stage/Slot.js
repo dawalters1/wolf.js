@@ -69,6 +69,7 @@ class Slot extends Base {
       throw new models.WOLFAPIError('slotId cannot be less than or equal to 0', { slotId });
     }
 
+    // TODO:
     const slot = (await this.list(targetChannelId))?.find((slot) => slot.id === slotId);
 
     if (!slot) {

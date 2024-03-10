@@ -13,7 +13,7 @@ class TipAdd extends Base {
 
   async process (body) {
     ((body.isGroup || body.groupId) ? [Event.GROUP_TIP_ADD, Event.CHANNEL_TIP_ADD] : [Event.PRIVATE_TIP_ADD])
-      .forEach((event) =>
+      .map((event) =>
         this.client.emit(
           event,
           new models.Tip(this.client, body)

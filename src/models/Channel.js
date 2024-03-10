@@ -3,6 +3,7 @@ import validator from '../validator/index.js';
 import Base from './Base.js';
 import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCounts from './ChannelAudioCounts.js';
+import ChannelEventManager from './ChannelEventManager.js';
 import ChannelExtended from './ChannelExtended.js';
 import ChannelMemberList from './ChannelMemberList.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
@@ -38,6 +39,7 @@ class Channel extends Base {
     this.capabilities = Capability.NOT_MEMBER;
 
     this.exists = data?.memberCount > 0;
+    this._events = new ChannelEventManager(client);
   }
 
   get inGroup () {
@@ -52,6 +54,10 @@ class Channel extends Base {
 
   async stages (forceNew = false) {
     return await this.client.stage.getAvailableStages(this.id, forceNew);
+  }
+
+  async events (subscribe = true, forceNew = false) {
+    return await this.client.event.channel.getList(this.id, subscribe, forceNew);
   }
 
   /**
@@ -139,10 +145,6 @@ class Channel extends Base {
    */
   async update ({ description, peekable, disableHyperlink, disableImage, disableImageFilter, disableVoice, slowModeRateInSeconds, longDescription, discoverable, language, category, advancedAdmin, questionable, locked, closed, entryLevel, avatar }) {
     return await this.client.channel.update(this.id, { description: description || this.description, peekable: peekable || this.peekable, disableHyperlink: disableHyperlink || this.messageConfig.disableHyperlink, disableImage: disableImage || this.messageConfig.disableImage, disableImageFilter: disableImageFilter || this.messageConfig.disableImageFilter, disableVoice: disableVoice || this.messageConfig.disableVoice, longDescription: longDescription || this.extended.longDescription, discoverable: discoverable || this.extended.discoverable, language: language || this.extended.language, category: category || this.extended.category, advancedAdmin: advancedAdmin || this.extended.advancedAdmin, questionable: questionable || this.extended.questionable, locked: locked || this.extended.locked, closed: closed || this.extended.closed, entryLevel: entryLevel || this.extended.entryLevel, avatar, slowModeRateInSeconds: validator.isNullOrUndefined(slowModeRateInSeconds) ? this.messageConfig.slowModeRateInSeconds : slowModeRateInSeconds });
-  }
-
-  async events (subscribe = true, forceNew = false) {
-    return await this.client.event.channel.getList(this.id, subscribe, forceNew);
   }
 
   async tipLeaderboardSummary (tipPeriod, tipType, tipDirection) {

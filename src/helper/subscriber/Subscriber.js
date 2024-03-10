@@ -10,6 +10,7 @@ import Wolfstars from './Wolfstars.js';
 class Subscriber extends Base {
   constructor (client) {
     super(client);
+
     this.subscribers = [];
     this.presence = new Presence(this.client);
     this.wolfstars = new Wolfstars(this.client);
@@ -74,7 +75,7 @@ class Subscriber extends Base {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
-      throw new models.WOLFAPIError('ids cannot be null or empty', { ids });
+      return [];
     }
 
     if ([...new Set(ids)].length !== ids.length) {
