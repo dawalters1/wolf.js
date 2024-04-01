@@ -2,6 +2,7 @@
 class PhraseCount {
   constructor (length, counts) {
     this.phrases = length;
+    this.counts = counts;
 
     this.phrasesPerLanguage = counts;
   }
