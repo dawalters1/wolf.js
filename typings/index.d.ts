@@ -689,13 +689,15 @@ export class EventHelper extends BaseHelper {
     /**
      * Get an event
      * @param id - The ID of the event
+     * @param forceNew - Whether or not to request new from the server
      */
-    public getById(id: number): Promise<Event>;
+    public getById(id: number, forceNew?: boolean): Promise<Event>;
     /**
      * Get events
      * @param ids - The list of event IDs
+     * @param forceNew - Whether or not to request new from the server
      */
-    public getByIds(ids: number | Array<number>): Promise<Event | Array<Event>>;
+    public getByIds(ids: number | Array<number>, forceNew?: boolean): Promise<Event | Array<Event>>;
 }
 
 export class ChannelEventHelper extends BaseHelper {
