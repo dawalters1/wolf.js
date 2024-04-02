@@ -22,6 +22,7 @@ export const GROUP_AUDIO_SLOT_LIST = 'group audio slot list';
 export const GROUP_AUDIO_SLOT_UPDATE = 'group audio slot update';
 export const GROUP_AUDIO_UPDATE = 'group audio update';
 export const GROUP_CREATE = 'group create';
+export const GROUP_CATEGORY_LIST = 'group category list';
 export const GROUP_EVENT = 'group event';
 export const GROUP_EVENT_CREATE = 'group event create';
 export const GROUP_EVENT_DELETE = 'group event delete';
@@ -134,6 +135,7 @@ export default {
   GROUP_AUDIO_SLOT_UPDATE,
   GROUP_AUDIO_UPDATE,
   GROUP_CREATE,
+  GROUP_CATEGORY_LIST,
   GROUP_EVENT,
   GROUP_EVENT_CREATE,
   GROUP_EVENT_DELETE,
