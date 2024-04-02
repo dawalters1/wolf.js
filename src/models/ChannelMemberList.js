@@ -13,14 +13,14 @@ class ChannelMemberList {
     this._banned = new ChannelMemberListSection(this.client, this.id, MemberListType.BANNED, [Capability.BANNED]);
     this._bots = new ChannelMemberListSection(this.client, this.id, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
 
-    // Members that are not in privilged, regular or banned list will appear here until they are loaded in either list
+    // Members that are not in privileged, regular or banned list will appear here until they are loaded in either list
     this._misc = new ChannelMemberListSection(this.client, this.id, MemberListType.MISCELLANEOUS);
   }
 
   async _get (subscriberId) {
     const member = (
       await Promise.all(
-        ...['_privileged', '_regular', '_banned', '_misc']
+        ['_privileged', '_regular', '_banned', '_misc']
           .map(async (section) =>
             await this[section].get(subscriberId))
       )
