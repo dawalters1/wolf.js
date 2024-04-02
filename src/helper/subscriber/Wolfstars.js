@@ -83,10 +83,6 @@ class Wolfstars extends Base {
 
     return wolfstars;
   }
-
-  _cleanUp (reconnection) {
-    this.talents = {};
-  }
 }
 
 export default Wolfstars;

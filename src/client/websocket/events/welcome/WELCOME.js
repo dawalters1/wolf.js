@@ -97,8 +97,8 @@ class Welcome extends Base {
     this.client.currentSubscriber = welcome.subscriber;
 
     this.client.currentSubscriber
-      ? fininaliseConnection(this.client, true)
-      : this.login(this.client);
+      ? await fininaliseConnection(this.client, true)
+      : await this.login(this.client);
 
     return this.client.emit(
       Event.WELCOME,

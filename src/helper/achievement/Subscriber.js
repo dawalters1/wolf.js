@@ -40,7 +40,7 @@ class Subscriber extends Base {
       }
     );
 
-    return response.body?.map((achivement) => new models.AchievementUnlockable(this.client, achivement)) ?? [];
+    return response.body?.map((achievement) => new models.AchievementUnlockable(this.client, achievement)) ?? [];
   }
 }
 

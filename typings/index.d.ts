@@ -689,13 +689,15 @@ export class EventHelper extends BaseHelper {
     /**
      * Get an event
      * @param id - The ID of the event
+     * @param forceNew - Whether or not to request new from the server
      */
-    public getById(id: number): Promise<Event>;
+    public getById(id: number, forceNew?: boolean): Promise<Event>;
     /**
      * Get events
      * @param ids - The list of event IDs
+     * @param forceNew - Whether or not to request new from the server
      */
-    public getByIds(ids: number | Array<number>): Promise<Event | Array<Event>>;
+    public getByIds(ids: number | Array<number>, forceNew?: boolean): Promise<Event | Array<Event>>;
 }
 
 export class ChannelEventHelper extends BaseHelper {
@@ -2548,7 +2550,7 @@ export class Discovery extends BaseModel {
      * @param value - The page, name or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel | StoreProductPartial | Event | Subscriber>>;
 
     toJSON(): {
         id: number;
@@ -2594,7 +2596,7 @@ export class DiscoveryPage extends BaseModel {
      * @param value - The page or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel | StoreProductPartial | Event | Subscriber>>;
 
     toJSON(): {
         id: number;
@@ -5908,6 +5910,7 @@ export enum TipType {
 
 export enum TopicPageRecipeType {
     EVENT = "event",
+    USER = "user",
     /**
      * @deprecated use {@link CHANNEL} instead
      */
