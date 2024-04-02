@@ -5,7 +5,7 @@ import { Language } from '../../constants/index.js';
 import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
 
 class Discovery extends Base {
-  constructor(client) {
+  constructor (client) {
     super(client);
 
     // TODO: MAP
@@ -20,7 +20,7 @@ class Discovery extends Base {
    * @internal - Recommended for internal use only, use client.topic.getTopicPageLayout(...) instead
    * @returns Returns requested page if exists
    */
-  async _getPage(page, languageId, forceNew = false) {
+  async _getPage (page, languageId, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
@@ -50,7 +50,7 @@ class Discovery extends Base {
     return this.discovery[languageId]?.pages[page];
   }
 
-  async _getAppropriateRecipeItems(id, languageId, maxResults, offset, type) {
+  async _getAppropriateRecipeItems (id, languageId, maxResults, offset, type) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -104,7 +104,7 @@ class Discovery extends Base {
     }
   }
 
-  async get(languageId, forceNew = false) {
+  async get (languageId, forceNew = false) {
     if (!validator.isValidNumber(languageId)) {
       throw new models.WOLFAPIError('languageId must be a valid number', { languageId });
     } else if (!Object.values(Language).includes(parseInt(languageId))) {
@@ -133,7 +133,7 @@ class Discovery extends Base {
     return this.discovery[languageId]?.main;
   }
 
-  _cleanUp(reconnection = false) {
+  _cleanUp (reconnection = false) {
     if (reconnection) { return; }
 
     this.discovery = {};

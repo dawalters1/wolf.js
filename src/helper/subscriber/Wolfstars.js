@@ -12,7 +12,7 @@ class Wolfstars extends Base {
    * @param {Number} id
    * @returns {Promise<WolfstarsProfile>}
    */
-  async getById(id) {
+  async getById (id) {
     if (validator.isNullOrUndefined(id)) {
       throw new WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -29,7 +29,7 @@ class Wolfstars extends Base {
    * @param subscriberIds
    * @returns {Promise<WolfstarsProfile | Array<WolfstarsProfile>>}
    */
-  async getByIds(subscriberIds) {
+  async getByIds (subscriberIds) {
     subscriberIds = (Array.isArray(subscriberIds) ? subscriberIds : [subscriberIds]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!subscriberIds.length) {
@@ -83,7 +83,6 @@ class Wolfstars extends Base {
 
     return wolfstars;
   }
-
 }
 
 export default Wolfstars;
