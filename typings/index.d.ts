@@ -5910,6 +5910,7 @@ export enum TipType {
 
 export enum TopicPageRecipeType {
     EVENT = "event",
+    USER = "user",
     /**
      * @deprecated use {@link CHANNEL} instead
      */
