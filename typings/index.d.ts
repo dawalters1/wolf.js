@@ -2550,7 +2550,7 @@ export class Discovery extends BaseModel {
      * @param value - The page, name or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel | StoreProductPartial | Event | Subscriber>>;
 
     toJSON(): {
         id: number;
@@ -2596,7 +2596,7 @@ export class DiscoveryPage extends BaseModel {
      * @param value - The page or ID
      * @param offset - The product, event or channel offset
      */
-    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel> | Array<StoreProductPartial> | Array<Event>>;
+    public get(value: number | string, offset?: number): Promise<DiscoverySection | DiscoveryPage | Array<Channel | StoreProductPartial | Event | Subscriber>>;
 
     toJSON(): {
         id: number;
