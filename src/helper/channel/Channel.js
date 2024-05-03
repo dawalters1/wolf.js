@@ -65,7 +65,7 @@ class Channel extends Base {
 
       for (const channel of channels) {
         channel.inChannel = true;
-        channel.capabilities = response.body.find((grp) => channel.id === grp.id).capabilities || Capability.REGULAR;
+        channel.capabilities = response.body.filter((grp) => channel.id === grp.id)[0]?.capabilities ?? Capability.REGULAR;
       }
     }
 

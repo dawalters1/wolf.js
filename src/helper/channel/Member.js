@@ -18,13 +18,9 @@ const canRequestList = async (client, myCapability, includeAllButBanned = false)
 };
 
 const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) => {
-  if (theirCapability === Capability.OWNER) {
-    return false;
-  }
+  if (theirCapability === Capability.OWNER) { return false; }
 
-  if (advancedAdmin) {
-    return true;
-  }
+  if (advancedAdmin) { return true; }
 
   switch (myCapabilities) {
     case Capability.ADMIN:
@@ -37,23 +33,18 @@ const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) =>
 };
 
 const canPerformChannelAction = async (client, channel, targetChannelMember, newCapability) => {
-  if (channel.owner.id === targetChannelMember.id || newCapability === Capability.OWNER) {
-    return false;
-  }
+  if (channel.owner.id === targetChannelMember.id || newCapability === Capability.OWNER) { return false; }
 
   if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
-    if (await client.utility.subscriber.privilege.has(targetChannelMember.id, Privilege.GROUP_ADMIN) && (newCapability === Capability.BANNED || newCapability === Capability.SILENCED)) {
-      return false;
-    }
+    if (await client.utility.subscriber.privilege.has(targetChannelMember.id, Privilege.GROUP_ADMIN) &&
+    (newCapability === Capability.BANNED || newCapability === Capability.SILENCED)) { return false; }
 
     return true;
   }
 
-  if (channel.extended.advancedAdmin) {
-    return true;
-  }
+  if (channel.extended.advancedAdmin) { return true; }
 
-  return isMyCapabilityHigher(channel.capabilities, targetChannelMember.capabilities, channel.extended.advancedAdmin) && isMyCapabilityHigher(channel.capabilities, newCapability, false);
+  return isMyCapabilityHigher(channel.capabilities, targetChannelMember.capabilities, channel.extended.advancedAdmin) && isMyCapabilityHigher(channel.capabilities, newCapability, channel.extended.advancedAdmin);
 };
 
 /**
