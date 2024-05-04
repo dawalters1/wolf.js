@@ -21,7 +21,7 @@ class PresenceUpdate extends Base {
       subscriber.deviceType = body.deviceType;
     }
 
-    const existing = this.client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId);
+    const existing = this.client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.id);
 
     if (existing) {
       patch(old, existing); // Subscription to presence will most likely be more up to date, set this instead
@@ -36,7 +36,7 @@ class PresenceUpdate extends Base {
     return this.client.emit(
       Event.PRESENCE_UPDATE,
       old,
-      this.client.subscriber.presence.presences.find((presence) => presence.subscriberId === body.subscriberId)
+      existing // Updated presence
     );
   };
 }

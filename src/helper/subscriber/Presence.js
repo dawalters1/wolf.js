@@ -70,13 +70,13 @@ class Presence extends Base {
       throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
     }
 
-    const presence = forceNew ? [] : this.presences.filter((subscriber) => ids.includes(subscriber.id));
+    const presences = forceNew ? [] : this.presences.filter((subscriber) => ids.includes(subscriber.id));
 
-    if (presence.length === ids.length) {
-      return presence;
+    if (presences.length === ids.length) {
+      return presences;
     }
 
-    const idLists = _.chunk(ids.filter((subscriberId) => !presence.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
+    const idLists = _.chunk(ids.filter((subscriberId) => !presences.some((subscriber) => subscriber.id === subscriberId)), this.client._frameworkConfig.get('batching.length'));
 
     for (const idList of idLists) {
       const response = await this.client.websocket.emit(
@@ -88,7 +88,7 @@ class Presence extends Base {
       );
 
       if (response.success) {
-        presence.push(...Object.values(response.body)
+        presences.push(...Object.values(response.body)
           .map((presenceResponse) => new models.Response(presenceResponse))
           .map((presenceResponse, index) =>
             presenceResponse.success
@@ -97,11 +97,11 @@ class Presence extends Base {
           )
         );
       } else {
-        presence.push(...idList.map((id) => new models.Presence(this.client, { id })));
+        presences.push(...idList.map((id) => new models.Presence(this.client, { id })));
       }
     }
 
-    return presence;
+    return presences;
   }
 
   _process (value) {
