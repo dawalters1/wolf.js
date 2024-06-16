@@ -39,7 +39,7 @@ class StringUtility {
             {
               startsAt: match.index,
               endsAt: match.index + match[0].length,
-              replaceWith: replacement[1] || ''
+              replaceWith: replacement[1] ?? ''
             }
           )
         )
@@ -146,7 +146,7 @@ class StringUtility {
       throw new WOLFAPIError('string cannot be null or undefined', { stringA });
     }
 
-    const matches = [...stringA.matchAll(/((\[+)(.+?)(\]+))/gs)]
+    const matches = [...stringA.matchAll(/((\[+)(.+?)(\]+))/gus)]
       .filter(Boolean);
 
     if (!matches.length) {
@@ -204,15 +204,18 @@ class StringUtility {
 
     return [
       ...string.matchAll(
-        /(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\d|\p{Letter}))/gu
+        /(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\(.+?\)|\d|\p{Letter}))/gus
       )
-    ]?.map((ad) => new models.Ad(
-      this.client,
-      {
-        start: ad.index,
-        end: ad.index + ad[0].length,
-        ad: ad[0]
-      })
+    ]?.map((ad) =>
+      new models.Ad(
+        this.client,
+        {
+          start: ad.index,
+          end: ad.index + ad[0].length,
+          ad: ad[0],
+          channelName: ad[2].trim()
+        }
+      )
     ) ?? [];
   }
 
