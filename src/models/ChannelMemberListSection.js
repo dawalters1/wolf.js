@@ -68,7 +68,9 @@ class ChannelMemberListSection extends Base {
 
     if (!this.members.some((member) => member.id === subscriberId)) { return false; }
 
-    return this.members.splice(this.members.findIndex((member) => member.id === subscriberId), 1);
+    this.members = this.members.filter((member) => member.id !== subscriberId);
+
+    return true;
   }
 
   async updateSubscriber (subscriber) {

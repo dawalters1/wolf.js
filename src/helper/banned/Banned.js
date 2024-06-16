@@ -130,7 +130,7 @@ class Banned extends Base {
       if (!this.banned.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.banned.splice(this.banned.findIndex((id) => id === subscriberId), 1);
+        this.banned = this.banned.filter((banned) => banned !== subscriberId);
         result.push(true);
       }
 

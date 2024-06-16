@@ -14,7 +14,7 @@ class SubscriberGroupEventDelete extends Base {
 
     if (!cached) { return false; }
 
-    this.client.event.subscription.subscriptions.splice(this.client.event.subscription.subscriptions.indexOf(cached), 1);
+    this.client.event.subscription.subscriptions = this.client.event.subscription.subscriptions.filter((subscription) => subscription.id !== body.id);
 
     return [Event.SUBSCRIBER_GROUP_EVENT_DELETE, Event.SUBSCRIBER_CHANNEL_EVENT_DELETE]
       .forEach((event) =>
