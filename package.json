@@ -42,6 +42,7 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity": "^3.598.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.598.0",
+    "@eslint/compat": "^1.1.0",
     "aws4-axios": "^3.3.6",
     "axios": "^1.7.2",
     "bull": "^4.13.0",

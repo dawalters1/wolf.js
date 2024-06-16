@@ -1,9 +1,12 @@
 app: wjs
+
 commandKey: 098984a71d03bae4079c602344a52e09920001ca73
+
 charms:
   unofficial:
     - 813
     - 814
+
 connection:
   host: https://v3-rc.palringo.com
   port: 443
@@ -25,9 +28,11 @@ connection:
       - message private subscribe
       - security login
       - security logout
+
 avatar:
   placeholder: >-
     https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
+
 members:
   privileged:
     batch:
@@ -45,8 +50,10 @@ members:
   bots:
     batch:
       size: 100
+
 batching:
   length: 50
+
 multimedia:
   event:
     method: post
@@ -91,6 +98,7 @@ multimedia:
         - type: image/gif
           size: 2621440
       square: true
+
 validation:
   links:
     protocols:
