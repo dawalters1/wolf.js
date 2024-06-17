@@ -45,6 +45,7 @@
     "@eslint/compat": "^1.1.0",
     "aws4-axios": "^3.3.6",
     "axios": "^1.7.2",
+    "axios-retry": "^4.4.0",
     "bull": "^4.13.0",
     "command-exists-promise": "^2.0.2",
     "file-type": "^19.0.0",
@@ -64,7 +65,7 @@
     "wrtc": "^0.4.7"
   },
   "devDependencies": {
-    "@types/node": "^20.13.2",
+    "@types/node": "^20.14.2",
     "chai": "^5.1.1",
     "eslint": "^9.5.0",
     "eslint-config-standard": "^17.1.0",
