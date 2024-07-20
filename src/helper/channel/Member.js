@@ -661,7 +661,7 @@ class Member extends Base {
       Command.GROUP_MEMBER_DELETE,
       {
         groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId)
+        subscriberId: parseInt(subscriberId)
       }
     );
   }

@@ -131,7 +131,7 @@ class Authorization extends Base {
       if (!this.authorized.includes(subscriberId)) {
         result.push(false);
       } else {
-        this.authorized.splice(this.authorized.findIndex((id) => id === subscriberId), 1);
+        this.authorized = this.authorized.filter((authorized) => authorized !== subscriberId);
         result.push(true);
       }
 
