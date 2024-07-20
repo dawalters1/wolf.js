@@ -21,7 +21,7 @@ class GroupAudioRequestDelete extends Base {
 
     const request = new models.ChannelAudioSlotRequest(this.client, body);
 
-    channel.audioRequests.splice(channel.audioRequests.indexOf(request), 1);
+    channel.audioRequests = channel.audioRequests.filter((request) => request.subscriberId !== body.subscriberId);
 
     return (new Date(cached.reservedExpiresAt).getTime() >= Date.now()
       ? [Event.GROUP_AUDIO_REQUEST_EXPIRE, Event.CHANNEL_AUDIO_REQUEST_EXPIRE]

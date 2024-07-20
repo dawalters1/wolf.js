@@ -19,7 +19,7 @@ class GroupEventUpdate extends Base {
     const newEvent = await this.client.event.getById(body.id, true);
 
     if (body.isRemoved) {
-      channel.events.splice(channel._events.list.indexOf(oldEvent), 1);
+      channel.events = channel.events.filter((event) => event.id !== body.id);
 
       return [Event.GROUP_EVENT_DELETE, Event.CHANNEL_EVENT_DELETE]
         .forEach((event) =>

@@ -53,7 +53,7 @@ class Subscription extends Base {
 
     clearTimeout(subscription.timeout);
 
-    this.subscriptions.splice(this.subscriptions.findIndex((sub) => sub.id === subscription.id), 1);
+    this.subscriptions = this.subscriptions.filter((sub) => sub.id !== subscription.id);
 
     return result;
   }

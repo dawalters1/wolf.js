@@ -2,9 +2,9 @@ import { WOLFAPIError } from '../models/index.js';
 import tlds from 'tldts';
 
 // eslint-disable-next-line prefer-regex-literals
-const TRIM_START_PUNC = new RegExp(/^\p{Punctuation}+/, 'gui');
+const TRIM_START_PUNC = new RegExp(/^[\p{Punctuation}|\p{Symbol}]+/, 'gui');
 // eslint-disable-next-line prefer-regex-literals
-const TRIM_END_PUNC = new RegExp(/\p{Punctuation}+$/, 'gui');
+const TRIM_END_PUNC = new RegExp(/[\p{Punctuation}|\p{Symbol}]+$/, 'gui');
 
 const trimPunctuation = (string) => string?.replace(TRIM_START_PUNC, '').replace(TRIM_END_PUNC, '').trim();
 

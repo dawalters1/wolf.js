@@ -8,6 +8,7 @@ class Ad extends Base {
     this.end = data.end;
 
     this.ad = data.ad;
+    this.channelName = data.channelName;
   }
 
   /**
@@ -23,7 +24,7 @@ class Ad extends Base {
    * @returns {Promise<Channel>}
    */
   async channel () {
-    return await this.client.channel.getByName(this.ad);
+    return await this.client.channel.getByName(this.channelName);
   }
 }
 export default Ad;

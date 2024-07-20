@@ -2240,6 +2240,7 @@ export class Ad extends BaseModel {
     public start: number;
     public end: number;
     public ad: string;
+    public channelName: string;
 
     /**
      * Get the group profile
@@ -2255,6 +2256,7 @@ export class Ad extends BaseModel {
         start: number;
         end: number;
         ad: string;
+        channelName: string;
     };
 }
 
