@@ -64,7 +64,7 @@
     "wrtc": "^0.4.7"
   },
   "devDependencies": {
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.5.0",
     "chai": "^5.1.1",
     "eslint": "^9.7.0",
     "eslint-config-standard": "^17.1.0",
