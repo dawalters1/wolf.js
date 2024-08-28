@@ -46,10 +46,10 @@ members:
       size: 25
   banned:
     batch:
-      size: 100
+      size: 25
   bots:
     batch:
-      size: 100
+      size: 25
 
 batching:
   length: 50
