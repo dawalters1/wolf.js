@@ -12,6 +12,8 @@ const toCapability = (subscriber, channel, type) => {
     case 'banned':
     case 'ban':
       return Capability.BANNED;
+    case 'co-owner':
+      return Capability.COOWNER;
     case 'admin':
       return Capability.ADMIN;
     case 'silence':
@@ -22,6 +24,8 @@ const toCapability = (subscriber, channel, type) => {
       return Capability.REGULAR;
     case 'owner':
       return Capability.OWNER;
+    default :
+      return 'UNKNOWN';
   }
 };
 
@@ -79,11 +83,12 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
         );
     }
 
-    case 'owner': // eslint-disable-line padding-line-between-statements
-    case 'admin': // eslint-disable-line padding-line-between-statements
-    case 'mod': // eslint-disable-line padding-line-between-statements
-    case 'reset': // eslint-disable-line padding-line-between-statements
-    case 'silence':// eslint-disable-line padding-line-between-statements
+    case 'owner':
+    case 'co-owner':
+    case 'admin':
+    case 'mod':
+    case 'reset':
+    case 'silence':
     case 'ban':// eslint-disable-line padding-line-between-statements
     {
       if (subscriber.id === client.currentSubscriber.id) {
@@ -115,6 +120,9 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
           )
         );
     }
+
+    default:
+      client.emit(Event.INTERNAL_ERROR, `Unknown Channel Action: ${action.type}`);
   }
 };
 
@@ -141,7 +149,10 @@ class MessageSend extends Base {
           await this.client.subscriber.getById(message.sourceSubscriberId)
         );
         break;
-      // Why is this its own message type? Flags dammit 🤬
+      /**
+       * Why is this its own message type? Flags dammit 🤬
+       * @deprecated
+       */
       case MessageType.APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK:
         message.body = message.body
           .replace('token=TOKEN', `token=${this.client.config.get('framework.login').token}`)

@@ -20,6 +20,14 @@ class ChannelMember extends Base {
   }
 
   /**
+   * Co-Owner this member
+   * @returns {Promise<Response>}
+   */
+  async coowner () {
+    return await this.client.channel.member.coowner(this.targetChannelId, this.id);
+  }
+
+  /**
    * Admin this member
    * @returns {Promise<Response>}
    */

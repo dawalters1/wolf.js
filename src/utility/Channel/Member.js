@@ -12,6 +12,8 @@ const checkCapability = (capability, subscriberCapability) => {
   switch (capability) {
     case Capability.OWNER:
       return [Capability.OWNER].includes(subscriberCapability);
+    case Capability.COOWNER:
+      return [Capability.OWNER, Capability.COOWNER].includes(subscriberCapability);
     case Capability.ADMIN:
       return [Capability.OWNER, Capability.ADMIN].includes(subscriberCapability);
     case Capability.MOD:

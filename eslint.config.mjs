@@ -1,14 +1,14 @@
 import _import from 'eslint-plugin-import';
-import node from 'eslint-plugin-node';
 import promise from 'eslint-plugin-promise';
 import { fixupPluginRules } from '@eslint/compat';
+import n from 'eslint-plugin-n';
 import globals from 'globals';
 
 export default [{
   plugins: {
     import: fixupPluginRules(_import),
-    node,
-    promise
+    promise,
+    n
   },
 
   languageOptions: {
@@ -437,13 +437,13 @@ export default [{
     'import/no-duplicates': 'error',
     'import/no-named-default': 'error',
     'import/no-webpack-loader-syntax': 'error',
-    'node/handle-callback-err': ['error', '^(err|error)$'],
-    'node/no-callback-literal': 'error',
-    'node/no-deprecated-api': 'error',
-    'node/no-exports-assign': 'error',
-    'node/no-new-require': 'error',
-    'node/no-path-concat': 'error',
-    'node/process-exit-as-throw': 'error',
+    'handle-callback-err': ['error', '^(err|error)$'],
+    'n/no-callback-literal': 'error',
+    'n/no-deprecated-api': 'error',
+    'n/no-exports-assign': 'error',
+    'n/no-new-require': 'error',
+    'n/no-path-concat': 'error',
+    'n/process-exit-as-throw': 'error',
     'promise/param-names': 'error',
 
     'padding-line-between-statements': ['error', {

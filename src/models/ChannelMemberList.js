@@ -7,11 +7,11 @@ class ChannelMemberList {
     this.client = client;
     this.id = id;
 
-    this._privileged = new ChannelMemberListSection(this.client, this.id, MemberListType.PRIVILEGED, [Capability.OWNER, Capability.ADMIN, Capability.MOD]);
+    this._privileged = new ChannelMemberListSection(this.client, this.id, MemberListType.PRIVILEGED, [Capability.OWNER, Capability.COOWNER, Capability.ADMIN, Capability.MOD]);
     this._regular = new ChannelMemberListSection(this.client, this.id, MemberListType.REGULAR, [Capability.REGULAR, Capability.SILENCED]);
     this._silenced = new ChannelMemberListSection(this.client, this.id, MemberListType.SILENCED, [Capability.SILENCED]);
     this._banned = new ChannelMemberListSection(this.client, this.id, MemberListType.BANNED, [Capability.BANNED]);
-    this._bots = new ChannelMemberListSection(this.client, this.id, MemberListType.BOTS, [Capability.OWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
+    this._bots = new ChannelMemberListSection(this.client, this.id, MemberListType.BOTS, [Capability.OWNER, Capability.COOWNER, Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED], [Privilege.BOT]);
 
     // Members that are not in privileged, regular or banned list will appear here until they are loaded in either list
     this._misc = new ChannelMemberListSection(this.client, this.id, MemberListType.MISCELLANEOUS);

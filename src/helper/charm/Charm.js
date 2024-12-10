@@ -2,6 +2,8 @@ import models from '../../models/index.js';
 import { Command } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
+import _ from 'lodash';
+import patch from '../../utils/patch.js';
 
 class Charm extends Base {
   constructor (client) {
@@ -12,18 +14,64 @@ class Charm extends Base {
 
   /**
    * Request the charms list
+   * @param {Number|Array<Number>} ids (Optional, default [])
    * @returns {Promise<Array<Charm>>} - The list of charms
    */
-  async list () {
-    if (this.charms.length) {
-      return this.charms;
+  async list (ids = [], forceNew = false) {
+    ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
+
+    if ([...new Set(ids)].length !== ids.length) {
+      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
     }
 
-    const response = await this.client.websocket.emit(Command.CHARM_LIST);
+    const charms = forceNew ? [] : this.charms.filter((charm) => ids.includes(charm.id));
 
-    this.charms = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
+    if (forceNew || charms.length < ids.length) {
+      const missingCharmIds = _.chunk(ids.filter((charmId) => !charms.some((charm) => charm.id === charmId)), this.client._frameworkConfig.get('batching.length'));
 
-    return this.charms;
+      if (!missingCharmIds.length) {
+        const response = await this.client.websocket.emit(
+          Command.CHARM_LIST,
+          {
+            headers: {
+              version: 2
+            }
+          }
+        );
+
+        charms.push(...response.body?.map((charm) => new models.Charm(this.client, charm)) ?? []);
+      } else {
+        for (const idList of missingCharmIds) {
+          const response = await this.client.websocket.emit(
+            Command.CHARM_LIST,
+            {
+              headers: {
+                version: 2
+              },
+              body: {
+                idList
+              }
+            }
+          );
+
+          if (response.success) {
+            charms.push(...Object.values(response.body)
+              .map((charmResponse) => new models.Response(charmResponse))
+              .map((charmResponse, index) =>
+                charmResponse.success
+                  ? this._process(new models.Charm(this.client, charmResponse.body))
+                  : new models.Charm(this.client, { id: idList[index] }
+                  )
+              )
+            );
+          } else {
+            charms.push(...idList.map((id) => new models.Charm(this.client, { id })));
+          }
+        }
+      }
+    }
+
+    return charms;
   }
 
   /**
@@ -289,6 +337,18 @@ class Charm extends Base {
         selectedList: charms
       }
     );
+  }
+
+  _process (value) {
+    (Array.isArray(value) ? value : [value]).forEach((charm) => {
+      const existing = this.charms.find((cached) => charm.id === cached.id);
+
+      existing
+        ? patch(existing, value)
+        : this.charms.push(charm);
+    });
+
+    return value;
   }
 
   _cleanUp (reconnection = false) {

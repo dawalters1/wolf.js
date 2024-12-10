@@ -42,7 +42,7 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity": "^3.616.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.616.0",
-    "@eslint/compat": "^1.1.1",
+    "@eslint/compat": "^1.2.4",
     "aws4-axios": "^3.3.6",
     "axios": "^1.7.2",
     "bull": "^4.15.1",
@@ -64,13 +64,14 @@
     "wrtc": "^0.4.7"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.3",
     "@types/node": "^20.14.11",
     "chai": "^5.1.1",
-    "eslint": "^9.7.0",
+    "eslint": "^9.16.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.5.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-n": "^17.14.0",
+    "eslint-plugin-promise": "^7.2.1",
     "mocha": "^10.6.0"
   }
 }

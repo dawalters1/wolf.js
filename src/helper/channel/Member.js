@@ -20,9 +20,13 @@ const canRequestList = async (client, myCapability, includeAllButBanned = false)
 const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) => {
   if (theirCapability === Capability.OWNER) { return false; }
 
+  if (myCapabilities !== Capability.OWNER && theirCapability === Capability.COOWNER) { return false; }
+
   if (advancedAdmin) { return true; }
 
   switch (myCapabilities) {
+    case Capability.COOWNER:
+      return [Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     case Capability.ADMIN:
       return [Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
     case Capability.MOD:
@@ -371,6 +375,55 @@ class Member extends Base {
     }
 
     return undefined;
+  }
+
+  /**
+   * Co-Owner a subscriber
+   * @param {Number} targetChannelId
+   * @param {Number} subscriberId
+   * @returns {Promise<Response>}
+   */
+  async coowner (targetChannelId, subscriberId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    if (validator.isNullOrUndefined(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
+    } else if (!validator.isValidNumber(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
+    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
+      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    }
+
+    const channel = await this.client.channel.getById(targetChannelId);
+
+    if (!channel.exists) {
+      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
+    }
+
+    const member = await this.get(targetChannelId, subscriberId);
+
+    if (!member) {
+      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
+    }
+
+    if (!await canPerformChannelAction(this.client, channel, member, Capability.COOWNER)) {
+      throw new models.WOLFAPIError('Insufficient privileges to assign CO-Owner', { targetChannelId, subscriberId });
+    }
+
+    return await this.client.websocket.emit(
+      Command.GROUP_MEMBER_UPDATE,
+      {
+        groupId: parseInt(targetChannelId),
+        id: parseInt(subscriberId),
+        capabilities: Capability.COOWNER
+      }
+    );
   }
 
   /**
