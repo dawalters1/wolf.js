@@ -1,4 +1,3 @@
-import { WOLFAPIError } from '../../../models/index.js';
 
 class Base {
   constructor (client, event) {
@@ -7,7 +6,7 @@ class Base {
   }
 
   async process () {
-    throw new WOLFAPIError('Event handler not implemented', { event: this.event });
+    throw new Error(`Event '${this.event}' Processor Not Implemented`);
   }
 }
 

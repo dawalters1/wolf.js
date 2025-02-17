@@ -1,162 +1,123 @@
-import Base from '../Base.js';
-import Category from './Category.js';
-import Channel from './Channel.js';
-import Subscriber from './Subscriber.js';
-import models from '../../models/index.js';
-import validator from '../../validator/index.js';
-import Constants, { Language } from '../../constants/index.js';
-import _ from 'lodash';
-import patch from '../../utils/patch.js';
+'use strict';
 
-const { Command } = Constants;
+// Node dependencies
+
+// 3rd Party Dependencies
+// WOLFjs Dependencies
+import verify from 'wolf.js-validator';
+// Local Dependencies
+import Base from '../Base.js';
+import Cache from '../../cache/Cache.js';
+import AchievementCategory from './AchievementCategory.js';
+import AchievementChannel from './AchievementChannel.js';
+import AchievementUser from './AchievementUser.js';
+import structures from '../../structures/index.js';
+// Variables
+import { Command, Language, CacheInstanceType } from '../../constants/index.js';
 
 class Achievement extends Base {
   constructor (client) {
     super(client);
 
-    this.achievements = {};
+    /*
+      Map<languageId, Map<id, Achievement>>
+    */
+    this.cache = new Cache('id', CacheInstanceType.MAP);
 
-    this.category = new Category(this.client);
-    this.channel = new Channel(client);
-    this.group = this.channel;
-    this.subscriber = new Subscriber(client);
+    this.user = new AchievementUser();
+    this.channel = new AchievementChannel();
+    this.category = new AchievementCategory();
   }
 
-  /**
-   * Request an achievement by ID & Language
-   * @param {Number} id - The ID of the achievement to request
-   * @param {Number} language - The language of the achievement to request
-   * @param {Boolean} forceNew - - Whether or not to request new from the server
-   * @returns {Promise<models.Achievement>} - The requested achievement
-   */
-  async getById (id, language, forceNew = false) {
-    if (validator.isNullOrUndefined(id)) {
-      throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-    } else if (!validator.isValidNumber(id)) {
-      throw new models.WOLFAPIError('id must be a valid number', { id });
-    } else if (validator.isLessThanOrEqualZero(id)) {
-      throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
-    }
+  async getById (languageId, achievementId, forceNew = false) {
+    // Parsing - Convert everything into numbers
+    languageId = Number(languageId) || languageId;
+    achievementId = Number(achievementId) || achievementId;
 
-    if (!validator.isValidNumber(language)) {
-      throw new models.WOLFAPIError('language must be a valid number', { language });
-    } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new models.WOLFAPIError('language is not valid', { language });
-    }
+    { // eslint-disable-line no-lone-blocks
+      if (!verify.isValidNumber(achievementId)) {
+        throw new Error(`Achievement.getById() parameter, id: ${JSON.stringify(achievementId)}, is not a valid number`);
+      } else if (verify.isLessThanOrEqualZero(achievementId)) {
+        throw new Error(`Achievement.getById() parameter, id: ${JSON.stringify(achievementId)}, is zero or negative`);
+      }
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
-    }
+      if (!verify.isValidNumber(languageId)) {
+        throw new Error(`Achievement.getById() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid number`);
+      } else if (Object.values(Language).includes(languageId)) {
+        throw new Error(`Achievement.getById() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid languageId`);
+      }
 
-    return (await this.getByIds([id], language, forceNew))[0];
-  }
-
-  /**
-   * Request multiple achievements by IDs & Language
-   * @param {Number|Number[]} ids - The IDs of the achievements to request
-   * @param {Number} language - The language of the achievement to request
-   * @param {Boolean} forceNew - Whether or not to request new from the server
-   * @returns {Promise<Array<models.Achievement>>} - The requested achievements
-   */
-  async getByIds (ids, language, forceNew = false) {
-    ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
-
-    if (!ids.length) {
-      return [];
-    }
-
-    if ([...new Set(ids)].length !== ids.length) {
-      throw new models.WOLFAPIError('ids cannot contain duplicates', { ids });
-    }
-
-    for (const id of ids) {
-      if (validator.isNullOrUndefined(id)) {
-        throw new models.WOLFAPIError('id cannot be null or undefined', { id });
-      } else if (!validator.isValidNumber(id)) {
-        throw new models.WOLFAPIError('id must be a valid number', { id });
-      } else if (validator.isLessThanOrEqualZero(id)) {
-        throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
+      if (!verify.isValidBoolean(forceNew)) {
+        throw new Error(`Achievement.getById() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
       }
     }
+  }
 
-    if (!validator.isValidNumber(language)) {
-      throw new models.WOLFAPIError('language must be a valid number', { language });
-    } else if (!Object.values(Language).includes(parseInt(language))) {
-      throw new models.WOLFAPIError('language is not valid', { language });
-    }
+  async getByIds (languageId, achievementIds, forceNew = false) {
+    languageId = parseInt(languageId);
+    achievementIds = (Array.isArray(achievementIds) ? achievementIds : [achievementIds]).map((id) => Number(id) || id);
 
-    if (!validator.isValidBoolean(forceNew)) {
-      throw new models.WOLFAPIError('forceNew must be a valid boolean', { forceNew });
+    { // eslint-disable-line no-lone-blocks
+      if (!achievementIds.length) {
+        throw new Error(`Achievement.getByIds() parameter, ids: ${JSON.stringify(achievementIds)}, cannot be an empty array`);
+      } else if ([...new Set(achievementIds)].length !== achievementIds.length) {
+        throw new Error(`Achievement.getByIds() parameter, ids: ${JSON.stringify(achievementIds)}, cannot contain duplicate ids`);
+      } else {
+        achievementIds.forEach((id, index) => {
+          if (!verify.isValidNumber(id)) {
+            throw new Error(`Achievement.getByIds() parameter, id[${index}]: ${JSON.stringify(id)}, is not a valid number`);
+          } else if (verify.isLessThanOrEqualZero(id)) {
+            throw new Error(`Achievement.getByIds() parameter, id[${index}]: ${JSON.stringify(id)}, is zero or negative`);
+          }
+        });
+      }
+
+      if (!verify.isValidNumber(languageId)) {
+        throw new Error(`Achievement.getByIds() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid number`);
+      } else if (Object.values(Language).includes(languageId)) {
+        throw new Error(`Achievement.getByIds() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid languageId`);
+      }
+
+      if (!verify.isValidBoolean(forceNew)) {
+        throw new Error(`Achievement.getByIds() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
+      }
     }
 
     const achievements = forceNew
       ? []
-      : this.achievements[language]?.filter((achievement) =>
-        ids.includes(achievement.id)
-      ) ?? [];
+      : this.cache.get(languageId, achievementIds)
+        .filter((Boolean));
 
-    if (achievements.length === ids.length) {
-      return achievements;
-    }
+    if (achievements.length === achievementIds.length) { return achievements; }
 
-    const idLists = _.chunk(
-      ids.filter(
-        (achievementId) => !achievements.some((achievement) => achievement.id === achievementId)
-      ),
-      this.client._frameworkConfig.get('batching.length')
+    const idList = achievementIds.filter((id) => !achievements.some((achievement) => achievement.id === id));
+
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT,
+      {
+        headers: {
+          version: 2
+        },
+        body: {
+          idList,
+          languageId
+        }
+      }
     );
 
-    for (const idList of idLists) {
-      const response = await this.client.websocket.emit(
-        Command.ACHIEVEMENT,
-        {
-          headers: {
-            version: 2
-          },
-          body: {
-            idList,
-            languageId: parseInt(language)
-          }
-        }
+    response.body.forEach((subResponse, index) =>
+      achievements.push(
+        subResponse.success
+          ? this.cache.set(languageId, new structures.Achievement(this.client, subResponse.body))
+          : new structures.Achievement(this.client, { id: idList[index] })
+      )
+    );
+
+    // Sort to match ids order
+    return achievementIds
+      .map((id) =>
+        achievements.find((achievement) => achievement.id === id)
       );
-
-      if (response.success) {
-        achievements.push(...Object.values(response.body)
-          .map((achievementResponse) => new models.Response(achievementResponse))
-          .map((achievementResponse, index) =>
-            achievementResponse.success
-              ? this._process(new models.Achievement(this.client, achievementResponse.body), language)
-              : new models.Achievement(this.client, { id: idList[index] }
-              )
-          )
-        );
-      } else {
-        achievements.push(...idList.map((id) => new models.Achievement(this.client, { id })));
-      }
-    }
-
-    return achievements;
-  }
-
-  _process (value, language) {
-    if (!this.achievements[language]) {
-      this.achievements[language] = [];
-    }
-
-    (Array.isArray(value) ? value : [value]).forEach((achievement) => {
-      const existing = this.achievements[language].find((cached) => achievement.id === cached.id);
-
-      existing ? patch(existing, value) : this.achievements[language].push(value);
-    });
-
-    return value;
-  }
-
-  _cleanUp (reconnection = false) {
-    this.achievements = {};
-    this.category._cleanUp(reconnection);
-    this.channel._cleanUp(reconnection);
-    this.subscriber._cleanUp(reconnection);
   }
 }
 

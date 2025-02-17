@@ -1,3 +1,4 @@
+
 export const NOT_SPECIFIED = 0;
 export const ENGLISH = 1;
 export const GERMAN = 3;

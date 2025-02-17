@@ -1,8 +1,4 @@
-import _import from 'eslint-plugin-import';
-import promise from 'eslint-plugin-promise';
-import { fixupPluginRules } from '@eslint/compat';
-import n from 'eslint-plugin-n';
-import globals from 'globals';
+import _import from 'eslint-plugin-import'; import promise from 'eslint-plugin-promise'; import { fixupPluginRules } from '@eslint/compat'; import n from 'eslint-plugin-n'; import globals from 'globals';
 
 export default [{
   plugins: {
