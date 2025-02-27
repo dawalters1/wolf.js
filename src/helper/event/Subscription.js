@@ -1,10 +1,11 @@
+import EventSubscriptionCache from '../../cache/EventSubscriptionCache.js';
 import Base from '../Base.js';
 
 class Subscription extends Base {
   constructor (client) {
     super(client);
 
-    this.cache = new EventSubscriptionCache();
+    this.eventSubscriptionCache = new EventSubscriptionCache();
   }
 
   async list () {

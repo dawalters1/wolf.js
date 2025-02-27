@@ -1,10 +1,11 @@
+import EventChannelCache from '../../cache/EventChannelCache.js';
 import Base from '../Base.js';
 
 class Channel extends Base {
   constructor (client) {
     super(client);
 
-    this.cache = new EventChannelCache();
+    this.eventChannelCache = new EventChannelCache();
   }
 
   async list () {

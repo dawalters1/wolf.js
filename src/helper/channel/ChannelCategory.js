@@ -7,19 +7,16 @@
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import ChannelCategoryCache from '../../cache/ChannelCategoryCache.js';
 import structures from '../../structures/index.js';
 // Variables
-import { Command, Language, CacheInstanceType } from '../../constants/index.js';
+import { Command, Language } from '../../constants/index.js';
 
 class ChannelCategory extends Base {
   constructor (client) {
     super(client);
 
-    /*
-      Map<languageId, Map<id, ChannelCategory>>
-    */
-    this.cache = new Cache('id', CacheInstanceType);
+    this.channelCategoryCache = new ChannelCategoryCache();
   }
 
   async get (languageId, forceNew = false) {

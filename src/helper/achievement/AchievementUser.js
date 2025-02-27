@@ -3,24 +3,21 @@
 // Node dependencies
 
 // 3rd Party Dependencies
-
+import { StatusCodes } from 'http-status-codes';
 // WOLFjs Dependencies
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import AchievementUserCache from '../../cache/AchievementUserCache.js';
 import structures from '../../structures/index.js';
 // Variables
-import { CacheInstanceType, Command } from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 
 class AchievementUser extends Base {
   constructor (client) {
     super(client);
 
-    /*
-      Map<userId, Map<id, AchievementUser>>
-    */
-    this.cache = new Cache('id', CacheInstanceType.MAP);
+    this.achievementUserCache = new AchievementUserCache();
   }
 
   async get (userId, parentId, forceNew = false) {
@@ -47,30 +44,36 @@ class AchievementUser extends Base {
     }
 
     if (!forceNew) {
-      const cached = this.cache.get(userId);
+      const cached = this.achievementUserCache.get(userId);
 
-      if (cached) { return cached.values(); }
+      if (cached) { return cached; }
     }
 
-    const response = await this.client.websocket.emit(
-      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
-      {
-        headers: {
-          version: 2
-        },
-        body: {
-          id: userId,
-          parentId: parentId === null ? undefined : parentId
+    try {
+      const response = await this.client.websocket.emit(
+        Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: userId,
+            parentId: parentId === null ? undefined : parentId
+          }
         }
-      }
-    );
+      );
 
-    return this.cache.set(
-      userId,
-      response.body.map((channelAchievement) =>
-        new structures.AchievementUser(this.client, channelAchievement)
-      )
-    );
+      return this.achievementUserCache.set(
+        userId,
+        response.body.map((channelAchievement) =>
+          new structures.AchievementUser(this.client, channelAchievement)
+        )
+      );
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) { return []; }
+
+      throw error;
+    }
   }
 }
 

@@ -8,19 +8,16 @@
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import AchievementCategoryCache from '../../cache/AchievementCategoryCache.js';
 import structures from '../../structures/index.js';
 // Variables
-import { CacheInstanceType, Command, Language } from '../../constants/index.js';
+import { Command, Language } from '../../constants/index.js';
 
 class AchievementCategory extends Base {
   constructor (client) {
     super(client);
 
-    /*
-      Map<languageId, Map<id, AchievementCategory>>
-    */
-    this.cache = new Cache('id', CacheInstanceType.MAP);
+    this.achievementCategoryCache = new AchievementCategoryCache();
   }
 
   async get (languageId, forceNew = false) {
@@ -39,9 +36,9 @@ class AchievementCategory extends Base {
     }
 
     if (!forceNew) {
-      const cached = this.cache.get(languageId);
+      const cached = this.achievementCategoryCache.get(languageId);
 
-      if (cached) { return cached.values(); }
+      if (cached) { return cached; }
     }
 
     const response = await this.client.websocket.emit(
@@ -53,9 +50,11 @@ class AchievementCategory extends Base {
       }
     );
 
-    return this.cache.set(
+    return this.achievementCategoryCache.set(
       languageId,
-      response.body.map((achievementCategory) => new structures.AchievementCategory(this.client, achievementCategory))
+      response.body.map((achievementCategory) =>
+        new structures.AchievementCategory(this.client, achievementCategory)
+      )
     );
   }
 }

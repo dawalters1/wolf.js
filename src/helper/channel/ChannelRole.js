@@ -7,8 +7,9 @@ import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
 import structures from '../../structures/index.js';
+import ChannelRoleCache from '../../cache/ChannelRoleCache.js';
 // Variables
-import { CacheInstanceType, Command } from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 
 class ChannelRole extends Base {
   constructor (client) {
@@ -17,7 +18,7 @@ class ChannelRole extends Base {
     /*
       Map<channelId, Map<roleId, ChannelRoleSummary>>
     */
-    this.cache = new Cache('roleId', CacheInstanceType.MAP);
+    this.channelRoleCache = new ChannelRoleCache();
   }
 
   async get (channelId, forceNew = false) {
@@ -36,9 +37,9 @@ class ChannelRole extends Base {
     }
 
     if (!forceNew) {
-      const cached = this.cache.getById(channelId);
+      const cached = this.channelRoleCache.get(channelId);
 
-      if (cached) { return cached.values(); }
+      if (cached) { return cached; }
     }
 
     const response = await this.client.websocket.emit(
@@ -50,7 +51,7 @@ class ChannelRole extends Base {
       }
     );
 
-    return this.cache.set(channelId, response.body.map((channelRoleSummary) => new structures.ChannelRoleSummary(this.client, channelRoleSummary)));
+    return this.channelRoleCache.set(channelId, response.body.map((channelRoleSummary) => new structures.ChannelRoleSummary(this.client, channelRoleSummary)));
   }
 
   async assign (channelId, userId, roleId) {

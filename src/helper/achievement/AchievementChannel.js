@@ -3,15 +3,15 @@
 // Node dependencies
 
 // 3rd Party Dependencies
-
+import { StatusCodes } from 'http-status-codes';
 // WOLFjs Dependencies
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import AchievementChannelCache from '../../cache/AchievementChannelCache.js';
 import structures from '../../structures/index.js';
 // Variables
-import { CacheInstanceType, Command } from '../../constants/index.js';
+import { Command } from '../../constants/index.js';
 
 class AchievementChannel extends Base {
   constructor (client) {
@@ -20,7 +20,7 @@ class AchievementChannel extends Base {
     /*
       Map<channelId, Map<id, AchievementChannel>>
     */
-    this.cache = new Cache('id', CacheInstanceType.OBJECT);
+    this.achievementChannelCache = new AchievementChannelCache();
   }
 
   async get (channelId, parentId, forceNew = false) {
@@ -47,30 +47,36 @@ class AchievementChannel extends Base {
     }
 
     if (!forceNew) {
-      const cached = this.cache.get(channelId);
+      const cached = this.achievementChannelCache.get(channelId);
 
-      if (cached) { return cached.values(); }
+      if (cached) { return cached; }
     }
 
-    const response = await this.client.websocket.emit(
-      Command.ACHIEVEMENT_GROUP_LIST,
-      {
-        headers: {
-          version: 2
-        },
-        body: {
-          id: channelId,
-          parentId: parentId === null ? undefined : parentId
+    try {
+      const response = await this.client.websocket.emit(
+        Command.ACHIEVEMENT_GROUP_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: channelId,
+            parentId: parentId === null ? undefined : parentId
+          }
         }
-      }
-    );
+      );
 
-    return this.cache.set(
-      channelId,
-      response.body.map((channelAchievement) =>
-        new structures.AchievementChannel(this.client, channelAchievement)
-      )
-    );
+      return this.achievementChannelCache.set(
+        channelId,
+        response.body.map((channelAchievement) =>
+          new structures.AchievementChannel(this.client, channelAchievement)
+        )
+      );
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) { return []; }
+
+      throw error;
+    }
   }
 }
 

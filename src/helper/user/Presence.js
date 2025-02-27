@@ -1,10 +1,11 @@
+import UserPresenceCache from '../../cache/UserPresenceCache.js';
 import Base from '../Base.js';
 
 class Presence extends Base {
   constructor (client) {
     super(client);
 
-    this.cache = new PresenceCache();
+    this.userPresenceCache = new UserPresenceCache();
   }
 
   async getById () {

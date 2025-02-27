@@ -1,3 +1,4 @@
+import UserCache from '../../cache/UserCache.js';
 import Base from '../Base.js';
 import Followers from './Followers.js';
 import Presence from './Presence.js';
@@ -7,7 +8,7 @@ class User extends Base {
   constructor (client) {
     super(client);
 
-    this.cache = new UserCache();
+    this.userCache = new UserCache();
 
     this.followers = new Followers(client);
     this.presence = new Presence(client);
@@ -31,11 +32,12 @@ class User extends Base {
 
     }
 
-    const users = forceNew ? [] : this.cache.get(ids);
+    const users = forceNew
+      ? []
+      : ids.map((id) => this.userCache.get(id))
+        .filter(Boolean);
 
-    if (users.length === ids.length) {
-      return users;
-    }
+    if (users.length === ids.length) { return users; }
 
     const userIds = users.map((user) => user.id);
     const missingUserIds = ids.filter((id) => !userIds.includes(id));

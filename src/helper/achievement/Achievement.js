@@ -7,13 +7,13 @@
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import AchievementCache from '../../cache/AchievementCache.js';
 import AchievementCategory from './AchievementCategory.js';
 import AchievementChannel from './AchievementChannel.js';
 import AchievementUser from './AchievementUser.js';
 import structures from '../../structures/index.js';
 // Variables
-import { Command, Language, CacheInstanceType } from '../../constants/index.js';
+import { Command, Language } from '../../constants/index.js';
 
 class Achievement extends Base {
   constructor (client) {
@@ -22,7 +22,7 @@ class Achievement extends Base {
     /*
       Map<languageId, Map<id, Achievement>>
     */
-    this.cache = new Cache('id', CacheInstanceType.MAP);
+    this.cache = new AchievementCache();
 
     this.user = new AchievementUser();
     this.channel = new AchievementChannel();

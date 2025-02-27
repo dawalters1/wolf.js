@@ -3,20 +3,21 @@
 // Node dependencies
 
 // 3rd Party Dependencies
+import { StatusCodes } from 'http-status-codes';
 // WOLFjs Dependencies
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import Cache from '../../cache/Cache.js';
+import ChannelCache from '../../cache/ChannelCache.js';
 import structures from '../../structures/index.js';
 // Variables
-import { CacheInstanceType, ChannelEntities, Command, Language } from '../../constants/index.js';
+import { ChannelEntities, Command, Language } from '../../constants/index.js';
 
 class Channel extends Base {
   constructor (client) {
     super(client);
 
-    this.cache = new Cache('id', CacheInstanceType.OBJECT);
+    this.cache = new ChannelCache();
     this.cache.fetched = false;
   }
 
@@ -89,19 +90,27 @@ class Channel extends Base {
       }
     }
 
-    const response = await this.client.websocket.emit(
-      Command.GROUP_PROFILE,
-      {
-        headers: { version: 4 },
-        body: {
-          name,
-          subscribe,
-          entities
+    try {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_PROFILE,
+        {
+          headers: { version: 4 },
+          body: {
+            name,
+            subscribe,
+            entities
+          }
         }
-      }
-    );
+      );
 
-    return this.cache.set(new structures.Channel(this.client, response.body));
+      return this.cache.set(new structures.Channel(this.client, response.body));
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) {
+        return new structures.Channel(this.client, { name });
+      }
+
+      throw error;
+    }
   }
 }
 
