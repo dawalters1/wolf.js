@@ -36,9 +36,9 @@ class Achievement extends Base {
 
     { // eslint-disable-line no-lone-blocks
       if (!verify.isValidNumber(achievementId)) {
-        throw new Error(`Achievement.getById() parameter, id: ${JSON.stringify(achievementId)}, is not a valid number`);
+        throw new Error(`Achievement.getById() parameter, achievementId: ${JSON.stringify(achievementId)}, is not a valid number`);
       } else if (verify.isLessThanOrEqualZero(achievementId)) {
-        throw new Error(`Achievement.getById() parameter, id: ${JSON.stringify(achievementId)}, is zero or negative`);
+        throw new Error(`Achievement.getById() parameter, achievementId: ${JSON.stringify(achievementId)}, is zero or negative`);
       }
 
       if (!verify.isValidNumber(languageId)) {
@@ -59,15 +59,15 @@ class Achievement extends Base {
 
     { // eslint-disable-line no-lone-blocks
       if (!achievementIds.length) {
-        throw new Error(`Achievement.getByIds() parameter, ids: ${JSON.stringify(achievementIds)}, cannot be an empty array`);
+        throw new Error(`Achievement.getByIds() parameter, achievementIds: ${JSON.stringify(achievementIds)}, cannot be an empty array`);
       } else if ([...new Set(achievementIds)].length !== achievementIds.length) {
-        throw new Error(`Achievement.getByIds() parameter, ids: ${JSON.stringify(achievementIds)}, cannot contain duplicate ids`);
+        throw new Error(`Achievement.getByIds() parameter, achievementIds: ${JSON.stringify(achievementIds)}, cannot contain duplicate ids`);
       } else {
-        achievementIds.forEach((id, index) => {
-          if (!verify.isValidNumber(id)) {
-            throw new Error(`Achievement.getByIds() parameter, id[${index}]: ${JSON.stringify(id)}, is not a valid number`);
-          } else if (verify.isLessThanOrEqualZero(id)) {
-            throw new Error(`Achievement.getByIds() parameter, id[${index}]: ${JSON.stringify(id)}, is zero or negative`);
+        achievementIds.forEach((achievementId, index) => {
+          if (!verify.isValidNumber(achievementId)) {
+            throw new Error(`Achievement.getByIds() parameter, achievementIds[${index}]: ${JSON.stringify(achievementId)}, is not a valid number`);
+          } else if (verify.isLessThanOrEqualZero(achievementId)) {
+            throw new Error(`Achievement.getByIds() parameter, achievementIds[${index}]: ${JSON.stringify(achievementId)}, is zero or negative`);
           }
         });
       }

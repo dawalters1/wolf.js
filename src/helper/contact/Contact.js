@@ -34,7 +34,9 @@ class Contact extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_LIST,
       {
-        subscribe: true
+        body: {
+          subscribe: true
+        }
       }
     );
 
@@ -57,7 +59,9 @@ class Contact extends Base {
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_ADD,
       {
-        userId
+        body: {
+          id: userId
+        }
       }
     );
   }
@@ -76,7 +80,9 @@ class Contact extends Base {
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_DELETE,
       {
-        userId
+        body: {
+          id: userId
+        }
       }
     );
   }

@@ -25,13 +25,13 @@ class AchievementCategory extends Base {
 
     { // eslint-disable-line no-lone-blocks
       if (!verify.isValidNumber(languageId)) {
-        throw new Error(`Category.get() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid number`);
+        throw new Error(`AchievementCategory.get() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid number`);
       } else if (Object.values(Language).includes(languageId)) {
-        throw new Error(`Category.get() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid languageId`);
+        throw new Error(`AchievementCategory.get() parameter, languageId: ${JSON.stringify(languageId)}, is not a valid languageId`);
       }
 
       if (!verify.isValidBoolean(forceNew)) {
-        throw new Error(`Category.get() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
+        throw new Error(`AchievementCategory.get() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
       }
     }
 

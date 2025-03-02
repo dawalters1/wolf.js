@@ -1,15 +1,15 @@
-import AchievementChannelAdditionalInfo from './AchievementChannelAdditionalInfo.js';
+import AchievementUserAdditionalInfo from './AchievementUserAdditionalInfo.js';
 import Base from './Base.js';
 
-class AchievementChannel extends Base {
+class AchievementUser extends Base {
   constructor (client, data) {
     super(client);
 
     this.id = data?.id;
     this.additionalInfo = data?.additionalInfo
-      ? new AchievementChannelAdditionalInfo(client, data.additionalInfo)
+      ? new AchievementUserAdditionalInfo(client, data.additionalInfo)
       : undefined;
   }
 }
 
-export default AchievementChannel;
+export default AchievementUser;

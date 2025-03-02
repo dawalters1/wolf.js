@@ -33,7 +33,9 @@ class Blocked extends Base {
     const response = await this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_LIST,
       {
-        subscribe: true
+        body: {
+          subscribe: true
+        }
       }
     );
 
@@ -56,7 +58,9 @@ class Blocked extends Base {
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_ADD,
       {
-        userId
+        body: {
+          id: userId
+        }
       }
     );
   }
@@ -75,7 +79,9 @@ class Blocked extends Base {
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_DELETE,
       {
-        userId
+        body: {
+          id: userId
+        }
       }
     );
   }
