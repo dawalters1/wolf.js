@@ -25,8 +25,8 @@ class User extends Base {
     return (await this.getByIds([id], subscribe, forceNew))[0];
   }
 
-  async getByIds (ids, subscribe = true, forceNew = false) {
-    ids = ids.map((id) => Number(id) || id);
+  async getByIds (userIds, subscribe = true, forceNew = false) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
 
     {
 
@@ -34,26 +34,40 @@ class User extends Base {
 
     const users = forceNew
       ? []
-      : ids.map((id) => this.userCache.get(id))
+      : userIds.map((id) => this.userCache.get(id))
         .filter(Boolean);
 
-    if (users.length === ids.length) { return users; }
+    if (users.length === userIds.length) { return users; }
 
-    const userIds = users.map((user) => user.id);
-    const missingUserIds = ids.filter((id) => !userIds.includes(id));
+    const idList = userIds.filter((id) => !users.some((user) => user.id === id));
 
     const response = await this.client.emit(
       Command.SUBSCRIBER_PROFILE,
       {
         headers: {
-
+          version: 4
         },
         body: {
-          idList: missingUserIds,
-          subscribe
+          idList,
+          subscribe,
+          extended: true
         }
       }
     );
+
+    response.body.forEach((subResponse, index) =>
+      achievements.push(
+        subResponse.success
+          ? this.cache.set(languageId, new structures.Achievement(this.client, subResponse.body))
+          : new structures.Achievement(this.client, { id: idList[index] })
+      )
+    );
+
+    // Sort to match ids order
+    return userIds
+      .map((id) =>
+        achievements.find((achievement) => achievement.id === id)
+      );
   }
 
   async search (query) {
