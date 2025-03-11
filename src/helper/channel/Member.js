@@ -95,7 +95,7 @@ class Member extends Base {
     );
 
     channel.members._bots.complete = response.body.length < this.client._frameworkConfig.get('members.bots.batch.size');
-    channel.members._bots.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._bots.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
 
     return channel.members._bots.members;
   }
@@ -153,7 +153,7 @@ class Member extends Base {
     );
 
     channel.members._silenced.complete = response.body?.length < this.client._frameworkConfig.get('members.silenced.batch.size');
-    channel.members._silenced.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._silenced.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
 
     return channel.members._silenced.members;
   }
@@ -196,10 +196,10 @@ class Member extends Base {
     }
 
     if (channel.members._regular.complete) {
-      const silenced = channel.members._regular.members.filter((member) => member.capabilities === Capability.BANNED);
+      const banned = channel.members._regular.members.filter((member) => member.capabilities === Capability.BANNED);
 
       channel.members._banned.complete = true;
-      channel.members._banned.members = silenced;
+      channel.members._banned.members = banned;
 
       return channel.members._banned.members;
     }
@@ -209,12 +209,12 @@ class Member extends Base {
       {
         id: parseInt(targetChannelId),
         limit: this.client._frameworkConfig.get('members.banned.batch.size'),
-        after: channel.members._banned.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        after: channel.members._banned.members.sort((a, b) => b.id - a.id).slice(-1)[0]?.id ?? undefined
       }
     );
 
     channel.members._banned.complete = response.body?.length < this.client._frameworkConfig.get('members.banned.batch.size');
-    channel.members._banned.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, capabilities: Capability.BANNED, targetChannelId })) ?? [];
+    channel.members._banned.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, capabilities: Capability.BANNED, targetChannelId })) ?? []);
 
     return channel.members._banned.members;
   }
@@ -260,7 +260,7 @@ class Member extends Base {
     }
 
     channel.members._privileged.complete = true; // 2,500 is the max supported, however some channels still have more than this
-    channel.members._privileged.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._privileged.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
 
     response.body?.forEach((member) => channel.members._misc.remove(member));
 
@@ -305,7 +305,7 @@ class Member extends Base {
       {
         id: parseInt(targetChannelId),
         subscribe: true,
-        after: channel.members._regular.members.sort((a, b) => b.id - a.id).slice(-1)[0] ?? undefined
+        after: channel.members._regular.members.sort((a, b) => b.id - a.id).slice(-1)[0]?.id ?? undefined
       }
     );
 
@@ -314,7 +314,7 @@ class Member extends Base {
     }
 
     channel.members._regular.complete = response.body.length < this.client._frameworkConfig.get('members.regular.batch.size');
-    channel.members._regular.members = response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? [];
+    channel.members._regular.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
 
     response.body?.forEach((member) => channel.members._misc.remove(member));
 
