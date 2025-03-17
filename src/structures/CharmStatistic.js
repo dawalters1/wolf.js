@@ -1,7 +1,7 @@
 import Base from './Base';
 import CharmStatisticsExtended from './CharmStatisticExtended';
 
-class CharmStatistics extends Base {
+class CharmStatistic extends Base {
   constructor (client, data) {
     super(client);
 
@@ -17,4 +17,4 @@ class CharmStatistics extends Base {
   }
 }
 
-export default CharmStatistics;
+export default CharmStatistic;

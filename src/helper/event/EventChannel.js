@@ -13,6 +13,7 @@ import structures from '../../structures/index.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
+// TODO: update to new caching approach
 class EventChannel extends Base {
   constructor (client) {
     super(client);

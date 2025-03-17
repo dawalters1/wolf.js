@@ -7,7 +7,7 @@
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import ChannelCategoryCache from '../../cache/ChannelCategoryCache.js';
+import DataManager from '../../manager/DataManager.js';
 import structures from '../../structures/index.js';
 // Variables
 import { Command, Language } from '../../constants/index.js';
@@ -16,7 +16,7 @@ class ChannelCategory extends Base {
   constructor (client) {
     super(client);
 
-    this.channelCategoryCache = new ChannelCategoryCache();
+    this._channelCategories = new DataManager();
   }
 
   async get (languageId, forceNew = false) {
@@ -35,9 +35,11 @@ class ChannelCategory extends Base {
     }
 
     if (!forceNew) {
-      const cached = this.cache.get(languageId);
+      const cached = this._channelCategories.cache.values();
 
-      if (cached) { return cached; }
+      if (cached && cached.every((category) => category._hasLanguage(languageId))) {
+        return cached;
+      }
     }
 
     const response = await this.client.websocket.emit(
@@ -49,7 +51,9 @@ class ChannelCategory extends Base {
       }
     );
 
-    return this.cache.set(languageId, response.body.map((channelCategory) => new structures.ChannelCategory(this.client, channelCategory)));
+    return response.body.map((channelCategory) =>
+      this._channelCategories._add(new structures.ChannelCategory(this.client, channelCategory), languageId)
+    );
   }
 }
 

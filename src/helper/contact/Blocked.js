@@ -8,7 +8,7 @@ import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
 import structures from '../../structures/index.js';
-import BlockedCache from '../../cache/BlockedCache.js';
+import DataManager from '../../managers/DataManager.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
@@ -16,18 +16,12 @@ class Blocked extends Base {
   constructor (client) {
     super(client);
 
-    this.blockedCache = BlockedCache();
+    this._blocked = new DataManager();
   }
 
-  async list (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!verify.isValidBoolean(forceNew)) {
-        throw new Error(`Blocked.list() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
-      }
-    }
-
-    if (!forceNew && this.blockedCache.fetched) {
-      return this.blockedCache.list();
+  async list () {
+    if (this._blocked._fetched) {
+      return this._blocked.cache.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -39,16 +33,18 @@ class Blocked extends Base {
       }
     );
 
-    this.blockedCache.fetched = true;
+    this._blocked._fetched = true;
 
-    return this.blockedCache.set(response.body.map((blockedUser) => new structures.Contact(this.client, blockedUser)));
+    return response.body.map((blockedUser) =>
+      this._blocked._add(new structures.Contact(this.client, blockedUser))
+    );
   }
 
   async block (userId) {
     userId = Number(userId) || userId;
 
     { // eslint-disable-line no-lone-blocks
-      if (!verify.isValuserIdNumber(userId)) {
+      if (!verify.isValidNumber(userId)) {
         throw new Error(`Blocked.block() parameter, userId: ${JSON.stringify(userId)}, is not a valuserId number`);
       } else if (verify.isLessThanOrEqualZero(userId)) {
         throw new Error(`Blocked.block() parameter, userId: ${JSON.stringify(userId)}, is zero or negative`);
@@ -69,7 +65,7 @@ class Blocked extends Base {
     userId = Number(userId) || userId;
 
     { // eslint-disable-line no-lone-blocks
-      if (!verify.isValuserIdNumber(userId)) {
+      if (!verify.isValidNumber(userId)) {
         throw new Error(`Blocked.unblock() parameter, userId: ${JSON.stringify(userId)}, is not a valuserId number`);
       } else if (verify.isLessThanOrEqualZero(userId)) {
         throw new Error(`Blocked.unblock() parameter, userId: ${JSON.stringify(userId)}, is zero or negative`);

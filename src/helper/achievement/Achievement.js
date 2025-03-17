@@ -7,7 +7,7 @@
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import AchievementCache from '../../cache/AchievementCache.js';
+import DataManager from '../../manager/DataManager.js';
 import AchievementCategory from './AchievementCategory.js';
 import AchievementChannel from './AchievementChannel.js';
 import AchievementUser from './AchievementUser.js';
@@ -19,10 +19,7 @@ class Achievement extends Base {
   constructor (client) {
     super(client);
 
-    /*
-      Map<languageId, Map<id, Achievement>>
-    */
-    this.cache = new AchievementCache();
+    this._achievements = new DataManager('id', 600);
 
     this.user = new AchievementUser();
     this.channel = new AchievementChannel();
@@ -85,8 +82,8 @@ class Achievement extends Base {
 
     const achievements = forceNew
       ? []
-      : this.cache.get(languageId, achievementIds)
-        .filter((Boolean));
+      : achievementIds.map((achievementId) => this._achievements.get(achievementId))
+        .filter((achievement) => achievement?._hasLanguage(languageId));
 
     if (achievements.length === achievementIds.length) { return achievements; }
 
@@ -108,7 +105,7 @@ class Achievement extends Base {
     response.body.forEach((subResponse, index) =>
       achievements.push(
         subResponse.success
-          ? this.cache.set(languageId, new structures.Achievement(this.client, subResponse.body))
+          ? this._achievements._add(new structures.Achievement(this.client, subResponse.body), languageId)
           : new structures.Achievement(this.client, { id: idList[index] })
       )
     );

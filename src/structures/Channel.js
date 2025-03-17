@@ -1,3 +1,4 @@
+import ChannelMemberManager from '../managers/ChannelMemberManager.js';
 import Base from './Base.js';
 import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCount from './ChannelAudioCount.js';
@@ -39,6 +40,14 @@ class Channel extends Base {
     this.messageConfig = data?.messageConfig
       ? new ChannelMessageConfig(client, data.messageConfig)
       : undefined;
+
+    this.members = this.exists
+      ? new ChannelMemberManager()
+      : undefined;
+  }
+
+  get isOwner () {
+    return this.owner.id === this.client.user.id;
   }
 }
 

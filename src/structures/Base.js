@@ -11,6 +11,10 @@ class Base {
       ).length > 1;
   }
 
+  _hasLanguage (languageId) {
+    throw new Error('NOT IMPLEMENTED');
+  }
+
   _patch (oldData, newData) {
     // No object provided to patch
     if (!oldData) { return newData; }

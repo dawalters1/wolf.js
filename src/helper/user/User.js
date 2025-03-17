@@ -1,14 +1,16 @@
 import UserCache from '../../cache/UserCache.js';
+import DataManager from '../../managers/DataManager.js';
 import Base from '../Base.js';
 import Followers from './Followers.js';
 import Presence from './Presence.js';
 import WOLFStar from './WOLFStar.js';
+import structures from '../../structures/index.js';
 
 class User extends Base {
   constructor (client) {
     super(client);
 
-    this.userCache = new UserCache();
+    this._users = new DataManager();
 
     this.followers = new Followers(client);
     this.presence = new Presence(client);
@@ -34,7 +36,7 @@ class User extends Base {
 
     const users = forceNew
       ? []
-      : userIds.map((id) => this.userCache.get(id))
+      : userIds.map((id) => this._users.get(id))
         .filter(Boolean);
 
     if (users.length === userIds.length) { return users; }
@@ -56,17 +58,17 @@ class User extends Base {
     );
 
     response.body.forEach((subResponse, index) =>
-      achievements.push(
+      users.push(
         subResponse.success
-          ? this.cache.set(languageId, new structures.Achievement(this.client, subResponse.body))
-          : new structures.Achievement(this.client, { id: idList[index] })
+          ? this.cache._add(new structures.User(this.client, subResponse.body))
+          : new structures.User(this.client, { id: idList[index] })
       )
     );
 
     // Sort to match ids order
     return userIds
       .map((id) =>
-        achievements.find((achievement) => achievement.id === id)
+        users.find((user) => user.id === id)
       );
   }
 

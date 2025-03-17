@@ -1,19 +1,22 @@
-import CacheInstanceType from './CacheInstanceType.js';
-import ChannelEntities from './ChannelEntities.js';
+import Capability from './Capability.js';
+import ChannelMemberListType from './ChannelMemberListType.js';
 import Command from './Command.js';
 import Language from './Language.js';
+import Privilege from './Privilege.js';
 
 const exports = {
-  CacheInstanceType,
-  ChannelEntities,
+  Capability,
+  ChannelMemberListType,
   Command,
-  Language
+  Language,
+  Privilege
 };
 
 export {
   exports as default,
-  CacheInstanceType,
-  ChannelEntities,
+  Capability,
+  ChannelMemberListType,
   Command,
-  Language
+  Language,
+  Privilege
 };

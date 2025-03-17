@@ -8,7 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import EventCache from '../../cache/AchievementCache.js';
+import DataManager from '../../managers/DataManager.js';
 import EventChannel from './EventChannel.js';
 import EventSubscription from './EventSubscription.js';
 import structures from '../../structures/index.js';
@@ -19,7 +19,7 @@ class Event extends Base {
   constructor (client) {
     super(client);
 
-    this.eventCache = new EventCache();
+    this._events = new DataManager();
 
     this.eventChannel = new EventChannel(client);
     this.eventSubscription = new EventSubscription(client);
@@ -68,7 +68,7 @@ class Event extends Base {
 
     const events = forceNew
       ? []
-      : this.eventCache.get(eventIds)
+      : eventIds.map((eventId) => this._events.get(eventId))
         .filter(Boolean);
 
     if (events.length === eventIds.length) { return events; }
@@ -88,7 +88,7 @@ class Event extends Base {
       response.body.forEach((subResponse, index) =>
         events.push(
           subResponse.success
-            ? this.cache.set(new structures.Event(this.client, subResponse.body))
+            ? this._events._add(new structures.Event(this.client, subResponse.body))
             : new structures.Event(this.client, { id: idList[index] })
         )
       );

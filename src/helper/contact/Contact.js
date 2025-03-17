@@ -8,7 +8,7 @@ import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
 import structures from '../../structures/index.js';
-import ContactCache from '../../cache/ContactCache.js';
+import DataManager from '../../managers/DataManager.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
@@ -16,19 +16,13 @@ class Contact extends Base {
   constructor (client) {
     super(client);
 
-    this.contactCache = ContactCache();
+    this._contacts = DataManager();
     this.blocked = new Contact(client);
   }
 
-  async list (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!verify.isValidBoolean(forceNew)) {
-        throw new Error(`Contact.list() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
-      }
-    }
-
-    if (!forceNew && this.contactCache.fetched) {
-      return this.contactCache.list();
+  async list () {
+    if (this._contacts._fetched) {
+      return this._contacts.cache.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -40,16 +34,18 @@ class Contact extends Base {
       }
     );
 
-    this.contactCache.fetched = true;
+    this._contacts._fetched = true;
 
-    return this.contactCache.set(response.body.map((blockedUser) => new structures.Contact(this.client, blockedUser)));
+    return response.body.map((contact) =>
+      this._contacts._add(new structures.Contact(this.client, contact))
+    );
   }
 
   async add (userId) {
     userId = Number(userId) || userId;
 
     { // eslint-disable-line no-lone-blocks
-      if (!verify.isValuserIdNumber(userId)) {
+      if (!verify.isValidNumber(userId)) {
         throw new Error(`Contact.add() parameter, userId: ${JSON.stringify(userId)}, is not a valuserId number`);
       } else if (verify.isLessThanOrEqualZero(userId)) {
         throw new Error(`Contact.add() parameter, userId: ${JSON.stringify(userId)}, is zero or negative`);
@@ -70,7 +66,7 @@ class Contact extends Base {
     userId = Number(userId) || userId;
 
     { // eslint-disable-line no-lone-blocks
-      if (!verify.isValuserIdNumber(userId)) {
+      if (!verify.isValidNumber(userId)) {
         throw new Error(`Contact.delete() parameter, userId: ${JSON.stringify(userId)}, is not a valuserId number`);
       } else if (verify.isLessThanOrEqualZero(userId)) {
         throw new Error(`Contact.delete() parameter, userId: ${JSON.stringify(userId)}, is zero or negative`);

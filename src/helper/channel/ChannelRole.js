@@ -11,16 +11,8 @@ import ChannelRoleCache from '../../cache/ChannelRoleCache.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
+// TODO: update to new caching approach
 class ChannelRole extends Base {
-  constructor (client) {
-    super(client);
-
-    /*
-      Map<channelId, Map<roleId, ChannelRoleSummary>>
-    */
-    this.channelRoleCache = new ChannelRoleCache();
-  }
-
   async get (channelId, forceNew = false) {
     channelId = Number(channelId) || channelId;
 
@@ -36,7 +28,11 @@ class ChannelRole extends Base {
       }
     }
 
-    if (!forceNew) {
+    const channel = await this.client.channel.getById(channelId);
+
+    if (!channel.exists) { throw new Error('No such channel exists'); }
+
+    if (!forceNew && channel.roles._fetched) {
       const cached = this.channelRoleCache.get(channelId);
 
       if (cached) { return cached; }

@@ -13,12 +13,6 @@ import structures from '../../structures/index.js';
 import { Command } from '../../constants/index.js';
 
 class WOLFStar extends Base {
-  constructor (client) {
-    super(client);
-
-    this.wolfStarCache = new WOLFStarCache();
-  }
-
   async getById (userId, forceNew = false) {
     userId = Number(userId) || userId;
 
@@ -59,40 +53,7 @@ class WOLFStar extends Base {
         throw new Error(`WOLFStar.getByIds() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
       }
     }
-
-    const wolfstars = forceNew
-      ? []
-      : this.wolfStarCache.get(userIds)
-        .filter(Boolean);
-
-    if (wolfstars.length === userIds.length) { return wolfstars; }
-
-    const wolfstarIds = wolfstars.map((wolfstar) => wolfstar.userId);
-    const idList = userIds.filter((id) => !wolfstarIds.includes(id));
-
-    const response = await this.client.websocket.emit(
-      Command.WOLFSTAR_PROFILE,
-      {
-        headers: { version: 2 },
-        body: {
-          idList
-        }
-      }
-    );
-
-    response.body.forEach((subResponse, index) =>
-      wolfstars.push(
-        subResponse.success
-          ? this.cache.set(new structures.WOLFStar(this.client, subResponse.body))
-          : new structures.WOLFStar(this.client, { userId: idList[index] })
-      )
-    );
-
-    // Sort to match ids order
-    return userIds
-      .map((userId) =>
-        wolfstars.find((wolfstar) => wolfstar.userId === userId)
-      );
+    // TODO:
   }
 }
 

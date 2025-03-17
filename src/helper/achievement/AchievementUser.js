@@ -8,18 +8,11 @@ import { StatusCodes } from 'http-status-codes';
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import AchievementUserCache from '../../cache/AchievementUserCache.js';
 import structures from '../../structures/index.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
 class AchievementUser extends Base {
-  constructor (client) {
-    super(client);
-
-    this.achievementUserCache = new AchievementUserCache();
-  }
-
   async get (userId, parentId, forceNew = false) {
     userId = parseInt(userId);
 
@@ -43,10 +36,12 @@ class AchievementUser extends Base {
       }
     }
 
-    if (!forceNew) {
-      const cached = this.achievementUserCache.get(userId);
+    const user = await this.client.user.getById(userId);
 
-      if (cached) { return cached; }
+    if (!user.exists) { throw new Error('No such user exists'); }
+
+    if (!forceNew && user.achievements._fetched) {
+      return user.achievements.cache.values();
     }
 
     try {
@@ -63,11 +58,10 @@ class AchievementUser extends Base {
         }
       );
 
-      return this.achievementUserCache.set(
-        userId,
-        response.body.map((channelAchievement) =>
-          new structures.AchievementUser(this.client, channelAchievement)
-        )
+      user.achievements._fetched = true;
+
+      return response.body.map((userAchievement) =>
+        user.achievements._add(new structures.AchievementUser(this.client, userAchievement))
       );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }

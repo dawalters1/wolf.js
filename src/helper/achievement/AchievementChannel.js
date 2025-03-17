@@ -8,21 +8,11 @@ import { StatusCodes } from 'http-status-codes';
 import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
-import AchievementChannelCache from '../../cache/AchievementChannelCache.js';
 import structures from '../../structures/index.js';
 // Variables
 import { Command } from '../../constants/index.js';
 
 class AchievementChannel extends Base {
-  constructor (client) {
-    super(client);
-
-    /*
-      Map<channelId, Map<id, AchievementChannel>>
-    */
-    this.achievementChannelCache = new AchievementChannelCache();
-  }
-
   async get (channelId, parentId, forceNew = false) {
     channelId = parseInt(channelId);
 
@@ -46,10 +36,12 @@ class AchievementChannel extends Base {
       }
     }
 
-    if (!forceNew) {
-      const cached = this.achievementChannelCache.get(channelId);
+    const channel = await this.client.channel.getById(channelId);
 
-      if (cached) { return cached; }
+    if (!channel.exists) { throw new Error('No such channel exists'); }
+
+    if (!forceNew && channel.achievements._fetched) {
+      return channel.achievements.cache.values();
     }
 
     try {
@@ -66,11 +58,10 @@ class AchievementChannel extends Base {
         }
       );
 
-      return this.achievementChannelCache.set(
-        channelId,
-        response.body.map((channelAchievement) =>
-          new structures.AchievementChannel(this.client, channelAchievement)
-        )
+      channel.achievements._fetched = true;
+
+      return response.body.map((channelAchievement) =>
+        channel.achievements._add(new structures.AchievementChannel(this.client, channelAchievement))
       );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }

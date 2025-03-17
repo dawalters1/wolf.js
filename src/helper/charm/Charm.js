@@ -9,47 +9,15 @@ import verify from 'wolf.js-validator';
 // Local Dependencies
 import Base from '../Base.js';
 import structures from '../../structures/index.js';
-import CharmCache from '../../cache/CharmCache.js';
-import CharmSummaryCache from '../../cache/CharmSummaryCache.js';
-import CharmStatisticsCache from '../../cache/CharmStatisticsCache.js';
+import DataManager from '../../managers/DataManager.js';
 // Variables
 import { Command } from '../../constants/index.js';
-import CharmExpiryCache from '../../cache/CharmExpiryCache.js';
 
 class Charm extends Base {
   constructor (client) {
     super(client);
 
-    this.charmsCache = new CharmCache();
-    this.charmSummaryCache = new CharmSummaryCache();
-    this.charmStatisticsCham = new CharmStatisticsCache();
-    this.charmActiveCache = new CharmExpiryCache();
-    this.charmsExpiredCache = new CharmExpiryCache();
-    this.fetched = false;
-  }
-
-  // TODO: Potentially deprecated, only returns 50?
-  async list (forceNew = false) {
-    { // eslint-disable-line no-lone-blocks
-      if (!verify.isValidBoolean(forceNew)) {
-        throw new Error(`Charm.getById() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
-      }
-    }
-
-    if (!forceNew && this.fetched) {
-      return this.charmsCache.list();
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.CHARM_LIST,
-      {
-        headers: { version: 2 }
-      }
-    );
-
-    this.fetched = true;
-
-    return this.charmsCache.set(response.body.map((charm) => new structures.Charm(this.client, charm)));
+    this._charms = new DataManager();
   }
 
   async getById (charmId, forceNew = false) {
@@ -70,10 +38,12 @@ class Charm extends Base {
     return (await this.getByIds([charmId], forceNew))[0];
   }
 
-  async getByIds (ids, forceNew = false) {
-    ids = ids.map((id) => Number(id) || id);
+  async getByIds (charmIds, languageId, forceNew = false) {
+    charmIds = charmIds.map((id) => Number(id) || id);
+    languageId = Number(languageId) || languageId;
 
     { // eslint-disable-line no-lone-blocks
+      // TODO: validate charmIds
       if (!verify.isValidBoolean(forceNew)) {
         throw new Error(`Charm.getByIds() parameter, forceNew: ${JSON.stringify(forceNew)}, is not a valid boolean`);
       }
@@ -81,12 +51,12 @@ class Charm extends Base {
 
     const charms = forceNew
       ? []
-      : this.cache.charms.get(ids)
-        .filter(Boolean);
+      : charmIds.map((charmId) => this._charms.get(charmId))
+        .filter((charm) => charm?._hasLanguage(languageId));
 
-    if (charms.length === ids.length) { return charms; }
+    if (charms.length === charmIds.length) { return charms; }
 
-    const idList = ids.filter((id) => !charms.some((charm) => charm.id === id));
+    const idList = charmIds.filter((id) => !charms.some((charm) => charm.id === id));
 
     const response = await this.client.websocket.emit(
       Command.CHARM_LIST,
@@ -101,12 +71,12 @@ class Charm extends Base {
     response.body.forEach((subResponse, index) =>
       charms.push(
         subResponse.success
-          ? this.cache.charms.set(new structures.Charm(this.client, subResponse.body))
+          ? this._charms._add(new structures.Charm(this.client, subResponse.body, languageId))
           : new structures.Charm(this.client, { id: idList[index] })
       )
     );
 
-    return ids.map((id) =>
+    return charmIds.map((id) =>
       charms.find((charm) => charm.id === id)
     );
   }
@@ -126,10 +96,12 @@ class Charm extends Base {
       }
     }
 
-    if (!forceNew) {
-      const cached = this.charmSummaryCache.get(userId);
+    const user = await this.client.user.getById(userId);
 
-      if (cached) { return cached; }
+    if (!user.exists) { throw new Error('No such user exists'); }
+
+    if (!forceNew && user.charmSummary._fetched) {
+      return user.charmSummary.cache.values();
     }
 
     try {
@@ -142,7 +114,11 @@ class Charm extends Base {
         }
       );
 
-      return this.charmSummaryCache.set(userId, response.body.map((charmSummary) => new structures.CharmUserSummary(this.client, charmSummary)));
+      user.charmSummary._fetched = true;
+
+      return response.body.map((charmSummary) =>
+        new structures.CharmUserSummary(this.client, charmSummary)
+      );
     } catch (error) {
       // handle codes
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
@@ -166,12 +142,12 @@ class Charm extends Base {
       }
     }
 
-    if (!forceNew) {
-      const cached = this.cache.statistics.get(userId);
+    const user = await this.client.user.getById(userId);
 
-      if (cached) {
-        return cached;
-      }
+    if (!user.exists) { throw new Error('No such user exists'); }
+
+    if (!forceNew && user.charmStatistics) {
+      return user.charmStatistics;
     }
 
     try {
@@ -185,10 +161,12 @@ class Charm extends Base {
         }
       );
 
-      return this.cache.charmStatisticsCache.set(new structures.CharmUserSummary(this.client, response.body));
+      user.charmStatistics = new structures.CharmUserSummary(this.client, response.body);
+
+      return user.charmStatistics;
     } catch (error) {
       // handle codes
-      if (error.code === StatusCodes.NOT_FOUND) { return []; }
+      if (error.code === StatusCodes.NOT_FOUND) { return null; }
 
       throw error;
     }
@@ -273,7 +251,9 @@ class Charm extends Base {
       }
     }
 
-    const user = await this.client.user.getById(userId, false);
+    const user = await this.client.user.getById(userId);
+
+    if (!user.exists) { throw new Error('No such user exists'); }
 
     return user?.charms?.selectedList[0] ?? null;
   }
