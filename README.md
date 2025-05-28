@@ -106,9 +106,11 @@ const keyword = client.config.keyword;
 
 client.commandHandler.register(
     [
-        new Command(`${keyword}_command_${keyword}`, { both: async (command) =>  command.reply(command.getPhrase(`${keyword}_help_message`)) },
+        new Command(`${keyword}_command_${keyword}`, { both: async (command) =>  command.reply(
+Command.getPhrase(`${keyword}_help_message`)) },
             [
-                new Command(`${keyword}_command_help`, { both: (command) => command.reply(command.getPhrase(`${keyword}_help_message`)) }),
+                new Command(`${keyword}_command_help`, { both: (command) => command.reply(
+Command.getPhrase(`${keyword}_help_message`)) }),
                 new Command(`${keyword}_command_me`, { both: (command) => me(client, command) })
             ]
         )
@@ -149,7 +151,8 @@ client.login();
  */
 export default async (client, command) => {
 
-    const subscriber = await client.subscriber.getById(command.sourceSubscriberId);
+    const subscriber = await client.subscriber.getById(
+Command.sourceSubscriberId);
 
     return await command.reply(
         client.utility.string.replace(

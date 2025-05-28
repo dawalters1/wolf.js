@@ -1,0 +1,136 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Command } from '../../constants/Command.ts';
+import Event from '../../structures/event.ts';
+import ChannelEvent from '../../structures/channelEvent.ts';
+import CreateChannelEvent from '../../structures/createChannelEvent.ts';
+import UpdateChannelEvent from '../../structures/updateChannelEvent.ts';
+import WOLFResponse from '../../structures/WOLFResponse.ts';
+import Base from '../base.ts';
+import { EventChannelOptions } from '../../options/requestOptions.ts';
+
+const eventHasData = (event: UpdateChannelEvent) => event.category || event.endsAt || event.hostedBy || event.longDescription || event.shortDescription || event.startsAt || event.title;
+
+class EventChannelHelper extends Base {
+  async list (channelId: number, opts?: EventChannelOptions): Promise<ChannelEvent[]> {
+    const channel = await this.client.channel.getById(channelId);
+
+    if (channel === null) { throw new Error(''); }
+
+    if (!opts?.forceNew && channel.events!.fetched) { return channel.events!.values(); }
+
+    const get = async (results: ChannelEvent[] = []): Promise<ChannelEvent[]> => {
+      const response = await this.client.websocket.emit<ChannelEvent[]>(
+        Command.GROUP_EVENT_LIST,
+        {
+          body: {
+            id: channelId,
+            subscribe: opts?.subscribe ?? true,
+            limit: 25,
+            offset: results.length
+          }
+        }
+      );
+
+      results.push(...response.body);
+
+      return response.body.length < 25
+        ? results
+        : await get(results);
+    };
+
+    return channel.events!.mset(await get());
+  }
+
+  async create (channelId: number, eventData: CreateChannelEvent) {
+    // validation
+
+    const channel = await this.client.channel.getById(channelId);
+
+    if (channel === null) { throw new Error(''); }
+
+    // Check privileges for create
+
+    const responses = [] as (WOLFResponse | WOLFResponse<Event>)[];
+
+    const { thumbnail, ...patchable } = eventData;
+
+    responses.push(
+      await this.client.websocket.emit<Event>(
+        Command.GROUP_EVENT_CREATE,
+        {
+          body: {
+            groupId: channelId,
+            ...patchable // TODO: do this properly
+          }
+        }
+      )
+    );
+
+    if (eventData.thumbnail) {
+      responses.push(await this.client.multimedia.post('', ''));
+    }
+
+    return responses;
+  }
+
+  async update (channelId: number, eventId: number, eventData: UpdateChannelEvent): Promise<(WOLFResponse | WOLFResponse<Event>)[]> {
+    // validation
+    const channel = await this.client.channel.getById(channelId);
+
+    if (channel === null) { throw new Error(''); }
+
+    const event = await this.client.event.getById(eventId);
+
+    if (event === null) { throw new Error(''); }
+
+    // Check privileges for update
+
+    const responses = [] as (WOLFResponse | WOLFResponse<Event>)[];
+
+    if (eventData.thumbnail) {
+      responses.push(await this.client.multimedia.post('', ''));
+    }
+
+    if (eventHasData(eventData)) {
+      const { thumbnail, ...patchable } = eventData;
+
+      responses.push(
+        await this.client.websocket.emit<Event>(
+          Command.GROUP_EVENT_UPDATE,
+          {
+            body: {
+              groupId: channelId,
+              id: eventId,
+              ...patchable // TODO: do this properly
+            }
+          }
+        )
+      );
+    }
+
+    return responses;
+  }
+
+  async delete (channelId: number, eventId: number) {
+    const channel = await this.client.channel.getById(channelId);
+
+    if (channel === null) { throw new Error(''); }
+
+    const event = await this.client.event.getById(eventId);
+
+    if (event === null) { throw new Error(''); }
+
+    return await this.client.websocket.emit(
+      Command.GROUP_EVENT_UPDATE,
+      {
+        body: {
+          groupId: channelId,
+          id: eventId,
+          isRemoved: true
+        }
+      }
+    );
+  }
+}
+
+export default EventChannelHelper;

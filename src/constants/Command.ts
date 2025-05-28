@@ -1,0 +1,54 @@
+
+export enum Command {
+  ACHIEVEMENT = 'achievement',
+  ACHIEVEMENT_CATEGORY_LIST = 'achievement category list',
+  ACHIEVEMENT_GROUP_LIST = 'achievement group list',
+  ACHIEVEMENT_SUBSCRIBER_LIST = 'achievement subscriber list',
+
+  CHARM_LIST = 'charm list',
+  CHARM_SUBSCRIBER_SUMMARY_LIST = 'charm subscriber summary list',
+  CHARM_SUBSCRIBER_STATISTICS = 'charm subscriber statistics',
+
+  EVENT = 'event',
+
+  GROUP_EVENT = 'group event',
+  GROUP_EVENT_CREATE = 'group event create',
+  GROUP_EVENT_LIST = 'group event list',
+  GROUP_EVENT_UPDATE = 'group event update',
+
+  GROUP_PROFILE = 'group profile',
+
+  GROUP_MEMBER = 'group member',
+  GROUP_MEMBER_BANNED_LIST = 'group member banned list',
+  GROUP_MEMBER_PRIVILEGED_LIST = 'group member privileged list',
+  GROUP_MEMBER_REGULAR_LIST = 'group member regular list',
+  GROUP_MEMBER_SEARCH = 'group member search',
+  GROUP_MEMBER_UPDATE = 'group member update',
+  GROUP_MEMBER_DELETE = 'group member delete',
+
+  NOTIFICATION_GLOBAL = 'notification global',
+  NOTIFICATION_GLOBAL_CLEAR = 'notification global clear',
+  NOTIFICATION_GLOBAL_DELETE = 'notification global delete',
+  NOTIFICATION_GLOBAL_LIST = 'notification global list',
+
+  NOTIFICATION_SUBSCRIBER = 'notification subscriber',
+  NOTIFICATION_SUBSCRIBER_CLEAR = 'notification subscriber clear',
+  NOTIFICATION_SUBSCRIBER_DELETE = 'notification subscriber delete',
+  NOTIFICATION_SUBSCRIBER_LIST = 'notification subscriber list',
+
+  SUBSCRIBER_CONTACT_ADD = 'subscriber contact add',
+  SUBSCRIBER_CONTACT_DELETE = 'subscriber contact delete',
+  SUBSCRIBER_CONTACT_LIST = 'subscriber contact list',
+
+  SUBSCRIBER_BLOCK_ADD = 'subscriber block add',
+  SUBSCRIBER_BLOCK_DELETE = 'subscriber block delete',
+  SUBSCRIBER_BLOCK_LIST = 'subscriber block list',
+
+  SUBSCRIBER_GROUP_LIST = 'subscriber group list',
+
+  SUBSCRIBER_GROUP_EVENT_ADD = 'subscriber group event add',
+  SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriber group event delete',
+  SUBSCRIBER_GROUP_EVENT_LIST = 'subscriber group event list',
+
+  TIP_ADD = 'tip add'
+}
