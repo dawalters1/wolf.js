@@ -1,0 +1,21 @@
+import WOLF from '../client/WOLF.ts';
+import Base from './base.ts';
+import ContactAdditionalInfo, { ServerContactAdditionalInfo } from './contactAdditionalInfo.ts';
+
+export interface ServerContact {
+    id: number;
+    additionalInfo: ServerContactAdditionalInfo
+}
+
+export class Contact extends Base {
+  id: number;
+  additionalInfo: ContactAdditionalInfo;
+
+  constructor (client: WOLF, data: ServerContact) {
+    super(client);
+    this.id = data.id;
+    this.additionalInfo = new ContactAdditionalInfo(client, data.additionalInfo);
+  }
+}
+
+export default Contact;

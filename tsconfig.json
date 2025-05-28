@@ -1,53 +1,20 @@
 {
-  // Mapped from https://www.typescriptlang.org/tsconfig
-  "compilerOptions": {
-    // Type Checking
-    "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
-    // if true: conflicts with discord-api-types
-    "exactOptionalPropertyTypes": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strict": true,
-    "useUnknownInCatchVariables": true,
-    // Modules
-    "module": "ES6",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    // Emit
-    "declaration": false,
-    "importHelpers": true,
-    "inlineSources": false,
-    "newLine": "lf",
-    "noEmitHelpers": true,
-    "rootDir": "src",
-    "outDir": "typings",
-    "preserveConstEnums": true,
-    "removeComments": false,
-    "sourceMap": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    // Language and Environment
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": [
-      "ESNext"
-    ],
-    "target": "ES6",
-    "useDefineForClassFields": true,
-    // Output Formatting
-    "pretty": true,
-    // Completeness
-    "skipLibCheck": true,
-    "skipDefaultLibCheck": true
-  },
-  "include": [
-    "typings"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "compilerOptions":
+    {
+      "target": "es6",
+      "module": "commonjs",
+      "outDir": "dist",
+      "esModuleInterop": true,
+      "lib": ["es6"],
+      "moduleResolution": "node",
+      "strict": true, 
+      "noEmitOnError": true,
+      "noImplicitAny": true,
+      "experimentalDecorators": true, // for typeorm
+      "emitDecoratorMetadata": true, // for typeorm,
+      "noEmit": true,
+      "allowImportingTsExtensions": true
+    },
+  "include": ["./src", "index.ts", "./eslint"],
+  "exclude": ["node_modules"],
 }
