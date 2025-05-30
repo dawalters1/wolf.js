@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelAudioConfig {
   id: number;
@@ -8,7 +8,7 @@ export interface ServerChannelAudioConfig {
   minRepLevel: number;
 }
 
-export class ChannelAudioConfig extends Base {
+export class ChannelAudioConfig extends BaseEntity {
   id: number;
   enabled: boolean;
   stageId?: number;

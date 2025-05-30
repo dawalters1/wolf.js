@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelMessageConfig {
   disableImage: boolean;
@@ -9,7 +9,7 @@ export interface ServerChannelMessageConfig {
   slowModeRateInSeconds: number;
 }
 
-export class ChannelMessageConfig extends Base {
+export class ChannelMessageConfig extends BaseEntity {
   disableImage: boolean;
   disableImageFilter: boolean;
   disableVoice: boolean;

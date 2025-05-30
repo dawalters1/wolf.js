@@ -1,6 +1,6 @@
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { DeviceType, UserPresence, UserPrivilege } from '../constants/index.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 import UserExtended, { ServerUserExtended } from './userExtended.ts';
 import UserSelectedCharmList, { ServerUserSelectedCharmList } from './userSelectedCharmList.ts';
@@ -27,7 +27,7 @@ export interface ServerUser {
   status: string;
 }
 
-export class User extends Base {
+export class User extends BaseEntity {
   @key
     id: number;
 
@@ -45,7 +45,7 @@ export class User extends Base {
   privileges: UserPrivilege;
   reputation: number;
   status: string;
-  charmSummary: CacheManager<CharmSummary, Map<number, CharmSummary>>;
+  charmSummary: CacheManager<CharmSummary>;
   charmStatistics: CharmStatistic;
 
   constructor (client: WOLF, data: ServerUser) {
@@ -68,7 +68,7 @@ export class User extends Base {
     this.privileges = data.privileges;
     this.reputation = data.reputation;
     this.status = data.status;
-    this.charmSummary = new CacheManager(new Map());
+    this.charmSummary = new CacheManager();
     this.charmStatistics = new CharmStatistic(client);
   }
 }

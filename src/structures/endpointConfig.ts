@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerEndpointConfig {
   avatarEndpoint: string;
   mmsUploadEndpoint: string;
 }
 
-export class EndpointConfig extends Base {
+export class EndpointConfig extends BaseEntity {
   avatarEndpoint: string;
   mmsUploadEndpoint: string;
 

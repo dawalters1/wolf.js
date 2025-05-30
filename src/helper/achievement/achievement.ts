@@ -1,34 +1,31 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import Achievement from '../../structures/achievement.ts';
-import { Language } from '../../constants/Language.ts';
-import { Command } from '../../constants/Command.ts';
+import {Language} from '../../constants/Language.ts';
+import {Command} from '../../constants/Command.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 import WOLF from '../../client/WOLF.ts';
 import AchievementCategoryHelper from './achievementCategory.ts';
-import Base from '../base.ts';
-import CacheManager from '../../managers/cacheManager.ts';
-import { AchievementOptions } from '../../options/requestOptions.ts';
+import BaseHelper from '../baseHelper.ts';
+import {AchievementOptions} from '../../options/requestOptions.ts';
 
-class AchievementHelper extends Base<CacheManager<Achievement, Map<number, Achievement>>> {
+class AchievementHelper extends BaseHelper<Achievement> {
   category: Readonly<AchievementCategoryHelper>;
 
-  constructor (client: WOLF) {
-    super(client, new CacheManager(new Map()));
+  constructor(client: WOLF) {
+    super(client);
 
     this.category = new AchievementCategoryHelper(client);
   }
 
-  async getById (achievementId: number, languageId: Language, opts?: AchievementOptions): Promise<Achievement | null> {
+  async getById(achievementId: number, languageId: Language, opts?: AchievementOptions): Promise<Achievement | null> {
     return (await this.getByIds([achievementId], languageId, opts))[0];
   }
 
-  async getByIds (achievementIds: number[], languageId: Language, opts?: AchievementOptions): Promise<(Achievement | null)[]> {
+  async getByIds(achievementIds: number[], languageId: Language, opts?: AchievementOptions): Promise<(Achievement | null)[]> {
     const achievementsMap = new Map<number, Achievement>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedAchievements = this.cache!.mget(achievementIds)
+      const cachedAchievements = this.cache.getAll(achievementIds)
         .filter((achievement): achievement is Achievement => achievement !== null && achievement.hasLanguage(languageId));
 
       cachedAchievements.forEach((achievement) => achievementsMap.set(achievement.id, achievement));

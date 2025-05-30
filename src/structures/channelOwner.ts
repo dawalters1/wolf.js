@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelOwner {
   id: number;
   hash: string;
 }
 
-export class ChannelOwner extends Base {
+export class ChannelOwner extends BaseEntity {
   id: number;
   hash: string;
 

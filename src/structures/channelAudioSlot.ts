@@ -1,8 +1,8 @@
 import WOLF from '../client/WOLF.ts';
 import { ChannelAudioSlotConnectionState } from '../constants/ChannelAudioConnectionState.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
 import ChannelAudioSlotReservation from './channelAudioSlotReservation.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelAudioSlot {
   id: number;
@@ -15,7 +15,7 @@ export interface ServerChannelAudioSlot {
   uuid: string;
 }
 
-export class ChannelAudioSlot extends Base {
+export class ChannelAudioSlot extends BaseEntity {
     @key
       id: number;
 

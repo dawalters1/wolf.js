@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { MessageType } from '../constants/MessageType.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import { ServerUserIdHash } from './userIdHash.ts';
 import MessageMetadata, { ServerMessageMetadata } from './messageMetadata.ts';
 import MessageEdited, { ServerMessageEdited } from './messageEdited.ts';
@@ -18,7 +18,7 @@ export interface ServerMessage {
   edited?: ServerMessageEdited;
 }
 
-export class Message extends Base {
+export class Message extends BaseEntity {
   id: number;
   flightId: string;
   sourceUserId: number | null;

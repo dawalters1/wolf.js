@@ -1,7 +1,7 @@
 import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 interface ServerAchievement {
   id: number;
@@ -17,7 +17,7 @@ interface ServerAchievement {
   acquisitionPercentage: number;
 }
 
-class Achievement extends Base {
+class Achievement extends BaseEntity {
   @key
     id: number;
 
@@ -50,7 +50,7 @@ class Achievement extends Base {
     this.languages = new Set([data.languageId]);
   }
 
-  protected _patch (achievement: Achievement): void {
+  patch (achievement: Achievement) {
     this.parentId = achievement.parentId;
     this.typeId = achievement.typeId;
     this.imageUrl = achievement.imageUrl;
@@ -62,6 +62,8 @@ class Achievement extends Base {
     achievement.description.forEach((value, key) => this.description.set(key, value));
     achievement.levelName.forEach((value, key) => this.levelName.set(key, value));
     achievement.languages.forEach((language) => this.languages.add(language));
+
+    return this
   }
 
   /** @internal */

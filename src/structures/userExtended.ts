@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { Gender, Language, LookingFor } from '../constants/index.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerUserExtended {
   about: string;
@@ -11,7 +11,7 @@ export interface ServerUserExtended {
   urls: string[];
 }
 
-export class UserExtended extends Base {
+export class UserExtended extends BaseEntity {
   about: string;
   dateOfBirth: Date | null;
   gender: Gender;
