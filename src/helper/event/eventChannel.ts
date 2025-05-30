@@ -5,12 +5,12 @@ import ChannelEvent from '../../structures/channelEvent.ts';
 import CreateChannelEvent from '../../structures/createChannelEvent.ts';
 import UpdateChannelEvent from '../../structures/updateChannelEvent.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 import { EventChannelOptions } from '../../options/requestOptions.ts';
 
 const eventHasData = (event: UpdateChannelEvent) => event.category || event.endsAt || event.hostedBy || event.longDescription || event.shortDescription || event.startsAt || event.title;
 
-class EventChannelHelper extends Base {
+class EventChannelHelper extends BaseHelper<ChannelEvent> {
   async list (channelId: number, opts?: EventChannelOptions): Promise<ChannelEvent[]> {
     const channel = await this.client.channel.getById(channelId);
 
@@ -40,7 +40,7 @@ class EventChannelHelper extends Base {
 
     channel.events!.fetched = true;
 
-    return channel.events!.mset(await get());
+    return channel.events!.setAll(await get());
   }
 
   async create (channelId: number, eventData: CreateChannelEvent) {

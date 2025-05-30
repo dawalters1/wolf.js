@@ -5,9 +5,9 @@ import { NotificationOptions } from '../../options/requestOptions.ts';
 import Notification from '../../structures/notification.ts';
 import NotificationGlobal from '../../structures/notificationGlobal.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class NotificationGlobalHelper extends Base<CacheManager<NotificationGlobal, Map<number, NotificationGlobal>>> {
+class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
   async list (opts: NotificationOptions): Promise<Notification[]> {
     if (!opts?.forceNew && this.client.me?.notificationsGlobal?.fetched) {
       return this.client.me!.notificationsGlobal.values();
@@ -32,10 +32,10 @@ class NotificationGlobalHelper extends Base<CacheManager<NotificationGlobal, Map
 
     this.client.me!.notificationsGlobal.fetched = true;
 
-    return this.client.me!.notificationsGlobal.mset(await get());
+    return this.client.me!.notificationsGlobal.setAll(await get());
   }
 
-  async clear () : Promise<WOLFResponse> {
+  async clear (): Promise<WOLFResponse> {
     return await this.client.websocket.emit(Command.NOTIFICATION_GLOBAL_CLEAR);
   }
 
@@ -61,7 +61,7 @@ class NotificationGlobalHelper extends Base<CacheManager<NotificationGlobal, Map
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedNotificationGlobals = this.cache!.mget(notificationIds)
+      const cachedNotificationGlobals = this.cache.getAll(notificationIds)
         .filter((notificationGlobal): notificationGlobal is NotificationGlobal => notificationGlobal !== null);
 
       cachedNotificationGlobals.forEach((notificationGlobal) => notificationsMap.set(notificationGlobal.id, notificationGlobal));

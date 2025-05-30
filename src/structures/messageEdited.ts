@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerMessageEdited {
   subscriberId: number;
   timestamp: number
 }
 
-export class MessageEdited extends Base {
+export class MessageEdited extends BaseEntity {
   userId: number;
   timestamp: number;
 

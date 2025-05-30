@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelExtended {
   id: number;
@@ -14,7 +14,7 @@ export interface ServerChannelExtended {
   longDescription: string;
 }
 
-export class ChannelExtended extends Base {
+export class ChannelExtended extends BaseEntity {
   id: number;
   discoverable: boolean;
   advancedAdmin: boolean;

@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerNotificationUserPopup {
   languageId: Language;
@@ -13,7 +13,7 @@ export interface ServerNotificationUserPopup {
   priority: null;
 }
 
-export class NotificationUserPopup extends Base {
+export class NotificationUserPopup extends BaseEntity {
   languageId: Language;
   title: string;
   body: string;

@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerMessageMetadataFormattingUrl {
   start: number;
@@ -7,7 +7,7 @@ export interface ServerMessageMetadataFormattingUrl {
   url: string;
 }
 
-export class MessageMetadataFormattingUrl extends Base {
+export class MessageMetadataFormattingUrl extends BaseEntity {
   start: number;
   end: number;
   url: string;

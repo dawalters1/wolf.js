@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerUserSelectedCharm {
   charmId: number;
   position: number;
 }
 
-export class UserSelectedCharm extends Base {
+export class UserSelectedCharm extends BaseEntity {
   charmId: number;
   position: number;
 

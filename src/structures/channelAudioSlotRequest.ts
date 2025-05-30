@@ -1,6 +1,6 @@
-import Base from './base';
+import BaseEntity from './baseEntity.ts';
 
-export class ChannelAudioSlotRequest extends Base {
+export class ChannelAudioSlotRequest extends BaseEntity {
 
 }
 

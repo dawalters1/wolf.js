@@ -1,8 +1,8 @@
 import WOLF from '../client/WOLF.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
 import NotificationUserFeed, { ServerNotificationUserFeed } from './notificationUserFeed.ts';
 import NotificationUserPopup, { ServerNotificationUserPopup } from './notificationUserPopup.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerNotificationUser {
   context: string;
@@ -16,7 +16,7 @@ export interface ServerNotificationUser {
   typeId: number;
 }
 
-export class NotificationUser extends Base {
+export class NotificationUser extends BaseEntity {
   @key
     id: number;
 

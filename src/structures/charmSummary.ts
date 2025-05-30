@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerCharmSummary {
   charmId: number;
@@ -8,7 +8,7 @@ export interface ServerCharmSummary {
   total: number
 }
 
-export class CharmSummary extends Base {
+export class CharmSummary extends BaseEntity {
   charmId: number;
   expireTime: Date | null;
   giftCount: number;

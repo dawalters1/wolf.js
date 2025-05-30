@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Base from '../base.ts';
-import CacheManager from '../../managers/cacheManager.ts';
+import BaseHelper from '../baseHelper.ts';
 import Channel from '../../structures/channel.ts';
 import WOLF from '../../client/WOLF.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
@@ -8,11 +7,7 @@ import { Command } from '../../constants/Command.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 
-class ChannelHelper extends Base<CacheManager<Channel, Map<number, Channel>>> {
-  constructor (client: WOLF) {
-    super(client, new CacheManager(new Map<number, Channel>()));
-  }
-
+class ChannelHelper extends BaseHelper<Channel> {
   async list (opts?: ChannelListOptions) {
     if (!opts?.forceNew && this.cache!.fetched) {
       return this.cache!.values().filter((channel) => channel.isMember);
@@ -50,7 +45,7 @@ class ChannelHelper extends Base<CacheManager<Channel, Map<number, Channel>>> {
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedChannels = this.cache!.mget(channelIds)
+      const cachedChannels = this.cache.getAll(channelIds)
         .filter((channel): channel is Channel => channel !== null);
 
       cachedChannels.forEach((channel) => channelsMap.set(channel.id, channel));

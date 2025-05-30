@@ -6,11 +6,11 @@ import { Language } from '../../constants/Language.ts';
 import CacheManager from '../../managers/cacheManager.ts';
 import { AchievementCategoryOptions } from '../../options/requestOptions.ts';
 import AchievementCategory from '../../structures/achievementCategory.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class AchievementCategoryHelper extends Base<CacheManager<AchievementCategory, Map<number, AchievementCategory>>> {
+class AchievementCategoryHelper extends BaseHelper<AchievementCategory> {
   constructor (client: WOLF) {
-    super(client, new CacheManager(new Map<number, AchievementCategory>()));
+    super(client)
   }
 
   async list (languageId: Language, opts?: AchievementCategoryOptions): Promise<AchievementCategory[]> {
@@ -30,7 +30,7 @@ class AchievementCategoryHelper extends Base<CacheManager<AchievementCategory, M
         }
       });
 
-    return this.cache!.mset(response.body);
+    return this.cache.setAll(response.body);
   }
 }
 

@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import UserSelectedCharm, { ServerUserSelectedCharm } from './userSelectedCharm.ts';
 
 export interface ServerUserSelectedCharmList {
   selectedList: ServerUserSelectedCharm[]
 }
 
-export class UserSelectedCharmList extends Base {
+export class UserSelectedCharmList extends BaseEntity {
   selectedList: UserSelectedCharm[];
 
   constructor (client: WOLF, data: ServerUserSelectedCharmList) {

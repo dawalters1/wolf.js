@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import CharmStatisticExtended, { ServerCharmStatisticExtended } from './charmStatisticExtended.ts';
 
 export interface ServerCharmStatistic {
@@ -11,7 +11,7 @@ export interface ServerCharmStatistic {
   totalLifetime: number;
 }
 
-export class CharmStatistic extends Base {
+export class CharmStatistic extends BaseEntity {
   extended: CharmStatisticExtended | null;
   totalActive: number;
   totalExpired: number;
@@ -36,7 +36,7 @@ export class CharmStatistic extends Base {
     this.fetched = !!data;
   }
 
-  protected _patch (charmStatistics: CharmStatistic): void {
+  patch (charmStatistics: CharmStatistic) {
     this.totalActive = charmStatistics.totalActive;
     this.totalExpired = charmStatistics.totalExpired;
     this.totalGiftedReceived = charmStatistics.totalGiftedReceived;
@@ -44,6 +44,7 @@ export class CharmStatistic extends Base {
     this.totalLifetime = charmStatistics.totalLifetime;
 
     this.fetched = true;
+    return this
   }
 }
 

@@ -5,11 +5,11 @@ import CacheManager from '../../managers/cacheManager.ts';
 import { EventSubscriptionOptions } from '../../options/requestOptions.ts';
 import EventSubscription from '../../structures/eventSubscription.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class EventSubscriptionHelper extends Base<CacheManager<EventSubscription, Map<number, EventSubscription>>> {
+class EventSubscriptionHelper extends BaseHelper<EventSubscription> {
   constructor (client: WOLF) {
-    super(client, new CacheManager(new Map()));
+    super(client);
   }
 
   async list (opts: EventSubscriptionOptions): Promise<EventSubscription[]> {
@@ -25,9 +25,9 @@ class EventSubscriptionHelper extends Base<CacheManager<EventSubscription, Map<n
     );
 
     this.cache!.fetched = true;
-    this.cache!.clear();
+    this.cache.clear();
 
-    return this.cache!.mset(response.body);
+    return this.cache.setAll(response.body);
   }
 
   async add (eventId: number): Promise<WOLFResponse> {

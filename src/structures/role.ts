@@ -1,7 +1,7 @@
 import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerRole {
   id: number;
@@ -12,7 +12,7 @@ export interface ServerRole {
   languageId: Language
 }
 
-export class Role extends Base {
+export class Role extends BaseEntity {
   @key
     id: number;
 

@@ -1,8 +1,8 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
 import { ServerChannelAudioSlot } from './channelAudioSlot.ts';
+import BaseEntity from './baseEntity.ts';
 
-export class ChannelAudioSlotReservation extends Base {
+export class ChannelAudioSlotReservation extends BaseEntity {
   userId: number;
   expiresAt: Date;
 

@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerEvent {
   attendanceCount: number;
@@ -18,7 +18,7 @@ export interface ServerEvent {
   title: string
 }
 
-export class Event extends Base {
+export class Event extends BaseEntity {
   @key
     id: number;
 

@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import MessageMetadataFormattingChannelLink, { ServerMessageMetadataFormattingChannelLink } from './messageMetadataFormattingChannelLink.ts';
 import MessageMetadataFormattingUrl, { ServerMessageMetadataFormattingUrl } from './messageMetadataFormattingUrl.ts';
 
@@ -8,7 +8,7 @@ export interface ServerMessageMetadataFormatting {
   links?: ServerMessageMetadataFormattingUrl[];
 }
 
-export class MessageMetadataFormatting extends Base {
+export class MessageMetadataFormatting extends BaseEntity {
   channelLinks: MessageMetadataFormattingChannelLink[] | null;
   links: MessageMetadataFormattingUrl[] | null;
 
