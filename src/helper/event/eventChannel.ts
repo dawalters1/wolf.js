@@ -25,7 +25,7 @@ class EventChannelHelper extends Base {
           body: {
             id: channelId,
             subscribe: opts?.subscribe ?? true,
-            limit: 25,
+            limit: 50,
             offset: results.length
           }
         }
@@ -33,10 +33,12 @@ class EventChannelHelper extends Base {
 
       results.push(...response.body);
 
-      return response.body.length < 25
+      return response.body.length < 50
         ? results
         : await get(results);
     };
+
+    channel.events!.fetched = true;
 
     return channel.events!.mset(await get());
   }

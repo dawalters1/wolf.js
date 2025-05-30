@@ -2,9 +2,9 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerEventSubscriptionAdditionalInfo {
-    eTag: string;
-    endsAt: Date;
-    startsAt: Date;
+  eTag: string;
+  endsAt: Date;
+  startsAt: Date;
 }
 
 export class EventSubscriptionAdditionalInfo extends Base {

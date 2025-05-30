@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerIconInfo {
-    availableSizes: Map<string, string>
-    availableTypes: string[];
+  availableSizes: Map<string, string>
+  availableTypes: string[];
 }
 
 export class IconInfo extends Base {

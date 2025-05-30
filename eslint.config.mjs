@@ -34,6 +34,7 @@ export default [
       //...stylistic.configs.all,
       ...prettier.rules,
       'no-warning-comments': ['warn', { terms: ['todo', 'fixme', 'xxx'], location: 'anywhere' }],
+      '@stylistic/js/indent': ["error", 2, { "ignoredNodes": ["PropertyDefinition", "SwitchCase"] }],
       '@stylistic/js/space-infix-ops': 'error',
       'custom/enum-spacing': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',

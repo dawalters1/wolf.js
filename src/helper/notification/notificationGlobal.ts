@@ -30,6 +30,8 @@ class NotificationGlobalHelper extends Base<CacheManager<NotificationGlobal, Map
         : await get(results);
     };
 
+    this.client.me!.notificationsGlobal.fetched = true;
+
     return this.client.me!.notificationsGlobal.mset(await get());
   }
 
@@ -55,7 +57,7 @@ class NotificationGlobalHelper extends Base<CacheManager<NotificationGlobal, Map
   }
 
   async getByIds (notificationIds: number[], opts?: NotificationOptions): Promise<(NotificationGlobal | null)[]> {
-    const notificationsMap = new Map<number, NotificationGlobal | null>();
+    const notificationsMap = new Map<number, NotificationGlobal>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {

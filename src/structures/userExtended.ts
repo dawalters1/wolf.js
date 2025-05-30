@@ -3,12 +3,12 @@ import { Gender, Language, LookingFor } from '../constants/index.ts';
 import Base from './base.ts';
 
 export interface ServerUserExtended {
-    about: string;
-    dateOfBirth: Date | null;
-    gender: Gender;
-    language: Language;
-    lookingFor: LookingFor;
-    urls: string[];
+  about: string;
+  dateOfBirth: Date | null;
+  gender: Gender;
+  language: Language;
+  lookingFor: LookingFor;
+  urls: string[];
 }
 
 export class UserExtended extends Base {

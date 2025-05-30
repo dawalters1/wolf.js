@@ -4,13 +4,13 @@ import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 
 export interface ServerCharm {
-    cost: number;
-    description: string;
-    languageId: Language;
-    id: number;
-    imageUrl: string;
-    name: string;
-    productId: number
+  cost: number;
+  description: string;
+  languageId: Language;
+  id: number;
+  imageUrl: string;
+  name: string;
+  productId: number
 }
 
 export class Charm extends Base {

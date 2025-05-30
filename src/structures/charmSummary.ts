@@ -2,10 +2,10 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerCharmSummary {
-    charmId: number;
-    expireTime: Date | null;
-    giftCount: number;
-    total: number
+  charmId: number;
+  expireTime: Date | null;
+  giftCount: number;
+  total: number
 }
 
 export class CharmSummary extends Base {

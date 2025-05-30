@@ -24,6 +24,7 @@ class EventSubscriptionHelper extends Base<CacheManager<EventSubscription, Map<n
       }
     );
 
+    this.cache!.fetched = true;
     this.cache!.clear();
 
     return this.cache!.mset(response.body);

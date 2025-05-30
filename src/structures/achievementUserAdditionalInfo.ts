@@ -2,11 +2,11 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerAchievementUserAdditionalInfo {
-    awardedAt: Date | null;
-    eTag: string;
-    steps?: number;
-    total?: number;
-    categoryId: number
+  awardedAt: Date | null;
+  eTag: string;
+  steps?: number;
+  total?: number;
+  categoryId: number
 }
 
 export class AchievementUserAdditionalInfo extends Base {

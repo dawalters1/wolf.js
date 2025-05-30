@@ -2,22 +2,22 @@ import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
 import Base from './base.ts';
 
-export interface ServerNotificationUserType {
-    languageId: Language;
-    title: string;
-    body: string;
-    imageUrl: string | null;
-    link: string | null;
+export interface ServerNotificationUserFeed {
+  languageId: Language;
+  title: string;
+  body: string;
+  imageUrl: string | null;
+  link: string | null;
 }
 
-export class NotificationUserType extends Base {
+export class NotificationUserFeed extends Base {
   languageId: Language;
   title: string;
   body: string;
   imageUrl: string | null;
   link: string | null;
 
-  constructor (client: WOLF, data: ServerNotificationUserType) {
+  constructor (client: WOLF, data: ServerNotificationUserFeed) {
     super(client);
 
     this.languageId = data.languageId;
@@ -28,4 +28,4 @@ export class NotificationUserType extends Base {
   }
 }
 
-export default NotificationUserType;
+export default NotificationUserFeed;

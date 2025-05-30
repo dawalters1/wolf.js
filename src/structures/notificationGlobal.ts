@@ -1,24 +1,30 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
-import NotificationGlobalType, { ServerNotificationGlobalType } from './notificationGlobalType.ts';
+import NotificationGlobalFeed, { ServerNotificationGlobalFeed } from './notificationGlobalFeed.ts';
+import NotificationGlobalPopup, { ServerNotificationGlobalPopup } from './notificationGlobalPopup.ts';
 
 export interface ServerNotificationGlobal {
-    context: string;
-    createdAt: Date;
-    expiresAt: Date;
-    feed: ServerNotificationGlobalType;
-    id: number;
-    notificationId: number;
-    presentationType: number;
-    typeId: number;
-}
-
-export class NotificationGlobal extends Base {
   context: string;
   createdAt: Date;
   expiresAt: Date;
-  feed: NotificationGlobalType;
+  feed: ServerNotificationGlobalFeed;
+  popup?: ServerNotificationGlobalPopup;
   id: number;
+  notificationId: number;
+  presentationType: number;
+  typeId: number;
+}
+
+export class NotificationGlobal extends Base {
+  @key
+    id: number;
+
+  context: string;
+  createdAt: Date;
+  expiresAt: Date;
+  feed: NotificationGlobalFeed;
+  popup?: ServerNotificationGlobalPopup;
   notificationId: number;
   presentationType: number;
   typeId: number;
@@ -29,7 +35,10 @@ export class NotificationGlobal extends Base {
     this.context = data.context;
     this.createdAt = data.createdAt;
     this.expiresAt = data.expiresAt;
-    this.feed = new NotificationGlobalType(client, data.feed);
+    this.feed = new NotificationGlobalFeed(client, data.feed);
+    this.popup = data.popup
+      ? new NotificationGlobalPopup(client, data.popup)
+      : undefined;
     this.id = data.id;
     this.notificationId = data.notificationId;
     this.presentationType = data.presentationType;

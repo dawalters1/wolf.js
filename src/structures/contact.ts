@@ -1,14 +1,17 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 import ContactAdditionalInfo, { ServerContactAdditionalInfo } from './contactAdditionalInfo.ts';
 
 export interface ServerContact {
-    id: number;
-    additionalInfo: ServerContactAdditionalInfo
+  id: number;
+  additionalInfo: ServerContactAdditionalInfo
 }
 
 export class Contact extends Base {
-  id: number;
+  @key
+    id: number;
+
   additionalInfo: ContactAdditionalInfo;
 
   constructor (client: WOLF, data: ServerContact) {

@@ -3,12 +3,12 @@ import Base from './base.ts';
 import CharmStatisticExtended, { ServerCharmStatisticExtended } from './charmStatisticExtended.ts';
 
 export interface ServerCharmStatistic {
-    extended?: ServerCharmStatisticExtended;
-    totalActive: number;
-    totalExpired: number;
-    totalGiftedReceived: number;
-    totalGiftedSent: number;
-    totalLifetime: number;
+  extended?: ServerCharmStatisticExtended;
+  totalActive: number;
+  totalExpired: number;
+  totalGiftedReceived: number;
+  totalGiftedSent: number;
+  totalLifetime: number;
 }
 
 export class CharmStatistic extends Base {

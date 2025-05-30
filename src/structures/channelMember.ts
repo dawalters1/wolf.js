@@ -1,16 +1,19 @@
 import WOLF from '../client/WOLF.ts';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 
 export interface ServerChannelMember {
-    id: number;
-    hash: string;
-    capabilities: ChannelMemberCapability
+  id: number;
+  hash: string;
+  capabilities: ChannelMemberCapability
 }
 
 export class ChannelMember extends Base {
-  id: number;
+  @key
+    id: number;
+
   hash: string;
   capabilities: ChannelMemberCapability;
   lists: Set<string>;

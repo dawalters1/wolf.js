@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerNotificationAdditionalInfo {
-    createdAt: Date;
-    eTag: string;
+  createdAt: Date;
+  eTag: string;
 }
 
 export class NotificationAdditionalInfo extends Base {

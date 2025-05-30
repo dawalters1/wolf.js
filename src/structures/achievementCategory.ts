@@ -4,9 +4,9 @@ import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 
 export interface ServerAchievementCategory {
-    id: number;
-    languageId: Language;
-    name: string;
+  id: number;
+  languageId: Language;
+  name: string;
 }
 
 export class AchievementCategory extends Base {

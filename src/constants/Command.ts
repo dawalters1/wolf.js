@@ -11,10 +11,17 @@ export enum Command {
 
   EVENT = 'event',
 
+  GROUP_AUDIO_BROADCAST_DISCONNECT = 'group audio broadcast disconnect',
+  GROUP_AUDIO_BROADCAST_UPDATE = 'group audio broadcast update',
+  GROUP_AUDIO_SLOT_LIST = 'group audio slot list',
+  GROUP_AUDIO_SLOT_UPDATE = 'group audio slot update',
+
   GROUP_EVENT = 'group event',
   GROUP_EVENT_CREATE = 'group event create',
   GROUP_EVENT_LIST = 'group event list',
   GROUP_EVENT_UPDATE = 'group event update',
+
+  GROUP_ROLE = 'group role',
 
   GROUP_PROFILE = 'group profile',
 

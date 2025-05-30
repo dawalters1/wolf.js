@@ -7,26 +7,30 @@ import UserSelectedCharmList, { ServerUserSelectedCharmList } from './userSelect
 import CharmStatistic from './charmStatistic.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import CharmSummary from './charmSummary.ts';
+import { key } from '../decorators/key.ts';
 
 export interface ServerUser {
-    categoryIds: number[];
-    charms: ServerUserSelectedCharmList;
-    deviceType: DeviceType;
-    extended?: ServerUserExtended;
-    followable: boolean;
-    hash: string;
-    icon: number;
-    iconHash: string;
-    iconInfo: ServerIconInfo;
-    id: number;
-    nickname: string;
-    onlineState: UserPresence;
-    privileges: UserPrivilege;
-    reputation: number;
-    status: string;
+  categoryIds: number[];
+  charms: ServerUserSelectedCharmList;
+  deviceType: DeviceType;
+  extended?: ServerUserExtended;
+  followable: boolean;
+  hash: string;
+  icon: number;
+  iconHash: string;
+  iconInfo: ServerIconInfo;
+  id: number;
+  nickname: string;
+  onlineState: UserPresence;
+  privileges: UserPrivilege;
+  reputation: number;
+  status: string;
 }
 
 export class User extends Base {
+  @key
+    id: number;
+
   categoryIds: number[];
   charms: UserSelectedCharmList;
   deviceType: DeviceType;
@@ -36,7 +40,6 @@ export class User extends Base {
   icon: number;
   iconHash: string;
   iconInfo: IconInfo;
-  id: number;
   nickname: string;
   onlineState: UserPresence;
   privileges: UserPrivilege;

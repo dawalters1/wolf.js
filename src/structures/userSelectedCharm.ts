@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerUserSelectedCharm {
-    charmId: number;
-    position: number;
+  charmId: number;
+  position: number;
 }
 
 export class UserSelectedCharm extends Base {

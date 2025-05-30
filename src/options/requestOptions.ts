@@ -7,6 +7,7 @@ export const defaultChannelEntities: ChannelEntities[] = [
   'audioConfig',
   'messageConfig'
 ];
+// TODO: something better than this trash approach :)
 
 export interface AchievementOptions{
   forceNew?: false;
@@ -60,6 +61,13 @@ export interface EventSubscriptionOptions {
 }
 
 export interface NotificationOptions {
+  forceNew?: false;
+  subscribe?: true;
+}
+export interface RoleOptions {
+  forceNew?: false;
+}
+export interface StageSlotOptions {
   forceNew?: false;
   subscribe?: true;
 }

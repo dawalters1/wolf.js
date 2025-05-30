@@ -2,9 +2,9 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerMessageMetadataFormattingUrl {
-    start: number;
-    end: number;
-    url: string;
+  start: number;
+  end: number;
+  url: string;
 }
 
 export class MessageMetadataFormattingUrl extends Base {

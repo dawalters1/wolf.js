@@ -24,7 +24,7 @@ class AchievementHelper extends Base<CacheManager<Achievement, Map<number, Achie
   }
 
   async getByIds (achievementIds: number[], languageId: Language, opts?: AchievementOptions): Promise<(Achievement | null)[]> {
-    const achievementsMap = new Map<number, Achievement | null>();
+    const achievementsMap = new Map<number, Achievement>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {

@@ -4,8 +4,8 @@ import AchievementUserAdditionalInfo, { ServerAchievementUserAdditionalInfo } fr
 import Base from './base.ts';
 
 export interface ServerAchievementUser {
-    id: number;
-    additionalInfo: ServerAchievementUserAdditionalInfo
+  id: number;
+  additionalInfo: ServerAchievementUserAdditionalInfo
 }
 
 export class AchievementUser extends Base {

@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerCharmStatisticExtended {
-    mostGiftedReceivedCharmId: number;
-    mostGiftedSentCharmId: number;
+  mostGiftedReceivedCharmId: number;
+  mostGiftedSentCharmId: number;
 }
 
 export class CharmStatisticExtended extends Base {
