@@ -3,15 +3,15 @@ import { Language } from '../constants/Language.ts';
 import Base from './base.ts';
 
 export interface ServerChannelExtended {
-    id: number;
-    discoverable: boolean;
-    advancedAdmin: boolean;
-    locked: boolean;
-    questionable: boolean;
-    entryLevel: number;
-    passworded: boolean;
-    language: Language;
-    longDescription: string;
+  id: number;
+  discoverable: boolean;
+  advancedAdmin: boolean;
+  locked: boolean;
+  questionable: boolean;
+  entryLevel: number;
+  passworded: boolean;
+  language: Language;
+  longDescription: string;
 }
 
 export class ChannelExtended extends Base {

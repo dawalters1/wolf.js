@@ -4,8 +4,8 @@ import AchievementChannelAdditionalInfo, { ServerAchievementChannelAdditionalInf
 import Base from './base.ts';
 
 export interface ServerAchievementChannel {
-    id: number;
-    additionalInfo: ServerAchievementChannelAdditionalInfo
+  id: number;
+  additionalInfo: ServerAchievementChannelAdditionalInfo
 }
 
 export class AchievementChannel extends Base {

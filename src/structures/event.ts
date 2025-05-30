@@ -1,23 +1,8 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 
 export interface ServerEvent {
-    attendanceCount: number;
-    category: number;
-    createdBy: number;
-    endsAt: Date;
-    groupId: number;
-    hostedBy: number | null;
-    id: number;
-    imageUrl: string | null;
-    isRemoved: boolean;
-    longDescription: string | null;
-    shortDescription: string | null;
-    startsAt: Date;
-    title: string
-}
-
-export class Event extends Base {
   attendanceCount: number;
   category: number;
   createdBy: number;
@@ -25,6 +10,25 @@ export class Event extends Base {
   groupId: number;
   hostedBy: number | null;
   id: number;
+  imageUrl: string | null;
+  isRemoved: boolean;
+  longDescription: string | null;
+  shortDescription: string | null;
+  startsAt: Date;
+  title: string
+}
+
+export class Event extends Base {
+  @key
+    id: number;
+
+  attendanceCount: number;
+  category: number;
+  createdBy: number;
+  endsAt: Date;
+  groupId: number;
+  hostedBy: number | null;
+
   imageUrl: string | null;
   isRemoved: boolean;
   longDescription: string | null;

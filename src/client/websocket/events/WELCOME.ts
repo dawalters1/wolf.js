@@ -1,14 +1,14 @@
-import { ServerEndpointConfig } from '../../../models/EndpointConfig.ts';
-import { ServerUser } from '../../../models/User.ts';
+import { ServerEndpointConfig } from '../../../structures/endpointConfig.ts';
+import { ServerUser } from '../../../structures/user.ts';
 import WOLF from '../../WOLF.ts';
 import Base from './base.ts';
 
 type ServerWelcome = {
- ip: string;
- country: string;
- loggedInUser?: ServerUser;
- token: string;
- endpointConfig: ServerEndpointConfig
+  ip: string;
+  country: string;
+  loggedInUser?: ServerUser;
+  token: string;
+  endpointConfig: ServerEndpointConfig
 }
 
 class Welcome extends Base {

@@ -1,14 +1,17 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 import ChannelEventAdditionalInfo, { ServerChannelEventAdditonalInfo } from './channelEventAdditionalInfo.ts';
 
 export interface ServerChannelEvent {
-    id: number;
-    additionalInfo: ServerChannelEventAdditonalInfo
+  id: number;
+  additionalInfo: ServerChannelEventAdditonalInfo
 }
 
 export class ChannelEvent extends Base {
-  id: number;
+  @key
+    id: number;
+
   additonalInfo: ChannelEventAdditionalInfo;
 
   constructor (client: WOLF, data: ServerChannelEvent) {

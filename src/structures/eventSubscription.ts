@@ -1,15 +1,18 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 import EventSubscriptionAdditionalInfo, { ServerEventSubscriptionAdditionalInfo } from './eventSubscriptionAdditionalInfo.ts';
 
 export interface ServerEventSubscription {
-    id: number;
-    groupId: number;
-    additionalInfo: ServerEventSubscriptionAdditionalInfo;
+  id: number;
+  groupId: number;
+  additionalInfo: ServerEventSubscriptionAdditionalInfo;
 }
 
 export class EventSubscription extends Base {
-  id: number;
+  @key
+    id: number;
+
   groupId: number;
   additionalInfo: EventSubscriptionAdditionalInfo;
 

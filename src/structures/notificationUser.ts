@@ -1,24 +1,31 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
-import NotificationUserType, { ServerNotificationUserType } from './notificationUserType.ts';
+import NotificationUserFeed, { ServerNotificationUserFeed } from './notificationUserFeed.ts';
+import NotificationUserPopup, { ServerNotificationUserPopup } from './notificationUserPopup.ts';
 
 export interface ServerNotificationUser {
-    context: string;
-    createdAt: Date;
-    expiresAt: Date;
-    feed: ServerNotificationUserType;
-    id: number;
-    notificationId: number;
-    presentationType: number;
-    typeId: number;
-}
-
-export class NotificationUser extends Base {
   context: string;
   createdAt: Date;
   expiresAt: Date;
-  feed: NotificationUserType;
+  feed: ServerNotificationUserFeed;
+  popup?: ServerNotificationUserPopup;
   id: number;
+  notificationId: number;
+  presentationType: number;
+  typeId: number;
+}
+
+export class NotificationUser extends Base {
+  @key
+    id: number;
+
+  context: string;
+  createdAt: Date;
+  expiresAt: Date;
+  feed: NotificationUserFeed;
+  popup?: NotificationUserPopup;
+
   notificationId: number;
   presentationType: number;
   typeId: number;
@@ -29,7 +36,10 @@ export class NotificationUser extends Base {
     this.context = data.context;
     this.createdAt = data.createdAt;
     this.expiresAt = data.expiresAt;
-    this.feed = new NotificationUserType(client, data.feed);
+    this.feed = new NotificationUserFeed(client, data.feed);
+    this.popup = data.popup
+      ? new NotificationUserPopup(client, data.popup)
+      : undefined;
     this.id = data.id;
     this.notificationId = data.notificationId;
     this.presentationType = data.presentationType;

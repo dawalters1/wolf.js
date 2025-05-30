@@ -22,7 +22,7 @@ class EventHelper extends Base<CacheManager<Event, Map<number, Event>>> {
   }
 
   async getByIds (eventIds: number[], opts?:EventOptions): Promise<(Event | null)[]> {
-    const eventsMap = new Map<number, Event | null>();
+    const eventsMap = new Map<number, Event>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
@@ -40,7 +40,7 @@ class EventHelper extends Base<CacheManager<Event, Map<number, Event>>> {
         {
           body: {
             idList: missingIds,
-            subscribe: opts?.subscribe
+            subscribe: opts?.subscribe ?? true
           }
         });
 

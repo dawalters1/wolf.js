@@ -2,22 +2,22 @@ import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
 import Base from './base.ts';
 
-export interface ServerNotificationGlobalType {
-    languageId: Language;
-    title: string;
-    body: string;
-    imageUrl: string | null;
-    link: string | null;
+export interface ServerNotificationGlobalFeed {
+  languageId: Language;
+  title: string;
+  body: string;
+  imageUrl: string | null;
+  link: string | null;
 }
 
-export class NotificationGlobalType extends Base {
+export class NotificationGlobalFeed extends Base {
   languageId: Language;
   title: string;
   body: string;
   imageUrl: string | null;
   link: string | null;
 
-  constructor (client: WOLF, data: ServerNotificationGlobalType) {
+  constructor (client: WOLF, data: ServerNotificationGlobalFeed) {
     super(client);
 
     this.languageId = data.languageId;
@@ -28,4 +28,4 @@ export class NotificationGlobalType extends Base {
   }
 }
 
-export default NotificationGlobalType;
+export default NotificationGlobalFeed;

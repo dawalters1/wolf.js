@@ -3,7 +3,7 @@ import Base from './base.ts';
 import UserSelectedCharm, { ServerUserSelectedCharm } from './userSelectedCharm.ts';
 
 export interface ServerUserSelectedCharmList {
-    selectedList: ServerUserSelectedCharm[]
+  selectedList: ServerUserSelectedCharm[]
 }
 
 export class UserSelectedCharmList extends Base {

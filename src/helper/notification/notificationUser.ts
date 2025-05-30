@@ -30,6 +30,8 @@ class NotificationUserHelper extends Base<CacheManager<NotificationUser, Map<num
         : await get(results);
     };
 
+    this.client.me!.notificationsUser.fetched = true;
+
     return this.client.me!.notificationsUser.mset(await get());
   }
 
@@ -55,7 +57,7 @@ class NotificationUserHelper extends Base<CacheManager<NotificationUser, Map<num
   }
 
   async getByIds (notificationIds: number[], opts?: NotificationOptions): Promise<(NotificationUser | null)[]> {
-    const notificationsMap = new Map<number, NotificationUser | null>();
+    const notificationsMap = new Map<number, NotificationUser>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {

@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerMessageEdited {
-    subscriberId: number;
-    timestamp: number
+  subscriberId: number;
+  timestamp: number
 }
 
 export class MessageEdited extends Base {

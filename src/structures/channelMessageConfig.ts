@@ -2,11 +2,11 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerChannelMessageConfig {
- disableImage: boolean;
- disableImageFilter: boolean;
- disableVoice: boolean;
- disableHyperlink: boolean;
- slowModeRateInSeconds: number;
+  disableImage: boolean;
+  disableImageFilter: boolean;
+  disableVoice: boolean;
+  disableHyperlink: boolean;
+  slowModeRateInSeconds: number;
 }
 
 export class ChannelMessageConfig extends Base {

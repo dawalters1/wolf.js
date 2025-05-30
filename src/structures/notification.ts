@@ -1,14 +1,17 @@
 import WOLF from '../client/WOLF.ts';
+import { key } from '../decorators/key.ts';
 import Base from './base.ts';
 import NotificationAdditionalInfo, { ServerNotificationAdditionalInfo } from './notificationAdditionalInfo.ts';
 
 export interface ServerNotification {
-    id: number;
-    additionalInfo: ServerNotificationAdditionalInfo
+  id: number;
+  additionalInfo: ServerNotificationAdditionalInfo
 }
 
 export class Notification extends Base {
-  id: number;
+  @key
+    id: number;
+
   additionalInfo: NotificationAdditionalInfo;
 
   constructor (client: WOLF, data: ServerNotification) {

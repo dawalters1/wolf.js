@@ -2,9 +2,9 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerMessageMetadataFormattingChannelLink {
-    start: number;
-    end: number;
-    groupId?: number
+  start: number;
+  end: number;
+  groupId?: number
 }
 
 export class MessageMetadataFormattingChannelLink extends Base {

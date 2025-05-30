@@ -2,9 +2,9 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerChannelAudioCount {
-    broadcasterCount: number;
-    consumerCount: number;
-    id: number;
+  broadcasterCount: number;
+  consumerCount: number;
+  id: number;
 }
 
 export class ChannelAudioCount extends Base {

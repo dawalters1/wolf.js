@@ -2,8 +2,8 @@ import WOLF from '../client/WOLF.ts';
 import Base from './base.ts';
 
 export interface ServerEndpointConfig {
-    avatarEndpoint: string;
-    mmsUploadEndpoint: string;
+  avatarEndpoint: string;
+  mmsUploadEndpoint: string;
 }
 
 export class EndpointConfig extends Base {
