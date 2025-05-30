@@ -6,11 +6,11 @@ import CacheManager from '../../managers/cacheManager.ts';
 import { ContactOptions } from '../../options/requestOptions.ts';
 import Contact from '../../structures/contact.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class BlockedHelper extends Base<CacheManager<Contact, Map<number, Contact>>> {
+class BlockedHelper extends BaseHelper<Contact> {
   constructor (client: WOLF) {
-    super(client, new CacheManager(new Map()));
+    super(client);
   }
 
   async list (opts?: ContactOptions) {
@@ -28,7 +28,7 @@ class BlockedHelper extends Base<CacheManager<Contact, Map<number, Contact>>> {
 
     this.cache!.fetched = true;
 
-    return this.cache?.mset(response.body);
+    return this.cache?.setAll(response.body);
   }
 
   async isBlocked (userId: number): Promise<boolean> {

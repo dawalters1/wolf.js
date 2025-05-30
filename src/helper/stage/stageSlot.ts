@@ -2,9 +2,9 @@ import { Command } from '../../constants/Command';
 import { StageSlotOptions } from '../../options/requestOptions';
 import { ChannelAudioSlot } from '../../structures/channelAudioSlot';
 import WOLFResponse from '../../structures/WOLFResponse';
-import Base from '../base';
+import BaseHelper from '../baseHelper.ts';
 
-class StageSlotHelper extends Base {
+class StageSlotHelper extends BaseHelper<ChannelAudioSlot> {
   async list (channelId: number, opts?: StageSlotOptions): Promise<ChannelAudioSlot[]> {
     const channel = await this.client.channel.getById(channelId);
 
@@ -22,7 +22,7 @@ class StageSlotHelper extends Base {
       }
     );
 
-    return channel.audioSlots.mset(response.body);
+    return channel.audioSlots.setAll(response.body);
   }
 
   async get (channelId: number, slotId: number): Promise<ChannelAudioSlot | null> {

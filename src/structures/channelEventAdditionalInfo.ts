@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelEventAdditonalInfo {
   eTag: string;
@@ -7,7 +7,7 @@ export interface ServerChannelEventAdditonalInfo {
   startsAt: Date;
 }
 
-export class ChannelEventAdditionalInfo extends Base {
+export class ChannelEventAdditionalInfo extends BaseEntity {
   eTag: string;
   endsAt: Date;
   startsAt: Date;

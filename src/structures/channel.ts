@@ -1,5 +1,4 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
 import ChannelOwner, { ServerChannelOwner } from './channelOwner.ts';
 import ChannelExtended, { ServerChannelExtended } from './channelExtended.ts';
 import ChannelAudioConfig, { ServerChannelAudioConfig } from './channelAudioConfig.ts';
@@ -14,6 +13,7 @@ import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts
 import ChannelMemberManager from '../managers/channelMemberManager.ts';
 import { ChannelAudioSlot } from './channelAudioSlot.ts';
 import ChannelAudioSlotRequest from './channelAudioSlotRequest.ts';
+import BaseEntity from './baseEntity.ts';
 // import { BaseManager } from '../managers/CacheManager.ts';
 // import AchievementChannel from './AchievementChannel.ts';
 
@@ -45,7 +45,7 @@ export interface ServerChannelModular {
   messageConfig?: ServerChannelMessageConfig;
 }
 
-class Channel extends Base {
+class Channel extends BaseEntity {
   @key
     id: number;
 
@@ -66,9 +66,9 @@ class Channel extends Base {
   messageConfig?: ChannelMessageConfig | null;
   verificationTier: ChannelVerificationTier | null;
   // achievements: BaseManager<AchievementChannel>;
-  events: CacheManager<ChannelEvent, Map<number, ChannelEvent>>;
-  audioSlots: CacheManager<ChannelAudioSlot, Map<number, ChannelAudioSlot>>;
-  audioSlotRequests: CacheManager<ChannelAudioSlotRequest, Map<number, ChannelAudioSlotRequest>>;
+  events: CacheManager<ChannelEvent>;
+  audioSlots: CacheManager<ChannelAudioSlot>;
+  audioSlotRequests: CacheManager<ChannelAudioSlotRequest>;
   members: ChannelMemberManager;
   isMember: boolean = false;
   capabilities: ChannelMemberCapability;
@@ -101,9 +101,9 @@ class Channel extends Base {
       ? new ChannelMessageConfig(client, data.messageConfig)
       : null;
     this.verificationTier = data.base.verificationTier;
-    this.events = new CacheManager(new Map());
-    this.audioSlots = new CacheManager(new Map());
-    this.audioSlotRequests = new CacheManager(new Map());
+    this.events = new CacheManager();
+    this.audioSlots = new CacheManager();
+    this.audioSlotRequests = new CacheManager();
     this.capabilities = ChannelMemberCapability.NONE;
     this.members = new ChannelMemberManager();
   }

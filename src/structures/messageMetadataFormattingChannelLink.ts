@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerMessageMetadataFormattingChannelLink {
   start: number;
@@ -7,7 +7,7 @@ export interface ServerMessageMetadataFormattingChannelLink {
   groupId?: number
 }
 
-export class MessageMetadataFormattingChannelLink extends Base {
+export class MessageMetadataFormattingChannelLink extends BaseEntity {
   start: number;
   end: number;
   channelId: number | null;

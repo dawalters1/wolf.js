@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerEventSubscriptionAdditionalInfo {
   eTag: string;
@@ -7,7 +7,7 @@ export interface ServerEventSubscriptionAdditionalInfo {
   startsAt: Date;
 }
 
-export class EventSubscriptionAdditionalInfo extends Base {
+export class EventSubscriptionAdditionalInfo extends BaseEntity {
   eTag: string;
   endsAt: Date;
   startsAt: Date;

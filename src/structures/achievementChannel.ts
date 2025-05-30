@@ -1,14 +1,14 @@
 import WOLF from '../client/WOLF.ts';
 import { key } from '../decorators/key.ts';
 import AchievementChannelAdditionalInfo, { ServerAchievementChannelAdditionalInfo } from './achievementChannelAdditionalInfo.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerAchievementChannel {
   id: number;
   additionalInfo: ServerAchievementChannelAdditionalInfo
 }
 
-export class AchievementChannel extends Base {
+export class AchievementChannel extends BaseEntity {
     @key
       id: number;
 

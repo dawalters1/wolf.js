@@ -6,7 +6,7 @@ import { UserPrivilege } from '../../constants/UserPrivilege.ts';
 import Channel from '../../structures/channel.ts';
 import ChannelMember from '../../structures/channelMember.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
 const canPerformChannelAction = async (client: WOLF, channel: Channel, targetMember: ChannelMember, targetCapability: ChannelMemberCapability) => {
   if (targetCapability === ChannelMemberCapability.OWNER) { return false; }
@@ -46,7 +46,7 @@ const canPerformChannelAction = async (client: WOLF, channel: Channel, targetMem
   return isSourceMemberCapabilityHigher;
 };
 
-class ChannelMemberHelper extends Base {
+class ChannelMemberHelper extends BaseHelper<ChannelMember> {
   async _getList (channel: Channel, list: string) {
     // Entirety of requested list has been cached, return it
     if (channel.members.metadata[list]) {

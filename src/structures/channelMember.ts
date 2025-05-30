@@ -2,7 +2,7 @@ import WOLF from '../client/WOLF.ts';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerChannelMember {
   id: number;
@@ -10,7 +10,7 @@ export interface ServerChannelMember {
   capabilities: ChannelMemberCapability
 }
 
-export class ChannelMember extends Base {
+export class ChannelMember extends BaseEntity {
   @key
     id: number;
 

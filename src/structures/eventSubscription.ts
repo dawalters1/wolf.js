@@ -1,6 +1,6 @@
 import WOLF from '../client/WOLF.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import EventSubscriptionAdditionalInfo, { ServerEventSubscriptionAdditionalInfo } from './eventSubscriptionAdditionalInfo.ts';
 
 export interface ServerEventSubscription {
@@ -9,7 +9,7 @@ export interface ServerEventSubscription {
   additionalInfo: ServerEventSubscriptionAdditionalInfo;
 }
 
-export class EventSubscription extends Base {
+export class EventSubscription extends BaseEntity {
   @key
     id: number;
 

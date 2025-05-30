@@ -1,7 +1,7 @@
 import WOLF from '../client/WOLF.ts';
 import { Language } from '../constants/Language.ts';
 import { key } from '../decorators/key.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerCharm {
   cost: number;
@@ -13,7 +13,7 @@ export interface ServerCharm {
   productId: number
 }
 
-export class Charm extends Base {
+export class Charm extends BaseEntity {
   @key
     id: number;
 
@@ -38,7 +38,7 @@ export class Charm extends Base {
     this.languages = new Set([data.languageId]);
   }
 
-  protected _patch (charm: Charm): void {
+  patch (charm: Charm) {
     this.cost = charm.cost;
     this.imageUrl = charm.imageUrl;
     this.productId = charm.productId;
@@ -46,6 +46,7 @@ export class Charm extends Base {
     charm.name.forEach((value, key) => this.name.set(key, value));
     charm.description.forEach((value, key) => this.description.set(key, value));
     charm.languages.forEach((language) => this.languages.add(language));
+    return this
   }
 
   /** @internal */

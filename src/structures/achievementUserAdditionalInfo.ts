@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerAchievementUserAdditionalInfo {
   awardedAt: Date | null;
@@ -9,7 +9,7 @@ export interface ServerAchievementUserAdditionalInfo {
   categoryId: number
 }
 
-export class AchievementUserAdditionalInfo extends Base {
+export class AchievementUserAdditionalInfo extends BaseEntity {
   awardedAt: Date | null;
   eTag: string;
   steps?: number;
