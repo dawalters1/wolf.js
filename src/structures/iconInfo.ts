@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerIconInfo {
   availableSizes: Map<string, string>
   availableTypes: string[];
 }
 
-export class IconInfo extends Base {
+export class IconInfo extends BaseEntity {
   availableSizes: Map<string, string>;
   availableTypes: Set<string>;
 

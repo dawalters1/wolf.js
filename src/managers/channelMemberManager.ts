@@ -10,10 +10,10 @@ interface ChannelMemberMetadata {
     silenced: boolean
 }
 
-class ChannelMemberManager extends CacheManager<ChannelMember, Map<number, ChannelMember>> {
+class ChannelMemberManager extends CacheManager<ChannelMember> {
   metadata: ChannelMemberMetadata;
   constructor () {
-    super(new Map());
+    super();
 
     this.metadata = {
       privileged: false,

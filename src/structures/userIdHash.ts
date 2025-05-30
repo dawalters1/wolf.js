@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerUserIdHash {
   id: number;
   hash: string
 }
 
-export class UserIdHash extends Base {
+export class UserIdHash extends BaseEntity {
   id: number;
   hash: string;
 

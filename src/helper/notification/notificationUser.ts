@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Command } from '../../constants/Command.ts';
-import CacheManager from '../../managers/cacheManager.ts';
 import { NotificationOptions } from '../../options/requestOptions.ts';
 import Notification from '../../structures/notification.ts';
 import NotificationUser from '../../structures/notificationUser.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class NotificationUserHelper extends Base<CacheManager<NotificationUser, Map<number, NotificationUser>>> {
+class NotificationUserHelper extends BaseHelper<NotificationUser> {
   async list (opts: NotificationOptions): Promise<Notification[]> {
     if (!opts?.forceNew && this.client.me?.notificationsUser?.fetched) {
-      return this.client.me!.notificationsUser.values();
+      return this.client.me.notificationsUser.values();
     }
 
     const get = async (results: Notification[] = []): Promise<Notification[]> => {
@@ -32,7 +30,7 @@ class NotificationUserHelper extends Base<CacheManager<NotificationUser, Map<num
 
     this.client.me!.notificationsUser.fetched = true;
 
-    return this.client.me!.notificationsUser.mset(await get());
+    return this.client.me.notificationsUser.setAll(await get());
   }
 
   async clear () : Promise<WOLFResponse> {
@@ -61,7 +59,7 @@ class NotificationUserHelper extends Base<CacheManager<NotificationUser, Map<num
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedNotificationUsers = this.cache!.mget(notificationIds)
+      const cachedNotificationUsers = this.cache.getAll(notificationIds)
         .filter((notificationUser): notificationUser is NotificationUser => notificationUser !== null);
 
       cachedNotificationUsers.forEach((notificationUser) => notificationsMap.set(notificationUser.id, notificationUser));

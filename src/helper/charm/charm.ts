@@ -1,30 +1,31 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import WOLF from '../../client/WOLF.ts';
-import { Command } from '../../constants/Command.ts';
-import { Language } from '../../constants/Language.ts';
+import {Command} from '../../constants/Command.ts';
+import {Language} from '../../constants/Language.ts';
 import CacheManager from '../../managers/cacheManager.ts';
-import { CharmOptions, CharmUserSummaryOptions, CharmUserStatisticsOptions } from '../../options/requestOptions.ts';
-import { Charm } from '../../structures/charm.ts';
+import {CharmOptions, CharmUserSummaryOptions, CharmUserStatisticsOptions} from '../../options/requestOptions.ts';
+import {Charm} from '../../structures/charm.ts';
 import CharmSummary from '../../structures/charmSummary.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
+import CharmStatistic from "../../structures/charmStatistic.ts";
 
-class CharmHelper extends Base<CacheManager<Charm, Map<number, Charm>>> {
-  constructor (client: WOLF) {
-    super(client, new CacheManager(new Map()));
+class CharmHelper extends BaseHelper<Charm> {
+  constructor(client: WOLF) {
+    super(client);
   }
 
-  async getById (charmId: number, languageId: Language, opts?: CharmOptions): Promise<Charm | null> {
+  async getById(charmId: number, languageId: Language, opts?: CharmOptions): Promise<Charm | null> {
     return (await this.getByIds([charmId], languageId, opts))[0];
   }
 
-  async getByIds (charmIds: number[], languageId: Language, opts?: CharmOptions): Promise<(Charm | null)[]> {
+  async getByIds(charmIds: number[], languageId: Language, opts?: CharmOptions): Promise<(Charm | null)[]> {
     const charmsMap = new Map<number, Charm | null>();
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedAchievements = this.cache!.mget(charmIds)
+      const cachedAchievements = this.cache.getAll(charmIds)
         .filter((charm): charm is Charm => charm !== null && charm.hasLanguage(languageId));
 
       cachedAchievements.forEach((achievement) => charmsMap.set(achievement.id, achievement));
@@ -49,7 +50,7 @@ class CharmHelper extends Base<CacheManager<Charm, Map<number, Charm>>> {
     return charmIds.map((achievementId) => charmsMap.get(achievementId) ?? null);
   }
 
-  async getUserSummary (userId: number, opts?: CharmUserSummaryOptions): Promise<CharmSummary[]> {
+  async getUserSummary(userId: number, opts?: CharmUserSummaryOptions): Promise<CharmSummary[]> {
     const user = await this.client.user.getById(userId);
 
     if (user === null) {
@@ -70,21 +71,21 @@ class CharmHelper extends Base<CacheManager<Charm, Map<number, Charm>>> {
 
     user.charmSummary.fetched = true;
 
-    return user.charmSummary!.mset(response.body);
+    return user.charmSummary.setAll(response.body);
   }
 
-  async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmSummary[]> {
+  async getUserStatistics(userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
     const user = await this.client.user.getById(userId);
 
     if (user === null) {
       throw new Error('');
     }
 
-    if (!opts?.forceNew && user.charmStatistics!.fetched) {
+    if (!opts?.forceNew && user.charmStatistics.fetched) {
       return user.charmStatistics;
     }
 
-    const response = await this.client.websocket.emit<CharmSummary[]>(
+    const response = await this.client.websocket.emit<CharmStatistic>(
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
         body: {
@@ -92,7 +93,7 @@ class CharmHelper extends Base<CacheManager<Charm, Map<number, Charm>>> {
         }
       });
 
-    user.charmStatistics._patch(response.body);
+    user.charmStatistics.patch(response.body);
 
     return user.charmStatistics;
   }

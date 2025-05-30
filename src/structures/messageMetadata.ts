@@ -1,5 +1,5 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 import MessageMetadataFormatting, { ServerMessageMetadataFormatting } from './messageMetadataFormatting.ts';
 
 export interface ServerMessageMetadata {
@@ -10,7 +10,7 @@ export interface ServerMessageMetadata {
   isDeleted?: boolean;
 }
 
-export class MessageMetadata extends Base {
+export class MessageMetadata extends BaseEntity {
   formatting: MessageMetadataFormatting | null;
   isEdited: boolean;
   isSpam: boolean;

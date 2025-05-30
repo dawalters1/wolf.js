@@ -6,20 +6,20 @@ import CacheManager from '../../managers/cacheManager.ts';
 import { ContactOptions } from '../../options/requestOptions.ts';
 import Contact from '../../structures/contact.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 import BlockedHelper from './blocked.ts';
 
-class ContactHelper extends Base<CacheManager<Contact, Map<number, Contact>>> {
+class ContactHelper extends BaseHelper<Contact> {
   blocked: BlockedHelper;
 
   constructor (client: WOLF) {
-    super(client, new CacheManager(new Map()));
+    super(client);
     this.blocked = new BlockedHelper(client);
   }
 
   async list (opts?: ContactOptions) {
-    if (!opts?.forceNew && this.cache!.fetched) {
-      return this.cache!.values();
+    if (!opts?.forceNew && this.cache.fetched) {
+      return this.cache.values();
     }
 
     const response = await this.client.websocket.emit<Contact[]>(
@@ -30,15 +30,15 @@ class ContactHelper extends Base<CacheManager<Contact, Map<number, Contact>>> {
         }
       });
 
-    this.cache!.fetched = true;
+    this.cache.fetched = true;
 
-    return this.cache?.mset(response.body);
+    return this.cache.setAll(response.body);
   }
 
   async isContact (userId: number): Promise<boolean> {
     await this.list();
 
-    return this.cache!.has(userId);
+    return this.cache.has(userId);
   }
 
   async add (userId: number): Promise<WOLFResponse> {

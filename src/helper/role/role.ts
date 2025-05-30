@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
-import CacheManager from '../../managers/cacheManager.ts';
 import { RoleOptions } from '../../options/requestOptions.ts';
 import { Role } from '../../structures/role.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import Base from '../base.ts';
+import BaseHelper from '../baseHelper.ts';
 
-class RoleHelper extends Base<CacheManager<Role, Map<number, Role>>> {
+class RoleHelper extends BaseHelper<Role> {
   async getById (roleId: number, langaugeId: Language, opts?: RoleOptions): Promise<Role | null> {
     return (await this.getByIds([roleId], langaugeId, opts))[0];
   }
@@ -17,7 +16,7 @@ class RoleHelper extends Base<CacheManager<Role, Map<number, Role>>> {
 
     // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedRoles = this.cache!.mget(roleIds)
+      const cachedRoles = this.cache.getAll(roleIds)
         .filter((role): role is Role => role !== null && role.hasLanguage(languageId));
 
       cachedRoles.forEach((role) => roleMap.set(role.id, role));

@@ -1,12 +1,12 @@
 import WOLF from '../client/WOLF.ts';
-import Base from './base.ts';
+import BaseEntity from './baseEntity.ts';
 
 export interface ServerCharmStatisticExtended {
   mostGiftedReceivedCharmId: number;
   mostGiftedSentCharmId: number;
 }
 
-export class CharmStatisticExtended extends Base {
+export class CharmStatisticExtended extends BaseEntity {
   mostGiftedReceivedCharmId: number;
   mostGiftedSentCharmId: number;
 

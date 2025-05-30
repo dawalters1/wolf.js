@@ -1,75 +1,53 @@
-
 import { getKeyProperty } from '../decorators/key.ts';
+import BaseEntity from '../structures/baseEntity.ts';
 
-export class CacheManager<T, S extends Set<T> | Map<number, T>> {
-  store: S;
+export class CacheManager<T extends BaseEntity> {
+  store: Map<number, T> = new Map();
   fetched: boolean = false;
-
-  constructor (store: S) {
-    this.store = store;
-  }
-
-  // #region add methods for set
-  add (this: CacheManager<T, Set<T>>, value: T): boolean {
-    if (this.store.has(value)) { return false; }
-
-    return this.store.add(value).has(value);
-  }
-
-  madd (this: CacheManager<T, Set<T>>, values: T[]): boolean[] {
-    return values.map((value) => this.add(value));
-  }
 
   // #endregion
   // #region set methods for map
-  set (this: CacheManager<T, Map<number, T>>, value: T): T {
-    const key = value[getKeyProperty(value as object)] as number;
+  set (value: T) {
+    const key = value[getKeyProperty(value)] as number;
 
     const existing = this.get(key);
 
-    if (existing) {
-      return (existing as any)._patch(value);
+    if (existing && existing.patch) {
+      return existing.patch(value);
     }
 
-    return this.store.set(key, value).get(key) as T;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.store.set(key, value).get(key)!;
   }
 
-  mset (this: CacheManager<T, Map<number, T>>, values: T[]): T[] {
+  setAll (values: T[]): T[] {
     return values.map((value) => this.set(value));
   }
 
   // #endregion
   // #region get methods
-  get (this: CacheManager<T, Map<number, T>>, key: number): T | null {
+  get (key: number) {
     return this.store.get(key) ?? null;
   }
 
-  mget (this: CacheManager<T, Map<number, T>>, keys: number[]): (T | null)[] {
+  getAll (keys: number[]): (T | null)[] {
     return keys.map((key) => this.store.get(key) ?? null);
   }
 
   // #endregion
-  has (key: T | number): boolean {
-    if (this.store instanceof Map) {
-      return this.store.has(key as number);
-    }
-
-    return this.store.has(key as T);
+  has (key: number): boolean {
+    return this.store.has(key);
   }
 
   mhas (keys: number[]): boolean[] {
     return keys.map((key) => this.has(key));
   }
 
-  delete (key: T | number): boolean {
-    if (this.store instanceof Map) {
-      return this.store.delete(key as number);
-    }
-
-    return this.store.delete(key as T);
+  delete (key: number): boolean {
+    return this.store.delete(key);
   }
 
-  mdelete (keys: number[]): boolean[] {
+  deleteAll (keys: number[]): boolean[] {
     return keys.map((key) => this.delete(key));
   }
 
@@ -82,7 +60,7 @@ export class CacheManager<T, S extends Set<T> | Map<number, T>> {
     return this.store.size;
   }
 
-  keys (this: CacheManager<T, Map<number, T>>): number[] {
+  keys (): number[] {
     return [...this.store.keys()];
   }
 
@@ -90,7 +68,7 @@ export class CacheManager<T, S extends Set<T> | Map<number, T>> {
     return [...this.store.values()];
   }
 
-  entries (this: CacheManager<T, Map<number, T>>): [number, T][] {
+  entries (): [number, T][] {
     return [...this.store.entries()];
   }
 }

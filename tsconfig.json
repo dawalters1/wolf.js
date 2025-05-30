@@ -5,7 +5,10 @@
       "module": "commonjs",
       "outDir": "dist",
       "esModuleInterop": true,
-      "lib": ["es6"],
+      "lib": [
+        "ESNext",
+        "dom"
+      ],
       "moduleResolution": "node",
       "strict": true, 
       "noEmitOnError": true,
