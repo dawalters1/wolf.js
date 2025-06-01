@@ -13,6 +13,7 @@ export class AchievementChannel extends BaseEntity {
     id: number;
 
   additionalInfo: AchievementChannelAdditionalInfo;
+  childrenId?: Set<number>;
 
   constructor (client: WOLF, data: ServerAchievementChannel) {
     super(client);

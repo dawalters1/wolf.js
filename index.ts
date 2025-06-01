@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import WOLF from './src/client/WOLF';
 
 const exports = {

@@ -1,8 +1,19 @@
 import BaseHelper from '../baseHelper';
+import { Command } from '../../constants/Command';
 import { User } from '../../structures/user';
+import { UserOptions } from '../../options/requestOptions';
+import WOLF from '../../client/WOLF';
 import WOLFResponse from '../../structures/WOLFResponse';
+import WOLFStarHelper from './wolfstar';
 
 class UserHelper extends BaseHelper<User> {
+  wolfstar: Readonly<WOLFStarHelper>;
+
+  constructor (client: WOLF) {
+    super(client);
+    this.wolfstar = new WOLFStarHelper(client);
+  }
+
   async getById (userId: number, opts?: UserOptions): Promise<User | null> {
     return (await this.getByIds([userId], opts))[0];
   }
@@ -29,7 +40,8 @@ class UserHelper extends BaseHelper<User> {
             subscribe: opts?.subscribe ?? true,
             extended: opts?.extended ?? true
           }
-        });
+        }
+      );
 
       response.body.values().filter((userResponse) => userResponse.success)
         .forEach((userResponse) => usersMap.set(userResponse.body.id, this.cache.set(userResponse.body)));

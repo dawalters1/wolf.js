@@ -5,7 +5,7 @@ import ChannelHelper from '../helper/channel/channel.ts';
 import CurrentUser from '../structures/currentUser.ts';
 import EventHelper from '../helper/event/event.ts';
 import Multimedia from './multimedia/multimedia.ts';
-import { UserHelper } from '../helper/user/userHelper.ts';
+import UserHelper from '../helper/user/user.ts';
 import { Websocket } from './websocket/websocket.ts';
 
 class WOLF {
@@ -14,7 +14,6 @@ class WOLF {
   achievement: Readonly<AchievementHelper>;
   authorisation: AuthorisationHelper;
   banned: BannedHelper;
-  // user: User;
   channel: Readonly<ChannelHelper>;
   event: Readonly<EventHelper>;
   websocket: Websocket;

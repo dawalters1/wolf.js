@@ -13,6 +13,7 @@ export class AchievementUser extends BaseEntity {
     id: number;
 
   additionalInfo: AchievementUserAdditionalInfo;
+  childrenId?: Set<number>;
 
   constructor (client: WOLF, data: ServerAchievementUser) {
     super(client);

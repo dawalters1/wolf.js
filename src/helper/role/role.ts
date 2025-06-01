@@ -32,7 +32,8 @@ class RoleHelper extends BaseHelper<Role> {
             idList: missingIds,
             languageId
           }
-        });
+        }
+      );
 
       response.body.filter((roleResponse) => roleResponse.success)
         .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache.set(roleResponse.body)));

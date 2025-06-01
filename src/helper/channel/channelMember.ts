@@ -4,80 +4,58 @@ import ChannelMember from '../../structures/channelMember.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../../constants/ChannelMemberListType.ts';
 import { Command } from '../../constants/Command.ts';
+import { StatusCodes } from 'http-status-codes';
 import { UserPrivilege } from '../../constants/UserPrivilege.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
-const canPerformChannelAction = async (client: WOLF, channel: Channel, targetMember: ChannelMember, targetCapability: ChannelMemberCapability) => {
-  if (targetCapability === ChannelMemberCapability.OWNER) { return false; }
+const canPerformChannelAction = async (
+  client: WOLF,
+  channel: Channel,
+  targetMember: ChannelMember,
+  targetCapability: ChannelMemberCapability
+): Promise<boolean> => {
+  if (targetCapability === ChannelMemberCapability.OWNER) return false;
+  if (channel.isOwner) return true;
 
-  if (channel.isOwner) { return true; }
+  const sourceMemberHasGap = client.me?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
 
-  const sourceMemberHasGap = client.me.privilegeList.includes(UserPrivilege.GROUP_ADMIN);
-
-  if (targetCapability === ChannelMemberCapability.CO_OWNER) {
-    if (sourceMemberHasGap) { return true; }
-
-    return false;
-  }
-
-  const isSourceMemberCapabilityHigher = sourceMemberHasGap ?? (() => {
+  const hasHigherCapability = (() => {
     switch (channel.capabilities) {
       case ChannelMemberCapability.CO_OWNER:
-        return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.NONE, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
+        return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.NONE, ChannelMemberCapability.BANNED].includes(targetMember.capabilities);
       case ChannelMemberCapability.ADMIN:
-        if (channel.extended && channel.extended.advancedAdmin) {
-          return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
-        }
-        return [ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
+        return channel.extended?.advancedAdmin
+          ? [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities)
+          : [ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
       case ChannelMemberCapability.MOD:
         return [ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
       default:
         return false;
     }
-  });
+  })();
 
   const targetUser = await client.user.getById(targetMember.id);
+  const targetMemberHasGap = targetUser?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
 
-  const targetMemberHasGap = targetUser.privilegeList.includes(UserPrivilege.GROUP_ADMIN);
+  if (
+    [ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(targetCapability) &&
+    targetMemberHasGap
+  ) return false;
 
-  if ([ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(targetCapability) && targetMemberHasGap) { return false; }
-
-  return isSourceMemberCapabilityHigher;
+  return sourceMemberHasGap || hasHigherCapability;
 };
 
 class ChannelMemberHelper extends BaseHelper<ChannelMember> {
-  async _getList (channel: Channel, list: string) {
-    // Entirety of requested list has been cached, return it
+  private async _getList (channel: Channel, list: string): Promise<ChannelMember[]> {
     if (channel.members.metadata[list]) {
-      return channel.members
-        .values()
-        .filter((member) => member.lists.has(list));
+      return channel.members.values().filter(m => m.lists.has(list));
     }
 
-    // TODO: This needs to be done
     const listConfig = this.client.config.get(`framework.helper.channel.member.list.${list}`);
+    const command = this._getCommandForList(list);
 
-    // Determine which command to use
-    const command = (() => {
-      switch (list) {
-        case ChannelMemberListType.PRIVILEGED:
-          return Command.GROUP_MEMBER_PRIVILEGED_LIST;
-        case ChannelMemberListType.REGULAR:
-          return Command.GROUP_MEMBER_REGULAR_LIST;
-        case ChannelMemberListType.SILENCED:
-          return Command.GROUP_MEMBER_SEARCH;
-        case ChannelMemberListType.BANNED:
-          return Command.GROUP_MEMBER_BANNED_LIST;
-        case ChannelMemberListType.BOTS:
-          return Command.GROUP_MEMBER_SEARCH;
-        default:
-          throw new Error(`Unknown list type ${list}`);
-      }
-    })();
-
-    const get = async (members: ChannelMember[] = []): Promise<ChannelMember[]> => {
-      // eslint-disable-next-line no-useless-catch
+    const fetchMembers = async (result: ChannelMember[] = []): Promise<ChannelMember[]> => {
       try {
         const response = await this.client.websocket.emit<ChannelMember[]>(
           command,
@@ -85,53 +63,59 @@ class ChannelMemberHelper extends BaseHelper<ChannelMember> {
             body: {
               id: channel.id,
               limit: listConfig.limit,
-              // GROUP_MEMBER_*_LIST list batching
-              after: listConfig.batchType === 'after'
-                ? (members.slice(-1)[0]?.id ?? undefined)
-                : undefined,
-              // GROUP_MEMBER_SEARCH batching
-              filter: listConfig.batchType === 'offset'
-                ? list
-                : undefined,
-              // GROUP_MEMBER_SEARCH batching
-              offset: listConfig.batchType === 'offset'
-                ? members.length
-                : undefined,
-              // Whether a list can be subscribed to
-              subscribe: Reflect.has(listConfig, 'subscribe')
-                ? listConfig.subscribe
-                : undefined
+              after: listConfig.batchType === 'after' ? result.at(-1)?.id : undefined,
+              filter: listConfig.batchType === 'offset' ? list : undefined,
+              offset: listConfig.batchType === 'offset' ? result.length : undefined,
+              subscribe: 'subscribe' in listConfig ? listConfig.subscribe : undefined
             }
           }
         );
 
-        channel.members.metadata[list] = listConfig.batched
+        response.body.forEach(m => m.addList(list));
+        result.push(...response.body);
+
+        const complete = listConfig.batched
           ? response.body.length < listConfig.limit
           : true;
 
-        response.body.forEach((channelMember) => channelMember.addList(list));
+        channel.members.metadata[list] = complete;
 
-        members.push(...response.body);
-
-        return channel.members.metadata[list]
-          ? members
-          : await get(members);
-      } catch (error) {
-        // Handle
-        // if (error.code === StatusCodes.NOT_FOUND) { return []; }
-        throw error;
+        return complete ? result : await fetchMembers(result);
+      } catch (err: any) {
+        if (err.code === StatusCodes.NOT_FOUND) return [];
+        throw err;
       }
     };
 
-    return await get();
+    return fetchMembers();
   }
 
-  async _getMember (channel: Channel, userId: number) {
+  private _getCommandForList (list: string): Command {
+    switch (list) {
+      case ChannelMemberListType.PRIVILEGED: return Command.GROUP_MEMBER_PRIVILEGED_LIST;
+      case ChannelMemberListType.REGULAR: return Command.GROUP_MEMBER_REGULAR_LIST;
+      case ChannelMemberListType.SILENCED:
+      case ChannelMemberListType.BOTS: return Command.GROUP_MEMBER_SEARCH;
+      case ChannelMemberListType.BANNED: return Command.GROUP_MEMBER_BANNED_LIST;
+      default: throw new Error(`Unknown list type: ${list}`);
+    }
+  }
+
+  async getList (channelId: number, list: ChannelMemberListType): Promise<ChannelMember[]> {
+    const channel = await this.client.channel.getById(channelId);
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.isMember) throw new Error(`Not a member of channel ${channelId}`);
+    return this._getList(channel, list);
+  }
+
+  async getMember (channelId: number, userId: number): Promise<ChannelMember | null> {
+    const channel = await this.client.channel.getById(channelId);
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.isMember) throw new Error(`Not a member of channel ${channelId}`);
+
     const cached = channel.members.get(userId);
+    if (cached) { return cached; };
 
-    if (cached) { return cached; }
-
-    // eslint-disable-next-line no-useless-catch
     try {
       const response = await this.client.websocket.emit<ChannelMember>(
         Command.GROUP_MEMBER,
@@ -144,196 +128,91 @@ class ChannelMemberHelper extends BaseHelper<ChannelMember> {
       );
 
       return channel.members.set(response.body);
-    } catch (error) {
-      //   if (error.code === StatusCodes.NOT_FOUND) { return null; }
-      throw error;
+    } catch (err: any) {
+      if (err.code === StatusCodes.NOT_FOUND) return null;
+      throw err;
     }
   }
 
-  async getList (channelId: number, list: ChannelMemberListType): Promise<ChannelMember[]> {
+  private async updateCapability (channelId: number, userId: number, target: ChannelMemberCapability, allowedFrom: ChannelMemberCapability[]): Promise<WOLFResponse> {
     const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    if (!channel.isMember) { throw new Error(); }
-
-    return await this._getList(channel, list);
-  }
-
-  async getMember (channelId: number, userId: number): Promise<ChannelMember> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    if (!channel.isMember) { throw new Error(); }
-
-    return await this._getMember(channel, userId);
-  }
-
-  async coowner (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.isMember) throw new Error(`Not a member of channel ${channelId}`);
     const member = await this.getMember(channelId, userId);
+    if (!member) { throw new Error('Member not found'); };
 
-    if (member === null) { throw new Error(''); }
+    if (!await canPerformChannelAction(this.client, channel, member, target)) {
+      throw new Error(`Insufficient permissions to change capability to ${ChannelMemberCapability[target]}`);
+    }
 
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.CO_OWNER)) { throw new Error(''); }
+    if (!allowedFrom.includes(member.capabilities)) {
+      throw new Error(`Invalid transition from ${ChannelMemberCapability[member.capabilities]} to ${ChannelMemberCapability[target]}`);
+    }
 
-    if (![ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
+    return this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
         body: {
           groupId: channelId,
           id: userId,
-          capabilities: ChannelMemberCapability.CO_OWNER
+          capabilities: target
         }
       }
     );
   }
 
-  async admin (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    const member = await this.getMember(channelId, userId);
-
-    if (member === null) { throw new Error(''); }
-
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.ADMIN)) { throw new Error(''); }
-
-    if (![ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        body: {
-          groupId: channelId,
-          id: userId,
-          capabilities: ChannelMemberCapability.ADMIN
-        }
-      }
-    );
+  async coowner (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.CO_OWNER, [
+      ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR
+    ]);
   }
 
-  async mod (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    const member = await this.getMember(channelId, userId);
-
-    if (member === null) { throw new Error(''); }
-
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.MOD)) { throw new Error(''); }
-
-    if (![ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.REGULAR].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        body: {
-          groupId: channelId,
-          id: userId,
-          capabilities: ChannelMemberCapability.MOD
-        }
-      }
-    );
+  async admin (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.ADMIN, [
+      ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR
+    ]);
   }
 
-  async regular (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    const member = await this.getMember(channelId, userId);
-
-    if (member === null) { throw new Error(''); }
-
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.REGULAR)) { throw new Error(''); }
-
-    if (![ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.SILENCED].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        body: {
-          groupId: channelId,
-          id: userId,
-          capabilities: ChannelMemberCapability.REGULAR
-        }
-      }
-    );
+  async mod (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.MOD, [
+      ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.REGULAR
+    ]);
   }
 
-  async silence (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
-    const member = await this.getMember(channelId, userId);
-
-    if (member === null) { throw new Error(''); }
-
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.SILENCED)) { throw new Error(''); }
-
-    if (![ChannelMemberCapability.REGULAR].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        body: {
-          groupId: channelId,
-          id: userId,
-          capabilities: ChannelMemberCapability.SILENCED
-        }
-      }
-    );
+  async regular (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.REGULAR, [
+      ChannelMemberCapability.CO_OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.SILENCED
+    ]);
   }
 
-  async ban (channelId: number, userId: number): Promise<WOLFResponse> {
-    const channel = await this.client.channel.getById(channelId);
+  async silence (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.SILENCED, [
+      ChannelMemberCapability.REGULAR
+    ]);
+  }
 
-    if (channel === null) { throw new Error(); }
-
-    const member = await this.getMember(channelId, userId);
-
-    if (member === null) { throw new Error(''); }
-
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.BANNED)) { throw new Error(''); }
-
-    if (![ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        body: {
-          groupId: channelId,
-          id: userId,
-          capabilities: ChannelMemberCapability.BANNED
-        }
-      }
-    );
+  async ban (channelId: number, userId: number) {
+    return this.updateCapability(channelId, userId, ChannelMemberCapability.BANNED, [
+      ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED
+    ]);
   }
 
   async kick (channelId: number, userId: number): Promise<WOLFResponse> {
     const channel = await this.client.channel.getById(channelId);
-
-    if (channel === null) { throw new Error(); }
-
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.isMember) throw new Error(`Not a member of channel ${channelId}`);
     const member = await this.getMember(channelId, userId);
+    if (!member) { throw new Error('Member not found'); };
 
-    if (member === null) { throw new Error(''); }
+    if (!await canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.BANNED)) {
+      throw new Error('Insufficient permissions to kick member');
+    }
 
-    if (!canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.BANNED)) { throw new Error(''); }
+    if (![ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(member.capabilities)) {
+      throw new Error('Kick not permitted for current capability');
+    }
 
-    if (![ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(member.capabilities)) { throw new Error(''); }
-
-    return await this.client.websocket.emit(
+    return this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
       {
         body: {

@@ -64,7 +64,8 @@ class ChannelHelper extends BaseHelper<Channel> {
             subscribe: opts?.subscribe ?? true,
             entities: opts?.entities ?? defaultChannelEntities
           }
-        });
+        }
+      );
 
       response.body.values().filter((channelResponse) => channelResponse.success)
         .forEach((channelResponse) => channelsMap.set(channelResponse.body.id, this.cache.set(channelResponse.body)));

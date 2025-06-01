@@ -58,4 +58,9 @@ export interface StageSlotOptions {
   forceNew?: false;
   subscribe?: true;
 }
+export interface UserOptions {
+  forceNew?: false;
+  subscribe?: true;
+  extended?: true;
+}
 //

@@ -20,7 +20,8 @@ class AchievementCategoryHelper extends BaseHelper<AchievementCategory> {
         body: {
           languageId
         }
-      });
+      }
+    );
 
     return this.cache.setAll(response.body);
   }

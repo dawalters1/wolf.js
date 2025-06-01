@@ -1,3 +1,4 @@
+import AchievementUser from './achievementUser.ts';
 import BaseEntity from './baseEntity.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import CharmStatistic from './charmStatistic.ts';
@@ -48,6 +49,7 @@ export class User extends BaseEntity {
   status: string;
   charmSummary: CacheManager<CharmSummary>;
   charmStatistics: CharmStatistic;
+  achievements: CacheManager<AchievementUser>;
 
   constructor (client: WOLF, data: ServerUser) {
     super(client);
@@ -73,5 +75,6 @@ export class User extends BaseEntity {
     this.status = data.status;
     this.charmSummary = new CacheManager();
     this.charmStatistics = new CharmStatistic(client);
+    this.achievements = new CacheManager();
   }
 }

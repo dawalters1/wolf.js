@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import stylistic from '@stylistic/eslint-plugin-ts';
 import autoSortImports from './eslint/autoSortImports.js';
-
+import emitFormatter from './eslint/emitFormatter.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,7 +27,8 @@ export default [
       custom: {
         rules: {
           'enum-spacing': enumSpacingRule,
-          'auto-sort-imports': autoSortImports
+          'auto-sort-imports': autoSortImports,
+          'emit-formatting': emitFormatter
         },
       },
     },
@@ -36,6 +37,7 @@ export default [
       ...tseslint.configs.stylistic.rules,
       //...stylistic.configs.all,
       ...prettier.rules,
+      'custom/emit-formatting': 'error',
       'custom/auto-sort-imports': 'error',
       'space-before-blocks': ['error', 'always'],
       'space-before-function-paren': ['error', 'always'],

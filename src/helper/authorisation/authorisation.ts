@@ -16,12 +16,18 @@ class AuthorisationHelper extends BaseHelper<User> {
 
   async authorise (userId: number): Promise<boolean> {
     const user = await this.client.user.getById(userId);
+    if (user === null) { throw new Error(''); }
     return !!this.cache.set(user);
   }
 
   async authoriseAll (userIds: number[]): Promise<boolean[]> {
-    const users = await this.client.user.getAllById(userIds);
-    return users.map((user) => !!this.cache.set(user));
+    const users = await this.client.user.getByIds(userIds);
+
+    return users.map((user, index) => {
+      if (user === null) { throw new Error(''); }
+
+      return !!this.cache.set(user);
+    });
   }
 
   deauthorise (userId: number): boolean {
