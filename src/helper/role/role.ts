@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
+import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
-import { RoleOptions } from '../../options/requestOptions.ts';
 import { Role } from '../../structures/role.ts';
+import { RoleOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import BaseHelper from '../baseHelper.ts';
 
 class RoleHelper extends BaseHelper<Role> {
   async getById (roleId: number, langaugeId: Language, opts?: RoleOptions): Promise<Role | null> {
@@ -35,7 +35,7 @@ class RoleHelper extends BaseHelper<Role> {
         });
 
       response.body.filter((roleResponse) => roleResponse.success)
-        .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache!.set(roleResponse.body)));
+        .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache.set(roleResponse.body)));
     }
 
     return roleIds.map((roleId) => roleMap.get(roleId) ?? null);

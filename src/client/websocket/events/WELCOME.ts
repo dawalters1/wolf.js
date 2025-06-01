@@ -1,7 +1,7 @@
+import BaseEvent from './baseEvent.ts';
 import { ServerEndpointConfig } from '../../../structures/endpointConfig.ts';
 import { ServerUser } from '../../../structures/user.ts';
 import WOLF from '../../WOLF.ts';
-import Base from './base.ts';
 
 type ServerWelcome = {
   ip: string;
@@ -11,7 +11,7 @@ type ServerWelcome = {
   endpointConfig: ServerEndpointConfig
 }
 
-class Welcome extends Base {
+class Welcome extends BaseEvent {
   constructor (client: WOLF) {
     super(client, 'WELCOME');
   }

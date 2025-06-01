@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
 import ChannelEventAdditionalInfo, { ServerChannelEventAdditonalInfo } from './channelEventAdditionalInfo.ts';
+import { key } from '../decorators/key.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelEvent {
   id: number;
@@ -21,5 +21,4 @@ export class ChannelEvent extends BaseEntity {
     this.additonalInfo = new ChannelEventAdditionalInfo(client, data.additionalInfo);
   }
 }
-
 export default ChannelEvent;

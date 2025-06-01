@@ -1,8 +1,8 @@
-import WOLF from '../../client/WOLF.ts';
 import BaseHelper from '../baseHelper.ts';
+import Notification from '../../structures/notification.ts';
 import NotificationGlobalHelper from './notificationGlobal.ts';
 import NotificationUserHelper from './notificationUser.ts';
-import Notification from '../../structures/notification.ts';
+import WOLF from '../../client/WOLF.ts';
 
 class NotificationHelper extends BaseHelper<Notification> {
   global: Readonly<NotificationGlobalHelper>;

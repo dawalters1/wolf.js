@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants/Language.ts';
 import BaseEntity from './baseEntity.ts';
+import { Language } from '../constants/Language.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelExtended {
   id: number;
@@ -39,5 +39,4 @@ export class ChannelExtended extends BaseEntity {
     this.longDescription = data.longDescription;
   }
 }
-
 export default ChannelExtended;

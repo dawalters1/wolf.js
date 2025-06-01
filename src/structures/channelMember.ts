@@ -1,8 +1,8 @@
-import WOLF from '../client/WOLF.ts';
+import BaseEntity from './baseEntity.ts';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.ts';
 import { key } from '../decorators/key.ts';
-import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelMember {
   id: number;
@@ -54,5 +54,4 @@ export class ChannelMember extends BaseEntity {
     this.lists.delete(list);
   }
 }
-
 export default ChannelMember;

@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Command } from '../../constants/Command.ts';
-import Event from '../../structures/event.ts';
+
+import BaseHelper from '../baseHelper.ts';
 import ChannelEvent from '../../structures/channelEvent.ts';
+import { Command } from '../../constants/Command.ts';
 import CreateChannelEvent from '../../structures/createChannelEvent.ts';
+import Event from '../../structures/event.ts';
+import { EventChannelOptions } from '../../options/requestOptions.ts';
 import UpdateChannelEvent from '../../structures/updateChannelEvent.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import BaseHelper from '../baseHelper.ts';
-import { EventChannelOptions } from '../../options/requestOptions.ts';
 
 const eventHasData = (event: UpdateChannelEvent) => event.category || event.endsAt || event.hostedBy || event.longDescription || event.shortDescription || event.startsAt || event.title;
 
@@ -16,7 +16,7 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
 
     if (channel === null) { throw new Error(''); }
 
-    if (!opts?.forceNew && channel.events!.fetched) { return channel.events!.values(); }
+    if (!opts?.forceNew && channel.events.fetched) { return channel.events.values(); }
 
     const get = async (results: ChannelEvent[] = []): Promise<ChannelEvent[]> => {
       const response = await this.client.websocket.emit<ChannelEvent[]>(
@@ -38,9 +38,9 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
         : await get(results);
     };
 
-    channel.events!.fetched = true;
+    channel.events.fetched = true;
 
-    return channel.events!.setAll(await get());
+    return channel.events.setAll(await get());
   }
 
   async create (channelId: number, eventData: CreateChannelEvent) {

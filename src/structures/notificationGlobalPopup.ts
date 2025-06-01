@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants/Language.ts';
 import BaseEntity from './baseEntity.ts';
+import { Language } from '../constants/Language.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerNotificationGlobalPopup {
   languageId: Language;
@@ -36,5 +36,4 @@ export class NotificationGlobalPopup extends BaseEntity {
     this.priority = data.priority;
   }
 }
-
 export default NotificationGlobalPopup;

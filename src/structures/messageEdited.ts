@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessageEdited {
   subscriberId: number;
@@ -17,5 +17,4 @@ export class MessageEdited extends BaseEntity {
     this.timestamp = data.timestamp;
   }
 }
-
 export default MessageEdited;

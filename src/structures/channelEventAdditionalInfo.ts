@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelEventAdditonalInfo {
   eTag: string;
@@ -20,5 +20,4 @@ export class ChannelEventAdditionalInfo extends BaseEntity {
     this.startsAt = data.startsAt;
   }
 }
-
 export default ChannelEventAdditionalInfo;

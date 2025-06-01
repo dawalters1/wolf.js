@@ -1,26 +1,18 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import WOLF from '../../client/WOLF.ts';
-import {Command} from '../../constants/Command.ts';
-import {Language} from '../../constants/Language.ts';
-import CacheManager from '../../managers/cacheManager.ts';
-import {CharmOptions, CharmUserSummaryOptions, CharmUserStatisticsOptions} from '../../options/requestOptions.ts';
-import {Charm} from '../../structures/charm.ts';
-import CharmSummary from '../../structures/charmSummary.ts';
-import WOLFResponse from '../../structures/WOLFResponse.ts';
 import BaseHelper from '../baseHelper.ts';
-import CharmStatistic from "../../structures/charmStatistic.ts";
+import { Charm } from '../../structures/charm.ts';
+import { CharmOptions, CharmUserStatisticsOptions, CharmUserSummaryOptions } from '../../options/requestOptions.ts';
+import CharmStatistic from '../../structures/charmStatistic.ts';
+import CharmSummary from '../../structures/charmSummary.ts';
+import { Command } from '../../constants/Command.ts';
+import { Language } from '../../constants/Language.ts';
+import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class CharmHelper extends BaseHelper<Charm> {
-  constructor(client: WOLF) {
-    super(client);
-  }
-
-  async getById(charmId: number, languageId: Language, opts?: CharmOptions): Promise<Charm | null> {
+  async getById (charmId: number, languageId: Language, opts?: CharmOptions): Promise<Charm | null> {
     return (await this.getByIds([charmId], languageId, opts))[0];
   }
 
-  async getByIds(charmIds: number[], languageId: Language, opts?: CharmOptions): Promise<(Charm | null)[]> {
+  async getByIds (charmIds: number[], languageId: Language, opts?: CharmOptions): Promise<(Charm | null)[]> {
     const charmsMap = new Map<number, Charm | null>();
 
     // User is not requesting new data from server
@@ -34,7 +26,7 @@ class CharmHelper extends BaseHelper<Charm> {
     const missingIds = charmIds.filter((id) => !charmsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Array<WOLFResponse<Charm>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Charm>>>(
         Command.CHARM_LIST,
         {
           body: {
@@ -43,22 +35,22 @@ class CharmHelper extends BaseHelper<Charm> {
           }
         });
 
-      response.body.filter((charmResponse) => charmResponse.success)
-        .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache!.set(charmResponse.body)));
+      response.body.values().filter((charmResponse) => charmResponse.success)
+        .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache.set(charmResponse.body)));
     }
 
     return charmIds.map((achievementId) => charmsMap.get(achievementId) ?? null);
   }
 
-  async getUserSummary(userId: number, opts?: CharmUserSummaryOptions): Promise<CharmSummary[]> {
+  async getUserSummary (userId: number, opts?: CharmUserSummaryOptions): Promise<CharmSummary[]> {
     const user = await this.client.user.getById(userId);
 
     if (user === null) {
       throw new Error('');
     }
 
-    if (!opts?.forceNew && user.charmSummary!.fetched) {
-      return user.charmSummary!.values();
+    if (!opts?.forceNew && user.charmSummary.fetched) {
+      return user.charmSummary.values();
     }
 
     const response = await this.client.websocket.emit<CharmSummary[]>(
@@ -74,7 +66,7 @@ class CharmHelper extends BaseHelper<Charm> {
     return user.charmSummary.setAll(response.body);
   }
 
-  async getUserStatistics(userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
+  async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
     const user = await this.client.user.getById(userId);
 
     if (user === null) {

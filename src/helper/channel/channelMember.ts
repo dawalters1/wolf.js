@@ -1,19 +1,19 @@
-import WOLF from '../../client/WOLF.ts';
+import BaseHelper from '../baseHelper.ts';
+import Channel from '../../structures/channel.ts';
+import ChannelMember from '../../structures/channelMember.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../../constants/ChannelMemberListType.ts';
 import { Command } from '../../constants/Command.ts';
 import { UserPrivilege } from '../../constants/UserPrivilege.ts';
-import Channel from '../../structures/channel.ts';
-import ChannelMember from '../../structures/channelMember.ts';
+import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import BaseHelper from '../baseHelper.ts';
 
 const canPerformChannelAction = async (client: WOLF, channel: Channel, targetMember: ChannelMember, targetCapability: ChannelMemberCapability) => {
   if (targetCapability === ChannelMemberCapability.OWNER) { return false; }
 
   if (channel.isOwner) { return true; }
 
-  const sourceMemberHasGap = client.user.privilegeList.includes(UserPrivilege.GROUP_ADMIN);
+  const sourceMemberHasGap = client.me.privilegeList.includes(UserPrivilege.GROUP_ADMIN);
 
   if (targetCapability === ChannelMemberCapability.CO_OWNER) {
     if (sourceMemberHasGap) { return true; }

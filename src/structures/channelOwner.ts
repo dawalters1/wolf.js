@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelOwner {
   id: number;
@@ -17,5 +17,4 @@ export class ChannelOwner extends BaseEntity {
     this.hash = data.hash;
   }
 }
-
 export default ChannelOwner;

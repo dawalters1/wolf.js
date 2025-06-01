@@ -1,9 +1,9 @@
+import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import { NotificationOptions } from '../../options/requestOptions.ts';
 import Notification from '../../structures/notification.ts';
+import { NotificationOptions } from '../../options/requestOptions.ts';
 import NotificationUser from '../../structures/notificationUser.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import BaseHelper from '../baseHelper.ts';
 
 class NotificationUserHelper extends BaseHelper<NotificationUser> {
   async list (opts: NotificationOptions): Promise<Notification[]> {
@@ -28,7 +28,7 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         : await get(results);
     };
 
-    this.client.me!.notificationsUser.fetched = true;
+    this.client.me.notificationsUser.fetched = true;
 
     return this.client.me.notificationsUser.setAll(await get());
   }
@@ -68,7 +68,7 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
     const missingIds = notificationIds.filter((notificationUserId) => !notificationsMap.has(notificationUserId));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<WOLFResponse<NotificationUser>[]>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<NotificationUser>>>(
         Command.NOTIFICATION_SUBSCRIBER,
         {
           body: {
@@ -77,8 +77,8 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         }
       );
 
-      response.body.filter((notificationUserResponse) => notificationUserResponse.success)
-        .forEach((notificationUserResponse) => notificationsMap.set(notificationUserResponse.body.id, this.cache!.set(notificationUserResponse.body)));
+      response.body.values().filter((notificationUserResponse) => notificationUserResponse.success)
+        .forEach((notificationUserResponse) => notificationsMap.set(notificationUserResponse.body.id, this.cache.set(notificationUserResponse.body)));
     }
 
     return notificationIds.map((notificationUserId) => notificationsMap.get(notificationUserId) ?? null);

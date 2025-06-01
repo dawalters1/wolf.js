@@ -1,15 +1,15 @@
-import WOLF from '../client/WOLF.ts';
-import { MessageType } from '../constants/MessageType.ts';
 import BaseEntity from './baseEntity.ts';
-import { ServerUserIdHash } from './userIdHash.ts';
-import MessageMetadata, { ServerMessageMetadata } from './messageMetadata.ts';
 import MessageEdited, { ServerMessageEdited } from './messageEdited.ts';
+import MessageMetadata, { ServerMessageMetadata } from './messageMetadata.ts';
+import { MessageType } from '../constants/MessageType.ts';
+import { ServerUserIdHash } from './userIdHash.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessage {
   id: number;
   flightId: string;
   originator?: ServerUserIdHash;
-  recipient? : ServerUserIdHash
+  recipient?: ServerUserIdHash
   isGroup: boolean;
   timestamp: number;
   mimeType: MessageType;

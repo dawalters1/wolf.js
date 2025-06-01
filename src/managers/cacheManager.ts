@@ -1,5 +1,5 @@
-import { getKeyProperty } from '../decorators/key.ts';
 import BaseEntity from '../structures/baseEntity.ts';
+import { getKeyProperty } from '../decorators/key.ts';
 
 export class CacheManager<T extends BaseEntity> {
   store: Map<number, T> = new Map();

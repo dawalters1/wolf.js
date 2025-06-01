@@ -4,6 +4,8 @@ import enumSpacingRule from './eslint/enumFormatter.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import stylistic from '@stylistic/eslint-plugin-ts';
+import autoSortImports from './eslint/autoSortImports.js';
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -25,6 +27,7 @@ export default [
       custom: {
         rules: {
           'enum-spacing': enumSpacingRule,
+          'auto-sort-imports': autoSortImports
         },
       },
     },
@@ -33,8 +36,10 @@ export default [
       ...tseslint.configs.stylistic.rules,
       //...stylistic.configs.all,
       ...prettier.rules,
+      'custom/auto-sort-imports': 'error',
+      'space-before-blocks': ['error', 'always'],
+      'space-before-function-paren': ['error', 'always'],
       'no-warning-comments': ['warn', { terms: ['todo', 'fixme', 'xxx'], location: 'anywhere' }],
-      '@stylistic/js/indent': ["error", 2, { "ignoredNodes": ["PropertyDefinition", "SwitchCase"] }],
       '@stylistic/js/space-infix-ops': 'error',
       'custom/enum-spacing': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',

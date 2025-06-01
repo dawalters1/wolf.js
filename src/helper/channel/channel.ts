@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import BaseHelper from '../baseHelper.ts';
 import Channel from '../../structures/channel.ts';
-import WOLF from '../../client/WOLF.ts';
+import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import { Command } from '../../constants/Command.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 
 class ChannelHelper extends BaseHelper<Channel> {
   async list (opts?: ChannelListOptions) {
-    if (!opts?.forceNew && this.cache!.fetched) {
-      return this.cache!.values().filter((channel) => channel.isMember);
+    if (!opts?.forceNew && this.cache.fetched) {
+      return this.cache.values().filter((channel) => channel.isMember);
     }
 
     const response = await this.client.websocket.emit<any[]>(
@@ -22,18 +21,21 @@ class ChannelHelper extends BaseHelper<Channel> {
       }
     );
 
-    this.cache!.fetched = true;
+    this.cache.fetched = true;
 
     if (response.body.length) {
       const channels = await this.getByIds(response.body.map((serverChannel) => serverChannel.id as number));
 
-      channels.forEach((channel, index) => {
-        channel!.isMember = true;
-        channel!.capabilities = response.body[index].capabilities as ChannelMemberCapability;
-      });
+      channels
+        .filter((channel): channel is Channel => channel !== null)
+        .forEach((channel, index) => {
+          channel.isMember = true;
+          channel.capabilities = response.body[index].capabilities as ChannelMemberCapability;
+        }
+        );
     }
 
-    return this.cache!.values().filter((channel) => channel.isMember);
+    return this.cache.values().filter((channel) => channel.isMember);
   }
 
   async getById (channelId: number, opts?: ChannelOptions): Promise<Channel | null> {
@@ -54,7 +56,7 @@ class ChannelHelper extends BaseHelper<Channel> {
     const missingIds = channelIds.filter((id) => !channelsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<WOLFResponse<Channel>[]>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Channel>>>(
         Command.GROUP_PROFILE,
         {
           body: {
@@ -64,8 +66,8 @@ class ChannelHelper extends BaseHelper<Channel> {
           }
         });
 
-      response.body.filter((channelResponse) => channelResponse.success)
-        .forEach((channelResponse) => channelsMap.set(channelResponse.body.id, this.cache!.set(channelResponse.body)));
+      response.body.values().filter((channelResponse) => channelResponse.success)
+        .forEach((channelResponse) => channelsMap.set(channelResponse.body.id, this.cache.set(channelResponse.body)));
     }
 
     return channelIds.map((channelId) => channelsMap.get(channelId) ?? null);

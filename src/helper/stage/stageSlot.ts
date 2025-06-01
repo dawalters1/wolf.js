@@ -1,8 +1,8 @@
+import BaseHelper from '../baseHelper.ts';
+import { ChannelAudioSlot } from '../../structures/channelAudioSlot';
 import { Command } from '../../constants/Command';
 import { StageSlotOptions } from '../../options/requestOptions';
-import { ChannelAudioSlot } from '../../structures/channelAudioSlot';
 import WOLFResponse from '../../structures/WOLFResponse';
-import BaseHelper from '../baseHelper.ts';
 
 class StageSlotHelper extends BaseHelper<ChannelAudioSlot> {
   async list (channelId: number, opts?: StageSlotOptions): Promise<ChannelAudioSlot[]> {
@@ -183,8 +183,7 @@ class StageSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (!slot.isOccupied) { throw new Error(''); };
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (slot.userId !== this.client.me!.id) { throw new Error(''); }
+    if (slot.userId !== this.client.me.id) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,

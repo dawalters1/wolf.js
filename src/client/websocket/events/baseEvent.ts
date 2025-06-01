@@ -1,6 +1,6 @@
 import WOLF from '../../WOLF.ts';
 
-class Base {
+class BaseEvent {
   client: WOLF;
   event: string;
 
@@ -14,4 +14,4 @@ class Base {
   }
 }
 
-export default Base;
+export default BaseEvent;

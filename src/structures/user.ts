@@ -1,13 +1,13 @@
-import IconInfo, { ServerIconInfo } from './iconInfo.ts';
-import { DeviceType, UserPresence, UserPrivilege } from '../constants/index.ts';
 import BaseEntity from './baseEntity.ts';
-import WOLF from '../client/WOLF.ts';
+import CacheManager from '../managers/cacheManager.ts';
+import CharmStatistic from './charmStatistic.ts';
+import CharmSummary from './charmSummary.ts';
+import { DeviceType, UserPresence, UserPrivilege } from '../constants/index.ts';
+import IconInfo, { ServerIconInfo } from './iconInfo.ts';
+import { key } from '../decorators/key.ts';
 import UserExtended, { ServerUserExtended } from './userExtended.ts';
 import UserSelectedCharmList, { ServerUserSelectedCharmList } from './userSelectedCharmList.ts';
-import CharmStatistic from './charmStatistic.ts';
-import CacheManager from '../managers/cacheManager.ts';
-import CharmSummary from './charmSummary.ts';
-import { key } from '../decorators/key.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerUser {
   categoryIds: number[];
@@ -43,6 +43,7 @@ export class User extends BaseEntity {
   nickname: string;
   onlineState: UserPresence;
   privileges: UserPrivilege;
+  privilegeList: UserPrivilege[];
   reputation: number;
   status: string;
   charmSummary: CacheManager<CharmSummary>;
@@ -66,6 +67,8 @@ export class User extends BaseEntity {
     this.nickname = data.nickname;
     this.onlineState = data.onlineState;
     this.privileges = data.privileges;
+    this.privilegeList = Object.values(UserPrivilege)
+      .filter((value): value is UserPrivilege => (this.privileges & value as number) === value);
     this.reputation = data.reputation;
     this.status = data.status;
     this.charmSummary = new CacheManager();

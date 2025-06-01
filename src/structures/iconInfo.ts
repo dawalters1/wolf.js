@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerIconInfo {
   availableSizes: Map<string, string>
@@ -17,5 +17,4 @@ export class IconInfo extends BaseEntity {
     this.availableTypes = new Set(data.availableTypes);
   }
 }
-
 export default IconInfo;

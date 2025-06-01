@@ -1,5 +1,5 @@
-import axios, { AxiosInstance } from 'axios';
 import { aws4Interceptor } from 'aws4-axios';
+import axios, { AxiosInstance } from 'axios';
 import { CognitoIdentityClient, NotAuthorizedException } from '@aws-sdk/client-cognito-identity';
 import { fromCognitoIdentity } from '@aws-sdk/credential-provider-cognito-identity';
 import WOLF from '../WOLF.ts';

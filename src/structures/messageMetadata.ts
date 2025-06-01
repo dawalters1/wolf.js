@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
 import MessageMetadataFormatting, { ServerMessageMetadataFormatting } from './messageMetadataFormatting.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessageMetadata {
   formatting: ServerMessageMetadataFormatting;
@@ -30,5 +30,4 @@ export class MessageMetadata extends BaseEntity {
     this.isTipped = data.isTipped || false;
   }
 }
-
 export default MessageMetadata;

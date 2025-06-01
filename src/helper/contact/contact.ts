@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import WOLF from '../../client/WOLF.ts';
-import { Command } from '../../constants/Command.ts';
-import CacheManager from '../../managers/cacheManager.ts';
-import { ContactOptions } from '../../options/requestOptions.ts';
-import Contact from '../../structures/contact.ts';
-import WOLFResponse from '../../structures/WOLFResponse.ts';
 import BaseHelper from '../baseHelper.ts';
 import BlockedHelper from './blocked.ts';
+import { Command } from '../../constants/Command.ts';
+import Contact from '../../structures/contact.ts';
+import { ContactOptions } from '../../options/requestOptions.ts';
+import WOLF from '../../client/WOLF.ts';
+import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class ContactHelper extends BaseHelper<Contact> {
-  blocked: BlockedHelper;
+  blocked: Readonly<BlockedHelper>;
 
   constructor (client: WOLF) {
     super(client);
