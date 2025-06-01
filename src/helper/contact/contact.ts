@@ -26,7 +26,8 @@ class ContactHelper extends BaseHelper<Contact> {
         body: {
           subscribe: true
         }
-      });
+      }
+    );
 
     this.cache.fetched = true;
 
@@ -46,7 +47,8 @@ class ContactHelper extends BaseHelper<Contact> {
         body: {
           id: userId
         }
-      });
+      }
+    );
   }
 
   async delete (userId: number): Promise<WOLFResponse> {
@@ -56,7 +58,8 @@ class ContactHelper extends BaseHelper<Contact> {
         body: {
           id: userId
         }
-      });
+      }
+    );
   }
 }
 

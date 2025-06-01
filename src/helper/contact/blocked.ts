@@ -16,7 +16,8 @@ class BlockedHelper extends BaseHelper<Contact> {
         body: {
           subscribe: true
         }
-      });
+      }
+    );
 
     this.cache.fetched = true;
 
@@ -36,7 +37,8 @@ class BlockedHelper extends BaseHelper<Contact> {
         body: {
           id: userId
         }
-      });
+      }
+    );
   }
 
   async unblock (userId: number): Promise<WOLFResponse> {
@@ -46,7 +48,8 @@ class BlockedHelper extends BaseHelper<Contact> {
         body: {
           id: userId
         }
-      });
+      }
+    );
   }
 }
 

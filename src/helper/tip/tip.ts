@@ -8,11 +8,14 @@ class TipHelper extends BaseHelper<any> {
     return await this.client.websocket.emit(
       Command.TIP_ADD,
       {
-        subscriberId: userId,
-        groupId: channelId,
-        charmList: charms,
-        context
-      });
+        body: {
+          subscriberId: userId,
+          groupId: channelId,
+          charmList: charms,
+          context
+        }
+      }
+    );
   }
 
   async getDetails (channelId: number, timestamp: number, limit?: 20, offset?: 0) {

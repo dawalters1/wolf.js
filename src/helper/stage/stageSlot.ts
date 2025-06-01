@@ -183,7 +183,8 @@ class StageSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (!slot.isOccupied) { throw new Error(''); };
 
-    if (slot.userId !== this.client.me.id) { throw new Error(''); }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    if (slot.userId !== this.client.me!.id) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,

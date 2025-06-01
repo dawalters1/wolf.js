@@ -1,3 +1,4 @@
+import AchievementChannel from './achievementChannel.ts';
 import BaseEntity from './baseEntity.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import ChannelAudioConfig, { ServerChannelAudioConfig } from './channelAudioConfig.ts';
@@ -65,7 +66,7 @@ class Channel extends BaseEntity {
   audioCount?: ChannelAudioCount | null;
   messageConfig?: ChannelMessageConfig | null;
   verificationTier: ChannelVerificationTier | null;
-  // achievements: BaseManager<AchievementChannel>;
+  achievements: CacheManager<AchievementChannel>;
   events: CacheManager<ChannelEvent>;
   audioSlots: CacheManager<ChannelAudioSlot>;
   audioSlotRequests: CacheManager<ChannelAudioSlotRequest>;
@@ -106,6 +107,7 @@ class Channel extends BaseEntity {
     this.audioSlotRequests = new CacheManager();
     this.capabilities = ChannelMemberCapability.NONE;
     this.members = new ChannelMemberManager();
+    this.achievements = new CacheManager();
   }
 
   get isOwner () {

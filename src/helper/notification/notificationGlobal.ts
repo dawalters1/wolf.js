@@ -16,9 +16,11 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
       const response = await this.client.websocket.emit<Notification[]>(
         Command.NOTIFICATION_GLOBAL,
         {
-          subscribe: opts?.subscribe ?? true,
-          offset: results.length,
-          limit: 50
+          body: {
+            subscribe: opts?.subscribe ?? true,
+            offset: results.length,
+            limit: 50
+          }
         }
       );
 
@@ -29,9 +31,9 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
         : await get(results);
     };
 
-    this.client.me.notificationsGlobal.fetched = true;
+    this.client.me!.notificationsGlobal.fetched = true;
 
-    return this.client.me.notificationsGlobal.setAll(await get());
+    return this.client.me!.notificationsGlobal.setAll(await get());
   }
 
   async clear (): Promise<WOLFResponse> {

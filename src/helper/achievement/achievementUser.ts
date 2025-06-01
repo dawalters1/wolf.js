@@ -1,21 +1,44 @@
-/*
+import AchievementUser from '../../structures/achievementUser.ts';
+import Base from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import AchievementUser from '../../structures/AchievementUser.ts';
-import Base from '../Base.ts';
 
-class AchievementUserHelper extends Base {
-  // TODO: update to handle parentId implementation
-  async get (userId: number, parentId?: number, forceNew?: boolean) : Promise<AchievementUser[]> {
-    const user = await this.client.channel.getById(userId);
+class AchievementUserHelper extends Base<AchievementUser> {
+  async get (userId: number, parentId?: number, forceNew?: boolean): Promise<(AchievementUser | null)[]> {
+    const user = await this.client.user.getById(userId);
+    if (user === null) throw new Error('User not found');
 
-    if (user === null) { throw new Error(''); }
+    let achievements: (AchievementUser | null)[];
 
-    if (!forceNew && user.achievements.size()) {
-      return user.achievements.values();
+    if (!forceNew && user.achievements.fetched) {
+      achievements = user.achievements.values();
+    } else {
+      const { body } = await this.client.websocket.emit<AchievementUser[]>(
+        Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: userId
+          }
+        }
+      );
+      achievements = user.achievements.setAll(body);
     }
 
-    const response = await this.client.websocket.emit<AchievementUser[]>(
-      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+    if (!parentId) {
+      return achievements;
+    }
+
+    const parentAchievement = user.achievements.get(parentId);
+    if (parentAchievement === null) throw new Error('Parent achievement not found');
+
+    if (parentAchievement.childrenId) {
+      return [parentAchievement, ...user.achievements.getAll([...parentAchievement.childrenId])];
+    }
+
+    const { body: children } = await this.client.websocket.emit<AchievementUser[]>(
+      Command.ACHIEVEMENT_GROUP_LIST,
       {
         headers: {
           version: 2
@@ -27,10 +50,12 @@ class AchievementUserHelper extends Base {
       }
     );
 
-    user.achievements.clear();
+    parentAchievement.childrenId = new Set(
+      children.map(child => child.id).filter(id => id !== parentId)
+    );
 
-    return user.achievements.mset(response.body);
+    return children;
   }
 }
+
 export default AchievementUserHelper;
-*/

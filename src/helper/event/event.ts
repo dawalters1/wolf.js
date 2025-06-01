@@ -39,7 +39,8 @@ class EventHelper extends BaseHelper<Event> {
             idList: missingIds,
             subscribe: opts?.subscribe ?? true
           }
-        });
+        }
+      );
 
       response.body.values().filter((eventResponse) => eventResponse.success)
         .forEach((eventResponse) => eventsMap.set(eventResponse.body.id, this.cache.set(eventResponse.body)));

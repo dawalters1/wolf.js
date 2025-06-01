@@ -1,6 +1,10 @@
 import BaseHelper from '../baseHelper.ts';
 import { Charm } from '../../structures/charm.ts';
-import { CharmOptions, CharmUserStatisticsOptions, CharmUserSummaryOptions } from '../../options/requestOptions.ts';
+import {
+  CharmOptions,
+  CharmUserStatisticsOptions,
+  CharmUserSummaryOptions
+} from '../../options/requestOptions.ts';
 import CharmStatistic from '../../structures/charmStatistic.ts';
 import CharmSummary from '../../structures/charmSummary.ts';
 import { Command } from '../../constants/Command.ts';
@@ -15,17 +19,15 @@ class CharmHelper extends BaseHelper<Charm> {
   async getByIds (charmIds: number[], languageId: Language, opts?: CharmOptions): Promise<(Charm | null)[]> {
     const charmsMap = new Map<number, Charm | null>();
 
-    // User is not requesting new data from server
     if (!opts?.forceNew) {
-      const cachedAchievements = this.cache.getAll(charmIds)
+      const cachedCharms = this.cache.getAll(charmIds)
         .filter((charm): charm is Charm => charm !== null && charm.hasLanguage(languageId));
-
-      cachedAchievements.forEach((achievement) => charmsMap.set(achievement.id, achievement));
+      cachedCharms.forEach((charm) => charmsMap.set(charm.id, charm));
     }
 
-    const missingIds = charmIds.filter((id) => !charmsMap.has(id));
+    const missingIds = charmIds.filter(id => !charmsMap.has(id));
 
-    if (missingIds.length) {
+    if (missingIds.length > 0) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<Charm>>>(
         Command.CHARM_LIST,
         {
@@ -33,20 +35,21 @@ class CharmHelper extends BaseHelper<Charm> {
             idList: missingIds,
             languageId
           }
-        });
+        }
+      );
 
       response.body.values().filter((charmResponse) => charmResponse.success)
         .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache.set(charmResponse.body)));
     }
 
-    return charmIds.map((achievementId) => charmsMap.get(achievementId) ?? null);
+    return charmIds.map(id => charmsMap.get(id) ?? null);
   }
 
   async getUserSummary (userId: number, opts?: CharmUserSummaryOptions): Promise<CharmSummary[]> {
     const user = await this.client.user.getById(userId);
 
-    if (user === null) {
-      throw new Error('');
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
     }
 
     if (!opts?.forceNew && user.charmSummary.fetched) {
@@ -56,10 +59,12 @@ class CharmHelper extends BaseHelper<Charm> {
     const response = await this.client.websocket.emit<CharmSummary[]>(
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
-        body: {
-          id: userId
-        }
-      });
+        body:
+          {
+            id: userId
+          }
+      }
+    );
 
     user.charmSummary.fetched = true;
 
@@ -69,8 +74,8 @@ class CharmHelper extends BaseHelper<Charm> {
   async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
     const user = await this.client.user.getById(userId);
 
-    if (user === null) {
-      throw new Error('');
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
     }
 
     if (!opts?.forceNew && user.charmStatistics.fetched) {
@@ -83,7 +88,8 @@ class CharmHelper extends BaseHelper<Charm> {
         body: {
           id: userId
         }
-      });
+      }
+    );
 
     user.charmStatistics.patch(response.body);
 

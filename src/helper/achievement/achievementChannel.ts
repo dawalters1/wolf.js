@@ -1,21 +1,43 @@
-
-/*
+import AchievementChannel from '../../structures/achievementChannel.ts';
+import Base from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import AchievementChannel from '../../structures/AchievementChannel.ts';
-import Base from '../Base.ts';
 
-class AchievementChannelHelper extends Base {
-  // TODO: update to handle parentId implementation
-  async get (channelId: number, parentId?: number, forceNew?: boolean) : Promise<AchievementChannel[]> {
+class AchievementChannelHelper extends Base<AchievementChannel> {
+  async get (channelId: number, parentId?: number, forceNew?: boolean): Promise<(AchievementChannel | null)[]> {
     const channel = await this.client.channel.getById(channelId);
+    if (channel === null) throw new Error('Channel not found');
 
-    if (channel === null) { throw new Error(''); }
+    let achievements: (AchievementChannel | null)[];
 
-    if (!forceNew) {
-      // TODO
+    if (!forceNew && channel.achievements.fetched) {
+      achievements = channel.achievements.values();
+    } else {
+      const { body } = await this.client.websocket.emit<AchievementChannel[]>(
+        Command.ACHIEVEMENT_GROUP_LIST,
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            id: channelId
+          }
+        }
+      );
+      achievements = channel.achievements.setAll(body);
     }
 
-    const response = await this.client.websocket.emit<AchievementChannel[]>(
+    if (!parentId) {
+      return achievements;
+    }
+
+    const parentAchievement = channel.achievements.get(parentId);
+    if (parentAchievement === null) throw new Error('Parent achievement not found');
+
+    if (parentAchievement.childrenId) {
+      return [parentAchievement, ...channel.achievements.getAll([...parentAchievement.childrenId])];
+    }
+
+    const { body: children } = await this.client.websocket.emit<AchievementChannel[]>(
       Command.ACHIEVEMENT_GROUP_LIST,
       {
         headers: {
@@ -28,11 +50,12 @@ class AchievementChannelHelper extends Base {
       }
     );
 
-    channel.achievements.clear();
+    parentAchievement.childrenId = new Set(
+      children.map(child => child.id).filter(id => id !== parentId)
+    );
 
-    return channel.achievements.mset(response.body);
+    return children;
   }
 }
 
 export default AchievementChannelHelper;
-*/

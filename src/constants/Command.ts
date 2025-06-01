@@ -57,5 +57,9 @@ export enum Command {
   SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriber group event delete',
   SUBSCRIBER_GROUP_EVENT_LIST = 'subscriber group event list',
 
-  TIP_ADD = 'tip add'
+  SUBSCRIBER_PROFILE = 'subscriber profile',
+
+  TIP_ADD = 'tip add',
+
+  WOLFSTAR_PROFILE = 'wolfstar profile'
 }

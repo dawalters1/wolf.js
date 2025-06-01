@@ -13,7 +13,9 @@
       "useUnknownInCatchVariables": false,
       "inlineSourceMap": true,
       "allowImportingTsExtensions": true,
-      "noEmit": true
+      "noEmit": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true
     },
     "ts-node": {
         "esm": true
