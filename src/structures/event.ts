@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
+import { key } from '../decorators/key.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerEvent {
   attendanceCount: number;
@@ -69,5 +69,4 @@ export class Event extends BaseEntity {
     this.title = event.title;
   }
 }
-
 export default Event;

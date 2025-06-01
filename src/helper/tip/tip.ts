@@ -1,7 +1,7 @@
-import { Command } from '../../constants/Command.ts';
 import BaseHelper from '../baseHelper.ts';
-import TipContext from '../../structures/tipContext.ts';
+import { Command } from '../../constants/Command.ts';
 import TipCharm from '../../structures/tipCharm.ts';
+import TipContext from '../../structures/tipContext.ts';
 
 class TipHelper extends BaseHelper<any> {
   async tip (channelId: number, userId: number, context: TipContext, charms: TipCharm[]) {

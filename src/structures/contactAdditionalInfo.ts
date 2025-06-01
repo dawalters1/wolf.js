@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { UserPrivilege, UserPresence } from '../constants/index.ts';
 import BaseEntity from './baseEntity.ts';
+import { UserPresence, UserPrivilege } from '../constants/index.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerContactAdditionalInfo {
   hash: string;
@@ -24,5 +24,4 @@ export class ContactAdditionalInfo extends BaseEntity {
     this.onlineState = data.onlineState;
   }
 }
-
 export default ContactAdditionalInfo;

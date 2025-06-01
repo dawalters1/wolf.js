@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelAudioCount {
   broadcasterCount: number;
@@ -20,5 +20,4 @@ export class ChannelAudioCount extends BaseEntity {
     this.id = data.id;
   }
 }
-
 export default ChannelAudioCount;

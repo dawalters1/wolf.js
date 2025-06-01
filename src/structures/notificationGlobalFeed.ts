@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants';
 import BaseEntity from './baseEntity.ts';
+import { Language } from '../constants';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerNotificationGlobalFeed {
   languageId: Language;
@@ -27,5 +27,4 @@ export class NotificationGlobalFeed extends BaseEntity {
     this.link = data.link;
   }
 }
-
 export default NotificationGlobalFeed;

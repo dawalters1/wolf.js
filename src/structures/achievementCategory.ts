@@ -1,8 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants/Language.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
-import AchievementHelper from "../helper/achievement/achievement.ts";
+import { key } from '../decorators/key.ts';
+import { Language } from '../constants/Language.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerAchievementCategory {
   id: number;
@@ -29,7 +28,7 @@ export class AchievementCategory extends BaseEntity {
   patch (achievementCategory: AchievementCategory) {
     achievementCategory.name.forEach((value, key) => this.name.set(key, value));
     achievementCategory.languages.forEach((language) => this.languages.add(language));
-    return this
+    return this;
   }
 
   /** @internal */

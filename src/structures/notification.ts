@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
+import { key } from '../decorators/key.ts';
 import NotificationAdditionalInfo, { ServerNotificationAdditionalInfo } from './notificationAdditionalInfo.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerNotification {
   id: number;
@@ -21,5 +21,4 @@ export class Notification extends BaseEntity {
     this.additionalInfo = new NotificationAdditionalInfo(client, data.additionalInfo);
   }
 }
-
 export default Notification;

@@ -1,24 +1,24 @@
 import BaseHelper from '../baseHelper.ts';
+import { Command } from '../../constants/Command.ts';
 import Event from '../../structures/event.ts';
+import EventChannelHelper from './eventChannel.ts';
+import { EventOptions } from '../../options/requestOptions.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
-import {Command} from '../../constants/Command.ts';
-import {EventOptions} from '../../options/requestOptions.ts';
-import EventChannelHelper from "./eventChannel.ts";
 
 class EventHelper extends BaseHelper<Event> {
   channel: EventChannelHelper;
 
-  constructor(client: WOLF) {
+  constructor (client: WOLF) {
     super(client);
     this.channel = new EventChannelHelper(client);
   }
 
-  async getById(eventId: number, opts?: EventOptions): Promise<Event | null> {
+  async getById (eventId: number, opts?: EventOptions): Promise<Event | null> {
     return (await this.getByIds([eventId], opts))[0];
   }
 
-  async getByIds(eventIds: number[], opts?: EventOptions): Promise<(Event | null)[]> {
+  async getByIds (eventIds: number[], opts?: EventOptions): Promise<(Event | null)[]> {
     const eventsMap = new Map<number, Event>();
 
     // User is not requesting new data from server
@@ -32,7 +32,7 @@ class EventHelper extends BaseHelper<Event> {
     const missingIds = eventIds.filter((id) => !eventsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<WOLFResponse<Event>[]>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Event>>>(
         Command.GROUP_EVENT,
         {
           body: {
@@ -41,8 +41,8 @@ class EventHelper extends BaseHelper<Event> {
           }
         });
 
-      response.body.filter((eventResponse) => eventResponse.success)
-        .forEach((eventResponse) => eventsMap.set(eventResponse.body.id, this.cache!.set(eventResponse.body)));
+      response.body.values().filter((eventResponse) => eventResponse.success)
+        .forEach((eventResponse) => eventsMap.set(eventResponse.body.id, this.cache.set(eventResponse.body)));
     }
 
     return eventIds.map((eventId) => eventsMap.get(eventId) ?? null);

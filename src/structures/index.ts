@@ -11,9 +11,9 @@ const exports = {
 };
 
 export {
-  exports as default,
   Achievement,
   AchievementCategory,
   AchievementChannel,
-  AchievementUser
+  AchievementUser,
+  exports as default
 };

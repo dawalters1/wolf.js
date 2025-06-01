@@ -1,21 +1,13 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
-import WOLF from '../../client/WOLF.ts';
-import { Command } from '../../constants/Command.ts';
-import CacheManager from '../../managers/cacheManager.ts';
-import { ContactOptions } from '../../options/requestOptions.ts';
-import Contact from '../../structures/contact.ts';
-import WOLFResponse from '../../structures/WOLFResponse.ts';
 import BaseHelper from '../baseHelper.ts';
+import { Command } from '../../constants/Command.ts';
+import Contact from '../../structures/contact.ts';
+import { ContactOptions } from '../../options/requestOptions.ts';
+import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class BlockedHelper extends BaseHelper<Contact> {
-  constructor (client: WOLF) {
-    super(client);
-  }
-
   async list (opts?: ContactOptions) {
-    if (!opts?.forceNew && this.cache!.fetched) {
-      return this.cache!.values();
+    if (!opts?.forceNew && this.cache.fetched) {
+      return this.cache.values();
     }
 
     const response = await this.client.websocket.emit<Contact[]>(
@@ -26,7 +18,7 @@ class BlockedHelper extends BaseHelper<Contact> {
         }
       });
 
-    this.cache!.fetched = true;
+    this.cache.fetched = true;
 
     return this.cache?.setAll(response.body);
   }
@@ -34,7 +26,7 @@ class BlockedHelper extends BaseHelper<Contact> {
   async isBlocked (userId: number): Promise<boolean> {
     await this.list();
 
-    return this.cache!.has(userId);
+    return this.cache.has(userId);
   }
 
   async block (userId: number): Promise<WOLFResponse> {

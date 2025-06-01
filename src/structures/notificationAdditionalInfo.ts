@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerNotificationAdditionalInfo {
   createdAt: Date;
@@ -17,5 +17,4 @@ export class NotificationAdditionalInfo extends BaseEntity {
     this.eTag = data.eTag;
   }
 }
-
 export default NotificationAdditionalInfo;

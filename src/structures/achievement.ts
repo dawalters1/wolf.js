@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants/Language.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
+import { key } from '../decorators/key.ts';
+import { Language } from '../constants/Language.ts';
+import WOLF from '../client/WOLF.ts';
 
 interface ServerAchievement {
   id: number;
@@ -63,7 +63,7 @@ class Achievement extends BaseEntity {
     achievement.levelName.forEach((value, key) => this.levelName.set(key, value));
     achievement.languages.forEach((language) => this.languages.add(language));
 
-    return this
+    return this;
   }
 
   /** @internal */

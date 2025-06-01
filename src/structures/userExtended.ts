@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
-import { Gender, Language, LookingFor } from '../constants/index.ts';
 import BaseEntity from './baseEntity.ts';
+import { Gender, Language, LookingFor } from '../constants/index.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerUserExtended {
   about: string;

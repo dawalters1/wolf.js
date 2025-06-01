@@ -1,5 +1,5 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessageMetadataFormattingChannelLink {
   start: number;
@@ -19,5 +19,4 @@ export class MessageMetadataFormattingChannelLink extends BaseEntity {
     this.channelId = data?.groupId || null;
   }
 }
-
 export default MessageMetadataFormattingChannelLink;

@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
 import MessageMetadataFormattingChannelLink, { ServerMessageMetadataFormattingChannelLink } from './messageMetadataFormattingChannelLink.ts';
 import MessageMetadataFormattingUrl, { ServerMessageMetadataFormattingUrl } from './messageMetadataFormattingUrl.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessageMetadataFormatting {
   groupLinks?: ServerMessageMetadataFormattingChannelLink[];

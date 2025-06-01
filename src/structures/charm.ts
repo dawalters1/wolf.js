@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { Language } from '../constants/Language.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
+import { key } from '../decorators/key.ts';
+import { Language } from '../constants/Language.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerCharm {
   cost: number;
@@ -46,7 +46,7 @@ export class Charm extends BaseEntity {
     charm.name.forEach((value, key) => this.name.set(key, value));
     charm.description.forEach((value, key) => this.description.set(key, value));
     charm.languages.forEach((language) => this.languages.add(language));
-    return this
+    return this;
   }
 
   /** @internal */

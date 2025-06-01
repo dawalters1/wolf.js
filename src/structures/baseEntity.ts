@@ -3,7 +3,7 @@ import WOLF from '../client/WOLF.ts';
 abstract class BaseEntity {
   client: WOLF;
 
-  protected constructor(client: WOLF) {
+  protected constructor (client: WOLF) {
     this.client = client;
   }
 

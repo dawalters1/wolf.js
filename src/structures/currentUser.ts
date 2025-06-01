@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import Notification from './notification.ts';
 import { ServerUser, User } from './user.ts';
+import WOLF from '../client/WOLF.ts';
 
 export class CurrentUser extends User {
   notificationsGlobal: CacheManager<Notification>;

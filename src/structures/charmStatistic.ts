@@ -1,6 +1,6 @@
-import WOLF from '../client/WOLF.ts';
 import BaseEntity from './baseEntity.ts';
 import CharmStatisticExtended, { ServerCharmStatisticExtended } from './charmStatisticExtended.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerCharmStatistic {
   extended?: ServerCharmStatisticExtended;
@@ -44,7 +44,7 @@ export class CharmStatistic extends BaseEntity {
     this.totalLifetime = charmStatistics.totalLifetime;
 
     this.fetched = true;
-    return this
+    return this;
   }
 }
 

@@ -1,7 +1,7 @@
-import WOLF from '../client/WOLF.ts';
-import { key } from '../decorators/key.ts';
 import BaseEntity from './baseEntity.ts';
 import ContactAdditionalInfo, { ServerContactAdditionalInfo } from './contactAdditionalInfo.ts';
+import { key } from '../decorators/key.ts';
+import WOLF from '../client/WOLF.ts';
 
 export interface ServerContact {
   id: number;
@@ -20,5 +20,4 @@ export class Contact extends BaseEntity {
     this.additionalInfo = new ContactAdditionalInfo(client, data.additionalInfo);
   }
 }
-
 export default Contact;
