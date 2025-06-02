@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';

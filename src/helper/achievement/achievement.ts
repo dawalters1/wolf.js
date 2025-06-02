@@ -1,6 +1,8 @@
 import Achievement from '../../structures/achievement.ts';
 import AchievementCategoryHelper from './achievementCategory.ts';
+import AchievementChannelHelper from './achievementChannel.ts';
 import { AchievementOptions } from '../../options/requestOptions.ts';
+import AchievementUserHelper from './achievementUser.ts';
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
@@ -9,11 +11,15 @@ import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class AchievementHelper extends BaseHelper<Achievement> {
   category: Readonly<AchievementCategoryHelper>;
+  user: Readonly<AchievementUserHelper>;
+  channel: Readonly<AchievementChannelHelper>;
 
   constructor (client: WOLF) {
     super(client);
 
     this.category = new AchievementCategoryHelper(client);
+    this.channel = new AchievementChannelHelper(client);
+    this.user = new AchievementUserHelper(client);
   }
 
   async getById (achievementId: number, languageId: Language, opts?: AchievementOptions): Promise<Achievement | null> {

@@ -11,6 +11,8 @@ import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts
 import ChannelMemberManager from '../managers/channelMemberManager.ts';
 import ChannelMessageConfig, { ServerChannelMessageConfig } from './channelMessageConfig.ts';
 import ChannelOwner, { ServerChannelOwner } from './channelOwner.ts';
+import ChannelRole from './channelRole.ts';
+import ChannelRoleUser from './channelRoleUser.ts';
 import { ChannelVerificationTier } from '../constants/ChannelVerificationTier.ts';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
@@ -73,6 +75,10 @@ class Channel extends BaseEntity {
   members: ChannelMemberManager;
   isMember: boolean = false;
   capabilities: ChannelMemberCapability;
+  roles: {
+    summaries: CacheManager<ChannelRole>,
+    users: CacheManager<ChannelRoleUser>
+  };
 
   constructor (client: WOLF, data: ServerChannelModular) {
     super(client);
@@ -108,6 +114,10 @@ class Channel extends BaseEntity {
     this.capabilities = ChannelMemberCapability.NONE;
     this.members = new ChannelMemberManager();
     this.achievements = new CacheManager();
+    this.roles = {
+      summaries: new CacheManager(),
+      users: new CacheManager()
+    };
   }
 
   get isOwner () {

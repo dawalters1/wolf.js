@@ -1,8 +1,13 @@
 import AchievementChannel from '../../structures/achievementChannel.ts';
-import Base from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
+import WOLF from '../../client/WOLF.ts';
 
-class AchievementChannelHelper extends Base<AchievementChannel> {
+class AchievementChannelHelper {
+  client: Readonly<WOLF>;
+  constructor (client: WOLF) {
+    this.client = client;
+  }
+
   async get (channelId: number, parentId?: number, forceNew?: boolean): Promise<(AchievementChannel | null)[]> {
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) throw new Error('Channel not found');

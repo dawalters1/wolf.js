@@ -3,15 +3,19 @@ import { Command } from '../../constants/Command.ts';
 import Event from '../../structures/event.ts';
 import EventChannelHelper from './eventChannel.ts';
 import { EventOptions } from '../../options/requestOptions.ts';
+import EventSubscriptionHelper from './eventSubscription.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class EventHelper extends BaseHelper<Event> {
-  channel: EventChannelHelper;
+  channel: Readonly<EventChannelHelper>;
+  subscription: Readonly<EventSubscriptionHelper>;
 
   constructor (client: WOLF) {
     super(client);
+
     this.channel = new EventChannelHelper(client);
+    this.subscription = new EventSubscriptionHelper(client);
   }
 
   async getById (eventId: number, opts?: EventOptions): Promise<Event | null> {

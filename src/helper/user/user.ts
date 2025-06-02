@@ -2,16 +2,20 @@ import BaseHelper from '../baseHelper';
 import { Command } from '../../constants/Command';
 import { User } from '../../structures/user';
 import { UserOptions } from '../../options/requestOptions';
+import UserRoleHelper from './userRole';
 import WOLF from '../../client/WOLF';
 import WOLFResponse from '../../structures/WOLFResponse';
 import WOLFStarHelper from './wolfstar';
 
 class UserHelper extends BaseHelper<User> {
   wolfstar: Readonly<WOLFStarHelper>;
+  role: Readonly<UserRoleHelper>;
 
   constructor (client: WOLF) {
     super(client);
+
     this.wolfstar = new WOLFStarHelper(client);
+    this.role = new UserRoleHelper(client);
   }
 
   async getById (userId: number, opts?: UserOptions): Promise<User | null> {

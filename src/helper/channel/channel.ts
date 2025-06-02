@@ -1,12 +1,27 @@
 
 import BaseHelper from '../baseHelper.ts';
 import Channel from '../../structures/channel.ts';
+import ChannelCategoryHelper from './channelCategory.ts';
 import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
+import ChannelMemberHelper from './channelMember.ts';
+import ChannelRoleHelper from './channelRole.ts';
 import { Command } from '../../constants/Command.ts';
+import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class ChannelHelper extends BaseHelper<Channel> {
+  category: Readonly<ChannelCategoryHelper>;
+  member: Readonly<ChannelMemberHelper>;
+  role: Readonly<ChannelRoleHelper>;
+
+  constructor (client:WOLF) {
+    super(client);
+    this.category = new ChannelCategoryHelper(client);
+    this.member = new ChannelMemberHelper(client);
+    this.role = new ChannelRoleHelper(client);
+  }
+
   async list (opts?: ChannelListOptions) {
     if (!opts?.forceNew && this.cache.fetched) {
       return this.cache.values().filter((channel) => channel.isMember);

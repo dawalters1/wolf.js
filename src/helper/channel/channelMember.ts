@@ -1,4 +1,3 @@
-import BaseHelper from '../baseHelper.ts';
 import Channel from '../../structures/channel.ts';
 import ChannelMember from '../../structures/channelMember.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
@@ -46,7 +45,12 @@ const canPerformChannelAction = async (
   return sourceMemberHasGap || hasHigherCapability;
 };
 
-class ChannelMemberHelper extends BaseHelper<ChannelMember> {
+class ChannelMemberHelper {
+  client: Readonly<WOLF>;
+  constructor (client: WOLF) {
+    this.client = client;
+  }
+
   private async _getList (channel: Channel, list: string): Promise<ChannelMember[]> {
     if (channel.members.metadata[list]) {
       return channel.members.values().filter(m => m.lists.has(list));

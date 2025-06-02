@@ -1,8 +1,13 @@
 import AchievementUser from '../../structures/achievementUser.ts';
-import Base from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
+import WOLF from '../../client/WOLF.ts';
 
-class AchievementUserHelper extends Base<AchievementUser> {
+class AchievementUserHelper {
+  client: Readonly<WOLF>;
+  constructor (client: WOLF) {
+    this.client = client;
+  }
+
   async get (userId: number, parentId?: number, forceNew?: boolean): Promise<(AchievementUser | null)[]> {
     const user = await this.client.user.getById(userId);
     if (user === null) throw new Error('User not found');
@@ -38,7 +43,7 @@ class AchievementUserHelper extends Base<AchievementUser> {
     }
 
     const { body: children } = await this.client.websocket.emit<AchievementUser[]>(
-      Command.ACHIEVEMENT_GROUP_LIST,
+      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
       {
         headers: {
           version: 2

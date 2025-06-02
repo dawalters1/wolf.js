@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
 import Notification from '../../structures/notification.ts';
@@ -28,9 +29,9 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         : await get(results);
     };
 
-    this.client.me.notificationsUser.fetched = true;
+    this.client.me!.notificationsUser.fetched = true;
 
-    return this.client.me.notificationsUser.setAll(await get());
+    return this.client.me!.notificationsUser.setAll(await get());
   }
 
   async clear () : Promise<WOLFResponse> {
