@@ -4,49 +4,11 @@ import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability
 import { ChannelMemberListType } from '../../constants/ChannelMemberListType.ts';
 import { Command } from '../../constants/Command.ts';
 import { StatusCodes } from 'http-status-codes';
-import { UserPrivilege } from '../../constants/UserPrivilege.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
-const canPerformChannelAction = async (
-  client: WOLF,
-  channel: Channel,
-  targetMember: ChannelMember,
-  targetCapability: ChannelMemberCapability
-): Promise<boolean> => {
-  if (targetCapability === ChannelMemberCapability.OWNER) return false;
-  if (channel.isOwner) return true;
-
-  const sourceMemberHasGap = client.me?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
-
-  const hasHigherCapability = (() => {
-    switch (channel.capabilities) {
-      case ChannelMemberCapability.CO_OWNER:
-        return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.NONE, ChannelMemberCapability.BANNED].includes(targetMember.capabilities);
-      case ChannelMemberCapability.ADMIN:
-        return channel.extended?.advancedAdmin
-          ? [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities)
-          : [ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
-      case ChannelMemberCapability.MOD:
-        return [ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
-      default:
-        return false;
-    }
-  })();
-
-  const targetUser = await client.user.getById(targetMember.id);
-  const targetMemberHasGap = targetUser?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
-
-  if (
-    [ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(targetCapability) &&
-    targetMemberHasGap
-  ) return false;
-
-  return sourceMemberHasGap || hasHigherCapability;
-};
-
 class ChannelMemberHelper {
-  client: Readonly<WOLF>;
+  readonly client: WOLF;
   constructor (client: WOLF) {
     this.client = client;
   }
@@ -145,7 +107,7 @@ class ChannelMemberHelper {
     const member = await this.getMember(channelId, userId);
     if (!member) { throw new Error('Member not found'); };
 
-    if (!await canPerformChannelAction(this.client, channel, member, target)) {
+    if (!await channel.canPerformActionAgainstMember(member, target)) {
       throw new Error(`Insufficient permissions to change capability to ${ChannelMemberCapability[target]}`);
     }
 
@@ -208,7 +170,7 @@ class ChannelMemberHelper {
     const member = await this.getMember(channelId, userId);
     if (!member) { throw new Error('Member not found'); };
 
-    if (!await canPerformChannelAction(this.client, channel, member, ChannelMemberCapability.BANNED)) {
+    if (!await channel.canPerformActionAgainstMember(member, ChannelMemberCapability.BANNED)) {
       throw new Error('Insufficient permissions to kick member');
     }
 

@@ -8,7 +8,7 @@ import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class ContactHelper extends BaseHelper<Contact> {
-  blocked: Readonly<BlockedHelper>;
+  readonly blocked: BlockedHelper;
 
   constructor (client: WOLF) {
     super(client);

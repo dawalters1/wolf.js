@@ -7,6 +7,7 @@ import { ChannelAudioSlot } from './channelAudioSlot.ts';
 import ChannelAudioSlotRequest from './channelAudioSlotRequest.ts';
 import ChannelEvent from './channelEvent.ts';
 import ChannelExtended, { ServerChannelExtended } from './channelExtended.ts';
+import ChannelMember from './channelMember';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import ChannelMemberManager from '../managers/channelMemberManager.ts';
 import ChannelMessageConfig, { ServerChannelMessageConfig } from './channelMessageConfig.ts';
@@ -16,6 +17,7 @@ import ChannelRoleUser from './channelRoleUser.ts';
 import { ChannelVerificationTier } from '../constants/ChannelVerificationTier.ts';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
+import { UserPrivilege } from '../constants';
 import WOLF from '../client/WOLF.ts';
 // import { BaseManager } from '../managers/CacheManager.ts';
 // import AchievementChannel from './AchievementChannel.ts';
@@ -128,6 +130,87 @@ class Channel extends BaseEntity {
   async join (password: string | null) {
     // return this.client.channel.joinById(this.id, password);
   }
+
+  async getAudioConfig () {
+    if (this.audioConfig) {
+      return this.audioConfig;
+    }
+
+    return (await this.client.channel.getById(this.id, { forceNew: true }))?.audioConfig;
+  }
+
+  async getAudioSlots () {
+    return this.client.audio.slots.list(this.id);
+  }
+
+  patch (data: this): this {
+    this.id = data.id;
+    this.name = data.name;
+    this.hash = data.hash;
+    this.reputation = data.reputation;
+    this.premium = data.premium;
+    this.icon = data.icon;
+    this.iconHash = data.iconHash;
+    this.iconInfo = data.iconInfo;
+    this.memberCount = data.memberCount;
+    this.official = data.official;
+    this.peekable = data.peekable;
+    this.owner = data.owner;
+    this.extended = data.extended;
+    this.audioConfig = data.audioConfig;
+    this.audioCount = data.audioCount;
+    this.messageConfig = data.messageConfig;
+    this.verificationTier = data.verificationTier;
+
+    return this;
+  }
+
+  hasCapability (required: ChannelMemberCapability): boolean {
+    switch (required) {
+      case ChannelMemberCapability.CO_OWNER:
+        return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.NONE, ChannelMemberCapability.BANNED].includes(this.capabilities);
+      case ChannelMemberCapability.ADMIN:
+        return this.extended?.advancedAdmin
+          ? [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(this.capabilities)
+          : [ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(this.capabilities);
+      case ChannelMemberCapability.MOD:
+        return [ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(this.capabilities);
+      default:
+        return false;
+    }
+  }
+
+  async canPerformActionAgainstMember (targetMember: ChannelMember, targetCapability?: ChannelMemberCapability): Promise<boolean> {
+    if (targetCapability === ChannelMemberCapability.OWNER) return false;
+    if (this.isOwner) return true;
+
+    const sourceMemberHasGap = this.client.me?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
+
+    const hasHigherCapability = (() => {
+      switch (this.capabilities) {
+        case ChannelMemberCapability.CO_OWNER:
+          return [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.NONE, ChannelMemberCapability.BANNED].includes(targetMember.capabilities);
+        case ChannelMemberCapability.ADMIN:
+          return this.extended?.advancedAdmin
+            ? [ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities)
+            : [ChannelMemberCapability.MOD, ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
+        case ChannelMemberCapability.MOD:
+          return [ChannelMemberCapability.REGULAR, ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED, ChannelMemberCapability.NONE].includes(targetMember.capabilities);
+        default:
+          return false;
+      }
+    })();
+
+    const targetUser = await this.client.user.getById(targetMember.id);
+    const targetMemberHasGap = targetUser?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
+
+    if (targetCapability &&
+      [ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(targetCapability) &&
+    targetMemberHasGap
+    ) return false;
+
+    return sourceMemberHasGap || hasHigherCapability;
+  };
 }
 
 export default Channel;

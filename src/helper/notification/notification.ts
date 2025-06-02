@@ -5,8 +5,8 @@ import NotificationUserHelper from './notificationUser.ts';
 import WOLF from '../../client/WOLF.ts';
 
 class NotificationHelper extends BaseHelper<Notification> {
-  global: Readonly<NotificationGlobalHelper>;
-  user: Readonly<NotificationUserHelper>;
+  readonly global: NotificationGlobalHelper;
+  readonly user: NotificationUserHelper;
 
   constructor (client: WOLF) {
     super(client);

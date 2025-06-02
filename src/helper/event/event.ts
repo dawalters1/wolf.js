@@ -8,8 +8,8 @@ import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class EventHelper extends BaseHelper<Event> {
-  channel: Readonly<EventChannelHelper>;
-  subscription: Readonly<EventSubscriptionHelper>;
+  readonly channel: EventChannelHelper;
+  readonly subscription: EventSubscriptionHelper;
 
   constructor (client: WOLF) {
     super(client);
