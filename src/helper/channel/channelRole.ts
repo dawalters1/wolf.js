@@ -5,7 +5,7 @@ import { Command } from '../../constants/Command';
 import WOLF from '../../client/WOLF';
 
 class ChannelRoleHelper {
-  client: Readonly<WOLF>;
+  readonly client: WOLF;
 
   constructor (client: WOLF) {
     this.client = client;
@@ -14,7 +14,7 @@ class ChannelRoleHelper {
   async roles (channelId: number, opts?: ChannelRoleOptions): Promise<(ChannelRole | null)[]> {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     if (!opts?.forceNew && channel.roles.summaries.fetched) {
       return channel.roles.summaries.values();
@@ -35,7 +35,7 @@ class ChannelRoleHelper {
   async users (channelId: number, opts?: ChannelRoleUserOptions): Promise<(ChannelRoleUser | null)[]> {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     if (!opts?.forceNew && channel.roles.users.fetched) {
       return channel.roles.users.values();
@@ -57,9 +57,12 @@ class ChannelRoleHelper {
   async assign (channelId: number, userId: number, roleId: number) {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
+    if (!channel.isOwner) { throw new Error('Bot must be owner of channel to assign roles'); }
 
-    // Capability check
+    const member = await this.client.channel.member.getMember(channelId, userId);
+
+    if (member === null) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       Command.GROUP_ROLE_SUBSCRIBER_ASSIGN,
@@ -74,9 +77,8 @@ class ChannelRoleHelper {
   async unassign (channelId: number, userId: number, roleId: number) {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
-
-    // Capability check
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
+    if (!channel.isOwner) { throw new Error('Bot must be owner of channel to unassign roles'); }
 
     return await this.client.websocket.emit(
       Command.GROUP_ROLE_SUBSCRIBER_UNASSIGN,
@@ -91,9 +93,8 @@ class ChannelRoleHelper {
   async reassign (channelId: number, oldUserId: number, newUserId: number, roleId: number) {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
-
-    // Capability check
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
+    if (!channel.isOwner) { throw new Error('Bot must be owner of channel to reassign roles'); }
 
     return await this.client.websocket.emit(
       Command.GROUP_ROLE_SUBSCRIBER_ASSIGN,

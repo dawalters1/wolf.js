@@ -10,9 +10,9 @@ import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class AchievementHelper extends BaseHelper<Achievement> {
-  category: Readonly<AchievementCategoryHelper>;
-  user: Readonly<AchievementUserHelper>;
-  channel: Readonly<AchievementChannelHelper>;
+  readonly category: AchievementCategoryHelper;
+  readonly user: AchievementUserHelper;
+  readonly channel: AchievementChannelHelper;
 
   constructor (client: WOLF) {
     super(client);

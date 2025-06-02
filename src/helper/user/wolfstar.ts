@@ -4,7 +4,7 @@ import WOLFResponse from '../../structures/WOLFResponse';
 import WOLFStar from '../../structures/wolfstar';
 
 class WOLFStarHelper {
-  client: Readonly<WOLF>;
+  readonly client: WOLF;
   constructor (client: WOLF) {
     this.client = client;
   }

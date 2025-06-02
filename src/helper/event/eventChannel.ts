@@ -14,7 +14,7 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
   async list (channelId: number, opts?: EventChannelOptions): Promise<ChannelEvent[]> {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     if (!opts?.forceNew && channel.events.fetched) { return channel.events.values(); }
 
@@ -48,7 +48,7 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
 
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     // Check privileges for create
 
@@ -79,7 +79,7 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
     // validation
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     const event = await this.client.event.getById(eventId);
 
@@ -116,7 +116,7 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
   async delete (channelId: number, eventId: number) {
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
     const event = await this.client.event.getById(eventId);
 

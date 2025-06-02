@@ -13,11 +13,19 @@ type ServerWelcome = {
 
 class Welcome extends BaseEvent {
   constructor (client: WOLF) {
-    super(client, 'WELCOME');
+    super(client, 'welcome');
   }
 
-  async process (data: ServerWelcome): Promise<void> {
+  async cleanup(){
+    
+  }
 
+  async login(){
+
+  }
+
+  async process (data: any): Promise<void> {
+    console.log('GOT WELCOME', data);
   }
 }
 

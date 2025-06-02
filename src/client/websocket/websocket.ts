@@ -3,7 +3,6 @@ import _ from 'lodash';
 import BaseEvent from './events/baseEvent.ts';
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
-// import { HttpStatusCode } from 'axios';
 import io, { Socket } from 'socket.io-client';
 import path, { dirname } from 'path';
 import WOLF from '../WOLF.ts';
@@ -23,12 +22,13 @@ export class Websocket {
     this.handlers = new Map();
   }
 
-  async _initHandlers () {
-    if ([...this.handlers.keys()].length) { return; }
+
+  async _init () {
+    if (this.socket) { return; }
 
     const filePaths = fs.readdirSync(path.join(__dirname, './events/'))
       .map(name => path.join(__dirname, './events/', name))
-      .filter(filePath => fs.lstatSync(filePath).isFile() && path.parse(filePath).name !== 'Base');
+      .filter(filePath => fs.lstatSync(filePath).isFile() && path.parse(filePath).name !== 'baseEvent');
 
     for (const filePath of filePaths) {
       const imported = await import(pathToFileURL(filePath).toString());
@@ -39,14 +39,11 @@ export class Websocket {
         this.handlers.set(handler.event, handler);
       }
     }
-  }
 
-  async _init () {
-    if (this.socket) { return; }
-
-    const { host, port, query } = this.client.config.get('framework.connection');
+    const framework = this.client.config.framework;
+    const { host, port, query } = framework.connection;//.get('framework.connection');
     const { device, version } = query;
-    const { onlineState, token } = this.client.config.get('framework.login');
+    const { onlineState, token } = framework.login;
 
     this.socket = io(`${host}:${port}/?token=${token}&device=${device}&state=${onlineState}&version=${version || JSON.parse(
       fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
@@ -57,6 +54,24 @@ export class Websocket {
       autoConnect: false
     }
     );
+
+  this.socket.io.on('open', () => console.log("CONNECTING"));
+    this.socket.on('connect', () => console.log("CONNECTED"));
+    this.socket.on('connect_error', error => console.log("CONNECT ERROR", error));
+    this.socket.on('connect_timeout', error => console.log("CONNECT TIMEOUT", error));
+    this.socket.on('disconnect', reason => {
+      if (reason === 'io server disconnect') {
+        this.socket?.connect();
+      }
+
+      console.log("DISCONNECTED", reason)
+    });
+    this.socket.on('error', error => console.log('ERROR', error));
+    this.socket.io.on('reconnect_attempt', reconnectNumber => console.log("RECONNECTING", reconnectNumber));
+    this.socket.io.on('reconnect', () => console.log("RECONNECT"));
+    this.socket.io.on('reconnect_failed', () => console.log("RECONNECT FAILED"));
+    this.socket.on('ping', () => console.log("PING"));
+    this.socket.on('pong', (latency) => console.log("PONG", latency));
 
     this.socket.onAny((event, args) => {
       const handler = this.handlers.get(event);
@@ -143,10 +158,16 @@ export class Websocket {
   }
 
   async connect () {
+    if (!this.socket) { await this._init(); }
 
+    if (this.socket?.connected) { return; }
+
+    return this.socket?.connect();
   }
 
   async disconnect () {
+    if (!this.socket?.connected) { return; }
 
+    return this.socket?.disconnect();
   }
 }

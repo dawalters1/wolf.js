@@ -11,9 +11,9 @@ import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class ChannelHelper extends BaseHelper<Channel> {
-  category: Readonly<ChannelCategoryHelper>;
-  member: Readonly<ChannelMemberHelper>;
-  role: Readonly<ChannelRoleHelper>;
+  readonly category: ChannelCategoryHelper;
+  readonly member: ChannelMemberHelper;
+  readonly role: ChannelRoleHelper;
 
   constructor (client:WOLF) {
     super(client);

@@ -11,6 +11,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
   {
+    browser: true,
+    node: true,
     files: ['**/*.ts', '**/*.tsx'],
     ignores: ['dist/', 'node_modules/'],
     languageOptions: {
@@ -37,6 +39,14 @@ export default [
       ...tseslint.configs.stylistic.rules,
       //...stylistic.configs.all,
       ...prettier.rules,
+       'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'TSTypeReference[typeName.name="Readonly"]',
+          message: 'Use `readonly` properties instead of `Readonly<T>`.',
+        },
+      ],
+      'curly': 'error',
       'custom/emit-formatting': 'error',
       'custom/auto-sort-imports': 'error',
       'space-before-blocks': ['error', 'always'],

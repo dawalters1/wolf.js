@@ -3,7 +3,7 @@ import UserRole from '../../structures/userRole';
 import WOLF from '../../client/WOLF';
 
 class UserRoleHelper {
-  client: Readonly<WOLF>;
+  readonly client: WOLF;
   constructor (client: WOLF) {
     this.client = client;
   }

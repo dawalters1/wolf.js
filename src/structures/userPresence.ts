@@ -15,6 +15,7 @@ export class UserPresence extends BaseEntity {
   state: UserPresenceType;
   device: DeviceType;
   lastActive: number | null;
+  subscribed: boolean = false;
 
   constructor (client: WOLF, data: ServerUserPresence | ServerUser) {
     super(client);
@@ -30,6 +31,23 @@ export class UserPresence extends BaseEntity {
       this.device = data.deviceType;
       this.lastActive = null;
     }
+  }
+
+  patch (presence: UserPresence | ServerUser) {
+    if ('id' in presence) {
+      this.userId = presence.id;
+      this.state = presence.onlineState;
+      this.device = presence.deviceType;
+      this.lastActive = null;
+    } else {
+      this.userId = presence.userId;
+      this.state = presence.state;
+      this.device = presence.device;
+      this.lastActive = presence.lastActive;
+      this.subscribed = presence.subscribed;
+    }
+
+    return this;
   }
 }
 

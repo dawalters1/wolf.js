@@ -64,6 +64,7 @@
     "reflect-metadata": "^0.2.2",
     "socket.io-client": "^4.4.1",
     "tldts": "^7.0.7",
+    "ts-morph": "^26.0.0",
     "url": "^0.11.4",
     "url-regex-safe": "^4.0.0"
   },
@@ -75,6 +76,7 @@
     "@types/lodash": "^4.17.17",
     "@types/node": "^20.14.11",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "bun": "^1.2.15",
     "chai": "^5.1.1",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
@@ -84,7 +86,6 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "mocha": "^11.3.0",
     "prettier": "^3.5.3",
-    "typescript-eslint": "^8.32.1",
-    "bun": "^1.2.15"
+    "typescript-eslint": "^8.32.1"
   }
 }

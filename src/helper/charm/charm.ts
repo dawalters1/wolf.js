@@ -86,12 +86,14 @@ class CharmHelper extends BaseHelper<Charm> {
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
         body: {
-          id: userId
+          id: userId,
+          extended: opts?.extended ?? true
         }
       }
     );
 
-    user.charmStatistics.patch(response.body);
+    user.charmSummary.fetched = true;
+    user.charmStatistics = response.body;
 
     return user.charmStatistics;
   }

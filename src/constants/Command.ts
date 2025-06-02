@@ -16,10 +16,16 @@ export enum Command {
   GROUP_AUDIO_SLOT_LIST = 'group audio slot list',
   GROUP_AUDIO_SLOT_UPDATE = 'group audio slot update',
 
+  GROUP_AUDIO_REQUEST_ADD = 'group audio request add',
+  GROUP_AUDIO_REQUEST_CLEAR = 'group audio request clear',
+  GROUP_AUDIO_REQUEST_DELETE = 'group audio request delete',
+  GROUP_AUDIO_REQUEST_LIST = 'group audio request list',
+
   GROUP_EVENT = 'group event',
   GROUP_EVENT_CREATE = 'group event create',
   GROUP_EVENT_LIST = 'group event list',
   GROUP_EVENT_UPDATE = 'group event update',
+
   GROUP_CATEGORY_LIST = 'group category list',
 
   GROUP_ROLE = 'group role',
@@ -42,7 +48,6 @@ export enum Command {
   NOTIFICATION_GLOBAL_CLEAR = 'notification global clear',
   NOTIFICATION_GLOBAL_DELETE = 'notification global delete',
   NOTIFICATION_GLOBAL_LIST = 'notification global list',
-
   NOTIFICATION_SUBSCRIBER = 'notification subscriber',
   NOTIFICATION_SUBSCRIBER_CLEAR = 'notification subscriber clear',
   NOTIFICATION_SUBSCRIBER_DELETE = 'notification subscriber delete',
@@ -51,19 +56,15 @@ export enum Command {
   SUBSCRIBER_CONTACT_ADD = 'subscriber contact add',
   SUBSCRIBER_CONTACT_DELETE = 'subscriber contact delete',
   SUBSCRIBER_CONTACT_LIST = 'subscriber contact list',
-
   SUBSCRIBER_BLOCK_ADD = 'subscriber block add',
   SUBSCRIBER_BLOCK_DELETE = 'subscriber block delete',
   SUBSCRIBER_BLOCK_LIST = 'subscriber block list',
-
   SUBSCRIBER_GROUP_LIST = 'subscriber group list',
-
   SUBSCRIBER_GROUP_EVENT_ADD = 'subscriber group event add',
   SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriber group event delete',
   SUBSCRIBER_GROUP_EVENT_LIST = 'subscriber group event list',
-
   SUBSCRIBER_ROLE_SUMMARY = 'subscriber role summary',
-
+  SUBSCRIBER_PRESENCE = 'subscriber presence',
   SUBSCRIBER_PROFILE = 'subscriber profile',
 
   TIP_ADD = 'tip add',

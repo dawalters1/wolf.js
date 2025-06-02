@@ -1,6 +1,6 @@
 /* eslint-disable custom/auto-sort-imports */
 // Shared types
-type ChannelEntities = 'base' | 'extended' | 'audioCounts' | 'audioConfig' | 'messageConfig';
+export type ChannelEntities = 'base' | 'extended' | 'audioCounts' | 'audioConfig' | 'messageConfig';
 
 export const defaultChannelEntities: ChannelEntities[] = [
   'base',
@@ -12,13 +12,13 @@ export const defaultChannelEntities: ChannelEntities[] = [
 
 // Base interfaces
 interface BaseOptions {
-  forceNew?: false;
+  forceNew?: boolean;
 }
 interface SubscribableOptions extends BaseOptions {
-  subscribe?: true;
+  subscribe?: boolean;
 }
 interface ExtendedUserOptions extends SubscribableOptions {
-  extended?: true;
+  extended?: boolean;
 }
 interface ChannelEntityOptions extends SubscribableOptions {
   entities?: ChannelEntities[];
@@ -27,13 +27,14 @@ interface ChannelEntityOptions extends SubscribableOptions {
 // Specific interfaces (more declarative, less repetition)
 export interface AchievementCategoryOptions extends BaseOptions {}
 export interface AchievementOptions extends BaseOptions {}
+export interface ChaannelAudioSlotRequestOptions extends SubscribableOptions {}
 export interface ChannelCategoryOptions extends BaseOptions {}
 export interface ChannelListOptions extends SubscribableOptions {}
 export interface ChannelOptions extends ChannelEntityOptions {}
 export interface ChannelRoleOptions extends BaseOptions {}
 export interface ChannelRoleUserOptions extends SubscribableOptions {}
 export interface CharmOptions extends BaseOptions {}
-export interface CharmUserStatisticsOptions extends BaseOptions {}
+export interface CharmUserStatisticsOptions extends ExtendedUserOptions {}
 export interface CharmUserSummaryOptions extends BaseOptions {}
 export interface ContactOptions extends SubscribableOptions {}
 export interface EventChannelOptions extends SubscribableOptions {}
@@ -43,3 +44,4 @@ export interface NotificationOptions extends SubscribableOptions {}
 export interface RoleOptions extends BaseOptions {}
 export interface StageSlotOptions extends SubscribableOptions {}
 export interface UserOptions extends ExtendedUserOptions {}
+export interface UserPresenceOptions extends SubscribableOptions {}

@@ -3,14 +3,14 @@ import { Command } from '../../constants/Command.ts';
 import WOLF from '../../client/WOLF.ts';
 
 class AchievementUserHelper {
-  client: Readonly<WOLF>;
+  readonly client: WOLF;
   constructor (client: WOLF) {
     this.client = client;
   }
 
   async get (userId: number, parentId?: number, forceNew?: boolean): Promise<(AchievementUser | null)[]> {
     const user = await this.client.user.getById(userId);
-    if (user === null) throw new Error('User not found');
+    if (user === null) { throw new Error(`User with ID ${userId} not found`); }
 
     let achievements: (AchievementUser | null)[];
 
@@ -36,7 +36,7 @@ class AchievementUserHelper {
     }
 
     const parentAchievement = user.achievements.get(parentId);
-    if (parentAchievement === null) throw new Error('Parent achievement not found');
+    if (parentAchievement === null) { throw new Error(`Parent achievement with ID ${parentId} not found`); }
 
     if (parentAchievement.childrenId) {
       return [parentAchievement, ...user.achievements.getAll([...parentAchievement.childrenId])];

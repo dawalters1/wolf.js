@@ -3,7 +3,7 @@ import BaseEntity from './baseEntity.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import CharmStatistic from './charmStatistic.ts';
 import CharmSummary from './charmSummary.ts';
-import { DeviceType, UserPrivilege } from '../constants/index.ts';
+import { DeviceType, UserPrivilege, UserPresence as UserPresenceType } from '../constants/index.ts';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
 import UserExtended, { ServerUserExtended } from './userExtended.ts';
@@ -23,7 +23,7 @@ export interface ServerUser {
   iconInfo: ServerIconInfo;
   id: number;
   nickname: string;
-  onlineState: UserPresence;
+  onlineState: UserPresenceType;
   privileges: UserPrivilege;
   reputation: number;
   status: string;
