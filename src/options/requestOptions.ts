@@ -27,7 +27,7 @@ interface ChannelEntityOptions extends SubscribableOptions {
 // Specific interfaces (more declarative, less repetition)
 export interface AchievementCategoryOptions extends BaseOptions {}
 export interface AchievementOptions extends BaseOptions {}
-export interface ChaannelAudioSlotRequestOptions extends SubscribableOptions {}
+export interface ChannelAudioSlotRequestOptions extends SubscribableOptions {}
 export interface ChannelCategoryOptions extends BaseOptions {}
 export interface ChannelListOptions extends SubscribableOptions {}
 export interface ChannelOptions extends ChannelEntityOptions {}

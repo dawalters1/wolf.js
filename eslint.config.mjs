@@ -11,8 +11,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
   {
-    browser: true,
-    node: true,
     files: ['**/*.ts', '**/*.tsx'],
     ignores: ['dist/', 'node_modules/'],
     languageOptions: {
@@ -22,6 +20,13 @@ export default [
         tsconfigRootDir: __dirname,
         sourceType: 'module',
       },
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        console: "readonly",
+        browser: true,
+        node: true,
+      }
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,

@@ -22,7 +22,6 @@ export class Websocket {
     this.handlers = new Map();
   }
 
-
   async _init () {
     if (this.socket) { return; }
 
@@ -41,7 +40,7 @@ export class Websocket {
     }
 
     const framework = this.client.config.framework;
-    const { host, port, query } = framework.connection;//.get('framework.connection');
+    const { host, port, query } = framework.connection;// .get('framework.connection');
     const { device, version } = query;
     const { onlineState, token } = framework.login;
 
@@ -55,23 +54,23 @@ export class Websocket {
     }
     );
 
-  this.socket.io.on('open', () => console.log("CONNECTING"));
-    this.socket.on('connect', () => console.log("CONNECTED"));
-    this.socket.on('connect_error', error => console.log("CONNECT ERROR", error));
-    this.socket.on('connect_timeout', error => console.log("CONNECT TIMEOUT", error));
+    this.socket.io.on('open', () => console.log('CONNECTING'));
+    this.socket.on('connect', () => console.log('CONNECTED'));
+    this.socket.on('connect_error', error => console.log('CONNECT ERROR', error));
+    this.socket.on('connect_timeout', error => console.log('CONNECT TIMEOUT', error));
     this.socket.on('disconnect', reason => {
       if (reason === 'io server disconnect') {
         this.socket?.connect();
       }
 
-      console.log("DISCONNECTED", reason)
+      console.log('DISCONNECTED', reason);
     });
     this.socket.on('error', error => console.log('ERROR', error));
-    this.socket.io.on('reconnect_attempt', reconnectNumber => console.log("RECONNECTING", reconnectNumber));
-    this.socket.io.on('reconnect', () => console.log("RECONNECT"));
-    this.socket.io.on('reconnect_failed', () => console.log("RECONNECT FAILED"));
-    this.socket.on('ping', () => console.log("PING"));
-    this.socket.on('pong', (latency) => console.log("PONG", latency));
+    this.socket.io.on('reconnect_attempt', reconnectNumber => console.log('RECONNECTING', reconnectNumber));
+    this.socket.io.on('reconnect', () => console.log('RECONNECT'));
+    this.socket.io.on('reconnect_failed', () => console.log('RECONNECT FAILED'));
+    this.socket.on('ping', () => console.log('PING'));
+    this.socket.on('pong', (latency) => console.log('PONG', latency));
 
     this.socket.onAny((event, args) => {
       const handler = this.handlers.get(event);
