@@ -3,10 +3,11 @@ import BaseEntity from './baseEntity.ts';
 import CacheManager from '../managers/cacheManager.ts';
 import CharmStatistic from './charmStatistic.ts';
 import CharmSummary from './charmSummary.ts';
-import { DeviceType, UserPresence, UserPrivilege } from '../constants/index.ts';
+import { DeviceType, UserPrivilege } from '../constants/index.ts';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
 import UserExtended, { ServerUserExtended } from './userExtended.ts';
+import UserPresence from './userPresence.ts';
 import UserSelectedCharmList, { ServerUserSelectedCharmList } from './userSelectedCharmList.ts';
 import WOLF from '../client/WOLF.ts';
 
@@ -34,7 +35,6 @@ export class User extends BaseEntity {
 
   categoryIds: number[];
   charms: UserSelectedCharmList;
-  deviceType: DeviceType;
   extended: UserExtended | null;
   followable: boolean;
   hash: string;
@@ -42,7 +42,6 @@ export class User extends BaseEntity {
   iconHash: string;
   iconInfo: IconInfo;
   nickname: string;
-  onlineState: UserPresence;
   privileges: UserPrivilege;
   privilegeList: UserPrivilege[];
   reputation: number;
@@ -50,13 +49,13 @@ export class User extends BaseEntity {
   charmSummary: CacheManager<CharmSummary>;
   charmStatistics: CharmStatistic;
   achievements: CacheManager<AchievementUser>;
+  presence: UserPresence;
 
   constructor (client: WOLF, data: ServerUser) {
     super(client);
 
     this.categoryIds = data.categoryIds;
     this.charms = new UserSelectedCharmList(client, data.charms);
-    this.deviceType = data.deviceType;
     this.extended = data.extended
       ? new UserExtended(client, data.extended)
       : null;
@@ -67,7 +66,6 @@ export class User extends BaseEntity {
     this.iconInfo = new IconInfo(client, data.iconInfo);
     this.id = data.id;
     this.nickname = data.nickname;
-    this.onlineState = data.onlineState;
     this.privileges = data.privileges;
     this.privilegeList = Object.values(UserPrivilege)
       .filter((value): value is UserPrivilege => (this.privileges & value as number) === value);
@@ -76,5 +74,6 @@ export class User extends BaseEntity {
     this.charmSummary = new CacheManager();
     this.charmStatistics = new CharmStatistic(client);
     this.achievements = new CacheManager();
+    this.presence = new UserPresence(client, data);
   }
 }

@@ -1,11 +1,14 @@
-import BaseHelper from '../baseHelper';
 import { Command } from '../../constants/Command';
+import WOLF from '../../client/WOLF';
 import WOLFResponse from '../../structures/WOLFResponse';
 import WOLFStar from '../../structures/wolfstar';
 
-// Nothing gets cached from this.
-// Should I cache?, IDK yet
-class WOLFStarHelper extends BaseHelper<WOLFStar> {
+class WOLFStarHelper {
+  client: Readonly<WOLF>;
+  constructor (client: WOLF) {
+    this.client = client;
+  }
+
   async getById (userId: number): Promise<WOLFStar | null> {
     return (await this.getByIds([userId]))[0];
   }

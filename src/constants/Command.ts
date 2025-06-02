@@ -20,8 +20,13 @@ export enum Command {
   GROUP_EVENT_CREATE = 'group event create',
   GROUP_EVENT_LIST = 'group event list',
   GROUP_EVENT_UPDATE = 'group event update',
+  GROUP_CATEGORY_LIST = 'group category list',
 
   GROUP_ROLE = 'group role',
+  GROUP_ROLE_SUMMARY = 'group role summary',
+  GROUP_ROLE_SUBSCRIBER_LIST = 'group role subscriber list',
+  GROUP_ROLE_SUBSCRIBER_ASSIGN = 'group role subscriber assign',
+  GROUP_ROLE_SUBSCRIBER_UNASSIGN = 'group role subscriber unassign',
 
   GROUP_PROFILE = 'group profile',
 
@@ -56,6 +61,8 @@ export enum Command {
   SUBSCRIBER_GROUP_EVENT_ADD = 'subscriber group event add',
   SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriber group event delete',
   SUBSCRIBER_GROUP_EVENT_LIST = 'subscriber group event list',
+
+  SUBSCRIBER_ROLE_SUMMARY = 'subscriber role summary',
 
   SUBSCRIBER_PROFILE = 'subscriber profile',
 
