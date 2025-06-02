@@ -16,11 +16,11 @@ class Welcome extends BaseEvent {
     super(client, 'welcome');
   }
 
-  async cleanup(){
-    
+  async cleanup () {
+
   }
 
-  async login(){
+  async login () {
 
   }
 
