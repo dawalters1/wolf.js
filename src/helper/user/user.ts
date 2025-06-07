@@ -1,6 +1,7 @@
 import BaseHelper from '../baseHelper';
 import { Command } from '../../constants/Command';
-import { User } from '../../structures/user';
+import CurrentUser from '../../structures/currentUser';
+import { ServerUser, User } from '../../structures/user';
 import { UserOptions } from '../../options/requestOptions';
 import UserPresenceHelper from './userPresence';
 import UserRoleHelper from './userRole';
@@ -39,9 +40,12 @@ class UserHelper extends BaseHelper<User> {
     const missingIds = userIds.filter((id) => !usersMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<User>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerUser>>>(
         Command.SUBSCRIBER_PROFILE,
         {
+          headers: {
+            version: 4
+          },
           body: {
             idList: missingIds,
             subscribe: opts?.subscribe ?? true,
@@ -50,8 +54,18 @@ class UserHelper extends BaseHelper<User> {
         }
       );
 
-      response.body.values().filter((userResponse) => userResponse.success)
-        .forEach((userResponse) => usersMap.set(userResponse.body.id, this.cache.set(userResponse.body)));
+      [...response.body.values()].filter((userResponse) => userResponse.success)
+        .forEach((userResponse) => {
+          const user = userResponse.body.id === this.client.config.framework.login.userId
+            ? new CurrentUser(this.client, userResponse.body)
+            : new User(this.client, userResponse.body);
+
+          if (user instanceof CurrentUser) {
+            this.client._me = user;
+          }
+
+          usersMap.set(userResponse.body.id, this.cache.set(user));
+        });
     }
 
     return userIds.map((userId) => usersMap.get(userId) ?? null);

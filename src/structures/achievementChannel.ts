@@ -21,6 +21,10 @@ export class AchievementChannel extends BaseEntity {
     this.id = data.id;
     this.additionalInfo = new AchievementChannelAdditionalInfo(client, data.additionalInfo);
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default AchievementChannel;

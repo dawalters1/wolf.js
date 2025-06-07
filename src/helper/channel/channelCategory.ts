@@ -1,5 +1,5 @@
 import BaseHelper from '../baseHelper.ts';
-import ChannelCategory from '../../structures/achievementCategory.ts';
+import ChannelCategory, { ServerChannelCategory } from '../../structures/channelCategory';
 import { ChannelCategoryOptions } from '../../options/requestOptions.ts';
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
@@ -14,7 +14,7 @@ class ChannelCategoryHelper extends BaseHelper<ChannelCategory> {
       }
     }
 
-    const response = await this.client.websocket.emit<ChannelCategory[]>(
+    const response = await this.client.websocket.emit<ServerChannelCategory[]>(
       Command.GROUP_CATEGORY_LIST,
       {
         body: {
@@ -23,7 +23,7 @@ class ChannelCategoryHelper extends BaseHelper<ChannelCategory> {
       }
     );
 
-    return this.cache.setAll(response.body);
+    return this.cache.setAll(response.body.map((serverChannelCategory) => new ChannelCategory(this.client, serverChannelCategory)));
   }
 }
 

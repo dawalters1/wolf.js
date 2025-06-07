@@ -1,4 +1,5 @@
 import BaseEntity from './baseEntity.ts';
+import { User } from './user';
 import { UserPresence, UserPrivilege } from '../constants/index.ts';
 import WOLF from '../client/WOLF.ts';
 
@@ -15,13 +16,23 @@ export class ContactAdditionalInfo extends BaseEntity {
   privileges: UserPrivilege;
   onlineState: UserPresence;
 
-  constructor (client: WOLF, data: ServerContactAdditionalInfo) {
+  constructor (client: WOLF, data: ServerContactAdditionalInfo | User) {
     super(client);
 
+    if ('nicknameShort' in data) {
+      this.nicknameShort = data.nicknameShort;
+      this.onlineState = data.onlineState;
+    } else {
+      this.nicknameShort = data.nickname;
+      this.onlineState = data.presence.state;
+    }
+
     this.hash = data.hash;
-    this.nicknameShort = data.nicknameShort;
     this.privileges = data.privileges;
-    this.onlineState = data.onlineState;
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 export default ContactAdditionalInfo;

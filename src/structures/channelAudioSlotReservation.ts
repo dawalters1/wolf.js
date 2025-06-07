@@ -11,7 +11,11 @@ export class ChannelAudioSlotReservation extends BaseEntity {
     super(client);
 
     this.userId = data.reservedOccupierId as number;
-    this.expiresAt = data.reservedExpiresAt as Date;
+    this.expiresAt = new Date(data.reservedExpiresAt as Date);
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 

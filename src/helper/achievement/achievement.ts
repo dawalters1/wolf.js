@@ -1,4 +1,4 @@
-import Achievement from '../../structures/achievement.ts';
+import Achievement, { ServerAchievement } from '../../structures/achievement.ts';
 import AchievementCategoryHelper from './achievementCategory.ts';
 import AchievementChannelHelper from './achievementChannel.ts';
 import { AchievementOptions } from '../../options/requestOptions.ts';
@@ -40,7 +40,7 @@ class AchievementHelper extends BaseHelper<Achievement> {
     const missingIds = achievementIds.filter((id) => !achievementsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Achievement>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerAchievement>>>(
         Command.ACHIEVEMENT,
         {
           body: {
@@ -50,8 +50,8 @@ class AchievementHelper extends BaseHelper<Achievement> {
         }
       );
 
-      response.body.values().filter((achievementResponse) => achievementResponse.success)
-        .forEach((achievementResponse) => achievementsMap.set(achievementResponse.body.id, this.cache.set(achievementResponse.body)));
+      [...response.body.values()].filter((achievementResponse) => achievementResponse.success)
+        .forEach((achievementResponse) => achievementsMap.set(achievementResponse.body.id, this.cache.set(new Achievement(this.client, achievementResponse.body))));
     }
 
     return achievementIds.map((achievementId) => achievementsMap.get(achievementId) ?? null);

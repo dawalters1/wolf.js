@@ -1,5 +1,5 @@
 import Channel from '../../structures/channel.ts';
-import ChannelMember from '../../structures/channelMember.ts';
+import ChannelMember, { ServerChannelMember } from '../../structures/channelMember.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../../constants/ChannelMemberListType.ts';
 import { Command } from '../../constants/Command.ts';
@@ -13,7 +13,7 @@ class ChannelMemberHelper {
     this.client = client;
   }
 
-  private async _getList (channel: Channel, list: string): Promise<ChannelMember[]> {
+  private async _getList (channel: Channel, list: ChannelMemberListType): Promise<ChannelMember[]> {
     if (channel.members.metadata[list]) {
       return channel.members.values().filter(m => m.lists.has(list));
     }
@@ -23,7 +23,7 @@ class ChannelMemberHelper {
 
     const fetchMembers = async (result: ChannelMember[] = []): Promise<ChannelMember[]> => {
       try {
-        const response = await this.client.websocket.emit<ChannelMember[]>(
+        const response = await this.client.websocket.emit<ServerChannelMember[]>(
           command,
           {
             body: {
@@ -37,8 +37,7 @@ class ChannelMemberHelper {
           }
         );
 
-        response.body.forEach(m => m.addList(list));
-        result.push(...response.body);
+        result.push(...response.body.map((serverChannelMember) => new ChannelMember(this.client, serverChannelMember, list)));
 
         const complete = listConfig.batched
           ? response.body.length < listConfig.limit
@@ -56,7 +55,7 @@ class ChannelMemberHelper {
     return fetchMembers();
   }
 
-  private _getCommandForList (list: string): Command {
+  private _getCommandForList (list: ChannelMemberListType): Command {
     switch (list) {
       case ChannelMemberListType.PRIVILEGED: return Command.GROUP_MEMBER_PRIVILEGED_LIST;
       case ChannelMemberListType.REGULAR: return Command.GROUP_MEMBER_REGULAR_LIST;
@@ -83,7 +82,7 @@ class ChannelMemberHelper {
     if (cached) { return cached; };
 
     try {
-      const response = await this.client.websocket.emit<ChannelMember>(
+      const response = await this.client.websocket.emit<ServerChannelMember>(
         Command.GROUP_MEMBER,
         {
           body: {
@@ -93,7 +92,7 @@ class ChannelMemberHelper {
         }
       );
 
-      return channel.members.set(response.body);
+      return channel.members.set(new ChannelMember(this.client, response.body));
     } catch (err: any) {
       if (err.code === StatusCodes.NOT_FOUND) return null;
       throw err;

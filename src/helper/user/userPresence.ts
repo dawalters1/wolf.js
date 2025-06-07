@@ -1,6 +1,6 @@
 import { Command } from '../../constants/Command';
 import { User } from '../../structures/user';
-import UserPresence from '../../structures/userPresence';
+import UserPresence, { ServerUserPresence } from '../../structures/userPresence';
 import { UserPresenceOptions } from '../../options/requestOptions';
 import WOLF from '../../client/WOLF';
 import WOLFResponse from '../../structures/WOLFResponse';
@@ -32,7 +32,7 @@ class UserPresenceHelper {
     const missingIds = userIds.filter((id) => !presenceMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<UserPresence>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerUserPresence>>>(
         Command.SUBSCRIBER_PRESENCE,
         {
           body: {
@@ -42,11 +42,12 @@ class UserPresenceHelper {
         }
       );
 
-      response.body.values().filter((presenceResponse) => presenceResponse.success)
+      [...response.body.values()].filter((presenceResponse) => presenceResponse.success)
+        .map((presenceResponse) => new UserPresence(this.client, presenceResponse.body))
         .forEach((presenceResponse) => {
           const user = users.find((user) => user?.id === presence.userId) ?? null;
           if (user === null) { throw new Error(''); }
-          const presence = presenceResponse.body;
+          const presence = presenceResponse;
           presence.subscribed = subscribe;// eh
           presenceMap.set(presence.userId, user.presence.patch(presence));
         });

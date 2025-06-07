@@ -12,23 +12,27 @@ export interface ServerWOLFStar {
 }
 
 export class WOLFStar extends BaseEntity {
-    @key
-      userId: number;
+  @key
+    userId: number;
 
-    shows: number;
-    maxListeners: number;
-    totalListeners: number;
-    talentList: WOLFStarTalent[];
+  shows: number;
+  maxListeners: number;
+  totalListeners: number;
+  talentList: WOLFStarTalent[];
 
-    constructor (client: WOLF, data: ServerWOLFStar) {
-      super(client);
+  constructor (client: WOLF, data: ServerWOLFStar) {
+    super(client);
 
-      this.userId = data.subscriberId;
-      this.shows = data.shows;
-      this.maxListeners = data.maxListeners;
-      this.totalListeners = data.totalListeners;
-      this.talentList = data.talentList;
-    }
+    this.userId = data.subscriberId;
+    this.shows = data.shows;
+    this.maxListeners = data.maxListeners;
+    this.totalListeners = data.totalListeners;
+    this.talentList = data.talentList;
+  }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default WOLFStar;

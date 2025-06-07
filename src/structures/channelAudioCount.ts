@@ -19,5 +19,9 @@ export class ChannelAudioCount extends BaseEntity {
     this.consumerCount = data.consumerCount;
     this.id = data.id;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default ChannelAudioCount;

@@ -9,19 +9,23 @@ export interface ServerChannelRoleUser {
 }
 
 export class ChannelRoleUser extends BaseEntity {
-    @key
-      userId: number;
+  @key
+    userId: number;
 
-    channelId: number;
-    roleId: number;
+  channelId: number;
+  roleId: number;
 
-    constructor (client: WOLF, data: ServerChannelRoleUser) {
-      super(client);
+  constructor (client: WOLF, data: ServerChannelRoleUser) {
+    super(client);
 
-      this.userId = data.subscriberId;
-      this.channelId = data.groupId;
-      this.roleId = data.roleId;
-    }
+    this.userId = data.subscriberId;
+    this.channelId = data.groupId;
+    this.roleId = data.roleId;
+  }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default ChannelRoleUser;

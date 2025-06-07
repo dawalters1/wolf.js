@@ -1,12 +1,12 @@
 import BaseHelper from '../baseHelper.ts';
-import { Charm } from '../../structures/charm.ts';
+import { Charm, ServerCharm } from '../../structures/charm.ts';
 import {
   CharmOptions,
   CharmUserStatisticsOptions,
   CharmUserSummaryOptions
 } from '../../options/requestOptions.ts';
-import CharmStatistic from '../../structures/charmStatistic.ts';
-import CharmSummary from '../../structures/charmSummary.ts';
+import CharmStatistic, { ServerCharmStatistic } from '../../structures/charmStatistic.ts';
+import CharmSummary, { ServerCharmSummary } from '../../structures/charmSummary.ts';
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -28,7 +28,7 @@ class CharmHelper extends BaseHelper<Charm> {
     const missingIds = charmIds.filter(id => !charmsMap.has(id));
 
     if (missingIds.length > 0) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Charm>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerCharm>>>(
         Command.CHARM_LIST,
         {
           body: {
@@ -38,8 +38,8 @@ class CharmHelper extends BaseHelper<Charm> {
         }
       );
 
-      response.body.values().filter((charmResponse) => charmResponse.success)
-        .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache.set(charmResponse.body)));
+      [...response.body.values()].filter((charmResponse) => charmResponse.success)
+        .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache.set(new Charm(this.client, charmResponse.body))));
     }
 
     return charmIds.map(id => charmsMap.get(id) ?? null);
@@ -56,7 +56,7 @@ class CharmHelper extends BaseHelper<Charm> {
       return user.charmSummary.values();
     }
 
-    const response = await this.client.websocket.emit<CharmSummary[]>(
+    const response = await this.client.websocket.emit<ServerCharmSummary[]>(
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
         body:
@@ -68,7 +68,7 @@ class CharmHelper extends BaseHelper<Charm> {
 
     user.charmSummary.fetched = true;
 
-    return user.charmSummary.setAll(response.body);
+    return user.charmSummary.setAll(response.body.map((serverCharmSummary) => new CharmSummary(this.client, serverCharmSummary)));
   }
 
   async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
@@ -82,7 +82,7 @@ class CharmHelper extends BaseHelper<Charm> {
       return user.charmStatistics;
     }
 
-    const response = await this.client.websocket.emit<CharmStatistic>(
+    const response = await this.client.websocket.emit<ServerCharmStatistic>(
       Command.CHARM_SUBSCRIBER_SUMMARY_LIST,
       {
         body: {
@@ -93,7 +93,7 @@ class CharmHelper extends BaseHelper<Charm> {
     );
 
     user.charmSummary.fetched = true;
-    user.charmStatistics = response.body;
+    user.charmStatistics = new CharmStatistic(this.client, response.body);
 
     return user.charmStatistics;
   }

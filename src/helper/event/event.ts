@@ -1,6 +1,6 @@
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import Event from '../../structures/event.ts';
+import Event, { ServerEvent } from '../../structures/event.ts';
 import EventChannelHelper from './eventChannel.ts';
 import { EventOptions } from '../../options/requestOptions.ts';
 import EventSubscriptionHelper from './eventSubscription.ts';
@@ -36,7 +36,7 @@ class EventHelper extends BaseHelper<Event> {
     const missingIds = eventIds.filter((id) => !eventsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Event>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerEvent>>>(
         Command.GROUP_EVENT,
         {
           body: {
@@ -46,8 +46,8 @@ class EventHelper extends BaseHelper<Event> {
         }
       );
 
-      response.body.values().filter((eventResponse) => eventResponse.success)
-        .forEach((eventResponse) => eventsMap.set(eventResponse.body.id, this.cache.set(eventResponse.body)));
+      [...response.body.values()].filter((eventResponse) => eventResponse.success)
+        .forEach((eventResponse) => eventsMap.set(eventResponse.body.id, this.cache.set(new Event(this.client, eventResponse.body))));
     }
 
     return eventIds.map((eventId) => eventsMap.get(eventId) ?? null);

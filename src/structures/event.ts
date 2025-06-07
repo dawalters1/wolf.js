@@ -42,7 +42,7 @@ export class Event extends BaseEntity {
     this.attendanceCount = data.attendanceCount;
     this.category = data.category;
     this.createdBy = data.createdBy;
-    this.endsAt = data.endsAt;
+    this.endsAt = new Date(data.endsAt);
     this.groupId = data.groupId;
     this.hostedBy = data.hostedBy;
     this.id = data.id;
@@ -50,23 +50,8 @@ export class Event extends BaseEntity {
     this.isRemoved = data.isRemoved;
     this.longDescription = data.longDescription;
     this.shortDescription = data.shortDescription;
-    this.startsAt = data.startsAt;
+    this.startsAt = new Date(data.startsAt);
     this.title = data.title;
-  }
-
-  protected _patch (event: Event): void {
-    this.attendanceCount = event.attendanceCount;
-    this.category = event.category;
-    this.createdBy = event.createdBy;
-    this.endsAt = event.endsAt;
-    this.groupId = event.groupId;
-    this.hostedBy = event.hostedBy;
-    this.imageUrl = event.imageUrl;
-    this.isRemoved = event.isRemoved;
-    this.longDescription = event.longDescription;
-    this.shortDescription = event.shortDescription;
-    this.startsAt = event.startsAt;
-    this.title = event.title;
   }
 }
 export default Event;

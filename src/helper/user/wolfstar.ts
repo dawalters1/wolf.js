@@ -1,7 +1,7 @@
 import { Command } from '../../constants/Command';
 import WOLF from '../../client/WOLF';
 import WOLFResponse from '../../structures/WOLFResponse';
-import WOLFStar from '../../structures/wolfstar';
+import WOLFStar, { ServerWOLFStar } from '../../structures/wolfstar';
 
 class WOLFStarHelper {
   readonly client: WOLF;
@@ -14,7 +14,7 @@ class WOLFStarHelper {
   }
 
   async getByIds (userIds: number[]): Promise<(WOLFStar | null)[]> {
-    const response = await this.client.websocket.emit<Map<number, WOLFResponse<WOLFStar>>>(
+    const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerWOLFStar>>>(
       Command.WOLFSTAR_PROFILE,
       {
         headers: {
@@ -26,7 +26,7 @@ class WOLFStarHelper {
       }
     );
 
-    return [...response.body.values()].map((value) => value?.body ?? null);
+    return [...response.body.values()].map((serverWOLFStarResponse) => serverWOLFStarResponse.success ? new WOLFStar(this.client, serverWOLFStarResponse.body) : null);
   }
 }
 

@@ -76,4 +76,8 @@ export class User extends BaseEntity {
     this.achievements = new CacheManager();
     this.presence = new UserPresence(client, data);
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }

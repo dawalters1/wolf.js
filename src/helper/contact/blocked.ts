@@ -1,6 +1,6 @@
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import Contact from '../../structures/contact.ts';
+import Contact, { ServerContact } from '../../structures/contact.ts';
 import { ContactOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
@@ -10,7 +10,7 @@ class BlockedHelper extends BaseHelper<Contact> {
       return this.cache.values();
     }
 
-    const response = await this.client.websocket.emit<Contact[]>(
+    const response = await this.client.websocket.emit<ServerContact[]>(
       Command.SUBSCRIBER_BLOCK_LIST,
       {
         body: {
@@ -21,7 +21,7 @@ class BlockedHelper extends BaseHelper<Contact> {
 
     this.cache.fetched = true;
 
-    return this.cache?.setAll(response.body);
+    return this.cache?.setAll(response.body.map((serverContact) => new Contact(this.client, serverContact)));
   }
 
   async isBlocked (userId: number): Promise<boolean> {

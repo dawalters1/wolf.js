@@ -19,11 +19,17 @@ export class AchievementUserAdditionalInfo extends BaseEntity {
   constructor (client: WOLF, data: ServerAchievementUserAdditionalInfo) {
     super(client);
 
-    this.awardedAt = data.awardedAt;
+    this.awardedAt = data?.awardedAt
+      ? new Date(data.awardedAt)
+      : null;
     this.eTag = data.eTag;
     this.steps = data.steps;
     this.total = data.total;
     this.categoryId = data.categoryId;
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 

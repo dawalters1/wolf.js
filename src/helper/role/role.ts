@@ -2,7 +2,7 @@
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
 import { Language } from '../../constants/Language.ts';
-import { Role } from '../../structures/role.ts';
+import { Role, ServerRole } from '../../structures/role.ts';
 import { RoleOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
@@ -25,7 +25,7 @@ class RoleHelper extends BaseHelper<Role> {
     const missingIds = roleIds.filter((id) => !roleMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<WOLFResponse<Role>[]>(
+      const response = await this.client.websocket.emit<WOLFResponse<ServerRole>[]>(
         Command.GROUP_ROLE,
         {
           body: {
@@ -36,7 +36,7 @@ class RoleHelper extends BaseHelper<Role> {
       );
 
       response.body.filter((roleResponse) => roleResponse.success)
-        .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache.set(roleResponse.body)));
+        .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache.set(new Role(this.client, roleResponse.body))));
     }
 
     return roleIds.map((roleId) => roleMap.get(roleId) ?? null);

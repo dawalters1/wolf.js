@@ -16,6 +16,10 @@ export class UserSelectedCharm extends BaseEntity {
     this.charmId = data.charmId;
     this.position = data.position;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default UserSelectedCharm;

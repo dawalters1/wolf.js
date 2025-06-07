@@ -21,6 +21,10 @@ export class AchievementUser extends BaseEntity {
     this.id = data.id;
     this.additionalInfo = new AchievementUserAdditionalInfo(client, data.additionalInfo);
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default AchievementUser;

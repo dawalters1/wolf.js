@@ -3,7 +3,7 @@ import { key } from '../decorators/key.ts';
 import { Language } from '../constants/Language.ts';
 import WOLF from '../client/WOLF.ts';
 
-interface ServerAchievement {
+export interface ServerAchievement {
   id: number;
   languageId: Language;
   parentId: number | null;
@@ -23,15 +23,15 @@ class Achievement extends BaseEntity {
 
   parentId: number | null;
   typeId: number;
-  name: Map<Language, string>;
-  description: Map<Language, string>;
+  name: Map<Language, string> = new Map();
+  description: Map<Language, string> = new Map();
   imageUrl: string;
   category: number;
   levelId: number;
-  levelName: Map<Language, string>;
+  levelName: Map<Language, string> = new Map();
   acquisitionPercentage: number;
   /** @internal */
-  languages: Set<Language>;
+  languages: Set<Language> = new Set();
 
   constructor (client: WOLF, data: ServerAchievement) {
     super(client);
@@ -39,30 +39,18 @@ class Achievement extends BaseEntity {
     this.id = data.id;
     this.parentId = data.parentId;
     this.typeId = data.typeId;
-    this.name = new Map([[data.languageId, data.name]]);
-    this.description = new Map([[data.languageId, data.description]]);
+    this.name.set(data.languageId, data.name);
+    this.description.set(data.languageId, data.description);
     this.imageUrl = data.imageUrl;
     this.category = data.category;
     this.levelId = data.levelId;
-    this.levelName = new Map([[data.languageId, data.levelName]]);
+    this.levelName.set(data.languageId, data.levelName);
     this.acquisitionPercentage = data.acquisitionPercentage;
 
-    this.languages = new Set([data.languageId]);
+    this.languages.add(data.languageId);
   }
 
-  patch (achievement: Achievement) {
-    this.parentId = achievement.parentId;
-    this.typeId = achievement.typeId;
-    this.imageUrl = achievement.imageUrl;
-    this.category = achievement.category;
-    this.levelId = achievement.levelId;
-    this.acquisitionPercentage = achievement.acquisitionPercentage;
-
-    achievement.name.forEach((value, key) => this.name.set(key, value));
-    achievement.description.forEach((value, key) => this.description.set(key, value));
-    achievement.levelName.forEach((value, key) => this.levelName.set(key, value));
-    achievement.languages.forEach((language) => this.languages.add(language));
-
+  patch (entity: any): this {
     return this;
   }
 

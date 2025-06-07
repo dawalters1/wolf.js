@@ -3,7 +3,7 @@ import BaseHelper from '../baseHelper.ts';
 import ChannelEvent from '../../structures/channelEvent.ts';
 import { Command } from '../../constants/Command.ts';
 import CreateChannelEvent from '../../structures/createChannelEvent.ts';
-import Event from '../../structures/event.ts';
+import Event, { ServerEvent } from '../../structures/event.ts';
 import { EventChannelOptions } from '../../options/requestOptions.ts';
 import UpdateChannelEvent from '../../structures/updateChannelEvent.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -52,21 +52,21 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
 
     // Check privileges for create
 
-    const responses = [] as (WOLFResponse | WOLFResponse<Event>)[];
+    const responses = [] as (Event | WOLFResponse)[];
 
     const { thumbnail, ...patchable } = eventData;
 
-    responses.push(
-      await this.client.websocket.emit<Event>(
-        Command.GROUP_EVENT_CREATE,
-        {
-          body: {
-            groupId: channelId,
-            ...patchable // TODO: do this properly
-          }
+    const response = await this.client.websocket.emit<ServerEvent>(
+      Command.GROUP_EVENT_CREATE,
+      {
+        body: {
+          groupId: channelId,
+          ...patchable // TODO: do this properly
         }
-      )
+      }
     );
+
+    responses.push(new Event(this.client, response.body));
 
     if (eventData.thumbnail) {
       responses.push(await this.client.multimedia.post('', ''));

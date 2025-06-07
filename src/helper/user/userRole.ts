@@ -1,5 +1,5 @@
 import { Command } from '../../constants/Command';
-import UserRole from '../../structures/userRole';
+import UserRole, { ServerUserRole } from '../../structures/userRole';
 import WOLF from '../../client/WOLF';
 
 class UserRoleHelper {
@@ -9,7 +9,7 @@ class UserRoleHelper {
   }
 
   async getById (userId: number): Promise<(UserRole | null)[]> {
-    const response = await this.client.websocket.emit<UserRole[]>(
+    const response = await this.client.websocket.emit<ServerUserRole[]>(
       Command.SUBSCRIBER_ROLE_SUMMARY,
       {
         body: {
@@ -18,7 +18,7 @@ class UserRoleHelper {
       }
     );
 
-    return response.body;
+    return response.body.map((serverUserRole) => new UserRole(this.client, serverUserRole));
   }
 }
 

@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import Notification from '../../structures/notification.ts';
+import Notification, { ServerNotification } from '../../structures/notification.ts';
 import { NotificationOptions } from '../../options/requestOptions.ts';
-import NotificationUser from '../../structures/notificationUser.ts';
+import NotificationUser, { ServerNotificationUser } from '../../structures/notificationUser.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class NotificationUserHelper extends BaseHelper<NotificationUser> {
@@ -13,8 +13,8 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
     }
 
     const get = async (results: Notification[] = []): Promise<Notification[]> => {
-      const response = await this.client.websocket.emit<Notification[]>(
-        Command.NOTIFICATION_SUBSCRIBER,
+      const response = await this.client.websocket.emit<ServerNotification[]>(
+        Command.NOTIFICATION_SUBSCRIBER_LIST,
         {
           subscribe: opts?.subscribe ?? true,
           offset: results.length,
@@ -22,16 +22,16 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         }
       );
 
-      results.push(...response.body);
+      results.push(...response.body.map((serverNotification) => new Notification(this.client, serverNotification)));
 
       return response.body.length < 50
         ? results
         : await get(results);
     };
 
-    this.client.me!.notificationsUser.fetched = true;
+    this.client.me.notificationsUser.fetched = true;
 
-    return this.client.me!.notificationsUser.setAll(await get());
+    return this.client.me.notificationsUser.setAll(await get());
   }
 
   async clear () : Promise<WOLFResponse> {
@@ -69,7 +69,7 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
     const missingIds = notificationIds.filter((notificationUserId) => !notificationsMap.has(notificationUserId));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<NotificationUser>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerNotificationUser>>>(
         Command.NOTIFICATION_SUBSCRIBER,
         {
           body: {
@@ -78,8 +78,8 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         }
       );
 
-      response.body.values().filter((notificationUserResponse) => notificationUserResponse.success)
-        .forEach((notificationUserResponse) => notificationsMap.set(notificationUserResponse.body.id, this.cache.set(notificationUserResponse.body)));
+      [...response.body.values()].filter((notificationUserResponse) => notificationUserResponse.success)
+        .forEach((notificationUserResponse) => notificationsMap.set(notificationUserResponse.body.id, this.cache.set(new NotificationUser(this.client, notificationUserResponse.body))));
     }
 
     return notificationIds.map((notificationUserId) => notificationsMap.get(notificationUserId) ?? null);

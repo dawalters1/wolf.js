@@ -16,5 +16,9 @@ export class ChannelOwner extends BaseEntity {
     this.id = data.id;
     this.hash = data.hash;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default ChannelOwner;

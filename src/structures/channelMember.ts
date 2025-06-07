@@ -18,14 +18,18 @@ export class ChannelMember extends BaseEntity {
   capabilities: ChannelMemberCapability;
   lists: Set<string>;
 
-  constructor (client: WOLF, data: ServerChannelMember) {
+  constructor (client: WOLF, data: ServerChannelMember, source?: ChannelMemberListType) {
     super(client);
 
     this.id = data.id;
     this.hash = data.hash;
     this.capabilities = data.capabilities;
 
-    this.lists = new Set();
+    this.lists = new Set([source, this._getParentList(data.capabilities)].filter((list) => list !== undefined));
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 
   _getParentList (capabilities: ChannelMemberCapability) {

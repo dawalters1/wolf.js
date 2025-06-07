@@ -2,7 +2,7 @@
 import BaseHelper from '../baseHelper.ts';
 import BlockedHelper from './blocked.ts';
 import { Command } from '../../constants/Command.ts';
-import Contact from '../../structures/contact.ts';
+import Contact, { ServerContact } from '../../structures/contact.ts';
 import { ContactOptions } from '../../options/requestOptions.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -20,7 +20,7 @@ class ContactHelper extends BaseHelper<Contact> {
       return this.cache.values();
     }
 
-    const response = await this.client.websocket.emit<Contact[]>(
+    const response = await this.client.websocket.emit<ServerContact[]>(
       Command.SUBSCRIBER_CONTACT_LIST,
       {
         body: {
@@ -31,7 +31,7 @@ class ContactHelper extends BaseHelper<Contact> {
 
     this.cache.fetched = true;
 
-    return this.cache.setAll(response.body);
+    return this.cache?.setAll(response.body.map((serverContact) => new Contact(this.client, serverContact)));
   }
 
   async isContact (userId: number): Promise<boolean> {

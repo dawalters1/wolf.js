@@ -1,4 +1,4 @@
-import ChannelAudioSlotRequest from '../../structures/channelAudioSlotRequest';
+import ChannelAudioSlotRequest, { ServerChannelAudioSlotRequest } from '../../structures/channelAudioSlotRequest';
 import { ChannelAudioSlotRequestOptions } from '../../options/requestOptions';
 import { ChannelMemberCapability } from '../../constants';
 import { Command } from '../../constants/Command';
@@ -23,7 +23,7 @@ class AudioSlotRequestHelper {
 
     if (!opts?.forceNew && channel.audioSlotRequests.fetched) { return channel.audioSlotRequests.values(); }
 
-    const response = await this.client.websocket.emit<ChannelAudioSlotRequest[]>(
+    const response = await this.client.websocket.emit<ServerChannelAudioSlotRequest[]>(
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
         body: {
@@ -35,7 +35,7 @@ class AudioSlotRequestHelper {
 
     channel.audioSlotRequests.fetched = true;
 
-    return channel.audioSlotRequests.setAll(response.body);
+    return channel.audioSlotRequests.setAll(response.body.map((serverChannelAudioSlotRequest) => new ChannelAudioSlotRequest(this.client, serverChannelAudioSlotRequest)));
   }
 
   async add (channelId: number, slotId?:number, userId?:number) {

@@ -34,8 +34,8 @@ export class NotificationUser extends BaseEntity {
     super(client);
 
     this.context = data.context;
-    this.createdAt = data.createdAt;
-    this.expiresAt = data.expiresAt;
+    this.createdAt = new Date(data.createdAt);
+    this.expiresAt = new Date(data.expiresAt);
     this.feed = new NotificationUserFeed(client, data.feed);
     this.popup = data.popup
       ? new NotificationUserPopup(client, data.popup)

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import WOLF from '../client/WOLF.ts';
 
 abstract class BaseEntity {
@@ -7,7 +8,11 @@ abstract class BaseEntity {
     this.client = client;
   }
 
-  patch?(entity: this): this
+  patch?(entity: any): this
+
+  clone (): this {
+    return _.clone(this);
+  }
 }
 
 export default BaseEntity;
