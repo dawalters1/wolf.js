@@ -53,6 +53,11 @@ export enum Command {
   NOTIFICATION_SUBSCRIBER_DELETE = 'notification subscriber delete',
   NOTIFICATION_SUBSCRIBER_LIST = 'notification subscriber list',
 
+  MESSAGE_GROUP_SUBSCRIBE = 'message group subscribe',
+  MESSAGE_PRIVATE_SUBSCRIBE = 'message private subscribe',
+
+  SECURITY_LOGIN = 'security login',
+
   SUBSCRIBER_CONTACT_ADD = 'subscriber contact add',
   SUBSCRIBER_CONTACT_DELETE = 'subscriber contact delete',
   SUBSCRIBER_CONTACT_LIST = 'subscriber contact list',

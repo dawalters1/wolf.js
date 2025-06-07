@@ -33,8 +33,8 @@ export class NotificationGlobal extends BaseEntity {
     super(client);
 
     this.context = data.context;
-    this.createdAt = data.createdAt;
-    this.expiresAt = data.expiresAt;
+    this.createdAt = new Date(data.createdAt);
+    this.expiresAt = new Date(data.expiresAt);
     this.feed = new NotificationGlobalFeed(client, data.feed);
     this.popup = data.popup
       ? new NotificationGlobalPopup(client, data.popup)

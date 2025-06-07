@@ -1,4 +1,4 @@
-import AchievementCategory from '../../structures/achievementCategory.ts';
+import AchievementCategory, { ServerAchievementCategory } from '../../structures/achievementCategory.ts';
 import { AchievementCategoryOptions } from '../../options/requestOptions.ts';
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
@@ -14,7 +14,7 @@ class AchievementCategoryHelper extends BaseHelper<AchievementCategory> {
       }
     }
 
-    const response = await this.client.websocket.emit<AchievementCategory[]>(
+    const response = await this.client.websocket.emit<ServerAchievementCategory[]>(
       Command.ACHIEVEMENT_CATEGORY_LIST,
       {
         body: {
@@ -23,7 +23,7 @@ class AchievementCategoryHelper extends BaseHelper<AchievementCategory> {
       }
     );
 
-    return this.cache.setAll(response.body);
+    return this.cache.setAll(response.body.map((serverAchievementCategory) => new AchievementCategory(this.client, serverAchievementCategory)));
   }
 }
 

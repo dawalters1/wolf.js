@@ -1,6 +1,6 @@
-import ChannelRole from '../../structures/channelRole';
+import ChannelRole, { ServerChannelRole } from '../../structures/channelRole';
 import { ChannelRoleOptions, ChannelRoleUserOptions } from '../../options/requestOptions';
-import ChannelRoleUser from '../../structures/channelRoleUser';
+import ChannelRoleUser, { ServerChannelRoleUser } from '../../structures/channelRoleUser';
 import { Command } from '../../constants/Command';
 import WOLF from '../../client/WOLF';
 
@@ -20,7 +20,7 @@ class ChannelRoleHelper {
       return channel.roles.summaries.values();
     }
 
-    const response = await this.client.websocket.emit<ChannelRole[]>(
+    const response = await this.client.websocket.emit<ServerChannelRole[]>(
       Command.GROUP_ROLE_SUMMARY,
       {
         body: {
@@ -29,7 +29,7 @@ class ChannelRoleHelper {
       }
     );
 
-    return channel.roles.summaries.setAll(response.body);
+    return channel.roles.summaries.setAll(response.body.map((serverChannelRole) => new ChannelRole(this.client, serverChannelRole)));
   }
 
   async users (channelId: number, opts?: ChannelRoleUserOptions): Promise<(ChannelRoleUser | null)[]> {
@@ -41,7 +41,7 @@ class ChannelRoleHelper {
       return channel.roles.users.values();
     }
 
-    const response = await this.client.websocket.emit<ChannelRoleUser[]>(
+    const response = await this.client.websocket.emit<ServerChannelRoleUser[]>(
       Command.GROUP_ROLE_SUBSCRIBER_LIST,
       {
         body: {
@@ -51,7 +51,7 @@ class ChannelRoleHelper {
       }
     );
 
-    return channel.roles.users.setAll(response.body);
+    return channel.roles.users.setAll(response.body.map((serverChannelRoleUser) => new ChannelRoleUser(this.client, serverChannelRoleUser)));
   }
 
   async assign (channelId: number, userId: number, roleId: number) {

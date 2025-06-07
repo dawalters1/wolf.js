@@ -26,7 +26,7 @@ export class Message extends BaseEntity {
   isChannel: boolean;
   timestamp: number;
   mimeType: MessageType;
-  data: string;
+  content: string;
   metadata: MessageMetadata | null;
   edited: MessageEdited | null;
 
@@ -40,7 +40,7 @@ export class Message extends BaseEntity {
     this.isChannel = data.isGroup;
     this.timestamp = data.timestamp;
     this.mimeType = data.mimeType;
-    this.data = data.data?.toString()?.trim() ?? '';
+    this.content = data.data?.toString()?.trim() ?? '';
     this.metadata = data?.metadata
       ? new MessageMetadata(client, data.metadata)
       : null;

@@ -18,34 +18,27 @@ export class Charm extends BaseEntity {
     id: number;
 
   cost: number;
-  description: Map<Language, string>;
+  description: Map<Language, string> = new Map();
   imageUrl: string;
-  name: Map<Language, string>;
+  name: Map<Language, string> = new Map();
   productId: number;
   /** @internal */
-  languages: Set<Language>;
+  languages: Set<Language> = new Set();
 
   constructor (client: WOLF, data: ServerCharm) {
     super(client);
 
     this.cost = data.cost;
-    this.description = new Map([[data.languageId, data.description]]);
+    this.description.set(data.languageId, data.description);
     this.id = data.id;
     this.imageUrl = data.imageUrl;
-    this.name = new Map([[data.languageId, data.name]]);
+    this.name.set(data.languageId, data.name);
     this.productId = data.productId;
 
-    this.languages = new Set([data.languageId]);
+    this.languages.add(data.languageId);
   }
 
-  patch (charm: Charm) {
-    this.cost = charm.cost;
-    this.imageUrl = charm.imageUrl;
-    this.productId = charm.productId;
-
-    charm.name.forEach((value, key) => this.name.set(key, value));
-    charm.description.forEach((value, key) => this.description.set(key, value));
-    charm.languages.forEach((language) => this.languages.add(language));
+  patch (entity: any): this {
     return this;
   }
 

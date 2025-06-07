@@ -1,4 +1,4 @@
-import AchievementUser from '../../structures/achievementUser.ts';
+import AchievementUser, { ServerAchievementUser } from '../../structures/achievementUser.ts';
 import { Command } from '../../constants/Command.ts';
 import WOLF from '../../client/WOLF.ts';
 
@@ -17,7 +17,7 @@ class AchievementUserHelper {
     if (!forceNew && user.achievements.fetched) {
       achievements = user.achievements.values();
     } else {
-      const { body } = await this.client.websocket.emit<AchievementUser[]>(
+      const response = await this.client.websocket.emit<ServerAchievementUser[]>(
         Command.ACHIEVEMENT_SUBSCRIBER_LIST,
         {
           headers: {
@@ -28,7 +28,7 @@ class AchievementUserHelper {
           }
         }
       );
-      achievements = user.achievements.setAll(body);
+      achievements = user.achievements.setAll(response.body.map((serverAchievementUser) => new AchievementUser(this.client, serverAchievementUser)));
     }
 
     if (!parentId) {
@@ -42,7 +42,7 @@ class AchievementUserHelper {
       return [parentAchievement, ...user.achievements.getAll([...parentAchievement.childrenId])];
     }
 
-    const { body: children } = await this.client.websocket.emit<AchievementUser[]>(
+    const response = await this.client.websocket.emit<ServerAchievementUser[]>(
       Command.ACHIEVEMENT_SUBSCRIBER_LIST,
       {
         headers: {
@@ -56,10 +56,10 @@ class AchievementUserHelper {
     );
 
     parentAchievement.childrenId = new Set(
-      children.map(child => child.id).filter(id => id !== parentId)
+      response.body.map((serverAchievementUser) => serverAchievementUser.id).filter(id => id !== parentId)
     );
 
-    return children;
+    return response.body.map((serverAchievementUser) => new AchievementUser(this.client, serverAchievementUser));
   }
 }
 

@@ -16,30 +16,25 @@ export class Role extends BaseEntity {
   @key
     id: number;
 
-  description: Map<Language, string>;
+  description: Map<Language, string> = new Map();
   emojiUrl: string;
-  name: Map<Language, string>;
+  name: Map<Language, string> = new Map();
   hexColur: string;
-  languages: Set<Language>;
+  languages: Set<Language> = new Set();
 
   constructor (client: WOLF, data: ServerRole) {
     super(client);
 
     this.id = data.id;
-    this.description = new Map([[data.languageId, data.description]]);
+    this.description.set(data.languageId, data.description);
     this.emojiUrl = data.emojiUrl;
-    this.name = new Map([[data.languageId, data.name]]);
+    this.name.set(data.languageId, data.name);
     this.hexColur = data.hexColur;
-    this.languages = new Set([data.languageId]);
+    this.languages.add(data.languageId);
   }
 
-  protected _patch (role: Role): void {
-    this.emojiUrl = role.emojiUrl;
-    this.hexColur = role.hexColur;
-
-    role.name.forEach((value, key) => this.name.set(key, value));
-    role.description.forEach((value, key) => this.description.set(key, value));
-    role.languages.forEach((language) => this.languages.add(language));
+  patch (entity: any): this {
+    return this;
   }
 
   /** @internal */

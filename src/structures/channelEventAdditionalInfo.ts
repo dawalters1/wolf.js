@@ -16,8 +16,12 @@ export class ChannelEventAdditionalInfo extends BaseEntity {
     super(client);
 
     this.eTag = data.eTag;
-    this.endsAt = data.endsAt;
-    this.startsAt = data.startsAt;
+    this.endsAt = new Date(data.endsAt);
+    this.startsAt = new Date(data.startsAt);
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 export default ChannelEventAdditionalInfo;

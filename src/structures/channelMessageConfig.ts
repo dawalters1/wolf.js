@@ -25,5 +25,9 @@ export class ChannelMessageConfig extends BaseEntity {
     this.disableHyperlink = data.disableHyperlink;
     this.slowModeRateInSeconds = data.slowModeRateInSeconds;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default ChannelMessageConfig;

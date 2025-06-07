@@ -15,7 +15,8 @@
       "allowImportingTsExtensions": true,
       "noEmit": true,
       "emitDecoratorMetadata": true,
-      "experimentalDecorators": true
+      "experimentalDecorators": true,
+      "stripInternal": true
     },
     "ts-node": {
         "esm": true

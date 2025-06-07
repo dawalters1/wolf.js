@@ -1,4 +1,4 @@
-import AchievementChannel from '../../structures/achievementChannel.ts';
+import AchievementChannel, { ServerAchievementChannel } from '../../structures/achievementChannel.ts';
 import { Command } from '../../constants/Command.ts';
 import WOLF from '../../client/WOLF.ts';
 
@@ -17,7 +17,7 @@ class AchievementChannelHelper {
     if (!forceNew && channel.achievements.fetched) {
       achievements = channel.achievements.values();
     } else {
-      const { body } = await this.client.websocket.emit<AchievementChannel[]>(
+      const response = await this.client.websocket.emit<ServerAchievementChannel[]>(
         Command.ACHIEVEMENT_GROUP_LIST,
         {
           headers: {
@@ -28,7 +28,7 @@ class AchievementChannelHelper {
           }
         }
       );
-      achievements = channel.achievements.setAll(body);
+      achievements = channel.achievements.setAll(response.body.map((serverAchievementChannel) => new AchievementChannel(this.client, serverAchievementChannel)));
     }
 
     if (!parentId) {
@@ -42,7 +42,7 @@ class AchievementChannelHelper {
       return [parentAchievement, ...channel.achievements.getAll([...parentAchievement.childrenId])];
     }
 
-    const { body: children } = await this.client.websocket.emit<AchievementChannel[]>(
+    const response = await this.client.websocket.emit<AchievementChannel[]>(
       Command.ACHIEVEMENT_GROUP_LIST,
       {
         headers: {
@@ -56,10 +56,10 @@ class AchievementChannelHelper {
     );
 
     parentAchievement.childrenId = new Set(
-      children.map(child => child.id).filter(id => id !== parentId)
+      response.body.map((serverAchievementChannel) => serverAchievementChannel.id).filter(id => id !== parentId)
     );
 
-    return children;
+    return response.body.map((serverAchievementChannel) => new AchievementChannel(this.client, serverAchievementChannel));
   }
 }
 

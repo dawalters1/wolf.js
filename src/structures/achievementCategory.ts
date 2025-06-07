@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import BaseEntity from './baseEntity.ts';
 import { key } from '../decorators/key.ts';
 import { Language } from '../constants/Language.ts';
@@ -13,21 +14,19 @@ export class AchievementCategory extends BaseEntity {
   @key
     id: number;
 
-  name: Map<Language, string>;
+  name: Map<Language, string> = new Map();
   /** @internal */
-  languages: Set<Language>;
+  languages: Set<Language> = new Set();
 
   constructor (client: WOLF, data: ServerAchievementCategory) {
     super(client);
 
     this.id = data.id;
-    this.name = new Map([[data.languageId, data.name]]);
-    this.languages = new Set([data.languageId]);
+    this.name.set(data.languageId, data.name);
+    this.languages.add(data.languageId);
   }
 
-  patch (achievementCategory: AchievementCategory) {
-    achievementCategory.name.forEach((value, key) => this.name.set(key, value));
-    achievementCategory.languages.forEach((language) => this.languages.add(language));
+  patch (entity: any): this {
     return this;
   }
 

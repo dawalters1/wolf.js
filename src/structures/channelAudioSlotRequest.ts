@@ -11,18 +11,22 @@ export interface ServerChannelAudioSlotRequest {
 }
 
 export class ChannelAudioSlotRequest extends BaseEntity {
-    @key
-      slotId: number;
+  @key
+    slotId: number;
 
-    channelId: number;
-    reservation: ChannelAudioSlotReservation;
+  channelId: number;
+  reservation: ChannelAudioSlotReservation;
 
-    constructor (client: WOLF, data: ServerChannelAudioSlotRequest) {
-      super(client);
-      this.slotId = data.slotId;
-      this.channelId = data.groupId;
-      this.reservation = new ChannelAudioSlotReservation(client, data);
-    }
+  constructor (client: WOLF, data: ServerChannelAudioSlotRequest) {
+    super(client);
+    this.slotId = data.slotId;
+    this.channelId = data.groupId;
+    this.reservation = new ChannelAudioSlotReservation(client, data);
+  }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 
 export default ChannelAudioSlotRequest;

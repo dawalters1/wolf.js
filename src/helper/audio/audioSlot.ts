@@ -1,5 +1,5 @@
 import BaseHelper from '../baseHelper.ts';
-import { ChannelAudioSlot } from '../../structures/channelAudioSlot.ts';
+import { ChannelAudioSlot, ServerChannelAudioSlot } from '../../structures/channelAudioSlot.ts';
 import { ChannelMemberCapability } from '../../constants';
 import { Command } from '../../constants/Command.ts';
 import { StageSlotOptions } from '../../options/requestOptions.ts';
@@ -17,7 +17,7 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (channel.audioSlots.fetched) { return channel.audioSlots.values(); }
 
-    const response = await this.client.websocket.emit<ChannelAudioSlot[]>(
+    const response = await this.client.websocket.emit<ServerChannelAudioSlot[]>(
       Command.GROUP_AUDIO_SLOT_LIST,
       {
         body: {
@@ -27,7 +27,7 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
       }
     );
 
-    return channel.audioSlots.setAll(response.body);
+    return channel.audioSlots.setAll(response.body.map((serverChannelAudioSlot) => new ChannelAudioSlot(this.client, serverChannelAudioSlot)));
   }
 
   async get (channelId: number, slotId: number): Promise<ChannelAudioSlot | null> {
@@ -234,8 +234,7 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (!slot.isOccupied) { throw new Error(`Slot with ID ${slotId} is not occupied`); };
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (slot.userId !== this.client.me!.id) { throw new Error(''); }
+    if (slot.userId !== this.client.me.id) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       Command.GROUP_AUDIO_BROADCAST_DISCONNECT,

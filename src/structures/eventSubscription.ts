@@ -23,5 +23,9 @@ export class EventSubscription extends BaseEntity {
     this.groupId = data.groupId;
     this.additionalInfo = new EventSubscriptionAdditionalInfo(client, data.additionalInfo);
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default EventSubscription;

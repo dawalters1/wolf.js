@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
 import Notification from '../../structures/notification.ts';
-import NotificationGlobal from '../../structures/notificationGlobal.ts';
+import NotificationGlobal, { ServerNotificationGlobal } from '../../structures/notificationGlobal.ts';
 import { NotificationOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
@@ -15,7 +14,7 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
 
     const get = async (results: Notification[] = []): Promise<Notification[]> => {
       const response = await this.client.websocket.emit<Notification[]>(
-        Command.NOTIFICATION_GLOBAL,
+        Command.NOTIFICATION_GLOBAL_LIST,
         {
           body: {
             subscribe: opts?.subscribe ?? true,
@@ -32,9 +31,9 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
         : await get(results);
     };
 
-    this.client.me!.notificationsGlobal.fetched = true;
+    this.client.me.notificationsGlobal.fetched = true;
 
-    return this.client.me!.notificationsGlobal.setAll(await get());
+    return this.client.me.notificationsGlobal.setAll(await get());
   }
 
   async clear (): Promise<WOLFResponse> {
@@ -72,7 +71,7 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
     const missingIds = notificationIds.filter((notificationGlobalId) => !notificationsMap.has(notificationGlobalId));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<NotificationGlobal>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerNotificationGlobal>>>(
         Command.NOTIFICATION_GLOBAL,
         {
           body: {
@@ -81,8 +80,8 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
         }
       );
 
-      response.body.values().filter((notificationGlobalResponse) => notificationGlobalResponse.success)
-        .forEach((notificationGlobalResponse) => notificationsMap.set(notificationGlobalResponse.body.id, this.cache.set(notificationGlobalResponse.body)));
+      [...response.body.values()].filter((notificationGlobalResponse) => notificationGlobalResponse.success)
+        .forEach((notificationGlobalResponse) => notificationsMap.set(notificationGlobalResponse.body.id, this.cache.set(new NotificationGlobal(this.client, notificationGlobalResponse.body))));
     }
 
     return notificationIds.map((notificationGlobalId) => notificationsMap.get(notificationGlobalId) ?? null);

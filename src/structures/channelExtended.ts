@@ -38,5 +38,9 @@ export class ChannelExtended extends BaseEntity {
     this.language = data.language;
     this.longDescription = data.longDescription;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default ChannelExtended;

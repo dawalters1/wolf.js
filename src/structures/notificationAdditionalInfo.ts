@@ -13,7 +13,7 @@ export class NotificationAdditionalInfo extends BaseEntity {
   constructor (client: WOLF, data: ServerNotificationAdditionalInfo) {
     super(client);
 
-    this.createdAt = data.createdAt;
+    this.createdAt = new Date(data.createdAt);
     this.eTag = data.eTag;
   }
 }

@@ -33,20 +33,7 @@ export class UserPresence extends BaseEntity {
     }
   }
 
-  patch (presence: UserPresence | ServerUser) {
-    if ('id' in presence) {
-      this.userId = presence.id;
-      this.state = presence.onlineState;
-      this.device = presence.deviceType;
-      this.lastActive = null;
-    } else {
-      this.userId = presence.userId;
-      this.state = presence.state;
-      this.device = presence.device;
-      this.lastActive = presence.lastActive;
-      this.subscribed = presence.subscribed;
-    }
-
+  patch (entity: any): this {
     return this;
   }
 }

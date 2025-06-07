@@ -20,7 +20,9 @@ export class AchievementChannelAdditionalInfo extends BaseEntity {
   constructor (client: WOLF, data: ServerAchievementChannelAdditionalInfo) {
     super(client);
 
-    this.awardedAt = data.awardedAt;
+    this.awardedAt = data?.awardedAt
+      ? new Date(data.awardedAt)
+      : null;
     this.eTag = data.eTag;
     this.steps = data.steps;
     this.total = data.total;
@@ -29,6 +31,10 @@ export class AchievementChannelAdditionalInfo extends BaseEntity {
     this.childrenId = data.total
       ? new Set()
       : undefined;
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 

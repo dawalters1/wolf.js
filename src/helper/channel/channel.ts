@@ -1,6 +1,6 @@
 
 import BaseHelper from '../baseHelper.ts';
-import Channel from '../../structures/channel.ts';
+import Channel, { ServerChannelModular } from '../../structures/channel.ts';
 import ChannelCategoryHelper from './channelCategory.ts';
 import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
@@ -17,6 +17,7 @@ class ChannelHelper extends BaseHelper<Channel> {
 
   constructor (client:WOLF) {
     super(client);
+
     this.category = new ChannelCategoryHelper(client);
     this.member = new ChannelMemberHelper(client);
     this.role = new ChannelRoleHelper(client);
@@ -71,7 +72,7 @@ class ChannelHelper extends BaseHelper<Channel> {
     const missingIds = channelIds.filter((id) => !channelsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<Channel>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerChannelModular>>>(
         Command.GROUP_PROFILE,
         {
           body: {
@@ -82,8 +83,8 @@ class ChannelHelper extends BaseHelper<Channel> {
         }
       );
 
-      response.body.values().filter((channelResponse) => channelResponse.success)
-        .forEach((channelResponse) => channelsMap.set(channelResponse.body.id, this.cache.set(channelResponse.body)));
+      [...response.body.values()].filter((channelResponse) => channelResponse.success)
+        .forEach((channelResponse) => channelsMap.set(channelResponse.body.base.id, this.cache.set(new Channel(this.client, channelResponse.body))));
     }
 
     return channelIds.map((channelId) => channelsMap.get(channelId) ?? null);

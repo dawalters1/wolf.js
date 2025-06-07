@@ -36,14 +36,7 @@ export class CharmStatistic extends BaseEntity {
     this.fetched = !!data;
   }
 
-  patch (charmStatistics: CharmStatistic) {
-    this.totalActive = charmStatistics.totalActive;
-    this.totalExpired = charmStatistics.totalExpired;
-    this.totalGiftedReceived = charmStatistics.totalGiftedReceived;
-    this.totalGiftedSent = charmStatistics.totalGiftedSent;
-    this.totalLifetime = charmStatistics.totalLifetime;
-
-    this.fetched = true;
+  patch (entity: any): this {
     return this;
   }
 }

@@ -22,5 +22,9 @@ export class ChannelAudioConfig extends BaseEntity {
     this.stageId = data.stageId;
     this.minRepLevel = data.minRepLevel;
   }
+
+  patch (entity: any): this {
+    return this;
+  }
 }
 export default ChannelAudioConfig;

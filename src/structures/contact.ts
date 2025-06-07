@@ -1,6 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import ContactAdditionalInfo, { ServerContactAdditionalInfo } from './contactAdditionalInfo.ts';
 import { key } from '../decorators/key.ts';
+import { User } from './user';
 import WOLF from '../client/WOLF.ts';
 
 export interface ServerContact {
@@ -14,10 +15,16 @@ export class Contact extends BaseEntity {
 
   additionalInfo: ContactAdditionalInfo;
 
-  constructor (client: WOLF, data: ServerContact) {
+  constructor (client: WOLF, data: ServerContact | User) {
     super(client);
+
     this.id = data.id;
-    this.additionalInfo = new ContactAdditionalInfo(client, data.additionalInfo);
+    const additionalInfo = 'additionalInfo' in data ? data.additionalInfo : data;
+    this.additionalInfo = new ContactAdditionalInfo(client, additionalInfo);
+  }
+
+  patch (entity: any): this {
+    return this;
   }
 }
 export default Contact;

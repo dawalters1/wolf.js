@@ -64,7 +64,7 @@ class Channel extends BaseEntity {
   memberCount: number;
   official: boolean;
   peekable: boolean;
-  owner: ServerChannelOwner;
+  owner: ChannelOwner;
   extended: ChannelExtended | null;
   audioConfig?: ChannelAudioConfig | null;
   audioCount?: ChannelAudioCount | null;
@@ -122,6 +122,10 @@ class Channel extends BaseEntity {
     };
   }
 
+  patch (entity: any): this {
+    return this;
+  }
+
   get isOwner () {
     return false;
   //  return this.owner.id === this.client.user.id;
@@ -141,28 +145,6 @@ class Channel extends BaseEntity {
 
   async getAudioSlots () {
     return this.client.audio.slots.list(this.id);
-  }
-
-  patch (data: this): this {
-    this.id = data.id;
-    this.name = data.name;
-    this.hash = data.hash;
-    this.reputation = data.reputation;
-    this.premium = data.premium;
-    this.icon = data.icon;
-    this.iconHash = data.iconHash;
-    this.iconInfo = data.iconInfo;
-    this.memberCount = data.memberCount;
-    this.official = data.official;
-    this.peekable = data.peekable;
-    this.owner = data.owner;
-    this.extended = data.extended;
-    this.audioConfig = data.audioConfig;
-    this.audioCount = data.audioCount;
-    this.messageConfig = data.messageConfig;
-    this.verificationTier = data.verificationTier;
-
-    return this;
   }
 
   hasCapability (required: ChannelMemberCapability): boolean {
