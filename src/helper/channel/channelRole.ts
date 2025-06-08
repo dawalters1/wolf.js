@@ -29,7 +29,15 @@ class ChannelRoleHelper {
       }
     );
 
-    return channel.roles.summaries.setAll(response.body.map((serverChannelRole) => new ChannelRole(this.client, serverChannelRole)));
+    return response.body.map((serverChannelRole) => {
+      const existing = channel.roles.summaries.get(serverChannelRole.roleId);
+
+      return channel.roles.summaries.set(
+        existing
+          ? existing.patch(serverChannelRole)
+          : new ChannelRole(this.client, serverChannelRole)
+      );
+    });
   }
 
   async users (channelId: number, opts?: ChannelRoleUserOptions): Promise<(ChannelRoleUser | null)[]> {
@@ -51,7 +59,15 @@ class ChannelRoleHelper {
       }
     );
 
-    return channel.roles.users.setAll(response.body.map((serverChannelRoleUser) => new ChannelRoleUser(this.client, serverChannelRoleUser)));
+    return response.body.map((serverChannelRoleUser) => {
+      const existing = channel.roles.users.get(serverChannelRoleUser.subscriberId);
+
+      return channel.roles.users.set(
+        existing
+          ? existing.patch(serverChannelRoleUser)
+          : new ChannelRoleUser(this.client, serverChannelRoleUser)
+      );
+    });
   }
 
   async assign (channelId: number, userId: number, roleId: number) {

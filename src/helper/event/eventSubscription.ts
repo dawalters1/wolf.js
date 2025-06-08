@@ -5,7 +5,7 @@ import { EventSubscriptionOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
 
 class EventSubscriptionHelper extends BaseHelper<EventSubscription> {
-  async list (opts: EventSubscriptionOptions): Promise<EventSubscription[]> {
+  async list (opts?: EventSubscriptionOptions): Promise<EventSubscription[]> {
     if (!opts?.forceNew && this.cache.fetched) { return this.cache.values(); }
 
     const response = await this.client.websocket.emit<ServerEventSubscription[]>(
@@ -17,10 +17,21 @@ class EventSubscriptionHelper extends BaseHelper<EventSubscription> {
       }
     );
 
+    const cachedSubscriptionIds = this.cache.keys();
+    const newSubscriptionIds = response.body.map((serverEventSubscription) => serverEventSubscription.id);
+    const oldSubscriptionIds = cachedSubscriptionIds.filter((subscriptionId) => !newSubscriptionIds.includes(subscriptionId));
+    this.cache.deleteAll(oldSubscriptionIds);
     this.cache.fetched = true;
-    this.cache.clear();
 
-    return this.cache.setAll(response.body.map((serverEventSubscription) => new EventSubscription(this.client, serverEventSubscription)));
+    return response.body.map((serverEventSubscription) => {
+      const existing = this.cache.get(serverEventSubscription.id);
+
+      return this.cache.set(
+        existing
+          ? existing.patch(serverEventSubscription)
+          : new EventSubscription(this.client, serverEventSubscription)
+      );
+    });
   }
 
   async add (eventId: number): Promise<WOLFResponse> {

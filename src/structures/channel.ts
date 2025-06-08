@@ -59,8 +59,8 @@ class Channel extends BaseEntity {
   reputation: number;
   premium: boolean;
   icon: number;
-  iconHash: string;
-  iconInfo: IconInfo;
+  iconHash: string | null;
+  iconInfo: IconInfo | null;
   memberCount: number;
   official: boolean;
   peekable: boolean;
@@ -92,7 +92,9 @@ class Channel extends BaseEntity {
     this.premium = data.base.premium;
     this.icon = data.base.icon;
     this.iconHash = data.base.iconHash;
-    this.iconInfo = new IconInfo(client, data.base.iconInfo);
+    this.iconInfo = data.base.iconInfo
+      ? new IconInfo(client, data.base.iconInfo)
+      : null;
     this.memberCount = data.base.members;
     this.official = data.base.official;
     this.peekable = data.base.peekable;
@@ -122,7 +124,50 @@ class Channel extends BaseEntity {
     };
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelModular): this {
+    if (entity.base) {
+      this.id = entity.base.id;
+      this.name = entity.base.name;
+      this.hash = entity.base.hash;
+      this.reputation = entity.base.reputation;
+      this.premium = entity.base.premium;
+      this.icon = entity.base.icon;
+      this.iconHash = entity.base.iconHash;
+      this.iconInfo = entity.base.iconInfo
+        ? this.iconInfo
+          ? this.iconInfo.patch(entity.base.iconInfo)
+          : new IconInfo(this.client, entity.base.iconInfo)
+        : null;
+      this.memberCount = entity.base.members;
+      this.official = entity.base.official;
+      this.peekable = entity.base.peekable;
+      this.owner = this.owner.patch(entity.base.owner);
+      this.verificationTier = entity.base.verificationTier;
+    }
+
+    if (entity.extended) {
+      this.extended = this.extended
+        ? this.extended.patch(entity.extended)
+        : new ChannelExtended(this.client, entity.extended);
+    }
+
+    if (entity.audioConfig) {
+      this.audioConfig = this.audioConfig
+        ? this.audioConfig.patch(entity.audioConfig)
+        : new ChannelAudioConfig(this.client, entity.audioConfig);
+    }
+    if (entity.audioCount) {
+      this.audioCount = this.audioCount
+        ? this.audioCount.patch(entity.audioCount)
+        : new ChannelAudioCount(this.client, entity.audioCount);
+    }
+
+    if (entity.messageConfig) {
+      this.messageConfig = this.messageConfig
+        ? this.messageConfig.patch(entity.messageConfig)
+        : new ChannelMessageConfig(this.client, entity.messageConfig);
+    }
+
     return this;
   }
 

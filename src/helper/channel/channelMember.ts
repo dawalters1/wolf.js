@@ -37,7 +37,15 @@ class ChannelMemberHelper {
           }
         );
 
-        result.push(...response.body.map((serverChannelMember) => new ChannelMember(this.client, serverChannelMember, list)));
+        result.push(...response.body.map((serverChannelMember) => {
+          const existing = channel.members.get(serverChannelMember.id);
+
+          return channel.members.set(
+            existing
+              ? existing.patch(serverChannelMember, list)
+              : new ChannelMember(this.client, serverChannelMember, list)
+          );
+        }));
 
         const complete = listConfig.batched
           ? response.body.length < listConfig.limit

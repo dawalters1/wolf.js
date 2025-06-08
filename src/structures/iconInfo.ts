@@ -16,5 +16,12 @@ export class IconInfo extends BaseEntity {
     this.availableSizes = data.availableSizes;
     this.availableTypes = new Set(data.availableTypes);
   }
+
+  patch (entity: ServerIconInfo): this {
+    this.availableSizes = entity.availableSizes;
+    this.availableTypes = new Set(entity.availableTypes);
+
+    return this;
+  }
 }
 export default IconInfo;

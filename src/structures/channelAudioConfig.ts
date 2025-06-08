@@ -23,7 +23,11 @@ export class ChannelAudioConfig extends BaseEntity {
     this.minRepLevel = data.minRepLevel;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelAudioConfig): this {
+    this.id = entity.id;
+    this.enabled = entity.enabled;
+    this.stageId = entity.stageId;
+    this.minRepLevel = entity.minRepLevel;
     return this;
   }
 }

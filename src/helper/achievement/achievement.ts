@@ -40,7 +40,7 @@ class AchievementHelper extends BaseHelper<Achievement> {
     const missingIds = achievementIds.filter((id) => !achievementsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerAchievement>>>(
+      const response = await this.client.websocket.emit<WOLFResponse<ServerAchievement>[]>(
         Command.ACHIEVEMENT,
         {
           body: {
@@ -50,8 +50,20 @@ class AchievementHelper extends BaseHelper<Achievement> {
         }
       );
 
-      [...response.body.values()].filter((achievementResponse) => achievementResponse.success)
-        .forEach((achievementResponse) => achievementsMap.set(achievementResponse.body.id, this.cache.set(new Achievement(this.client, achievementResponse.body))));
+      response.body
+        .filter((achievementResponse) => achievementResponse.success)
+        .forEach((achievementResponse) => {
+          const existing = this.cache.get(achievementResponse.body.id);
+
+          achievementsMap.set(
+            achievementResponse.body.id,
+            this.cache.set(
+              existing
+                ? existing.patch(achievementResponse.body)
+                : new Achievement(this.client, achievementResponse.body)
+            )
+          );
+        });
     }
 
     return achievementIds.map((achievementId) => achievementsMap.get(achievementId) ?? null);

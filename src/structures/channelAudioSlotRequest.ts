@@ -24,7 +24,10 @@ export class ChannelAudioSlotRequest extends BaseEntity {
     this.reservation = new ChannelAudioSlotReservation(client, data);
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelAudioSlotRequest): this {
+    this.slotId = entity.slotId;
+    this.channelId = entity.groupId;
+    this.reservation = this.reservation.patch(entity);
     return this;
   }
 }

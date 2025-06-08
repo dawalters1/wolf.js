@@ -14,11 +14,7 @@ export class UserRole extends BaseEntity {
     super(client);
 
     this.roleId = data.roleId;
-    this.channelIdList = data.groupIdList;
-  }
-
-  patch (entity: any): this {
-    return this;
+    this.channelIdList = new Set(data.groupIdList);
   }
 }
 

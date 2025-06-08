@@ -35,7 +35,15 @@ class AudioSlotRequestHelper {
 
     channel.audioSlotRequests.fetched = true;
 
-    return channel.audioSlotRequests.setAll(response.body.map((serverChannelAudioSlotRequest) => new ChannelAudioSlotRequest(this.client, serverChannelAudioSlotRequest)));
+    return response.body.map((serverChannelAudioSlotRequest) => {
+      const existing = channel.audioSlotRequests.get(serverChannelAudioSlotRequest.slotId);
+
+      return channel.audioSlotRequests.set(
+        existing
+          ? existing.patch(serverChannelAudioSlotRequest)
+          : new ChannelAudioSlotRequest(this.client, serverChannelAudioSlotRequest)
+      );
+    });
   }
 
   async add (channelId: number, slotId?:number, userId?:number) {

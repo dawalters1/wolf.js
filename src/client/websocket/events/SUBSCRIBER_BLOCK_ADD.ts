@@ -15,7 +15,7 @@ class SubscriberBlockAddEvent extends BaseEvent<ServerSubscriberBlockAdd> {
   async process (data: ServerSubscriberBlockAdd) {
     const user = await this.client.user.getById(data.targetId);
 
-    if (user === null) { return; /** DO something */ }
+    if (user === null) { return; }
 
     this.client.emit(
       'blockAdd',

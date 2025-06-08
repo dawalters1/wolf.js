@@ -1,6 +1,7 @@
 import BaseEntity from './baseEntity';
 import { DeviceType, UserPresence as UserPresenceType } from '../constants';
 import { ServerUser } from './user';
+import { ServerUserPresenceUpdate } from '../client/websocket/events/PRESENCE_UPDATE';
 import WOLF from '../client/WOLF';
 
 export interface ServerUserPresence {
@@ -33,7 +34,18 @@ export class UserPresence extends BaseEntity {
     }
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerUserPresence | ServerUser | ServerUserPresenceUpdate): this {
+    if ('subscriberId' in entity) {
+      this.userId = entity.subscriberId;
+      this.state = entity.state;
+      this.device = entity.device;
+      this.lastActive = entity.lastActive;
+    } else {
+      this.userId = entity.id;
+      this.state = entity.onlineState;
+      this.device = entity.deviceType;
+      this.lastActive = this.lastActive ?? null;
+    }
     return this;
   }
 }

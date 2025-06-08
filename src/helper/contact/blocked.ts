@@ -21,7 +21,15 @@ class BlockedHelper extends BaseHelper<Contact> {
 
     this.cache.fetched = true;
 
-    return this.cache?.setAll(response.body.map((serverContact) => new Contact(this.client, serverContact)));
+    return response.body.map((serverContact) => {
+      const existing = this.cache.get(serverContact.id);
+
+      return this.cache.set(
+        existing
+          ? existing.patch(serverContact)
+          : new Contact(this.client, serverContact)
+      );
+    });
   }
 
   async isBlocked (userId: number): Promise<boolean> {

@@ -23,7 +23,15 @@ class ChannelCategoryHelper extends BaseHelper<ChannelCategory> {
       }
     );
 
-    return this.cache.setAll(response.body.map((serverChannelCategory) => new ChannelCategory(this.client, serverChannelCategory)));
+    return response.body.map((serverChannelCategory) => {
+      const existing = this.cache.get(serverChannelCategory.id);
+
+      return this.cache.set(
+        existing
+          ? existing.patch(serverChannelCategory)
+          : new ChannelCategory(this.client, serverChannelCategory)
+      );
+    });
   }
 }
 

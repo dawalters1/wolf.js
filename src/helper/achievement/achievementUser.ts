@@ -28,7 +28,16 @@ class AchievementUserHelper {
           }
         }
       );
-      achievements = user.achievements.setAll(response.body.map((serverAchievementUser) => new AchievementUser(this.client, serverAchievementUser)));
+
+      achievements = response.body.map((serverAchievementUser) => {
+        const existing = user.achievements.get(serverAchievementUser.id);
+
+        return user.achievements.set(
+          existing
+            ? existing.patch(serverAchievementUser)
+            : new AchievementUser(this.client, serverAchievementUser)
+        );
+      });
     }
 
     if (!parentId) {
@@ -42,8 +51,8 @@ class AchievementUserHelper {
       return [parentAchievement, ...user.achievements.getAll([...parentAchievement.childrenId])];
     }
 
-    const response = await this.client.websocket.emit<ServerAchievementUser[]>(
-      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+    const response = await this.client.websocket.emit<AchievementUser[]>(
+      Command.ACHIEVEMENT_GROUP_LIST,
       {
         headers: {
           version: 2
@@ -59,7 +68,15 @@ class AchievementUserHelper {
       response.body.map((serverAchievementUser) => serverAchievementUser.id).filter(id => id !== parentId)
     );
 
-    return response.body.map((serverAchievementUser) => new AchievementUser(this.client, serverAchievementUser));
+    return response.body.map((serverAchievementUser) => {
+      const existing = user.achievements.get(serverAchievementUser.id);
+
+      return user.achievements.set(
+        existing
+          ? existing.patch(serverAchievementUser)
+          : new AchievementUser(this.client, serverAchievementUser)
+      );
+    });
   }
 }
 

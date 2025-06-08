@@ -28,7 +28,14 @@ export class CharmSummary extends BaseEntity {
     this.total = data.total;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerCharmSummary): this {
+    this.charmId = entity.charmId;
+    this.expireTime = entity?.expireTime
+      ? new Date(entity.expireTime)
+      : null;
+    this.giftCount = entity.giftCount;
+    this.total = entity.total;
+
     return this;
   }
 }

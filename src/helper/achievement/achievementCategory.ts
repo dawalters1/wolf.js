@@ -23,7 +23,15 @@ class AchievementCategoryHelper extends BaseHelper<AchievementCategory> {
       }
     );
 
-    return this.cache.setAll(response.body.map((serverAchievementCategory) => new AchievementCategory(this.client, serverAchievementCategory)));
+    return response.body.map((serverAchivementCategory) => {
+      const existing = this.cache.get(serverAchivementCategory.id);
+
+      return this.cache.set(
+        existing
+          ? existing.patch(serverAchivementCategory)
+          : new AchievementCategory(this.client, serverAchivementCategory)
+      );
+    });
   }
 }
 

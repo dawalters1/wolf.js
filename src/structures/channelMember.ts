@@ -2,6 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.ts';
 import { key } from '../decorators/key.ts';
+import { User } from './user';
 import WOLF from '../client/WOLF.ts';
 
 export interface ServerChannelMember {
@@ -28,7 +29,17 @@ export class ChannelMember extends BaseEntity {
     this.lists = new Set([source, this._getParentList(data.capabilities)].filter((list) => list !== undefined));
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelMember | User, list?: ChannelMemberListType): this {
+    if ('capabilities' in entity) {
+      this.capabilities = entity.capabilities;
+      if (list) {
+        this.lists.add(list);
+      }
+    }
+
+    this.id = entity.id;
+    this.hash = entity.hash;
+
     return this;
   }
 

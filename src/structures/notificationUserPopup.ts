@@ -35,5 +35,18 @@ export class NotificationUserPopup extends BaseEntity {
     this.linkText = data.linkText;
     this.priority = data.priority;
   }
+
+  patch (entity: ServerNotificationUserPopup): this {
+    this.languageId = entity.languageId;
+    this.title = entity.title;
+    this.body = entity.body;
+    this.imageUrl = entity.imageUrl;
+    this.link = entity.link;
+    this.dismissText = entity.dismissText;
+    this.linkText = entity.linkText;
+    this.priority = entity.priority;
+
+    return this;
+  }
 }
 export default NotificationUserPopup;

@@ -23,7 +23,11 @@ export class ChannelRoleUser extends BaseEntity {
     this.roleId = data.roleId;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelRoleUser): this {
+    this.userId = entity.subscriberId;
+    this.channelId = entity.groupId;
+    this.roleId = entity.roleId;
+
     return this;
   }
 }

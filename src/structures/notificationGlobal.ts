@@ -23,8 +23,8 @@ export class NotificationGlobal extends BaseEntity {
   context: string;
   createdAt: Date;
   expiresAt: Date;
-  feed: NotificationGlobalFeed;
-  popup?: ServerNotificationGlobalPopup;
+  feed?: NotificationGlobalFeed;
+  popup?: NotificationGlobalPopup;
   notificationId: number;
   presentationType: number;
   typeId: number;
@@ -35,7 +35,9 @@ export class NotificationGlobal extends BaseEntity {
     this.context = data.context;
     this.createdAt = new Date(data.createdAt);
     this.expiresAt = new Date(data.expiresAt);
-    this.feed = new NotificationGlobalFeed(client, data.feed);
+    this.feed = data.feed
+      ? new NotificationGlobalFeed(client, data.feed)
+      : undefined;
     this.popup = data.popup
       ? new NotificationGlobalPopup(client, data.popup)
       : undefined;
@@ -43,6 +45,28 @@ export class NotificationGlobal extends BaseEntity {
     this.notificationId = data.notificationId;
     this.presentationType = data.presentationType;
     this.typeId = data.typeId;
+  }
+
+  patch (entity: ServerNotificationGlobal): this {
+    this.context = entity.context;
+    this.createdAt = new Date(entity.createdAt);
+    this.expiresAt = new Date(entity.expiresAt);
+    this.feed = entity.feed
+      ? this.feed
+        ? this.feed.patch(entity.feed)
+        : new NotificationGlobalFeed(this.client, entity.feed)
+      : undefined;
+    this.popup = entity.popup
+      ? this.popup
+        ? this.popup.patch(entity.popup)
+        : new NotificationGlobalPopup(this.client, entity.popup)
+      : undefined;
+    this.id = entity.id;
+    this.notificationId = entity.notificationId;
+    this.presentationType = entity.presentationType;
+    this.typeId = entity.typeId;
+
+    return this;
   }
 }
 export default NotificationGlobal;

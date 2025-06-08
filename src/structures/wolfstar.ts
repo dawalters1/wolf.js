@@ -29,10 +29,6 @@ export class WOLFStar extends BaseEntity {
     this.totalListeners = data.totalListeners;
     this.talentList = data.talentList;
   }
-
-  patch (entity: any): this {
-    return this;
-  }
 }
 
 export default WOLFStar;

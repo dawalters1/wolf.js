@@ -5,7 +5,7 @@ import WOLF from '../client/WOLF.ts';
 
 export interface ServerCharm {
   cost: number;
-  description: string;
+  description: string | null;
   languageId: Language;
   id: number;
   imageUrl: string;
@@ -18,7 +18,7 @@ export class Charm extends BaseEntity {
     id: number;
 
   cost: number;
-  description: Map<Language, string> = new Map();
+  description: Map<Language, string | null> = new Map();
   imageUrl: string;
   name: Map<Language, string> = new Map();
   productId: number;
@@ -39,6 +39,15 @@ export class Charm extends BaseEntity {
   }
 
   patch (entity: any): this {
+    this.cost = entity.cost;
+    this.description.set(entity.languageId, entity.description);
+    this.id = entity.id;
+    this.imageUrl = entity.imageUrl;
+    this.name.set(entity.languageId, entity.name);
+    this.productId = entity.productId;
+
+    this.languages.add(entity.languageId);
+
     return this;
   }
 

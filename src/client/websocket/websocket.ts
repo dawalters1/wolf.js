@@ -4,6 +4,7 @@ import EventRegistry from './eventRegistry';
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
 import io, { Socket } from 'socket.io-client';
+import { Language } from '../../constants';
 import path, { dirname } from 'path';
 import WOLF from '../WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -66,7 +67,7 @@ export class Websocket {
     this.socket.on('connect_error', error => console.log('CONNECT ERROR', error));
     this.socket.on('connect_timeout', error => console.log('CONNECT TIMEOUT', error));
     this.socket.on('disconnect', reason => {
-      console.log('DISCONNECTED', reason);
+      this.client.loggedIn = false;
       if (reason === 'io server disconnect') {
         this.socket?.connect();
       }
@@ -87,12 +88,44 @@ export class Websocket {
     });
   }
 
+  private _parseBody = (body: any, languageId?: Language) => {
+    const formattedBody = typeof body === 'object' && 'body' in body ? new WOLFResponse(body) : body;
+
+    if (!languageId) return formattedBody;
+
+    if (formattedBody instanceof WOLFResponse) {
+      formattedBody.body.languageId = formattedBody.body.languageId ?? languageId;
+    } else if (formattedBody && typeof formattedBody === 'object') {
+      formattedBody.languageId = formattedBody.languageId ?? languageId;
+    }
+
+    return formattedBody;
+  };
+
+  private _parseAck (ack: any, languageId?: Language) {
+    if (Array.isArray(ack.body)) {
+      ack.body = ack.body.map((body: any) => this._parseBody(body, languageId));
+    } else if (ack.body && typeof ack.body === 'object') {
+      const entries = Object.entries(ack.body);
+      const isNumericKeyed = entries.every(([key]) => !isNaN(Number(key)));
+
+      if (isNumericKeyed) {
+        ack.body = new Map(
+          entries.map(([key, value]) => [Number(key), this._parseBody(value, languageId)])
+        );
+      } else {
+        ack.body = this._parseBody(ack.body, languageId);
+      }
+    }
+
+    return ack;
+  }
+
   async emit<T> (command: string, body?: any): Promise<WOLFResponse<T>> {
     const emitOnce = (requestBody?: any, attempt = 0): Promise<WOLFResponse<T>> => new Promise((resolve, reject) => {
       this.socket?.emit(command, requestBody, async (ack: any) => {
-        this._addLanguageIdToAckBody(ack, requestBody);
+        const response = new WOLFResponse<T>(this._parseAck(ack, requestBody?.body?.languageId));
 
-        const response = new WOLFResponse<T>(ack);
         if (!response.success) {
           const retryCodes = [408, 429, 500, 502, 504];
           if (!retryCodes.includes(response.code) || attempt >= 3) {
@@ -108,53 +141,22 @@ export class Websocket {
 
     // Batch request support for idList chunking
     if (requestBody?.body && Reflect.has(requestBody.body, 'idList')) {
-      const responses = new Map<number, WOLFResponse<T>>();
-      const headers = new Map<string, any>();
+      const responses = await Promise.all(
+        _.chunk(requestBody.body.idList, 50)
+          .map((idChunk) =>
+            emitOnce(
+              {
+                ...requestBody,
+                body: { ...requestBody.body, idList: idChunk }
+              }
+            )
+          )
+      );
 
-      for (const idChunk of _.chunk(requestBody.body.idList, 50)) {
-        const chunkRequest = {
-          ...requestBody,
-          body: { ...requestBody.body, idList: idChunk }
-        };
-        const response = await emitOnce(chunkRequest);
-
-        if (response.body instanceof Map) {
-          for (const [index, value] of response.body.entries()) {
-            responses.set(index as number, value);
-          }
-        }
-
-        if (response.headers) {
-          for (const [key, val] of response.headers.entries()) {
-            headers.set(key, val);
-          }
-        }
-      }
-
-      return {
-        code: 207,
-        body: responses,
-        headers
-      } as WOLFResponse<T>;
+      return Object.assign({}, ...responses);
     }
 
     return emitOnce(requestBody);
-  }
-
-  private _addLanguageIdToAckBody (ack: any, requestBody: any) {
-    if (!requestBody || !requestBody.body || !Reflect.has(requestBody.body, 'languageId')) return;
-
-    const languageId = requestBody.body.languageId;
-
-    if (ack.body instanceof Map) {
-      for (const [key, value] of ack.body.entries()) {
-        ack.body.set(key, { ...value, languageId: ack?.body.languageId ?? languageId });
-      }
-    } else if (Array.isArray(ack.body)) {
-      ack.body = ack.body.map((item: any) => ({ ...item, languageId: ack?.body.languageId ?? languageId }));
-    } else if (typeof ack.body === 'object' && ack.body !== null) {
-      ack.body = { ...ack.body, languageId: ack?.body.languageId ?? languageId };
-    }
   }
 
   async connect () {

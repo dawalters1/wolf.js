@@ -28,7 +28,15 @@ export class AchievementUserAdditionalInfo extends BaseEntity {
     this.categoryId = data.categoryId;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerAchievementUserAdditionalInfo): this {
+    this.awardedAt = entity?.awardedAt
+      ? new Date(entity.awardedAt)
+      : null;
+    this.eTag = entity.eTag;
+    this.steps = entity.steps;
+    this.total = entity.total;
+    this.categoryId = entity.categoryId;
+
     return this;
   }
 }

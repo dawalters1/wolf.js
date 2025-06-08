@@ -100,7 +100,6 @@ class WelcomeEvent extends BaseEvent<ServerWelcome> {
     // TODO:
     this.client.config.framework.login.userId = response.body.subscriber?.id;
     this.client.config.cognito = response.body.cognito;
-
     this.client.emit('loginSuccess', await this.synchronise());
 
     return true;
@@ -126,6 +125,7 @@ class WelcomeEvent extends BaseEvent<ServerWelcome> {
       this.client.config.framework.login.userId = welcome.loggedInUser.id;
       this.client.emit('resume', await this.synchronise());
     }
+    this.client.loggedIn = true;
 
     this.client.emit('ready');
   }

@@ -75,6 +75,9 @@ class ChannelHelper extends BaseHelper<Channel> {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerChannelModular>>>(
         Command.GROUP_PROFILE,
         {
+          headers: {
+            version: 4
+          },
           body: {
             idList: missingIds,
             subscribe: opts?.subscribe ?? true,
@@ -83,8 +86,20 @@ class ChannelHelper extends BaseHelper<Channel> {
         }
       );
 
-      [...response.body.values()].filter((channelResponse) => channelResponse.success)
-        .forEach((channelResponse) => channelsMap.set(channelResponse.body.base.id, this.cache.set(new Channel(this.client, channelResponse.body))));
+      [...response.body.entries()]
+        .filter(([channelId, channelResponse]) => channelResponse.success)
+        .forEach(([channelId, channelResponse]) => {
+          const existing = this.cache.get(channelId);
+
+          channelsMap.set(
+            channelId,
+            this.cache.set(
+              existing
+                ? existing.patch(channelResponse.body)
+                : new Channel(this.client, channelResponse.body)
+            )
+          );
+        });
     }
 
     return channelIds.map((channelId) => channelsMap.get(channelId) ?? null);

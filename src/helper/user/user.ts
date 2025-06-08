@@ -54,17 +54,21 @@ class UserHelper extends BaseHelper<User> {
         }
       );
 
-      [...response.body.values()].filter((userResponse) => userResponse.success)
-        .forEach((userResponse) => {
-          const user = userResponse.body.id === this.client.config.framework.login.userId
-            ? new CurrentUser(this.client, userResponse.body)
-            : new User(this.client, userResponse.body);
+      [...response.body.entries()].filter(([userId, userResponse]) => userResponse.success)
+        .forEach(([userId, userResponse]) => {
+          const existing = this.cache.get(userId);
+
+          const user = existing
+            ? existing.patch(userResponse.body)
+            : userId === this.client.config.framework.login.userId
+              ? new CurrentUser(this.client, userResponse.body)
+              : new User(this.client, userResponse.body);
 
           if (user instanceof CurrentUser) {
             this.client._me = user;
           }
 
-          usersMap.set(userResponse.body.id, this.cache.set(user));
+          usersMap.set(userId, this.cache.set(user));
         });
     }
 
