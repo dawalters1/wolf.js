@@ -23,7 +23,7 @@ export class ChannelExtended extends BaseEntity {
   entryLevel: number;
   passworded: boolean;
   language: Language;
-  longDescription: string;
+  longDescription: string | null;
 
   constructor (client: WOLF, data: ServerChannelExtended) {
     super(client);
@@ -36,10 +36,20 @@ export class ChannelExtended extends BaseEntity {
     this.entryLevel = data.entryLevel;
     this.passworded = data.passworded;
     this.language = data.language;
-    this.longDescription = data.longDescription;
+    this.longDescription = data.longDescription || null;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelExtended): this {
+    this.id = entity.id;
+    this.discoverable = entity.discoverable;
+    this.advancedAdmin = entity.advancedAdmin;
+    this.locked = entity.locked;
+    this.questionable = entity.questionable;
+    this.entryLevel = entity.entryLevel;
+    this.passworded = entity.passworded;
+    this.language = entity.language;
+    this.longDescription = entity.longDescription || null;
+
     return this;
   }
 }

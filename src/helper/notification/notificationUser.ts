@@ -12,7 +12,7 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
       return this.client.me.notificationsUser.values();
     }
 
-    const get = async (results: Notification[] = []): Promise<Notification[]> => {
+    const get = async (results: ServerNotification[] = []): Promise<ServerNotification[]> => {
       const response = await this.client.websocket.emit<ServerNotification[]>(
         Command.NOTIFICATION_SUBSCRIBER_LIST,
         {
@@ -22,7 +22,7 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         }
       );
 
-      results.push(...response.body.map((serverNotification) => new Notification(this.client, serverNotification)));
+      results.push(...response.body);
 
       return response.body.length < 50
         ? results
@@ -31,7 +31,15 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
 
     this.client.me.notificationsUser.fetched = true;
 
-    return this.client.me.notificationsUser.setAll(await get());
+    return (await get()).map((serverNotification) => {
+      const existing = this.client.me.notificationsUser.get(serverNotification.id);
+
+      return this.client.me.notificationsUser.set(
+        existing
+          ? existing.patch(serverNotification)
+          : new Notification(this.client, serverNotification)
+      );
+    });
   }
 
   async clear () : Promise<WOLFResponse> {
@@ -78,8 +86,20 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
         }
       );
 
-      [...response.body.values()].filter((notificationUserResponse) => notificationUserResponse.success)
-        .forEach((notificationUserResponse) => notificationsMap.set(notificationUserResponse.body.id, this.cache.set(new NotificationUser(this.client, notificationUserResponse.body))));
+      [...response.body.entries()]
+        .filter(([notificationId, notificationUserResponse]) => notificationUserResponse.success)
+        .forEach(([notificationId, notificationUserResponse]) => {
+          const existing = this.cache.get(notificationId);
+
+          notificationsMap.set(
+            notificationUserResponse.body.id,
+            this.cache.set(
+              existing
+                ? existing.patch(notificationUserResponse.body)
+                : new NotificationUser(this.client, notificationUserResponse.body)
+            )
+          );
+        });
     }
 
     return notificationIds.map((notificationUserId) => notificationsMap.get(notificationUserId) ?? null);

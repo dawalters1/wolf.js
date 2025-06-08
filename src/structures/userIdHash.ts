@@ -17,7 +17,10 @@ export class UserIdHash extends BaseEntity {
     this.hash = data.hash;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerUserIdHash): this {
+    this.id = entity.id;
+    this.hash = entity.hash;
+
     return this;
   }
 }

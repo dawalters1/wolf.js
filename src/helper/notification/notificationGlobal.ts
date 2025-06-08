@@ -1,7 +1,7 @@
 
 import BaseHelper from '../baseHelper.ts';
 import { Command } from '../../constants/Command.ts';
-import Notification from '../../structures/notification.ts';
+import Notification, { ServerNotification } from '../../structures/notification.ts';
 import NotificationGlobal, { ServerNotificationGlobal } from '../../structures/notificationGlobal.ts';
 import { NotificationOptions } from '../../options/requestOptions.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -12,8 +12,8 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
       return this.client.me.notificationsGlobal.values();
     }
 
-    const get = async (results: Notification[] = []): Promise<Notification[]> => {
-      const response = await this.client.websocket.emit<Notification[]>(
+    const get = async (results: ServerNotification[] = []): Promise<ServerNotification[]> => {
+      const response = await this.client.websocket.emit<ServerNotification[]>(
         Command.NOTIFICATION_GLOBAL_LIST,
         {
           body: {
@@ -33,7 +33,15 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
 
     this.client.me.notificationsGlobal.fetched = true;
 
-    return this.client.me.notificationsGlobal.setAll(await get());
+    return (await get()).map((serverNotification) => {
+      const existing = this.client.me.notificationsGlobal.get(serverNotification.id);
+
+      return this.client.me.notificationsGlobal.set(
+        existing
+          ? existing.patch(serverNotification)
+          : new Notification(this.client, serverNotification)
+      );
+    });
   }
 
   async clear (): Promise<WOLFResponse> {
@@ -80,8 +88,20 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
         }
       );
 
-      [...response.body.values()].filter((notificationGlobalResponse) => notificationGlobalResponse.success)
-        .forEach((notificationGlobalResponse) => notificationsMap.set(notificationGlobalResponse.body.id, this.cache.set(new NotificationGlobal(this.client, notificationGlobalResponse.body))));
+      [...response.body.entries()]
+        .filter(([notificationId, notificationGlobalResponse]) => notificationGlobalResponse.success)
+        .forEach(([notificationId, notificationGlobalResponse]) => {
+          const existing = this.cache.get(notificationId);
+
+          notificationsMap.set(
+            notificationGlobalResponse.body.id,
+            this.cache.set(
+              existing
+                ? existing.patch(notificationGlobalResponse.body)
+                : new NotificationGlobal(this.client, notificationGlobalResponse.body)
+            )
+          );
+        });
     }
 
     return notificationIds.map((notificationGlobalId) => notificationsMap.get(notificationGlobalId) ?? null);

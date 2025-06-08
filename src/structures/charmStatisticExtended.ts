@@ -17,7 +17,10 @@ export class CharmStatisticExtended extends BaseEntity {
     this.mostGiftedSentCharmId = data.mostGiftedSentCharmId;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerCharmStatisticExtended): this {
+    this.mostGiftedReceivedCharmId = entity.mostGiftedReceivedCharmId;
+    this.mostGiftedSentCharmId = entity.mostGiftedSentCharmId;
+
     return this;
   }
 }

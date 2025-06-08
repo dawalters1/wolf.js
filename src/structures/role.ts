@@ -33,7 +33,14 @@ export class Role extends BaseEntity {
     this.languages.add(data.languageId);
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerRole): this {
+    this.id = entity.id;
+    this.description.set(entity.languageId, entity.description);
+    this.emojiUrl = entity.emojiUrl;
+    this.name.set(entity.languageId, entity.name);
+    this.hexColur = entity.hexColur;
+    this.languages.add(entity.languageId);
+
     return this;
   }
 

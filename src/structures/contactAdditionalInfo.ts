@@ -31,7 +31,18 @@ export class ContactAdditionalInfo extends BaseEntity {
     this.privileges = data.privileges;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerContactAdditionalInfo | User): this {
+    if ('nicknameShort' in entity) {
+      this.nicknameShort = entity.nicknameShort;
+      this.onlineState = entity.onlineState;
+    } else {
+      this.nicknameShort = entity.nickname;
+      this.onlineState = entity.presence.state;
+    }
+
+    this.hash = entity.hash;
+    this.privileges = entity.privileges;
+
     return this;
   }
 }

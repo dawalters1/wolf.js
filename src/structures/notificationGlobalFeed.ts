@@ -26,5 +26,15 @@ export class NotificationGlobalFeed extends BaseEntity {
     this.imageUrl = data.imageUrl;
     this.link = data.link;
   }
+
+  patch (entity: ServerNotificationGlobalFeed): this {
+    this.languageId = entity.languageId;
+    this.title = entity.title;
+    this.body = entity.body;
+    this.imageUrl = entity.imageUrl;
+    this.link = entity.link;
+
+    return this;
+  }
 }
 export default NotificationGlobalFeed;

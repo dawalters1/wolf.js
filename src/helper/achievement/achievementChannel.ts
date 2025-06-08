@@ -28,7 +28,16 @@ class AchievementChannelHelper {
           }
         }
       );
-      achievements = channel.achievements.setAll(response.body.map((serverAchievementChannel) => new AchievementChannel(this.client, serverAchievementChannel)));
+
+      achievements = response.body.map((serverAchievementChannel) => {
+        const existing = channel.achievements.get(serverAchievementChannel.id);
+
+        return channel.achievements.set(
+          existing
+            ? existing.patch(serverAchievementChannel)
+            : new AchievementChannel(this.client, serverAchievementChannel)
+        );
+      });
     }
 
     if (!parentId) {
@@ -59,7 +68,15 @@ class AchievementChannelHelper {
       response.body.map((serverAchievementChannel) => serverAchievementChannel.id).filter(id => id !== parentId)
     );
 
-    return response.body.map((serverAchievementChannel) => new AchievementChannel(this.client, serverAchievementChannel));
+    return response.body.map((serverAchievementChannel) => {
+      const existing = channel.achievements.get(serverAchievementChannel.id);
+
+      return channel.achievements.set(
+        existing
+          ? existing.patch(serverAchievementChannel)
+          : new AchievementChannel(this.client, serverAchievementChannel)
+      );
+    });
   }
 }
 

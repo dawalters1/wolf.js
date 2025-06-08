@@ -23,7 +23,11 @@ export class ChannelRole extends BaseEntity {
     this.maxSeats = data.maxSeats;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelRole): this {
+    this.roleId = entity.roleId;
+    this.userIdList = new Set(entity.subscriberIdList);
+    this.maxSeats = entity.maxSeats;
+
     return this;
   }
 }

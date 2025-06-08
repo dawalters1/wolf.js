@@ -16,8 +16,6 @@ class SubscriberNotificationListAddEvent extends BaseEvent<ServerSubscriberNotif
   }
 
   async process (data: ServerSubscriberNotificationListAdd) {
-    data.additionalInfo.createdAt = new Date();
-
     this.client.emit(
       'userNotificationAdd',
 

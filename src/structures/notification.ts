@@ -20,5 +20,12 @@ export class Notification extends BaseEntity {
     this.id = data.id;
     this.additionalInfo = new NotificationAdditionalInfo(client, data.additionalInfo);
   }
+
+  patch (entity: ServerNotification): this {
+    this.id = entity.id;
+    this.additionalInfo = this.additionalInfo.patch(entity.additionalInfo);
+
+    return this;
+  }
 }
 export default Notification;

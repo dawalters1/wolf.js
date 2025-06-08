@@ -25,7 +25,7 @@ class RoleHelper extends BaseHelper<Role> {
     const missingIds = roleIds.filter((id) => !roleMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<WOLFResponse<ServerRole>[]>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerRole>>>(
         Command.GROUP_ROLE,
         {
           body: {
@@ -35,8 +35,18 @@ class RoleHelper extends BaseHelper<Role> {
         }
       );
 
-      response.body.filter((roleResponse) => roleResponse.success)
-        .forEach((roleResponse) => roleMap.set(roleResponse.body.id, this.cache.set(new Role(this.client, roleResponse.body))));
+      [...response.body.entries()].filter(([roleId, roleResponse]) => roleResponse.success)
+        .forEach(([roleId, roleResponse]) => {
+          const existing = this.cache.get(roleId);
+
+          roleMap.set(
+            roleId,
+            this.cache.set(existing
+              ? existing.patch(roleResponse.body)
+              : new Role(this.client, roleResponse.body)
+            )
+          );
+        });
     }
 
     return roleIds.map((roleId) => roleMap.get(roleId) ?? null);

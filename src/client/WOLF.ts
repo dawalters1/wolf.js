@@ -2,6 +2,7 @@ import AchievementHelper from '../helper/achievement/achievement.ts';
 import AudioHelper from '../helper/audio/audio';
 import AuthorisationHelper from '../helper/authorisation/authorisation.ts';
 import BannedHelper from '../helper/banned/banned.ts';
+import Channel from '../structures/channel';
 import ChannelHelper from '../helper/channel/channel.ts';
 import CharmHelper from '../helper/charm/charm.ts';
 import Contact from '../structures/contact';
@@ -9,6 +10,7 @@ import ContactHelper from '../helper/contact/contact.ts';
 import CurrentUser from '../structures/currentUser.ts';
 import EventEmitter from 'events';
 import EventHelper from '../helper/event/event.ts';
+import EventSubscription from '../structures/eventSubscription';
 import { Message } from '../structures/message';
 import MessagingHelper from '../helper/messaging/messaging';
 import Multimedia from './multimedia/multimedia.ts';
@@ -18,7 +20,8 @@ import NotificationHelper from '../helper/notification/notification.ts';
 import { SessionContext } from './websocket/events/WELCOME';
 import { User } from '../structures/user';
 import UserHelper from '../helper/user/user.ts';
-import { UserPresence } from '../constants';
+import UserPresence from '../structures/userPresence';
+import { UserPresence as UserPresenceType } from '../constants';
 import { Websocket } from './websocket/websocket.ts';
 import Welcome from '../structures/welcome';
 import WOLFResponse from '../structures/WOLFResponse';
@@ -40,7 +43,14 @@ export interface Events {
   'userNotificationAdd': [Notification],
   'userNotificationClear': []
   'userNotificationDelete': [number],
-  'userProfileUpdate': [User, User]
+  'userProfileUpdate': [User, User],
+  'userPresenceUpdate': [UserPresence],
+  'channelProfileUpdate': [Channel, Channel],
+  'contactAdd': [Contact],
+  'contactDelete': [number],
+  'blockDelete': [number],
+  'userChannelEventSubscriptionAdd': [EventSubscription],
+  'userChannelEventSubscriptionDelete': [number]
 }
 
 class WOLF extends EventEmitter<Events> {
@@ -126,7 +136,7 @@ class WOLF extends EventEmitter<Events> {
           password,
           token: v3Token ?? `wjs-${nanoid()}`,
           developerToken,
-          state: UserPresence.AWAY
+          state: UserPresenceType.AWAY
         }
       }
     };

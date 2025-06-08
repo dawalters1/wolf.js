@@ -42,14 +42,13 @@ class UserPresenceHelper {
         }
       );
 
-      [...response.body.values()].filter((presenceResponse) => presenceResponse.success)
-        .map((presenceResponse) => new UserPresence(this.client, presenceResponse.body))
-        .forEach((presenceResponse) => {
-          const user = users.find((user) => user?.id === presence.userId) ?? null;
-          if (user === null) { throw new Error(''); }
-          const presence = presenceResponse;
-          presence.subscribed = subscribe;// eh
-          presenceMap.set(presence.userId, user.presence.patch(presence));
+      [...response.body.entries()].filter(([userId, presenceResponse]) => presenceResponse.success)
+        .forEach(([userId, presenceResponse]) => {
+          const user = users.find((user) => user?.id === userId) ?? null;
+          if (user === null) { return; }
+          user.presence?.patch(presenceResponse.body);
+          user.presence.subscribed = subscribe;
+          presenceMap.set(userId, user.presence);
         });
     }
 

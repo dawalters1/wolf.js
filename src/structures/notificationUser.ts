@@ -23,9 +23,8 @@ export class NotificationUser extends BaseEntity {
   context: string;
   createdAt: Date;
   expiresAt: Date;
-  feed: NotificationUserFeed;
+  feed?: NotificationUserFeed;
   popup?: NotificationUserPopup;
-
   notificationId: number;
   presentationType: number;
   typeId: number;
@@ -36,7 +35,9 @@ export class NotificationUser extends BaseEntity {
     this.context = data.context;
     this.createdAt = new Date(data.createdAt);
     this.expiresAt = new Date(data.expiresAt);
-    this.feed = new NotificationUserFeed(client, data.feed);
+    this.feed = data.feed
+      ? new NotificationUserFeed(client, data.feed)
+      : undefined;
     this.popup = data.popup
       ? new NotificationUserPopup(client, data.popup)
       : undefined;
@@ -44,6 +45,28 @@ export class NotificationUser extends BaseEntity {
     this.notificationId = data.notificationId;
     this.presentationType = data.presentationType;
     this.typeId = data.typeId;
+  }
+
+  patch (entity: ServerNotificationUser): this {
+    this.context = entity.context;
+    this.createdAt = new Date(entity.createdAt);
+    this.expiresAt = new Date(entity.expiresAt);
+    this.feed = entity.feed
+      ? this.feed
+        ? this.feed.patch(entity.feed)
+        : new NotificationUserFeed(this.client, entity.feed)
+      : undefined;
+    this.popup = entity.popup
+      ? this.popup
+        ? this.popup.patch(entity.popup)
+        : new NotificationUserPopup(this.client, entity.popup)
+      : undefined;
+    this.id = entity.id;
+    this.notificationId = entity.notificationId;
+    this.presentationType = entity.presentationType;
+    this.typeId = entity.typeId;
+
+    return this;
   }
 }
 export default NotificationUser;

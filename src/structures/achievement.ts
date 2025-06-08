@@ -30,6 +30,7 @@ class Achievement extends BaseEntity {
   levelId: number;
   levelName: Map<Language, string> = new Map();
   acquisitionPercentage: number;
+
   /** @internal */
   languages: Set<Language> = new Set();
 
@@ -50,7 +51,20 @@ class Achievement extends BaseEntity {
     this.languages.add(data.languageId);
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerAchievement): this {
+    this.id = entity.id;
+    this.parentId = entity.parentId;
+    this.typeId = entity.typeId;
+    this.name.set(entity.languageId, entity.name);
+    this.description.set(entity.languageId, entity.description);
+    this.imageUrl = entity.imageUrl;
+    this.category = entity.category;
+    this.levelId = entity.levelId;
+    this.levelName.set(entity.languageId, entity.levelName);
+    this.acquisitionPercentage = entity.acquisitionPercentage;
+
+    this.languages.add(entity.languageId);
+
     return this;
   }
 

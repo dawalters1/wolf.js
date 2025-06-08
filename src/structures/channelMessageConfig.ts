@@ -26,7 +26,13 @@ export class ChannelMessageConfig extends BaseEntity {
     this.slowModeRateInSeconds = data.slowModeRateInSeconds;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelMessageConfig): this {
+    this.disableImage = entity.disableImage;
+    this.disableImageFilter = entity.disableImageFilter;
+    this.disableVoice = entity.disableVoice;
+    this.disableHyperlink = entity.disableHyperlink;
+    this.slowModeRateInSeconds = entity.slowModeRateInSeconds;
+
     return this;
   }
 }

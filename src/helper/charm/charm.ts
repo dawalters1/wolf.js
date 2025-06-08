@@ -39,7 +39,18 @@ class CharmHelper extends BaseHelper<Charm> {
       );
 
       [...response.body.values()].filter((charmResponse) => charmResponse.success)
-        .forEach((charmResponse) => charmsMap.set(charmResponse.body.id, this.cache.set(new Charm(this.client, charmResponse.body))));
+        .forEach((charmResponse) => {
+          const existing = this.cache.get(charmResponse.body.id);
+
+          charmsMap.set(
+            charmResponse.body.id,
+            this.cache.set(
+              existing
+                ? existing.patch(charmResponse.body)
+                : new Charm(this.client, charmResponse.body)
+            )
+          );
+        });
     }
 
     return charmIds.map(id => charmsMap.get(id) ?? null);
@@ -68,7 +79,15 @@ class CharmHelper extends BaseHelper<Charm> {
 
     user.charmSummary.fetched = true;
 
-    return user.charmSummary.setAll(response.body.map((serverCharmSummary) => new CharmSummary(this.client, serverCharmSummary)));
+    return response.body.map((serverCharmSummary) => {
+      const existing = user.charmSummary.get(serverCharmSummary.charmId);
+
+      return user.charmSummary.set(
+        existing
+          ? existing.patch(serverCharmSummary)
+          : new CharmSummary(this.client, serverCharmSummary)
+      );
+    });
   }
 
   async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
@@ -93,7 +112,7 @@ class CharmHelper extends BaseHelper<Charm> {
     );
 
     user.charmSummary.fetched = true;
-    user.charmStatistics = new CharmStatistic(this.client, response.body);
+    user.charmStatistics = user.charmStatistics?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
 
     return user.charmStatistics;
   }

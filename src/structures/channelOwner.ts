@@ -17,7 +17,10 @@ export class ChannelOwner extends BaseEntity {
     this.hash = data.hash;
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerChannelOwner): this {
+    this.id = entity.id;
+    this.hash = entity.hash;
+
     return this;
   }
 }

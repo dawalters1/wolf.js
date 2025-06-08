@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import BaseEntity from './baseEntity.ts';
 import { key } from '../decorators/key.ts';
 import { Language } from '../constants/Language.ts';
@@ -26,7 +25,11 @@ export class AchievementCategory extends BaseEntity {
     this.languages.add(data.languageId);
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerAchievementCategory): this {
+    this.id = entity.id;
+    this.name.set(entity.languageId, entity.name);
+    this.languages.add(entity.languageId);
+
     return this;
   }
 

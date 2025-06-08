@@ -22,7 +22,10 @@ export class AchievementUser extends BaseEntity {
     this.additionalInfo = new AchievementUserAdditionalInfo(client, data.additionalInfo);
   }
 
-  patch (entity: any): this {
+  patch (entity: ServerAchievementUser): this {
+    this.id = entity.id;
+    this.additionalInfo = this.additionalInfo.patch(entity.additionalInfo);
+
     return this;
   }
 }

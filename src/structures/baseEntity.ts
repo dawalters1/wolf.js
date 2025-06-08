@@ -8,7 +8,7 @@ abstract class BaseEntity {
     this.client = client;
   }
 
-  patch?(entity: any): this
+  patch?(entity: any, ...args: any | undefined): this
 
   clone (): this {
     return _.clone(this);

@@ -23,12 +23,11 @@ export class Event extends BaseEntity {
     id: number;
 
   attendanceCount: number;
-  category: number;
+  category: number | null;
   createdBy: number;
   endsAt: Date;
   groupId: number;
   hostedBy: number | null;
-
   imageUrl: string | null;
   isRemoved: boolean;
   longDescription: string | null;
@@ -52,6 +51,24 @@ export class Event extends BaseEntity {
     this.shortDescription = data.shortDescription;
     this.startsAt = new Date(data.startsAt);
     this.title = data.title;
+  }
+
+  patch (entity: ServerEvent): this {
+    this.attendanceCount = entity.attendanceCount;
+    this.category = entity.category;
+    this.createdBy = entity.createdBy;
+    this.endsAt = new Date(entity.endsAt);
+    this.groupId = entity.groupId;
+    this.hostedBy = entity.hostedBy;
+    this.id = entity.id;
+    this.imageUrl = entity.imageUrl;
+    this.isRemoved = entity.isRemoved;
+    this.longDescription = entity.longDescription;
+    this.shortDescription = entity.shortDescription;
+    this.startsAt = new Date(entity.startsAt);
+    this.title = entity.title;
+
+    return this;
   }
 }
 export default Event;

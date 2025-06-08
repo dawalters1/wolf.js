@@ -13,10 +13,6 @@ export class CurrentUser extends User {
     this.notificationsGlobal = new CacheManager();
     this.notificationsUser = new CacheManager();
   }
-
-  patch (entity: any): this {
-    return this;
-  }
 }
 
 export default CurrentUser;
