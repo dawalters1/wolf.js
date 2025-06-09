@@ -1,5 +1,5 @@
 import BaseHelper from '../baseHelper.ts';
-import { ChannelAudioSlot, ServerChannelAudioSlot } from '../../structures/channelAudioSlot.ts';
+import { ChannelAudioSlot, ServerGroupAudioSlot } from '../../structures/channelAudioSlot.ts';
 import { ChannelMemberCapability } from '../../constants';
 import { Command } from '../../constants/Command.ts';
 import { StageSlotOptions } from '../../options/requestOptions.ts';
@@ -17,7 +17,7 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (channel.audioSlots.fetched) { return channel.audioSlots.values(); }
 
-    const response = await this.client.websocket.emit<ServerChannelAudioSlot[]>(
+    const response = await this.client.websocket.emit<ServerGroupAudioSlot[]>(
       Command.GROUP_AUDIO_SLOT_LIST,
       {
         body: {
@@ -27,13 +27,13 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
       }
     );
 
-    return response.body.map((serverChannelAudioSlot) => {
-      const existing = channel.audioSlots.get(serverChannelAudioSlot.id);
+    return response.body.map((ServerGroupAudioSlot) => {
+      const existing = channel.audioSlots.get(ServerGroupAudioSlot.id);
 
       return channel.audioSlots.set(
         existing
-          ? existing.patch(serverChannelAudioSlot)
-          : new ChannelAudioSlot(this.client, serverChannelAudioSlot)
+          ? existing.patch(ServerGroupAudioSlot)
+          : new ChannelAudioSlot(this.client, ServerGroupAudioSlot)
       );
     });
   }

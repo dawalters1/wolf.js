@@ -1,17 +1,17 @@
 import AchievementChannel from './achievementChannel.ts';
 import BaseEntity from './baseEntity.ts';
 import CacheManager from '../managers/cacheManager.ts';
-import ChannelAudioConfig, { ServerChannelAudioConfig } from './channelAudioConfig.ts';
-import ChannelAudioCount, { ServerChannelAudioCount } from './channelAudioCount.ts';
+import ChannelAudioConfig, { ServerGroupAudioConfig } from './channelAudioConfig.ts';
+import ChannelAudioCount, { ServerGroupAudioCount } from './channelAudioCount.ts';
 import { ChannelAudioSlot } from './channelAudioSlot.ts';
 import ChannelAudioSlotRequest from './channelAudioSlotRequest.ts';
 import ChannelEvent from './channelEvent.ts';
-import ChannelExtended, { ServerChannelExtended } from './channelExtended.ts';
+import ChannelExtended, { ServerGroupExtended } from './channelExtended.ts';
 import ChannelMember from './channelMember';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
 import ChannelMemberManager from '../managers/channelMemberManager.ts';
-import ChannelMessageConfig, { ServerChannelMessageConfig } from './channelMessageConfig.ts';
-import ChannelOwner, { ServerChannelOwner } from './channelOwner.ts';
+import ChannelMessageConfig, { ServerGroupMessageConfig } from './channelMessageConfig.ts';
+import ChannelOwner, { ServerGroupOwner } from './channelOwner.ts';
 import ChannelRole from './channelRole.ts';
 import ChannelRoleUser from './channelRoleUser.ts';
 import { ChannelVerificationTier } from '../constants/ChannelVerificationTier.ts';
@@ -22,7 +22,7 @@ import WOLF from '../client/WOLF.ts';
 // import { BaseManager } from '../managers/CacheManager.ts';
 // import AchievementChannel from './AchievementChannel.ts';
 
-export interface ServerChannel {
+export interface ServerGroup {
   id: number;
   name: string;
   hash: string;
@@ -34,20 +34,20 @@ export interface ServerChannel {
   members: number;
   official: boolean;
   peekable: boolean;
-  owner: ServerChannelOwner;
-  extended?: ServerChannelExtended;
-  audioConfig?: ServerChannelAudioConfig;
-  audioCount?: ServerChannelAudioCount;
-  messageConfig?: ServerChannelMessageConfig
+  owner: ServerGroupOwner;
+  extended?: ServerGroupExtended;
+  audioConfig?: ServerGroupAudioConfig;
+  audioCount?: ServerGroupAudioCount;
+  messageConfig?: ServerGroupMessageConfig
   verificationTier: ChannelVerificationTier;
 }
 
-export interface ServerChannelModular {
-  base: ServerChannel,
-  extended?: ServerChannelExtended;
-  audioConfig?: ServerChannelAudioConfig;
-  audioCount?: ServerChannelAudioCount;
-  messageConfig?: ServerChannelMessageConfig;
+export interface ServerGroupModular {
+  base: ServerGroup,
+  extended?: ServerGroupExtended;
+  audioConfig?: ServerGroupAudioConfig;
+  audioCount?: ServerGroupAudioCount;
+  messageConfig?: ServerGroupMessageConfig;
 }
 
 class Channel extends BaseEntity {
@@ -66,9 +66,9 @@ class Channel extends BaseEntity {
   peekable: boolean;
   owner: ChannelOwner;
   extended: ChannelExtended | null;
-  audioConfig?: ChannelAudioConfig | null;
-  audioCount?: ChannelAudioCount | null;
-  messageConfig?: ChannelMessageConfig | null;
+  audioConfig: ChannelAudioConfig | null;
+  audioCount: ChannelAudioCount | null;
+  messageConfig: ChannelMessageConfig | null;
   verificationTier: ChannelVerificationTier | null;
   achievements: CacheManager<AchievementChannel>;
   events: CacheManager<ChannelEvent>;
@@ -82,7 +82,7 @@ class Channel extends BaseEntity {
     users: CacheManager<ChannelRoleUser>
   };
 
-  constructor (client: WOLF, data: ServerChannelModular) {
+  constructor (client: WOLF, data: ServerGroupModular) {
     super(client);
 
     this.id = data.base.id;
@@ -124,7 +124,7 @@ class Channel extends BaseEntity {
     };
   }
 
-  patch (entity: ServerChannelModular): this {
+  patch (entity: ServerGroupModular): this {
     if (entity.base) {
       this.id = entity.base.id;
       this.name = entity.base.name;

@@ -215,7 +215,6 @@ export default [
       'no-useless-constructor': 'error',
       'no-useless-escape': 'error',
       'no-useless-rename': 'error',
-      'no-useless-return': 'error',
       'no-void': 'error',
       'no-whitespace-before-property': 'error',
       'no-with': 'error',

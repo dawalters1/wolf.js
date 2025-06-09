@@ -1,15 +1,10 @@
 import BaseEvent from './baseEvent';
 import EventSubscription from '../../../structures/eventSubscription';
+import { ServerGroupEvent } from '../../../structures/channelEvent';
 import WOLF from '../../WOLF';
 
-interface ServerSubscriberGroupEventAdd {
-    id: number;
+interface ServerSubscriberGroupEventAdd extends ServerGroupEvent {
     groupId: number;
-    additionalInfo: {
-        eTag: string;
-        startsAt: Date;
-        endsAt: Date
-    }
 }
 
 class SubscriberContactAddEvent extends BaseEvent<ServerSubscriberGroupEventAdd> {

@@ -1,10 +1,8 @@
 import BaseEvent from './baseEvent';
+import { ServerIdHash } from '../../../structures/idHash';
 import WOLF from '../../WOLF';
 
-interface ServerSubscriberUpdate {
-    id: number;
-    hash: string
-}
+interface ServerSubscriberUpdate extends ServerIdHash {}
 
 class SubscriberUpdateEvent extends BaseEvent<ServerSubscriberUpdate> {
   constructor (client: WOLF) {

@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelMessageConfig {
+export interface ServerGroupMessageConfig {
   disableImage: boolean;
   disableImageFilter: boolean;
   disableVoice: boolean;
@@ -16,7 +16,7 @@ export class ChannelMessageConfig extends BaseEntity {
   disableHyperlink: boolean;
   slowModeRateInSeconds: number;
 
-  constructor (client: WOLF, data: ServerChannelMessageConfig) {
+  constructor (client: WOLF, data: ServerGroupMessageConfig) {
     super(client);
 
     this.disableImage = data.disableImage;
@@ -26,7 +26,7 @@ export class ChannelMessageConfig extends BaseEntity {
     this.slowModeRateInSeconds = data.slowModeRateInSeconds;
   }
 
-  patch (entity: ServerChannelMessageConfig): this {
+  patch (entity: ServerGroupMessageConfig): this {
     this.disableImage = entity.disableImage;
     this.disableImageFilter = entity.disableImageFilter;
     this.disableVoice = entity.disableVoice;

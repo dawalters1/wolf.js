@@ -1,6 +1,6 @@
-import ChannelRole, { ServerChannelRole } from '../../structures/channelRole';
+import ChannelRole, { ServerGroupRole } from '../../structures/channelRole';
 import { ChannelRoleOptions, ChannelRoleUserOptions } from '../../options/requestOptions';
-import ChannelRoleUser, { ServerChannelRoleUser } from '../../structures/channelRoleUser';
+import ChannelRoleUser, { ServerGroupRoleUser } from '../../structures/channelRoleUser';
 import { Command } from '../../constants/Command';
 import WOLF from '../../client/WOLF';
 
@@ -20,7 +20,7 @@ class ChannelRoleHelper {
       return channel.roles.summaries.values();
     }
 
-    const response = await this.client.websocket.emit<ServerChannelRole[]>(
+    const response = await this.client.websocket.emit<ServerGroupRole[]>(
       Command.GROUP_ROLE_SUMMARY,
       {
         body: {
@@ -29,13 +29,13 @@ class ChannelRoleHelper {
       }
     );
 
-    return response.body.map((serverChannelRole) => {
-      const existing = channel.roles.summaries.get(serverChannelRole.roleId);
+    return response.body.map((ServerGroupRole) => {
+      const existing = channel.roles.summaries.get(ServerGroupRole.roleId);
 
       return channel.roles.summaries.set(
         existing
-          ? existing.patch(serverChannelRole)
-          : new ChannelRole(this.client, serverChannelRole)
+          ? existing.patch(ServerGroupRole)
+          : new ChannelRole(this.client, ServerGroupRole)
       );
     });
   }
@@ -49,7 +49,7 @@ class ChannelRoleHelper {
       return channel.roles.users.values();
     }
 
-    const response = await this.client.websocket.emit<ServerChannelRoleUser[]>(
+    const response = await this.client.websocket.emit<ServerGroupRoleUser[]>(
       Command.GROUP_ROLE_SUBSCRIBER_LIST,
       {
         body: {
@@ -59,13 +59,13 @@ class ChannelRoleHelper {
       }
     );
 
-    return response.body.map((serverChannelRoleUser) => {
-      const existing = channel.roles.users.get(serverChannelRoleUser.subscriberId);
+    return response.body.map((ServerGroupRoleUser) => {
+      const existing = channel.roles.users.get(ServerGroupRoleUser.subscriberId);
 
       return channel.roles.users.set(
         existing
-          ? existing.patch(serverChannelRoleUser)
-          : new ChannelRoleUser(this.client, serverChannelRoleUser)
+          ? existing.patch(ServerGroupRoleUser)
+          : new ChannelRoleUser(this.client, ServerGroupRoleUser)
       );
     });
   }

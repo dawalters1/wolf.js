@@ -1,6 +1,6 @@
 
 import BaseHelper from '../baseHelper.ts';
-import Channel, { ServerChannelModular } from '../../structures/channel.ts';
+import Channel, { ServerGroupModular } from '../../structures/channel.ts';
 import ChannelCategoryHelper from './channelCategory.ts';
 import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
@@ -40,7 +40,7 @@ class ChannelHelper extends BaseHelper<Channel> {
     this.cache.fetched = true;
 
     if (response.body.length) {
-      const channels = await this.getByIds(response.body.map((serverChannel) => serverChannel.id as number));
+      const channels = await this.getByIds(response.body.map((ServerGroup) => ServerGroup.id as number));
 
       channels
         .filter((channel): channel is Channel => channel !== null)
@@ -72,7 +72,7 @@ class ChannelHelper extends BaseHelper<Channel> {
     const missingIds = channelIds.filter((id) => !channelsMap.has(id));
 
     if (missingIds.length) {
-      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerChannelModular>>>(
+      const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerGroupModular>>>(
         Command.GROUP_PROFILE,
         {
           headers: {

@@ -1,4 +1,4 @@
-import ChannelAudioSlotRequest, { ServerChannelAudioSlotRequest } from '../../structures/channelAudioSlotRequest';
+import ChannelAudioSlotRequest, { ServerGroupAudioSlotRequest } from '../../structures/channelAudioSlotRequest';
 import { ChannelAudioSlotRequestOptions } from '../../options/requestOptions';
 import { ChannelMemberCapability } from '../../constants';
 import { Command } from '../../constants/Command';
@@ -23,7 +23,7 @@ class AudioSlotRequestHelper {
 
     if (!opts?.forceNew && channel.audioSlotRequests.fetched) { return channel.audioSlotRequests.values(); }
 
-    const response = await this.client.websocket.emit<ServerChannelAudioSlotRequest[]>(
+    const response = await this.client.websocket.emit<ServerGroupAudioSlotRequest[]>(
       Command.GROUP_AUDIO_REQUEST_LIST,
       {
         body: {
@@ -35,13 +35,13 @@ class AudioSlotRequestHelper {
 
     channel.audioSlotRequests.fetched = true;
 
-    return response.body.map((serverChannelAudioSlotRequest) => {
-      const existing = channel.audioSlotRequests.get(serverChannelAudioSlotRequest.slotId);
+    return response.body.map((ServerGroupAudioSlotRequest) => {
+      const existing = channel.audioSlotRequests.get(ServerGroupAudioSlotRequest.slotId);
 
       return channel.audioSlotRequests.set(
         existing
-          ? existing.patch(serverChannelAudioSlotRequest)
-          : new ChannelAudioSlotRequest(this.client, serverChannelAudioSlotRequest)
+          ? existing.patch(ServerGroupAudioSlotRequest)
+          : new ChannelAudioSlotRequest(this.client, ServerGroupAudioSlotRequest)
       );
     });
   }

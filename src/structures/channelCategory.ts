@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity';
 import { Language } from '../constants';
 import WOLF from '../client/WOLF';
 
-export interface ServerChannelCategory {
+export interface ServerGroupCategory {
     id: number;
     description: string;
     imageUrl: string;
@@ -21,7 +21,7 @@ export class ChannelCategory extends BaseEntity {
   recipeId: number;
   languages: Set<Language> = new Set();
 
-  constructor (client: WOLF, data: ServerChannelCategory) {
+  constructor (client: WOLF, data: ServerGroupCategory) {
     super(client);
 
     this.id = data.id;
@@ -33,7 +33,7 @@ export class ChannelCategory extends BaseEntity {
     this.languages.add(data.languageId);
   }
 
-  patch (entity: ServerChannelCategory): this {
+  patch (entity: ServerGroupCategory): this {
     this.id = entity.id;
     this.description.set(entity.languageId, entity.description);
     this.imageUrl = entity.imageUrl;

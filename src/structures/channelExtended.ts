@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { Language } from '../constants/Language.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelExtended {
+export interface ServerGroupExtended {
   id: number;
   discoverable: boolean;
   advancedAdmin: boolean;
@@ -25,7 +25,7 @@ export class ChannelExtended extends BaseEntity {
   language: Language;
   longDescription: string | null;
 
-  constructor (client: WOLF, data: ServerChannelExtended) {
+  constructor (client: WOLF, data: ServerGroupExtended) {
     super(client);
 
     this.id = data.id;
@@ -39,7 +39,7 @@ export class ChannelExtended extends BaseEntity {
     this.longDescription = data.longDescription || null;
   }
 
-  patch (entity: ServerChannelExtended): this {
+  patch (entity: ServerGroupExtended): this {
     this.id = entity.id;
     this.discoverable = entity.discoverable;
     this.advancedAdmin = entity.advancedAdmin;

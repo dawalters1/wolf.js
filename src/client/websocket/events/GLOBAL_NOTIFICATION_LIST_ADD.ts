@@ -1,14 +1,8 @@
 import BaseEvent from './baseEvent';
-import Notification from '../../../structures/notification';
+import Notification, { ServerNotification } from '../../../structures/notification';
 import WOLF from '../../WOLF';
 
-interface ServerGlobalNotificationListAdd {
-    id: number
-    additionalInfo: {
-        eTag: string,
-        createdAt: Date
-    }
-}
+interface ServerGlobalNotificationListAdd extends ServerNotification {}
 
 class GlobalNotificationListAddEvent extends BaseEvent<ServerGlobalNotificationListAdd> {
   constructor (client: WOLF) {
@@ -16,8 +10,6 @@ class GlobalNotificationListAddEvent extends BaseEvent<ServerGlobalNotificationL
   }
 
   async process (data: ServerGlobalNotificationListAdd) {
-    data.additionalInfo.createdAt = new Date();
-
     this.client.emit(
       'globalNotificationAdd',
 

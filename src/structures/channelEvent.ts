@@ -1,11 +1,11 @@
 import BaseEntity from './baseEntity.ts';
-import ChannelEventAdditionalInfo, { ServerChannelEventAdditonalInfo } from './channelEventAdditionalInfo.ts';
+import ChannelEventAdditionalInfo, { ServerGroupEventAdditonalInfo } from './channelEventAdditionalInfo.ts';
 import { key } from '../decorators/key.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelEvent {
+export interface ServerGroupEvent {
   id: number;
-  additionalInfo: ServerChannelEventAdditonalInfo
+  additionalInfo: ServerGroupEventAdditonalInfo
 }
 
 export class ChannelEvent extends BaseEntity {
@@ -14,14 +14,14 @@ export class ChannelEvent extends BaseEntity {
 
   additonalInfo: ChannelEventAdditionalInfo;
 
-  constructor (client: WOLF, data: ServerChannelEvent) {
+  constructor (client: WOLF, data: ServerGroupEvent) {
     super(client);
 
     this.id = data.id;
     this.additonalInfo = new ChannelEventAdditionalInfo(client, data.additionalInfo);
   }
 
-  patch (entity: ServerChannelEvent): this {
+  patch (entity: ServerGroupEvent): this {
     this.id = entity.id;
     this.additonalInfo = this.additonalInfo.patch(entity.additionalInfo);
     return this;

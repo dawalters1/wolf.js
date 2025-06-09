@@ -5,7 +5,7 @@ import { key } from '../decorators/key.ts';
 import { User } from './user';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelMember {
+export interface ServerGroupMember {
   id: number;
   hash: string;
   capabilities: ChannelMemberCapability
@@ -19,7 +19,7 @@ export class ChannelMember extends BaseEntity {
   capabilities: ChannelMemberCapability;
   lists: Set<string>;
 
-  constructor (client: WOLF, data: ServerChannelMember, source?: ChannelMemberListType) {
+  constructor (client: WOLF, data: ServerGroupMember, source?: ChannelMemberListType) {
     super(client);
 
     this.id = data.id;
@@ -29,7 +29,7 @@ export class ChannelMember extends BaseEntity {
     this.lists = new Set([source, this._getParentList(data.capabilities)].filter((list) => list !== undefined));
   }
 
-  patch (entity: ServerChannelMember | User, list?: ChannelMemberListType): this {
+  patch (entity: ServerGroupMember | User, list?: ChannelMemberListType): this {
     if ('capabilities' in entity) {
       this.capabilities = entity.capabilities;
       if (list) {

@@ -12,7 +12,9 @@ class SubscriberContactDeleteEvent extends BaseEvent<ServerSubscriberContactDele
   }
 
   async process (data: ServerSubscriberContactDelete) {
-    this.client.contact.cache.delete(data.targetId);
+    const wasDeleted = this.client.contact.cache.delete(data.targetId);
+
+    if (wasDeleted === false) { return; }
 
     this.client.emit(
       'contactDelete',
