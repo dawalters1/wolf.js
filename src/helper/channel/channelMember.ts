@@ -1,5 +1,5 @@
 import Channel from '../../structures/channel.ts';
-import ChannelMember, { ServerChannelMember } from '../../structures/channelMember.ts';
+import ChannelMember, { ServerGroupMember } from '../../structures/channelMember.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import { ChannelMemberListType } from '../../constants/ChannelMemberListType.ts';
 import { Command } from '../../constants/Command.ts';
@@ -23,7 +23,7 @@ class ChannelMemberHelper {
 
     const fetchMembers = async (result: ChannelMember[] = []): Promise<ChannelMember[]> => {
       try {
-        const response = await this.client.websocket.emit<ServerChannelMember[]>(
+        const response = await this.client.websocket.emit<ServerGroupMember[]>(
           command,
           {
             body: {
@@ -37,13 +37,13 @@ class ChannelMemberHelper {
           }
         );
 
-        result.push(...response.body.map((serverChannelMember) => {
-          const existing = channel.members.get(serverChannelMember.id);
+        result.push(...response.body.map((ServerGroupMember) => {
+          const existing = channel.members.get(ServerGroupMember.id);
 
           return channel.members.set(
             existing
-              ? existing.patch(serverChannelMember, list)
-              : new ChannelMember(this.client, serverChannelMember, list)
+              ? existing.patch(ServerGroupMember, list)
+              : new ChannelMember(this.client, ServerGroupMember, list)
           );
         }));
 
@@ -90,7 +90,7 @@ class ChannelMemberHelper {
     if (cached) { return cached; };
 
     try {
-      const response = await this.client.websocket.emit<ServerChannelMember>(
+      const response = await this.client.websocket.emit<ServerGroupMember>(
         Command.GROUP_MEMBER,
         {
           body: {

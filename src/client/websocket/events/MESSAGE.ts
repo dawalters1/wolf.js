@@ -4,7 +4,6 @@ import { Message, ServerMessage } from '../../../structures/message';
 import WOLF, { Events } from '../../WOLF';
 
 class MessageEvent extends BaseEvent<ServerMessage> {
-  static ArgClass = Message;
   constructor (client: WOLF) {
     super(client, 'message send');
   }

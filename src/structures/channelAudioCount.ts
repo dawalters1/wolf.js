@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelAudioCount {
+export interface ServerGroupAudioCount {
   broadcasterCount: number;
   consumerCount: number;
   id: number;
@@ -12,7 +12,7 @@ export class ChannelAudioCount extends BaseEntity {
   consumerCount: number;
   id: number;
 
-  constructor (client: WOLF, data: ServerChannelAudioCount) {
+  constructor (client: WOLF, data: ServerGroupAudioCount) {
     super(client);
 
     this.broadcasterCount = data.broadcasterCount;
@@ -20,7 +20,7 @@ export class ChannelAudioCount extends BaseEntity {
     this.id = data.id;
   }
 
-  patch (entity: ServerChannelAudioCount): this {
+  patch (entity: ServerGroupAudioCount): this {
     this.broadcasterCount = entity.broadcasterCount;
     this.consumerCount = entity.consumerCount;
     this.id = entity.id;

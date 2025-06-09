@@ -1,10 +1,8 @@
 import BaseEvent from './baseEvent';
+import IdHash from '../../../structures/idHash';
 import WOLF from '../../WOLF';
 
-interface ServerGroupUpdate {
-    id: number;
-    hash: string;
-}
+interface ServerGroupUpdate extends IdHash {}
 
 class GroupUpdateEvent extends BaseEvent<ServerGroupUpdate> {
   constructor (client: WOLF) {

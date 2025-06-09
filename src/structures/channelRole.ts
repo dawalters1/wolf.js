@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity';
 import { key } from '../decorators/key';
 import WOLF from '../client/WOLF';
 
-export interface ServerChannelRole {
+export interface ServerGroupRole {
     roleId: number;
     subscriberIdList: Set<number>;
     maxSeats: number;
@@ -15,7 +15,7 @@ export class ChannelRole extends BaseEntity {
   userIdList: Set<number>;
   maxSeats: number;
 
-  constructor (client: WOLF, data: ServerChannelRole) {
+  constructor (client: WOLF, data: ServerGroupRole) {
     super(client);
 
     this.roleId = data.roleId;
@@ -23,7 +23,7 @@ export class ChannelRole extends BaseEntity {
     this.maxSeats = data.maxSeats;
   }
 
-  patch (entity: ServerChannelRole): this {
+  patch (entity: ServerGroupRole): this {
     this.roleId = entity.roleId;
     this.userIdList = new Set(entity.subscriberIdList);
     this.maxSeats = entity.maxSeats;

@@ -2,9 +2,10 @@ import BaseEntity from './baseEntity.ts';
 import { ChannelAudioSlotConnectionState } from '../constants/ChannelAudioConnectionState.ts';
 import ChannelAudioSlotReservation from './channelAudioSlotReservation.ts';
 import { key } from '../decorators/key.ts';
+import { ServerGroupAudioSlotUpdate } from '../client/websocket/events/GROUP_AUDIO_SLOT_UPDATE';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelAudioSlot {
+export interface ServerGroupAudioSlot {
   id: number;
   locked: boolean;
   occupierId: number | null;
@@ -25,10 +26,10 @@ export class ChannelAudioSlot extends BaseEntity {
   userId: number | null;
   isReserved: boolean;
   reservation?: ChannelAudioSlotReservation;
-  connectionState: ChannelAudioSlotConnectionState;
+  connectionState: ChannelAudioSlotConnectionState | null;
   uuid: string;
 
-  constructor (client: WOLF, data: ServerChannelAudioSlot) {
+  constructor (client: WOLF, data: ServerGroupAudioSlot) {
     super(client);
 
     this.id = data.id;
@@ -44,23 +45,25 @@ export class ChannelAudioSlot extends BaseEntity {
     this.isOccupied = data.occupierId !== null || this.reservation !== undefined;
   }
 
-  patch (entity: ServerChannelAudioSlot): this {
-    this.id = entity.id;
-    this.isLocked = entity.locked;
-    this.isMuted = entity.occupierMuted;
-    this.userId = entity.occupierId;
-    this.isReserved = entity.reservedOccupierId !== undefined;
+  patch (entity: ServerGroupAudioSlot | ServerGroupAudioSlotUpdate): this {
+    const data = 'slot' in entity ? entity.slot : entity;
+
+    this.id = data.id;
+    this.isLocked = data.locked;
+    this.isMuted = data.occupierMuted;
+    this.userId = data.occupierId;
+    this.isReserved = data.reservedOccupierId !== undefined;
     this.reservation = this.reservation
-      ? entity.reservedOccupierId
-        ? this.reservation.patch(entity)
+      ? data.reservedOccupierId
+        ? this.reservation.patch(data)
         : undefined
-      : entity.reservedOccupierId
+      : data.reservedOccupierId
         ? new ChannelAudioSlotReservation(this.client, entity)
         : undefined;
 
-    this.connectionState = entity.connectionState;
-    this.uuid = entity.uuid;
-    this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
+    this.connectionState = data.connectionState;
+    this.uuid = data.uuid;
+    this.isOccupied = data.occupierId !== null || this.reservation !== undefined;
 
     return this;
   }

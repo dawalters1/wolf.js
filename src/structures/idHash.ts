@@ -1,23 +1,23 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerUserIdHash {
+export interface ServerIdHash {
   id: number;
   hash: string
 }
 
-export class UserIdHash extends BaseEntity {
+export class IdHash extends BaseEntity {
   id: number;
   hash: string;
 
-  constructor (client: WOLF, data: ServerUserIdHash) {
+  constructor (client: WOLF, data: ServerIdHash) {
     super(client);
 
     this.id = data.id;
     this.hash = data.hash;
   }
 
-  patch (entity: ServerUserIdHash): this {
+  patch (entity: ServerIdHash): this {
     this.id = entity.id;
     this.hash = entity.hash;
 
@@ -25,4 +25,4 @@ export class UserIdHash extends BaseEntity {
   }
 }
 
-export default UserIdHash;
+export default IdHash;

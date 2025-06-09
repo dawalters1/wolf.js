@@ -12,12 +12,12 @@ class SubscriberNotificationListDelete extends BaseEvent<ServerSubscriberNotific
   }
 
   async process (data: ServerSubscriberNotificationListDelete) {
-    const deleted = [
+    const wasDeleted = [
       this.client.me?.notificationsUser.delete(data.id),
       this.client.notification.user.cache.delete(data.id)
     ].some(Boolean);
 
-    if (deleted === false) { return; }
+    if (wasDeleted === false) { return; }
 
     this.client.emit('userNotificationDelete', data.id!);
   }

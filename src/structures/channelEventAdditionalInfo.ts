@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelEventAdditonalInfo {
+export interface ServerGroupEventAdditonalInfo {
   eTag: string;
   endsAt: Date;
   startsAt: Date;
@@ -12,7 +12,7 @@ export class ChannelEventAdditionalInfo extends BaseEntity {
   endsAt: Date;
   startsAt: Date;
 
-  constructor (client: WOLF, data: ServerChannelEventAdditonalInfo) {
+  constructor (client: WOLF, data: ServerGroupEventAdditonalInfo) {
     super(client);
 
     this.eTag = data.eTag;
@@ -20,7 +20,7 @@ export class ChannelEventAdditionalInfo extends BaseEntity {
     this.startsAt = new Date(data.startsAt);
   }
 
-  patch (entity: ServerChannelEventAdditonalInfo): this {
+  patch (entity: ServerGroupEventAdditonalInfo): this {
     this.eTag = entity.eTag;
     this.endsAt = new Date(entity.endsAt);
     this.startsAt = new Date(entity.startsAt);

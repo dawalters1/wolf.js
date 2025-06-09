@@ -1,10 +1,9 @@
 import BaseEntity from './baseEntity.ts';
-import ChannelAudioSlotReservation from './channelAudioSlotReservation';
 import { key } from '../decorators/key';
+import { ServerGroupAudioRequestAddEvent } from '../client/websocket/events/GROUP_AUDIO_REQUEST_ADD';
 import WOLF from '../client/WOLF';
 
-export interface ServerChannelAudioSlotRequest {
-    slotId: number;
+export interface ServerGroupAudioSlotRequest {
     groupId: number;
     reservedOccupierId: number;
     reservedExpiresAt: Date;
@@ -12,23 +11,23 @@ export interface ServerChannelAudioSlotRequest {
 
 export class ChannelAudioSlotRequest extends BaseEntity {
   @key
-    slotId: number;
+    reservedUserId: number;
 
   channelId: number;
-  reservation: ChannelAudioSlotReservation;
+  reservedExpiresAt: Date;
 
-  constructor (client: WOLF, data: ServerChannelAudioSlotRequest) {
+  constructor (client: WOLF, data: ServerGroupAudioSlotRequest | ServerGroupAudioRequestAddEvent) {
     super(client);
-    this.slotId = data.slotId;
-    this.channelId = data.groupId;
-    this.reservation = new ChannelAudioSlotReservation(client, data);
-  }
 
-  patch (entity: ServerChannelAudioSlotRequest): this {
-    this.slotId = entity.slotId;
-    this.channelId = entity.groupId;
-    this.reservation = this.reservation.patch(entity);
-    return this;
+    if ('reservedOccupierId' in data) {
+      this.reservedUserId = data.reservedOccupierId;
+      this.channelId = data.groupId;
+      this.reservedExpiresAt = new Date(data.reservedExpiresAt);
+    } else {
+      this.reservedUserId = data.subscriberId;
+      this.channelId = data.groupId;
+      this.reservedExpiresAt = new Date(data.expiresAt);
+    }
   }
 }
 

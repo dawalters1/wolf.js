@@ -3,7 +3,11 @@ import AudioHelper from '../helper/audio/audio';
 import AuthorisationHelper from '../helper/authorisation/authorisation.ts';
 import BannedHelper from '../helper/banned/banned.ts';
 import Channel from '../structures/channel';
+import ChannelAudioCount from '../structures/channelAudioCount';
+import { ChannelAudioSlot } from '../structures/channelAudioSlot';
+import ChannelAudioSlotRequest from '../structures/channelAudioSlotRequest';
 import ChannelHelper from '../helper/channel/channel.ts';
+import ChannelRoleUser from '../structures/channelRoleUser';
 import CharmHelper from '../helper/charm/charm.ts';
 import Contact from '../structures/contact';
 import ContactHelper from '../helper/contact/contact.ts';
@@ -50,7 +54,14 @@ export interface Events {
   'contactDelete': [number],
   'blockDelete': [number],
   'userChannelEventSubscriptionAdd': [EventSubscription],
-  'userChannelEventSubscriptionDelete': [number]
+  'userChannelEventSubscriptionDelete': [number],
+  'channelAudioSlotRequestClear': [],
+  'channelAudioSlotRequestAdd': [ChannelAudioSlotRequest],
+  'channelAudioSlotRequestDelete': [number],
+  'channelRoleUserAssign': [ChannelRoleUser],
+  'channelRoleUserUnassign': [number, number],
+  'channelAudioCountUpdate': [ChannelAudioCount, ChannelAudioCount],
+  'channelAudioSlotUpdate': [ChannelAudioSlot, ChannelAudioSlot]
 }
 
 class WOLF extends EventEmitter<Events> {

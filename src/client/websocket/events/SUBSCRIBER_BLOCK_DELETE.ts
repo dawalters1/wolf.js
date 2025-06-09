@@ -12,7 +12,9 @@ class SubscriberBlockDeleteEvent extends BaseEvent<ServerSubscriberBlockDelete> 
   }
 
   async process (data: ServerSubscriberBlockDelete) {
-    this.client.contact.blocked.cache.delete(data.targetId);
+    const wasDeleted = this.client.contact.blocked.cache.delete(data.targetId);
+
+    if (wasDeleted === false) { return; }
 
     this.client.emit(
       'blockDelete',

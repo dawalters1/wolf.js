@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelOwner {
+export interface ServerGroupOwner {
   id: number;
   hash: string;
 }
@@ -10,14 +10,14 @@ export class ChannelOwner extends BaseEntity {
   id: number;
   hash: string;
 
-  constructor (client: WOLF, data: ServerChannelOwner) {
+  constructor (client: WOLF, data: ServerGroupOwner) {
     super(client);
 
     this.id = data.id;
     this.hash = data.hash;
   }
 
-  patch (entity: ServerChannelOwner): this {
+  patch (entity: ServerGroupOwner): this {
     this.id = entity.id;
     this.hash = entity.hash;
 

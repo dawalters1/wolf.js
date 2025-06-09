@@ -11,7 +11,9 @@ class SubscriberContactDeleteEvent extends BaseEvent<ServerSubscriberGroupEventD
   }
 
   async process (data: ServerSubscriberGroupEventDelete) {
-    this.client.contact.cache.delete(data.id);
+    const wasDeleted = this.client.event.subscription.cache.delete(data.id);
+
+    if (wasDeleted === false) { return; }
 
     this.client.emit(
       'userChannelEventSubscriptionDelete',

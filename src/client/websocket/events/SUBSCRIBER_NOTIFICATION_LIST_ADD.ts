@@ -1,14 +1,8 @@
 import BaseEvent from './baseEvent';
-import Notification from '../../../structures/notification';
+import Notification, { ServerNotification } from '../../../structures/notification';
 import WOLF from '../../WOLF';
 
-interface ServerSubscriberNotificationListAdd {
-    id: number
-    additionalInfo: {
-        eTag: string,
-        createdAt: Date
-    }
-}
+interface ServerSubscriberNotificationListAdd extends ServerNotification {}
 
 class SubscriberNotificationListAddEvent extends BaseEvent<ServerSubscriberNotificationListAdd> {
   constructor (client: WOLF) {

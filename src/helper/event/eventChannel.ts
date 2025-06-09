@@ -1,6 +1,6 @@
 
 import BaseHelper from '../baseHelper.ts';
-import ChannelEvent, { ServerChannelEvent } from '../../structures/channelEvent.ts';
+import ChannelEvent, { ServerGroupEvent } from '../../structures/channelEvent.ts';
 import { Command } from '../../constants/Command.ts';
 import CreateChannelEvent from '../../structures/createChannelEvent.ts';
 import Event, { ServerEvent } from '../../structures/event.ts';
@@ -18,8 +18,8 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
 
     if (!opts?.forceNew && channel.events.fetched) { return channel.events.values(); }
 
-    const get = async (results: ServerChannelEvent[] = []): Promise<ServerChannelEvent[]> => {
-      const response = await this.client.websocket.emit<ServerChannelEvent[]>(
+    const get = async (results: ServerGroupEvent[] = []): Promise<ServerGroupEvent[]> => {
+      const response = await this.client.websocket.emit<ServerGroupEvent[]>(
         Command.GROUP_EVENT_LIST,
         {
           body: {
@@ -40,13 +40,13 @@ class EventChannelHelper extends BaseHelper<ChannelEvent> {
 
     channel.events.fetched = true;
 
-    return (await get()).map((serverChannelEvent) => {
-      const existing = channel.events.get(serverChannelEvent.id);
+    return (await get()).map((ServerGroupEvent) => {
+      const existing = channel.events.get(ServerGroupEvent.id);
 
       return channel.events.set(
         existing
-          ? existing.patch(serverChannelEvent)
-          : new ChannelEvent(this.client, serverChannelEvent)
+          ? existing.patch(ServerGroupEvent)
+          : new ChannelEvent(this.client, ServerGroupEvent)
       );
     });
   }

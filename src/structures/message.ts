@@ -2,14 +2,14 @@ import BaseEntity from './baseEntity.ts';
 import MessageEdited, { ServerMessageEdited } from './messageEdited.ts';
 import MessageMetadata, { ServerMessageMetadata } from './messageMetadata.ts';
 import { MessageType } from '../constants/MessageType.ts';
-import { ServerUserIdHash } from './userIdHash.ts';
+import { ServerIdHash } from './idHash.ts';
 import WOLF from '../client/WOLF.ts';
 
 export interface ServerMessage {
   id: number;
   flightId: string;
-  originator?: ServerUserIdHash;
-  recipient?: ServerUserIdHash
+  originator?: ServerIdHash;
+  recipient?: ServerIdHash
   isGroup: boolean;
   timestamp: number;
   mimeType: MessageType;

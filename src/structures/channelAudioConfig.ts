@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerChannelAudioConfig {
+export interface ServerGroupAudioConfig {
   id: number;
   enabled: boolean;
   stageId?: number;
@@ -14,7 +14,7 @@ export class ChannelAudioConfig extends BaseEntity {
   stageId?: number;
   minRepLevel: number;
 
-  constructor (client: WOLF, data: ServerChannelAudioConfig) {
+  constructor (client: WOLF, data: ServerGroupAudioConfig) {
     super(client);
 
     this.id = data.id;
@@ -23,7 +23,7 @@ export class ChannelAudioConfig extends BaseEntity {
     this.minRepLevel = data.minRepLevel;
   }
 
-  patch (entity: ServerChannelAudioConfig): this {
+  patch (entity: ServerGroupAudioConfig): this {
     this.id = entity.id;
     this.enabled = entity.enabled;
     this.stageId = entity.stageId;
