@@ -4,7 +4,7 @@ import NotificationGlobalFeed, { ServerNotificationGlobalFeed } from './notifica
 import NotificationGlobalPopup, { ServerNotificationGlobalPopup } from './notificationGlobalPopup.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerNotificationGlobal {
+export type ServerNotificationGlobal = {
   context: string;
   createdAt: Date;
   expiresAt: Date;

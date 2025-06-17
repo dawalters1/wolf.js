@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { Language } from '../constants/Language.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupExtended {
+export type ServerGroupExtended = {
   id: number;
   discoverable: boolean;
   advancedAdmin: boolean;

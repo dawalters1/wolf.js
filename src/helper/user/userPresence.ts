@@ -19,36 +19,45 @@ class UserPresenceHelper {
   async getByIds (userIds: number[], opts?: UserPresenceOptions): Promise<(UserPresence | null)[]> {
     const presenceMap = new Map<number, UserPresence>();
 
-    const subscribe = opts?.subscribe ?? true;
-
     const users = await this.client.user.getByIds(userIds);
 
-    if (!opts?.forceNew) {
-      const cachedPresence = users.filter((user): user is User => user !== null && subscribe ? user?.presence.subscribed : true);
+    const missingUserIds = userIds.filter(
+      userId => !users.some(user => user?.id === userId)
+    );
 
-      cachedPresence.forEach((user) => presenceMap.set(user.id, user?.presence));
+    if (missingUserIds.length > 0) {
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
 
-    const missingIds = userIds.filter((id) => !presenceMap.has(id));
+    const subscribe = opts?.subscribe ?? true;
 
-    if (missingIds.length) {
+    if (!opts?.forceNew) {
+      const cachedPresence = users.filter((user): user is User => user !== null && subscribe ? user?._presence.subscribed : true);
+
+      cachedPresence.forEach((user) => presenceMap.set(user.id, user?._presence));
+    }
+
+    const idsToFetch = userIds.filter((id) => !presenceMap.has(id));
+
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerUserPresence>>>(
         Command.SUBSCRIBER_PRESENCE,
         {
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             subscribe
           }
         }
       );
 
-      [...response.body.entries()].filter(([userId, presenceResponse]) => presenceResponse.success)
+      [...response.body.entries()].filter(([, presenceResponse]) => presenceResponse.success)
         .forEach(([userId, presenceResponse]) => {
-          const user = users.find((user) => user?.id === userId) ?? null;
-          if (user === null) { return; }
-          user.presence?.patch(presenceResponse.body);
-          user.presence.subscribed = subscribe;
-          presenceMap.set(userId, user.presence);
+          const user = users.find((user) => user?.id === userId) as User;
+
+          user._presence?.patch(presenceResponse.body);
+          user._presence.subscribed = subscribe;
+
+          presenceMap.set(userId, user._presence);
         });
     }
 

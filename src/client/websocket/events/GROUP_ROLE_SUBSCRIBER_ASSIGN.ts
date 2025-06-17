@@ -21,15 +21,15 @@ class GroupRoleSubscriberAssignEvent extends BaseEvent<ServerGroupRoleSubscriber
     if (channel === null) { return; }
 
     const [role, user] = [
-      channel.roles.summaries.get(data.additionalInfo.roleId),
-      channel.roles.users.get(data.additionalInfo.subscriberId)
+      channel._roles.summaries.get(data.additionalInfo.roleId),
+      channel._roles.users.get(data.additionalInfo.subscriberId)
     ];
 
     role?.userIdList?.add(data.additionalInfo.subscriberId);
 
     this.client.emit(
       'channelRoleUserAssign',
-      channel.roles.users.set(
+      channel._roles.users.set(
         user
           ? user.patch(data)
           : new ChannelRoleUser(this.client, data)

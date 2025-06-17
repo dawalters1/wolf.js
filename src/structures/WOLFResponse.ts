@@ -1,21 +1,24 @@
-import { HttpStatusCode } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
 interface ServerResponse {
-  code: HttpStatusCode,
+  code: StatusCodes,
   body?: unknown,
   headers: Map<string, any>;
 }
 
 export class WOLFResponse<T = undefined> {
-  code: HttpStatusCode;
+  code: StatusCodes;
   body: T;
   headers: Map<string, any> = new Map();
 
-  constructor ({ code, body, headers }: ServerResponse) {
-    this.code = code;
-    this.body = body as T;
-    this.headers = new Map(Object.entries(headers ?? {}));
+  constructor (data: ServerResponse) {
+    this.code = data.code;
+    this.body = data?.body as T;
+    this.headers = data.headers instanceof Map
+      ? data.headers
+      : new Map(Object.entries(data.headers ?? {}));
+
+    console.log(this);
   }
 
   get success () {

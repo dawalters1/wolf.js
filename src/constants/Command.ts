@@ -28,6 +28,8 @@ export enum Command {
 
   GROUP_CATEGORY_LIST = 'group category list',
 
+  GROUP_STATS = 'group stats',
+
   GROUP_ROLE = 'group role',
   GROUP_ROLE_SUMMARY = 'group role summary',
   GROUP_ROLE_SUBSCRIBER_LIST = 'group role subscriber list',
@@ -73,6 +75,13 @@ export enum Command {
   SUBSCRIBER_PROFILE = 'subscriber profile',
 
   TIP_ADD = 'tip add',
+
+  TIP_DETAIL = 'tip detail',
+  TIP_SUMMARY = 'tip summary',
+  TIP_LEADERBOARD_GLOBAL = 'tip leaderboard global',
+  TIP_LEADERBOARD_GLOBAL_SUMMARY = 'tip leaderboard global summary',
+  TIP_LEADERBOARD_GROUP = 'tip leaderboard group',
+  TIP_LEADERBOARD_GROUP_SUMMARY = 'tip leaderboard group summary',
 
   WOLFSTAR_PROFILE = 'wolfstar profile'
 }

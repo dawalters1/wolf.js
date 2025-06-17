@@ -20,7 +20,7 @@ class PresenceUpdateEvent extends BaseEvent<ServerUserPresenceUpdate> {
 
     this.client.emit(
       'userPresenceUpdate',
-      user.presence.patch(data)
+      user._presence.patch(data)
     );
   }
 }

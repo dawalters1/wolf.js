@@ -3,7 +3,7 @@ import { key } from '../decorators/key';
 import { ServerGroupAudioRequestAddEvent } from '../client/websocket/events/GROUP_AUDIO_REQUEST_ADD';
 import WOLF from '../client/WOLF';
 
-export interface ServerGroupAudioSlotRequest {
+export type ServerGroupAudioSlotRequest = {
     groupId: number;
     reservedOccupierId: number;
     reservedExpiresAt: Date;
@@ -28,6 +28,16 @@ export class ChannelAudioSlotRequest extends BaseEntity {
       this.channelId = data.groupId;
       this.reservedExpiresAt = new Date(data.expiresAt);
     }
+  }
+
+  patch (entity: ServerGroupAudioSlotRequest) {
+    if ('reservedOccupierId' in entity) {
+      this.reservedUserId = entity.reservedOccupierId;
+      this.channelId = entity.groupId;
+      this.reservedExpiresAt = new Date(entity.reservedExpiresAt);
+    }
+
+    return this;
   }
 }
 

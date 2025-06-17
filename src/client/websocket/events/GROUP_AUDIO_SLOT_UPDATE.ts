@@ -18,9 +18,9 @@ class GroupAudioCountUpdateEvent extends BaseEvent<ServerGroupAudioSlotUpdate> {
 
     if (channel === null) { return; }
 
-    if (channel.audioSlots === null) { return; }
+    if (channel._audioSlots === null) { return; }
 
-    const oldChannelAudioSlot = channel.audioSlots.get(data.slot.id);
+    const oldChannelAudioSlot = channel._audioSlots.get(data.slot.id);
 
     if (oldChannelAudioSlot === null) { return; }
 

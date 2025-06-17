@@ -16,8 +16,8 @@ class ChannelRoleHelper {
 
     if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
-    if (!opts?.forceNew && channel.roles.summaries.fetched) {
-      return channel.roles.summaries.values();
+    if (!opts?.forceNew && channel._roles.summaries.fetched) {
+      return channel._roles.summaries.values();
     }
 
     const response = await this.client.websocket.emit<ServerGroupRole[]>(
@@ -30,9 +30,9 @@ class ChannelRoleHelper {
     );
 
     return response.body.map((ServerGroupRole) => {
-      const existing = channel.roles.summaries.get(ServerGroupRole.roleId);
+      const existing = channel._roles.summaries.get(ServerGroupRole.roleId);
 
-      return channel.roles.summaries.set(
+      return channel._roles.summaries.set(
         existing
           ? existing.patch(ServerGroupRole)
           : new ChannelRole(this.client, ServerGroupRole)
@@ -45,8 +45,8 @@ class ChannelRoleHelper {
 
     if (channel === null) throw new Error(`Channel with ID ${channelId} not found`);
 
-    if (!opts?.forceNew && channel.roles.users.fetched) {
-      return channel.roles.users.values();
+    if (!opts?.forceNew && channel._roles.users.fetched) {
+      return channel._roles.users.values();
     }
 
     const response = await this.client.websocket.emit<ServerGroupRoleUser[]>(
@@ -60,9 +60,9 @@ class ChannelRoleHelper {
     );
 
     return response.body.map((ServerGroupRoleUser) => {
-      const existing = channel.roles.users.get(ServerGroupRoleUser.subscriberId);
+      const existing = channel._roles.users.get(ServerGroupRoleUser.subscriberId);
 
-      return channel.roles.users.set(
+      return channel._roles.users.set(
         existing
           ? existing.patch(ServerGroupRoleUser)
           : new ChannelRoleUser(this.client, ServerGroupRoleUser)

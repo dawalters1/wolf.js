@@ -4,14 +4,17 @@ import CacheManager from '../managers/cacheManager.ts';
 import CharmStatistic from './charmStatistic.ts';
 import CharmSummary from './charmSummary.ts';
 import { DeviceType, UserPrivilege, UserPresence as UserPresenceType } from '../constants/index.ts';
+import ExpiringProperty from '../managers/expiringProperty';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
 import UserExtended, { ServerUserExtended } from './userExtended.ts';
 import UserPresence from './userPresence.ts';
+import UserRole from './userRole';
 import UserSelectedCharmList, { ServerUserSelectedCharmList } from './userSelectedCharmList.ts';
 import WOLF from '../client/WOLF.ts';
+import WOLFStar from './wolfstar';
 
-export interface ServerUser {
+export type ServerUser = {
   categoryIds: number[];
   charms: ServerUserSelectedCharmList;
   deviceType: DeviceType;
@@ -46,10 +49,18 @@ export class User extends BaseEntity {
   privilegeList: UserPrivilege[];
   reputation: number;
   status: string;
-  charmSummary: CacheManager<CharmSummary>;
-  charmStatistics: CharmStatistic;
-  achievements: CacheManager<AchievementUser>;
-  presence: UserPresence;
+
+  // #region TTL'd properties
+  _charmSummary: CacheManager<CharmSummary> = new CacheManager(60);
+  _charmStatistics: ExpiringProperty<CharmStatistic> = new ExpiringProperty(300);
+  _wolfstars: ExpiringProperty<WOLFStar> = new ExpiringProperty(60);
+  _achievements: CacheManager<AchievementUser> = new CacheManager(10);
+  _roles: ExpiringProperty<UserRole> = new ExpiringProperty(60);
+  // #endregion
+
+  // #region Subscription properties
+  _presence: UserPresence;
+  // #endregion
 
   constructor (client: WOLF, data: ServerUser) {
     super(client);
@@ -71,10 +82,27 @@ export class User extends BaseEntity {
       .filter((value): value is UserPrivilege => (this.privileges & value as number) === value);
     this.reputation = data.reputation;
     this.status = data.status;
-    this.charmSummary = new CacheManager();
-    this.charmStatistics = new CharmStatistic(client);
-    this.achievements = new CacheManager();
-    this.presence = new UserPresence(client, data);
+    this._presence = new UserPresence(client, data);
+  }
+
+  async achievements (parentId?: number) {
+    return this.client.achievement.user.get(this.id, parentId);
+  }
+
+  async charmSummary () {
+    return this.client.charm.getUserSummary(this.id);
+  }
+
+  async charmStatistics () {
+    return this.client.charm.getUserStatistics(this.id);
+  }
+
+  async presence () {
+    return this.client.user.presence.getById(this.id);
+  }
+
+  async wolfstarsProfile () {
+    return this.client.user.wolfstar.getById(this.id);
   }
 
   patch (entity: any): this {

@@ -5,7 +5,7 @@ import { MessageType } from '../constants/MessageType.ts';
 import { ServerIdHash } from './idHash.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerMessage {
+export type ServerMessage = {
   id: number;
   flightId: string;
   originator?: ServerIdHash;

@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerEndpointConfig {
+export type ServerEndpointConfig = {
   avatarEndpoint: string;
   mmsUploadEndpoint: string;
 }

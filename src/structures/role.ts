@@ -3,7 +3,7 @@ import { key } from '../decorators/key.ts';
 import { Language } from '../constants/Language.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerRole {
+export type ServerRole = {
   id: number;
   description: string;
   emojiUrl: string;

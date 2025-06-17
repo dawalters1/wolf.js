@@ -3,7 +3,7 @@ import { key } from '../decorators/key';
 import { ServerGroupRoleSubscriberAssign } from '../client/websocket/events/GROUP_ROLE_SUBSCRIBER_ASSIGN';
 import WOLF from '../client/WOLF';
 
-export interface ServerGroupRoleUser {
+export type ServerGroupRoleUser = {
     subscriberId: number;
     groupId: number;
     roleId: number;

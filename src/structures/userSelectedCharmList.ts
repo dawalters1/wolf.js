@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import UserSelectedCharm, { ServerUserSelectedCharm } from './userSelectedCharm.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerUserSelectedCharmList {
+export type ServerUserSelectedCharmList = {
   selectedList: ServerUserSelectedCharm[]
 }
 

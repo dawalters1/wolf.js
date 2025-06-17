@@ -22,14 +22,14 @@ class RoleHelper extends BaseHelper<Role> {
       cachedRoles.forEach((role) => roleMap.set(role.id, role));
     }
 
-    const missingIds = roleIds.filter((id) => !roleMap.has(id));
+    const idsToFetch = roleIds.filter((id) => !roleMap.has(id));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerRole>>>(
         Command.GROUP_ROLE,
         {
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             languageId
           }
         }

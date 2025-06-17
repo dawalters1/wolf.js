@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerUserSelectedCharm {
+export type ServerUserSelectedCharm = {
   charmId: number;
   position: number;
 }

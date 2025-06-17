@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity';
 import { Language } from '../constants';
 import WOLF from '../client/WOLF';
 
-export interface ServerGroupCategory {
+export type ServerGroupCategory = {
     id: number;
     description: string;
     imageUrl: string;

@@ -25,14 +25,14 @@ class CharmHelper extends BaseHelper<Charm> {
       cachedCharms.forEach((charm) => charmsMap.set(charm.id, charm));
     }
 
-    const missingIds = charmIds.filter(id => !charmsMap.has(id));
+    const idsToFetch = charmIds.filter(id => !charmsMap.has(id));
 
-    if (missingIds.length > 0) {
+    if (idsToFetch.length > 0) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerCharm>>>(
         Command.CHARM_LIST,
         {
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             languageId
           }
         }
@@ -63,8 +63,8 @@ class CharmHelper extends BaseHelper<Charm> {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user.charmSummary.fetched) {
-      return user.charmSummary.values();
+    if (!opts?.forceNew && user._charmSummary.fetched) {
+      return user._charmSummary.values();
     }
 
     const response = await this.client.websocket.emit<ServerCharmSummary[]>(
@@ -77,12 +77,12 @@ class CharmHelper extends BaseHelper<Charm> {
       }
     );
 
-    user.charmSummary.fetched = true;
+    user._charmSummary.fetched = true;
 
     return response.body.map((serverCharmSummary) => {
-      const existing = user.charmSummary.get(serverCharmSummary.charmId);
+      const existing = user._charmSummary.get(serverCharmSummary.charmId);
 
-      return user.charmSummary.set(
+      return user._charmSummary.set(
         existing
           ? existing.patch(serverCharmSummary)
           : new CharmSummary(this.client, serverCharmSummary)
@@ -90,15 +90,15 @@ class CharmHelper extends BaseHelper<Charm> {
     });
   }
 
-  async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic> {
+  async getUserStatistics (userId: number, opts?: CharmUserStatisticsOptions): Promise<CharmStatistic | null> {
     const user = await this.client.user.getById(userId);
 
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user.charmStatistics.fetched) {
-      return user.charmStatistics;
+    if (!opts?.forceNew && user._charmStatistics.fetched) {
+      return user._charmStatistics.value;
     }
 
     const response = await this.client.websocket.emit<ServerCharmStatistic>(
@@ -111,10 +111,9 @@ class CharmHelper extends BaseHelper<Charm> {
       }
     );
 
-    user.charmSummary.fetched = true;
-    user.charmStatistics = user.charmStatistics?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
+    user._charmStatistics.value = user._charmStatistics.value?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
 
-    return user.charmStatistics;
+    return user._charmStatistics.value;
   }
 }
 

@@ -9,12 +9,15 @@ import ChannelEvent from './channelEvent.ts';
 import ChannelExtended, { ServerGroupExtended } from './channelExtended.ts';
 import ChannelMember from './channelMember';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.ts';
+import { ChannelMemberListType } from '../constants/ChannelMemberListType';
 import ChannelMemberManager from '../managers/channelMemberManager.ts';
 import ChannelMessageConfig, { ServerGroupMessageConfig } from './channelMessageConfig.ts';
 import ChannelOwner, { ServerGroupOwner } from './channelOwner.ts';
 import ChannelRole from './channelRole.ts';
 import ChannelRoleUser from './channelRoleUser.ts';
+import ChannelStats from './channelStats';
 import { ChannelVerificationTier } from '../constants/ChannelVerificationTier.ts';
+import ExpiringProperty from '../managers/expiringProperty';
 import IconInfo, { ServerIconInfo } from './iconInfo.ts';
 import { key } from '../decorators/key.ts';
 import { UserPrivilege } from '../constants';
@@ -22,7 +25,7 @@ import WOLF from '../client/WOLF.ts';
 // import { BaseManager } from '../managers/CacheManager.ts';
 // import AchievementChannel from './AchievementChannel.ts';
 
-export interface ServerGroup {
+export type ServerGroup = {
   id: number;
   name: string;
   hash: string;
@@ -42,7 +45,7 @@ export interface ServerGroup {
   verificationTier: ChannelVerificationTier;
 }
 
-export interface ServerGroupModular {
+export type ServerGroupModular = {
   base: ServerGroup,
   extended?: ServerGroupExtended;
   audioConfig?: ServerGroupAudioConfig;
@@ -70,17 +73,25 @@ class Channel extends BaseEntity {
   audioCount: ChannelAudioCount | null;
   messageConfig: ChannelMessageConfig | null;
   verificationTier: ChannelVerificationTier | null;
-  achievements: CacheManager<AchievementChannel>;
-  events: CacheManager<ChannelEvent>;
-  audioSlots: CacheManager<ChannelAudioSlot>;
-  audioSlotRequests: CacheManager<ChannelAudioSlotRequest>;
-  members: ChannelMemberManager;
   isMember: boolean = false;
-  capabilities: ChannelMemberCapability;
-  roles: {
+  capabilities: ChannelMemberCapability = ChannelMemberCapability.NONE;
+
+  // #region TTL Management
+  _achievements: CacheManager<AchievementChannel> = new CacheManager(300);
+  _stats: ExpiringProperty<ChannelStats> = new ExpiringProperty(300);
+  // #endregion
+
+  _events: CacheManager<ChannelEvent> = new CacheManager();
+  _audioSlots: CacheManager<ChannelAudioSlot> = new CacheManager();
+  _audioSlotRequests: CacheManager<ChannelAudioSlotRequest> = new CacheManager();
+  _members: ChannelMemberManager = new ChannelMemberManager();
+  _roles: {
     summaries: CacheManager<ChannelRole>,
     users: CacheManager<ChannelRoleUser>
-  };
+  } = {
+      summaries: new CacheManager(),
+      users: new CacheManager()
+    };
 
   constructor (client: WOLF, data: ServerGroupModular) {
     super(client);
@@ -112,16 +123,38 @@ class Channel extends BaseEntity {
       ? new ChannelMessageConfig(client, data.messageConfig)
       : null;
     this.verificationTier = data.base.verificationTier;
-    this.events = new CacheManager();
-    this.audioSlots = new CacheManager();
-    this.audioSlotRequests = new CacheManager();
-    this.capabilities = ChannelMemberCapability.NONE;
-    this.members = new ChannelMemberManager();
-    this.achievements = new CacheManager();
-    this.roles = {
-      summaries: new CacheManager(),
-      users: new CacheManager()
-    };
+  }
+
+  async achievements (parentId?: number) {
+    return this.client.achievement.channel.get(this.id, parentId);
+  }
+
+  async audioSlots () {
+    return this.client.audio.slots.list(this.id);
+  }
+
+  async audioSlotRequests () {
+    return this.client.audio.slotRequest.list(this.id);
+  }
+
+  async events () {
+    return this.client.event.channel.list(this.id);
+  }
+
+  async member (userId: number) {
+    return this.client.channel.member.getMember(this.id, userId);
+  }
+
+  async members (list: ChannelMemberListType) {
+    return this.client.channel.member.getList(this.id, list);
+  }
+
+  async roles () {
+    return this.client.channel.role.roles(this.id);
+  }
+
+  async roleUsers () {
+    return this.client.channel.role.users(this.id);
   }
 
   patch (entity: ServerGroupModular): this {
@@ -169,6 +202,10 @@ class Channel extends BaseEntity {
     }
 
     return this;
+  }
+
+  get stats () {
+    return this._stats.value;
   }
 
   get isOwner () {

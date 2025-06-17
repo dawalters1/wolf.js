@@ -37,14 +37,14 @@ class AchievementHelper extends BaseHelper<Achievement> {
       cachedAchievements.forEach((achievement) => achievementsMap.set(achievement.id, achievement));
     }
 
-    const missingIds = achievementIds.filter((id) => !achievementsMap.has(id));
+    const idsToFetch = achievementIds.filter((id) => !achievementsMap.has(id));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<WOLFResponse<ServerAchievement>[]>(
         Command.ACHIEVEMENT,
         {
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             languageId
           }
         }

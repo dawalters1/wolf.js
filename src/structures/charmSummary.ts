@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { key } from '../decorators/key';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerCharmSummary {
+export type ServerCharmSummary = {
   charmId: number;
   expireTime: Date | null;
   giftCount: number;

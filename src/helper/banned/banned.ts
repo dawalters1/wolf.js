@@ -16,12 +16,25 @@ class BannedHelper extends BaseHelper<User> {
 
   async ban (userId: number): Promise<boolean> {
     const user = await this.client.user.getById(userId);
+
+    if (user === null) { throw new Error(`User with id ${userId} not found`); }
+
     return !!this.cache.set(user);
   }
 
   async banAll (userIds: number[]): Promise<boolean[]> {
-    const users = await this.client.user.getAllById(userIds);
-    return users.map((user) => !!this.cache.set(user));
+    const users = await this.client.user.getByIds(userIds);
+
+    const missingUserIds = userIds.filter(
+      (userId) => !users.some((user) => user?.id === userId)
+    );
+
+    if (missingUserIds.length > 0) {
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return users.map((user) => !!this.cache.set(user!));
   }
 
   unban (userId: number): boolean {

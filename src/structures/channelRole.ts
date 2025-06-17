@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity';
 import { key } from '../decorators/key';
 import WOLF from '../client/WOLF';
 
-export interface ServerGroupRole {
+export type ServerGroupRole = {
     roleId: number;
     subscriberIdList: Set<number>;
     maxSeats: number;

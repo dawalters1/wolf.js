@@ -15,9 +15,9 @@ class GroupAudioRequestAddEvent extends BaseEvent<ServerGroupAudioRequestDelete>
 
     if (channel === null) { return; };
 
-    if (channel.audioSlotRequests.size() === 0) { return; }
+    if (channel._audioSlotRequests.size() === 0) { return; }
 
-    channel.audioSlotRequests.clear();
+    channel._audioSlotRequests.clear();
 
     this.client.emit(
       'channelAudioSlotRequestClear'

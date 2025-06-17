@@ -20,7 +20,7 @@ class GroupAudioRequestAddEvent extends BaseEvent<ServerGroupAudioRequestAddEven
 
     this.client.emit(
       'channelAudioSlotRequestAdd',
-      channel.audioSlotRequests.set(
+      channel._audioSlotRequests.set(
         new ChannelAudioSlotRequest(
           this.client,
           data

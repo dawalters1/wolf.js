@@ -6,7 +6,7 @@ import path from 'path';
 import stylistic from '@stylistic/eslint-plugin-ts';
 import autoSortImports from './eslint/autoSortImports.js';
 import emitFormatter from './eslint/emitFormatter.js';
-
+import globals from 'globals'
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default [
@@ -21,11 +21,9 @@ export default [
         sourceType: 'module',
       },
       globals: {
-        window: "readonly",
-        document: "readonly",
-        console: "readonly",
-        browser: true,
-        node: true,
+        ...globals.browser,
+        ...globals.node,
+        NodeJS: true
       }
     },
     plugins: {

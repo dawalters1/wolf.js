@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { key } from '../decorators/key.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerEvent {
+export type ServerEvent = {
   attendanceCount: number;
   category: number;
   createdBy: number;

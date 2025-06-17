@@ -1,6 +1,6 @@
 import { ContextType } from '../constants/ContextType.ts';
 
-export interface TipContext {
+export type TipContext = {
   type: ContextType | string,
   id: number | undefined
 }

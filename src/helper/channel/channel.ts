@@ -2,10 +2,11 @@
 import BaseHelper from '../baseHelper.ts';
 import Channel, { ServerGroupModular } from '../../structures/channel.ts';
 import ChannelCategoryHelper from './channelCategory.ts';
-import { ChannelListOptions, ChannelOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
+import { ChannelListOptions, ChannelOptions, ChannelStatsOptions, defaultChannelEntities } from '../../options/requestOptions.ts';
 import { ChannelMemberCapability } from '../../constants/ChannelMemberCapability.ts';
 import ChannelMemberHelper from './channelMember.ts';
 import ChannelRoleHelper from './channelRole.ts';
+import ChannelStats, { ServerGroupStats } from '../../structures/channelStats';
 import { Command } from '../../constants/Command.ts';
 import WOLF from '../../client/WOLF.ts';
 import WOLFResponse from '../../structures/WOLFResponse.ts';
@@ -69,9 +70,9 @@ class ChannelHelper extends BaseHelper<Channel> {
       cachedChannels.forEach((channel) => channelsMap.set(channel.id, channel));
     }
 
-    const missingIds = channelIds.filter((id) => !channelsMap.has(id));
+    const idsToFetch = channelIds.filter((id) => !channelsMap.has(id));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerGroupModular>>>(
         Command.GROUP_PROFILE,
         {
@@ -79,7 +80,7 @@ class ChannelHelper extends BaseHelper<Channel> {
             version: 4
           },
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             subscribe: opts?.subscribe ?? true,
             entities: opts?.entities ?? defaultChannelEntities
           }
@@ -103,6 +104,29 @@ class ChannelHelper extends BaseHelper<Channel> {
     }
 
     return channelIds.map((channelId) => channelsMap.get(channelId) ?? null);
+  }
+
+  async stats (channelId: number, opts?: ChannelStatsOptions): Promise<ChannelStats | null> {
+    const channel = await this.getById(channelId);
+
+    if (channel === null) { throw new Error(''); }
+
+    if (!opts?.forceNew && channel._stats.fetched) {
+      return channel.stats;
+    }
+
+    const response = await this.client.websocket.emit<ServerGroupStats>(
+      Command.GROUP_STATS,
+      {
+        body: {
+          id: channelId
+        }
+      }
+    );
+
+    channel._stats.value = channel.stats?.patch(response.body) ?? new ChannelStats(this.client, response.body);
+
+    return channel.stats;
   }
 }
 

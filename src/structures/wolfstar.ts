@@ -3,7 +3,7 @@ import { key } from '../decorators/key';
 import WOLF from '../client/WOLF';
 import { WOLFStarTalent } from '../constants';
 
-export interface ServerWOLFStar {
+export type ServerWOLFStar = {
     subscriberId: number;
     shows: number;
     maxListeners: number;
@@ -28,6 +28,16 @@ export class WOLFStar extends BaseEntity {
     this.maxListeners = data.maxListeners;
     this.totalListeners = data.totalListeners;
     this.talentList = data.talentList;
+  }
+
+  patch (entity: ServerWOLFStar): this {
+    this.userId = entity.subscriberId;
+    this.shows = entity.shows;
+    this.maxListeners = entity.maxListeners;
+    this.totalListeners = entity.totalListeners;
+    this.talentList = entity.talentList;
+
+    return this;
   }
 }
 

@@ -3,7 +3,7 @@ import { key } from '../decorators/key.ts';
 import NotificationAdditionalInfo, { ServerNotificationAdditionalInfo } from './notificationAdditionalInfo.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerNotification {
+export type ServerNotification = {
   id: number;
   additionalInfo: ServerNotificationAdditionalInfo
 }

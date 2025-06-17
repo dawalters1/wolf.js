@@ -3,7 +3,7 @@ import MessageMetadataFormattingChannelLink, { ServerMessageMetadataFormattingCh
 import MessageMetadataFormattingUrl, { ServerMessageMetadataFormattingUrl } from './messageMetadataFormattingUrl.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerMessageMetadataFormatting {
+export type ServerMessageMetadataFormatting = {
   groupLinks?: ServerMessageMetadataFormattingChannelLink[];
   links?: ServerMessageMetadataFormattingUrl[];
 }

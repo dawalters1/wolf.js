@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { Language } from '../constants/Language.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerNotificationUserPopup {
+export type ServerNotificationUserPopup = {
   languageId: Language;
   title: string;
   body: string;

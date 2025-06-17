@@ -19,11 +19,11 @@ class GroupRoleSubscriberUnassignEvent extends BaseEvent<ServerGroupRoleSubscrib
 
     if (channel === null) { return; }
 
-    const role = channel.roles.summaries.get(data.additionalInfo.roleId);
+    const role = channel._roles.summaries.get(data.additionalInfo.roleId);
 
     role?.userIdList?.delete(data.additionalInfo.subscriberId);
 
-    const wasDeleted = channel.roles.users.delete(data.additionalInfo.subscriberId);
+    const wasDeleted = channel._roles.users.delete(data.additionalInfo.subscriberId);
 
     if (wasDeleted === false) { return; }
 

@@ -4,7 +4,7 @@ import NotificationUserFeed, { ServerNotificationUserFeed } from './notification
 import NotificationUserPopup, { ServerNotificationUserPopup } from './notificationUserPopup.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerNotificationUser {
+export type ServerNotificationUser = {
   context: string;
   createdAt: Date;
   expiresAt: Date;

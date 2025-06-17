@@ -74,14 +74,14 @@ class NotificationUserHelper extends BaseHelper<NotificationUser> {
       cachedNotificationUsers.forEach((notificationUser) => notificationsMap.set(notificationUser.id, notificationUser));
     }
 
-    const missingIds = notificationIds.filter((notificationUserId) => !notificationsMap.has(notificationUserId));
+    const idsToFetch = notificationIds.filter((notificationUserId) => !notificationsMap.has(notificationUserId));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerNotificationUser>>>(
         Command.NOTIFICATION_SUBSCRIBER,
         {
           body: {
-            idList: missingIds
+            idList: idsToFetch
           }
         }
       );

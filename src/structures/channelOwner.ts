@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupOwner {
+export type ServerGroupOwner = {
   id: number;
   hash: string;
 }
