@@ -31,6 +31,7 @@ export interface ChannelAudioSlotRequestOptions extends SubscribableOptions {}
 export interface ChannelCategoryOptions extends BaseOptions {}
 export interface ChannelListOptions extends SubscribableOptions {}
 export interface ChannelOptions extends ChannelEntityOptions {}
+export interface ChannelStatsOptions extends BaseOptions {}
 export interface ChannelRoleOptions extends BaseOptions {}
 export interface ChannelRoleUserOptions extends SubscribableOptions {}
 export interface CharmOptions extends BaseOptions {}
@@ -44,4 +45,6 @@ export interface NotificationOptions extends SubscribableOptions {}
 export interface RoleOptions extends BaseOptions {}
 export interface StageSlotOptions extends SubscribableOptions {}
 export interface UserOptions extends ExtendedUserOptions {}
+export interface UserRoleOptions extends BaseOptions {}
 export interface UserPresenceOptions extends SubscribableOptions {}
+export interface WOLFStarOptions extends BaseOptions {}

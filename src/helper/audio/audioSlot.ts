@@ -15,7 +15,7 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
 
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
-    if (channel.audioSlots.fetched) { return channel.audioSlots.values(); }
+    if (channel._audioSlots.fetched) { return channel._audioSlots.values(); }
 
     const response = await this.client.websocket.emit<ServerGroupAudioSlot[]>(
       Command.GROUP_AUDIO_SLOT_LIST,
@@ -28,9 +28,9 @@ class AudioSlotHelper extends BaseHelper<ChannelAudioSlot> {
     );
 
     return response.body.map((ServerGroupAudioSlot) => {
-      const existing = channel.audioSlots.get(ServerGroupAudioSlot.id);
+      const existing = channel._audioSlots.get(ServerGroupAudioSlot.id);
 
-      return channel.audioSlots.set(
+      return channel._audioSlots.set(
         existing
           ? existing.patch(ServerGroupAudioSlot)
           : new ChannelAudioSlot(this.client, ServerGroupAudioSlot)

@@ -14,8 +14,8 @@ class AchievementUserHelper {
 
     let achievements: (AchievementUser | null)[];
 
-    if (!forceNew && user.achievements.fetched) {
-      achievements = user.achievements.values();
+    if (!forceNew && user._achievements.fetched) {
+      achievements = user._achievements.values();
     } else {
       const response = await this.client.websocket.emit<ServerAchievementUser[]>(
         Command.ACHIEVEMENT_SUBSCRIBER_LIST,
@@ -29,10 +29,11 @@ class AchievementUserHelper {
         }
       );
 
+      user._achievements.fetched = true;
       achievements = response.body.map((serverAchievementUser) => {
-        const existing = user.achievements.get(serverAchievementUser.id);
+        const existing = user._achievements.get(serverAchievementUser.id);
 
-        return user.achievements.set(
+        return user._achievements.set(
           existing
             ? existing.patch(serverAchievementUser)
             : new AchievementUser(this.client, serverAchievementUser)
@@ -44,11 +45,11 @@ class AchievementUserHelper {
       return achievements;
     }
 
-    const parentAchievement = user.achievements.get(parentId);
+    const parentAchievement = user._achievements.get(parentId);
     if (parentAchievement === null) { throw new Error(`Parent achievement with ID ${parentId} not found`); }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...user.achievements.getAll([...parentAchievement.childrenId])];
+      return [parentAchievement, ...user._achievements.getAll([...parentAchievement.childrenId])];
     }
 
     const response = await this.client.websocket.emit<AchievementUser[]>(
@@ -69,9 +70,9 @@ class AchievementUserHelper {
     );
 
     return response.body.map((serverAchievementUser) => {
-      const existing = user.achievements.get(serverAchievementUser.id);
+      const existing = user._achievements.get(serverAchievementUser.id);
 
-      return user.achievements.set(
+      return user._achievements.set(
         existing
           ? existing.patch(serverAchievementUser)
           : new AchievementUser(this.client, serverAchievementUser)

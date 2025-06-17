@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import { Gender, Language, LookingFor } from '../constants/index.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerUserExtended {
+export type ServerUserExtended = {
   about: string;
   dateOfBirth: Date | null;
   gender: Gender;

@@ -30,7 +30,7 @@ class SubscriberUpdateEvent extends BaseEvent<ServerSubscriberUpdate> {
         channel.owner.patch(newUser);
       }
 
-      channel.members.get(oldUser.id)?.patch(newUser);
+      channel._members.get(oldUser.id)?.patch(newUser);
     });
 
     this.client.emit(

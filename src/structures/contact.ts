@@ -4,7 +4,7 @@ import { key } from '../decorators/key.ts';
 import { User } from './user';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerContact {
+export type ServerContact = {
   id: number;
   additionalInfo: ServerContactAdditionalInfo
 }

@@ -16,7 +16,7 @@ class GroupAudioRequestAddEvent extends BaseEvent<ServerGroupAudioRequestDelete>
 
     if (channel === null) { return; };
 
-    const wasDeleted = channel.audioSlotRequests.delete(data.subscriberId);
+    const wasDeleted = channel._audioSlotRequests.delete(data.subscriberId);
 
     if (wasDeleted === false) { return; }
 

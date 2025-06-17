@@ -12,7 +12,7 @@ import CharmHelper from '../helper/charm/charm.ts';
 import Contact from '../structures/contact';
 import ContactHelper from '../helper/contact/contact.ts';
 import CurrentUser from '../structures/currentUser.ts';
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import EventHelper from '../helper/event/event.ts';
 import EventSubscription from '../structures/eventSubscription';
 import { Message } from '../structures/message';
@@ -21,7 +21,9 @@ import Multimedia from './multimedia/multimedia.ts';
 import { nanoid } from 'nanoid';
 import Notification from '../structures/notification';
 import NotificationHelper from '../helper/notification/notification.ts';
+import RoleHelper from '../helper/role/role';
 import { SessionContext } from './websocket/events/WELCOME';
+import TipHelper from '../helper/tip/tip';
 import { User } from '../structures/user';
 import UserHelper from '../helper/user/user.ts';
 import UserPresence from '../structures/userPresence';
@@ -30,38 +32,37 @@ import { Websocket } from './websocket/websocket.ts';
 import Welcome from '../structures/welcome';
 import WOLFResponse from '../structures/WOLFResponse';
 
-// TODO: refactor event names
-export interface Events {
-  'ready': [],
-  'loginSuccess': [SessionContext ],
-  'resume': [SessionContext ],
-  'loginFailed': [WOLFResponse],
-  'welcome': [Welcome],
-  'message': [Message],
-  'channelMessage': [Message],
-  'privateMessage': [Message],
-  'blockAdd': [Contact],
-  'globalNotificationAdd': [Notification],
-  'globalNotificationClear': []
-  'globalNotificationDelete': [number],
-  'userNotificationAdd': [Notification],
-  'userNotificationClear': []
-  'userNotificationDelete': [number],
-  'userProfileUpdate': [User, User],
-  'userPresenceUpdate': [UserPresence],
-  'channelProfileUpdate': [Channel, Channel],
-  'contactAdd': [Contact],
-  'contactDelete': [number],
-  'blockDelete': [number],
-  'userChannelEventSubscriptionAdd': [EventSubscription],
-  'userChannelEventSubscriptionDelete': [number],
-  'channelAudioSlotRequestClear': [],
-  'channelAudioSlotRequestAdd': [ChannelAudioSlotRequest],
-  'channelAudioSlotRequestDelete': [number],
-  'channelRoleUserAssign': [ChannelRoleUser],
-  'channelRoleUserUnassign': [number, number],
-  'channelAudioCountUpdate': [ChannelAudioCount, ChannelAudioCount],
-  'channelAudioSlotUpdate': [ChannelAudioSlot, ChannelAudioSlot]
+export type Events = {
+  ready: [],
+  loginSuccess: [sessionContext: SessionContext],
+  resume: [sessionContext: SessionContext],
+  loginFailed: [wolfResponse: WOLFResponse],
+  welcome: [welcome: Welcome],
+  message: [message: Message],
+  channelMessage: [message: Message],
+  privateMessage: [message: Message],
+  blockAdd: [contact: Contact],
+  globalNotificationAdd: [notification: Notification],
+  globalNotificationClear: [],
+  globalNotificationDelete: [notificationId: number],
+  userNotificationAdd: [notification: Notification],
+  userNotificationClear: [],
+  userNotificationDelete: [notificationId: number],
+  userProfileUpdate: [oldUser: User, newUser: User],
+  userPresenceUpdate: [userPresence: UserPresence],
+  channelProfileUpdate: [oldChannel: Channel, newChannel: Channel],
+  contactAdd: [contact: Contact],
+  contactDelete: [userId: number],
+  blockDelete: [userId: number],
+  userChannelEventSubscriptionAdd: [eventSubscription: EventSubscription],
+  userChannelEventSubscriptionDelete: [eventId: number],
+  channelAudioSlotRequestClear: [],
+  channelAudioSlotRequestAdd: [channelAudioSlotRequest: ChannelAudioSlotRequest],
+  channelAudioSlotRequestDelete: [slotId: number],
+  channelRoleUserAssign: [channelRoleUser: ChannelRoleUser],
+  channelRoleUserUnassign: [channelId: number, userId: number],
+  channelAudioCountUpdate: [oldCount: ChannelAudioCount, newCount: ChannelAudioCount],
+  channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot]
 }
 
 class WOLF extends EventEmitter<Events> {
@@ -108,6 +109,9 @@ class WOLF extends EventEmitter<Events> {
   readonly notification: NotificationHelper;
   readonly websocket: Websocket;
   readonly user: UserHelper;
+  readonly tip: TipHelper;
+  readonly role: RoleHelper;
+
   /** @internal */
   _me?: CurrentUser;
   loggedIn: boolean = false;
@@ -132,6 +136,8 @@ class WOLF extends EventEmitter<Events> {
     this.messaging = new MessagingHelper(this);
     this.notification = new NotificationHelper(this);
     this.user = new UserHelper(this);
+    this.tip = new TipHelper(this);
+    this.role = new RoleHelper(this);
   }
 
   // Temp

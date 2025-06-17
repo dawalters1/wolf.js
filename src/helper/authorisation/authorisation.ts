@@ -23,11 +23,16 @@ class AuthorisationHelper extends BaseHelper<User> {
   async authoriseAll (userIds: number[]): Promise<boolean[]> {
     const users = await this.client.user.getByIds(userIds);
 
-    return users.map((user, index) => {
-      if (user === null) { throw new Error(''); }
+    const missingUserIds = userIds.filter(
+      (userId) => !users.some((user) => user?.id === userId)
+    );
 
-      return !!this.cache.set(user);
-    });
+    if (missingUserIds.length > 0) {
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return users.map((user) => !!this.cache.set(user!));
   }
 
   deauthorise (userId: number): boolean {

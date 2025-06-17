@@ -76,14 +76,14 @@ class NotificationGlobalHelper extends BaseHelper<NotificationGlobal> {
       cachedNotificationGlobals.forEach((notificationGlobal) => notificationsMap.set(notificationGlobal.id, notificationGlobal));
     }
 
-    const missingIds = notificationIds.filter((notificationGlobalId) => !notificationsMap.has(notificationGlobalId));
+    const idsToFetch = notificationIds.filter((notificationGlobalId) => !notificationsMap.has(notificationGlobalId));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerNotificationGlobal>>>(
         Command.NOTIFICATION_GLOBAL,
         {
           body: {
-            idList: missingIds
+            idList: idsToFetch
           }
         }
       );

@@ -3,7 +3,7 @@ import { DeviceType, UserPresence, UserPrivilege } from '../constants';
 import EndpointConfig, { ServerEndpointConfig } from './endpointConfig';
 import WOLF from '../client/WOLF';
 
-export interface ServerLoginSubscriber {
+export type ServerLoginSubscriber = {
   id: number;
   hash: string;
   privileges: UserPrivilege;
@@ -15,7 +15,7 @@ export interface ServerLoginSubscriber {
   reputation: number;
 }
 
-export interface ServerWelcome {
+export type ServerWelcome = {
     ip: string;
     country: string;
     loggedInUser: ServerLoginSubscriber | null;

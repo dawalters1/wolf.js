@@ -3,7 +3,7 @@ import ChannelEventAdditionalInfo, { ServerGroupEventAdditonalInfo } from './cha
 import { key } from '../decorators/key.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupEvent {
+export type ServerGroupEvent = {
   id: number;
   additionalInfo: ServerGroupEventAdditonalInfo
 }

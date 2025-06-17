@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerIdHash {
+export type ServerIdHash = {
   id: number;
   hash: string
 }
@@ -9,12 +9,14 @@ export interface ServerIdHash {
 export class IdHash extends BaseEntity {
   id: number;
   hash: string;
+  isChannel: boolean = false;
 
-  constructor (client: WOLF, data: ServerIdHash) {
+  constructor (client: WOLF, data: ServerIdHash, isChannel: boolean = false) {
     super(client);
 
     this.id = data.id;
     this.hash = data.hash;
+    this.isChannel = isChannel;
   }
 
   patch (entity: ServerIdHash): this {

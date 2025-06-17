@@ -14,8 +14,8 @@ class AchievementChannelHelper {
 
     let achievements: (AchievementChannel | null)[];
 
-    if (!forceNew && channel.achievements.fetched) {
-      achievements = channel.achievements.values();
+    if (!forceNew && channel._achievements.fetched) {
+      achievements = channel._achievements.values();
     } else {
       const response = await this.client.websocket.emit<ServerAchievementChannel[]>(
         Command.ACHIEVEMENT_GROUP_LIST,
@@ -29,10 +29,11 @@ class AchievementChannelHelper {
         }
       );
 
+      channel._achievements.fetched = true;
       achievements = response.body.map((serverAchievementChannel) => {
-        const existing = channel.achievements.get(serverAchievementChannel.id);
+        const existing = channel._achievements.get(serverAchievementChannel.id);
 
-        return channel.achievements.set(
+        return channel._achievements.set(
           existing
             ? existing.patch(serverAchievementChannel)
             : new AchievementChannel(this.client, serverAchievementChannel)
@@ -44,11 +45,11 @@ class AchievementChannelHelper {
       return achievements;
     }
 
-    const parentAchievement = channel.achievements.get(parentId);
+    const parentAchievement = channel._achievements.get(parentId);
     if (parentAchievement === null) { throw new Error(`Parent achievement with ID ${parentId} not found`); }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...channel.achievements.getAll([...parentAchievement.childrenId])];
+      return [parentAchievement, ...channel._achievements.getAll([...parentAchievement.childrenId])];
     }
 
     const response = await this.client.websocket.emit<AchievementChannel[]>(
@@ -69,9 +70,9 @@ class AchievementChannelHelper {
     );
 
     return response.body.map((serverAchievementChannel) => {
-      const existing = channel.achievements.get(serverAchievementChannel.id);
+      const existing = channel._achievements.get(serverAchievementChannel.id);
 
-      return channel.achievements.set(
+      return channel._achievements.set(
         existing
           ? existing.patch(serverAchievementChannel)
           : new AchievementChannel(this.client, serverAchievementChannel)

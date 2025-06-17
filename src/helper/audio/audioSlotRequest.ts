@@ -21,7 +21,7 @@ class AudioSlotRequestHelper {
 
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
-    if (!opts?.forceNew && channel.audioSlotRequests.fetched) { return channel.audioSlotRequests.values(); }
+    if (!opts?.forceNew && channel._audioSlotRequests.fetched) { return channel._audioSlotRequests.values(); }
 
     const response = await this.client.websocket.emit<ServerGroupAudioSlotRequest[]>(
       Command.GROUP_AUDIO_REQUEST_LIST,
@@ -33,15 +33,15 @@ class AudioSlotRequestHelper {
       }
     );
 
-    channel.audioSlotRequests.fetched = true;
+    channel._audioSlotRequests.fetched = true;
 
-    return response.body.map((ServerGroupAudioSlotRequest) => {
-      const existing = channel.audioSlotRequests.get(ServerGroupAudioSlotRequest.slotId);
+    return response.body.map((serverGroupAudioSlotRequest) => {
+      const existing = channel._audioSlotRequests.get(serverGroupAudioSlotRequest.reservedOccupierId);
 
-      return channel.audioSlotRequests.set(
+      return channel._audioSlotRequests.set(
         existing
-          ? existing.patch(ServerGroupAudioSlotRequest)
-          : new ChannelAudioSlotRequest(this.client, ServerGroupAudioSlotRequest)
+          ? existing.patch(serverGroupAudioSlotRequest)
+          : new ChannelAudioSlotRequest(this.client, serverGroupAudioSlotRequest)
       );
     });
   }
@@ -113,14 +113,16 @@ class AudioSlotRequestHelper {
 
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
-    const requests = await this.list(channelId);
-
     if (slotId) {
       if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to remove slot request'); }
 
-      const request = requests.find((request) => request.slotId === slotId) ?? null;
+      const slots = await channel.audioSlots();
 
-      if (request === null) { throw new Error(`No Slot request exists for Slot with ID ${slotId}`); }
+      const slot = slots.find((slot) => slot.id === slotId) ?? null;
+
+      if (slot === null) { throw new Error(`Slot with id ${slotId} not found`); }
+
+      if (!slot.reservation?.userId) { throw new Error(`Slot with id ${slotId} does not have a reservation`); }
 
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_SLOT_UPDATE,
@@ -136,7 +138,9 @@ class AudioSlotRequestHelper {
       );
     }
 
-    const myRequest = requests.find((request) => request.reservation.userId === this.client.me?.id) ?? null;
+    const requests = await this.list(channelId);
+
+    const myRequest = requests.find((request) => request.reservedUserId === this.client.me?.id) ?? null;
 
     if (myRequest === null) { throw new Error(`Bot does not have a request in Channel with ID ${channelId}`); }
 

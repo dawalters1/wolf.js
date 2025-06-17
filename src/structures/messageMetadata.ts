@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import MessageMetadataFormatting, { ServerMessageMetadataFormatting } from './messageMetadataFormatting.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerMessageMetadata {
+export type ServerMessageMetadata = {
   formatting: ServerMessageMetadataFormatting;
   isEdited?: boolean;
   isSpam?: boolean;

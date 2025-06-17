@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerAchievementUserAdditionalInfo {
+export type ServerAchievementUserAdditionalInfo = {
   awardedAt: Date | null;
   eTag: string;
   steps?: number;

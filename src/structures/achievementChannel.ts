@@ -3,7 +3,7 @@ import BaseEntity from './baseEntity.ts';
 import { key } from '../decorators/key.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerAchievementChannel {
+export type ServerAchievementChannel = {
   id: number;
   additionalInfo: ServerAchievementChannelAdditionalInfo
 }

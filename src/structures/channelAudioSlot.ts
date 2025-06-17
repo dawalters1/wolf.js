@@ -5,7 +5,7 @@ import { key } from '../decorators/key.ts';
 import { ServerGroupAudioSlotUpdate } from '../client/websocket/events/GROUP_AUDIO_SLOT_UPDATE';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupAudioSlot {
+export type ServerGroupAudioSlot = {
   id: number;
   locked: boolean;
   occupierId: number | null;

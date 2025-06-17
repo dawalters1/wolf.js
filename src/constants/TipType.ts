@@ -1,5 +1,5 @@
 export enum TipType {
   CHARM = 'charm',
-  SUBSCRIBER = 'subscriber',
+  USER = 'subscriber',
   CHANNEL = 'group',
 }

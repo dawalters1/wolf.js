@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerMessageMetadataFormattingUrl {
+export type ServerMessageMetadataFormattingUrl = {
   start: number;
   end: number;
   url: string;

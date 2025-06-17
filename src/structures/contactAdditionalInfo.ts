@@ -3,7 +3,7 @@ import { User } from './user';
 import { UserPresence, UserPrivilege } from '../constants/index.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerContactAdditionalInfo {
+export type ServerContactAdditionalInfo = {
   hash: string;
   nicknameShort: string;
   privileges: UserPrivilege;
@@ -24,7 +24,7 @@ export class ContactAdditionalInfo extends BaseEntity {
       this.onlineState = data.onlineState;
     } else {
       this.nicknameShort = data.nickname;
-      this.onlineState = data.presence.state;
+      this.onlineState = data._presence.state;
     }
 
     this.hash = data.hash;
@@ -37,7 +37,7 @@ export class ContactAdditionalInfo extends BaseEntity {
       this.onlineState = entity.onlineState;
     } else {
       this.nicknameShort = entity.nickname;
-      this.onlineState = entity.presence.state;
+      this.onlineState = entity._presence.state;
     }
 
     this.hash = entity.hash;

@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupAudioCount {
+export type ServerGroupAudioCount = {
   broadcasterCount: number;
   consumerCount: number;
   id: number;

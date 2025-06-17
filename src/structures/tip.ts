@@ -1,5 +1,5 @@
 
-export interface ServerTip {
+export type ServerTip = {
 
 }
 

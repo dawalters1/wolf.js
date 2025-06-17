@@ -48,13 +48,13 @@ export class Websocket {
     const { framework } = this.client.config;
     const { host, port, query } = framework.connection;
     const { device, version } = query;
-    const { onlineState, token } = framework.login;
+    const { onlineState, token, apiKey } = framework.login;
 
     const packageVersion = JSON.parse(
       fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
     ).version;
 
-    const socketUrl = `${host}:${port}/?token=${token}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
+    const socketUrl = `${host}:${port}/?token=${token}&apiKey=${apiKey}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
 
     this.socket = io(socketUrl, {
       transports: ['websocket'],

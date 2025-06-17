@@ -14,8 +14,8 @@ class ChannelMemberHelper {
   }
 
   private async _getList (channel: Channel, list: ChannelMemberListType): Promise<ChannelMember[]> {
-    if (channel.members.metadata[list]) {
-      return channel.members.values().filter(m => m.lists.has(list));
+    if (channel._members.metadata[list]) {
+      return channel._members.values().filter(m => m.lists.has(list));
     }
 
     const listConfig = this.client.config.get(`framework.helper.channel.member.list.${list}`);
@@ -38,9 +38,9 @@ class ChannelMemberHelper {
         );
 
         result.push(...response.body.map((ServerGroupMember) => {
-          const existing = channel.members.get(ServerGroupMember.id);
+          const existing = channel._members.get(ServerGroupMember.id);
 
-          return channel.members.set(
+          return channel._members.set(
             existing
               ? existing.patch(ServerGroupMember, list)
               : new ChannelMember(this.client, ServerGroupMember, list)
@@ -51,7 +51,7 @@ class ChannelMemberHelper {
           ? response.body.length < listConfig.limit
           : true;
 
-        channel.members.metadata[list] = complete;
+        channel._members.metadata[list] = complete;
 
         return complete ? result : await fetchMembers(result);
       } catch (err: any) {
@@ -86,7 +86,7 @@ class ChannelMemberHelper {
     if (!channel) throw new Error(`Channel ${channelId} not found`);
     if (!channel.isMember) throw new Error(`Not a member of channel ${channelId}`);
 
-    const cached = channel.members.get(userId);
+    const cached = channel._members.get(userId);
     if (cached) { return cached; };
 
     try {
@@ -100,7 +100,7 @@ class ChannelMemberHelper {
         }
       );
 
-      return channel.members.set(new ChannelMember(this.client, response.body));
+      return channel._members.set(new ChannelMember(this.client, response.body));
     } catch (err: any) {
       if (err.code === StatusCodes.NOT_FOUND) return null;
       throw err;

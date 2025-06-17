@@ -5,7 +5,7 @@ import { key } from '../decorators/key.ts';
 import { User } from './user';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerGroupMember {
+export type ServerGroupMember = {
   id: number;
   hash: string;
   capabilities: ChannelMemberCapability

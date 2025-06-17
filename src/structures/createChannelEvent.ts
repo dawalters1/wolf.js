@@ -1,11 +1,11 @@
 
-export interface CreateChannelEvent {
+export type CreateChannelEvent = {
   title: string;
   startsAt: Date;
   endsAt: Date;
   shortDescription?: string;
   longDescription?: string;
-  // eslint-disable-next-line no-undef
+
   thumbnail?: Buffer;
   hostedBy?: number;
   category?: number

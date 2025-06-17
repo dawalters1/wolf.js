@@ -33,14 +33,14 @@ class EventHelper extends BaseHelper<Event> {
       cachedEvents.forEach((event) => eventsMap.set(event.id, event));
     }
 
-    const missingIds = eventIds.filter((id) => !eventsMap.has(id));
+    const idsToFetch = eventIds.filter((id) => !eventsMap.has(id));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerEvent>>>(
         Command.GROUP_EVENT,
         {
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             subscribe: opts?.subscribe ?? true
           }
         }

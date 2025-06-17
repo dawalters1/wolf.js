@@ -1,5 +1,5 @@
 
-export interface Cognito {
+export type Cognito = {
     identity: string;
     token: string;
 }

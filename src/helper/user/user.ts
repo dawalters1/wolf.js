@@ -37,9 +37,9 @@ class UserHelper extends BaseHelper<User> {
       cachedUsers.forEach((user) => usersMap.set(user.id, user));
     }
 
-    const missingIds = userIds.filter((id) => !usersMap.has(id));
+    const idsToFetch = userIds.filter((id) => !usersMap.has(id));
 
-    if (missingIds.length) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit<Map<number, WOLFResponse<ServerUser>>>(
         Command.SUBSCRIBER_PROFILE,
         {
@@ -47,14 +47,14 @@ class UserHelper extends BaseHelper<User> {
             version: 4
           },
           body: {
-            idList: missingIds,
+            idList: idsToFetch,
             subscribe: opts?.subscribe ?? true,
             extended: opts?.extended ?? true
           }
         }
       );
 
-      [...response.body.entries()].filter(([userId, userResponse]) => userResponse.success)
+      [...response.body.entries()].filter(([, userResponse]) => userResponse.success)
         .forEach(([userId, userResponse]) => {
           const existing = this.cache.get(userId);
 

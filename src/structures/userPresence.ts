@@ -4,7 +4,7 @@ import { ServerUser } from './user';
 import { ServerUserPresenceUpdate } from '../client/websocket/events/PRESENCE_UPDATE';
 import WOLF from '../client/WOLF';
 
-export interface ServerUserPresence {
+export type ServerUserPresence = {
     subscriberId: number;
     state: UserPresenceType;
     device: DeviceType;

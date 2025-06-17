@@ -1,28 +1,44 @@
 {
   "compilerOptions": {
-      "module": "ESNext",
-      "esModuleInterop": true,
-      "target": "ESNext",
-      "moduleResolution": "Node",
-      "outDir": "dist",
-      "forceConsistentCasingInFileNames": true,
-      "noFallthroughCasesInSwitch": true,
-      "isolatedModules": false,
-      "strict": true,
-      "noImplicitAny": true,
-      "useUnknownInCatchVariables": false,
-      "inlineSourceMap": true,
-      "allowImportingTsExtensions": true,
-      "noEmit": true,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "stripInternal": true
-    },
-    "ts-node": {
-        "esm": true
-    },
-    "lib": ["esnext"],
-  
-  "include": ["./src", "index.ts", "./eslint", "eslint.config.mjs"],
-  "exclude": ["node_modules"],
+    // Module system & targets
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
+
+    // Output
+    "outDir": "dist",
+    "declaration": true,                // Emit .d.ts files
+    "emitDeclarationOnly": true,       // Optional: emit only .d.ts without .js (ideal for type-only packages)
+    "stripInternal": true,             // Remove symbols marked with /** @internal */
+
+    // Debugging
+    "inlineSourceMap": true,
+
+    // Interop & Imports
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+
+    // Strictness
+    "strict": true,
+    "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "useUnknownInCatchVariables": false,
+
+    // Decorators
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // Module behavior
+    "isolatedModules": false, // Set to true if using Babel or transpiling via ESBuild
+    "noEmit": false,            // Set to false to emit output
+
+    
+    "skipLibCheck": true
+  },
+
+  "lib": ["esnext"],
+
+  "include": ["src", "index.ts", "eslint", "eslint.config.mjs"],
+  "exclude": ["node_modules"]
 }

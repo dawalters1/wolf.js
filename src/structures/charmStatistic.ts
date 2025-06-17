@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.ts';
 import CharmStatisticExtended, { ServerCharmStatisticExtended } from './charmStatisticExtended.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerCharmStatistic {
+export type ServerCharmStatistic = {
   extended?: ServerCharmStatisticExtended;
   totalActive: number;
   totalExpired: number;

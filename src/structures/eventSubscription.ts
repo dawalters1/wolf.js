@@ -3,7 +3,7 @@ import EventSubscriptionAdditionalInfo, { ServerEventSubscriptionAdditionalInfo 
 import { key } from '../decorators/key.ts';
 import WOLF from '../client/WOLF.ts';
 
-export interface ServerEventSubscription {
+export type ServerEventSubscription = {
   id: number;
   groupId: number;
   additionalInfo: ServerEventSubscriptionAdditionalInfo;
