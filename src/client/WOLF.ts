@@ -17,6 +17,7 @@ import EventHelper from '../helper/event/event.ts';
 import EventSubscription from '../structures/eventSubscription';
 import { Message } from '../structures/message';
 import MessagingHelper from '../helper/messaging/messaging';
+import MetadataHelper from '../helper/metadata/metadata';
 import Multimedia from './multimedia/multimedia.ts';
 import { nanoid } from 'nanoid';
 import Notification from '../structures/notification';
@@ -33,39 +34,51 @@ import Welcome from '../structures/welcome';
 import WOLFResponse from '../structures/WOLFResponse';
 
 export type Events = {
-  ready: [],
-  loginSuccess: [sessionContext: SessionContext],
-  resume: [sessionContext: SessionContext],
-  loginFailed: [wolfResponse: WOLFResponse],
-  welcome: [welcome: Welcome],
-  message: [message: Message],
-  channelMessage: [message: Message],
-  privateMessage: [message: Message],
   blockAdd: [contact: Contact],
+  blockDelete: [userId: number],
+  channelAudioCountUpdate: [oldCount: ChannelAudioCount, newCount: ChannelAudioCount],
+  channelAudioSlotRequestAdd: [channelAudioSlotRequest: ChannelAudioSlotRequest],
+  channelAudioSlotRequestClear: [],
+  channelAudioSlotRequestDelete: [slotId: number],
+  channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot],
+  channelMessage: [message: Message],
+  channelProfileUpdate: [oldChannel: Channel, newChannel: Channel],
+  channelRoleUserAssign: [channelRoleUser: ChannelRoleUser],
+  channelRoleUserUnassign: [channelId: number, userId: number],
+  connectError: [error: Error],
+  connectTimeout: [],
+  connected: [],
+  connecting: [],
+  contactAdd: [contact: Contact],
+  contactDelete: [userId: number],
+  disconnected: [reason: String],
   globalNotificationAdd: [notification: Notification],
   globalNotificationClear: [],
   globalNotificationDelete: [notificationId: number],
+  loginFailed: [wolfResponse: WOLFResponse],
+  loginSuccess: [sessionContext: SessionContext],
+  message: [message: Message],
+  ping: [],
+  pong: [latency: Number],
+  privateMessage: [message: Message],
+  ready: [],
+  reconnectAttempt: [attempt: Number],
+  reconnectFailed: [],
+  reconnected: [],
+  resume: [sessionContext: SessionContext],
+  socketError: [error: Error],
+  userChannelEventSubscriptionAdd: [eventSubscription: EventSubscription],
+  userChannelEventSubscriptionDelete: [eventId: number],
   userNotificationAdd: [notification: Notification],
   userNotificationClear: [],
   userNotificationDelete: [notificationId: number],
-  userProfileUpdate: [oldUser: User, newUser: User],
   userPresenceUpdate: [userPresence: UserPresence],
-  channelProfileUpdate: [oldChannel: Channel, newChannel: Channel],
-  contactAdd: [contact: Contact],
-  contactDelete: [userId: number],
-  blockDelete: [userId: number],
-  userChannelEventSubscriptionAdd: [eventSubscription: EventSubscription],
-  userChannelEventSubscriptionDelete: [eventId: number],
-  channelAudioSlotRequestClear: [],
-  channelAudioSlotRequestAdd: [channelAudioSlotRequest: ChannelAudioSlotRequest],
-  channelAudioSlotRequestDelete: [slotId: number],
-  channelRoleUserAssign: [channelRoleUser: ChannelRoleUser],
-  channelRoleUserUnassign: [channelId: number, userId: number],
-  channelAudioCountUpdate: [oldCount: ChannelAudioCount, newCount: ChannelAudioCount],
-  channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlot]
+  userProfileUpdate: [oldUser: User, newUser: User],
+  welcome: [welcome: Welcome]
 }
 
 class WOLF extends EventEmitter<Events> {
+  // TODO:
   config: any = {
     framework: {
       subscriptions: {
@@ -111,6 +124,7 @@ class WOLF extends EventEmitter<Events> {
   readonly user: UserHelper;
   readonly tip: TipHelper;
   readonly role: RoleHelper;
+  readonly metadata: MetadataHelper;
 
   /** @internal */
   _me?: CurrentUser;
@@ -138,10 +152,11 @@ class WOLF extends EventEmitter<Events> {
     this.user = new UserHelper(this);
     this.tip = new TipHelper(this);
     this.role = new RoleHelper(this);
+    this.metadata = new MetadataHelper(this);
   }
 
   // Temp
-  async login (email: string, password: string, v3Token?: string, developerToken?: string) {
+  async login (email: string, password: string, v3Token?: string, apiKey?: string) {
     if (this.loggedIn) { return; }
 
     this.config = {
@@ -152,7 +167,7 @@ class WOLF extends EventEmitter<Events> {
           username: email,
           password,
           token: v3Token ?? `wjs-${nanoid()}`,
-          developerToken,
+          apiKey,
           state: UserPresenceType.AWAY
         }
       }

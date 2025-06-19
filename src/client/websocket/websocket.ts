@@ -54,7 +54,11 @@ export class Websocket {
       fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
     ).version;
 
-    const socketUrl = `${host}:${port}/?token=${token}&apiKey=${apiKey}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
+    if (apiKey === undefined) {
+      console.warn('APIKey will be required to login in the future');
+    }
+
+    const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined ? '' : `&apiKey=${apiKey}`}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
 
     this.socket = io(socketUrl, {
       transports: ['websocket'],
@@ -62,22 +66,23 @@ export class Websocket {
       autoConnect: false
     });
 
-    this.socket.io.on('open', () => console.log('CONNECTING'));
-    this.socket.on('connect', () => console.log('CONNECTED'));
-    this.socket.on('connect_error', error => console.log('CONNECT ERROR', error));
-    this.socket.on('connect_timeout', error => console.log('CONNECT TIMEOUT', error));
+    this.socket.io.on('open', () => this.client.emit('connecting'));
+    this.socket.on('connect', () => this.client.emit('connected'));
+    this.socket.on('connect_error', error => this.client.emit('connectError', error));
+    this.socket.on('connect_timeout', () => this.client.emit('connectTimeout'));
     this.socket.on('disconnect', reason => {
       this.client.loggedIn = false;
+      this.client.emit('disconnected', reason);
       if (reason === 'io server disconnect') {
         this.socket?.connect();
       }
     });
-    this.socket.on('error', error => console.log('ERROR', error));
-    this.socket.io.on('reconnect_attempt', attempt => console.log('RECONNECTING', attempt));
-    this.socket.io.on('reconnect', () => console.log('RECONNECTED'));
-    this.socket.io.on('reconnect_failed', () => console.log('RECONNECT FAILED'));
-    this.socket.on('ping', () => console.log('PING'));
-    this.socket.on('pong', latency => console.log('PONG', latency));
+    this.socket.on('error', error => this.client.emit('socketError', error));
+    this.socket.io.on('reconnect_attempt', attempt => this.client.emit('reconnectAttempt', attempt));
+    this.socket.io.on('reconnect', () => this.client.emit('reconnected'));
+    this.socket.io.on('reconnect_failed', () => this.client.emit('reconnectFailed'));
+    this.socket.on('ping', () => this.client.emit('ping'));
+    this.socket.on('pong', latency => this.client.emit('pong', latency));
 
     // Handle all incoming events with their registered handlers
     this.socket.onAny((event: string, args: any) => {
@@ -129,8 +134,12 @@ export class Websocket {
         if (!response.success) {
           const retryCodes = [408, 429, 500, 502, 504];
           if (!retryCodes.includes(response.code) || attempt >= 3) {
+            if (response.code === 403) {
+              console.log(command);
+            }
             return reject(response);
           }
+
           return resolve(await emitOnce(requestBody, attempt + 1));
         }
         resolve(response);

@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 interface ServerResponse {
   code: StatusCodes,
   body?: unknown,
-  headers: Map<string, any>;
+  headers?: Map<string, any>;
 }
 
 export class WOLFResponse<T = undefined> {
@@ -14,11 +14,12 @@ export class WOLFResponse<T = undefined> {
   constructor (data: ServerResponse) {
     this.code = data.code;
     this.body = data?.body as T;
-    this.headers = data.headers instanceof Map
-      ? data.headers
-      : new Map(Object.entries(data.headers ?? {}));
 
-    console.log(this);
+    if (data.headers) {
+      data.headers = data.headers instanceof Map
+        ? data.headers
+        : new Map(Object.entries(data.headers ?? {}));
+    }
   }
 
   get success () {

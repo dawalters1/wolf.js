@@ -1,7 +1,9 @@
 import BaseHelper from '../baseHelper';
 import { Command } from '../../constants/Command';
 import CurrentUser from '../../structures/currentUser';
+import Search, { ServerSearch } from '../../structures/search';
 import { ServerUser, User } from '../../structures/user';
+import { StatusCodes } from 'http-status-codes';
 import { UserOptions } from '../../options/requestOptions';
 import UserPresenceHelper from './userPresence';
 import UserRoleHelper from './userRole';
@@ -73,6 +75,27 @@ class UserHelper extends BaseHelper<User> {
     }
 
     return userIds.map((userId) => usersMap.get(userId) ?? null);
+  }
+
+  async search (query: string): Promise<(Search | null)[]> {
+    try {
+      const response = await this.client.websocket.emit<ServerSearch[]>(
+        Command.SEARCH,
+        {
+          body: {
+            query,
+            types: ['related']
+          }
+        }
+      );
+
+      return response.body?.map((serverSearch) => new Search(this.client, serverSearch));
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) {
+        return [];
+      }
+      throw error;
+    }
   }
 }
 
