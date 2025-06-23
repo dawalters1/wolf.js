@@ -31,6 +31,8 @@ exports.ServerEvents = {
 
   TIP_ADD: 'tip add',
 
+  OBJECTION: 'objection',
+  
   WELCOME: 'welcome'
 };
 

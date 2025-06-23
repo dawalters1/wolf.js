@@ -1016,7 +1016,7 @@ export class WOLFBot {
    * @param loginType - The account type
    * @param token - The token to use to log in (Automatically generated if not provided)
    */
-  public login(email: String, password: String, onlineState: OnlineState, loginType: LoginType, token: String): void;
+  public login(email: String, password: String, apiKey: String, onlineState: OnlineState, loginType: LoginType, token: String): void;
 
   /**
    * Logout of the current account

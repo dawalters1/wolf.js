@@ -26,7 +26,14 @@ module.exports = class Websocket {
   _init() {
     const connectionSettings = this._api._botConfig.get('connection');
     const loginSettings = this._api.config.get('_loginSettings');
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
+
+    const apiKey = loginSettings.apiKey;
+
+    if (apiKey === undefined) {
+      console.warn('APIKey will be required to login in the future');
+    }
+
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}${apiKey===undefined?'':`&apiKey=${apiKey}`}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
       {
         transports: ['websocket'],
         reconnection: true,

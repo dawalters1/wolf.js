@@ -289,7 +289,7 @@ class WOLFBot extends EventEmitter {
    * @param {String} loginType - The account type
    * @param {String} token - The token to use to log in (Automatically generated if not provided)
    */
-  login(email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
+  login(email, password, apiKey = undefined, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL, token = undefined) {
     try {
       if (validator.isNullOrWhitespace(email)) {
         throw new Error('email cannot be null or empty');
@@ -324,12 +324,13 @@ class WOLFBot extends EventEmitter {
         password,
         onlineState,
         loginType,
+        apiKey,
         token: token && !validator.isNullOrWhitespace(token) ? token : crypto.randomBytes(32).toString('hex')
       };
 
       this.websocket._init();
     } catch (error) {
-      error.internalErrorMessage = `api.login(email=${JSON.stringify(email)}, password=${JSON.stringify(password)}, onlineState=${JSON.stringify(onlineState)}, loginType=${JSON.stringify(loginType)}, token=${JSON.stringify(token)})`;
+      error.internalErrorMessage = `api.login(email=${JSON.stringify(email)}, password=${JSON.stringify(password)}, apiKey=${JSON.stringify(apiKey)} onlineState=${JSON.stringify(onlineState)}, loginType=${JSON.stringify(loginType)}, token=${JSON.stringify(token)})`;
       throw error;
     }
   }
