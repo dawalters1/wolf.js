@@ -1,14 +1,18 @@
+import Capability from '../constants/Capability.js';
+import MemberListType from '../constants/MemberListType.js';
 import Base from './Base.js';
 
 class ChannelMember extends Base {
-  constructor (client, data) {
+  constructor (client, data, source = undefined) {
     super(client);
 
     this.id = data?.id;
-    this.targetChannelId = data?.targetChannelId;
+    this.targetChannelId = data?.targetGroupId;
     this.targetGroupId = this.targetChannelId;
     this.hash = data?.hash;
     this.capabilities = data?.capabilities;
+
+    this.lists = new Set([source, this._getParentList(data.capabilities)].filter((list) => list !== undefined));
   }
 
   /**
@@ -19,6 +23,9 @@ class ChannelMember extends Base {
     return await this.client.subscriber.getById(this.id);
   }
 
+  async coowner(){
+    return await this.client.channel.member.coowner(this.targetChannelId, this.id)
+  }
   /**
    * Admin this member
    * @returns {Promise<Response>}
@@ -83,6 +90,32 @@ class ChannelMember extends Base {
    */
   async unassign (roleId) {
     return await this.client.role.channel.unassign(this.targetChannelId, this.id, roleId);
+  }
+
+  _getParentList (capabilities) {
+    switch (capabilities) {
+      case Capability.OWNER:
+      case Capability.CO_OWNER:
+      case Capability.ADMIN:
+      case Capability.MOD:
+        return MemberListType.PRIVILEGED;
+      case Capability.REGULAR:
+        return MemberListType.REGULAR;
+      case Capability.SILENCED:
+        return MemberListType.SILENCED;
+      case Capability.BANNED:
+        return MemberListType.BANNED;
+      default:
+        throw new Error('UNSUPPORTED Capability');
+    }
+  }
+
+  addList (list) {
+    return this.lists.add(list);
+  }
+
+  removeList (list) {
+     return this.lists.delete(list);
   }
 }
 

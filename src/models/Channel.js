@@ -5,7 +5,8 @@ import ChannelAudioConfig from './ChannelAudioConfig.js';
 import ChannelAudioCounts from './ChannelAudioCounts.js';
 import ChannelEventManager from './ChannelEventManager.js';
 import ChannelExtended from './ChannelExtended.js';
-import ChannelMemberList from './ChannelMemberList.js';
+import ChannelMemberManager from './ChannelMemberManager.js';
+import ChannelMemberList from './ChannelMemberManager.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
 import ChannelRoleContainer from './ChannelRoleContainer.js';
 import IconInfo from './IconInfo.js';
@@ -32,7 +33,7 @@ class Channel extends Base {
     this.audioCounts = new ChannelAudioCounts(client, data?.audioCounts);
     this.audioConfig = new ChannelAudioConfig(client, data?.audioConfig);
     this.messageConfig = new ChannelMessageConfig(client, data?.messageConfig);
-    this.members = new ChannelMemberList(client, data?.id);
+    this.members = new ChannelMemberManager();
     this.verificationTier = data?.verificationTier;
     this.roles = new ChannelRoleContainer(client, data?.id);
     this.inChannel = false;
@@ -44,6 +45,10 @@ class Channel extends Base {
 
   get inGroup () {
     return this.inChannel;
+  }
+
+  get isOwner(){
+    return this.owner.id === this.client.currentSubscriber.id;
   }
 
   get percentage () {

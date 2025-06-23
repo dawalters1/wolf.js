@@ -56,9 +56,13 @@ class Websocket {
 
     const { host, port, query } = this.client._frameworkConfig.get('connection');
     const { device, version } = query;
-    const { onlineState, token } = this.client.config.get('framework.login');
+    const { onlineState, token, apiKey } = this.client.config.get('framework.login');
 
-    this.socket = io(`${host}:${port}/?token=${token}&device=${device}&state=${onlineState}&version=${version || JSON.parse(fs.readFileSync(path.join(__dirname, '../../../package.json'))).version}`,
+    if(apiKey === undefined){
+      console.warn(`apiKey will be required to login in the future`)
+    }
+
+    this.socket = io(`${host}:${port}/?token=${token}${apiKey===undefined?'':`&apiKey=${apiKey}`}&device=${device}&state=${onlineState}&version=${version || JSON.parse(fs.readFileSync(path.join(__dirname, '../../../package.json'))).version}`,
       {
         transports: ['websocket'],
         reconnection: true,

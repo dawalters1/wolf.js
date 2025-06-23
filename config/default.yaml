@@ -37,6 +37,7 @@ members:
   privileged:
     batch:
       size: 2500
+      subscribe: true
     max: 2500
   regular:
     batch:

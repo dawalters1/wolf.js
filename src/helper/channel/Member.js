@@ -1,229 +1,112 @@
-import { Capability, Command, Privilege } from '../../constants/index.js';
+
+import { StatusCodes } from 'http-status-codes';
+import  MemberListType  from'../../constants/MemberListType.js';
+import  Command from '../../constants/Command.js';
+import patch  from '../../utils/patch.js';
+import ChannelMember from '../../models/ChannelMember.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
-import models from '../../models/index.js';
+import Privilege from '../../constants/Privilege.js';
+import Capability from '../../constants/Capability.js';
 
-const canRequestList = async (client, myCapability, includeAllButBanned = false) => {
-  if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
-    return true;
-  }
+const canPerformActionAgainstMember = async (client, channel, targetMember, targetCapability) => {
+    if (targetCapability === Capability.OWNER) return false;
+    if (channel.isOwner) return true;
 
-  const requiredCapabilities = [Capability.OWNER, Capability.MOD, Capability.ADMIN];
+    const sourceMemberHasGap = client.currentSubscriber.privilegeList.includes(Privilege.GROUP_ADMIN) ?? false;
 
-  if (includeAllButBanned) {
-    requiredCapabilities.push(...[Capability.REGULAR, Capability.SILENCED]);
-  }
+    const hasHigherCapability = (() => {
+      switch (channel.capabilities) {
+        case Capability.CO_OWNER:
+          return [Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.NOT_MEMBER, Capability.BANNED].includes(targetMember.capabilities);
+        case Capability.ADMIN:
+          return channel.extended?.advancedAdmin
+            ? [Capability.ADMIN, Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.BANNED, Capability.NOT_MEMBER].includes(targetMember.capabilities)
+            : [Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.BANNED, Capability.NOT_MEMBER].includes(targetMember.capabilities);
+        case Capability.MOD:
+          return [Capability.REGULAR, Capability.SILENCED, Capability.BANNED, Capability.NOT_MEMBER].includes(targetMember.capabilities);
+        default:
+          return false;
+      }
+    })();
 
-  return requiredCapabilities.includes(myCapability);
-};
+    const targetUser = await client.subscriber.getById(targetMember.id);
+    const targetMemberHasGap = targetUser?.privilegeList.includes(Privilege.GROUP_ADMIN) ?? false;
 
-const isMyCapabilityHigher = (myCapabilities, theirCapability, advancedAdmin) => {
-  if (theirCapability === Capability.OWNER) { return false; }
+    if (targetCapability &&
+      [Capability.SILENCED, Capability.BANNED].includes(targetCapability) &&
+    targetMemberHasGap
+    ) return false;
 
-  if (advancedAdmin) { return true; }
+    return sourceMemberHasGap || hasHigherCapability;
+  };
 
-  switch (myCapabilities) {
-    case Capability.ADMIN:
-      return [Capability.MOD, Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
-    case Capability.MOD:
-      return [Capability.REGULAR, Capability.SILENCED, Capability.NOT_MEMBER, Capability.BANNED].includes(theirCapability);
-    default:
-      return false;
-  }
-};
-
-const canPerformChannelAction = async (client, channel, targetChannelMember, newCapability) => {
-  if (channel.owner.id === targetChannelMember.id || newCapability === Capability.OWNER) { return false; }
-
-  if (await client.utility.subscriber.privilege.has(client.currentSubscriber.id, Privilege.GROUP_ADMIN)) {
-    if (await client.utility.subscriber.privilege.has(targetChannelMember.id, Privilege.GROUP_ADMIN) &&
-    (newCapability === Capability.BANNED || newCapability === Capability.SILENCED)) { return false; }
-
-    return true;
-  }
-
-  if (channel.extended.advancedAdmin) { return true; }
-
-  return isMyCapabilityHigher(channel.capabilities, targetChannelMember.capabilities, channel.extended.advancedAdmin) && isMyCapabilityHigher(channel.capabilities, newCapability, channel.extended.advancedAdmin);
-};
-
-/**
- * CANCEROUS ASS APPROACH, like wtf is this shit???
- */
 class Member extends Base {
-  /**
-   * Get list of bots in the channel
-   * @param {Number} targetChannelId
-   * @param {Boolean} returnCurrentList
-   * @returns {Promise<Array<ChannelMember>>}
-   */
-  async getBotList (targetChannelId, returnCurrentList = false) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (!validator.isValidBoolean(returnCurrentList)) {
-      throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    if (!await canRequestList(this.client, channel.capabilities, true)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetChannelId });
-    }
-
-    if (channel.members._bots.complete || returnCurrentList) {
-      return channel.members._bots.members;
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_MEMBER_SEARCH,
-      {
-        groupId: parseInt(targetChannelId),
-        filter: 'bots',
-        offset: channel.members._bots.members.length,
-        limit: this.client._frameworkConfig.get('members.bots.batch.size')
-      }
-    );
-
-    channel.members._bots.complete = response.body.length < this.client._frameworkConfig.get('members.bots.batch.size');
-    channel.members._bots.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
-
-    return channel.members._bots.members;
+  constructor(client) {
+    super(client)
   }
 
-  /**
-   * Get a channels silenced lists
-   * @param {Number} targetChannelId
-   * @param {Boolean} returnCurrentList
-   * @returns {Promise<Array<ChannelMember>>}
-   */
-  async getSilencedList (targetChannelId, returnCurrentList = false) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+  async _getList(channel, list, returnCurrentList = false) {
+    if (channel.members._metadata[list] || returnCurrentList) {
+      return channel.members._members.values().filter(m => m.lists.has(list));
     }
 
-    if (!validator.isValidBoolean(returnCurrentList)) {
-      throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
-    }
+    const listConfig = this.client._frameworkConfig.get(`members.${list}.batch`);
+    const command = this._getCommandForList(list);
 
-    const channel = await this.client.channel.getById(targetChannelId);
+    const fetchMembers = async (result = []) => {
+      try {
+        const response = await this.client.websocket.emit(
+          command,
+          {
+            body: {
+              id: channel.id,
+              limit: listConfig.size,
+              after: listConfig.batchType === 'after' ? result.at(-1)?.id : undefined,
+              filter: listConfig.batchType === 'offset' ? list : undefined,
+              offset: listConfig.batchType === 'offset' ? result.length : undefined,
+              subscribe: 'subscribe' in listConfig ? listConfig.subscribe : undefined
+            }
+          }
+        );
 
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
+        result.push(...response.body.map((serverGroupMember) => {
+          const existing = channel.members._members.get(serverGroupMember.id);
+          return channel.members._members.set(
+            existing
+              ? patch(existing, {...serverGroupMember, targetGroupId: channel.id})
+              : new ChannelMember(this.client, {...serverGroupMember, targetGroupId: channel.id}, list)
+          );
+        }));
 
-    if (channel.members._silenced.complete || returnCurrentList) {
-      return channel.members._silenced.members;
-    }
+        const complete = listConfig.batched
+          ? response.body.length < listConfig.limit
+          : true;
 
-    if (channel.members._regular.complete) {
-      const silenced = channel.members._regular.members.filter((member) => member.capabilities === Capability.SILENCED);
+        channel.members._metadata[list] = complete;
 
-      channel.members._silenced.complete = true;
-      channel.members._silenced.members = silenced;
-
-      return channel.members._silenced.members;
-    }
-
-    if (!await canRequestList(this.client, channel.capabilities, true)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetChannelId });
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_MEMBER_SEARCH,
-      {
-        groupId: parseInt(targetChannelId),
-        filter: 'silenced',
-        offset: channel.members._silenced.members.length,
-        limit: this.client._frameworkConfig.get('members.silenced.batch.size')
+        return complete ? result : await fetchMembers(result);
+      } catch (err) {
+        if (err.code === StatusCodes.NOT_FOUND) return [];
+        throw err;
       }
-    );
+    };
 
-    channel.members._silenced.complete = response.body?.length < this.client._frameworkConfig.get('members.silenced.batch.size');
-    channel.members._silenced.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
-
-    return channel.members._silenced.members;
+    return fetchMembers();
   }
 
-  /**
-   * Get a channels banned list (Mod required)
-   * @param {Number} targetChannelId
-   * @param {number} limit
-   * @returns {Promise<Array<ChannelMember>>}
-   */
-  async getBannedList (targetChannelId, limit = 100) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+  _getCommandForList(list) {
+    switch (list) {
+      case MemberListType.PRIVILEGED: return Command.GROUP_MEMBER_PRIVILEGED_LIST;
+      case MemberListType.REGULAR: return Command.GROUP_MEMBER_REGULAR_LIST;
+      case MemberListType.SILENCED:
+      case MemberListType.BOTS: return Command.GROUP_MEMBER_SEARCH;
+      case MemberListType.BANNED: return Command.GROUP_MEMBER_BANNED_LIST;
+      default: throw new Error(`Unknown list type: ${list}`);
     }
-
-    if (validator.isNullOrUndefined(limit)) {
-      throw new models.WOLFAPIError('limit cannot be null or undefined', { limit });
-    } else if (!validator.isValidNumber(limit)) {
-      throw new models.WOLFAPIError('limit must be a valid number', { limit });
-    } else if (validator.isLessThanOrEqualZero(limit)) {
-      throw new models.WOLFAPIError('limit cannot be less than or equal to 0', { limit });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    if (channel.members._banned.complete) {
-      return channel.members._banned.members;
-    }
-
-    if (!await canRequestList(this.client, channel.capabilities)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetChannelId });
-    }
-
-    if (channel.members._regular.complete) {
-      const banned = channel.members._regular.members.filter((member) => member.capabilities === Capability.BANNED);
-
-      channel.members._banned.complete = true;
-      channel.members._banned.members = banned;
-
-      return channel.members._banned.members;
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_MEMBER_BANNED_LIST,
-      {
-        id: parseInt(targetChannelId),
-        limit: this.client._frameworkConfig.get('members.banned.batch.size'),
-        after: channel.members._banned.members.sort((a, b) => b.id - a.id).slice(-1)[0]?.id ?? undefined
-      }
-    );
-
-    channel.members._banned.complete = response.body?.length < this.client._frameworkConfig.get('members.banned.batch.size');
-    channel.members._banned.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, capabilities: Capability.BANNED, targetChannelId })) ?? []);
-
-    return channel.members._banned.members;
   }
 
-  /**
-   * Get a channels privileged list
-   * @param {Number} targetChannelId
-   * @returns {Promise<Array<ChannelMember>>}
-   */
+  //Legacy
   async getPrivilegedList (targetChannelId) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -233,46 +116,10 @@ class Member extends Base {
       throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
     }
 
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    if (!await canRequestList(this.client, channel.capabilities, true)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetChannelId });
-    }
-
-    if (channel.members._privileged.complete) {
-      return channel.members._privileged.members;
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_MEMBER_PRIVILEGED_LIST,
-      {
-        id: parseInt(targetChannelId),
-        subscribe: true
-      }
-    );
-
-    if (!response.success) {
-      return new models.WOLFAPIError('Privileged members request failed', { response });
-    }
-
-    channel.members._privileged.complete = true; // 2,500 is the max supported, however some channels still have more than this
-    channel.members._privileged.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
-
-    response.body?.forEach((member) => channel.members._misc.remove(member));
-
-    return channel.members._privileged.members;
+    return await this._getList(targetChannelId, MemberListType.PRIVILEGED)
   }
 
-  /**
-   * Get a channels regular list
-   * @param {Number} targetChannelId
-   * @param {Boolean} returnCurrentList
-   * @returns {Promise<WOLFAPIError|*|[]|*[]>}
-   */
+  //Legacy
   async getRegularList (targetChannelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
@@ -286,48 +133,75 @@ class Member extends Base {
       throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
     }
 
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    if (!await canRequestList(this.client, channel.capabilities, true)) {
-      throw new models.WOLFAPIError('Insufficient privileges to fetch list', { targetChannelId });
-    }
-
-    if (returnCurrentList || channel.members._regular.complete) {
-      return channel.members._regular.members;
-    }
-
-    const response = await this.client.websocket.emit(
-      Command.GROUP_MEMBER_REGULAR_LIST,
-      {
-        id: parseInt(targetChannelId),
-        subscribe: true,
-        after: channel.members._regular.members.sort((a, b) => b.id - a.id).slice(-1)[0]?.id ?? undefined
-      }
-    );
-
-    if (!response.success) {
-      return new models.WOLFAPIError('Regular members request failed', { response });
-    }
-
-    channel.members._regular.complete = response.body.length < this.client._frameworkConfig.get('members.regular.batch.size');
-    channel.members._regular.members.push(...response.body?.map((member) => new models.ChannelMember(this.client, { ...member, targetChannelId })) ?? []);
-
-    response.body?.forEach((member) => channel.members._misc.remove(member));
-
-    return channel.members._regular.members;
+    return await this._getList(targetChannelId, MemberListType.REGULAR, returnCurrentList)
   }
 
-  /**
-   * Get a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<ChannelMember>}
-   */
-  async get (targetChannelId, subscriberId) {
+  //Legacy
+  async getSilencedList (targetChannelId, returnCurrentList = false) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    if (!validator.isValidBoolean(returnCurrentList)) {
+      throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
+    }
+
+    return await this._getList(targetChannelId, MemberListType.SILENCED, returnCurrentList)
+  }
+
+    //Legacy
+  async getBannedList (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    return await this._getList(targetChannelId, MemberListType.BANNED, returnCurrentList)
+  }
+
+  //Legacy
+  async getBotList (targetChannelId) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    return await this._getList(targetChannelId, MemberListType.BOTS)
+  } 
+
+  async getList(targetChannelId, list, returnCurrentList = false) {
+    if (validator.isNullOrUndefined(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
+    } else if (!validator.isValidNumber(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
+    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
+      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+    }
+
+    if (!validator.isValidBoolean(returnCurrentList)) {
+      throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
+    }
+    
+
+    const channel = await this.client.channel.getById(targetChannelId);
+    if (!channel) throw new Error(`Channel ${targetChannelId} not found`);
+    if (!channel.inChannel) throw new Error(`Not a member of channel ${targetChannelId}`);
+
+    return this._getList(channel, list, returnCurrentList);
+  }
+
+  //Legacy
+  async get(channelId, subscriberId){
     if (validator.isNullOrUndefined(targetChannelId)) {
       throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
     } else if (!validator.isValidNumber(targetChannelId)) {
@@ -344,324 +218,131 @@ class Member extends Base {
       throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
     }
 
-    const channel = await this.client.channel.getById(targetChannelId);
+    return this.getMember(channelId, subscriberId)
+  }
 
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
+  async getMember(channelId, userId) {
+    if (validator.isNullOrUndefined(channelId)) {
+      throw new models.WOLFAPIError('channelId cannot be null or undefined', { channelId });
+    } else if (!validator.isValidNumber(channelId)) {
+      throw new models.WOLFAPIError('channelId must be a valid number', { channelId });
+    } else if (validator.isLessThanOrEqualZero(channelId)) {
+      throw new models.WOLFAPIError('channelId cannot be less than or equal to 0', { channelId });
     }
 
-    const member = await channel.members._get(subscriberId);
+    const channel = await this.client.channel.getById(channelId);
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.inChannel) throw new Error(`Not a member of channel ${channelId}`);
 
-    if (member) {
-      return member;
-    }
+    const cached = channel.members._members.get(userId);
+    if (cached) return cached;
 
     const response = await this.client.websocket.emit(
       Command.GROUP_MEMBER,
       {
-        groupId: parseInt(targetChannelId),
-        subscriberId: parseInt(subscriberId)
+        body: {
+          groupId: channel.id,
+          subscriberId: userId
+        }
       }
     );
 
-    if (response.success) {
-      await channel.members._onJoin(await this.client.subscriber.getById(subscriberId, false), response.body.capabilities);
-
-      return await channel.members._get(subscriberId);
+    if(response.success){
+    return channel.members._members.set(userId, new ChannelMember(this.client, {...response.body, targetGroupId: channel.id})).get(userId);
+    }
+    if(response.code === StatusCodes.NOT_FOUND){
+      return null;
     }
 
-    return undefined;
+    throw response;
   }
 
-  /**
-   * Admin a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async admin (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+  async updateCapability(channelId, userId, target, allowedFrom) {
+    const channel = await this.client.channel.getById(channelId);
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.inChannel) throw new Error(`Not a member of channel ${channelId}`);
+
+    const member = await this.getMember(channelId, userId);
+    if (!member) throw new Error('Member not found');
+
+    if (!await canPerformActionAgainstMember(this.client, channel, member, target)) {
+      throw new Error(`Insufficient permissions to change capability to ${target}`);
     }
 
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    if (!allowedFrom.includes(member.capabilities)) {
+      throw new Error(`Invalid transition from ${member.capabilities} to ${target}`);
     }
 
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.ADMIN)) {
-      throw new models.WOLFAPIError('Insufficient privileges to admin', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
+    return this.client.websocket.emit(
       Command.GROUP_MEMBER_UPDATE,
       {
-        groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId),
-        capabilities: Capability.ADMIN
+        body: {
+          groupId: channelId,
+          id: userId,
+          capabilities: target
+        }
       }
     );
   }
 
-  /**
-   * Mod a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async mod (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.MOD)) {
-      throw new models.WOLFAPIError('Insufficient privileges to mod', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId),
-        capabilities: Capability.MOD
-      }
-    );
+  async coowner(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.CO_OWNER, [
+      Capability.ADMIN, Capability.MOD, Capability.REGULAR
+    ]);
   }
 
-  /**
-   * Reset a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async regular (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.REGULAR)) {
-      throw new models.WOLFAPIError('Insufficient privileges to reset', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId),
-        capabilities: Capability.REGULAR
-      }
-    );
+  async admin(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.ADMIN, [
+      Capability.CO_OWNER, Capability.MOD, Capability.REGULAR
+    ]);
   }
 
-  /**
-   * Silence a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async silence (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.SILENCED)) {
-      throw new models.WOLFAPIError('Insufficient privileges to silence', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId),
-        capabilities: Capability.SILENCED
-      }
-    );
+  async mod(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.MOD, [
+      Capability.CO_OWNER, Capability.ADMIN, Capability.REGULAR
+    ]);
   }
 
-  /**
-   * Ban a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async ban (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
-    }
-
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
-    }
-
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.BANNED)) {
-      throw new models.WOLFAPIError('Insufficient privileges to ban', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
-      Command.GROUP_MEMBER_UPDATE,
-      {
-        groupId: parseInt(targetChannelId),
-        id: parseInt(subscriberId),
-        capabilities: Capability.BANNED
-      }
-    );
+  async regular(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.REGULAR, [
+      Capability.CO_OWNER, Capability.ADMIN, Capability.MOD, Capability.SILENCED
+    ]);
   }
 
-  /**
-   * Kick a subscriber
-   * @param {Number} targetChannelId
-   * @param {Number} subscriberId
-   * @returns {Promise<Response>}
-   */
-  async kick (targetChannelId, subscriberId) {
-    if (validator.isNullOrUndefined(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be null or undefined', { targetChannelId });
-    } else if (!validator.isValidNumber(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId must be a valid number', { targetChannelId });
-    } else if (validator.isLessThanOrEqualZero(targetChannelId)) {
-      throw new models.WOLFAPIError('targetChannelId cannot be less than or equal to 0', { targetChannelId });
+  async silence(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.SILENCED, [
+      Capability.REGULAR
+    ]);
+  }
+
+  async ban(channelId, userId) {
+    return this.updateCapability(channelId, userId, Capability.BANNED, [
+      Capability.REGULAR, Capability.SILENCED
+    ]);
+  }
+
+  async kick(channelId, userId) {
+    const channel = await this.client.channel.getById(channelId);
+    if (!channel) throw new Error(`Channel ${channelId} not found`);
+    if (!channel.inChannel) throw new Error(`Not a member of channel ${channelId}`);
+    const member = await this.getMember(channelId, userId);
+    if (!member) throw new Error('Member not found');
+
+    if (!await canPerformActionAgainstMember(this.client, channel, member, Capability.BANNED)) {
+      throw new Error('Insufficient permissions to kick member');
     }
 
-    if (validator.isNullOrUndefined(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be null or undefined', { subscriberId });
-    } else if (!validator.isValidNumber(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId must be a valid number', { subscriberId });
-    } else if (validator.isLessThanOrEqualZero(subscriberId)) {
-      throw new models.WOLFAPIError('subscriberId cannot be less than or equal to 0', { subscriberId });
+    if (![Capability.REGULAR, Capability.SILENCED, Capability.BANNED].includes(member.capabilities)) {
+      throw new Error('Kick not permitted for current capability');
     }
 
-    const channel = await this.client.channel.getById(targetChannelId);
-
-    if (!channel.exists) {
-      throw new models.WOLFAPIError('Unknown channel', { targetChannelId });
-    }
-
-    const member = await this.get(targetChannelId, subscriberId);
-
-    if (!member) {
-      throw new models.WOLFAPIError('Unknown Member', { targetChannelId, subscriberId });
-    }
-
-    if (!await canPerformChannelAction(this.client, channel, member, Capability.NOT_MEMBER)) {
-      throw new models.WOLFAPIError('Insufficient privileges to kick', { targetChannelId, subscriberId });
-    }
-
-    return await this.client.websocket.emit(
+    return this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
       {
-        groupId: parseInt(targetChannelId),
-        subscriberId: parseInt(subscriberId)
+        body: {
+          groupId: channelId,
+          id: userId
+        }
       }
     );
   }
