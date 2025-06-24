@@ -13,7 +13,7 @@ const toLanguageKey = require('../../utils/ToLanguageKey');
 const GroupProfileBuilder = require('../../utils/ProfileBuilders/Group');
 
 class Group extends BaseHelper {
-  constructor(api) {
+  constructor (api) {
     super(api);
 
     this._groups = [];
@@ -21,7 +21,7 @@ class Group extends BaseHelper {
     this._joinedGroupsFetched = false;
   }
 
-  async _joinedGroups() {
+  async _joinedGroups () {
     if (this._joinedGroupsFetched) {
       return this._groups.filter((group) => group.inGroup);
     }
@@ -49,15 +49,15 @@ class Group extends BaseHelper {
     return this._groups.find((group) => group.inGroup);
   }
 
-  async list() {
+  async list () {
     return this._groups.filter((group) => group.inGroup || (group.subscribers && group.subscribers.length > 0));
   }
 
-  async getById(targetGroupId, requestNew = false) {
+  async getById (targetGroupId, requestNew = false) {
     return (await this.getByIds(targetGroupId, requestNew))[0];
   }
 
-  async getByIds(targetGroupIds, requestNew = false) {
+  async getByIds (targetGroupIds, requestNew = false) {
     try {
       targetGroupIds = Array.isArray(targetGroupIds) ? [...new Set(targetGroupIds)] : [targetGroupIds];
 
@@ -129,12 +129,12 @@ class Group extends BaseHelper {
           } else {
             groups.push(
               ...targetGroupIdBatch.map((id) =>
-              (
-                {
-                  id,
-                  exists: false
-                }
-              )
+                (
+                  {
+                    id,
+                    exists: false
+                  }
+                )
               )
             );
           }
@@ -148,7 +148,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getByName(targetGroupName, requestNew = false) {
+  async getByName (targetGroupName, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupName)) {
         throw new Error('targetGroupName cannot be null or undefined');
@@ -196,7 +196,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async joinById(targetGroupId, password = undefined) {
+  async joinById (targetGroupId, password = undefined) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -226,7 +226,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async joinByName(targetGroupName, password = undefined) {
+  async joinByName (targetGroupName, password = undefined) {
     try {
       if (validator.isNullOrUndefined(targetGroupName)) {
         throw new Error('targetGroupName cannot be null or undefined');
@@ -252,7 +252,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async leaveById(targetGroupId) {
+  async leaveById (targetGroupId) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -276,7 +276,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async leaveByName(targetGroupName) {
+  async leaveByName (targetGroupName) {
     try {
       if (validator.isNullOrUndefined(targetGroupName)) {
         throw new Error('targetGroupName cannot be null or undefined');
@@ -291,7 +291,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getChatHistory(targetGroupId, chronological, timestamp = 0, limit = 15) {
+  async getChatHistory (targetGroupId, chronological, timestamp = 0, limit = 15) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -351,7 +351,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getSubscriber(targetGroupId, subscriberId, requestNew = false) {
+  async getSubscriber (targetGroupId, subscriberId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -431,7 +431,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getSubscriberList(targetGroupId, requestNew = false) {
+  async getSubscriberList (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -478,7 +478,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getStats(targetGroupId, requestNew = false) {
+  async getStats (targetGroupId, requestNew = false) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -514,15 +514,15 @@ class Group extends BaseHelper {
     }
   }
 
-  create() {
+  create () {
     return new GroupProfileBuilder(this._api).create();
   }
 
-  update(group) {
+  update (group) {
     return new GroupProfileBuilder(this._api)._update(group);
   }
 
-  async updateAvatar(targetGroupId, avatar) {
+  async updateAvatar (targetGroupId, avatar) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -546,7 +546,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async updateSubscriber(targetGroupId, targetSubscriberId, capabilities) {
+  async updateSubscriber (targetGroupId, targetSubscriberId, capabilities) {
     try {
       if (validator.isNullOrUndefined(targetGroupId)) {
         throw new Error('targetGroupId cannot be null or undefined');
@@ -588,7 +588,7 @@ class Group extends BaseHelper {
     }
   }
 
-  async getRecommendedList() {
+  async getRecommendedList () {
     try {
       const result = await this._websocket.emit(Commands.GROUP_RECOMMENDATION_LIST);
 
@@ -603,12 +603,12 @@ class Group extends BaseHelper {
     }
   }
 
-  async _cleanup() {
+  async _cleanup () {
     this._joinedGroupsFetched = false;
     this._groups = [];
   }
 
-  _process(group) {
+  _process (group) {
     group = new GroupObject(this._api, group);
     group.language = group.extended && group.extended.language ? toLanguageKey(group.extended.language) : this._api.config.get('app.defaultLanguage');
 

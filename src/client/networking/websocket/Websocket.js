@@ -12,18 +12,18 @@ const { version } = require('../../../../package.json');
  * {@hideconstructor}
  */
 module.exports = class Websocket {
-  constructor(api) {
+  constructor (api) {
     this._api = api;
     this._handler = new Handler(this._api);
 
     this._requestDefs = {};
   };
 
-  _createMD5Key(command, data) {
+  _createMD5Key (command, data) {
     return crypto.createHash('md5').update(data ? `${command}${JSON.stringify(data)}` : command).digest('hex');
   }
 
-  _init() {
+  _init () {
     const connectionSettings = this._api._botConfig.get('connection');
     const loginSettings = this._api.config.get('_loginSettings');
 
@@ -33,7 +33,7 @@ module.exports = class Websocket {
       console.warn('APIKey will be required to login in the future');
     }
 
-    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}${apiKey===undefined?'':`&apiKey=${apiKey}`}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
+    this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}${apiKey === undefined ? '' : `&apiKey=${apiKey}`}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
       {
         transports: ['websocket'],
         reconnection: true,
@@ -52,11 +52,11 @@ module.exports = class Websocket {
     this.socket.on('connect_timeout', error => this._api.emit(Events.CONNECTION_TIMEOUT, error));
 
     this.socket.on('disconnect', reason => {
-      if (reason === "io server disconnect") {
+      if (reason === 'io server disconnect') {
         this.socket.connect();
       }
 
-      this._api.emit(Events.DISCONNECTED, reason)
+      this._api.emit(Events.DISCONNECTED, reason);
     });
 
     this.socket.on('error', error => this._api.emit(Events.ERROR, error));
@@ -73,7 +73,7 @@ module.exports = class Websocket {
     this.socket.onAny((eventName, data) => this._handler.process(eventName, data));
   }
 
-  async _send(command, data, attempt = 0) {
+  async _send (command, data, attempt = 0) {
     const response = await new Promise((resolve) => {
       this.socket.emit(command, data, resp =>
         resolve(resp));
@@ -94,7 +94,7 @@ module.exports = class Websocket {
     return response;
   }
 
-  async _emit(command, data) {
+  async _emit (command, data) {
     if (data && !data.body && !data.headers) {
       data = {
         body: data
@@ -136,7 +136,7 @@ module.exports = class Websocket {
     return response;
   }
 
-  async emit(command, data) {
+  async emit (command, data) {
     return await this._emit(command, data);
   }
 };

@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
 const ResponseObject = require('../../models/ResponseObject');
-const _ = require('lodash');
+const models = require('../../models');
 
 const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
 
@@ -36,16 +36,16 @@ const validateV2Options = (options) => {
 const getDefaultOptions = (api, opts) => {
   const _options = Object.assign({}, opts);
 
-  if(_options.chunk || _options.chunkSize) {
-    console.warn('[WARNING]: Message Helper - opts.chunk and opts.chunkSize are deprecated and will be removed in 2.0')
+  if (_options.chunk || _options.chunkSize) {
+    console.warn('[WARNING]: Message Helper - opts.chunk and opts.chunkSize are deprecated and will be removed in 2.0');
   }
 
   _options.chunkSize = typeof _options.chunkSize === 'number' ? parseInt(_options.chunkSize) : 1000;
 
   _options.chunk = typeof _options.chunk === 'boolean' ? _options.chunk : true;
 
-  if(_options.links){
-    console.warn('[WARNING]: Message Helper - opts.links is deprecated please use [content](url) approach instead')
+  if (_options.links) {
+    console.warn('[WARNING]: Message Helper - opts.links is deprecated please use [content](url) approach instead');
   }
 
   _options.links = _options.links && Array.isArray(_options.links) ? _options.links : [];
@@ -362,8 +362,6 @@ class Messaging extends BaseHelper {
     }
   }
 
-
-
   async _sendMessageV2 (targetType, targetId, content, opts = {}) {
     opts = validateV2Options(opts);
 
@@ -400,7 +398,7 @@ class Messaging extends BaseHelper {
       throw new Error(`${mimeType} is not a supported mimetype`);
     }
 
-    if(!Reflect.has(opts, 'links') && !Reflect.has(opts, 'chunk')) {
+    if (!Reflect.has(opts, 'links') && !Reflect.has(opts, 'chunk')) {
       return await this._sendMessageV2(targetType, targetId, content, opts);
     }
 
@@ -626,9 +624,9 @@ class Messaging extends BaseHelper {
 
     return responses.length > 1
       ? new ResponseObject({
-          code: 207,
-          body: responses
-        })
+        code: 207,
+        body: responses
+      })
       : responses[0];
   }
 

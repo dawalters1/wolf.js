@@ -1,7 +1,7 @@
 const Message = require('../../../../models/MessageObject');
 const { version } = require('../../../../../package.json');
 
-const { Events, MessageType, Privilege, Capability, MessageLinkingType } = require('../../../../constants');
+const { Events, MessageType, Privilege, Capability } = require('../../../../constants');
 
 // Stop gap join/leave handling incase group members list isnt requested
 const handleAdminAction = async (api, message) => {
@@ -83,35 +83,35 @@ module.exports = async (api, body) => {
         .replace('deviceType=DEVICETYPE', 'deviceType=0');
       break;
     case MessageType.TEXT_PLAIN:
-      {
-        if (message.sourceSubscriberId !== api.currentSubscriber.id) {
-          const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
+    {
+      if (message.sourceSubscriberId !== api.currentSubscriber.id) {
+        const args = message.body.split(api.SPLIT_REGEX).filter(Boolean);
 
-          const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
+        const secret = api._botConfig.get('secrets').find((secret) => secret.commands.includes(args[0]));
 
-          if (secret) {
-            const hasProperArgument = args.length >= 2 && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString();
-            const isDeveloper = api.options.developerId === message.sourceSubscriberId;
+        if (secret) {
+          const hasProperArgument = args.length >= 2 && args[1].startsWith('@') && api.utility().number().toEnglishNumbers(args[1]).slice(1) === api.currentSubscriber.id.toString();
+          const isDeveloper = api.options.developerId === message.sourceSubscriberId;
 
-            if ((hasProperArgument && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) || (args.length === 1 && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])))) {
-              const hasDevId = (!!api.options.developerId);
+          if ((hasProperArgument && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF, Privilege.VOLUNTEER]))) || (args.length === 1 && (isDeveloper || await api.utility().subscriber().privilege().has(message.sourceSubscriberId, [Privilege.STAFF])))) {
+            const hasDevId = (!!api.options.developerId);
 
-              return await api.messaging().sendMessage(
-                message,
-                api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
-                  {
-                    version,
-                    nickname: hasDevId ? (await api.subscriber().getById(api.options.developerId)).nickname : '',
-                    subscriberId: hasDevId ? api.options.developerId : ''
-                  }
-                )
-              );
-            }
+            return await api.messaging().sendMessage(
+              message,
+              api.utility().string().replace(secret.responses.find((resp) => resp.hasDevId === hasDevId).response,
+                {
+                  version,
+                  nickname: hasDevId ? (await api.subscriber().getById(api.options.developerId)).nickname : '',
+                  subscriberId: hasDevId ? api.options.developerId : ''
+                }
+              )
+            );
           }
-        } else if (!api.options.messageHandling.processOwnMessages) {
-          return Promise.resolve();
         }
+      } else if (!api.options.messageHandling.processOwnMessages) {
+        return Promise.resolve();
       }
+    }
   }
 
   return await api.emit(

@@ -17,21 +17,13 @@ class Phrase extends BaseHelper {
   }
 
   async _loadLocal () {
-    if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) {
-      throw new Error(
-        'Missing phrase folder - https://github.com/dawalters1/Bot-Template/tree/main/phrases'
-      );
-    }
+    if (!fs.existsSync(path.resolve(require.main.filename, '../phrases'))) { return; }
 
     const files = fs
       .readdirSync(path.resolve(require.main.filename, '../phrases'))
       .filter((file) => file.endsWith('.json'));
 
-    if (files.length === 0) {
-      throw new Error(
-        'Missing phrase jsons - https://github.com/dawalters1/Bot-Template/tree/main/phrases'
-      );
-    }
+    if (files.length === 0) { return; }
 
     for (const file of files) {
       const language = path.parse(file).name;
