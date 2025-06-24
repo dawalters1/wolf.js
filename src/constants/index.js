@@ -32,7 +32,7 @@ exports.ServerEvents = {
   TIP_ADD: 'tip add',
 
   OBJECTION: 'objection',
-  
+
   WELCOME: 'welcome'
 };
 
@@ -254,7 +254,8 @@ exports.AdminAction = {
   KICK: 16,
   JOIN: 17,
   LEAVE: 18,
-  OWNER: 32
+  OWNER: 32,
+  COOWNER: 64
 };
 
 exports.Capability = {
@@ -264,7 +265,8 @@ exports.Capability = {
   MOD: 2,
   BANNED: 4,
   SILENCED: 8,
-  OWNER: 32
+  OWNER: 32,
+  COOWNER: 64
 };
 
 exports.Category = {
