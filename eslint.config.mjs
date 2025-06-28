@@ -1,64 +1,78 @@
-import tseslint from 'typescript-eslint';
-import prettier from 'eslint-config-prettier';
-import enumSpacingRule from './eslint/enumFormatter.js';
-import { fileURLToPath } from 'url';
-import path from 'path';
-import stylistic from '@stylistic/eslint-plugin-ts';
 import autoSortImports from './eslint/autoSortImports.js';
 import emitFormatter from './eslint/emitFormatter.js';
-import globals from 'globals'
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import enumSpacingRule from './eslint/enumFormatter.js';
+import globals from 'globals';
+import importPlugin from 'eslint-plugin-import';
+import prettier from 'eslint-config-prettier';
+import stylistic from '@stylistic/eslint-plugin';
+import unusedImports from 'eslint-plugin-unused-imports';
 
 export default [
   {
-    files: ['**/*.ts', '**/*.tsx'],
-    ignores: ['dist/', 'node_modules/'],
+    ignores: ['dist/**', 'node_modules/**'],
     languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        project: './tsconfig.json',
-        tsconfigRootDir: __dirname,
-        sourceType: 'module',
-      },
       globals: {
-        ...globals.browser,
         ...globals.node,
-        NodeJS: true
+        ...globals.browser,
+        document: 'readonly',
+        navigator: 'readonly',
+        window: 'readonly'
+      },
+
+      ecmaVersion: 2022,
+      sourceType: 'module',
+
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
       }
     },
     plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      '@stylistic/js': stylistic,
+      '@stylistic': stylistic,
+      'unused-imports': unusedImports,
+      import: importPlugin,
       custom: {
         rules: {
           'enum-spacing': enumSpacingRule,
           'auto-sort-imports': autoSortImports,
           'emit-formatting': emitFormatter
-        },
-      },
+        }
+      }
     },
     rules: {
-      ...tseslint.configs.recommended.rules,
-      ...tseslint.configs.stylistic.rules,
-      //...stylistic.configs.all,
+    //  ...stylistic.configs.all,
       ...prettier.rules,
-       'no-restricted-syntax': [
+      'import/extensions': [
+        'error',
+        'always'
+      ],
+      'no-restricted-syntax': [
         'error',
         {
           selector: 'TSTypeReference[typeName.name="Readonly"]',
-          message: 'Use `readonly` properties instead of `Readonly<T>`.',
-        },
+          message: 'Use `readonly` properties instead of `Readonly<T>`.'
+        }
       ],
-      'curly': 'error',
+      'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
+      'unused-imports/no-unused-imports': 'error',
+      'unused-imports/no-unused-vars': [
+        'warn',
+        {
+          vars: 'all',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          argsIgnorePattern: '^_'
+        }
+      ],
+      curly: 'error',
       'custom/emit-formatting': 'error',
       'custom/auto-sort-imports': 'error',
       'space-before-blocks': ['error', 'always'],
       'space-before-function-paren': ['error', 'always'],
       'no-warning-comments': ['warn', { terms: ['todo', 'fixme', 'xxx'], location: 'anywhere' }],
-      '@stylistic/js/space-infix-ops': 'error',
+      '@stylistic/space-infix-ops': 'error',
       'custom/enum-spacing': 'error',
-      '@typescript-eslint/no-non-null-assertion': 'error',
-      '@typescript-eslint/prefer-literal-enum-member': 'off',
       'no-var': 'warn',
       'object-shorthand': ['warn', 'properties'],
       'accessor-pairs': ['error', { setWithoutGet: true, enforceForClassMembers: true }],
@@ -70,20 +84,19 @@ export default [
       camelcase: ['error', {
         allow: ['^UNSAFE_'],
         properties: 'never',
-        ignoreGlobals: true,
+        ignoreGlobals: true
       }],
       'comma-dangle': ['error', {
         arrays: 'never',
         objects: 'never',
         imports: 'never',
         exports: 'never',
-        functions: 'never',
+        functions: 'never'
       }],
       'comma-spacing': ['error', { before: false, after: true }],
       'comma-style': ['error', 'last'],
       'computed-property-spacing': ['error', 'never', { enforceForClassMembers: true }],
       'constructor-super': 'error',
-      curly: ['error', 'multi-line'],
       'default-case-last': 'error',
       'dot-location': ['error', 'property'],
       'dot-notation': ['error', { allowKeywords: true }],
@@ -104,7 +117,7 @@ export default [
         ImportDeclaration: 1,
         flatTernaryExpressions: false,
         ignoreComments: false,
-        offsetTernaryExpressions: true,
+        offsetTernaryExpressions: true
       }],
       'key-spacing': ['error', { beforeColon: false, afterColon: true }],
       'keyword-spacing': ['error', { before: true, after: true }],
@@ -155,7 +168,7 @@ export default [
       'no-useless-catch': 'error',
       'no-mixed-operators': ['error', {
         groups: [['==', '!=', '===', '!==', '>', '>=', '<', '<='], ['&&', '||'], ['in', 'instanceof']],
-        allowSamePrecedence: true,
+        allowSamePrecedence: true
       }],
       'no-mixed-spaces-and-tabs': 'error',
       'no-multi-spaces': 'error',
@@ -195,18 +208,12 @@ export default [
       'no-unused-expressions': ['error', {
         allowShortCircuit: true,
         allowTernary: true,
-        allowTaggedTemplates: true,
-      }],
-      '@typescript-eslint/no-unused-vars': ['error', {
-        args: 'none',
-        caughtErrors: 'none',
-        ignoreRestSiblings: true,
-        vars: 'all',
+        allowTaggedTemplates: true
       }],
       'no-use-before-define': ['error', {
         functions: false,
         classes: false,
-        variables: false,
+        variables: false
       }],
       'no-useless-call': 'error',
       'no-useless-computed-key': 'error',
@@ -221,7 +228,7 @@ export default [
       'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
       'one-var': ['error', { initialized: 'never' }],
       'operator-linebreak': ['error', 'after', {
-        overrides: { '?': 'before', ':': 'before', '|>': 'before' },
+        overrides: { '?': 'before', ':': 'before', '|>': 'before' }
       }],
       'padded-blocks': ['error', { blocks: 'never', switches: 'never', classes: 'never' }],
       'prefer-const': ['error', { destructuring: 'all' }],
@@ -232,18 +239,16 @@ export default [
       'rest-spread-spacing': ['error', 'never'],
       semi: ['error', 'always'],
       'semi-spacing': ['error', { before: false, after: true }],
-      'space-before-blocks': ['error', 'always'],
-      'space-before-function-paren': ['error', 'always'],
       'space-in-parens': ['error', 'never'],
       'space-infix-ops': 'error',
       'space-unary-ops': ['error', { words: true, nonwords: false }],
       'spaced-comment': ['error', 'always', {
         line: { markers: ['*package', '!', '/', ',', '='] },
         block: {
-          balanced: true, 
+          balanced: true,
           markers: ['*package', '!', ',', ':', '::', 'flow-include'],
-          exceptions: ['*'],
-        },
+          exceptions: ['*']
+        }
       }],
       'symbol-description': 'error',
       'template-curly-spacing': ['error', 'never'],
@@ -251,12 +256,12 @@ export default [
       'unicode-bom': ['error', 'never'],
       'use-isnan': ['error', {
         enforceForSwitchCase: true,
-        enforceForIndexOf: true,
+        enforceForIndexOf: true
       }],
       'valid-typeof': ['error', { requireStringLiterals: true }],
       'wrap-iife': ['error', 'any', { functionPrototypeMethods: true }],
       'yield-star-spacing': ['error', 'both'],
-      yoda: ['error', 'never'],
-    },
-  },
+      yoda: ['error', 'never']
+    }
+  }
 ];

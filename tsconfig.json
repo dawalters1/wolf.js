@@ -1,44 +1,53 @@
 {
+  // Mapped from https://www.typescriptlang.org/tsconfig
   "compilerOptions": {
-    // Module system & targets
-    "module": "ESNext",
-    "target": "ESNext",
-    "moduleResolution": "Node",
-
-    // Output
-    "outDir": "dist",
-    "declaration": true,                // Emit .d.ts files
-    "emitDeclarationOnly": true,       // Optional: emit only .d.ts without .js (ideal for type-only packages)
-    "stripInternal": true,             // Remove symbols marked with /** @internal */
-
-    // Debugging
-    "inlineSourceMap": true,
-
-    // Interop & Imports
-    "esModuleInterop": true,
-    "allowImportingTsExtensions": true,
-
-    // Strictness
-    "strict": true,
-    "noImplicitAny": true,
-    "forceConsistentCasingInFileNames": true,
+    // Type Checking
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    // if true: conflicts with discord-api-types
+    "exactOptionalPropertyTypes": false,
     "noFallthroughCasesInSwitch": true,
-    "useUnknownInCatchVariables": false,
-
-    // Decorators
-    "experimentalDecorators": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+    "useUnknownInCatchVariables": true,
+    // Modules
+    "module": "ES6",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    // Emit
+    "declaration": false,
+    "importHelpers": true,
+    "inlineSources": false,
+    "newLine": "lf",
+    "noEmitHelpers": true,
+    "rootDir": "src",
+    "outDir": "typings",
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // Language and Environment
     "emitDecoratorMetadata": true,
-
-    // Module behavior
-    "isolatedModules": false, // Set to true if using Babel or transpiling via ESBuild
-    "noEmit": false,            // Set to false to emit output
-
-    
-    "skipLibCheck": true
+    "experimentalDecorators": true,
+    "lib": [
+      "ESNext"
+    ],
+    "target": "ES6",
+    "useDefineForClassFields": true,
+    // Output Formatting
+    "pretty": true,
+    // Completeness
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
   },
-
-  "lib": ["esnext"],
-
-  "include": ["src", "index.ts", "eslint", "eslint.config.mjs"],
-  "exclude": ["node_modules"]
+  "include": [
+    "typings"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

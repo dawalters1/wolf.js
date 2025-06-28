@@ -2,14 +2,14 @@ export default {
   meta: {
     type: 'layout',
     docs: {
-      description: 'Enforce multiline formatting for websocket .emit calls',
+      description: 'Enforce multiline formatting for websocket .emit calls'
     },
     fixable: 'whitespace',
-    schema: [],
+    schema: []
   },
-  create(context) {
+  create (context) {
     return {
-      CallExpression(node) {
+      CallExpression (node) {
         const callee = node.callee;
         if (
           callee.type === 'MemberExpression' &&
@@ -43,7 +43,7 @@ export default {
                   );
                 }
                 return null;
-              },
+              }
             });
           }
 
@@ -52,7 +52,7 @@ export default {
             context.report({
               node: commandArg,
               message: 'The command argument must be on a new line.',
-              fix: (fixer) => fixer.insertTextBefore(commandArg, '\n'),
+              fix: (fixer) => fixer.insertTextBefore(commandArg, '\n')
             });
           }
 
@@ -61,7 +61,7 @@ export default {
             context.report({
               node: dataArg,
               message: 'The data object must be on a new line.',
-              fix: (fixer) => fixer.insertTextBefore(dataArg, '\n'),
+              fix: (fixer) => fixer.insertTextBefore(dataArg, '\n')
             });
           }
 
@@ -71,7 +71,7 @@ export default {
             context.report({
               node: closeParen,
               message: 'The closing parenthesis must be on its own line.',
-              fix: (fixer) => fixer.insertTextBefore(closeParen, '\n'),
+              fix: (fixer) => fixer.insertTextBefore(closeParen, '\n')
             });
           }
 
