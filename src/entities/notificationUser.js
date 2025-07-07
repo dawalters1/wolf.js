@@ -1,3 +1,4 @@
+
 import BaseEntity from './baseEntity.js';
 import NotificationUserFeed from './notificationUserFeed.js';
 import NotificationUserPopup from './notificationUserPopup.js';

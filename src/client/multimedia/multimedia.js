@@ -7,6 +7,9 @@ import {
 import { fromCognitoIdentity } from '@aws-sdk/credential-provider-cognito-identity';
 import WOLFResponse from '../../entities/WOLFResponse.js';
 
+/**
+ * @param {import('../WOLF.js').default} client
+ */
 class Multimedia {
   constructor (client) {
     this.client = client;
@@ -23,7 +26,7 @@ class Multimedia {
           getCredentials: async () => {
             const getCredentials = async (forceNew = false) => {
               try {
-                const cognito = { identity: '', token: '' }; // TODO: replace with actual call to fetch credentials
+                const cognito = await this.client.security.getToken({ forceNew });
 
                 const cognitoIdentity = new CognitoIdentityClient({
                   credentials: fromCognitoIdentity({

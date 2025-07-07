@@ -8,6 +8,8 @@ class AudioSlotHelper extends BaseHelper {
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
+    if (!channel.isMember && !channel.peekable) { throw new Error(`Channel with id ${channelId} is not peekable`); }
+
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
@@ -23,6 +25,7 @@ class AudioSlotHelper extends BaseHelper {
       }
     );
 
+    channel._audioSlots.fetched = true;
     return response.body.map((serverSlot) => {
       const existing = channel._audioSlots.get(serverSlot.id);
       return channel._audioSlots.set(

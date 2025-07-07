@@ -1,3 +1,4 @@
+
 import BaseEntity from './baseEntity.js';
 import TipCharm from './tipCharm.js';
 

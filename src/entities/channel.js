@@ -143,7 +143,7 @@ class Channel extends BaseEntity {
   }
 
   async join (password) {
-    // return this.client.channel.joinById(this.id, password);
+    return this.client.channel.joinById(this.id, password);
   }
 
   async getAudioConfig () {

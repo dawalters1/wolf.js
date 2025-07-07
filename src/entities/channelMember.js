@@ -1,3 +1,4 @@
+
 import BaseEntity from './baseEntity.js';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.js';
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.js';
@@ -49,12 +50,23 @@ export class ChannelMember extends BaseEntity {
     }
   }
 
+  _onCapabilityChange (newCapability) {
+    const list = this._getParentList(newCapability);
+
+    if (!this.lists.has(list)) {
+      this.removeList(this._getParentList(this.capabilities));
+      this.addList(list);
+    }
+
+    this.capabilities = newCapability;
+  }
+
   addList (list) {
-    this.lists.add(list);
+    return this.lists.add(list);
   }
 
   removeList (list) {
-    this.lists.delete(list);
+    return this.lists.delete(list);
   }
 }
 

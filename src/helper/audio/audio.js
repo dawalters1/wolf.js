@@ -48,22 +48,102 @@ class AudioHelper {
   }
 
   async join (channelId, slotId) {
-    const audioClient = new AudioClient(this.client, channelId);
+    if (this.audioClients.has(channelId)) {
+      throw new Error(`AudioClient exists for channel with id ${channelId}`);
+    }
+
+    const audioClient = this.audioClients
+      .set(
+        channelId,
+        new AudioClient(this.client, channelId)
+      )
+      .get(channelId);
 
     const sdp = await audioClient.createSDP();
 
-    const response = await this.client.websocket.emit(
-      Command.GROUP_AUDIO_BROADCAST,
-      {
-        id: channelId,
-        slotId,
-        sdp
-      }
-    );
+    try {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_AUDIO_BROADCAST,
+        {
+          id: channelId,
+          slotId,
+          sdp
+        }
+      );
 
-    await audioClient.setResponse(slotId, response.body.sdp);
+      await audioClient.setResponse(slotId, response.body.sdp);
 
-    return audioClient;
+      return response;
+    } catch (error) {
+      this.audioClients.delete(channelId);
+
+      throw error;
+    }
+  }
+
+  async play (channelId, stream) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    return this.audioClients.get(channelId).play(stream);
+  }
+
+  async stop (channelId) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    return this.audioClients.get(channelId).stop();
+  }
+
+  async pause (channelId) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    return this.audioClients.get(channelId).pause();
+  }
+
+  async resume (channelId) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    return this.audioClients.get(channelId).resume();
+  }
+
+  async getClientState (channelId) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    const client = this.audioClients.get(channelId);
+
+    return {
+      connectionState: client.connectionState,
+      broadcastState: client.broadcastState
+    };
+  }
+
+  async getClientSettings (channelId) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    const client = this.audioClients.get(channelId);
+
+    return client.audioSource.settings;
+  }
+
+  async updateClientSettings (channelId, settings) {
+    if (!this.audioClients.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    const client = this.audioClients.get(channelId);
+
+    client.updateSettings(settings);
   }
 }
 
