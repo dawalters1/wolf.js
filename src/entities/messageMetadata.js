@@ -1,3 +1,4 @@
+
 import BaseEntity from './baseEntity.js';
 import MessageMetadataFormatting from './messageMetadataFormatting.js';
 

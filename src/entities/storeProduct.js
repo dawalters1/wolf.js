@@ -16,6 +16,7 @@ class StoreProduct extends BaseEntity {
     this.botId = entity.botId;
     this.charmId = entity.charmId;
     this.languages = new Set([entity.languageId]);
+
     this.profile = undefined;
   }
 

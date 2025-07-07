@@ -18,7 +18,9 @@ export class User extends BaseEntity {
     this.hash = entity.hash;
     this.icon = entity.icon;
     this.iconHash = entity.iconHash;
-    this.iconInfo = new IconInfo(client, entity.iconInfo);
+    this.iconInfo = entity.iconInfo
+      ? new IconInfo(client, entity.iconInfo)
+      : null;
     this.id = entity.id;
     this.nickname = entity.nickname;
     this.privileges = entity.privileges;

@@ -95,7 +95,15 @@ class ChannelMemberHelper {
         }
       );
 
-      return channel._members.set(new ChannelMember(this.client, response.body));
+      return channel._members.set(
+        new ChannelMember(
+          this.client,
+          {
+            ...response.body,
+            hash: (await this.client.user.getById(userId)).hash
+          }
+        )
+      );
     } catch (err) {
       if (err.code === StatusCodes.NOT_FOUND) { return null; }
       throw err;

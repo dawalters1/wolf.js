@@ -10,6 +10,9 @@ import StatusCodes from 'http-status-codes';
 import urlRegexSafe from 'url-regex-safe';
 import WOLFResponse from '../../entities/WOLFResponse.js';
 
+const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
+const isValidUrl = (url) => urlRegex.test(url);
+
 const getAds = (client, content) =>
   [...content.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\(.+?\)|\d|\p{Letter}))/gus)].map(ad => new Ad(client, ad));
 
@@ -25,10 +28,9 @@ const getLinks = (client, content) => {
     const urlPattern = new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu');
 
     for (const match of content.matchAll(urlPattern)) {
-      if (!matchedIndices.has(match.index) && true /** Validate url */) {
-        continue;
-        //   matchedIndices.add(match.index);
-        // matches.push(match);
+      if (!matchedIndices.has(match.index) && isValidUrl(match[1])) {
+        matchedIndices.add(match.index);
+        matches.push(match);
       }
     }
   }

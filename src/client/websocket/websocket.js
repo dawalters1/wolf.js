@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import BaseEvent from './events/baseEvent.js';
-import EventRegistry from './eventRegistry.js';
 import { fileURLToPath, pathToFileURL } from 'url';
 import fs from 'fs';
 import io from 'socket.io-client';
@@ -15,7 +14,7 @@ export class Websocket {
 
   constructor (client) {
     this.client = client;
-    this.handlers = new EventRegistry();
+    this.handlers = new Map();
   }
 
   async _init () {
@@ -35,7 +34,10 @@ export class Websocket {
       if (typeof HandlerClass !== 'function') { continue; }
 
       const handler = new HandlerClass(this.client);
-      if (handler instanceof BaseEvent) { this.handlers.register(handler); }
+
+      if (handler instanceof BaseEvent) {
+        this.handlers.set(handler.event, handler);
+      }
     }
 
     const { framework } = this.client.config;
@@ -126,9 +128,6 @@ export class Websocket {
           if (!response.success) {
             const retryCodes = [408, 429, 500, 502, 504];
             if (!retryCodes.includes(response.code) || attempt >= 3) {
-              if (response.code === 403) {
-                console.log(command);
-              }
               return reject(response);
             }
 

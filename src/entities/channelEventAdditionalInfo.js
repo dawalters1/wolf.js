@@ -1,3 +1,4 @@
+
 import BaseEntity from './baseEntity.js';
 
 export class ChannelEventAdditionalInfo extends BaseEntity {
