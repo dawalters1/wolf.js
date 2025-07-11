@@ -9,7 +9,9 @@ const getKeyProperty = (obj) => {
 class CacheManager {
   constructor (ttl = null) {
     this.ttl = ttl;
-    this.store = ttl === null ? new Map() : new ExpiryMap(ttl * 1000);
+    this.store = ttl === null
+      ? new Map()
+      : new ExpiryMap(ttl * 1000);
     this._fetched = false;
     this.timeout = undefined;
   }

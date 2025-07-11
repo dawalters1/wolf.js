@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.js';
 import CharmStatisticExtended from './charmStatisticExtended.js';
 
 export class CharmStatistic extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     this.extended = entity.extended
@@ -15,6 +15,7 @@ export class CharmStatistic extends BaseEntity {
     this.totalLifetime = entity.totalLifetime ?? 0;
   }
 
+  /** @internal */
   patch (entity) {
     this.extended = entity.extended
       ? this.extended

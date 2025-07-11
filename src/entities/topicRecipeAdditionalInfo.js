@@ -7,6 +7,7 @@ export class TopicRecipeAdditionalInfo extends BaseEntity {
     this.eTag = entity.eTag;
   }
 
+  /** @internal */
   patch (entity) {
     this.eTag = entity.eTag;
     return this;

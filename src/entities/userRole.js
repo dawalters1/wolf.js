@@ -8,6 +8,7 @@ export class UserRole extends BaseEntity {
     this.channelIdList = new Set(entity.groupIdList);
   }
 
+  /** @internal */
   patch (entity) {
     this.roleId = entity.roleId;
     this.channelIdList = new Set(entity.groupIdList);

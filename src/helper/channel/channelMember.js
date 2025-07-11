@@ -25,16 +25,27 @@ class ChannelMemberHelper {
             body: {
               id: channel.id,
               limit: listConfig.limit,
-              after: listConfig.batchType === 'after' ? result.at(-1)?.id : undefined,
-              filter: listConfig.batchType === 'offset' ? list : undefined,
-              offset: listConfig.batchType === 'offset' ? result.length : undefined,
-              subscribe: 'subscribe' in listConfig ? listConfig.subscribe : undefined
+              after: listConfig.batchType === 'after'
+                ? result.at(-1)?.id
+                : undefined,
+              filter: listConfig.batchType === 'offset'
+                ? list
+                : undefined,
+              offset: listConfig.batchType === 'offset'
+                ? result.length
+                : undefined,
+              subscribe: 'subscribe' in listConfig
+                ? listConfig.subscribe
+                : undefined
             }
           }
         );
 
         result.push(...response.body.map(serverMember => {
+          serverMember.channelId = channel.id;
+
           const existing = channel._members.get(serverMember.id);
+
           return channel._members.set(
             existing
               ? existing.patch(serverMember, list)
@@ -48,7 +59,9 @@ class ChannelMemberHelper {
 
         channel._members.metadata[list] = complete;
 
-        return complete ? result : await fetchMembers(result);
+        return complete
+          ? result
+          : await fetchMembers(result);
       } catch (err) {
         if (err.code === StatusCodes.NOT_FOUND) { return []; }
         throw err;
@@ -100,6 +113,7 @@ class ChannelMemberHelper {
           this.client,
           {
             ...response.body,
+            channelId,
             hash: (await this.client.user.getById(userId)).hash
           }
         )

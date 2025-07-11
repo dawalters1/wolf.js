@@ -85,7 +85,9 @@ class AudioClient {
   }
 
   set broadcastState (value) {
-    this.state = value === 'playing' ? 'enabled' : 'disabled';
+    this.state = value === 'playing'
+      ? 'enabled'
+      : 'disabled';
     this._broadcastState = value;
   }
 
@@ -177,7 +179,9 @@ class AudioClient {
 
     this.ffmpeg?.kill('SIGKILL');
 
-    this.ffmpeg = data instanceof Stream ? ffmpeg(data).native() : ffmpeg(data);
+    this.ffmpeg = data instanceof Stream
+      ? ffmpeg(data).native()
+      : ffmpeg(data);
 
     this.ffmpeg
       .noVideo()
@@ -219,7 +223,9 @@ class AudioClient {
   }
 
   async resume () {
-    this.broadcastState = this.ffmpeg ? 'playing' : 'idle';
+    this.broadcastState = this.ffmpeg
+      ? 'playing'
+      : 'idle';
     this.paused = false;
     this.client.emit('channelAudioClientBroadcastResume', this.channelId);
 

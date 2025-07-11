@@ -1,3 +1,4 @@
+
 export const LookingFor = {
   NOT_SPECIFIED: 0,
   FRIENDSHIP: 1,

@@ -13,7 +13,9 @@ export class User extends BaseEntity {
 
     this.categoryIds = entity.categoryIds;
     this.charms = new UserSelectedCharmList(client, entity.charms);
-    this.extended = entity.extended ? new UserExtended(client, entity.extended) : null;
+    this.extended = entity.extended
+      ? new UserExtended(client, entity.extended)
+      : null;
     this.followable = entity.followable;
     this.hash = entity.hash;
     this.icon = entity.icon;
@@ -39,26 +41,27 @@ export class User extends BaseEntity {
     this._presence = new UserPresence(client, entity);
   }
 
-  async achievements (parentId) {
+  async getAchievements (parentId) {
     return this.client.achievement.user.get(this.id, parentId);
   }
 
-  async charmSummary () {
+  async getCharmSummary () {
     return this.client.charm.getUserSummary(this.id);
   }
 
-  async charmStatistics () {
+  async getCharmStatistics () {
     return this.client.charm.getUserStatistics(this.id);
   }
 
-  async presence () {
+  async getPresence () {
     return this.client.user.presence.getById(this.id);
   }
 
-  async wolfstarsProfile () {
+  async getWOLFStarsProfile () {
     return this.client.user.wolfstar.getById(this.id);
   }
 
+  /** @internal */
   patch (entity) {
     return this;
   }

@@ -19,6 +19,7 @@ export class UserPresence extends BaseEntity {
     this.subscribed = false;
   }
 
+  /** @internal */
   patch (entity) {
     if ('subscriberId' in entity) {
       this.userId = entity.subscriberId;

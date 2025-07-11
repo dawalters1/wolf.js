@@ -1,3 +1,4 @@
+
 export const Avatar = {
   GIF: 'gif',
   JPG: 'jpg',

@@ -55,7 +55,9 @@ class ChannelHelper extends BaseHelper {
         channelsMap.set(
           channelId,
           this.cache.set(
-            existing ? existing.patch(channelResponse.body) : new Channel(this.client, channelResponse.body)
+            existing
+              ? existing.patch(channelResponse.body)
+              : new Channel(this.client, channelResponse.body)
           )
         );
       }
@@ -88,7 +90,9 @@ class ChannelHelper extends BaseHelper {
       const existing = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
 
       return this.cache.set(
-        existing ? existing.patch(response.body) : new Channel(this.client, response.body)
+        existing
+          ? existing.patch(response.body)
+          : new Channel(this.client, response.body)
       );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return null; }
@@ -152,7 +156,7 @@ class ChannelHelper extends BaseHelper {
   async joinById (channelId, password) {
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
-    if (channel.isMember) { throw new Error(); }
+    if (channel.isMember) { throw new Error(`Already member of Channel with id ${channelId}`); }
 
     return this.client.websocket.emit(
       Command.GROUP_MEMBER_ADD,
@@ -168,7 +172,7 @@ class ChannelHelper extends BaseHelper {
   async joinByName (channelName, password) {
     const channel = await this.getByName(channelName);
     if (!channel) { throw new Error(); }
-    if (channel.isMember) { throw new Error(); }
+    if (channel.isMember) { throw new Error(`Already member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
       Command.GROUP_MEMBER_ADD,
@@ -184,7 +188,7 @@ class ChannelHelper extends BaseHelper {
   async leaveById (channelId) {
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
-    if (!channel.isMember) { throw new Error(); }
+    if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,
@@ -199,7 +203,7 @@ class ChannelHelper extends BaseHelper {
   async leaveByName (channelName) {
     const channel = await this.getByName(channelName);
     if (!channel) { throw new Error(); }
-    if (!channel.isMember) { throw new Error(); }
+    if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
       Command.GROUP_MEMBER_DELETE,

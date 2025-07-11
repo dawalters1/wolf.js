@@ -59,7 +59,9 @@ const getFormattingData = async (client, ads, links) => {
   if (!data.formatting.groupLinks.length) { Reflect.deleteProperty(data.formatting, 'groupLinks'); }
   if (!data.formatting.links.length) { Reflect.deleteProperty(data.formatting, 'links'); }
 
-  return 'groupLinks' in data.formatting || 'links' in data.formatting ? data : undefined;
+  return 'groupLinks' in data.formatting || 'links' in data.formatting
+    ? data
+    : undefined;
 };
 
 const getEmbedData = async (client, data, opts) => {
@@ -83,8 +85,12 @@ const getEmbedData = async (client, data, opts) => {
       if (metadata === null) { continue; }
 
       const preview = {
-        type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
-        url: item.url.includes('://') || item.url.startsWith('mailto:') ? item.url : 'http://' + item.url
+        type: !metadata.title && metadata.imageSize
+          ? EmbedType.IMAGE_PREVIEW
+          : EmbedType.LINK_PREVIEW,
+        url: item.url.includes('://') || item.url.startsWith('mailto:')
+          ? item.url
+          : 'http://' + item.url
       };
 
       if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
@@ -133,7 +139,9 @@ const buildMessages = async (client, recipient, isChannel, content, opts) => {
       (() => {
         if (content.length < 1000) { return content.length; }
         const index = content.lastIndexOf(' ', 1000);
-        return index === -1 ? 1000 : index;
+        return index === -1
+          ? 1000
+          : index;
       })()
     );
 
@@ -146,7 +154,9 @@ const buildMessages = async (client, recipient, isChannel, content, opts) => {
     ];
 
     const formattingData = await getFormattingData(client, ads, links);
-    const embeds = embedsAttached ? undefined : await getEmbedData(client, formattingData, opts);
+    const embeds = embedsAttached
+      ? undefined
+      : await getEmbedData(client, formattingData, opts);
 
     messages.push({
       recipient,
@@ -161,12 +171,20 @@ const buildMessages = async (client, recipient, isChannel, content, opts) => {
     if (chunk.length === content.length) { break; }
 
     embedsAttached ||= !!(embeds?.length);
-    content = (opts?.formatting?.alert ? '/alert ' : opts?.formatting?.me ? '/me ' : '') + content.slice(chunk.length).trim();
+    content = (opts?.formatting?.alert
+      ? '/alert '
+      : opts?.formatting?.me
+        ? '/me '
+        : '') + content.slice(chunk.length).trim();
 
     developerInjectedLinks = developerInjectedLinks
       .filter(l => l.start >= chunk.length)
       .map(link => {
-        const adjustment = opts?.formatting?.alert ? 8 : opts?.formatting?.me ? 5 : 0;
+        const adjustment = opts?.formatting?.alert
+          ? 8
+          : opts?.formatting?.me
+            ? 5
+            : 0;
         return {
           ...link,
           start: link.start - chunk.length - 1 + adjustment,
@@ -192,7 +210,9 @@ class MessagingHelper {
 
     if (channelId) {
       requestBody.body = {
-        idList: Array.isArray(channelId) ? channelId : [channelId]
+        idList: Array.isArray(channelId)
+          ? channelId
+          : [channelId]
       };
     }
 
@@ -211,7 +231,9 @@ class MessagingHelper {
   }
 
   async _sendMessage (targetId, isChannel, content, opts) {
-    const mimeType = Buffer.isBuffer(content) ? (await fileTypeFromBuffer(content))?.mime : MessageType.TEXT_PLAIN;
+    const mimeType = Buffer.isBuffer(content)
+      ? (await fileTypeFromBuffer(content))?.mime
+      : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
       throw new Error('NOT IMPLEMENTED');

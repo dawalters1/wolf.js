@@ -22,15 +22,25 @@ class Channel extends BaseEntity {
     this.premium = entity.base.premium;
     this.icon = entity.base.icon;
     this.iconHash = entity.base.iconHash;
-    this.iconInfo = entity.base.iconInfo ? new IconInfo(client, entity.base.iconInfo) : null;
+    this.iconInfo = entity.base.iconInfo
+      ? new IconInfo(client, entity.base.iconInfo)
+      : null;
     this.memberCount = entity.base.members;
     this.official = entity.base.official;
     this.peekable = entity.base.peekable;
     this.owner = new ChannelOwner(client, entity.base.owner);
-    this.extended = entity.extended ? new ChannelExtended(client, entity.extended) : null;
-    this.audioConfig = entity.audioConfig ? new ChannelAudioConfig(client, entity.audioConfig) : null;
-    this.audioCount = entity.audioCount ? new ChannelAudioCount(client, entity.audioCount) : null;
-    this.messageConfig = entity.messageConfig ? new ChannelMessageConfig(client, entity.messageConfig) : null;
+    this.extended = entity.extended
+      ? new ChannelExtended(client, entity.extended)
+      : null;
+    this.audioConfig = entity.audioConfig
+      ? new ChannelAudioConfig(client, entity.audioConfig)
+      : null;
+    this.audioCount = entity.audioCount
+      ? new ChannelAudioCount(client, entity.audioCount)
+      : null;
+    this.messageConfig = entity.messageConfig
+      ? new ChannelMessageConfig(client, entity.messageConfig)
+      : null;
     this.verificationTier = entity.base.verificationTier;
 
     this.isMember = false;
@@ -50,42 +60,7 @@ class Channel extends BaseEntity {
     };
   }
 
-  async achievements (parentId) {
-    return this.client.achievement.channel.get(this.id, parentId);
-  }
-
-  async audioSlots () {
-    return this.client.audio.slots.list(this.id);
-  }
-
-  async audioSlotRequests () {
-    return this.client.audio.slotRequest.list(this.id);
-  }
-
-  async events () {
-    return this.client.event.channel.list(this.id);
-  }
-
-  async member (userId) {
-    return this.client.channel.member.getMember(this.id, userId);
-  }
-
-  async members (list) {
-    return this.client.channel.member.getList(this.id, list);
-  }
-
-  async roles () {
-    return this.client.channel.role.roles(this.id);
-  }
-
-  async roleUsers () {
-    return this.client.channel.role.users(this.id);
-  }
-
-  async stages () {
-    return this.client.audio.getAvailableList(this.id);
-  }
-
+  /** @internal */
   patch (entity) {
     if (entity.base) {
       this.id = entity.base.id;
@@ -134,31 +109,22 @@ class Channel extends BaseEntity {
     return this;
   }
 
-  get stats () {
-    return this._stats.value;
-  }
-
+  /**
+ * Get method to check if the bot is the owner.
+ **
+ * @readonly
+ * @type {boolean}
+ */
   get isOwner () {
-    return false; // Implement ownership logic if needed
+    return this.client.me.id === this.owner.id;
   }
 
-  async join (password) {
-    return this.client.channel.joinById(this.id, password);
-  }
-
-  async getAudioConfig () {
-    if (this.audioConfig) {
-      return this.audioConfig;
-    }
-
-    const result = await this.client.channel.getById(this.id, { forceNew: true });
-    return result?.audioConfig;
-  }
-
-  async getAudioSlots () {
-    return this.client.audio.slots.list(this.id);
-  }
-
+  /**
+ * Checks if the user has the specified capability based on their role in the channel.
+ **
+ * @param {*} required The required capability
+ * @returns {boolean}
+ */
   hasCapability (required) {
     switch (required) {
       case ChannelMemberCapability.CO_OWNER:
@@ -174,6 +140,14 @@ class Channel extends BaseEntity {
     }
   }
 
+  /**
+ * Checks if the current user can perform an action against a target member based on their capabilities and privileges.
+ **
+ * @async
+ * @param {*} targetMember The target member to perform the action against
+ * @param {*} targetCapability The capability being checked against for the target member
+ * @returns {Promise<boolean>}
+ */
   async canPerformActionAgainstMember (targetMember, targetCapability) {
     if (targetCapability === ChannelMemberCapability.OWNER) { return false; }
     if (this.isOwner) { return true; }
@@ -207,6 +181,135 @@ class Channel extends BaseEntity {
     }
 
     return sourceMemberHasGap || hasHigherCapability;
+  }
+
+  /**
+ * Join a channel with a password.
+ **
+ * @async
+ * @param {*} password Optional - The password for joining the channel
+ * @returns {Promise<import('../entities/WOLFResponse.js').default>}
+ */
+  async join (password) {
+    return this.client.channel.joinById(this.id, password);
+  }
+
+  /**
+ * Leave the channel
+ **
+ * @async
+ * @returns {Promise<WOLFResponse>}
+ */
+  async leave () {
+    return this.client.channel.leaveById(this.id);
+  }
+
+  /**
+ * Get the channels audio config
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelAudioConfig.js')>}
+ */
+  async getAudioConfig () {
+    if (this.audioConfig) {
+      return this.audioConfig;
+    }
+
+    const result = await this.client.channel.getById(this.id, { forceNew: true });
+    return result?.audioConfig;
+  }
+
+  /**
+ * Get the channels audio slots
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelAudioSlot.js').default[]>}
+ */
+  async getAudioSlots () {
+    return this.client.audio.slots.list(this.id);
+  }
+
+  /**
+ * Get the channels achievements
+ **
+ * @async
+ * @param {number} parentId - Optional - The ID of the parent achievement
+ * @returns {Promise<import('../entities/achievementChannel.js').default[]>}
+ */
+  async getAchievements (parentId) {
+    return this.client.achievement.channel.get(this.id, parentId);
+  }
+
+  /**
+ * Get the channels audio slot requests
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelAudioSlotRequest.js').default[]>}
+ */
+  async getAudioSlotRequests () {
+    return this.client.audio.slotRequest.list(this.id);
+  }
+
+  /**
+ * Get the channels events
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelEvent.js').default[]>}
+ */
+  async getEvents () {
+    return this.client.event.channel.list(this.id);
+  }
+
+  /**
+ * Get a channel member
+ **
+ * @async
+ * @param {number} userId The user ID of the member
+ * @returns {Promise<import('../entities/channelMember.js').default>}
+ */
+  async getMember (userId) {
+    return this.client.channel.member.getMember(this.id, userId);
+  }
+
+  /**
+ * Get a specified members list
+ **
+ * @async
+ * @param {import('../constants/ChannelMemberListType.js')} list The list parameter.
+ * @returns {Promise<import('../entities/channelMember.js').default[]>}
+ */
+  async getMembers (list) {
+    return this.client.channel.member.getList(this.id, list);
+  }
+
+  /**
+ * Get the available roles
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelRole.js').default[]>}
+ */
+  async getRoles () {
+    return this.client.channel.role.roles(this.id);
+  }
+
+  /**
+ * Get the users assigned to roles
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelRoleUser.js').default[]>}
+ */
+  async getRoleUsers () {
+    return this.client.channel.role.users(this.id);
+  }
+
+  /**
+ * Get the available stages
+ **
+ * @async
+ * @returns {Promise<import('../entities/channelStage.js').default[]>}
+ */
+  async getStages () {
+    return this.client.audio.getAvailableList(this.id);
   }
 }
 

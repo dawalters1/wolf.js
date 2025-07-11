@@ -10,6 +10,12 @@ export class Ad extends BaseEntity {
     this.channelName = entity[2].trim();
   }
 
+  /**
+ * Get the specified Channel
+ **
+ * @async
+ * @returns {Promise<import('../entities/channel.js').default>} The channel
+ */
   async channel () {
     return this.client.channel.getByName(this.channelName);
   }

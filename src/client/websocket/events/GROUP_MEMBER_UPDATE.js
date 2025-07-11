@@ -18,6 +18,10 @@ class GroupMemberAddEvent extends BaseEvent {
 
     if (channel === null) { return; }
 
+    if (data.capabilities === ChannelMemberCapability.OWNER) {
+      channel.owner.patch(await this.client.user.getById(data.subscriberId));
+    }
+
     const member = channel._members.get(data.subscriberId);
 
     if (member === null) { return; };

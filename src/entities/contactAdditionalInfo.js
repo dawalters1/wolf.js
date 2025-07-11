@@ -17,6 +17,7 @@ export class ContactAdditionalInfo extends BaseEntity {
     this.privileges = entity.privileges;
   }
 
+  /** @internal */
   patch (entity) {
     if ('nicknameShort' in entity) {
       this.nicknameShort = entity.nicknameShort;

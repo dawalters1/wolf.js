@@ -1,3 +1,4 @@
+
 export const TipPeriod = {
   ALL_TIME: 'alltime',
   DAY: 'day',

@@ -14,6 +14,7 @@ export class NotificationUserPopup extends BaseEntity {
     this.priority = entity.priority;
   }
 
+  /** @internal */
   patch (entity) {
     this.languageId = entity.languageId;
     this.title = entity.title;

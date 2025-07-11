@@ -25,9 +25,7 @@ class WOLFStarHelper {
 
     if (!opts?.forceNew) {
       const cachedWOLFStar = users.filter(user => user !== null && user._wolfstars?.fetched);
-      cachedWOLFStar.forEach(user => {
-        wolfStarMap.set(user.id, user._wolfstars.value);
-      });
+      cachedWOLFStar.forEach(user => wolfStarMap.set(user.id, user._wolfstars.value));
     }
 
     const idsToFetch = userIds.filter(id => !wolfStarMap.has(id));
@@ -51,8 +49,7 @@ class WOLFStarHelper {
           const user = users.find(user => user?.id === userId);
 
           if (user) {
-            user._wolfstars.value =
-              user._wolfstars.value?.patch(wolfStarResponse.body) ??
+            user._wolfstars.value = user._wolfstars.value?.patch(wolfStarResponse.body) ??
               new WOLFStar(this.client, wolfStarResponse.body);
 
             wolfStarMap.set(user.id, user._wolfstars.value);

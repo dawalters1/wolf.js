@@ -19,6 +19,7 @@ class Achievement extends BaseEntity {
     this.languages = new Set([entity.languageId]);
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.parentId = entity.parentId;

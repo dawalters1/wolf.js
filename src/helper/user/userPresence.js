@@ -25,7 +25,9 @@ class UserPresenceHelper {
 
     if (!opts?.forceNew) {
       const cachedPresence = users.filter(
-        (user) => user !== null && (subscribe ? user._presence?.subscribed : true)
+        (user) => user !== null && (subscribe
+          ? user._presence?.subscribed
+          : true)
       );
       cachedPresence.forEach((user) => presenceMap.set(user.id, user._presence));
     }

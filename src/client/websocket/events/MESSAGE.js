@@ -15,15 +15,19 @@ class MessageEvent extends BaseEvent {
       case MessageType.INTERACTIVE_MESSAGE_PACK:
         message.content = message.content
           .replace('token=TOKEN', `token=${this.client.config.framework.login.token}`)
-          .replace('language=LANGUAGE', `language=${this.client.me && this.client.me.extended ? this.client.me.extended.language : Language.ENGLISH} `)
+          .replace('language=LANGUAGE', `language=${this.client.me && this.client.me.extended
+            ? this.client.me.extended.language
+            : Language.ENGLISH} `)
           .replace('platform=PLATFORM', `platform=${this.client.config.framework.connection.query.device}`) // Replaces deviceType
-          .replace('deviceType=DEVICETYPE', 'deviceType=Unknown'); // Deprecated
+          .replace('deviceType=DEVICETYPE', 'deviceType=Unknown');
         break;
       default:
         break;
     }
 
-    const events = [message.isChannel ? 'channelMessage' : 'privateMessage', 'message'];
+    const events = [message.isChannel
+      ? 'channelMessage'
+      : 'privateMessage', 'message'];
 
     events.forEach((event) =>
       this.client.emit(event, message)

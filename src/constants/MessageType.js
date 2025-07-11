@@ -1,3 +1,4 @@
+
 export const MessageType = {
   TEXT_PLAIN: 'text/plain',
   TEXT_IMAGE: 'text/image_link',

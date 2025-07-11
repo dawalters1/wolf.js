@@ -7,6 +7,7 @@ export class UserSelectedCharmList extends BaseEntity {
     this.selectedList = entity.selectedList.map(charm => new UserSelectedCharm(client, charm));
   }
 
+  /** @internal */
   patch (entity) {
     this.selectedList = entity.selectedList.map(charm => new UserSelectedCharm(this.client, charm));
     return this;

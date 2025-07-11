@@ -1,3 +1,4 @@
+
 export const WOLFStarTalent = {
   MUSIC: 1,
   ENTERTAINMENT: 2,

@@ -10,6 +10,7 @@ class ChannelAudioConfig extends BaseEntity {
     this.minRepLevel = entity.minRepLevel;
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.enabled = entity.enabled;

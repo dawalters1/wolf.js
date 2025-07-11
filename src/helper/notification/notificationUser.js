@@ -21,7 +21,9 @@ class NotificationUserHelper extends BaseHelper {
 
       results.push(...response.body);
 
-      return response.body.length < 50 ? results : await get(results);
+      return response.body.length < 50
+        ? results
+        : await get(results);
     };
 
     this.client.me.notificationsUser.fetched = true;

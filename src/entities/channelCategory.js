@@ -13,6 +13,7 @@ export class ChannelCategory extends BaseEntity {
     this.languages = new Set([entity.languageId]);
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.description.set(entity.languageId, entity.description);

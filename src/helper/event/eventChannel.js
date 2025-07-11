@@ -37,7 +37,9 @@ class EventChannelHelper extends BaseHelper {
 
       results.push(...response.body);
 
-      return response.body.length < 50 ? results : await get(results);
+      return response.body.length < 50
+        ? results
+        : await get(results);
     };
 
     channel._events.fetched = true;

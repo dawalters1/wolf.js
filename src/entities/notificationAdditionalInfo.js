@@ -8,6 +8,7 @@ export class NotificationAdditionalInfo extends BaseEntity {
     this.eTag = entity.eTag;
   }
 
+  /** @internal */
   patch (entity) {
     this.createdAt = new Date(entity.createdAt);
     this.eTag = entity.eTag;

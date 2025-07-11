@@ -1,3 +1,4 @@
+
 export const IconSize = {
   SMALL: 'small',
   MEDIUM: 'medium',

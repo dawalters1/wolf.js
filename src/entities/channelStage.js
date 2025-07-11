@@ -1,11 +1,13 @@
 import BaseEntity from './baseEntity.js';
 
 export class ChannelStage extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     this.id = entity.id;
-    this.expireTime = entity.expireTime ? new Date(entity.expireTime) : null;
+    this.expireTime = entity.expireTime
+      ? new Date(entity.expireTime)
+      : null;
   }
 }
 

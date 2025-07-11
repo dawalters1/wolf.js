@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 export class CharmSummary extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     this.charmId = entity.charmId;
@@ -12,6 +12,7 @@ export class CharmSummary extends BaseEntity {
     this.total = entity.total;
   }
 
+  /** @internal */
   patch (entity) {
     this.charmId = entity.charmId;
     this.expireTime = entity?.expireTime

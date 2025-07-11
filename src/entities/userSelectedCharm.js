@@ -8,6 +8,7 @@ export class UserSelectedCharm extends BaseEntity {
     this.position = entity.position;
   }
 
+  /** @internal */
   patch (entity) {
     this.charmId = entity.charmId;
     this.position = entity.position;

@@ -2,7 +2,7 @@ import BaseEntity from './baseEntity.js';
 import ChannelStatsOwner from './channelStatsOwner.js';
 
 export class ChannelStatsDetails extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     this.id = entity.id;

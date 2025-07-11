@@ -1,3 +1,4 @@
+
 export const Command = {
   ACHIEVEMENT: 'achievement',
   ACHIEVEMENT_CATEGORY_LIST: 'achievement category list',

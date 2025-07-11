@@ -10,6 +10,7 @@ export class Notification extends BaseEntity {
     this.additionalInfo = new NotificationAdditionalInfo(client, entity.additionalInfo);
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.additionalInfo = this.additionalInfo.patch(entity.additionalInfo);
