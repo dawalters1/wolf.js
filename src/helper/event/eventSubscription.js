@@ -1,9 +1,15 @@
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import EventSubscription from '../../entities/eventSubscription.js';
+import { validate } from '../../validator/index.js';
 
 class EventSubscriptionHelper extends BaseHelper {
   async list (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     if (!opts?.forceNew && this.cache.fetched) {
       return this.cache.values();
     }
@@ -35,6 +41,19 @@ class EventSubscriptionHelper extends BaseHelper {
   }
 
   async add (eventId) {
+    eventId = Number(eventId) || eventId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(eventId)
+        .isNotNullOrUndefined(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is null or undefined`)
+        .isValidNumber(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is not a valid number`)
+        .isGreaterThanZero(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is less than or equal to zero`);
+    }
+
+    const event = await this.client.event.getById(eventId);
+
+    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_ADD,
       {
@@ -46,6 +65,19 @@ class EventSubscriptionHelper extends BaseHelper {
   }
 
   async remove (eventId) {
+    eventId = Number(eventId) || eventId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(eventId)
+        .isNotNullOrUndefined(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is null or undefined`)
+        .isValidNumber(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is not a valid number`)
+        .isGreaterThanZero(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is less than or equal to zero`);
+    }
+
+    const event = await this.client.event.getById(eventId);
+
+    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_DELETE,
       {

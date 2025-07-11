@@ -2,9 +2,15 @@ import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Notification from '../../entities/notification.js';
 import NotificationGlobal from '../../entities/notificationGlobal.js';
+import { validate } from '../../validator/index.js';
 
 class NotificationGlobalHelper extends BaseHelper {
   async list (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     if (!opts?.forceNew && this.client.me?.notificationsGlobal?.fetched) {
       return this.client.me.notificationsGlobal.values();
     }
@@ -45,24 +51,72 @@ class NotificationGlobalHelper extends BaseHelper {
     return await this.client.websocket.emit(Command.NOTIFICATION_GLOBAL_CLEAR);
   }
 
-  async delete (notificationIds) {
+  async deleteById (notificationId) {
+    notificationId = Number(notificationId) || notificationId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationId)
+        .isNotNullOrUndefined(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is null or undefined`)
+        .isValidNumber(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is not a valid number`)
+        .isGreaterThanZero(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+    }
+
+    return (await this.deleteByIds([notificationId]))[0];
+  }
+
+  async deleteByIds (notificationIds) {
+    notificationIds = notificationIds.map((notificationId) => Number(notificationId) || notificationId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationIds)
+        .isValidArray(`NotificationGlobalHelper.deleteByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is null or undefined')
+        .isValidNumber('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+    }
     return await this.client.websocket.emit(
       Command.NOTIFICATION_GLOBAL_DELETE,
       {
         body: {
-          idList: Array.isArray(notificationIds)
-            ? notificationIds
-            : [notificationIds]
+          idList: notificationIds
         }
       }
     );
   }
 
   async getById (notificationId, opts) {
+    notificationId = Number(notificationId) || notificationId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationId)
+        .isNotNullOrUndefined(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is null or undefined`)
+        .isValidNumber(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is not a valid number`)
+        .isGreaterThanZero(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([notificationId], opts))[0];
   }
 
   async getByIds (notificationIds, opts) {
+    notificationIds = notificationIds.map((notificationId) => Number(notificationId) || notificationId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationIds)
+        .isValidArray(`NotificationGlobalHelper.getByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is null or undefined')
+        .isValidNumber('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const notificationsMap = new Map();
 
     if (!opts?.forceNew) {
@@ -87,7 +141,7 @@ class NotificationGlobalHelper extends BaseHelper {
       );
 
       [...response.body.entries()]
-        .filter(([id, res]) => res.success)
+        .filter(([_, res]) => res.success)
         .forEach(([id, res]) => {
           const existing = this.cache.get(id);
 

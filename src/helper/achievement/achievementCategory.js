@@ -1,9 +1,23 @@
 import AchievementCategory from '../../entities/achievementCategory.js';
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
+import { validate } from '../../validator/index.js';
 
 class AchievementCategoryHelper extends BaseHelper {
   async list (languageId, opts) {
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(languageId)
+        .isNotNullOrUndefined(`AchievementCategoryHelper.list() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `AchievementCategoryHelper.list() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     if (!opts?.forceNew) {
       const cachedAchievementCategories = this.cache.values();
 

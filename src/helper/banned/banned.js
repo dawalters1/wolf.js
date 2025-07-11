@@ -1,4 +1,5 @@
 import BaseHelper from '../baseHelper.js';
+import { validate } from '../../validator/index.js';
 
 class BannedHelper extends BaseHelper {
   list () {
@@ -6,6 +7,17 @@ class BannedHelper extends BaseHelper {
   }
 
   isBanned (userIds) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userIds)
+        .isValidArray(`BannedHelper.isBanned() parameter, userIds: ${userIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is null or undefined')
+        .isValidNumber('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is less than or equal to zero');
+    }
+
     const has = (userId) => this.cache.has(userId);
     return Array.isArray(userIds)
       ? userIds.map((userId) => has(userId))
@@ -13,27 +25,69 @@ class BannedHelper extends BaseHelper {
   }
 
   async ban (userId) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`BannedHelper.ban() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`BannedHelper.ban() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`BannedHelper.ban() parameter, userId: ${userId} is less than or equal to zero`);
+    }
+
     const user = await this.client.user.getById(userId);
-    if (user === null) { throw new Error(`User with id ${userId} not found`); }
+    if (user === null) { throw new Error(''); }
     return !!this.cache.set(user);
   }
 
   async banAll (userIds) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userIds)
+        .isValidArray(`BannedHelper.banAll() parameter, userIds: ${userIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('BannedHelper.banAll() parameter, userIds[{index}]: {value} is null or undefined')
+        .isValidNumber('BannedHelper.banAll() parameter, userIds[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('BannedHelper.banAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+    }
+
     const users = await this.client.user.getByIds(userIds);
     const missingUserIds = userIds.filter(
       (userId) => !users.some((user) => user?.id === userId)
     );
+
     if (missingUserIds.length > 0) {
       throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
+
     return users.map((user) => !!this.cache.set(user));
   }
 
   unban (userId) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`BannedHelper.unban() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`BannedHelper.unban() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`BannedHelper.unban() parameter, userId: ${userId} is less than or equal to zero`);
+    }
+
     return this.cache.delete(userId);
   }
 
   unbanAll (userIds) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userIds)
+        .isValidArray(`BannedHelper.unbanAll() parameter, userIds: ${userIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is null or undefined')
+        .isValidNumber('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+    }
+
     return userIds.map((userId) => this.cache.delete(userId));
   }
 

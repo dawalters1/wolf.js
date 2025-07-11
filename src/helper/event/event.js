@@ -3,6 +3,7 @@ import { Command } from '../../constants/Command.js';
 import Event from '../../entities/event.js';
 import EventChannelHelper from './eventChannel.js';
 import EventSubscriptionHelper from './eventSubscription.js';
+import { validate } from '../../validator/index.js';
 
 class EventHelper extends BaseHelper {
   constructor (client) {
@@ -13,6 +14,19 @@ class EventHelper extends BaseHelper {
   }
 
   async getById (eventId, opts) {
+    eventId = Number(eventId) || eventId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(eventId)
+        .isNotNullOrUndefined(`EventHelper.getById() parameter, eventId: ${eventId} is null or undefined`)
+        .isValidNumber(`EventHelper.getById() parameter, eventId: ${eventId} is not a valid number`)
+        .isGreaterThanZero(`EventHelper.getById() parameter, eventId: ${eventId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([eventId], opts))[0];
   }
 
