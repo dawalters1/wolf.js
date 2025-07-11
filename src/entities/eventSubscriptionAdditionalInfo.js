@@ -9,6 +9,7 @@ export class EventSubscriptionAdditionalInfo extends BaseEntity {
     this.startsAt = new Date(entity.startsAt);
   }
 
+  /** @internal */
   patch (entity) {
     this.eTag = entity.eTag;
     this.endsAt = new Date(entity.endsAt);

@@ -10,6 +10,7 @@ export class AchievementUser extends BaseEntity {
     this.childrenId = entity.childrenId ?? null;
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.additionalInfo = this.additionalInfo
@@ -18,6 +19,10 @@ export class AchievementUser extends BaseEntity {
     this.childrenId = entity.childrenId ?? this.childrenId;
 
     return this;
+  }
+
+  async achievement (languageId) {
+    return this.client.achievement.getById(this.id, languageId);
   }
 }
 

@@ -32,7 +32,9 @@ class AudioSlotRequestHelper {
     return response.body.map(serverReq => {
       const existing = channel._audioSlotRequests.get(serverReq.reservedOccupierId);
       return channel._audioSlotRequests.set(
-        existing ? existing.patch(serverReq) : new ChannelAudioSlotRequest(this.client, serverReq)
+        existing
+          ? existing.patch(serverReq)
+          : new ChannelAudioSlotRequest(this.client, serverReq)
       );
     });
   }

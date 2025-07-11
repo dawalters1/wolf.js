@@ -8,6 +8,7 @@ class ChannelAudioSlotReservation extends BaseEntity {
     this.expiresAt = new Date(entity.reservedExpiresAt);
   }
 
+  /** @internal */
   patch (entity) {
     this.userId = entity.reservedOccupierId;
     this.expiresAt = new Date(entity.reservedExpiresAt);

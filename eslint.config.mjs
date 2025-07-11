@@ -5,8 +5,8 @@ import globals from 'globals';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
 import stylistic from '@stylistic/eslint-plugin';
+import ternaryFormatter from './eslint/ternaryFormatter.js';
 import unusedImports from 'eslint-plugin-unused-imports';
-
 export default [
   {
     ignores: ['dist/**', 'node_modules/**'],
@@ -36,7 +36,8 @@ export default [
         rules: {
           'enum-spacing': enumSpacingRule,
           'auto-sort-imports': autoSortImports,
-          'emit-formatting': emitFormatter
+          'emit-formatting': emitFormatter,
+          'ternary-formatting': ternaryFormatter
         }
       }
     },
@@ -66,6 +67,7 @@ export default [
         }
       ],
       curly: 'error',
+      'custom/ternary-formatting': 'error',
       'custom/emit-formatting': 'error',
       'custom/auto-sort-imports': 'error',
       'space-before-blocks': ['error', 'always'],

@@ -15,6 +15,7 @@ export class ChannelAudioSlotRequest extends BaseEntity {
     }
   }
 
+  /** @internal */
   patch (entity) {
     if ('reservedOccupierId' in entity) {
       this.reservedUserId = entity.reservedOccupierId;

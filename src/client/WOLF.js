@@ -12,6 +12,7 @@ import MetadataHelper from '../helper/metadata/metadata.js';
 import Multimedia from './multimedia/multimedia.js';
 import { nanoid } from 'nanoid';
 import NotificationHelper from '../helper/notification/notification.js';
+import PhraseHelper from '../helper/phrase/phrase.js';
 import RoleHelper from '../helper/role/role.js';
 import TipHelper from '../helper/tip/tip.js';
 import UserHelper from '../helper/user/user.js';
@@ -34,6 +35,16 @@ class WOLF extends EventEmitter {
         },
         host: 'https://v3-rc.palringo.com',
         port: 443
+      },
+      commands: {
+        phrases: {
+          enabled: false
+        },
+        ignore: {
+          self: true,
+          official: true,
+          unofficial: false
+        }
       }
     }
   };
@@ -56,6 +67,7 @@ class WOLF extends EventEmitter {
     this.event = new EventHelper(this);
     this.messaging = new MessagingHelper(this);
     this.notification = new NotificationHelper(this);
+    this.phrase = new PhraseHelper(this);
     this.user = new UserHelper(this);
     this.tip = new TipHelper(this);
     this.role = new RoleHelper(this);
@@ -64,6 +76,10 @@ class WOLF extends EventEmitter {
 
   get me () {
     return this._me;
+  }
+
+  get SPLIT_REGEX () {
+    return /[\n\t,،\s+]/g;
   }
 
   async login (email, password, v3Token, apiKey) {

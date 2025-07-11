@@ -1,3 +1,4 @@
+
 export const TipType = {
   CHARM: 'charm',
   USER: 'subscriber',

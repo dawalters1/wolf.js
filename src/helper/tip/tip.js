@@ -63,7 +63,9 @@ class TipHelper extends BaseHelper {
     );
 
     return [...response.body.entries()]
-      .map(([, tipSummaryResponse]) => tipSummaryResponse.success ? new TipSummary(this.client, tipSummaryResponse.body) : null);
+      .map(([, tipSummaryResponse]) => tipSummaryResponse.success
+        ? new TipSummary(this.client, tipSummaryResponse.body)
+        : null);
   }
 
   async getChannelLeaderboard (channelId, tipPeriod, tipType, tipDirection) {

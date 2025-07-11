@@ -1,3 +1,4 @@
+
 export const TipDirection = {
   SENT: 'sent',
   RECEIVED: 'received'

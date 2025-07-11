@@ -20,6 +20,7 @@ class StoreProduct extends BaseEntity {
     this.profile = undefined;
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.name.set(entity.languageId, entity.name);
@@ -35,6 +36,7 @@ class StoreProduct extends BaseEntity {
     return this;
   }
 
+  /** @internal */
   hasLanguage (languageId) {
     return this.languages.has(languageId);
   }

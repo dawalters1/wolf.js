@@ -1,3 +1,4 @@
+
 export class TipContext {
   /**
    * @param {string} type - Context type (e.g. from ContextType enum or string)

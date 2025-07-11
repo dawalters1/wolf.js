@@ -13,6 +13,7 @@ class AchievementUserAdditionalInfo extends BaseEntity {
     this.categoryId = entity.categoryId;
   }
 
+  /** @internal */
   patch (entity) {
     this.awardedAt = entity?.awardedAt
       ? new Date(entity.awardedAt)

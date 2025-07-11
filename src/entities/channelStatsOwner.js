@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 class ChannelStatsOwner extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     this.level = entity.level;

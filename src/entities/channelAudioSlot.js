@@ -6,6 +6,7 @@ export class ChannelAudioSlot extends BaseEntity {
     super(client);
 
     this.id = entity.id;
+    this.channelId = entity.channelId;
     this.isLocked = entity.locked;
     this.isMuted = entity.occupierMuted;
     this.userId = entity.occupierId;
@@ -18,10 +19,14 @@ export class ChannelAudioSlot extends BaseEntity {
     this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
   }
 
+  /** @internal */
   patch (entity) {
-    const data = 'slot' in entity ? entity.slot : entity;
+    const data = 'slot' in entity
+      ? entity.slot
+      : entity;
 
     this.id = data.id;
+    this.channelId = entity?.id ?? entity.channelId;
     this.isLocked = data.locked;
     this.isMuted = data.occupierMuted;
     this.userId = data.occupierId;
@@ -40,6 +45,14 @@ export class ChannelAudioSlot extends BaseEntity {
     this.isOccupied = data.occupierId !== null || this.reservation !== undefined;
 
     return this;
+  }
+
+  async join () {
+    return this.client.audio.join(this.channelId, this.id);
+  }
+
+  async leave () {
+    return this.client.audio.leave();
   }
 }
 

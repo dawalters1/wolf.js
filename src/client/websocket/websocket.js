@@ -53,7 +53,9 @@ export class Websocket {
       console.warn('APIKey will be required to login in the future');
     }
 
-    const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined ? '' : `&apiKey=${apiKey}`}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
+    const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined
+      ? ''
+      : `&apiKey=${apiKey}`}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
 
     this.socket = io(socketUrl, {
       transports: ['websocket'],
@@ -87,7 +89,9 @@ export class Websocket {
   }
 
   _parseBody = (body, languageId) => {
-    const formattedBody = typeof body === 'object' && 'body' in body ? new WOLFResponse(body) : body;
+    const formattedBody = typeof body === 'object' && 'body' in body
+      ? new WOLFResponse(body)
+      : body;
 
     if (!languageId) { return formattedBody; }
 
@@ -138,7 +142,9 @@ export class Websocket {
         });
       });
 
-    const requestBody = body && !body.headers && !body.body ? { body } : body;
+    const requestBody = body && !body.headers && !body.body
+      ? { body }
+      : body;
 
     if (requestBody?.body && Reflect.has(requestBody.body, 'idList')) {
       const responses = await Promise.all(

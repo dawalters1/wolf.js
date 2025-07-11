@@ -1,3 +1,4 @@
+
 export const Relationship = {
   NOT_SPECIFIED: 0,
   SINGLE: 1,

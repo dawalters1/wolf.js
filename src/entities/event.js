@@ -19,6 +19,7 @@ export class Event extends BaseEntity {
     this.title = entity.title;
   }
 
+  /** @internal */
   patch (entity) {
     this.attendanceCount = entity.attendanceCount;
     this.category = entity.category;

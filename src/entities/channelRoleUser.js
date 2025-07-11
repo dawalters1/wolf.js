@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 export class ChannelRoleUser extends BaseEntity {
-  constructor (client, entity) {
+    constructor (client, entity) {
     super(client);
 
     if ('additionalInfo' in entity) {
@@ -15,6 +15,7 @@ export class ChannelRoleUser extends BaseEntity {
     }
   }
 
+  /** @internal */
   patch (entity) {
     if ('additionalInfo' in entity) {
       this.userId = entity.additionalInfo.subscriberId;

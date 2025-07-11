@@ -3,7 +3,8 @@ import AchievementCategoryHelper from './achievementCategory.js';
 import AchievementChannelHelper from './achievementChannel.js';
 import AchievementUserHelper from './achievementUser.js';
 import BaseHelper from '../baseHelper.js';
-import { Command } from '../../constants/Command.js';
+import { Command, Language } from '../../constants/index.js';
+import { validate } from '../../validator/index.js';
 
 class AchievementHelper extends BaseHelper {
   constructor (client) {
@@ -15,10 +16,46 @@ class AchievementHelper extends BaseHelper {
   }
 
   async getById (achievementId, languageId, opts) {
+    achievementId = Number(achievementId) || achievementId;
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(achievementId)
+        .isNotNullOrUndefined(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is null or undefined`)
+        .isValidNumber(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is not a valid number`)
+        .isGreaterThanZero(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is less than or equal to zero`);
+
+      validate(languageId)
+        .isNotNullOrUndefined(`AchievementHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `AchievementHelper.getById() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isValidOpts();
+    }
+
     return (await this.getByIds([achievementId], languageId, opts))[0];
   }
 
   async getByIds (achievementIds, languageId, opts) {
+    achievementIds = achievementIds.map((achievementId) => Number(achievementId) || achievementId);
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(achievementIds)
+        .isValidArray(`AchievementHelper.getByIds() parameter, achievementIds: ${achievementIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is null or undefined')
+        .isValidNumber('AchievementHelper.getById() parameter, achievementId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is less than or equal to zero');
+
+      validate(languageId)
+        .isNotNullOrUndefined(`AchievementHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `AchievementHelper.getByIds() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isValidOpts();
+    }
+
     const achievementsMap = new Map();
 
     if (!opts?.forceNew) {

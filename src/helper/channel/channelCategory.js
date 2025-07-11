@@ -25,7 +25,9 @@ class ChannelCategoryHelper extends BaseHelper {
       const existing = this.cache.get(serverCategory.id);
 
       return this.cache.set(
-        existing ? existing.patch(serverCategory) : new ChannelCategory(this.client, serverCategory)
+        existing
+          ? existing.patch(serverCategory)
+          : new ChannelCategory(this.client, serverCategory)
       );
     });
   }

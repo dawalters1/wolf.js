@@ -11,6 +11,7 @@ export class WOLFStar extends BaseEntity {
     this.talentList = entity.talentList;
   }
 
+  /** @internal */
   patch (entity) {
     this.userId = entity.subscriberId;
     this.shows = entity.shows;

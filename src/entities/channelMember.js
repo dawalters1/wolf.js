@@ -8,6 +8,7 @@ export class ChannelMember extends BaseEntity {
     super(client);
 
     this.id = entity.id;
+    this.channelId = entity.channelId;
     this.hash = entity.hash;
     this.capabilities = entity.capabilities;
 
@@ -18,6 +19,7 @@ export class ChannelMember extends BaseEntity {
     );
   }
 
+  /** @internal */
   patch (entity, list) {
     if ('capabilities' in entity) {
       this.capabilities = entity.capabilities;
@@ -54,19 +56,39 @@ export class ChannelMember extends BaseEntity {
     const list = this._getParentList(newCapability);
 
     if (!this.lists.has(list)) {
-      this.removeList(this._getParentList(this.capabilities));
-      this.addList(list);
+      this.lists.delete(this._getParentList(this.capabilities));
+      this.lists.add(list);
     }
 
     this.capabilities = newCapability;
   }
 
-  addList (list) {
-    return this.lists.add(list);
+  async regular () {
+    return this.client.channel.member.regular(this.channelId, this.id);
   }
 
-  removeList (list) {
-    return this.lists.delete(list);
+  async mod () {
+    return this.client.channel.member.mod(this.channelId, this.id);
+  }
+
+  async admin () {
+    return this.client.channel.member.admin(this.channelId, this.id);
+  }
+
+  async coowner () {
+    return this.client.channel.member.coowner(this.channelId, this.id);
+  }
+
+  async kick () {
+    return this.client.channel.member.kick(this.channelId, this.id);
+  }
+
+  async ban () {
+    return this.client.channel.member.ban(this.channelId, this.id);
+  }
+
+  async message (content, opts) {
+    return this.client.messaging.sendPrivateMessage(this.id, content, opts);
   }
 }
 

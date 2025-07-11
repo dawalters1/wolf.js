@@ -1,3 +1,4 @@
+
 export const LoginType = {
   APPLE: 'apple',
   EMAIL: 'email',

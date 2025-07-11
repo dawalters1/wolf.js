@@ -23,6 +23,7 @@ export class NotificationGlobal extends BaseEntity {
     this.typeId = entity.typeId;
   }
 
+  /** @internal */
   patch (entity) {
     this.context = entity.context;
     this.createdAt = new Date(entity.createdAt);

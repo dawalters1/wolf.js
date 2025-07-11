@@ -10,8 +10,12 @@ export class TipLeaderboardItem extends BaseEntity {
     this.charmId = entity.charmId;
     this.quantity = entity.quantity;
     this.credits = entity.credits;
-    this.channel = entity.group ? new IdHash(this.client, entity.group, true) : null;
-    this.user = entity.subscriber ? new IdHash(this.client, entity.subscriber) : null;
+    this.channel = entity.group
+      ? new IdHash(this.client, entity.group, true)
+      : null;
+    this.user = entity.subscriber
+      ? new IdHash(this.client, entity.subscriber)
+      : null;
   }
 }
 

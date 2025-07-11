@@ -12,6 +12,7 @@ export class NotificationUserFeed extends BaseEntity {
     this.link = entity.link;
   }
 
+  /** @internal */
   patch (entity) {
     this.languageId = entity.languageId;
     this.title = entity.title;

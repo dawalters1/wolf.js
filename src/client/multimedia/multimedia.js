@@ -60,7 +60,9 @@ class Multimedia {
     try {
       const response = await this.axios.post(
         `/v${config.version}/${config.route}`,
-        body ? { body } : undefined
+        body
+          ? { body }
+          : undefined
       );
 
       return new WOLFResponse(response.data);

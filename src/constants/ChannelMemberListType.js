@@ -1,3 +1,4 @@
+
 export const ChannelMemberListType = {
   PRIVILEGED: 'privileged',
   REGULAR: 'regular',

@@ -19,11 +19,21 @@ export class WelcomeEvent extends BaseEvent {
     };
 
     const subscriptions = [
-      ['channels', channel.list ? this.client.channel.list({ forceNew: true }) : undefined],
-      ['userNotifications', notification.user ? this.client.notification.user.list({ forceNew: true }) : undefined],
-      ['globalNotifications', notification.global ? this.client.notification.global.list({ forceNew: true }) : undefined],
-      [null, messaging.channel ? this.client.messaging._subscribeToChannel() : undefined],
-      [null, messaging.private ? this.client.messaging._subscribeToPrivate() : undefined]
+      ['channels', channel.list
+        ? this.client.channel.list({ forceNew: true })
+        : undefined],
+      ['userNotifications', notification.user
+        ? this.client.notification.user.list({ forceNew: true })
+        : undefined],
+      ['globalNotifications', notification.global
+        ? this.client.notification.global.list({ forceNew: true })
+        : undefined],
+      [null, messaging.channel
+        ? this.client.messaging._subscribeToChannel()
+        : undefined],
+      [null, messaging.private
+        ? this.client.messaging._subscribeToPrivate()
+        : undefined]
     ];
 
     const results = await Promise.all(subscriptions.map(([, promise]) => promise));
@@ -91,7 +101,9 @@ export class WelcomeEvent extends BaseEvent {
     this.client.config.endpointConfig = welcome.endpointConfig;
 
     const isSameUser = welcome.loggedInUser?.id === this.client.me?.id;
-    this.client.config.cognito = isSameUser ? this.client.config.cognito : undefined;
+    this.client.config.cognito = isSameUser
+      ? this.client.config.cognito
+      : undefined;
 
     if (welcome.loggedInUser === null) {
       const success = await this.login();

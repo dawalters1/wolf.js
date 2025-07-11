@@ -8,6 +8,7 @@ export class ChannelOwner extends BaseEntity {
     this.hash = entity.hash;
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.hash = entity.hash;

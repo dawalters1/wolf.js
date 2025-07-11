@@ -2,7 +2,7 @@
 import BaseEntity from './baseEntity.js';
 
 class Charm extends BaseEntity {
-  constructor (client, data) {
+    constructor (client, data) {
     super(client);
 
     this.id = data.id;
@@ -14,6 +14,7 @@ class Charm extends BaseEntity {
     this.languages = new Set([data.languageId]);
   }
 
+  /** @internal */
   patch (entity) {
     this.id = entity.id;
     this.cost = entity.cost;
@@ -25,6 +26,12 @@ class Charm extends BaseEntity {
     return this;
   }
 
+  /**
+ * Check if the language exists based on its ID.
+ **
+ * @param {*} languageId The languageId parameter to check if it exists in the languages set.
+ * @returns {boolean} Check if the language exists based on the language Id.
+ */
   hasLanguage (languageId) {
     return this.languages.has(languageId);
   }
