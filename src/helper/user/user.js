@@ -6,6 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { User } from '../../entities/user.js';
 import UserPresenceHelper from './userPresence.js';
 import UserRoleHelper from './userRole.js';
+import { validate } from '../../validator/index.js';
 import WOLFStarHelper from './wolfstar.js';
 
 class UserHelper extends BaseHelper {
@@ -17,10 +18,37 @@ class UserHelper extends BaseHelper {
   }
 
   async getById (userId, opts) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`UserHelper.getById() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`UserHelper.getById() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`UserHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([userId], opts))[0];
   }
 
   async getByIds (userIds, opts) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userIds)
+        .isValidArray(`UserHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('UserHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
+        .isValidNumber('UserHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('UserHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const usersMap = new Map();
 
     if (!opts?.forceNew) {
@@ -69,6 +97,11 @@ class UserHelper extends BaseHelper {
   }
 
   async search (query) {
+    { // eslint-disable-line no-lone-blocks
+      validate(query)
+        .isNotNullOrUndefined(`UserHelper.search() parameter, query: ${query} is null or undefined`)
+        .isNotEmptyOrWhitespace(`UserHelper.search() parameter, query: ${query} is empty or whitespace`);
+    }
     try {
       const response = await this.client.websocket.emit(
         Command.SEARCH,

@@ -1,5 +1,6 @@
 import { Command } from '../../constants/Command.js';
 import UserRole from '../../entities/userRole.js';
+import { validate } from '../../validator/index.js';
 
 class UserRoleHelper {
   constructor (client) {
@@ -7,10 +8,37 @@ class UserRoleHelper {
   }
 
   async getById (userId, opts) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`UserRoleHelper.getById() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`UserRoleHelper.getById() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`UserRoleHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([userId], opts))[0];
   }
 
   async getByIds (userIds, opts) {
+    userIds = userIds.map((userId) => Number(userId) || userId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userIds)
+        .isValidArray(`UserRoleHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
+        .isValidNumber('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const userRoleMap = new Map();
 
     const users = await this.client.user.getByIds(userIds);

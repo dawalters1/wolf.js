@@ -10,6 +10,7 @@ import IdHash from '../../entities/idHash.js';
 import { Message } from '../../entities/message.js';
 import Search from '../../entities/search.js';
 import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validator/index.js';
 
 class ChannelHelper extends BaseHelper {
   constructor (client) {
@@ -20,10 +21,38 @@ class ChannelHelper extends BaseHelper {
   }
 
   async getById (channelId, opts) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([channelId], opts))[0];
   }
 
   async getByIds (channelIds, opts) {
+    channelIds = channelIds.map((channelId) => Number(channelId) || channelId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelIds)
+        .isValidArray(`ChannelHelper.getByIds() parameter, channelIds: ${channelIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is null or undefined')
+        .isValidNumber('ChannelHelper.getById() parameter, channelId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     const channelsMap = new Map();
 
     if (!opts?.forceNew) {
@@ -67,6 +96,16 @@ class ChannelHelper extends BaseHelper {
   }
 
   async getByName (name, opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(name)
+        .isNotNullOrUndefined(`ChannelHelper.getByName() parameter, name: ${name} is null or undefined`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.getByName() parameter, name: ${name} is empty or whitespace`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     if (!opts?.forceNew) {
       const cached = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
       if (cached) { return cached; }
@@ -101,6 +140,30 @@ class ChannelHelper extends BaseHelper {
   }
 
   async getChatHistory (channelId, chronological = false, timestamp, limit = 100) {
+    channelId = Number(channelId) || channelId;
+    timestamp = Number(timestamp) || timestamp;
+    limit = Number(limit) || limit;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(chronological)
+        .isBoolean(`ChannelHelper.getChatHistory() parameter, chronological: ${chronological} is not a valid boolean`);
+
+      validate(timestamp)
+        .isNotRequired()
+        .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+
+      validate(limit)
+        .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is less than or equal to zero`);
+    }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
 
@@ -130,6 +193,18 @@ class ChannelHelper extends BaseHelper {
   }
 
   async getStats (channelId, opts) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
 
@@ -154,6 +229,19 @@ class ChannelHelper extends BaseHelper {
   }
 
   async joinById (channelId, password) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(password)
+        .isNotRequired()
+        .isNotNull(`ChannelHelper.getById() parameter, password: ${password} is null`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.getById() parameter, password: ${password} is empty or whitespace`);
+    }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
     if (channel.isMember) { throw new Error(`Already member of Channel with id ${channelId}`); }
@@ -169,8 +257,18 @@ class ChannelHelper extends BaseHelper {
     );
   }
 
-  async joinByName (channelName, password) {
-    const channel = await this.getByName(channelName);
+  async joinByName (name, password) {
+    { // eslint-disable-line no-lone-blocks
+      validate(name)
+        .isNotNullOrUndefined(`ChannelHelper.joinByName() parameter, name: ${name} is null or undefined`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.joinByName() parameter, name: ${name} is empty or whitespace`);
+
+      validate(password)
+        .isNotRequired()
+        .isNotNull(`ChannelHelper.joinByName() parameter, password: ${password} is null`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.joinByName() parameter, password: ${password} is empty or whitespace`);
+    }
+    const channel = await this.getByName(name);
     if (!channel) { throw new Error(); }
     if (channel.isMember) { throw new Error(`Already member of Channel with id ${channel.id}`); }
 
@@ -178,7 +276,7 @@ class ChannelHelper extends BaseHelper {
       Command.GROUP_MEMBER_ADD,
       {
         body: {
-          name: channelName.toLowerCase(),
+          name: name.toLowerCase(),
           password
         }
       }
@@ -186,6 +284,14 @@ class ChannelHelper extends BaseHelper {
   }
 
   async leaveById (channelId) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is less than or equal to zero`);
+    }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
@@ -200,8 +306,13 @@ class ChannelHelper extends BaseHelper {
     );
   }
 
-  async leaveByName (channelName) {
-    const channel = await this.getByName(channelName);
+  async leaveByName (name) {
+    { // eslint-disable-line no-lone-blocks
+      validate(name)
+        .isNotNullOrUndefined(`ChannelHelper.leaveByName() parameter, name: ${name} is null or undefined`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.leaveByName() parameter, name: ${name} is empty or whitespace`);
+    }
+    const channel = await this.getByName(name);
     if (!channel) { throw new Error(); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
 
@@ -216,6 +327,11 @@ class ChannelHelper extends BaseHelper {
   }
 
   async list (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     if (!opts?.forceNew && this.cache.fetched) {
       return [...this.cache.values()].filter(channel => channel.isMember);
     }
@@ -243,6 +359,11 @@ class ChannelHelper extends BaseHelper {
   }
 
   async search (query) {
+    { // eslint-disable-line no-lone-blocks
+      validate(query)
+        .isNotNullOrUndefined(`ChannelHelper.search() parameter, query: ${query} is null or undefined`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.search() parameter, query: ${query} is empty or whitespace`);
+    }
     try {
       const response = await this.client.websocket.emit(
         Command.SEARCH,

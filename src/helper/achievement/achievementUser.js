@@ -1,12 +1,33 @@
 import AchievementUser from '../../entities/achievementUser.js';
 import { Command } from '../../constants/Command.js';
+import { validate } from '../../validator/index.js';
 
 class AchievementUserHelper {
   constructor (client) {
     this.client = client;
   }
 
-  async get (userId, parentId, forceNew) {
+  async get (userId, parentId, opts) {
+    userId = Number(userId) || userId;
+    parentId = Number(parentId) || parentId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`AchievementUserHelper.get() parameter, achievementId: ${userId} is null or undefined`)
+        .isValidNumber(`AchievementUserHelper.get() parameter, achievementId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`AchievementUserHelper.get() parameter, achievementId: ${userId} is less than or equal to zero`);
+
+      validate(parentId)
+        .isNotRequired()
+        .isNotNullOrUndefined(`AchievementUserHelper.get() parameter, parentId: ${parentId} is null or undefined`)
+        .isValidNumber(`AchievementUserHelper.get() parameter, parentId: ${parentId} is not a valid number`)
+        .isGreaterThanZero(`AchievementUserHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     const user = await this.client.user.getById(userId);
     if (user === null) {
       throw new Error(`User with ID ${userId} not found`);
@@ -14,7 +35,7 @@ class AchievementUserHelper {
 
     let achievements;
 
-    if (!forceNew && user._achievements.fetched) {
+    if (!opts?.forceNew && user._achievements.fetched) {
       achievements = user._achievements.values();
     } else {
       const response = await this.client.websocket.emit(

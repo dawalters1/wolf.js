@@ -3,6 +3,7 @@ import { Command } from '../../constants/Command.js';
 import ExpiryMap from 'expiry-map';
 import Metadata from '../../entities/metadata.js';
 import StatusCodes from 'http-status-codes';
+import { validate } from '../../validator/index.js';
 
 class MetadataHelper {
   constructor (client) {
@@ -11,22 +12,13 @@ class MetadataHelper {
     this._metadata = new ExpiryMap(60);
   }
 
-  // Helper to clean expired entries before returning values
-  _cleanCache (expiryMap) {
-    // ExpiryMap removes expired entries automatically on access, but
-    // if you want to explicitly clean or filter invalid, do it here
-    // For example, remove any entries with null/undefined values
-    for (const [key, value] of expiryMap.entries()) {
-      if (!value) {
-        expiryMap.delete(key);
-      }
-    }
-  }
-
   async metadata (url) {
+    { // eslint-disable-line no-lone-blocks
+      validate(url)
+        .isNotNullOrUndefined(`ChannelHelper.leaveByName() parameter, url: ${url} is null or undefined`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.leaveByName() parameter, url: ${url} is empty or whitespace`);
+    }
     const normalizedUrl = url.toLocaleLowerCase();
-
-    this._cleanCache(this._metadata);
 
     const cached = this._metadata.get(normalizedUrl);
     if (cached) {
@@ -59,8 +51,6 @@ class MetadataHelper {
   }
 
   async urlBlacklist () {
-    this._cleanCache(this._blacklist);
-
     if (this._blacklist.size) {
       return [...this._blacklist.values()];
     }

@@ -2,6 +2,7 @@ import BaseHelper from '../baseHelper.js';
 import ChannelEvent from '../../entities/channelEvent.js';
 import { Command } from '../../constants/Command.js';
 import Event from '../../entities/event.js';
+import { validate } from '../../validator/index.js';
 
 const eventHasData = (event) =>
   event.category ||
@@ -14,6 +15,18 @@ const eventHasData = (event) =>
 
 class EventChannelHelper extends BaseHelper {
   async list (channelId, opts) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`EventChannelHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const channel = await this.client.channel.getById(channelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
@@ -56,6 +69,17 @@ class EventChannelHelper extends BaseHelper {
   }
 
   async create (channelId, eventData) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`EventChannelHelper.create() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.create() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.create() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(eventData)
+        .isValidObject();
+    }
     const channel = await this.client.channel.getById(channelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
@@ -84,15 +108,30 @@ class EventChannelHelper extends BaseHelper {
   }
 
   async update (channelId, eventId, eventData) {
+    channelId = Number(channelId) || channelId;
+    eventId = Number(eventId) || eventId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`EventChannelHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(eventId)
+        .isNotNullOrUndefined(`EventChannelHelper.update() parameter, eventId: ${eventId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.update() parameter, eventId: ${eventId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.update() parameter, eventId: ${eventId} is less than or equal to zero`);
+
+      validate(eventData)
+        .isValidObject();
+    }
     const channel = await this.client.channel.getById(channelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) {
-      throw new Error('');
-    }
+    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
 
     const responses = [];
 
@@ -121,15 +160,27 @@ class EventChannelHelper extends BaseHelper {
   }
 
   async delete (channelId, eventId) {
+    channelId = Number(channelId) || channelId;
+    eventId = Number(eventId) || eventId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`EventChannelHelper.delete() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.delete() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.delete() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(eventId)
+        .isNotNullOrUndefined(`EventChannelHelper.delete() parameter, eventId: ${eventId} is null or undefined`)
+        .isValidNumber(`EventChannelHelper.delete() parameter, eventId: ${eventId} is not a valid number`)
+        .isGreaterThanZero(`EventChannelHelper.delete() parameter, eventId: ${eventId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) {
-      throw new Error('');
-    }
+    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
 
     return await this.client.websocket.emit(
       Command.GROUP_EVENT_UPDATE,

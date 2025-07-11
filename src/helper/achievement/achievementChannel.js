@@ -1,12 +1,33 @@
 import AchievementChannel from '../../entities/achievementChannel.js';
 import { Command } from '../../constants/Command.js';
+import { validate } from '../../validator/index.js';
 
 class AchievementChannelHelper {
   constructor (client) {
     this.client = client;
   }
 
-  async get (channelId, parentId, forceNew) {
+  async get (channelId, parentId, opts) {
+    channelId = Number(channelId) || channelId;
+    parentId = Number(parentId) || parentId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is null or undefined`)
+        .isValidNumber(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is less than or equal to zero`);
+
+      validate(parentId)
+        .isNotRequired()
+        .isNotNullOrUndefined(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is null or undefined`)
+        .isValidNumber(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is not a valid number`)
+        .isGreaterThanZero(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) {
       throw new Error(`Channel with ID ${channelId} not found`);
@@ -14,7 +35,7 @@ class AchievementChannelHelper {
 
     let achievements;
 
-    if (!forceNew && channel._achievements.fetched) {
+    if (!opts?.forceNew && channel._achievements.fetched) {
       achievements = channel._achievements.values();
     } else {
       const response = await this.client.websocket.emit(

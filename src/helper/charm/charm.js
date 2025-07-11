@@ -3,13 +3,51 @@ import Charm from '../../entities/charm.js';
 import CharmStatistic from '../../entities/charmStatistic.js';
 import CharmSummary from '../../entities/charmSummary.js';
 import { Command } from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
+import { validate } from '../../validator/index.js';
 
 class CharmHelper extends BaseHelper {
   async getById (charmId, languageId, opts) {
+    charmId = Number(charmId) || charmId;
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(charmId)
+        .isNotNullOrUndefined(`CharmHelper.getById() parameter, charmId: ${charmId} is null or undefined`)
+        .isValidNumber(`CharmHelper.getById() parameter, charmId: ${charmId} is not a valid number`)
+        .isGreaterThanZero(`CharmHelper.getById() parameter, charmId: ${charmId} is less than or equal to zero`);
+
+      validate(languageId)
+        .isNotNullOrUndefined(`CharmHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `CharmHelper.getById() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([charmId], languageId, opts))[0];
   }
 
   async getByIds (charmIds, languageId, opts) {
+    charmIds = charmIds.map((channelId) => Number(channelId) || channelId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(charmIds)
+        .isValidArray(`CharmHelper.getByIds() parameter, charmIds: ${charmIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is null or undefined')
+        .isValidNumber('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is less than or equal to zero');
+
+      validate(languageId)
+        .isNotNullOrUndefined(`CharmHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `CharmHelper.getByIds() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const charmsMap = new Map();
 
     if (!opts?.forceNew) {
@@ -50,6 +88,19 @@ class CharmHelper extends BaseHelper {
   }
 
   async getUserSummary (userId, opts) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`CharmHelper.getUserSummary() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`CharmHelper.getUserSummary() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`CharmHelper.getUserSummary() parameter, userId: ${userId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     const user = await this.client.user.getById(userId);
 
     if (!user) {
@@ -83,6 +134,18 @@ class CharmHelper extends BaseHelper {
   }
 
   async getUserStatistics (userId, opts) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const user = await this.client.user.getById(userId);
 
     if (!user) {

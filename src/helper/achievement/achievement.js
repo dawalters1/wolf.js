@@ -30,7 +30,8 @@ class AchievementHelper extends BaseHelper {
         .isValidConstant(Language, `AchievementHelper.getById() parameter, languageId: ${languageId} is not valid`);
 
       validate(opts)
-        .isValidOpts();
+        .isNotRequired()
+        .isValidObject();
     }
 
     return (await this.getByIds([achievementId], languageId, opts))[0];
@@ -53,7 +54,8 @@ class AchievementHelper extends BaseHelper {
         .isValidConstant(Language, `AchievementHelper.getByIds() parameter, languageId: ${languageId} is not valid`);
 
       validate(opts)
-        .isValidOpts();
+        .isNotRequired()
+        .isValidObject();
     }
 
     const achievementsMap = new Map();

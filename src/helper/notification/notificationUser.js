@@ -2,9 +2,15 @@ import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Notification from '../../entities/notification.js';
 import NotificationUser from '../../entities/notificationUser.js';
+import { validate } from '../../validator/index.js';
 
 class NotificationUserHelper extends BaseHelper {
   async list (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     if (!opts?.forceNew && this.client.me?.notificationsUser?.fetched) {
       return this.client.me.notificationsUser.values();
     }
@@ -43,24 +49,73 @@ class NotificationUserHelper extends BaseHelper {
     return await this.client.websocket.emit(Command.NOTIFICATION_SUBSCRIBER_CLEAR);
   }
 
-  async delete (notificationIds) {
+  async deleteById (notificationId) {
+    notificationId = Number(notificationId) || notificationId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationId)
+        .isNotNullOrUndefined(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is null or undefined`)
+        .isValidNumber(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is not a valid number`)
+        .isGreaterThanZero(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+    }
+
+    return (await this.deleteByIds([notificationId]))[0];
+  }
+
+  async deleteByIds (notificationIds) {
+    notificationIds = notificationIds.map((notificationId) => Number(notificationId) || notificationId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationIds)
+        .isValidArray(`NotificationUserHelper.deleteByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is null or undefined')
+        .isValidNumber('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+    }
+
     return await this.client.websocket.emit(
       Command.NOTIFICATION_SUBSCRIBER_DELETE,
       {
         body: {
-          idList: Array.isArray(notificationIds)
-            ? notificationIds
-            : [notificationIds]
+          idList: notificationIds
         }
       }
     );
   }
 
   async getById (notificationId, opts) {
+    notificationId = Number(notificationId) || notificationId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationId)
+        .isNotNullOrUndefined(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is null or undefined`)
+        .isValidNumber(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is not a valid number`)
+        .isGreaterThanZero(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     return (await this.getByIds([notificationId], opts))[0];
   }
 
   async getByIds (notificationIds, opts) {
+    notificationIds = notificationIds.map((notificationId) => Number(notificationId) || notificationId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(notificationIds)
+        .isValidArray(`NotificationUserHelper.getByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is null or undefined')
+        .isValidNumber('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
     const notificationsMap = new Map();
 
     if (!opts?.forceNew) {

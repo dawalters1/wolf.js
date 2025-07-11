@@ -1,10 +1,31 @@
+import AudioClient from '../../client/audio/audioClient.js';
 import BaseHelper from '../baseHelper.js';
 import { ChannelAudioSlot } from '../../entities/channelAudioSlot.js';
 import { ChannelMemberCapability } from '../../constants/index.js';
 import { Command } from '../../constants/Command.js';
+import { validate } from '../../validator/index.js';
 
 class AudioSlotHelper extends BaseHelper {
+  constructor (client) {
+    super(client);
+
+    this.audioClients = new Map();
+  }
+
   async list (channelId, opts) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject();
+    }
+
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -40,6 +61,20 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async get (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.get() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.get() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.get() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.get() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.get() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.get() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
+
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -50,6 +85,19 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async lock (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.lock() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.lock() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.lock() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.lock() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.lock() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.lock() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -75,6 +123,19 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async unlock (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.unlock() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.unlock() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.unlock() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.unlock() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.unlock() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.unlock() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -100,6 +161,20 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async mute (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.mute() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.mute() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.mute() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.mute() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.mute() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
+
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -133,6 +208,19 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async unmute (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.unmute() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.unmute() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.unmute() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.unmute() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.unmute() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.unmute() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -166,6 +254,19 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async kick (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.kick() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.kick() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.kick() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.kick() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.kick() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.kick() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
@@ -197,10 +298,67 @@ class AudioSlotHelper extends BaseHelper {
   }
 
   async join (channelId, slotId) {
-    throw new Error('NOT IMPLEMENTED');
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioHelper.join() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.join() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.join() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioHelper.join() parameter, channelId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.join() parameter, channelId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.join() parameter, channelId: ${slotId} is less than or equal to zero`);
+    }
+
+    if (this.audioClients.has(channelId)) {
+      throw new Error(`AudioClient exists for channel with id ${channelId}`);
+    }
+
+    const audioClient = this.audioClients
+      .set(
+        channelId,
+        new AudioClient(this.client, channelId)
+      )
+      .get(channelId);
+
+    const sdp = await audioClient.createSDP();
+
+    try {
+      const response = await this.client.websocket.emit(
+        Command.GROUP_AUDIO_BROADCAST,
+        {
+          id: channelId,
+          slotId,
+          sdp
+        }
+      );
+
+      await audioClient.setResponse(slotId, response.body.sdp);
+
+      return response;
+    } catch (error) {
+      this.audioClients.delete(channelId);
+
+      throw error;
+    }
   }
 
   async leave (channelId, slotId) {
+    channelId = Number(channelId) || channelId;
+    slotId = Number(slotId) || slotId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioSlotHelper.leave() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.leave() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.leave() parameter, channelId: ${channelId} is less than or equal to zero`);
+      validate(slotId)
+        .isNotNullOrUndefined(`AudioSlotHelper.leave() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotHelper.leave() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotHelper.leave() parameter, slotId: ${slotId} is less than or equal to zero`);
+    }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
