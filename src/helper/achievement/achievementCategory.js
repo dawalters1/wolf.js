@@ -15,7 +15,7 @@ class AchievementCategoryHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AchievementCategoryHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
 
     if (!opts?.forceNew) {

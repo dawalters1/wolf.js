@@ -7,7 +7,10 @@ class AuthorisationHelper extends BaseHelper {
   }
 
   isAuthorised (userIds) {
-    userIds = userIds.map((userId) => Number(userId) || userId);
+    const isArray = Array.isArray(userIds);
+    userIds = (isArray
+      ? userIds
+      : [userIds]).map((userId) => Number(userId) || userId);
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
@@ -19,7 +22,7 @@ class AuthorisationHelper extends BaseHelper {
     }
 
     const has = (userId) => this.cache.has(userId);
-    return Array.isArray(userIds)
+    return isArray
       ? userIds.map((userId) => has(userId))
       : has(userIds);
   }
@@ -35,7 +38,7 @@ class AuthorisationHelper extends BaseHelper {
     }
 
     const user = await this.client.user.getById(userId);
-    if (user === null) { throw new Error(''); }
+    if (user === null) { throw new Error(`User with ID ${userId} is not found`); }
     return !!this.cache.set(user);
   }
 

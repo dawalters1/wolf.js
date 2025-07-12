@@ -1,6 +1,7 @@
 import Cognito from '../../entities/cognito.js';
 import { Command } from '../../constants/Command.js';
 import { UserPresence } from '../../constants/index.js';
+import { validate } from '../../validator/index.js';
 
 class SecurityHelper {
   constructor (client) {
@@ -46,6 +47,11 @@ class SecurityHelper {
    * @returns {Promise<Cognito>}
    */
   async getToken (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ forceNew: Boolean }, 'SecurityHelper.getToken() parameter, opts.{parameter}: {value} {error}');
+    }
     if (!opts?.forceNew && this.cognito) {
       return this.cognito;
     }

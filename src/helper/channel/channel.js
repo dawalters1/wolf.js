@@ -31,7 +31,7 @@ class ChannelHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([channelId], opts))[0];
@@ -45,12 +45,12 @@ class ChannelHelper extends BaseHelper {
         .isValidArray(`ChannelHelper.getByIds() parameter, channelIds: ${channelIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is null or undefined')
-        .isValidNumber('ChannelHelper.getById() parameter, channelId[{index}]: {value} is not a valid number')
+        .isValidNumber('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is not a valid number')
         .isGreaterThanZero('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.getByIds() parameter, opts.{parameter}: {value} {error}');// TODO: entities
     }
 
     const channelsMap = new Map();
@@ -103,7 +103,7 @@ class ChannelHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.getByName() parameter, opts.{parameter}: {value} {error}'); // TODO: entities
     }
 
     if (!opts?.forceNew) {
@@ -165,7 +165,7 @@ class ChannelHelper extends BaseHelper {
         .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is less than or equal to zero`);
     }
     const channel = await this.getById(channelId);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with ID ${channelId} not found`); }
 
     if (!channel.isMember && !channel.peekable) { throw new Error(`Channel ${channelId} is not peekable`); }
 
@@ -197,13 +197,13 @@ class ChannelHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`ChannelHelper.getStats() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.getStats() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.getStats() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'ChannelHelper.getStats() parameter, opts.{parameter}: {value} {error}');
     }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
@@ -233,14 +233,14 @@ class ChannelHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`ChannelHelper.joinById() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelHelper.joinById() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelHelper.joinById() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(password)
         .isNotRequired()
-        .isNotNull(`ChannelHelper.getById() parameter, password: ${password} is null`)
-        .isNotEmptyOrWhitespace(`ChannelHelper.getById() parameter, password: ${password} is empty or whitespace`);
+        .isNotNull(`ChannelHelper.joinById() parameter, password: ${password} is null`)
+        .isNotEmptyOrWhitespace(`ChannelHelper.joinById() parameter, password: ${password} is empty or whitespace`);
     }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }
@@ -330,7 +330,7 @@ class ChannelHelper extends BaseHelper {
     { // eslint-disable-line no-lone-blocks
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.cache.fetched) {
       return [...this.cache.values()].filter(channel => channel.isMember);

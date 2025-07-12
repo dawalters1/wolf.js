@@ -10,6 +10,7 @@ class Validator {
     if (this.value === undefined) {
       this.forceValidation = true;
     }
+
     return this;
   }
 
@@ -138,6 +139,11 @@ class Validator {
       isString (message = 'Item at index {index} is not a string ({value})') {
         runEachValidation(item => validate(item).isString(message), message);
         return this;
+      },
+
+      isValidObject (matchable, message = 'Value is not a valid object') {
+        runEachValidation(item => validate(item).isValidObject(matchable, message));
+        return this;
       }
 
       // Add more as needed...
@@ -145,7 +151,74 @@ class Validator {
   }
 
   isValidObject (matchable, message = 'Value is not a valid object') {
-    // TODO: Implement object shape checking if needed
+    if (this.#shouldSkip()) { return this; }
+
+    if (typeof this.value !== 'object' || this.value === null || Array.isArray(this.value)) {
+      throw new Error(message);
+    }
+
+    const actual = this.value;
+
+    const check = (actual, expected, path = '') => {
+      for (const key in expected) {
+        const fullPath = path
+          ? `${path}.${key}`
+          : key;
+        const expectedValue = expected[key];
+        const actualValue = actual[key];
+
+        if (!(key in actual)) {
+          continue; // assume user did not want to include it, code will default value it
+        //  throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', 'is missing'));
+        }
+
+        if (expectedValue?.__match_type === 'any') {
+          const ctor = expectedValue.constructor;
+          const isMatch =
+          (ctor === String && typeof actualValue === 'string') ||
+          (ctor === Number && typeof actualValue === 'number') ||
+          (ctor === Boolean && typeof actualValue === 'boolean') ||
+          (actualValue instanceof ctor);
+
+          if (!isMatch) {
+            throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
+          }
+          continue;
+        }
+
+        if (expectedValue?.__match_type === 'regex') {
+          if (typeof actualValue !== 'string' || !expectedValue.regex.test(actualValue)) {
+            throw new Error(`${message}: "${fullPath}" should match ${expectedValue.regex}, got "${actualValue}"`);
+          }
+          continue;
+        }
+
+        if (typeof expectedValue === 'function') {
+          const ctor = expectedValue;
+          const isMatch =
+          (ctor === String && typeof actualValue === 'string') ||
+          (ctor === Number && typeof actualValue === 'number') ||
+          (ctor === Boolean && typeof actualValue === 'boolean') ||
+          (actualValue instanceof ctor);
+
+          if (!isMatch) {
+            throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
+          }
+          continue;
+        }
+
+        if (typeof expectedValue === 'object' && expectedValue !== null && !Array.isArray(expectedValue)) {
+          check(actualValue, expectedValue, fullPath);
+          continue;
+        }
+
+        if (actualValue !== expectedValue) {
+          throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `expected "${expectedValue}", got "${actualValue}"`));
+        }
+      }
+    };
+
+    check(actual, matchable);
     return this;
   }
 }

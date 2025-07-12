@@ -43,7 +43,7 @@ export class Websocket {
     const { framework } = this.client.config;
     const { host, port, query } = framework.connection;
     const { device, version } = query;
-    const { onlineState, token, apiKey } = framework.login;
+    const { state, token, apiKey } = framework.login;
 
     const packageVersion = JSON.parse(
       fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
@@ -55,7 +55,7 @@ export class Websocket {
 
     const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined
       ? ''
-      : `&apiKey=${apiKey}`}&device=${device}&state=${onlineState}&version=${version || packageVersion}`;
+      : `&apiKey=${apiKey}`}&device=${device}&state=${state}&version=${version || packageVersion}`;
 
     this.socket = io(socketUrl, {
       transports: ['websocket'],
@@ -165,6 +165,7 @@ export class Websocket {
   async connect () {
     if (!this.socket) { await this._init(); }
     if (this.socket?.connected) { return; }
+    console.log('CONNECTING');
     return this.socket?.connect();
   }
 

@@ -9,7 +9,7 @@ class NotificationGlobalHelper extends BaseHelper {
     { // eslint-disable-line no-lone-blocks
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationGlobalHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.client.me?.notificationsGlobal?.fetched) {
       return this.client.me.notificationsGlobal.values();
@@ -96,7 +96,7 @@ class NotificationGlobalHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'NotificationGlobalHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([notificationId], opts))[0];
@@ -115,7 +115,7 @@ class NotificationGlobalHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'NotificationGlobalHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const notificationsMap = new Map();
 

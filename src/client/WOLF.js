@@ -1,60 +1,50 @@
+import _ from 'lodash';
 import AchievementHelper from '../helper/achievement/achievement.js';
 import AudioHelper from '../helper/audio/audio.js';
 import AuthorisationHelper from '../helper/authorisation/authorisation.js';
 import BannedHelper from '../helper/banned/banned.js';
 import ChannelHelper from '../helper/channel/channel.js';
 import CharmHelper from '../helper/charm/charm.js';
+import config from 'config';
 import ContactHelper from '../helper/contact/contact.js';
 import { EventEmitter } from 'node:events';
 import EventHelper from '../helper/event/event.js';
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 import MessagingHelper from '../helper/messaging/messaging.js';
 import MetadataHelper from '../helper/metadata/metadata.js';
 import Multimedia from './multimedia/multimedia.js';
 import { nanoid } from 'nanoid';
 import NotificationHelper from '../helper/notification/notification.js';
+import path, { dirname } from 'node:path';
 import PhraseHelper from '../helper/phrase/phrase.js';
 import RoleHelper from '../helper/role/role.js';
+import SecurityHelper from '../helper/security/security.js';
 import TipHelper from '../helper/tip/tip.js';
 import UserHelper from '../helper/user/user.js';
 import { UserPresence as UserPresenceType } from '../constants/index.js';
 import { Websocket } from './websocket/websocket.js';
+import yaml from 'js-yaml';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 class WOLF extends EventEmitter {
-  config = {
-    framework: {
-      subscriptions: {
-        channel: { list: true },
-        notification: { global: true, user: true },
-        messaging: { channel: true, private: true },
-        tipping: { channel: false, private: false }
-      },
-      connection: {
-        query: {
-          device: 'wjs',
-          version: undefined
-        },
-        host: 'https://v3-rc.palringo.com',
-        port: 443
-      },
-      commands: {
-        phrases: {
-          enabled: false
-        },
-        ignore: {
-          self: true,
-          official: true,
-          unofficial: false
-        }
-      }
-    }
-  };
-
   loggedIn = false;
   _me = undefined;
 
   constructor () {
     super();
+    const baseConfig = config.util.toObject();
 
+    const botConfig = fs.existsSync(path.join(process.cwd(), '/config/default.yaml'))
+      ? yaml.load(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8'))
+      : {};
+
+    const frameworkConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+
+    this.config = _.merge({}, baseConfig, botConfig, frameworkConfig);
+    this.config.get = config.get;
     this.multimedia = new Multimedia(this);
     this.websocket = new Websocket(this);
     this.achievement = new AchievementHelper(this);
@@ -69,6 +59,7 @@ class WOLF extends EventEmitter {
     this.notification = new NotificationHelper(this);
     this.phrase = new PhraseHelper(this);
     this.user = new UserHelper(this);
+    this.security = new SecurityHelper(this);
     this.tip = new TipHelper(this);
     this.role = new RoleHelper(this);
     this.metadata = new MetadataHelper(this);
@@ -82,21 +73,15 @@ class WOLF extends EventEmitter {
     return /[\n\t,،\s+]/g;
   }
 
-  async login (email, password, v3Token, apiKey) {
+  async login (email, password, apiKey, v3Token) {
     if (this.loggedIn) { return; }
 
-    this.config = {
-      ...this.config,
-      framework: {
-        ...this.config.framework,
-        login: {
-          username: email,
-          password,
-          token: v3Token ?? `wjs-${nanoid()}`,
-          apiKey,
-          state: UserPresenceType.AWAY
-        }
-      }
+    this.config.framework.login = {
+      username: email,
+      password,
+      token: v3Token ?? `wjs-${nanoid()}`,
+      apiKey,
+      state: UserPresenceType.AWAY
     };
 
     return this.websocket.connect();

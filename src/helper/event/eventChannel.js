@@ -25,7 +25,7 @@ class EventChannelHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventChannelHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     const channel = await this.client.channel.getById(channelId);
 

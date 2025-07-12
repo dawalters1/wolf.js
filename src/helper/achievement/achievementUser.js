@@ -25,7 +25,7 @@ class AchievementUserHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AchievementUserHelper.get() parameter, opts.{parameter}: {value} {error}');
     }
 
     const user = await this.client.user.getById(userId);

@@ -1,0 +1,76 @@
+
+framework: 
+  connection:
+    host: https://v3-rc.palringo.com
+    port: 443
+    query:
+      device: wjs
+  subscriptions:
+    channel:
+      list: true
+    notification:
+      global: true
+      user: true
+    messaging:
+      channel: true
+      private: true
+    tipping:
+      channel: true
+      private: false
+
+  commands:
+    phrases: true
+    language: en
+    ignore:
+      self: true
+      official: false
+      unofficial: false
+      
+  mmsEndpoints:
+    message: 
+      path: '/v1/send-message'
+      methods:
+        - post
+      validation:
+        mimeTypes:
+          - type: image/jpeg
+            size: 1048576
+          - type: image/gif
+            size: 3145728
+          - type: audio/x-m4a
+            size: 1048576
+          - type: audio/mp4
+            size: 1048576
+        square: false
+    event:
+      path: '/v1/group-event-update'
+      methods:
+        - post
+      validation:
+        mimeTypes:
+          - type: image/jpeg
+            size: 1048576
+        square: false        
+    avatars:
+      channel:
+        path: '/v1/group-avatar-update'
+        methods:
+          - post
+        validation:
+          mimeTypes:
+            - type: image/jpeg
+              size: 1048576
+            - type: image/gif
+              size: 2621440
+          square: true          
+      user:
+        path: '/v1/subscriber-avatar-update'
+        methods:
+          - post          
+        validation:
+          mimeTypes:
+            - type: image/jpeg
+              size: 1048576
+            - type: image/gif
+              size: 2621440
+          square: true          
