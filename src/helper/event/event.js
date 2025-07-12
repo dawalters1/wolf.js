@@ -24,13 +24,28 @@ class EventHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([eventId], opts))[0];
   }
 
   async getByIds (eventIds, opts) {
+    eventIds = eventIds.map((eventId) => Number(eventId) || eventId);
+
+    { // eslint-disable-line no-lone-blocks
+      validate(eventIds)
+        .isValidArray(`EventHelper.getByIds() parameter, eventIds: ${eventIds} is not a valid array`)
+        .each()
+        .isNotNullOrUndefined('EventHelper.getByIds() parameter, eventId[{index}]: {value} is null or undefined')
+        .isValidNumber('EventHelper.getByIds() parameter, eventId[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('EventHelper.getByIds() parameter, eventId[{index}]: {value} is less than or equal to zero');
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
+    }
+
     const eventsMap = new Map();
 
     if (!opts?.forceNew) {

@@ -18,16 +18,16 @@ class CommandManager {
   constructor (client) {
     this.client = client;
     this.commands = [];
-    this.usePhrases = this.client.config.framework.commands.phrases.enabled;
+    this.usePhrases = this.client.config.framework.commands.phrases;
 
     this.client.on('message', async (message) => {
-      const commandSettings = this.client.config.framework.commands;
+      const ignoreSettings = this.client.config.framework.commands.ignore;
 
       if (!message.content) { return; }
 
       if (this.client.banned.isBanned(message.sourceUserId)) { return; }
 
-      if (commandSettings.ignore.self && message.userId === this.client.me.id) { return; }
+      if (ignoreSettings.self && message.userId === this.client.me.id) { return; }
 
       const context = this._getCommand(
         this.commands,
@@ -46,9 +46,9 @@ class CommandManager {
 
       if (!context.callback) { return; }
 
-      if (commandSettings.ignore.official && (await this.client.user.getById(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
+      if (ignoreSettings.official && (await this.client.user.getById(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
 
-      if (commandSettings.ignore.unofficial) {
+      if (ignoreSettings.unofficial) {
         const unofficialCharmIds = client.config.charm.unofficial;
         const charmSummary = await this.client.charm.getUserSummary(context.userId);
 

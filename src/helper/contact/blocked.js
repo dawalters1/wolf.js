@@ -1,9 +1,15 @@
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Contact from '../../entities/contact.js';
+import { validate } from '../../validator/index.js';
 
 class BlockedHelper extends BaseHelper {
   async list (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'BlockedHelper.list() parameter, opts.{parameter}: {value} {error}');
+    }
     if (!opts?.forceNew && this.cache.fetched) {
       return this.cache.values();
     }
@@ -31,11 +37,29 @@ class BlockedHelper extends BaseHelper {
   }
 
   async isBlocked (userId) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`BlockedHelper.isBlocked() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`BlockedHelper.isBlocked() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`BlockedHelper.isBlocked() parameter, userId: ${userId} is less than or equal to zero`);
+    }
+
     await this.list();
     return this.cache.has(userId);
   }
 
   async block (userId) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`BlockedHelper.block() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`BlockedHelper.block() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`BlockedHelper.block() parameter, userId: ${userId} is less than or equal to zero`);
+    }
+
     return this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_ADD,
       {
@@ -47,6 +71,15 @@ class BlockedHelper extends BaseHelper {
   }
 
   async unblock (userId) {
+    userId = Number(userId) || userId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(userId)
+        .isNotNullOrUndefined(`BlockedHelper.unblock() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`BlockedHelper.unblock() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`BlockedHelper.unblock() parameter, userId: ${userId} is less than or equal to zero`);
+    }
+
     return this.client.websocket.emit(
       Command.SUBSCRIBER_BLOCK_DELETE,
       {

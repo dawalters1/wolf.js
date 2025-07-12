@@ -15,7 +15,7 @@ class ChannelCategoryHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'ChannelCategoryHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew) {
       const cachedCategories = [...this.cache.values()];

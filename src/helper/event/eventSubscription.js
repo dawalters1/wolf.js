@@ -8,7 +8,7 @@ class EventSubscriptionHelper extends BaseHelper {
     { // eslint-disable-line no-lone-blocks
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventSubscriptionHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.cache.fetched) {
       return this.cache.values();

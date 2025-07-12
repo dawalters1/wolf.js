@@ -22,12 +22,12 @@ class AudioHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AudioHelper.getAvailableList() parameter, opts.{parameter}: {value} {error}');
     }
 
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(''); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
     if (!opts?.forceNew && channel._stages.fetched) {
       return channel._stages.values();
@@ -58,7 +58,7 @@ class AudioHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AudioHelper.getAudioConfig() parameter, opts.{parameter}: {value} {error}');
     }
     // Implement as needed
   }
@@ -74,7 +74,7 @@ class AudioHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AudioHelper.getAudioCount() parameter, opts.{parameter}: {value} {error}');
     }
     // Implement as needed
   }
@@ -90,7 +90,7 @@ class AudioHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AudioHelper.updateAudioConfig() parameter, opts.{parameter}: {value} {error}');
     }
     // Implement as needed
   }

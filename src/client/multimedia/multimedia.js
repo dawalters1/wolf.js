@@ -57,21 +57,33 @@ class Multimedia {
   }
 
   async post (config, body) {
-    try {
-      const response = await this.axios.post(
-        `/v${config.version}/${config.route}`,
-        body
+    return await this.axios(
+      {
+        method: 'POST',
+        baseURL: this.client.config.endpointConfig.mmsUploadEndpoint,
+        url: config.path,
+        data: body
           ? { body }
           : undefined
-      );
+      }
+    )
+      .then((response) => new WOLFResponse(response.data))
+      .catch((error) => new WOLFResponse({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
+  }
 
-      return new WOLFResponse(response.data);
-    } catch (error) {
-      return new WOLFResponse({
-        code: error.response?.code || error.response?.status,
-        headers: error.response?.headers
-      });
-    }
+  async delete (config, body) {
+    return await this.axios(
+      {
+        method: 'DELETE',
+        baseURL: this.client.config.endpointConfig.mmsUploadEndpoint,
+        url: config.path,
+        data: body
+          ? { body }
+          : undefined
+      }
+    )
+      .then((response) => new WOLFResponse(response.data))
+      .catch((error) => new WOLFResponse({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
   }
 }
 

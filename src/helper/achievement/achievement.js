@@ -31,7 +31,7 @@ class AchievementHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AchievementHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([achievementId], languageId, opts))[0];
@@ -46,7 +46,7 @@ class AchievementHelper extends BaseHelper {
         .isValidArray(`AchievementHelper.getByIds() parameter, achievementIds: ${achievementIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is null or undefined')
-        .isValidNumber('AchievementHelper.getById() parameter, achievementId[{index}]: {value} is not a valid number')
+        .isValidNumber('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is not a valid number')
         .isGreaterThanZero('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
@@ -55,7 +55,7 @@ class AchievementHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AchievementHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
 
     const achievementsMap = new Map();

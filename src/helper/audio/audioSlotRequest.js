@@ -13,12 +13,13 @@ class AudioSlotRequestHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'AudioSlotRequestHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
 
     const channel = await this.client.channel.getById(channelId);
@@ -59,17 +60,17 @@ class AudioSlotRequestHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
       validate(slotId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, slotId: ${slotId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, slotId: ${slotId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
       validate(userId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, userId: ${userId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, userId: ${userId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
@@ -86,8 +87,8 @@ class AudioSlotRequestHelper {
       const slot = slots[slotId - 1] ?? null;
       if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
       if (slot.isLocked) { throw new Error(`Slot with ID ${slotId} is locked`); }
-      if (slots.some(s => s.userId === userId)) { throw new Error(`Channel Member ${userId} already occupies a slot in Channel with ID ${channelId}`); }
-      if (slots.some(s => s.reservation?.userId === userId)) { throw new Error(''); }
+      if (slots.some((slot) => slot.userId === userId)) { throw new Error(`Channel Member ${userId} already occupies a slot in Channel with ID ${channelId}`); }
+      if (slots.some((slot) => slot.reservation?.userId === userId)) { throw new Error(`User with ID ${userId} already has a slot reservation in Channel with ID ${channelId}`); }
 
       return await this.client.websocket.emit(
         Command.GROUP_AUDIO_SLOT_UPDATE,
@@ -125,13 +126,13 @@ class AudioSlotRequestHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
       validate(slotId)
-        .isNotNullOrUndefined(`AudioSlotHelper.list() parameter, slotId: ${slotId} is null or undefined`)
-        .isValidNumber(`AudioSlotHelper.list() parameter, slotId: ${slotId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }

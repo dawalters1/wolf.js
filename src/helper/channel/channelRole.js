@@ -19,7 +19,7 @@ class ChannelRoleHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'ChannelRoleHelper.roles() parameter, opts.{parameter}: {value} {error}');
     }
     const channel = await this.client.channel.getById(channelId);
 
@@ -60,7 +60,7 @@ class ChannelRoleHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelRoleHelper.users() parameter, opts.{parameter}: {value} {error}');
     }
     const channel = await this.client.channel.getById(channelId);
 
@@ -119,7 +119,7 @@ class ChannelRoleHelper {
 
     const member = await this.client.channel.member.getMember(channelId, userId);
 
-    if (member === null) { throw new Error(''); }
+    if (member === null) { throw new Error(`Member with ID ${userId} not found`); }
 
     return await this.client.websocket.emit(
       Command.GROUP_ROLE_SUBSCRIBER_ASSIGN,

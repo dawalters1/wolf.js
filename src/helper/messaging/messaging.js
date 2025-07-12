@@ -236,7 +236,23 @@ class MessagingHelper {
       : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
-      throw new Error('NOT IMPLEMENTED');
+      const messageConfig = this.client.config.framework.mmsEndpoints.message;
+      // verification
+
+      return this.client.multimedia.post(
+        messageConfig,
+        {
+          data: ['audio/x-m4a', 'audio/x-mp4'].includes(mimeType)
+            ? content
+            : content.toString('base64'),
+          mimeType: ['audio/x-m4a', 'audio/x-mp4'].includes(mimeType)
+            ? 'audio/aac'
+            : mimeType,
+          recipient: parseInt(targetId),
+          isGroup: isChannel,
+          flightId: nanoid(32)
+        }
+      );
     }
 
     const messages = await buildMessages(this.client, targetId, isChannel, content, opts);

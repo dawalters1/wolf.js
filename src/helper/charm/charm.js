@@ -23,7 +23,7 @@ class CharmHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'CharmHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([charmId], languageId, opts))[0];
@@ -46,7 +46,7 @@ class CharmHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'CharmHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const charmsMap = new Map();
 
@@ -98,7 +98,7 @@ class CharmHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'CharmHelper.getUserSummary() parameter, opts.{parameter}: {value} {error}');
     }
 
     const user = await this.client.user.getById(userId);
@@ -144,7 +144,7 @@ class CharmHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'CharmHelper.getUserStatistics() parameter, opts.{parameter}: {value} {error}');
     }
     const user = await this.client.user.getById(userId);
 

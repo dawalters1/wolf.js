@@ -25,7 +25,7 @@ class AchievementChannelHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'AchievementChannelHelper.get() parameter, opts.{parameter}: {value} {error}');
     }
 
     const channel = await this.client.channel.getById(channelId);

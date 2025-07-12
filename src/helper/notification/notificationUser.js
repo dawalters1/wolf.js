@@ -9,7 +9,7 @@ class NotificationUserHelper extends BaseHelper {
     { // eslint-disable-line no-lone-blocks
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationUserHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.client.me?.notificationsUser?.fetched) {
       return this.client.me.notificationsUser.values();
@@ -95,7 +95,7 @@ class NotificationUserHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'NotificationUserHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([notificationId], opts))[0];
@@ -114,7 +114,7 @@ class NotificationUserHelper extends BaseHelper {
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'NotificationUserHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const notificationsMap = new Map();
 
