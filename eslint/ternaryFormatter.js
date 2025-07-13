@@ -34,7 +34,6 @@ export default {
             message: 'Ternary expressions must be split into multiple lines',
             fix (fixer) {
               const questionToken = sourceCode.getTokenAfter(node.test, token => token.value === '?');
-              const colonToken = sourceCode.getTokenAfter(node.consequent, token => token.value === ':');
 
               const indent = '  ';
               const newText =

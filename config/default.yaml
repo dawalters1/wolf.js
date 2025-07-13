@@ -26,6 +26,11 @@ framework:
       official: false
       unofficial: false
       
+  messages:
+    ignore:
+      self: true
+
+
   mmsEndpoints:
     message: 
       path: '/v1/send-message'

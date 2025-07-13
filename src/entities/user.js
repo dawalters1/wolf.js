@@ -39,6 +39,15 @@ export class User extends BaseEntity {
     this._roles = new ExpiringProperty(60);
 
     this._presence = new UserPresence(client, entity);
+
+    this._follow = {
+      follower: {
+        count: new ExpiringProperty(15)
+      },
+      following: {
+        count: new ExpiringProperty(15)
+      }
+    };
   }
 
   async getAchievements (parentId) {

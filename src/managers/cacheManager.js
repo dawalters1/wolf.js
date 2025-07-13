@@ -75,9 +75,7 @@ class CacheManager {
   }
 
   delete (key) {
-    const result = this.store.delete(key);
-    if (this.size() === 0) { this.fetched = false; }
-    return result;
+    return this.store.delete(key);
   }
 
   deleteAll (keys) {

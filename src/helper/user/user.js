@@ -4,6 +4,7 @@ import CurrentUser from '../../entities/currentUser.js';
 import Search from '../../entities/search.js';
 import { StatusCodes } from 'http-status-codes';
 import { User } from '../../entities/user.js';
+import UserFollowerHelper from './follwers.js';
 import UserPresenceHelper from './userPresence.js';
 import UserRoleHelper from './userRole.js';
 import { validate } from '../../validator/index.js';
@@ -12,6 +13,7 @@ import WOLFStarHelper from './wolfstar.js';
 class UserHelper extends BaseHelper {
   constructor (client) {
     super(client);
+    this.followers = new UserFollowerHelper(client);
     this.wolfstar = new WOLFStarHelper(client);
     this.role = new UserRoleHelper(client);
     this.presence = new UserPresenceHelper(client);

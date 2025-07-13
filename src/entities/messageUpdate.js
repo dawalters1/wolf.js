@@ -1,10 +1,8 @@
 import MessageEdited from './messageEdited.js';
 import MessageMetadata from './messageMetadata.js';
 
-export class Message {
+export class MessageUpdate {
   constructor (client, entity) {
-    this.id = entity.id;
-    this.flightId = entity.flightId;
     this.sourceUserId = entity.originator
       ? entity.originator.id
       : null;
@@ -13,7 +11,6 @@ export class Message {
       : null;
     this.isChannel = entity.isGroup;
     this.timestamp = entity.timestamp;
-    this.mimeType = entity.mimeType;
     this.content = entity.data.toString().trim() || '';
     this.metadata = entity.metadata
       ? new MessageMetadata(client, entity.metadata)
@@ -26,4 +23,4 @@ export class Message {
   }
 }
 
-export default Message;
+export default MessageUpdate;
