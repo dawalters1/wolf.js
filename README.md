@@ -170,13 +170,18 @@ export default async (client, command) => {
 
 Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/bot+approval?r=80280172) or [bot approval.ar](http://wolflive.com/bot+approval.ar?r=80280172)
 
-## Known Issues
+## Known Issues - Will be addressed in V3.0
 
-- Nothing at all ᴺᵒᵗʰᶦⁿᵍ ᵃᵗ ᵃˡˡ
+- Stage Client is trash
+- Members list handling can lead to abuse bars
+- Incorrect handling of server responses leading to abuse bars
 
-## Lacking Features
+## Lacking Features - Mostly will be addressed in V3.0
 
-- Nothing at all ᴺᵒᵗʰᶦⁿᵍ ᵃᵗ ᵃˡˡ
+- WOLFStar Pro/Content Creator following
+- APIKey Support (Upcoming 1.8.1 and 2.6.5 should support)
+- HardCoded command strings
+- TBD
 
 ## Contact
 
