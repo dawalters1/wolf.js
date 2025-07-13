@@ -5,7 +5,7 @@ import ChannelStatsTop from './channelStatsTop.js';
 import ChannelStatsTrend from './channelStatsTrend.js';
 
 export class ChannelStats extends BaseEntity {
-    constructor (client, entity) {
+  constructor (client, entity) {
     super(client);
 
     this.details = new ChannelStatsDetails(this.client, entity.details);

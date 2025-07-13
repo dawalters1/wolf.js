@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 class CharmExpired extends BaseEntity {
-    constructor (client, entity) {
+  constructor (client, entity) {
     super(client);
 
     this.id = entity.id;

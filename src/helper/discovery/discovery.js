@@ -1,9 +1,9 @@
 
 // TODO: determine the layout of this
-class TopicRecipeHelper {
+class DiscoveryHelper {
   constructor (client) {
     this.client = client;
   }
 }
 
-export default TopicRecipeHelper;
+export default DiscoveryHelper;

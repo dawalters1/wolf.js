@@ -2,7 +2,7 @@
 import BaseEntity from './baseEntity.js';
 
 class Charm extends BaseEntity {
-    constructor (client, data) {
+  constructor (client, data) {
     super(client);
 
     this.id = data.id;

@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 export class ChannelRoleUser extends BaseEntity {
-    constructor (client, entity) {
+  constructor (client, entity) {
     super(client);
 
     if ('additionalInfo' in entity) {

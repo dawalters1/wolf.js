@@ -9,7 +9,7 @@ class MessageEvent extends BaseEvent {
 
   async process (data) {
     const message = new Message(this.client, data);
-    // if (message.sourceUserId === this.client.me?.id && this.client.config.framework.messages.ignore.self) { return; }
+    if (message.sourceUserId === this.client.me?.id && this.client.config.framework.messages.ignore.self) { return; }
 
     switch (message.mimeType) {
       case MessageType.INTERACTIVE_MESSAGE_PACK:
@@ -19,7 +19,7 @@ class MessageEvent extends BaseEvent {
             ? this.client.me.extended.language
             : Language.ENGLISH} `)
           .replace('platform=PLATFORM', `platform=${this.client.config.framework.connection.query.device}`) // Replaces deviceType
-          .replace('deviceType=DEVICETYPE', 'deviceType=Unknown');
+          .replace('deviceType=DEVICETYPE', 'deviceType=wjs');
         break;
       default:
         break;
