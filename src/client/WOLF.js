@@ -20,7 +20,9 @@ import path, { dirname } from 'node:path';
 import PhraseHelper from '../helper/phrase/phrase.js';
 import RoleHelper from '../helper/role/role.js';
 import SecurityHelper from '../helper/security/security.js';
+import StoreHelper from '../helper/store/store.js';
 import TipHelper from '../helper/tip/tip.js';
+import TopicHelper from '../helper/topic/topic.js';
 import UserHelper from '../helper/user/user.js';
 import { UserPresence as UserPresenceType } from '../constants/index.js';
 import { Websocket } from './websocket/websocket.js';
@@ -60,7 +62,9 @@ class WOLF extends EventEmitter {
     this.phrase = new PhraseHelper(this);
     this.user = new UserHelper(this);
     this.security = new SecurityHelper(this);
+    this.store = new StoreHelper(this);
     this.tip = new TipHelper(this);
+    this.topic = new TopicHelper(this);
     this.role = new RoleHelper(this);
     this.metadata = new MetadataHelper(this);
   }

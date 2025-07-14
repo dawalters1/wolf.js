@@ -5,13 +5,13 @@ class StoreProduct extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.name = new Map([entity.languageId, entity.name]);
+    this.name = new Map([[entity.languageId, entity.name]]);
     this.name.set(entity.languageId, entity.name);
     this.targetType = entity.targetType;
     this.imageUrl = entity.imageUrl;
     this.credits = entity.credits;
     this.reputationLevel = entity.reputationLevel;
-    this.promotionText = new Map([entity.languageId, entity.promotionText]);
+    this.promotionText = new Map([[entity.languageId, entity.promotionText]]);
     this.isLimited = entity.isLimited;
     this.botId = entity.botId;
     this.charmId = entity.charmId;

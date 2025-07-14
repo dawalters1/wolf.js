@@ -24,7 +24,7 @@ class StoreProductProfile extends BaseEntity {
     this.durationList = new Set(entity.durationList.map(d => new StoreProductDuration(this.client, d)));
     this.imageList = new Set(entity.imageList.map(i => new StoreProductImage(this.client, i)));
     this.extraInfo = entity.extraInfo;
-    this.recipeId = new Map([entity.languageId, entity.recipeId]);
+    this.recipeId = new Map([[entity.languageId, entity.recipeId]]);
     this.languages = new Set([entity.languageId]);
   }
 

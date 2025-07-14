@@ -20,6 +20,12 @@ class BaseEntity {
   clone () {
     return _.clone(this);
   }
+
+  /** @internal */
+
+  json () {
+    return _.omit(this, 'client');
+  }
 }
 
 export default BaseEntity;

@@ -4,12 +4,12 @@ export class TopicRecipeAdditionalInfo extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
-    this.eTag = entity.eTag;
+    this.hash = entity.hash;
   }
 
   /** @internal */
   patch (entity) {
-    this.eTag = entity.eTag;
+    this.hash = entity.hash;
     return this;
   }
 }

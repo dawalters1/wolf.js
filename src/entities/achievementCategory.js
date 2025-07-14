@@ -5,7 +5,7 @@ export class AchievementCategory extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.name = new Map([entity.languageId, entity.name]);
+    this.name = new Map([[entity.languageId, entity.name]]);
     this.languages = new Set([entity.languageId]);
   }
 

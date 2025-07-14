@@ -7,6 +7,7 @@ import { validate } from '../../validator/index.js';
 class RoleHelper extends BaseHelper {
   async getById (roleId, languageId, opts) {
     roleId = Number(roleId) || roleId;
+    languageId = Number(languageId) || languageId;
 
     { // eslint-disable-line no-lone-blocks
       validate(roleId)
@@ -28,6 +29,7 @@ class RoleHelper extends BaseHelper {
 
   async getByIds (roleIds, languageId, opts) {
     roleIds = roleIds.map((channelId) => Number(channelId) || channelId);
+    languageId = Number(languageId) || languageId;
 
     { // eslint-disable-line no-lone-blocks
       validate(roleIds)
