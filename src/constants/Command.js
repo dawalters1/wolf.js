@@ -111,6 +111,9 @@ export const Command = {
   TIP_LEADERBOARD_GROUP_SUMMARY: 'tip leaderboard group summary',
   TIP_SUMMARY: 'tip summary',
 
+  TOPIC_PAGE_LAYOUT: 'topic page layout',
+  TOPIC_PAGE_RECIPE_LIST: 'topic page recipe list',
+
   WOLFSTAR_PROFILE: 'wolfstar profile'
 };
 export default Command;

@@ -157,7 +157,23 @@ export class Websocket {
         )
       );
 
-      return Object.assign({}, ...responses);
+      return responses.reduce((result, response) => {
+        const resBody = response.body;
+        const resultBody = result.body;
+
+        if (Array.isArray(resBody)) {
+          result.body = (Array.isArray(resultBody)
+            ? resultBody
+            : []).concat(resBody);
+        } else if (resBody instanceof Map) {
+          if (!(resultBody instanceof Map)) { result.body = new Map(); }
+          for (const [key, value] of resBody.entries()) {
+            result.body.set(key, value);
+          }
+        }
+
+        return result;
+      }, new WOLFResponse({ code: 207, body: [] }));
     }
 
     return emitOnce(requestBody);

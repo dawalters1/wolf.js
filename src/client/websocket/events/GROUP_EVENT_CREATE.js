@@ -11,7 +11,6 @@ class GroupEventCreateEvent extends BaseEvent {
 
     if (channel === null) { return; }
 
-    console.log(channel._events);
     if (!channel._events._fetched) { return; }
 
     this.client.emit(

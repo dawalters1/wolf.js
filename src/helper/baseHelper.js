@@ -1,9 +1,9 @@
 import CacheManager from '../managers/cacheManager.js';
 
 class BaseHelper {
-  constructor (client) {
+  constructor (client, ttl = null) {
     this.client = client;
-    this.cacheManager = new CacheManager();
+    this.cacheManager = new CacheManager(ttl);
   }
 
   get cache () {

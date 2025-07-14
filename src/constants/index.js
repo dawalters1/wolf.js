@@ -22,6 +22,7 @@ export * from './Search.js';
 export * from './TipDirection.js';
 export * from './TipPeriod.js';
 export * from './TipType.js';
+export * from './TopicPageRecipeType.js';
 export * from './UserFollowType.js';
 export * from './UserPresence.js';
 export * from './UserPrivilege.js';

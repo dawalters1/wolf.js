@@ -7,9 +7,9 @@ class Charm extends BaseEntity {
 
     this.id = data.id;
     this.cost = data.cost;
-    this.description = new Map([data.languageId, data.description]);
+    this.description = new Map([[data.languageId, data.description]]);
     this.imageUrl = data.imageUrl;
-    this.name = new Map([data.languageId, data.name]);
+    this.name = new Map([[data.languageId, data.name]]);
     this.productId = data.productId;
     this.languages = new Set([data.languageId]);
   }
