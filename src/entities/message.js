@@ -1,8 +1,17 @@
+import BaseEntity from './baseEntity.js';
+import ContextType from '../constants/ContextType.js';
 import MessageEdited from './messageEdited.js';
 import MessageMetadata from './messageMetadata.js';
 
-export class Message {
+export class Message extends BaseEntity {
+  /**
+   *
+   * @param {import('../client/WOLF.js').default} client
+   * @param {*} entity
+   */
   constructor (client, entity) {
+    super(client);
+
     this.id = entity.id;
     this.flightId = entity.flightId;
     this.sourceUserId = entity.originator
@@ -23,6 +32,39 @@ export class Message {
       : null;
 
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
+  }
+
+  async tip (tipCharms) {
+    if (!this.isChannel) { throw new Error(''); }
+
+    return this.client.tip.tip(
+      this.targetChannelId,
+      this.sourceUserId,
+      {
+        type: ContextType.MESSAGE,
+        timestamp: this.timestamp
+      },
+      tipCharms
+    );
+  }
+
+  async sendReply (content, opts) {
+    if (this.isChannel) {
+      return this.client.messaging.sendChannelMessage(this.targetChannelId, content, opts);
+    }
+    return this.client.messaging.sendPrivateMessage(this.sourceUserId, content, opts);
+  }
+
+  async delete () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.messaging.deleteMessage(this.targetChannelId, this.timestamp);
+  }
+
+  async restore () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.messaging.restoreMessage(this.targetChannelId, this.timestamp);
   }
 }
 

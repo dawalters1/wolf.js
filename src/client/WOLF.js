@@ -37,13 +37,13 @@ class WOLF extends EventEmitter {
     super();
     const baseConfig = config.util.toObject();
 
+    const frameworkConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
+
     const botConfig = fs.existsSync(path.join(process.cwd(), '/config/default.yaml'))
       ? yaml.load(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8'))
       : {};
 
-    const frameworkConfig = yaml.load(fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8'));
-
-    this.config = _.merge({}, baseConfig, botConfig, frameworkConfig);
+    this.config = _.merge({}, baseConfig, frameworkConfig, botConfig);
     this.config.get = config.get;
     this.multimedia = new Multimedia(this);
     this.websocket = new Websocket(this);

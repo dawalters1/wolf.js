@@ -50,6 +50,7 @@ export const Command = {
   GROUP_STATS: 'group stats',
 
   MESSAGE_SEND: 'message send',
+  MESSAGE_UPDATE: 'message update',
 
   MESSAGE_GROUP_SUBSCRIBE: 'message group subscribe',
   MESSAGE_GROUP_HISTORY_LIST: 'message group history list',
@@ -102,6 +103,8 @@ export const Command = {
 
   TIP_ADD: 'tip add',
   TIP_DETAIL: 'tip detail',
+  TIP_GROUP_SUBSCRIBE: 'tip group subscribe',
+  TIP_GROUP_UNSUBSCRIBE: 'tip group unsubscribe',
   TIP_LEADERBOARD_GLOBAL: 'tip leaderboard global',
   TIP_LEADERBOARD_GLOBAL_SUMMARY: 'tip leaderboard global summary',
   TIP_LEADERBOARD_GROUP: 'tip leaderboard group',

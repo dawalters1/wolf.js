@@ -36,8 +36,13 @@ class Validator {
     return this.#throwIf(typeof this.value !== 'number' || isNaN(this.value), message);
   }
 
+  // TODO: provide default value? isGreaterThan(num, mesage)
   isGreaterThanZero (message = 'Value must be greater than zero') {
     return this.#throwIf(typeof this.value !== 'number' || this.value <= 0, message);
+  }
+
+  isLessThanZero (message = 'Value must be greater than or equal to zero') {
+    return this.#throwIf(typeof this.value !== 'number' || this.value < 0, message);
   }
 
   isString (message = 'Value is not a string') {
@@ -136,6 +141,11 @@ class Validator {
         return this;
       },
 
+      isLessThanZero (message = 'Item at index {index} is not >= 0 ({value})') {
+        runEachValidation(item => validate(item).isLessThanZero(message), message);
+        return this;
+      },
+
       isString (message = 'Item at index {index} is not a string ({value})') {
         runEachValidation(item => validate(item).isString(message), message);
         return this;
@@ -159,6 +169,9 @@ class Validator {
 
     const actual = this.value;
 
+    const has = (obj, prop) =>
+      obj && typeof obj === 'object' && !Array.isArray(obj) && Object.prototype.hasOwnProperty.call(obj, prop);
+
     const check = (actual, expected, path = '') => {
       for (const key in expected) {
         const fullPath = path
@@ -167,12 +180,46 @@ class Validator {
         const expectedValue = expected[key];
         const actualValue = actual[key];
 
-        if (!(key in actual)) {
-          continue; // assume user did not want to include it, code will default value it
-        //  throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', 'is missing'));
+        if (has(expectedValue, '__required_if')) {
+          const { key: depKey, value: depValue } = expectedValue.__required_if;
+          const dependencyValue = depKey.split('.').reduce((obj, part) => obj?.[part], actual);
+
+          if (dependencyValue === depValue && !(key in actual)) {
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `is required because "${depKey}" is "${depValue}"`));
+          }
         }
 
-        if (expectedValue?.__match_type === 'any') {
+        if (has(expectedValue, '__not_required_if')) {
+          const { key: depKey, value: depValue } = expectedValue.__not_required_if;
+          const dependencyValue = depKey.split('.').reduce((obj, part) => obj?.[part], actual);
+
+          if (dependencyValue === depValue && (key in actual)) {
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `is not allowed because "${depKey}" is "${depValue}"`));
+          }
+        }
+
+        if (!(key in actual)) {
+          continue;
+        }
+
+        if (has(expectedValue, '__enum')) {
+          const enumValues = Object.values(expectedValue.__enum);
+          if (!enumValues.includes(actualValue)) {
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `should be one of [${enumValues.join(', ')}], got "${actualValue}"`));
+          }
+          continue;
+        }
+
+        if (has(expectedValue, '__match_type') && expectedValue.__match_type === 'any') {
           const ctor = expectedValue.constructor;
           const isMatch =
           (ctor === String && typeof actualValue === 'string') ||
@@ -181,15 +228,45 @@ class Validator {
           (actualValue instanceof ctor);
 
           if (!isMatch) {
-            throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
           }
           continue;
         }
 
-        if (expectedValue?.__match_type === 'regex') {
+        if (has(expectedValue, '__match_type') && expectedValue.__match_type === 'regex') {
           if (typeof actualValue !== 'string' || !expectedValue.regex.test(actualValue)) {
             throw new Error(`${message}: "${fullPath}" should match ${expectedValue.regex}, got "${actualValue}"`);
           }
+          continue;
+        }
+
+        if (typeof expectedValue === 'object' && expectedValue !== null && 'type' in expectedValue) {
+          const ctor = expectedValue.type;
+          const isMatch =
+          (ctor === String && typeof actualValue === 'string') ||
+          (ctor === Number && typeof actualValue === 'number') ||
+          (ctor === Boolean && typeof actualValue === 'boolean') ||
+          (actualValue instanceof ctor);
+
+          if (!isMatch) {
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
+          }
+
+          const nestedKeys = Object.keys(expectedValue).filter(k =>
+            !['__required_if', '__enum', '__match_type', 'regex', 'type', '__not_required_if'].includes(k)
+          );
+
+          if (nestedKeys.length > 0) {
+            const nestedSchema = Object.fromEntries(nestedKeys.map(k => [k, expectedValue[k]]));
+            check(actualValue, nestedSchema, fullPath);
+          }
+
           continue;
         }
 
@@ -202,7 +279,10 @@ class Validator {
           (actualValue instanceof ctor);
 
           if (!isMatch) {
-            throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
+            throw new Error(message
+              .replace('{parameter}', key)
+              .replace('{value}', key)
+              .replace('{error}', `should be a ${ctor.name}, got ${typeof actualValue}`));
           }
           continue;
         }
@@ -213,7 +293,10 @@ class Validator {
         }
 
         if (actualValue !== expectedValue) {
-          throw new Error(message.replace('{parameter}', key).replace('{value}', key).replace('{error}', `expected "${expectedValue}", got "${actualValue}"`));
+          throw new Error(message
+            .replace('{parameter}', key)
+            .replace('{value}', key)
+            .replace('{error}', `expected "${expectedValue}", got "${actualValue}"`));
         }
       }
     };

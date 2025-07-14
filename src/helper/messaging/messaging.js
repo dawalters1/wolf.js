@@ -4,10 +4,12 @@ import { Command } from '../../constants/Command.js';
 import { EmbedType } from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
 import Link from '../../entities/link.js';
+import Message from '../../entities/message.js';
 import { MessageType } from '../../constants/index.js';
 import { nanoid } from 'nanoid';
 import StatusCodes from 'http-status-codes';
 import urlRegexSafe from 'url-regex-safe';
+import { validate } from '../../validator/index.js';
 import WOLFResponse from '../../entities/WOLFResponse.js';
 
 const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
@@ -230,14 +232,14 @@ class MessagingHelper {
     );
   }
 
-  async _sendMessage (targetId, isChannel, content, opts) {
+  async #_sendMessage (targetId, isChannel, content, opts) {
     const mimeType = Buffer.isBuffer(content)
       ? (await fileTypeFromBuffer(content))?.mime
       : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client.config.framework.mmsEndpoints.message;
-      // verification
+      // TODO: verification
 
       return this.client.multimedia.post(
         messageConfig,
@@ -272,11 +274,87 @@ class MessagingHelper {
   }
 
   async sendChannelMessage (channelId, content, opts) {
-    return this._sendMessage(channelId, true, content, opts);
+    return this.#_sendMessage(channelId, true, content, opts);
   }
 
   async sendPrivateMessage (userId, content, opts) {
-    return this._sendMessage(userId, false, content, opts);
+    return this.#_sendMessage(userId, false, content, opts);
+  }
+
+  async deleteMessage (targetId, timestamp, isChannel = true) {
+    targetId = Number(targetId) || targetId;
+    timestamp = Number(timestamp) || timestamp;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(targetId)
+        .isNotNullOrUndefined(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is null or undefined`)
+        .isValidNumber(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is not a valid number`)
+        .isGreaterThanZero(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
+
+      validate(timestamp)
+        .isNotNullOrUndefined(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is null or undefined`)
+        .isValidNumber(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is not a valid number`)
+        .isGreaterThanZero(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+
+      validate(isChannel)
+        .isBoolean(`MessagingHelper.deleteMessage() parameter, isChannel: ${isChannel} is not a boolean`);
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.MESSAGE_UPDATE,
+      {
+        body: {
+          isGroup: isChannel,
+          metadata: {
+            isDeleted: true
+          },
+          recipientId: targetId,
+          timestamp
+        }
+      }
+    );
+
+    response.body = new Message(this.client, response.body);
+
+    return response;
+  }
+
+  async restoreMessage (targetId, timestamp, isChannel = true) {
+    targetId = Number(targetId) || targetId;
+    timestamp = Number(timestamp) || timestamp;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(targetId)
+        .isNotNullOrUndefined(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is null or undefined`)
+        .isValidNumber(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is not a valid number`)
+        .isGreaterThanZero(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
+
+      validate(timestamp)
+        .isNotNullOrUndefined(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is null or undefined`)
+        .isValidNumber(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is not a valid number`)
+        .isGreaterThanZero(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+
+      validate(isChannel)
+        .isBoolean(`MessagingHelper.restoreMessage() parameter, isChannel: ${isChannel} is not a boolean`);
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.MESSAGE_UPDATE,
+      {
+        body: {
+          isGroup: isChannel,
+          metadata: {
+            isDeleted: false
+          },
+          recipientId: targetId,
+          timestamp
+        }
+      }
+    );
+
+    response.body = new Message(this.client, response.body);
+
+    return response;
   }
 }
 
