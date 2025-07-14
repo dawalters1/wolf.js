@@ -23,9 +23,14 @@ class ChannelMemberHelper {
         const response = await this.client.websocket.emit(
           command,
           {
+            headers: {
+              version: listConfig.version
+            },
             body: {
-              id: channel.id,
-              limit: listConfig.limit,
+              [listConfig.key]: channel.id,
+              limit: 'limit' in listConfig
+                ? listConfig.limit
+                : undefined,
               after: listConfig.batchType === 'after'
                 ? result.at(-1)?.id
                 : undefined,

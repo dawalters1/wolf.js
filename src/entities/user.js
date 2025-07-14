@@ -3,8 +3,8 @@ import CacheManager from '../managers/cacheManager.js';
 import ExpiringProperty from '../managers/expiringProperty.js';
 import IconInfo from './iconInfo.js';
 import UserExtended from './userExtended.js';
+import { UserFollowerType, UserPrivilege } from '../constants/index.js';
 import UserPresence from './userPresence.js';
-import { UserPrivilege } from '../constants/index.js';
 import UserSelectedCharmList from './userSelectedCharmList.js';
 
 export class User extends BaseEntity {
@@ -50,6 +50,22 @@ export class User extends BaseEntity {
     };
   }
 
+  async follow () {
+    return this.client.user.followers.follow(this.id);
+  }
+
+  async unfollow () {
+    return this.client.user.followers.unfollow(this.id);
+  }
+
+  async getFollowerCount () {
+    return this.client.user.followers.count(this.id, UserFollowerType.FOLLOWER);
+  }
+
+  async getFollowingCount () {
+    return this.client.user.followers.count(this.id, UserFollowerType.FOLLOWING);
+  }
+
   async getAchievements (parentId) {
     return this.client.achievement.user.get(this.id, parentId);
   }
@@ -68,6 +84,10 @@ export class User extends BaseEntity {
 
   async getWOLFStarsProfile () {
     return this.client.user.wolfstar.getById(this.id);
+  }
+
+  async sendPrivateMessage (content, opts) {
+    return this.client.messaging.sendPrivateMessage(this.id, content, opts);
   }
 
   /** @internal */

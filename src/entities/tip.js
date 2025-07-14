@@ -1,12 +1,19 @@
+import BaseEntity from './baseEntity.js';
+import TipCharm from './tipCharm.js';
+import TipContext from './tipContext.js';
 
-/**
- * A class representing a Tip with implementation details to be added
- **
- * @class Tip
- * @typedef {Tip}
- */
-class Tip {
-  // Add implementation here as needed
+class Tip extends BaseEntity {
+  constructor (client, entity) {
+    super(client);
+
+    this.charmList = entity?.charmList.map((charm) => new TipCharm(client, charm)) ?? [];
+    this.channelId = entity?.groupId;
+    this.isChannel = !!this.channelId;
+    this.sourceUserId = entity?.sourceSubscriberId;
+    this.userId = entity?.subscriberId;
+    this.context = new TipContext(client, entity?.context);
+    this.version = entity.version;
+  }
 }
 
 export default Tip;

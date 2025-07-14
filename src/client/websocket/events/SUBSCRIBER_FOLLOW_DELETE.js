@@ -1,12 +1,5 @@
 import BaseEvent from './baseEvent.js';
 
-const body = {
-  id: 0,
-  additionalInfo: {
-    hash: ''
-  }
-};
-
 class SubscriberFollowDeleteEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber follow delete');

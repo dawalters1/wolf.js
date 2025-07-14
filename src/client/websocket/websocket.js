@@ -132,6 +132,7 @@ export class Websocket {
           if (!response.success) {
             const retryCodes = [408, 429, 500, 502, 504];
             if (!retryCodes.includes(response.code) || attempt >= 3) {
+              console.log(command, body);
               return reject(response);
             }
 
@@ -165,7 +166,7 @@ export class Websocket {
   async connect () {
     if (!this.socket) { await this._init(); }
     if (this.socket?.connected) { return; }
-    console.log('CONNECTING');
+
     return this.socket?.connect();
   }
 

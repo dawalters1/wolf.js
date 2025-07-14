@@ -3,7 +3,10 @@ import { StatusCodes } from 'http-status-codes';
 export class WOLFResponse {
   constructor (entity) {
     this.code = entity.code;
-    this.body = entity.body;
+
+    if (entity.body) {
+      this.body = entity.body;
+    }
 
     if (entity.headers) {
       this.headers = entity.headers instanceof Map

@@ -12,7 +12,7 @@ export class WelcomeEvent extends BaseEvent {
   }
 
   async synchronise () {
-    const { channel, notification, messaging } = this.client.config.framework.subscriptions;
+    const { channel, notification, messaging, tipping } = this.client.config.framework.subscriptions;
 
     const sessionContext = {
       user: await this.client.user.getById(this.client.config.framework.login.userId)
@@ -33,6 +33,9 @@ export class WelcomeEvent extends BaseEvent {
         : undefined],
       [null, messaging.private
         ? this.client.messaging._subscribeToPrivate()
+        : undefined],
+      [null, tipping.channel
+        ? this.client.tip._subscribeToChannel()
         : undefined]
     ];
 

@@ -9,6 +9,14 @@ export class UserFollow extends BaseEntity {
     this.hash = entity.hash;
   }
 
+  async unfollow () {
+    return await this.client.user.followers.unfollow(this.userId);
+  }
+
+  async toggleNotification () {
+    return await this.client.user.followers.update(this.userId, !this.notification);
+  }
+
   /** @internal */
   patch (entity) {
     this.userId = entity.subscriberId;

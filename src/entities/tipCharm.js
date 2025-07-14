@@ -6,11 +6,13 @@ class TipCharm extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.quanitity = entity.quanitity; // Note: typo in "quantity" is preserved
-    this.charmId = entity.charmId;
-    this.credits = entity.credits;
-    this.magnitude = entity.magnitude;
-    this.user = new IdHash(this.client, entity.subscriber);
+    this.quantity = entity.quantity ?? null;
+    this.charmId = entity.charmId ?? null;
+    this.credits = entity.credits ?? null;
+    this.magnitude = entity.magnitude ?? null;
+    this.user = entity.subscriber
+      ? new IdHash(this.client, entity.subscriber)
+      : null;
   }
 }
 
