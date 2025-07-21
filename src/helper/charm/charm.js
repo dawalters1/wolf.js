@@ -51,8 +51,8 @@ class CharmHelper extends BaseHelper {
     const charmsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedCharms = this.cache.getAll(charmIds)
-        .filter(charm => charm !== null && charm.hasLanguage(languageId));
+      const cachedCharms = this.cache.getAll(charmIds, languageId)
+        .filter(charm => charm !== null);
       cachedCharms.forEach(charm => charmsMap.set(charm.id, charm));
     }
 
@@ -71,7 +71,7 @@ class CharmHelper extends BaseHelper {
 
       [...response.body.values()].filter(charmResponse => charmResponse.success)
         .forEach(charmResponse => {
-          const existing = this.cache.get(charmResponse.body.id);
+          const existing = this.cache.get(charmResponse.body.id, languageId);
 
           charmsMap.set(
             charmResponse.body.id,

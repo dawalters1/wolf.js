@@ -1,6 +1,6 @@
 import Blacklist from '../../entities/blacklist.js';
+import CacheManager from '../../managers/cacheManager.js';
 import { Command } from '../../constants/Command.js';
-import ExpiryMap from 'expiry-map';
 import Metadata from '../../entities/metadata.js';
 import StatusCodes from 'http-status-codes';
 import { validate } from '../../validator/index.js';
@@ -8,8 +8,8 @@ import { validate } from '../../validator/index.js';
 class MetadataHelper {
   constructor (client) {
     this.client = client;
-    this._blacklist = new ExpiryMap(180);
-    this._metadata = new ExpiryMap(60);
+    this._blacklist = new CacheManager(180);
+    this._metadata = new CacheManager(60);
   }
 
   async metadata (url) {
@@ -50,8 +50,8 @@ class MetadataHelper {
     }
   }
 
-  async urlBlacklist () {
-    if (this._blacklist.size) {
+  async urlBlacklist (opts) {
+    if (!opts?.forceNew && this._blacklist.fetched) {
       return [...this._blacklist.values()];
     }
 
@@ -59,11 +59,12 @@ class MetadataHelper {
       Command.METADATA_URL_BLACKLIST
     );
 
-    response.body.forEach((serverBlacklist) => {
-      this._blacklist.set(serverBlacklist.id, new Blacklist(this.client, serverBlacklist));
-    });
+    this._blacklist.clear();
+    this._blacklist.fetched = true;
 
-    return [...this._blacklist.values()];
+    return this._blacklist.setAll(
+      response.body.map((serverBlacklist) => new Blacklist(this.client, serverBlacklist))
+    );
   }
 }
 

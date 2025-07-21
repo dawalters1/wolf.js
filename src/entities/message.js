@@ -23,7 +23,7 @@ export class Message extends BaseEntity {
     this.isChannel = entity.isGroup;
     this.timestamp = entity.timestamp;
     this.mimeType = entity.mimeType;
-    this.content = entity.data.toString().trim() || '';
+    this.body = entity.data.toString().trim() || '';
     this.metadata = entity.metadata
       ? new MessageMetadata(client, entity.metadata)
       : null;
@@ -32,6 +32,17 @@ export class Message extends BaseEntity {
       : null;
 
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
+    this.bodyParts = this.body?.split(this.client.SPLIT_REGEX)?.filter(Boolean) ?? [];
+  }
+
+  async getUser () {
+    return this.client.user.getById(this.sourceUserId);
+  }
+
+  async getChannel () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.channel.getById(this.targetChannelId);
   }
 
   async tip (tipCharms) {

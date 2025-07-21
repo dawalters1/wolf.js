@@ -18,9 +18,9 @@ class ChannelCategoryHelper extends BaseHelper {
         .isValidObject({ forceNew: Boolean }, 'ChannelCategoryHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew) {
-      const cachedCategories = [...this.cache.values()];
+      const cachedCategories = this.cache.values().filter((category) => category.languageId === languageId);
 
-      if (cachedCategories.length && cachedCategories.every(cat => cat.hasLanguage(languageId))) {
+      if (cachedCategories.length) {
         return cachedCategories;
       }
     }
@@ -35,7 +35,7 @@ class ChannelCategoryHelper extends BaseHelper {
     );
 
     return response.body.map(serverCategory => {
-      const existing = this.cache.get(serverCategory.id);
+      const existing = this.cache.get(serverCategory.id, languageId);
 
       return this.cache.set(
         existing

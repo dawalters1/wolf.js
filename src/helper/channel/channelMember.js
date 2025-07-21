@@ -5,6 +5,7 @@ import { Command } from '../../constants/Command.js';
 import { StatusCodes } from 'http-status-codes';
 import { validate } from '../../validator/index.js';
 
+// TODO: if we disconnect from the server briefly all this cache is lost, refactor channel and this so that this is kept
 class ChannelMemberHelper {
   constructor (client) {
     this.client = client;
@@ -93,13 +94,13 @@ class ChannelMemberHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`ChannelMemberHelper.getMember() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`ChannelMemberHelper.getMember() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelMemberHelper.getMember() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`ChannelMemberHelper.getList() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`ChannelMemberHelper.getList() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`ChannelMemberHelper.getList() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(list)
-        .isNotNullOrUndefined(`AchievementHelper.getByIds() parameter, list: ${list} is null or undefined`)
-        .isValidConstant(ChannelMemberListType, `AchievementHelper.getByIds() parameter, list: ${list} is not valid`);
+        .isNotNullOrUndefined(`AchievementHelper.getList() parameter, list: ${list} is null or undefined`)
+        .isValidConstant(ChannelMemberListType, `AchievementHelper.getList() parameter, list: ${list} is not valid`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (!channel) { throw new Error(`Channel ${channelId} not found`); }

@@ -15,8 +15,8 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
 const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
 const isValidUrl = (url) => urlRegex.test(url);
 
-const getAds = (client, content) =>
-  [...content.matchAll(/(?:(?<!\d|\p{Letter}))(\[(.+?)\])(?:(?!\(.+?\)|\d|\p{Letter}))/gus)].map(ad => new Ad(client, ad));
+const getAds = (client, body) =>
+  [...body.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)].map(ad => new Ad(client, ad));
 
 const getLinks = (client, content) => {
   const urls = content.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
@@ -107,16 +107,16 @@ const getEmbedData = async (client, data, opts) => {
   return undefined;
 };
 
-const buildMessages = async (client, recipient, isChannel, content, opts) => {
-  if (opts?.formatting?.success) { content = `(Y) ${content}`; } else if (opts?.formatting?.failed) { content = `(N) ${content}`; }
+const buildMessages = async (client, recipient, isChannel, body, opts) => {
+  if (opts?.formatting?.success) { body = `(Y) ${body}`; } else if (opts?.formatting?.failed) { body = `(N) ${body}`; }
 
-  if (opts?.formatting?.alert) { content = `/alert ${content}`; } else if (opts?.formatting?.me) { content = `/me ${content}`; }
+  if (opts?.formatting?.alert) { body = `/alert ${body}`; } else if (opts?.formatting?.me) { body = `/me ${body}`; }
 
-  content = content.toString().trim();
+  body = body.toString().trim();
   let offset = 0;
 
-  let developerInjectedLinks = [...content.matchAll(/\[(.+?)\]\((.+?)\)/gu)].reduce((results, match) => {
-    content = content.replace(match[0], match[1]);
+  let developerInjectedLinks = [...body.matchAll(/\[(.+?)\]\((.+?)\)/gu)].reduce((results, match) => {
+    body = body.replace(match[0], match[1]);
     results.push({
       start: match.index - offset,
       end: match.index + match[1].length - offset,
@@ -131,23 +131,23 @@ const buildMessages = async (client, recipient, isChannel, content, opts) => {
 
   while (true) {
     const overflowDeveloperLink = developerInjectedLinks.find(link => link.start < 1000 && link.end > 1000);
-    const overflowAd = getAds(client, content)?.find(ad => ad.start < 1000 && ad.end > 1000);
-    const overflowLink = getLinks(client, content)?.find(link => link.start < 1000 && link.end > 1000);
+    const overflowAd = getAds(client, body)?.find(ad => ad.start < 1000 && ad.end > 1000);
+    const overflowLink = getLinks(client, body)?.find(link => link.start < 1000 && link.end > 1000);
 
     const splitIndex = (
       overflowDeveloperLink?.start ??
       overflowAd?.start ??
       overflowLink?.start ??
       (() => {
-        if (content.length < 1000) { return content.length; }
-        const index = content.lastIndexOf(' ', 1000);
+        if (body.length < 1000) { return body.length; }
+        const index = body.lastIndexOf(' ', 1000);
         return index === -1
           ? 1000
           : index;
       })()
     );
 
-    const chunk = content.slice(0, splitIndex).trim();
+    const chunk = body.slice(0, splitIndex).trim();
 
     const ads = getAds(client, chunk);
     const links = [
@@ -170,14 +170,14 @@ const buildMessages = async (client, recipient, isChannel, content, opts) => {
       embeds
     });
 
-    if (chunk.length === content.length) { break; }
+    if (chunk.length === body.length) { break; }
 
     embedsAttached ||= !!(embeds?.length);
-    content = (opts?.formatting?.alert
+    body = (opts?.formatting?.alert
       ? '/alert '
       : opts?.formatting?.me
         ? '/me '
-        : '') + content.slice(chunk.length).trim();
+        : '') + body.slice(chunk.length).trim();
 
     developerInjectedLinks = developerInjectedLinks
       .filter(l => l.start >= chunk.length)

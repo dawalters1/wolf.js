@@ -326,6 +326,8 @@ class ChannelHelper extends BaseHelper {
     );
   }
 
+  // TODO: if we disconnect from the server, all this cache is lost, rework this so that inChannel channels are not lost upon reconnect and
+  // are handled appropriately upon reconnection
   async list (opts) {
     { // eslint-disable-line no-lone-blocks
       validate(opts)

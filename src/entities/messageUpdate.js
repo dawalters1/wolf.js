@@ -11,7 +11,7 @@ export class MessageUpdate {
       : null;
     this.isChannel = entity.isGroup;
     this.timestamp = entity.timestamp;
-    this.content = entity.data.toString().trim() || '';
+    this.body = entity.data.toString().trim() || '';
     this.metadata = entity.metadata
       ? new MessageMetadata(client, entity.metadata)
       : null;

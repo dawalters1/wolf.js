@@ -23,7 +23,7 @@ class CommandManager {
     this.client.on('message', async (message) => {
       const ignoreSettings = this.client.config.framework.commands.ignore;
 
-      if (!message.content) { return; }
+      if (!message.body) { return; }
 
       if (this.client.banned.isBanned(message.sourceUserId)) { return; }
 
@@ -33,7 +33,7 @@ class CommandManager {
         this.commands,
         {
           isChannel: message.isChannel,
-          argument: message.content,
+          body: message.body,
           targetChannelId: message.isChannel
             ? message.targetChannelId
             : undefined,
@@ -65,7 +65,7 @@ class CommandManager {
   }
 
   _getCommand (commands, context) {
-    const argument = context.argument.split(this.client.SPLIT_REGEX)[0];
+    const argument = context.body.split(this.client.SPLIT_REGEX)[0];
 
     for (const command of commands) {
       const isChannel = context.isChannel && command.commandCallbackTypes.includes(Command.getCallback.CHANNEL);
@@ -81,12 +81,13 @@ class CommandManager {
         : [command.key];
 
       const matchedInput = matchable.find(match =>
-        isEqual(match?.value ?? match, argument)
+        this.client.utility.string.isEqual(match?.value ?? match, argument)
       );
 
+      // console.log(context);
       if (!matchedInput) { continue; }
 
-      context.argument = context.argument.slice((matchedInput?.value ?? matchedInput).length).trim();
+      context.body = context.body.slice((matchedInput?.value ?? matchedInput).length).trim();
       context.language = context.language ?? matchedInput.language ?? undefined;
 
       context.callback = isBoth
@@ -112,7 +113,7 @@ class CommandManager {
   }
 
   isCommand (message) {
-    const argument = message.content.split(this.client.SPLIT_REGEX)[0];
+    const argument = message.body.split(this.client.SPLIT_REGEX)[0];
 
     return this.commands.some(command => {
       const matchable = this.usePhrases

@@ -1,6 +1,6 @@
 {
   "name": "wolf.js",
-  "version": "2.6.4",
+  "version": "3.0.0-alpha1",
   "description": "An unofficial Node.js API for WOLF (AKA Palringo).",
   "main": "index.js",
   "typings": "typings/index.d.js",
@@ -48,6 +48,7 @@
     "aws4-axios": "^3.4.0",
     "axios": "^1.9.0",
     "bull": "^4.16.5",
+    "cache-manager": "^7.0.1",
     "command-exists-promise": "^2.0.2",
     "config": "^4.0.0",
     "expiry-map": "^2.0.0",
@@ -75,7 +76,6 @@
     "@types/lodash": "^4.17.17",
     "@types/node": "^24.0.3",
     "@types/url-regex-safe": "^1.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.34.0",
     "bun": "^1.2.16",
     "chai": "^5.2.0",
     "eslint": "^9.29.0",

@@ -50,8 +50,8 @@ class RoleHelper extends BaseHelper {
     const roleMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedRoles = this.cache.getAll(roleIds)
-        .filter((role) => role !== null && role.hasLanguage(languageId));
+      const cachedRoles = this.cache.getAll(roleIds, languageId)
+        .filter((role) => role !== null);
 
       cachedRoles.forEach((role) => roleMap.set(role.id, role));
     }
@@ -71,7 +71,7 @@ class RoleHelper extends BaseHelper {
 
       [...response.body.entries()].filter(([_, res]) => res.success)
         .forEach(([roleId, res]) => {
-          const existing = this.cache.get(roleId);
+          const existing = this.cache.get(roleId, languageId);
 
           roleMap.set(
             roleId,

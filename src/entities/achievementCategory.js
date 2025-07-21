@@ -5,23 +5,18 @@ export class AchievementCategory extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.name = new Map([[entity.languageId, entity.name]]);
-    this.languages = new Set([entity.languageId]);
+    this.name = entity.name;
   }
 
   /** @internal */
   patch (entity) {
     this.id = entity.id;
-    this.name.set(entity.languageId, entity.name);
-    this.languages.add(entity.languageId);
+    this.name = entity.name;
 
     return this;
   }
 
-  /** @internal */
-  hasLanguage (languageId) {
-    return this.languages.has(languageId);
-  }
+
 }
 
 export default AchievementCategory;

@@ -24,6 +24,10 @@ class Validator {
     return this;
   }
 
+  isInstanceOf (instance, message = 'Value is not instance of') {
+    return this.#throwIf(!(this.value instanceof instance), message);
+  }
+
   isNotNullOrUndefined (message = 'Value is null or undefined') {
     return this.#throwIf(this.value === null || this.value === undefined, message);
   }
@@ -95,6 +99,10 @@ class Validator {
     return this.#throwIf(!Object.values(constants).includes(this.value), message);
   }
 
+  isInList (keys, message = 'Value is not valid') {
+    return this.#throwIf(!keys.includes(this.value), message);
+  }
+
   isValidArray (message = 'Value is not a valid array') {
     return this.#throwIf(!Array.isArray(this.value), message);
   }
@@ -126,6 +134,10 @@ class Validator {
     }
 
     return {
+      isInstanceOf (instance, message = 'Item is not instance of') {
+        runEachValidation(item => validate(item).isInstanceOf(instance, message), message);
+        return this;
+      },
       isNotNullOrUndefined (message = 'Item at index {index} is null or undefined ({value})') {
         runEachValidation(item => validate(item).isNotNullOrUndefined(message), message);
         return this;

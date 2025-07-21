@@ -5,27 +5,21 @@ export class Role extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.description = new Map([[entity.languageId, entity.description]]);
+    this.languageId = entity.languageId;
+    this.description = entity.description;
     this.emojiUrl = entity.emojiUrl;
-    this.name = new Map([[entity.languageId, entity.name]]);
+    this.name = entity.name;
     this.hexColur = entity.hexColur;
-    this.languages = new Set([entity.languageId]);
   }
 
   /** @internal */
   patch (entity) {
     this.id = entity.id;
-    this.description.set(entity.languageId, entity.description);
+    this.description = entity.description;
     this.emojiUrl = entity.emojiUrl;
-    this.name.set(entity.languageId, entity.name);
+    this.name = entity.name;
     this.hexColur = entity.hexColur;
-    this.languages.add(entity.languageId);
 
     return this;
-  }
-
-  /** @internal */
-  hasLanguage (languageId) {
-    return this.languages.has(languageId);
   }
 }

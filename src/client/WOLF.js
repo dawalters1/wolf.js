@@ -25,6 +25,7 @@ import TipHelper from '../helper/tip/tip.js';
 import TopicHelper from '../helper/topic/topic.js';
 import UserHelper from '../helper/user/user.js';
 import { UserPresence as UserPresenceType } from '../constants/index.js';
+import Utility from '../utilities/index.js';
 import { Websocket } from './websocket/websocket.js';
 import yaml from 'js-yaml';
 
@@ -46,6 +47,8 @@ class WOLF extends EventEmitter {
       : {};
 
     this.config = _.merge({}, baseConfig, frameworkConfig, botConfig);
+
+    this.utility = new Utility(this);
     this.config.get = config.get;
     this.multimedia = new Multimedia(this);
     this.websocket = new Websocket(this);
@@ -77,16 +80,30 @@ class WOLF extends EventEmitter {
     return /[\n\t,،\s+]/g;
   }
 
-  async login (email, password, apiKey, v3Token) {
+  async login (email, password, opts) {
     if (this.loggedIn) { return; }
+
+    // Assume Configuration
+    if (email === undefined && password === undefined) {
+      email = this.config.framework.login?.email;
+      password = this.config.framework.login?.password;
+
+      opts = {
+        token: this.config.framework.login?.token,
+        apiKey: this.config.framework.login?.apiKey,
+        state: this.config.framework.login?.onlineState
+      };
+    }
 
     this.config.framework.login = {
       username: email,
       password,
-      token: v3Token ?? `wjs-${nanoid()}`,
-      apiKey,
-      state: UserPresenceType.AWAY
+      token: opts?.token ?? `wjs-${nanoid()}`,
+      apiKey: opts?.apiKey,
+      state: opts?.onlineState ?? UserPresenceType.ONLINE
     };
+
+    // Validation
 
     return this.websocket.connect();
   }

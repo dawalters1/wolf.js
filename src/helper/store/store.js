@@ -1,5 +1,6 @@
 import { Command } from '../../constants/Command.js';
 import StoreProductHelper from './storeProduct.js';
+import { validate } from '../../validator/index.js';
 
 class StoreHelper {
   constructor (client) {
@@ -8,8 +9,13 @@ class StoreHelper {
     this._balance = -1;
   }
 
-  async balance () {
-    if (this._balance >= 0) {
+  async balance (opts) {
+    { // eslint-disable-line no-lone-blocks
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ forceNew: Boolean }, 'StoreProductProfileHelper.getProductProfile() parameter, opts.{parameter}: {value} {error}');
+    }
+    if (!opts.forceNew && this._balance >= 0) {
       return this._balance;
     }
 

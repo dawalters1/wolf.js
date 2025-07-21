@@ -1,11 +1,9 @@
 import ExpiryMap from 'expiry-map';
 
-const getKeyProperty = (obj) => {
-  const properties = Object.getOwnPropertyNames(obj);
+const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 
-  return properties[1];
-};
-
+// TODO: refactor/restructure to better support languages, key/languageId approach seems eh
+// TODO: respect maxAge provided by the server
 class CacheManager {
   constructor (ttl = null) {
     this.ttl = ttl;
@@ -14,6 +12,12 @@ class CacheManager {
       : new ExpiryMap(ttl * 1000);
     this._fetched = false;
     this.timeout = undefined;
+  }
+
+  #createKey (key, languageId = null) {
+    return languageId
+      ? `${key}.languageId:${languageId}`
+      : key;
   }
 
   get fetched () {
@@ -42,7 +46,8 @@ class CacheManager {
       }, this.ttl * 1000);
     }
 
-    const key = value[getKeyProperty(value)];
+    const key = this.#createKey(value[getKeyProperty(value)], value.languageId ?? null);
+
     const existing = this.get(key);
 
     if (existing?.patch) {
@@ -58,28 +63,28 @@ class CacheManager {
     return values.map((value) => this.set(value));
   }
 
-  get (key) {
-    return this.store.get(key) ?? null;
+  get (key, languageId = null) {
+    return this.store.get(this.#createKey(key, languageId)) ?? null;
   }
 
-  getAll (keys) {
-    return keys.map((key) => this.get(key));
+  getAll (keys, languageId = null) {
+    return keys.map((key) => this.get(key, languageId));
   }
 
-  has (key) {
-    return this.store.has(key);
+  has (key, languageId = null) {
+    return this.store.has(this.#createKey(key, languageId));
   }
 
-  mhas (keys) {
-    return keys.map((key) => this.has(key));
+  mhas (keys, languageId = null) {
+    return keys.map((key) => this.has(key, languageId));
   }
 
-  delete (key) {
-    return this.store.delete(key);
+  delete (key, languageId = null) {
+    return this.store.delete(this.#createKey(key, languageId));
   }
 
-  deleteAll (keys) {
-    return keys.map((key) => this.delete(key));
+  deleteAll (keys, languageId = null) {
+    return keys.map((key) => this.delete(key, languageId));
   }
 
   clear () {

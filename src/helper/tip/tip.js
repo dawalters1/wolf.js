@@ -66,14 +66,14 @@ class TipHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`TipHelper.tip() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`TipHelper.tip() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.tip() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`TipHelper.getDetails() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`TipHelper.getDetails() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`TipHelper.getDetails() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamp)
-        .isNotNullOrUndefined(`TipHelper.tip() parameter, timestamp: ${timestamp} is null or undefined`)
-        .isValidNumber(`TipHelper.tip() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.tip() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isNotNullOrUndefined(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is null or undefined`)
+        .isValidNumber(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is not a valid number`)
+        .isGreaterThanZero(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is less than or equal to zero`);
     }
 
     try {
@@ -131,16 +131,16 @@ class TipHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`TipHelper.getSummary() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`TipHelper.getSummary() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getSummary() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`TipHelper.getSummaries() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`TipHelper.getSummaries() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`TipHelper.getSummaries() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamps)
-        .isValidArray(`TipHelper.getSummary() parameter, timestamps: ${timestamps} is not a valid array`)
+        .isValidArray(`TipHelper.getSummaries() parameter, timestamps: ${timestamps} is not a valid array`)
         .each()
-        .isNotNullOrUndefined('TipHelper.getSummary() parameter, timestamp[{index}]: {value} is null or undefined')
-        .isValidNumber('TipHelper.getSummary() parameter, timestamp[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('TipHelper.getSummary() parameter, timestamp[{index}]: {value} is less than or equal to zero');
+        .isNotNullOrUndefined('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is null or undefined')
+        .isValidNumber('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is not a valid number')
+        .isGreaterThanZero('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is less than or equal to zero');
     }
     const response = await this.client.websocket.emit(
       Command.TIP_SUMMARY,

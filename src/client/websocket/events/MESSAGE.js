@@ -13,7 +13,7 @@ class MessageEvent extends BaseEvent {
 
     switch (message.mimeType) {
       case MessageType.INTERACTIVE_MESSAGE_PACK:
-        message.content = message.content
+        message.body = message.body
           .replace('token=TOKEN', `token=${this.client.config.framework.login.token}`)
           .replace('language=LANGUAGE', `language=${this.client.me && this.client.me.extended
             ? this.client.me.extended.language

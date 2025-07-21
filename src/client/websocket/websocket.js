@@ -51,6 +51,8 @@ export class Websocket {
 
     if (apiKey === undefined) {
       console.warn('APIKey will be required to login in the future');
+    } else {
+      console.log(apiKey);
     }
 
     const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined

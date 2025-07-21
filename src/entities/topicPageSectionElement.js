@@ -12,20 +12,6 @@ export class TopicPageSectionElement extends BaseEntity {
       : null;
     this.type = entity.type;
   }
-
-  async getRecipe () {
-    if (this.properties && this.properties.recipe !== null) {
-      return this.properties.getRecipe();
-    }
-    throw new Error('No recipe');
-  }
-
-  async getRecipeProfiles () {
-    if (this.properties && this.properties.recipe !== null) {
-      return this.properties.getRecipeProfiles();
-    }
-    throw new Error('No recipe');
-  }
 }
 
 export default TopicPageSectionElement;

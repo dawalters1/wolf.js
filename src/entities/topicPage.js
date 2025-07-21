@@ -6,9 +6,10 @@ export class TopicPage extends BaseEntity {
     super(client);
 
     this.name = entity.name;
-    this.id = new Map([[entity.languageId, entity.id]]);
-    this.title = new Map([[entity.languageId, entity.title]]);
-    this.showBalance = new Map([[entity.languageId, entity.showBalance]]);
+    this.languageId = entity.languageId;
+    this.id = entity.id;
+    this.title = entity.title;
+    this.showBalance = entity.showBalance;
     this.sectionList = new Map([[entity.languageId, new Set(entity.sectionList.map((serverSection) => new TopicPageSection(this.client, serverSection, entity.languageId)))]]);
   }
 }
