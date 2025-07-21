@@ -60,17 +60,17 @@ class AudioSlotRequestHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.add() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.add() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.add() parameter, channelId: ${channelId} is less than or equal to zero`);
       validate(slotId)
-        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is null or undefined`)
-        .isValidNumber(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.add() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.add() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.add() parameter, slotId: ${slotId} is less than or equal to zero`);
       validate(userId)
-        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is null or undefined`)
-        .isValidNumber(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, userId: ${userId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.add() parameter, userId: ${userId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.add() parameter, userId: ${userId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.add() parameter, userId: ${userId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
@@ -126,13 +126,13 @@ class AudioSlotRequestHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.remove() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.remove() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.remove() parameter, channelId: ${channelId} is less than or equal to zero`);
       validate(slotId)
-        .isNotNullOrUndefined(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is null or undefined`)
-        .isValidNumber(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotRequestHelper.list() parameter, slotId: ${slotId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioSlotRequestHelper.remove() parameter, slotId: ${slotId} is null or undefined`)
+        .isValidNumber(`AudioSlotRequestHelper.remove() parameter, slotId: ${slotId} is not a valid number`)
+        .isGreaterThanZero(`AudioSlotRequestHelper.remove() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }

@@ -1,12 +1,17 @@
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
-import { StatusCodes } from 'http-status-codes';
 import StoreProduct from '../../entities/storeProduct.js';
-import StoreProductProfile from '../../entities/storeProductProfile.js';
+import StoreProductProfileHelper from './storeProductProfile.js';
 import { validate } from '../../validator/index.js';
 
 class StoreProductHelper extends BaseHelper {
+  constructor (client) {
+    super(client);
+
+    this.profile = new StoreProductProfileHelper(this.client);
+  }
+
   async getById (productId, languageId, opts) {
     productId = Number(productId) || productId;
 
@@ -50,8 +55,8 @@ class StoreProductHelper extends BaseHelper {
     const productsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedProducts = this.cache.getAll(productIds)
-        .filter((product) => product !== null && product.hasLanguage(languageId));
+      const cachedProducts = this.cache.getAll(productIds, languageId)
+        .filter((product) => product !== null);
 
       cachedProducts.forEach((product) => productsMap.set(product.id, product));
     }
@@ -72,7 +77,7 @@ class StoreProductHelper extends BaseHelper {
       response.body
         .filter((res) => res.success)
         .forEach((res) => {
-          const existing = this.cache.get(res.body.id);
+          const existing = this.cache.get(res.body.id, languageId);
 
           productsMap.set(
             res.body.id,
@@ -86,55 +91,6 @@ class StoreProductHelper extends BaseHelper {
     }
 
     return productIds.map((id) => productsMap.get(id) ?? null);
-  }
-
-  async getProductProfile (productId, languageId, opts) {
-    productId = Number(productId) || productId;
-
-    { // eslint-disable-line no-lone-blocks
-      validate(productId)
-        .isNotNullOrUndefined(`StoreProductHelper.getProductProfile() parameter, productId: ${productId} is null or undefined`)
-        .isValidNumber(`StoreProductHelper.getProductProfile() parameter, productId: ${productId} is not a valid number`)
-        .isGreaterThanZero(`StoreProductHelper.getProductProfile() parameter, productId: ${productId} is less than or equal to zero`);
-
-      validate(languageId)
-        .isNotNullOrUndefined(`StoreProductHelper.getProductProfile() parameter, languageId: ${languageId} is null or undefined`)
-        .isValidConstant(Language, `StoreProductHelper.getProductProfile() parameter, languageId: ${languageId} is not valid`);
-
-      validate(opts)
-        .isNotRequired()
-        .isValidObject({ forceNew: Boolean }, 'EventHelper.getProductProfile() parameter, opts.{parameter}: {value} {error}');
-    }
-
-    const product = await this.getById(productId, languageId);
-
-    if (product === null) {
-      throw new Error(`Product with id ${productId} not found`);
-    }
-
-    if (!opts?.forceNew && product.profile && product.profile.hasLanguage(languageId)) {
-      return product.profile;
-    }
-
-    try {
-      const response = await this.client.websocket.emit(
-        Command.STORE_PRODUCT_PROFILE,
-        {
-          body: {
-            languageId,
-            id: productId
-          }
-        }
-      );
-
-      product.profile = product.profile?.patch(response.body) ?? new StoreProductProfile(this.client, response.body);
-      return product.profile;
-    } catch (error) {
-      if (error.code === StatusCodes.NOT_FOUND) {
-        return null;
-      }
-      throw error;
-    }
   }
 
   async purchase () {

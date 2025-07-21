@@ -13,7 +13,6 @@ export class NotificationGlobalFeed extends BaseEntity {
 
   /** @internal */
   patch (entity) {
-    this.languageId = entity.languageId;
     this.title = entity.title;
     this.body = entity.body;
     this.imageUrl = entity.imageUrl;

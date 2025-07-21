@@ -5,30 +5,24 @@ export class ChannelCategory extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.description = new Map([[entity.languageId, entity.description]]);
+    this.languageId = entity.languageId;
+    this.description = entity.description;
     this.imageUrl = entity.imageUrl;
-    this.name = new Map([[entity.languageId, entity.name]]);
-    this.pageName = new Map([[entity.languageId, entity.pageName]]);
+    this.name = entity.name;
+    this.pageName = entity.pageName;
     this.recipeId = entity.recipeId;
-    this.languages = new Set([entity.languageId]);
   }
 
   /** @internal */
   patch (entity) {
     this.id = entity.id;
-    this.description.set(entity.languageId, entity.description);
+    this.description = entity.description;
     this.imageUrl = entity.imageUrl;
-    this.name.set(entity.languageId, entity.name);
-    this.pageName.set(entity.languageId, entity.pageName);
+    this.name = entity.name;
+    this.pageName = entity.pageName;
     this.recipeId = entity.recipeId;
-    this.languages.add(entity.languageId);
 
     return this;
-  }
-
-  /** @internal */
-  hasLanguage (languageId) {
-    return this.languages.has(languageId);
   }
 }
 

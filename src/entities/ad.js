@@ -7,7 +7,7 @@ export class Ad extends BaseEntity {
     this.start = entity.index;
     this.end = this.start + entity[0].length;
     this.ad = entity[0];
-    this.channelName = entity[2].trim();
+    this.channelName = entity[1].trim();
   }
 
   /**

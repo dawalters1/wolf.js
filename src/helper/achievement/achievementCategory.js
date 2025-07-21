@@ -19,9 +19,9 @@ class AchievementCategoryHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cachedAchievementCategories = this.cache.values();
+      const cachedAchievementCategories = this.cache.values().filter((achievementCategory) => achievementCategory.languageId === languageId);
 
-      if (cachedAchievementCategories && cachedAchievementCategories.every((achievementCategory) => achievementCategory.hasLanguage(languageId))) {
+      if (cachedAchievementCategories.languageId) {
         return cachedAchievementCategories;
       }
     }
@@ -36,7 +36,7 @@ class AchievementCategoryHelper extends BaseHelper {
     );
 
     return response.body.map((serverAchievementCategory) => {
-      const existing = this.cache.get(serverAchievementCategory.id);
+      const existing = this.cache.get(serverAchievementCategory.id, languageId);
 
       return this.cache.set(
         existing

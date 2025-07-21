@@ -168,7 +168,7 @@ class AudioSlotHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioSlotHelper.mute() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioSlotHelper.mute() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioSlotHelper.list() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThanZero(`AudioSlotHelper.mute() parameter, channelId: ${channelId} is less than or equal to zero`);
       validate(slotId)
         .isNotNullOrUndefined(`AudioSlotHelper.mute() parameter, slotId: ${slotId} is null or undefined`)
         .isValidNumber(`AudioSlotHelper.mute() parameter, slotId: ${slotId} is not a valid number`)
