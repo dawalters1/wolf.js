@@ -2,8 +2,8 @@ import BaseEntity from './baseEntity.js';
 import CacheManager from '../managers/cacheManager.js';
 import ExpiringProperty from '../managers/expiringProperty.js';
 import IconInfo from './iconInfo.js';
+import { Language, UserFollowerType, UserPrivilege } from '../constants/index.js';
 import UserExtended from './userExtended.js';
-import { UserFollowerType, UserPrivilege } from '../constants/index.js';
 import UserPresence from './userPresence.js';
 import UserSelectedCharmList from './userSelectedCharmList.js';
 
@@ -48,6 +48,8 @@ export class User extends BaseEntity {
         count: new ExpiringProperty(15)
       }
     };
+
+    this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
   }
 
   async follow () {
