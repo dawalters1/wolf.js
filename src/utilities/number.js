@@ -1,11 +1,16 @@
 
 class NumberUtility {
+  /**
+   *
+   * @param {string|number} arg - The string or number to update
+   * @returns
+   */
   addCommas (arg) {
     const [integerPart, decimalPart] = arg.toString().split('.');
 
     const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    return decimalPart
+    return decimalPart !== undefined
       ? `${formattedInteger}.${decimalPart}`
       : formattedInteger;
   }
