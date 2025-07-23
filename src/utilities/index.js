@@ -1,3 +1,4 @@
+import Language from '../constants/Language.js';
 import moment from 'moment';
 import NumberUtility from './number.js';
 import StringUtility from './string.js';
@@ -44,6 +45,97 @@ class Utility {
     }
 
     return parts.join(' ');
+  }
+
+  toLanguageId (languageKey) {
+    const languageKeyMap = {
+      ar: Language.ARABIC,
+      in: Language.BAHASA_INDONESIA,
+      br: Language.BRAZILIAN_PORTUGUESE,
+      bu: Language.BULGARIAN,
+      ch: Language.CHINESE_SIMPLIFIED,
+      cz: Language.CZECH,
+      da: Language.DANISH,
+      du: Language.DUTCH,
+      en: Language.ENGLISH,
+      et: Language.ESTONIAN,
+      fi: Language.FINNISH,
+      fr: Language.FRENCH,
+      ge: Language.GERMAN,
+      gr: Language.GREEK,
+      hi: Language.HINDI,
+      hu: Language.HUNGARIAN,
+      it: Language.ITALIAN,
+      ja: Language.JAPANESE,
+      ka: Language.KAZAKH,
+      ko: Language.KOREAN,
+      ls: Language.LATIN_SPANISH,
+      la: Language.LATVIAN,
+      li: Language.LITHUANIAN,
+      ma: Language.MALAY,
+      no: Language.NORWEGIAN,
+      fa: Language.PERSIAN_FARSI,
+      po: Language.POLISH,
+      pt: Language.PORTUGUESE,
+      ru: Language.RUSSIAN,
+      sl: Language.SLOVAK,
+      es: Language.SPANISH,
+      sv: Language.SWEDISH,
+      th: Language.THAI,
+      tr: Language.TURKISH,
+      uk: Language.UKRAINIAN,
+      vi: Language.VIETNAMESE
+    };
+
+    return languageKeyMap[languageKey.toLocaleLowerCase()] ?? Language.ENGLISH;
+  }
+
+  /**
+   * Convert LanguageID to string language
+   * @param {Number} languageId
+   * @returns {String}
+   */
+  toLanguageKey (languageId) {
+    const languageIdMap = {
+      14: 'ar',
+      28: 'in',
+      37: 'br',
+      45: 'bu',
+      11: 'ch',
+      22: 'cz',
+      24: 'da',
+      30: 'du',
+      1: 'en',
+      39: 'et',
+      25: 'fi',
+      6: 'fr',
+      3: 'ge',
+      16: 'gr',
+      18: 'hi',
+      27: 'hu',
+      13: 'it',
+      19: 'ja',
+      41: 'ka',
+      36: 'ko',
+      20: 'ls',
+      42: 'la',
+      43: 'li',
+      29: 'ma',
+      31: 'no',
+      15: 'fa',
+      10: 'po',
+      17: 'pt',
+      12: 'ru',
+      21: 'sl',
+      4: 'es',
+      32: 'sv',
+      33: 'th',
+      34: 'tr',
+      44: 'uk',
+      35: 'vi'
+    };
+
+    return languageIdMap[languageId] ?? 'en';
   }
 }
 
