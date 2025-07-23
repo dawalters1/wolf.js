@@ -9,7 +9,7 @@ import ChannelMessageConfig from './channelMessageConfig.js';
 import ChannelOwner from './channelOwner.js';
 import ExpiringProperty from '../managers/expiringProperty.js';
 import IconInfo from './iconInfo.js';
-import { UserPrivilege } from '../constants/index.js';
+import { Language, UserPrivilege } from '../constants/index.js';
 
 class Channel extends BaseEntity {
   constructor (client, entity) {
@@ -58,6 +58,8 @@ class Channel extends BaseEntity {
       summaries: new CacheManager(),
       users: new CacheManager()
     };
+
+    this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
   }
 
   /** @internal */
