@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import Ad from '../../entities/ad.js';
 import { Command } from '../../constants/Command.js';
 import { EmbedType } from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
@@ -14,9 +13,6 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
 
 const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
 const isValidUrl = (url) => urlRegex.test(url);
-
-const getAds = (client, body) =>
-  [...body.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)].map(ad => new Ad(client, ad));
 
 const getLinks = (client, content) => {
   const urls = content.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
@@ -131,7 +127,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
 
   while (true) {
     const overflowDeveloperLink = developerInjectedLinks.find(link => link.start < 1000 && link.end > 1000);
-    const overflowAd = getAds(client, body)?.find(ad => ad.start < 1000 && ad.end > 1000);
+    const overflowAd = this.client.utility.string.getAds(body)?.find(ad => ad.start < 1000 && ad.end > 1000);
     const overflowLink = getLinks(client, body)?.find(link => link.start < 1000 && link.end > 1000);
 
     const splitIndex = (
@@ -149,7 +145,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
 
     const chunk = body.slice(0, splitIndex).trim();
 
-    const ads = getAds(client, chunk);
+    const ads = this.client.utility.string.getAds(chunk);
     const links = [
       ...developerInjectedLinks.filter(l => l.end <= chunk.length),
       ...getLinks(client, chunk)

@@ -8,7 +8,7 @@ class Utility {
   constructor (client) {
     this.client = client;
 
-    this.string = new StringUtility();
+    this.string = new StringUtility(client);
     this.number = new NumberUtility();
     this.timer = new TimerUtility(client);
   }
