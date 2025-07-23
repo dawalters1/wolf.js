@@ -127,7 +127,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
 
   while (true) {
     const overflowDeveloperLink = developerInjectedLinks.find(link => link.start < 1000 && link.end > 1000);
-    const overflowAd = this.client.utility.string.getAds(body)?.find(ad => ad.start < 1000 && ad.end > 1000);
+    const overflowAd = client.utility.string.getAds(body)?.find(ad => ad.start < 1000 && ad.end > 1000);
     const overflowLink = getLinks(client, body)?.find(link => link.start < 1000 && link.end > 1000);
 
     const splitIndex = (
@@ -145,7 +145,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
 
     const chunk = body.slice(0, splitIndex).trim();
 
-    const ads = this.client.utility.string.getAds(chunk);
+    const ads = client.utility.string.getAds(chunk);
     const links = [
       ...developerInjectedLinks.filter(l => l.end <= chunk.length),
       ...getLinks(client, chunk)
