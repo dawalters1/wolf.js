@@ -26,7 +26,8 @@ class EventSubscriptionHelper extends BaseHelper {
     const cachedSubscriptionIds = this.cache.keys();
     const newSubscriptionIds = response.body.map((serverEventSubscription) => serverEventSubscription.id);
     const oldSubscriptionIds = cachedSubscriptionIds.filter((subscriptionId) => !newSubscriptionIds.includes(subscriptionId));
-    this.cache.deleteAll(oldSubscriptionIds);
+    oldSubscriptionIds.forEach((subscriptionId) => this.cache.delete(subscriptionId));
+
     this.cache.fetched = true;
 
     return response.body.map((serverEventSubscription) => {
