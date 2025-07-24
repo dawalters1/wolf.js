@@ -52,11 +52,11 @@ class AchievementChannelHelper {
 
       channel._achievements.fetched = true;
       achievements = response.body.map(serverAchievementChannel => {
-        const existing = channel._achievements.get(serverAchievementChannel.id);
+        const existing = channel._achievements.get(serverAchievementChannel);
 
         return channel._achievements.set(
-          serverAchievementChannel.id,
-          existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel)
+          existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel),
+          response.headers?.maxAge
         );
       });
     }
@@ -71,7 +71,7 @@ class AchievementChannelHelper {
     }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...channel._achievements.getAll([...parentAchievement.childrenId])];
+      return [parentAchievement, ...channel._achievements.mGet([...parentAchievement.childrenId])];
     }
 
     const response = await this.client.websocket.emit(
@@ -94,11 +94,11 @@ class AchievementChannelHelper {
     );
 
     return response.body.map(serverAchievementChannel => {
-      const existing = channel._achievements.get(serverAchievementChannel.id);
+      const existing = channel._achievements.get(serverAchievementChannel);
 
       return channel._achievements.set(
-        serverAchievementChannel.id,
-        existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel)
+        existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel),
+        response.headers?.maxAge
       );
     });
   }

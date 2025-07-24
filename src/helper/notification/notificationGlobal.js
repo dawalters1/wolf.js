@@ -37,13 +37,10 @@ class NotificationGlobalHelper extends BaseHelper {
     this.client.me.notificationsGlobal.fetched = true;
 
     return (await get()).map((serverNotification) => {
-      const existing = this.client.me.notificationsGlobal.get(serverNotification.id);
+      const existing = this.client.me.notificationsGlobal.get(serverNotification);
 
       return this.client.me.notificationsGlobal.set(
-        existing
-          ? existing.patch(serverNotification)
-          : new Notification(this.client, serverNotification)
-      );
+        existing?.patch(serverNotification) ?? new Notification(this.client, serverNotification));
     });
   }
 
@@ -120,7 +117,7 @@ class NotificationGlobalHelper extends BaseHelper {
     const notificationsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedNotificationGlobals = this.cache.getAll(notificationIds)
+      const cachedNotificationGlobals = notificationIds.map((notificationId) => this.cache.get(notificationId))
         .filter((notificationGlobal) => notificationGlobal !== null);
 
       cachedNotificationGlobals.forEach((notificationGlobal) => {
@@ -148,10 +145,8 @@ class NotificationGlobalHelper extends BaseHelper {
           notificationsMap.set(
             res.body.id,
             this.cache.set(
-              existing
-                ? existing.patch(res.body)
-                : new NotificationGlobal(this.client, res.body)
-            )
+              existing?.patch(res.body) ?? new NotificationGlobal(this.client, res.body),
+              response.headers?.maxAge)
           );
         });
     }

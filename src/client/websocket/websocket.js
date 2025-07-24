@@ -124,6 +124,7 @@ export class Websocket {
   }
 
   async emit (command, body) {
+    console.log(command);
     const emitOnce = (requestBody, attempt = 0) =>
       new Promise((resolve, reject) => {
         this.socket?.emit(command, requestBody, async ack => {

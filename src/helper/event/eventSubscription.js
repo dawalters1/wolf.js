@@ -33,9 +33,8 @@ class EventSubscriptionHelper extends BaseHelper {
       const existing = this.cache.get(serverEventSubscription.id);
 
       return this.cache.set(
-        existing
-          ? existing.patch(serverEventSubscription)
-          : new EventSubscription(this.client, serverEventSubscription)
+        existing?.patch(serverEventSubscription) ?? new EventSubscription(this.client, serverEventSubscription),
+        response.headers?.maxAge
       );
     });
   }

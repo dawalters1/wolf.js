@@ -49,8 +49,8 @@ class TopicHelper extends BaseHelper {
         );
 
         return this.cache.set(
-          this.cache.get(name)?.patch(response.body) ??
-        new TopicPage(this.client, response.body)
+          this.cache.get(name)?.patch(response.body) ?? new TopicPage(this.client, response.body),
+          response.headers?.maxAge
         );
       } catch (error) {
         if (error.code === StatusCodes.NOT_FOUND) { return null; };

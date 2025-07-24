@@ -50,12 +50,9 @@ class AudioSlotHelper extends BaseHelper {
     return response.body.map((serverSlot) => {
       serverSlot.channelId = channelId;
 
-      const existing = channel._audioSlots.get(serverSlot.id);
+      const existing = channel._audioSlots.get(serverSlot);
 
-      return channel._audioSlots.set(
-        existing
-          ? existing.patch(serverSlot)
-          : new ChannelAudioSlot(this.client, serverSlot)
+      return channel._audioSlots.set(existing?.patch(serverSlot) ?? new ChannelAudioSlot(this.client, serverSlot)
       );
     });
   }

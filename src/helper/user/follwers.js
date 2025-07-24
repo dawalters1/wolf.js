@@ -111,11 +111,10 @@ class UserFollowerHelper {
       const existing = this.client.me._follow[followDirection].list.get(serverFollowData.id);
 
       return this.client.me._follow[followDirection].list.set(
-        existing
-          ? existing.patch(serverFollowData)
-          : followDirection === UserFollowerType.FOLLOWER
-            ? new UserFollower(this.client, serverFollowData)
-            : new UserFollow(this.client, serverFollowData)
+        existing?.patch(serverFollowData) ??
+           followDirection === UserFollowerType.FOLLOWER
+          ? new UserFollower(this.client, serverFollowData)
+          : new UserFollow(this.client, serverFollowData)
       );
     });
   }

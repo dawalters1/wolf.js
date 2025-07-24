@@ -51,7 +51,7 @@ class CharmHelper extends BaseHelper {
     const charmsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedCharms = this.cache.getAll(charmIds, languageId)
+      const cachedCharms = charmIds.map((charmId) => this.cache.get(charmId, languageId))
         .filter(charm => charm !== null);
       cachedCharms.forEach(charm => charmsMap.set(charm.id, charm));
     }
@@ -71,14 +71,13 @@ class CharmHelper extends BaseHelper {
 
       [...response.body.values()].filter(charmResponse => charmResponse.success)
         .forEach(charmResponse => {
-          const existing = this.cache.get(charmResponse.body.id, languageId);
+          const existing = this.cache.get(charmResponse.body.id);
 
           charmsMap.set(
             charmResponse.body.id,
             this.cache.set(
-              existing
-                ? existing.patch(charmResponse.body)
-                : new Charm(this.client, charmResponse.body)
+              existing?.patch(charmResponse.body) ?? new Charm(this.client, charmResponse.body),
+              response.headers?.maxAge
             )
           );
         });
@@ -126,10 +125,7 @@ class CharmHelper extends BaseHelper {
       const existing = user._charmSummary.get(serverCharmSummary.charmId);
 
       return user._charmSummary.set(
-        existing
-          ? existing.patch(serverCharmSummary)
-          : new CharmSummary(this.client, serverCharmSummary)
-      );
+        existing?.patch(serverCharmSummary) ?? new CharmSummary(this.client, serverCharmSummary));
     });
   }
 

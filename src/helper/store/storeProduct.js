@@ -55,7 +55,7 @@ class StoreProductHelper extends BaseHelper {
     const productsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedProducts = this.cache.getAll(productIds, languageId)
+      const cachedProducts = productIds.map((productId) => this.cache.get(productId, languageId))
         .filter((product) => product !== null);
 
       cachedProducts.forEach((product) => productsMap.set(product.id, product));
@@ -76,15 +76,14 @@ class StoreProductHelper extends BaseHelper {
 
       response.body
         .filter((res) => res.success)
-        .forEach((res) => {
-          const existing = this.cache.get(res.body.id, languageId);
+        .forEach((serverStoreProduct) => {
+          const existing = this.cache.get(serverStoreProduct.body.id, languageId);
 
           productsMap.set(
-            res.body.id,
+            serverStoreProduct.body.id,
             this.cache.set(
-              existing
-                ? existing.patch(res.body)
-                : new StoreProduct(this.client, res.body)
+              existing?.patch(serverStoreProduct.body) ?? new StoreProduct(this.client, serverStoreProduct.body),
+              response.headers?.maxAge
             )
           );
         });
