@@ -55,9 +55,8 @@ class AchievementChannelHelper {
         const existing = channel._achievements.get(serverAchievementChannel.id);
 
         return channel._achievements.set(
-          existing
-            ? existing.patch(serverAchievementChannel)
-            : new AchievementChannel(this.client, serverAchievementChannel)
+          serverAchievementChannel.id,
+          existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel)
         );
       });
     }
@@ -98,9 +97,8 @@ class AchievementChannelHelper {
       const existing = channel._achievements.get(serverAchievementChannel.id);
 
       return channel._achievements.set(
-        existing
-          ? existing.patch(serverAchievementChannel)
-          : new AchievementChannel(this.client, serverAchievementChannel)
+        serverAchievementChannel.id,
+        existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel)
       );
     });
   }

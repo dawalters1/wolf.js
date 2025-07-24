@@ -36,12 +36,14 @@ class AchievementCategoryHelper extends BaseHelper {
     );
 
     return response.body.map((serverAchievementCategory) => {
-      const existing = this.cache.get(serverAchievementCategory.id, languageId);
+      const key = this.cache.getKey(serverAchievementCategory, languageId);
+
+      const existing = this.cache.get(key);
 
       return this.cache.set(
-        existing
-          ? existing.patch(serverAchievementCategory)
-          : new AchievementCategory(this.client, serverAchievementCategory)
+        key,
+        existing?.patch(serverAchievementCategory) ?? new AchievementCategory(this.client, serverAchievementCategory),
+        response.headers?.maxAge
       );
     });
   }
