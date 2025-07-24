@@ -1,111 +1,96 @@
-import ExpiryMap from 'expiry-map';
 
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 
-// TODO: refactor/restructure to better support languages, key/languageId approach seems eh
-// TODO: respect maxAge provided by the server
 class CacheManager {
-  constructor (ttl = null) {
-    this.ttl = ttl;
-    this.store = ttl === null
-      ? new Map()
-      : new ExpiryMap(ttl * 1000);
-    this._fetched = false;
-    this.timeout = undefined;
+  constructor () {
+    this.store = new Map();
+
+    this.fetched = false;
+    setInterval(() => {
+      for (const [key, value] of this.store) {
+        if (value.expiresAt && value.expiresAt <= Date.now()) {
+          this.store.delete(key);
+        }
+      }
+
+      if (this.store.size === 0) {
+        this.fetched = false;
+      }
+    }, 120);
   }
 
-  #createKey (key, languageId = null) {
+  getKey (...args) {
+    if (typeof args[0] === 'number') {
+      const languageId = args[1];
+
+      return languageId
+        ? `${args[0]}.languageId:${languageId}`
+        : args[0];
+    }
+    const languageId = args[0].languageId;
+    const primaryKey = getKeyProperty(args[0]);
+
     return languageId
-      ? `${key}.languageId:${languageId}`
-      : key;
+      ? `${primaryKey}.languageId:${languageId}`
+      : primaryKey;
   }
 
-  get fetched () {
-    return this._fetched;
+  get (key) {
+    const cached = this.get(key) ?? null;
+
+    if (!cached) { return null; }
+
+    if (cached?.expiresAt && cached.expiresAt < Date.now()) { return null; }
+
+    return cached.values;
   }
 
-  set fetched (value) {
-    this._fetched = value;
-
-    if (!this.ttl) { return; }
-
-    clearTimeout(this.timeout);
-
-    if (value) {
-      this.timeout = setTimeout(() => {
-        this._fetched = false;
-      }, this.ttl * 1000);
-    }
+  mGet (keys) {
+    return keys.map((key) => this.get(key));
   }
 
-  set (value) {
-    if (this.ttl) {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this._fetched = false;
-      }, this.ttl * 1000);
-    }
-
-    const key = this.#createKey(value[getKeyProperty(value)], value.languageId ?? null);
-
-    const existing = this.get(key);
-
-    if (existing?.patch) {
-      this.store.set(key, existing.patch(value));
-    } else {
-      this.store.set(key, value);
-    }
-
-    return this.store.get(key);
+  set (key, value, maxAge) {
+    return this.store.set(
+      key,
+      {
+        value,
+        expiresAt: maxAge
+          ? Date.now() + (maxAge * 1000)
+          : null
+      }
+    );
   }
 
-  setAll (values) {
-    return values.map((value) => this.set(value));
+  mSet (keyValues, maxAge) {
+    return keyValues.map((keyValue) => this.set(keyValue[0], keyValue[1], maxAge));
   }
 
-  get (key, languageId = null) {
-    return this.store.get(this.#createKey(key, languageId)) ?? null;
+  delete (key) {
+    return this.store.delete(key);
   }
 
-  getAll (keys, languageId = null) {
-    return keys.map((key) => this.get(key, languageId));
+  has (key) {
+    return this.store.has(key);
   }
 
-  has (key, languageId = null) {
-    return this.store.has(this.#createKey(key, languageId));
-  }
-
-  mhas (keys, languageId = null) {
-    return keys.map((key) => this.has(key, languageId));
-  }
-
-  delete (key, languageId = null) {
-    return this.store.delete(this.#createKey(key, languageId));
-  }
-
-  deleteAll (keys, languageId = null) {
-    return keys.map((key) => this.delete(key, languageId));
+  mHas (keys) {
+    return keys.map((key) => this.has(key));
   }
 
   clear () {
-    this.store.clear();
-    this.fetched = false;
+    return this.store.clear();
   }
 
   size () {
-    return this.store.size;
-  }
-
-  keys () {
-    return Array.from(this.store.keys());
+    return this.store.size();
   }
 
   values () {
-    return Array.from(this.store.values());
+    return [...this.store.values()].map((value) => value.value);
   }
 
-  entries () {
-    return Array.from(this.store.entries());
+  keys () {
+    return [...this.store.keys()];
   }
 }
 

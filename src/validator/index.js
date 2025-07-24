@@ -28,6 +28,10 @@ class Validator {
     return this.#throwIf(!(this.value instanceof instance), message);
   }
 
+  isTypeOf (type, message = 'Value is not type of') {
+    return this.#throwIf(!((String)(typeof this.value) !== type), message);
+  }
+
   isNotNullOrUndefined (message = 'Value is null or undefined') {
     return this.#throwIf(this.value === null || this.value === undefined, message);
   }
@@ -38,6 +42,22 @@ class Validator {
 
   isValidNumber (message = 'Value is not a valid number') {
     return this.#throwIf(typeof this.value !== 'number' || isNaN(this.value), message);
+  }
+
+  isLessThan (value, message = 'Value must be less than {value}') {
+    return this.#throwIf(typeof this.value !== 'number' || this.value >= value, message.replace('{value}', value));
+  }
+
+  isGreaterThan (value, message = 'Value must be less than {value}') {
+    return this.#throwIf(typeof this.value !== 'number' || this.value <= value, message.replace('{value}', value));
+  }
+
+  isLessThanOrEqual (value, message = 'Value must be less than or equal to {value}') {
+    return this.#throwIf(typeof this.value !== 'number' || this.value > value, message.replace('{value}', value));
+  }
+
+  isGreaterThanOrEqual (value, message = 'Value must be less than or equal to {value}') {
+    return this.#throwIf(typeof this.value !== 'number' || this.value < value, message.replace('{value}', value));
   }
 
   // TODO: provide default value? isGreaterThan(num, mesage)
@@ -134,6 +154,7 @@ class Validator {
     }
 
     return {
+      // TODO: add missing methods
       isInstanceOf (instance, message = 'Item is not instance of') {
         runEachValidation(item => validate(item).isInstanceOf(instance, message), message);
         return this;
