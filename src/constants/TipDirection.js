@@ -1,7 +1,6 @@
-export const SENT = 'sent';
-export const RECEIVED = 'received';
 
-export default {
-  SENT,
-  RECEIVED
+export const TipDirection = {
+  SENT: 'sent',
+  RECEIVED: 'received'
 };
+export default TipDirection;

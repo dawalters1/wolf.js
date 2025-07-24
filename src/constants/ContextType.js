@@ -1,7 +1,6 @@
-export const MESSAGE = 'message';
-export const STAGE = 'stage';
 
-export default {
-  MESSAGE,
-  STAGE
+export const ContextType = {
+  MESSAGE: 'message',
+  STAGE: 'stage'
 };
+export default ContextType;

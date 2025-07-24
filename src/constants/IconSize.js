@@ -1,11 +1,8 @@
-export const SMALL = 'small';
-export const MEDIUM = 'medium';
-export const LARGE = 'large';
-export const XLARGE = 'xlarge';
 
-export default {
-  SMALL,
-  MEDIUM,
-  LARGE,
-  XLARGE
+export const IconSize = {
+  SMALL: 'small',
+  MEDIUM: 'medium',
+  LARGE: 'large',
+  XLARGE: 'xlarge'
 };
+export default IconSize;

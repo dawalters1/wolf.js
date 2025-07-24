@@ -1,11 +1,7 @@
-export const CHARM = 'charm';
-export const SUBSCRIBER = 'subscriber';
-export const GROUP = 'group';
-export const CHANNEL = 'group';
 
-export default {
-  CHARM,
-  SUBSCRIBER,
-  GROUP,
-  CHANNEL
+export const TipType = {
+  CHARM: 'charm',
+  USER: 'subscriber',
+  CHANNEL: 'group'
 };
+export default TipType;
