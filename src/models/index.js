@@ -25,8 +25,6 @@ import ChannelAudioSlot from './ChannelAudioSlot.js';
 import ChannelAudioSlotRequest from './ChannelAudioSlotRequest.js';
 import ChannelAudioSlotUpdate from './ChannelAudioSlotUpdate.js';
 import ChannelMember from './ChannelMember.js';
-import ChannelMemberList from './ChannelMemberList.js';
-import ChannelMemberListSection from './ChannelMemberListSection.js';
 import ChannelMessageConfig from './ChannelMessageConfig.js';
 import ChannelRole from './ChannelRole.js';
 import ChannelRoleContext from './ChannelRoleContext.js';
@@ -130,8 +128,6 @@ export {
   ChannelCategory,
   ChannelExtended,
   ChannelMember,
-  ChannelMemberList,
-  ChannelMemberListSection,
   ChannelMessageConfig,
   ChannelRole,
   ChannelRoleContext,
@@ -236,8 +232,6 @@ export default {
   ChannelCategory,
   ChannelExtended,
   ChannelMember,
-  ChannelMemberList,
-  ChannelMemberListSection,
   ChannelMessageConfig,
   ChannelRole,
   ChannelRoleContext,

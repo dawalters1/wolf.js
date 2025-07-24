@@ -1,15 +1,14 @@
 import { Event, ServerEvent } from '../../../../../constants/index.js';
-import models from '../../../../../models/index.js';
+import models, { IdHash } from '../../../../../models/index.js';
 import patch from '../../../../../utils/patch.js';
 import Base from '../../Base.js';
 
-/**
- *
- * @param {import('../../../../WOLF').default} this.client
- * @param {*} body
- * @returns
- */
+
 class SubscriberUpdate extends Base {
+  /**
+   * 
+   * @param {import('../../../../WOLF.js').default} client 
+   */
   constructor (client) {
     super(client, ServerEvent.SUBSCRIBER_UPDATE);
   }
@@ -31,12 +30,17 @@ class SubscriberUpdate extends Base {
         patch(contact, newSubscriber.toContact())
       );
 
-    await Promise.all(
-      (await this.client.channel.list())
-        .map((channel) =>
-          channel.members?._onSubscriberUpdate(newSubscriber)
-        )
-    );
+    for(const channel of this.client.channel.channels) {
+      if(channel.owner.id === oldSubscriber.id){
+        channel.owner = new IdHash(this.client, newSubscriber, true);
+      }
+
+      const member = channel.members._members.get(oldSubscriber.id);
+     
+      if(member){
+        member.hash = newSubscriber.hash;
+      }
+    }
 
     return this.client.emit(
       Event.SUBSCRIBER_UPDATE,

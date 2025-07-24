@@ -136,10 +136,11 @@ export class WOLF {
      * Login to WOLF
      * @param email - The email belonging to the account
      * @param password - The password belonging to the account
+     * @param apiKey - The provided Bot APIKEY
      * @param onlineState - The onlineState to appear as (Default: Online)
      * @param loginType - The loginType (Default: Email)
      */
-    public login(email: string, password: string, onlineState?: OnlineState, loginType?: LoginType): Promise<void>;
+    public login(email: string, password: string, apiKey?: string, onlineState?: OnlineState, loginType?: LoginType): Promise<void>;
 
     /**
      * Connect to the service without login details
@@ -776,6 +777,7 @@ export class EventSubscriptionHelper extends BaseHelper {
 export class ChannelHelper extends BaseHelper {
     private constructor(client);
 
+    readonly channels: Channel[];
     /**
      * Exposes the Channel Member methods
      */
@@ -866,6 +868,18 @@ export class ChannelHelper extends BaseHelper {
 
 export class ChannelMemberHelper extends BaseHelper {
     private constructor(client);
+    /**
+     * Get list of bots in the channel
+     * @param targetChannelId - The ID of the channel
+     * @param returnCurrentList - Whether or not to return the currently fetched list
+     */
+    public getList(targetChannelId: number, list: MemberListType, returnCurrentList?: boolean): Promise<Array<ChannelMember>>;
+    /**
+     * Get list of bots in the channel
+     * @param targetChannelId - The ID of the channel
+     * @param returnCurrentList - Whether or not to return the currently fetched list
+     */
+    public getMember(targetChannelId: number, subscriberId: number): Promise<ChannelMember>;
 
     /**
      * Get list of bots in the channel
@@ -903,6 +917,13 @@ export class ChannelMemberHelper extends BaseHelper {
      * @param subscriberId - The ID of the subscriber
      */
     public get(targetChannelId: number, subscriberId: number): Promise<ChannelMember>;
+
+    /**
+     * Coowner a subscriber
+     * @param targetChannelId - The ID of the channel
+     * @param subscriberId - The ID of the subscriber
+     */
+    public coowner(targetChannelId: number, subscriberId: number): Promise<Response>;
     /**
      * Admin a subscriber
      * @param targetChannelId - The ID of the channel
@@ -2755,7 +2776,7 @@ export class Channel extends BaseModel {
     public audioCounts: ChannelAudioCounts;
     public audioConfig: ChannelAudioConfig;
     public messageConfig: ChannelMessageConfig;
-    public members: ChannelMemberList;
+    public members: ChannelMemberManager;
     public verificationTier: VerificationTier;
     public roles: ChannelRoleContainer;
 
@@ -3148,6 +3169,7 @@ export class ChannelMember extends BaseModel {
      */
     public subscriber(): Promise<Subscriber>;
 
+    public coowner(): Promise<Response>;
     /**
      * Admin this member
      */
@@ -3192,41 +3214,9 @@ export class ChannelMember extends BaseModel {
     };
 }
 
-export class ChannelMemberList extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    toJSON(): {
-        privileged: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-        regular: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-        silenced: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-        banned: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-        bots: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-        misc: Array<{
-            id: number;
-            hash: string;
-            capabilities: Capability;
-        }>
-    };
+export class ChannelMemberManager {
+    readonly _metadata: any;
+    readonly _members: Map;
 }
 
 export class ChannelMessageConfig extends BaseModel {

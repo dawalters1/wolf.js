@@ -29,6 +29,7 @@ export const SUBSCRIBER_GROUP_EVENT_DELETE = 'subscriber group event delete';
 export const SUBSCRIBER_UPDATE = 'subscriber update';
 export const TIP_ADD = 'tip add';
 export const WELCOME = 'welcome';
+export const OBJECTION = 'objection';
 
 export default {
   GROUP_AUDIO_COUNT_UPDATE,
@@ -60,5 +61,6 @@ export default {
   SUBSCRIBER_GROUP_EVENT_DELETE,
   SUBSCRIBER_UPDATE,
   TIP_ADD,
-  WELCOME
+  WELCOME,
+  OBJECTION
 };
