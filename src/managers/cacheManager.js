@@ -4,85 +4,74 @@ const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 class CacheManager {
   constructor () {
     this.store = new Map();
-
     this.fetched = false;
+
     setInterval(() => {
-      for (const [key, value] of this.store) {
-        if (value.expiresAt && value.expiresAt <= Date.now()) {
-          this.store.delete(key);
+      const sizePrior = this.store.size;
+
+      for (const [id, value] of this.store) {
+        const { expiresAt } = value;
+
+        if (expiresAt && expiresAt <= Date.now()) {
+          this.store.delete(id);
         }
       }
 
-      if (this.store.size === 0) {
+      if (sizePrior > 0 && this.store.size === 0) {
         this.fetched = false;
       }
     }, 120);
   }
 
-  getKey (...args) {
-    if (typeof args[0] === 'number') {
-      const languageId = args[1];
-
-      return languageId
-        ? `${args[0]}.languageId:${languageId}`
-        : args[0];
+  resolveId (...args) {
+    if (args.length === 2) {
+      return `${args[1]}:${args[0]}`;
     }
-    const languageId = args[0].languageId;
-    const primaryKey = getKeyProperty(args[0]);
 
-    return languageId
-      ? `${primaryKey}.languageId:${languageId}`
-      : primaryKey;
+    const idOrObject = args[0];
+
+    if (typeof idOrObject === 'number') { return idOrObject; };
+    ;
+    const id = idOrObject[getKeyProperty(idOrObject)];
+
+    if (!('languageId' in idOrObject)) { return id; }
+
+    return `${idOrObject.languageId}:${id}`;
   }
 
-  get (key) {
-    const cached = this.get(key) ?? null;
+  set (value, maxAge = null) {
+    const id = this.resolveId(value);
 
-    if (!cached) { return null; }
-
-    if (cached?.expiresAt && cached.expiresAt < Date.now()) { return null; }
-
-    return cached.values;
-  }
-
-  mGet (keys) {
-    return keys.map((key) => this.get(key));
-  }
-
-  set (key, value, maxAge) {
     return this.store.set(
-      key,
+      id,
       {
         value,
         expiresAt: maxAge
           ? Date.now() + (maxAge * 1000)
           : null
       }
-    );
+    ).get(id)?.value ?? null;
   }
 
-  mSet (keyValues, maxAge) {
-    return keyValues.map((keyValue) => this.set(keyValue[0], keyValue[1], maxAge));
+  get (...args) {
+    return this.store.get(this.resolveId(...args))?.value ?? null;
   }
 
-  delete (key) {
-    return this.store.delete(key);
+  has (...args) {
+    return this.store.has(this.resolveId(...args));
   }
 
-  has (key) {
-    return this.store.has(key);
-  }
-
-  mHas (keys) {
-    return keys.map((key) => this.has(key));
+  delete (...args) {
+    return this.store.delete(...args);
   }
 
   clear () {
-    return this.store.clear();
+    this.store.clear();
+    this.fetched = false;
   }
 
-  size () {
-    return this.store.size();
+  get size () {
+    return this.store.size;
   }
 
   values () {

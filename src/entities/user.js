@@ -11,6 +11,7 @@ export class User extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
+    this.id = entity.id;
     this.categoryIds = entity.categoryIds;
     this.charms = new UserSelectedCharmList(client, entity.charms);
     this.extended = entity.extended
@@ -23,7 +24,6 @@ export class User extends BaseEntity {
     this.iconInfo = entity.iconInfo
       ? new IconInfo(client, entity.iconInfo)
       : null;
-    this.id = entity.id;
     this.nickname = entity.nickname;
     this.privileges = entity.privileges;
     this.privilegeList = Object.values(UserPrivilege).filter(

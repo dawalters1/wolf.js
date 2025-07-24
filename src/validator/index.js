@@ -29,7 +29,7 @@ class Validator {
   }
 
   isTypeOf (type, message = 'Value is not type of') {
-    return this.#throwIf(!((String)(typeof this.value) !== type), message);
+    return this.#throwIf(!((String)(typeof this.value) === type), message);
   }
 
   isNotNullOrUndefined (message = 'Value is null or undefined') {
@@ -82,7 +82,8 @@ class Validator {
   }
 
   isNotEmptyOrWhitespace (message = 'String is empty or whitespace') {
-    return this.#throwIf(typeof this.value !== 'string' || this.value.trim() === '', message);
+    if (typeof value !== 'string') { return this; }
+    return this.#throwIf(this.value?.trim() === '', message);
   }
 
   isValidDate (message = 'Value is not a valid date') {

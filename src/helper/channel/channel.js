@@ -56,7 +56,8 @@ class ChannelHelper extends BaseHelper {
     const channelsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedChannels = this.cache.getAll(channelIds).filter(c => c !== null);
+      const cachedChannels = channelIds.map((channelId) => this.cache.get(channelId))
+        .filter((channel) => channel !== null);
       cachedChannels.forEach(channel => channelsMap.set(channel.id, channel));
     }
 
@@ -79,14 +80,13 @@ class ChannelHelper extends BaseHelper {
 
       for (const [channelId, channelResponse] of response.body.entries()) {
         if (!channelResponse.success) { continue; }
-
         const existing = this.cache.get(channelId);
+
         channelsMap.set(
           channelId,
           this.cache.set(
-            existing
-              ? existing.patch(channelResponse.body)
-              : new Channel(this.client, channelResponse.body)
+            existing?.patch(channelResponse.body) ?? new Channel(this.client, channelResponse.body),
+            response.headers?.maxAge
           )
         );
       }
@@ -129,9 +129,8 @@ class ChannelHelper extends BaseHelper {
       const existing = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
 
       return this.cache.set(
-        existing
-          ? existing.patch(response.body)
-          : new Channel(this.client, response.body)
+        existing?.patch(response.body) ?? new Channel(this.client, response.body),
+        response.headers?.maxAge
       );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return null; }

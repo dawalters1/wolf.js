@@ -36,12 +36,9 @@ class AchievementCategoryHelper extends BaseHelper {
     );
 
     return response.body.map((serverAchievementCategory) => {
-      const key = this.cache.getKey(serverAchievementCategory, languageId);
-
-      const existing = this.cache.get(key);
+      const existing = this.cache.get(serverAchievementCategory.body.id, languageId);
 
       return this.cache.set(
-        key,
         existing?.patch(serverAchievementCategory) ?? new AchievementCategory(this.client, serverAchievementCategory),
         response.headers?.maxAge
       );

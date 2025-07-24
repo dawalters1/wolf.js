@@ -15,8 +15,6 @@ export class AchievementCategory extends BaseEntity {
 
     return this;
   }
-
-
 }
 
 export default AchievementCategory;

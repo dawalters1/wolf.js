@@ -39,12 +39,10 @@ class ChannelRoleHelper {
     );
 
     return response.body.map(serverGroupRole => {
-      const existing = channel._roles.summaries.get(serverGroupRole.roleId);
+      const existing = channel._roles.summaries.get(serverGroupRole);
 
       return channel._roles.summaries.set(
-        existing
-          ? existing.patch(serverGroupRole)
-          : new ChannelRole(this.client, serverGroupRole)
+        existing?.patch(serverGroupRole) ?? new ChannelRole(this.client, serverGroupRole)
       );
     });
   }
@@ -84,10 +82,7 @@ class ChannelRoleHelper {
       const existing = channel._roles.users.get(serverGroupRoleUser.subscriberId);
 
       return channel._roles.users.set(
-        existing
-          ? existing.patch(serverGroupRoleUser)
-          : new ChannelRoleUser(this.client, serverGroupRoleUser)
-      );
+        existing?.patch(serverGroupRoleUser) ?? new ChannelRoleUser(this.client, serverGroupRoleUser));
     });
   }
 

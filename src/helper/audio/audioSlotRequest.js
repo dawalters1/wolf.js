@@ -41,14 +41,13 @@ class AudioSlotRequestHelper {
       }
     );
 
+    channel._audioSlotRequests.clear();
     channel._audioSlotRequests.fetched = true;
 
-    return response.body.map(serverReq => {
-      const existing = channel._audioSlotRequests.get(serverReq.reservedOccupierId);
+    return response.body.map((serverAudioRequest) => {
+      const existing = channel._audioSlotRequests.get(serverAudioRequest);
       return channel._audioSlotRequests.set(
-        existing
-          ? existing.patch(serverReq)
-          : new ChannelAudioSlotRequest(this.client, serverReq)
+        existing?.patch(serverAudioRequest) ?? new ChannelAudioSlotRequest(this.client, serverAudioRequest)
       );
     });
   }

@@ -52,12 +52,11 @@ class AchievementUserHelper {
 
       user._achievements.fetched = true;
       achievements = response.body.map(serverAchievementUser => {
-        const existing = user._achievements.get(serverAchievementUser.id);
+        const existing = user._achievements.get(serverAchievementUser);
 
         return user._achievements.set(
-          existing
-            ? existing.patch(serverAchievementUser)
-            : new AchievementUser(this.client, serverAchievementUser)
+          existing?.patch(serverAchievementUser) ?? new AchievementUser(this.client, serverAchievementUser),
+          response.headers?.maxAge
         );
       });
     }
@@ -72,7 +71,7 @@ class AchievementUserHelper {
     }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...user._achievements.getAll([...parentAchievement.childrenId])];
+      return [parentAchievement, ...user._achievements.mGet([...parentAchievement.childrenId])];
     }
 
     const response = await this.client.websocket.emit(
@@ -95,12 +94,11 @@ class AchievementUserHelper {
     );
 
     return response.body.map(serverAchievementUser => {
-      const existing = user._achievements.get(serverAchievementUser.id);
+      const existing = user._achievements.get(serverAchievementUser);
 
       return user._achievements.set(
-        existing
-          ? existing.patch(serverAchievementUser)
-          : new AchievementUser(this.client, serverAchievementUser)
+        existing?.patch(serverAchievementUser) ?? new AchievementUser(this.client, serverAchievementUser),
+        response.headers?.maxAge
       );
     });
   }

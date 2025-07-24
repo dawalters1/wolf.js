@@ -29,9 +29,8 @@ class BlockedHelper extends BaseHelper {
       const existing = this.cache.get(serverContact.id);
 
       return this.cache.set(
-        existing
-          ? existing.patch(serverContact)
-          : new Contact(this.client, serverContact)
+        existing?.patch(serverContact) ?? new Contact(this.client, serverContact),
+        response.headers?.maxAge
       );
     });
   }
