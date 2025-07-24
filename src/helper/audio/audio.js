@@ -44,7 +44,10 @@ class AudioHelper {
 
     channel._stages.clear();
     channel._stages.fetched = true;
-    return channel._stages.setAll(response.body.map(serverStage => new ChannelStage(this.client, serverStage)));
+
+    return response.body.map((serverStage) =>
+      channel._stages.set(new ChannelStage(this.client, serverStage))
+    );
   }
 
   async getAudioConfig (channelId, opts) {

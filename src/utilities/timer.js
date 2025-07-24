@@ -45,6 +45,7 @@ class TimerUtility {
         .isNotNullOrUndefined(`TimerUtility.get() parameter, jobId: ${jobId} is null or undefined`)
         .isNotEmptyOrWhitespace(`TimerUtility.get() parameter, jobId: ${jobId} is empty or whitespace`);
     }
+
     const job = await this._queue.getJob(jobId);
 
     return job

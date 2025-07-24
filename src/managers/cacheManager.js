@@ -1,90 +1,68 @@
-import ExpiryMap from 'expiry-map';
 
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 
-// TODO: refactor/restructure to better support languages, key/languageId approach seems eh
-// TODO: respect maxAge provided by the server
 class CacheManager {
-  constructor (ttl = null) {
-    this.ttl = ttl;
-    this.store = ttl === null
-      ? new Map()
-      : new ExpiryMap(ttl * 1000);
-    this._fetched = false;
-    this.timeout = undefined;
+  constructor () {
+    this.store = new Map();
+    this.fetched = false;
+
+    setInterval(() => {
+      const sizePrior = this.store.size;
+
+      for (const [id, value] of this.store) {
+        const { expiresAt } = value;
+
+        if (expiresAt && expiresAt <= Date.now()) {
+          this.store.delete(id);
+        }
+      }
+
+      if (sizePrior > 0 && this.store.size === 0) {
+        this.fetched = false;
+      }
+    }, 120);
   }
 
-  #createKey (key, languageId = null) {
-    return languageId
-      ? `${key}.languageId:${languageId}`
-      : key;
-  }
-
-  get fetched () {
-    return this._fetched;
-  }
-
-  set fetched (value) {
-    this._fetched = value;
-
-    if (!this.ttl) { return; }
-
-    clearTimeout(this.timeout);
-
-    if (value) {
-      this.timeout = setTimeout(() => {
-        this._fetched = false;
-      }, this.ttl * 1000);
-    }
-  }
-
-  set (value) {
-    if (this.ttl) {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this._fetched = false;
-      }, this.ttl * 1000);
+  resolveId (...args) {
+    if (args.length === 2) {
+      return `${args[1]}:${args[0]}`;
     }
 
-    const key = this.#createKey(value[getKeyProperty(value)], value.languageId ?? null);
+    const idOrObject = args[0];
 
-    const existing = this.get(key);
+    if (typeof idOrObject === 'number') { return idOrObject; };
+    ;
+    const id = idOrObject[getKeyProperty(idOrObject)];
 
-    if (existing?.patch) {
-      this.store.set(key, existing.patch(value));
-    } else {
-      this.store.set(key, value);
-    }
+    if (!('languageId' in idOrObject)) { return id; }
 
-    return this.store.get(key);
+    return `${idOrObject.languageId}:${id}`;
   }
 
-  setAll (values) {
-    return values.map((value) => this.set(value));
+  set (value, maxAge = null) {
+    const id = this.resolveId(value);
+
+    return this.store.set(
+      id,
+      {
+        value,
+        expiresAt: maxAge
+          ? Date.now() + (maxAge * 1000)
+          : null
+      }
+    ).get(id)?.value ?? null;
   }
 
-  get (key, languageId = null) {
-    return this.store.get(this.#createKey(key, languageId)) ?? null;
+  get (...args) {
+    return this.store.get(this.resolveId(...args))?.value ?? null;
   }
 
-  getAll (keys, languageId = null) {
-    return keys.map((key) => this.get(key, languageId));
+  has (...args) {
+    return this.store.has(this.resolveId(...args));
   }
 
-  has (key, languageId = null) {
-    return this.store.has(this.#createKey(key, languageId));
-  }
-
-  mhas (keys, languageId = null) {
-    return keys.map((key) => this.has(key, languageId));
-  }
-
-  delete (key, languageId = null) {
-    return this.store.delete(this.#createKey(key, languageId));
-  }
-
-  deleteAll (keys, languageId = null) {
-    return keys.map((key) => this.delete(key, languageId));
+  delete (...args) {
+    return this.store.delete(...args);
   }
 
   clear () {
@@ -92,20 +70,16 @@ class CacheManager {
     this.fetched = false;
   }
 
-  size () {
+  get size () {
     return this.store.size;
   }
 
-  keys () {
-    return Array.from(this.store.keys());
-  }
-
   values () {
-    return Array.from(this.store.values());
+    return [...this.store.values()].map((value) => value.value);
   }
 
-  entries () {
-    return Array.from(this.store.entries());
+  keys () {
+    return [...this.store.keys()];
   }
 }
 

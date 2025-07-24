@@ -61,10 +61,7 @@ class EventChannelHelper extends BaseHelper {
       const existing = channel._events.get(serverGroupEvent.id);
 
       return channel._events.set(
-        existing
-          ? existing.patch(serverGroupEvent)
-          : new ChannelEvent(this.client, serverGroupEvent)
-      );
+        existing?.patch(serverGroupEvent) ?? new ChannelEvent(this.client, serverGroupEvent)      );
     });
   }
 
