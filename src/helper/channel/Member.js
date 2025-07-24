@@ -48,10 +48,10 @@ class Member extends Base {
 
   async _getList(channel, list, returnCurrentList = false) {
     if (channel.members._metadata[list] || returnCurrentList) {
-      return channel.members._members.values().filter(m => m.lists.has(list));
+      return [...channel.members._members.values()].filter((member) => member.lists.has(list));
     }
 
-    const listConfig = this.client._frameworkConfig.get(`members.${list}.batch`);
+    const listConfig = this.client._frameworkConfig.get(`members.${list}`);
     const command = this._getCommandForList(list);
 
     const fetchMembers = async (result = []) => {
@@ -59,8 +59,11 @@ class Member extends Base {
         const response = await this.client.websocket.emit(
           command,
           {
+            headers: {
+              version: listConfig.version,
+            },
             body: {
-              id: channel.id,
+              [listConfig.key]: channel.id,
               limit: listConfig.size,
               after: listConfig.batchType === 'after' ? result.at(-1)?.id : undefined,
               filter: listConfig.batchType === 'offset' ? list : undefined,
@@ -73,6 +76,7 @@ class Member extends Base {
         result.push(...response.body.map((serverGroupMember) => {
           const existing = channel.members._members.get(serverGroupMember.id);
           return channel.members._members.set(
+            serverGroupMember.id,
             existing
               ? patch(existing, {...serverGroupMember, targetGroupId: channel.id})
               : new ChannelMember(this.client, {...serverGroupMember, targetGroupId: channel.id}, list)

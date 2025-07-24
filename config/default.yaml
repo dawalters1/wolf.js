@@ -35,22 +35,29 @@ avatar:
 
 members:
   privileged:
-    batch:
-      size: 2500
-      subscribe: true
-    max: 2500
+    key: 'id'
+    version: 3
+    subscribe: true 
   regular:
-    batch:
-      size: 25
-  silenced:
-    batch:
-      size: 25
-  banned:
-    batch:
-      size: 25
+    key: 'id'
+    version: 1
+    limit: 100
+    batchType: after
   bots:
-    batch:
-      size: 25
+    key: 'groupId'
+    version: 1
+    batchType: offset
+    limit: 50 
+  silenced:
+    key: 'groupId'
+    version: 1
+    batchType: offset
+    limit: 50 
+  banned:
+    key: 'id'
+    version: 1
+    batchType: after
+    limit: 50 
 
 batching:
   length: 50
