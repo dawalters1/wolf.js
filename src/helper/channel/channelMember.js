@@ -51,12 +51,11 @@ class ChannelMemberHelper {
         result.push(...response.body.map(serverMember => {
           serverMember.channelId = channel.id;
 
-          const existing = channel._members.get(serverMember.id);
+          const existing = channel._members.get(serverMember);
 
           return channel._members.set(
-            existing
-              ? existing.patch(serverMember, list)
-              : new ChannelMember(this.client, serverMember, list)
+            existing?.patch(serverMember, list) ?? new ChannelMember(this.client, serverMember, list),
+            response.headers?.maxAge
           );
         }));
 

@@ -6,7 +6,7 @@ class DiscoveryHelper {
   }
 
   async get (languageId, opts) {
-    return this.client.topic.getTopic('discover', languageId, opts);
+    //   return this.client.topic.getTopic('discover', languageId, opts);
   }
 }
 

@@ -1,17 +1,11 @@
-import Command from '../../constants/Command.js';
-import Language from '../../constants/Language.js';
-import { StatusCodes } from 'http-status-codes';
-import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
-import TopicRecipe from '../../entities/topicRecipe.js';
 import TopicRecipeManager from '../../managers/topicRecipeManager.js';
-import { validate } from '../../validator/index.js';
 
 class TopicRecipeHelper {
   constructor (client) {
     this.client = client;
     this.cache = new TopicRecipeManager();
   }
-
+/*
   async get (id, languageId, type, opts) {
     id = Number(id) || id;
     languageId = Number(languageId) || languageId;
@@ -66,20 +60,21 @@ class TopicRecipeHelper {
       };
 
       const topicRecipeList = (await get())
-        .map((serverTopicRecipe) => new TopicRecipe(this.client, serverTopicRecipe, id, type));
+        .map((serverTopicRecipe) => new TopicRecipe(this.client, { ...serverTopicRecipe, recipeId: id }, id, type));
 
       return [
         ...this.cache.set(
           id,
           languageId,
-          new Set(topicRecipeList)
+          new Set(topicRecipeList),
+          response.headers?.maxAge
         ).values()
       ];
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
       throw error;
     }
-  }
+  } */
 }
 
 export default TopicRecipeHelper;

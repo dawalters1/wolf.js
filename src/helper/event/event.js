@@ -49,7 +49,8 @@ class EventHelper extends BaseHelper {
     const eventsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedEvents = this.cache.getAll(eventIds).filter(event => event !== null);
+      const cachedEvents = eventIds.map((eventId) => this.cache.get(eventId))
+        .filter((event) => event !== null);
       cachedEvents.forEach(event => eventsMap.set(event.id, event));
     }
 
@@ -74,9 +75,8 @@ class EventHelper extends BaseHelper {
           eventsMap.set(
             eventResponse.body.id,
             this.cache.set(
-              existing
-                ? existing.patch(eventResponse.body)
-                : new Event(this.client, eventResponse.body)
+              existing?.patch(eventResponse.body) ?? new Event(this.client, eventResponse.body),
+              response.headers?.maxAge
             )
           );
         });

@@ -47,8 +47,8 @@ class StoreProductProfileHelper extends BaseHelper {
 
       const existing = this.cache.get(productId, languageId);
       return this.cache.set(
-        existing?.patch(response.body) ??
-        new StoreProductProfile(this.client, response.body)
+        existing?.patch(response.body) ?? new StoreProductProfile(this.client, response.body),
+        response.headers?.maxAge
       );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {

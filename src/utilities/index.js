@@ -90,11 +90,6 @@ class Utility {
     return languageKeyMap[languageKey.toLocaleLowerCase()] ?? Language.ENGLISH;
   }
 
-  /**
-   * Convert LanguageID to string language
-   * @param {Number} languageId
-   * @returns {String}
-   */
   toLanguageKey (languageId) {
     const languageIdMap = {
       14: 'ar',

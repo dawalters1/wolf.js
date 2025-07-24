@@ -54,7 +54,7 @@ class UserHelper extends BaseHelper {
     const usersMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedUsers = this.cache.getAll(userIds)
+      const cachedUsers = userIds.map((userId) => this.cache.get(userId))
         .filter((user) => user !== null);
 
       cachedUsers.forEach((user) => usersMap.set(user.id, user));
@@ -81,8 +81,9 @@ class UserHelper extends BaseHelper {
         .forEach(([userId, userResponse]) => {
           const existing = this.cache.get(userId);
 
+          console.log(existing);
           const user = existing
-            ? existing.patch(userResponse.body)
+            ? existing?.patch(userResponse.body)
             : userId === this.client.config.framework.login.userId
               ? new CurrentUser(this.client, userResponse.body)
               : new User(this.client, userResponse.body);
@@ -91,7 +92,13 @@ class UserHelper extends BaseHelper {
             this.client._me = user;
           }
 
-          usersMap.set(userId, this.cache.set(user));
+          usersMap.set(
+            userId,
+            this.cache.set(
+              user,
+              response.headers?.maxAge
+            )
+          );
         });
     }
 

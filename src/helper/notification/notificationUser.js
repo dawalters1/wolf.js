@@ -35,12 +35,10 @@ class NotificationUserHelper extends BaseHelper {
     this.client.me.notificationsUser.fetched = true;
 
     return (await get()).map((serverNotification) => {
-      const existing = this.client.me.notificationsUser.get(serverNotification.id);
+      const existing = this.client.me.notificationsUser.get(serverNotification);
 
       return this.client.me.notificationsUser.set(
-        existing
-          ? existing.patch(serverNotification)
-          : new Notification(this.client, serverNotification)
+        existing?.patch(serverNotification) ?? new Notification(this.client, serverNotification)
       );
     });
   }
@@ -119,7 +117,7 @@ class NotificationUserHelper extends BaseHelper {
     const notificationsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedNotificationUsers = this.cache.getAll(notificationIds)
+      const cachedNotificationUsers = notificationIds.map((notificationId) => this.cache.get(notificationId))
         .filter((notificationUser) => notificationUser !== null);
 
       cachedNotificationUsers.forEach((notificationUser) =>
@@ -147,9 +145,8 @@ class NotificationUserHelper extends BaseHelper {
           notificationsMap.set(
             res.body.id,
             this.cache.set(
-              existing
-                ? existing.patch(res.body)
-                : new NotificationUser(this.client, res.body)
+              existing?.patch(res.body) ?? new NotificationUser(this.client, res.body),
+              response.headers?.maxAge
             )
           );
         });

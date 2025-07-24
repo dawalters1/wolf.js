@@ -61,7 +61,7 @@ class AchievementHelper extends BaseHelper {
     const achievementsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedAchievements = this.cache.getAll(achievementIds.map((achievementId) => `${achievementId}.languageId:${languageId}`))
+      const cachedAchievements = achievementIds.map((achievementId) => this.cache.get(achievementId, languageId))
         .filter((achievement) => achievement !== null);
 
       cachedAchievements.forEach((achievement) => achievementsMap.set(achievement.id, achievement));
@@ -83,17 +83,12 @@ class AchievementHelper extends BaseHelper {
       response.body
         .filter((achievementResponse) => achievementResponse.success)
         .forEach((achievementResponse) => {
-          const key = this.createKey(achievementResponse.body.id, languageId);
-
-          const existing = this.cache.get(key);
+          const existing = this.cache.get(achievementResponse.body.id, languageId);
 
           achievementsMap.set(
             achievementResponse.body.id,
             this.cache.set(
-              key,
-              existing
-                ? existing.patch(achievementResponse.body)
-                : new Achievement(this.client, achievementResponse.body),
+              existing?.patch(achievementResponse.body) ?? new Achievement(this.client, achievementResponse.body),
               response.headers?.maxAge
             )
           );

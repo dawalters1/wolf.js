@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Ad from '../entities/ad.js';
+import { validate } from '../validator/index.js';
 
 function replaceRange (string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
@@ -11,6 +12,24 @@ class StringUtility {
   }
 
   chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.chunk() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.chunk() parameter, string: ${string} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, string: ${string} is empty or whitespace`);
+
+      validate(length)
+        .isGreaterThan(0, `StringUtility.chunk() parameter, length: ${length} must be lstringer than 0`);
+
+      validate(splitChar)
+        .isNotNullOrUndefined(`StringUtility.chunk() parameter, splitChar: ${splitChar} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, splitChar: ${splitChar} is empty or whitespace`);
+
+      validate(joinChar)
+        .isNotNullOrUndefined(`StringUtility.chunk() parameter, joinChar: ${joinChar} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, joinChar: ${joinChar} is empty or whitespace`);
+    }
+
     if (string.length <= length) {
       return [string];
     }
@@ -35,7 +54,12 @@ class StringUtility {
   }
 
   getAds (string) {
-    if (typeof string !== 'string') { return []; }
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.getAds() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.getAds() parameter, string: ${string} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.getAds() parameter, string: ${string} is empty or whitespace`);
+    }
 
     return [...string.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)].map(ad => new Ad(this.client, ad));
   }
@@ -65,6 +89,13 @@ class StringUtility {
   }
 
   replace (string, replacements) {
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.replace() parameter, string: ${string} is empty or whitespace`);
+    }
+
     return Object.entries(replacements)
       .map((replacement) => [...string.matchAll(new RegExp(_.escapeRegExp(`{${replacement[0]}}`), 'g'))]
         .map((match) =>
@@ -83,7 +114,11 @@ class StringUtility {
   }
 
   sanitise (string) {
-    if (typeof string !== 'string') { return string; }
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`);
+    }
 
     return string
       .normalize('NFD') // Handles Latin accents
@@ -93,7 +128,11 @@ class StringUtility {
   }
 
   trimAds (string) {
-    if (typeof string !== 'string') { return string; }
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`);
+    }
 
     const ads = this.getAds(string);
 
