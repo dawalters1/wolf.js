@@ -59,7 +59,7 @@ class WOLF extends EventEmitter {
    * @param {OnlineState | Number} onlineState
    * @returns {Promise<void>}
    */
-  async login (email, password, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL) {
+  async login (email, password, apiKey = undefined, onlineState = OnlineState.ONLINE, loginType = LoginType.EMAIL) {
     if (this.websocket?.socket?.connected && this.currentSubscriber) {
       return false;
     }
@@ -71,19 +71,17 @@ class WOLF extends EventEmitter {
       password = loginDetails.password;
       onlineState = loginDetails.onlineState;
       loginType = loginDetails.type;
+      apiKey = loginDetails.apiKey;
     } else {
       this.config.framework.login.email = email;
       this.config.framework.login.password = password;
       this.config.framework.login.onlineState = onlineState;
       this.config.framework.login.type = loginType;
+      this.config.framework.login.apiKey = apiKey;
     }
 
     if (validator.isNullOrWhitespace(email)) {
       throw new WOLFAPIError('email cannot be null or empty', { email });
-    }
-
-    if (validator.isNullOrWhitespace(password)) {
-      throw new WOLFAPIError('password cannot be null or empty', { password });
     }
 
     if (!validator.isValidNumber(onlineState)) {

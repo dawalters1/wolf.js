@@ -43,7 +43,8 @@ const developerConfig = (client) => {
         password: typeof config?.framework?.login?.password === 'string' ? config.framework.login.password : undefined,
         onlineState: typeof config?.framework?.login?.onlineState === 'number' && Object.values(OnlineState).includes(config.framework.login.onlineState) ? config.framework.login.onlineState : OnlineState.ONLINE,
         token: typeof config?.framework?.login?.token === 'string' ? config.framework.login.token : `WJS${nanoid(32)}`,
-        type: typeof config?.framework?.login?.type === 'string' && Object.values(LoginType).includes(config.framework.login.type) ? config.framework.login.type : LoginType.EMAIL
+        type: typeof config?.framework?.login?.type === 'string' && Object.values(LoginType).includes(config.framework.login.type) ? config.framework.login.type : LoginType.EMAIL,
+        apiKey: typeof config?.framework?.login?.apiKey === 'string'? config.framework.login.apiKey : undefined,
       },
       join: {
         limit: typeof config?.framework?.join?.limit === 'number' ? config.framework.join.limit : Infinity,

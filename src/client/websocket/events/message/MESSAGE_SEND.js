@@ -1,5 +1,6 @@
 import { MessageType, Event, ServerEvent, Language, Capability } from '../../../../constants/index.js';
-import models, { ChannelMemberList, ChannelRoleContainer, ChannelSubscriberUpdate } from '../../../../models/index.js';
+import ChannelMemberManager from '../../../../models/ChannelMemberManager.js';
+import models, { ChannelMember, ChannelRoleContainer, ChannelSubscriberUpdate } from '../../../../models/index.js';
 import Base from '../Base.js';
 
 const toCapability = (subscriber, channel, type) => {
@@ -22,9 +23,17 @@ const toCapability = (subscriber, channel, type) => {
       return Capability.REGULAR;
     case 'owner':
       return Capability.OWNER;
+    case 'co-owner': 
+      return Capability.CO_OWNER
   }
 };
 
+/**
+ * 
+ * @param {import('../../../WOLF.js').default} client 
+ * @param {*} message 
+ * @returns 
+ */
 const handleApplicationPalringoChannelAction = async (client, message) => {
   const [subscriber, channel] = await Promise.all(
     [
@@ -38,8 +47,19 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
 
   switch (action.type) {
     case 'join':
-    {
-      await channel.members._onJoin(subscriber, capabilities);
+    {   
+      await channel.members._members
+        .set(subscriber.id, 
+          new ChannelMember(
+          client, 
+          {
+            id: subscriber.id,
+            targetGroupId: channel.id,
+            hash: subscriber.hash,
+            capabilities
+          }
+        )
+      );
 
       channel.membersCount++;
 
@@ -62,11 +82,12 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
       if (subscriber.id === client.currentSubscriber.id) {
         channel.capabilities = capabilities;
         channel.inChannel = false;
-        channel.members = new ChannelMemberList(client, channel.id);
+        channel.members = new ChannelMemberManager()
         channel.roles = new ChannelRoleContainer(client, channel.id);
+      } else{
+         channel.members._members.delete(subscriber.id);
       }
 
-      await channel.members._onLeave(subscriber, capabilities);
       channel.membersCount--;
 
       return (subscriber.id === client.currentSubscriber.id ? [Event.LEFT_GROUP, Event.LEFT_CHANNEL] : [Event.GROUP_MEMBER_DELETE, Event.CHANNEL_MEMBER_DELETE])
@@ -79,6 +100,7 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
         );
     }
 
+    case 'co-owner': // eslint-disable-line padding-line-between-statements
     case 'owner': // eslint-disable-line padding-line-between-statements
     case 'admin': // eslint-disable-line padding-line-between-statements
     case 'mod': // eslint-disable-line padding-line-between-statements
@@ -89,13 +111,28 @@ const handleApplicationPalringoChannelAction = async (client, message) => {
       if (subscriber.id === client.currentSubscriber.id) {
         channel.capabilities = capabilities;
       }
-      await channel.members._onUpdate(subscriber, capabilities);
 
-      // non-mod+ users do not have access to banned lists
-      if (action.type === 'reset' && subscriber.id === client.currentSubscriber.id) {
-        channel.members._misc.members.push(...channel.members._banned.members);
+      const member = channel.members._members.get(subscriber.id);
 
-        await channel.members._banned.reset();
+      if(member){
+
+        member.removeList(member._getParentList(member.capabilities))
+        member.addList(member._getParentList(capabilities));
+        member.capabilities = capabilities;
+
+      } else {
+        await channel.members._members
+          .set(subscriber.id, 
+            new ChannelMember(
+            client, 
+            {
+              id: subscriber.id,
+              targetGroupId: channel.id,
+              hash: subscriber.hash,
+              capabilities
+            }
+          )
+        );
       }
 
       return [Event.GROUP_MEMBER_UPDATE, Event.CHANNEL_MEMBER_UPDATE]
