@@ -81,7 +81,6 @@ class UserHelper extends BaseHelper {
         .forEach(([userId, userResponse]) => {
           const existing = this.cache.get(userId);
 
-          console.log(existing);
           const user = existing
             ? existing?.patch(userResponse.body)
             : userId === this.client.config.framework.login.userId
