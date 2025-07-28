@@ -94,6 +94,29 @@ export class User extends BaseEntity {
 
   /** @internal */
   patch (entity) {
+    this.id = entity.id;
+    this.categoryIds = entity.categoryIds;
+    this.charms = this.charms.patch(entity.charms);
+    this.extended =
+    entity.extended
+      ? this.extended?.patch(entity.extended) ?? new UserExtended(this.client, entity.extended)
+      : null;
+    this.followable = entity.followable;
+    this.hash = entity.hash;
+    this.icon = entity.icon;
+    this.iconHash = entity.iconHash;
+    this.iconInfo = entity.iconInfo
+      ? this.iconInfo?.patch(entity.iconInfo) ?? new IconInfo(this.client, entity.iconInfo)
+      : null;
+    this.nickname = entity.nickname;
+    this.privileges = entity.privileges;
+    this.privilegeList = Object.values(UserPrivilege).filter(
+      (value) => (this.privileges & value) === value
+    );
+    this.reputation = entity.reputation;
+    this.status = entity.status;
+    this._presence = this._presence.patch(entity);
+
     return this;
   }
 }

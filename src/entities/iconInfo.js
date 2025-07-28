@@ -8,6 +8,10 @@ export class IconInfo extends BaseEntity {
     this.availableTypes = new Set(entity.availableTypes);
   }
 
+  getAvatarUrl (size) {
+    // TODO: availableSizes
+  }
+
   /** @internal */
   patch (entity) {
     this.availableSizes = entity.availableSizes;

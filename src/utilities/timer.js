@@ -54,7 +54,9 @@ class TimerUtility {
   }
 
   async add (jobId, handler, data, delay) {
+    delay = Number(delay) || delay;
     if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
+
     { // eslint-disable-line no-lone-blocks
       validate(jobId)
         .isNotNullOrUndefined(`TimerUtility.add() parameter, jobId: ${jobId} is null or undefined`)
@@ -73,7 +75,6 @@ class TimerUtility {
         .isValidNumber(`TimerUtility.add() parameter, delay: ${delay} is not a valid number`)
         .isGreaterThanZero(`TimerUtility.add() parameter, delay: ${delay} is less than or equal to zero`);
     }
-    delay = Number(delay) || delay;
 
     await this.cancel(jobId);
 
@@ -108,7 +109,10 @@ class TimerUtility {
   }
 
   async extend (jobId, delay) {
+    delay = Number(delay) || delay;
+
     if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
+
     { // eslint-disable-line no-lone-blocks
       validate(jobId)
         .isNotNullOrUndefined(`TimerUtility.extend() parameter, jobId: ${jobId} is null or undefined`)
