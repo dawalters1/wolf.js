@@ -12,6 +12,8 @@ class StringUtility {
   }
 
   chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
+    length = Number(length) || length;
+
     { // eslint-disable-line no-lone-blocks
       validate(string)
         .isTypeOf('string', `StringUtility.chunk() parameter, string: ${string} is not type of string`)
