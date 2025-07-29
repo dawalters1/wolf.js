@@ -16,7 +16,9 @@ const validateOptions = (options) => {
   const _options = Object.assign({}, options);
 
   _options.formatting = typeof _options.formatting === 'object' ? _options.formatting : {};
-  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : true;
+  _options.formatting.includeEmbeds = typeof _options.formatting.includeEmbeds === 'boolean' ? _options.formatting.includeEmbeds : false;
+  _options.formatting.renderAds = typeof _options.formatting.renderAds === 'boolean' ? _options.formatting.renderAds: true;
+  _options.formatting.renderLinks = typeof _options.formatting.renderLinks === 'boolean' ? _options.formatting.renderLinks: true;
   _options.formatting.success = typeof _options.formatting.success === 'boolean' ? _options.formatting.success : false;
   _options.formatting.failed = typeof _options.formatting.failed === 'boolean' ? _options.formatting.failed : false;
   _options.formatting.me = typeof _options.formatting.me === 'boolean' ? _options.formatting.me : false;
@@ -33,35 +35,39 @@ const validateOptions = (options) => {
   return _options;
 };
 
-const getFormattingData = async (client, ads, links) => {
+const getFormattingData = async (client, ads, links, opts) => {
   const data = {
     formatting: {
-      groupLinks: await ads.reduce(async (result, ad) => {
-        if ((await result).length >= 25) {
+      groupLinks: !opts?.formatting?.renderAds ? 
+        [] : 
+        await ads.reduce(async (result, ad) => {
+          if ((await result).length >= 25) {
+            return result;
+          }
+
+          (await result).push(
+            {
+              start: ad.start,
+              end: ad.end,
+              groupId: (await ad.channel())?.id
+            }
+          );
+
           return result;
-        }
+        }, []),
 
-        (await result).push(
-          {
-            start: ad.start,
-            end: ad.end,
-            groupId: (await ad.channel())?.id
-          }
-        );
-
-        return result;
-      }, []),
-
-      links: links.map((link) =>
-        (
-          {
-            start: link.start,
-            end: link.end,
-            url: link.link
-          }
+      links: !opts?.formatting?.renderLinks ? 
+        [] :
+        links.map((link) =>
+          (
+            {
+              start: link.start,
+              end: link.end,
+              url: link.link
+            }
+          )
         )
-      )
-    }
+      }
   };
 
   if (!data.formatting.groupLinks.length) {
@@ -165,7 +171,7 @@ const buildMessages = async (client, recipient, isChannel, content, options) => 
     })()).trim();
 
     // Get formatting data for the chunk
-    const formatting = await getFormattingData(client, client.utility.string.getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...client.utility.string.getLinks(messageChunk)]);
+    const formatting = await getFormattingData(client, client.utility.string.getAds(messageChunk), [...developerInjectedLinks.filter((link) => link.end <= messageChunk.length), ...client.utility.string.getLinks(messageChunk)], options);
 
     const embeds = embedsAttached ? undefined : await getEmbedData(client, formatting, options);
 

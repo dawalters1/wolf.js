@@ -4137,7 +4137,15 @@ export class MessageSendOptions {
         /**
          * Whether or not the message should show a link/ad preview
          */
-        includeEmbeds: boolean,
+        includeEmbeds: false | boolean,
+        /**
+         * Whether or not the message should show rendered ads
+         */
+        renderAds: true | boolean;
+        /**
+         * Whether or not the message should show rendered links
+         */
+        renderLinks: true | boolean;
         /**
          * Whether or not the bot should append (Y) to the start of the message
          */
