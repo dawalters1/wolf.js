@@ -11,6 +11,8 @@ const __dirname = dirname(__filename);
  * @param {import('../models/CommandContext.js').default} command
  */
 export default async (client, command) => {
+  if(client.config.framework.login.apiKey) { return false };
+
   if (command.sourceSubscriberId === client.currentSubscriber.id) { return false; }
 
   const argument = client.utility.number.toEnglishNumbers(command.argument)?.split(client.SPLIT_REGEX).filter(Boolean)[0] ?? undefined;
