@@ -63,8 +63,17 @@ export class Websocket {
       autoConnect: false
     });
 
+    // This should work??
+    this.socket.io.backoff.duration = () => {
+      if (this.socket.reconnectionDelay === -1) {
+        return this.socket.disconnect();
+      }
+
+      return this.socket.reconnectionDelay;
+    };
+
     this.socket.io.on('open', () => this.client.emit('connecting'));
-    this.socket.on('connect', () => this.client.emit('connected'));
+    this.socket.on('connect', () => { this.socket.reconnectionDelay = 1000; this.client.emit('connected'); });
     this.socket.on('connect_error', error => this.client.emit('connectError', error));
     this.socket.on('connect_timeout', () => this.client.emit('connectTimeout'));
     this.socket.on('disconnect', reason => {
@@ -132,7 +141,7 @@ export class Websocket {
           if (!response.success) {
             const retryCodes = [408, 429, 500, 502, 504];
             if (!retryCodes.includes(response.code) || attempt >= 3) {
-              console.log(command, body);
+              console.log('[RequestFailed]', command, body, '\nResponse', response);
               return reject(response);
             }
 

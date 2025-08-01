@@ -32,7 +32,7 @@ const VOLUME_PRECISION_BITS = 15; // For fixed-point volume calculations
  * @param {number} value - The value to clamp
  * @returns {number} Clamped value
  */
-function clampInt16(value) {
+function clampInt16 (value) {
   return Math.min(32767, Math.max(-32768, Math.round(value)));
 }
 
@@ -42,19 +42,19 @@ function clampInt16(value) {
  * @param {number} volume - Volume multiplier (0.0 to 2.0)
  * @param {boolean} muted - Whether audio is muted
  */
-function applyVolume(samples, volume, muted) {
+function applyVolume (samples, volume, muted) {
   if (muted || volume === 0) {
     samples.fill(0);
     return;
   }
-  
+
   if (volume === 1) {
     return; // No processing needed
   }
 
   // Use fixed-point arithmetic for better performance
   const volumeFixed = Math.round(volume * (1 << VOLUME_PRECISION_BITS));
-  
+
   for (let i = 0; i < samples.length; i++) {
     const scaled = (samples[i] * volumeFixed) >> VOLUME_PRECISION_BITS;
     samples[i] = clampInt16(scaled);
@@ -66,17 +66,17 @@ function applyVolume(samples, volume, muted) {
  * @param {object} data - Audio frame data
  * @returns {boolean} True if valid
  */
-function validateAudioFrame(data) {
-  if (!data || typeof data !== 'object') return false;
-  if (!(data.samples instanceof Int16Array)) return false;
-  if (typeof data.sampleRate !== 'number' || data.sampleRate <= 0) return false;
-  if (typeof data.channelCount !== 'number' || data.channelCount <= 0) return false;
-  if (typeof data.numberOfFrames !== 'number' || data.numberOfFrames <= 0) return false;
-  
+function validateAudioFrame (data) {
+  if (!data || typeof data !== 'object') { return false; }
+  if (!(data.samples instanceof Int16Array)) { return false; }
+  if (typeof data.sampleRate !== 'number' || data.sampleRate <= 0) { return false; }
+  if (typeof data.channelCount !== 'number' || data.channelCount <= 0) { return false; }
+  if (typeof data.numberOfFrames !== 'number' || data.numberOfFrames <= 0) { return false; }
+
   // Check if sample count matches expected frame size
   const expectedSamples = data.numberOfFrames * data.channelCount;
-  if (data.samples.length !== expectedSamples) return false;
-  
+  if (data.samples.length !== expectedSamples) { return false; }
+
   return true;
 }
 
@@ -86,7 +86,7 @@ function validateAudioFrame(data) {
  * @param {number} frames - Number of frames per chunk
  * @returns {number} Frame duration in milliseconds
  */
-function calculateFrameDuration(sampleRate, frames) {
+function calculateFrameDuration (sampleRate, frames) {
   return (frames / sampleRate) * 1000;
 }
 
@@ -94,25 +94,25 @@ function calculateFrameDuration(sampleRate, frames) {
  * Initialize worker with configuration
  * @param {object} newConfig - Configuration object
  */
-function initialize(newConfig) {
+function initialize (newConfig) {
   try {
     // Validate and merge configuration
     if (newConfig && typeof newConfig === 'object') {
       config = { ...config, ...newConfig };
     }
-    
+
     // Calculate precise frame duration
     config.frameDurationMs = calculateFrameDuration(config.sampleRate, config.frames);
-    
+
     // Initialize timing
     state.nextFrameTime = performance.now();
-    
+
     // Reset state
     state.bufferQueue.length = 0;
     state.processing = false;
     state.paused = false;
     state.underrunCount = 0;
-    
+
     // Send acknowledgment
     parentPort?.postMessage({
       type: 'initialized',
@@ -130,7 +130,7 @@ function initialize(newConfig) {
  * Enqueue audio data for processing
  * @param {object} data - Audio frame data
  */
-function enqueueAudioData(data) {
+function enqueueAudioData (data) {
   try {
     if (!validateAudioFrame(data)) {
       parentPort?.postMessage({
@@ -139,15 +139,15 @@ function enqueueAudioData(data) {
       });
       return;
     }
-    
+
     // Check queue size limit
     if (state.bufferQueue.length >= config.maxQueueSize) {
       // Drop oldest frame to prevent memory buildup
       state.bufferQueue.shift();
     }
-    
+
     state.bufferQueue.push(data);
-    
+
     // Start processing if conditions are met
     if (!state.processing && !state.paused && state.bufferQueue.length >= config.minPreloadFrames) {
       startProcessing();
@@ -164,14 +164,14 @@ function enqueueAudioData(data) {
  * Update audio settings
  * @param {object} settings - New settings
  */
-function updateSettings(settings) {
+function updateSettings (settings) {
   try {
-    if (!settings || typeof settings !== 'object') return;
-    
+    if (!settings || typeof settings !== 'object') { return; }
+
     if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 2) {
       state.volume = settings.volume;
     }
-    
+
     if (typeof settings.muted === 'boolean') {
       state.muted = settings.muted;
     }
@@ -186,7 +186,7 @@ function updateSettings(settings) {
 /**
  * Pause audio processing
  */
-function pauseProcessing() {
+function pauseProcessing () {
   state.paused = true;
   state.processing = false;
 }
@@ -194,9 +194,9 @@ function pauseProcessing() {
 /**
  * Resume audio processing
  */
-function resumeProcessing() {
+function resumeProcessing () {
   state.paused = false;
-  
+
   if (!state.processing && state.bufferQueue.length >= config.minPreloadFrames) {
     startProcessing();
   }
@@ -205,76 +205,75 @@ function resumeProcessing() {
 /**
  * Start the audio processing loop
  */
-function startProcessing() {
-  if (state.processing || state.shutdown) return;
-  
+function startProcessing () {
+  if (state.processing || state.shutdown) { return; }
+
   state.processing = true;
-  
+
   setImmediate(processNext);
 }
 
 /**
  * Process the next audio frame
  */
-function processNext() {
+function processNext () {
   try {
     // Check if we should stop processing
     if (state.paused || state.shutdown) {
       state.processing = false;
       return;
     }
-    
+
     // Check if we have data to process
     if (state.bufferQueue.length === 0) {
       handleUnderrun();
       return;
     }
-    
+
     // Check timing - don't process too early
     const now = performance.now();
     if (now < state.nextFrameTime) {
       setTimeout(processNext, Math.max(0, state.nextFrameTime - now));
       return;
     }
-    
+
     // Get next frame
     const data = state.bufferQueue.shift();
-    
+
     // Create a copy of samples to avoid modifying original
     const samples = new Int16Array(data.samples);
-    
+
     // Apply volume and mute
     applyVolume(samples, state.volume, state.muted);
-    
+
     // Create processed frame data
     const processedData = {
       ...data,
-      samples: samples
+      samples
     };
-    
+
     // Send to main thread
     parentPort?.postMessage({
       type: 'audioFrame',
       data: processedData
     });
-    
+
     // Update timing
     state.nextFrameTime += config.frameDurationMs;
-    
+
     // Handle timing drift
     if (now > state.nextFrameTime + config.maxDriftMs) {
       state.nextFrameTime = now + config.frameDurationMs;
     }
-    
+
     // Schedule next frame
     setImmediate(processNext);
-    
   } catch (error) {
     parentPort?.postMessage({
       type: 'error',
       error: `Frame processing failed: ${error.message}`
     });
-    
+
     // Try to continue processing
     setTimeout(processNext, config.frameDurationMs);
   }
@@ -283,10 +282,10 @@ function processNext() {
 /**
  * Handle audio underrun condition
  */
-function handleUnderrun() {
+function handleUnderrun () {
   state.underrunCount++;
   state.processing = false;
-  
+
   parentPort?.postMessage({
     type: 'underrun',
     count: state.underrunCount
@@ -296,24 +295,22 @@ function handleUnderrun() {
 /**
  * Shutdown the worker gracefully
  */
-function shutdown() {
-  
+function shutdown () {
   state.shutdown = true;
   state.processing = false;
-  
+
   // Clear buffer queue
   state.bufferQueue.length = 0;
-  
+
   parentPort?.postMessage({
     type: 'shutdown'
   });
-  
 }
 
 /**
  * Handle messages from the main thread
  */
-function handleMessage(msg) {
+function handleMessage (msg) {
   try {
     if (!msg || typeof msg.type !== 'string') {
       parentPort?.postMessage({
@@ -322,39 +319,39 @@ function handleMessage(msg) {
       });
       return;
     }
-    
+
     switch (msg.type) {
       case 'init':
         initialize(msg.config);
         break;
-        
+
       case 'enqueue':
         enqueueAudioData(msg.data);
         break;
-        
+
       case 'updateSettings':
         updateSettings(msg.settings);
         break;
-        
+
       case 'pause':
         pauseProcessing();
         break;
-        
+
       case 'resume':
         resumeProcessing();
         break;
-        
+
       case 'shutdown':
         shutdown();
         break;
-        
+
       // Legacy support for older message format
       case 'updateVolume':
         if (typeof msg.volume === 'number') {
           updateSettings({ volume: msg.volume });
         }
         break;
-        
+
       default:
         parentPort?.postMessage({
           type: 'error',
@@ -372,7 +369,7 @@ function handleMessage(msg) {
 // Set up message handling
 if (parentPort) {
   parentPort.on('message', handleMessage);
-  
+
   // Handle worker thread errors
   process.on('uncaughtException', (error) => {
     parentPort?.postMessage({
@@ -380,7 +377,7 @@ if (parentPort) {
       error: `Uncaught exception: ${error.message}`
     });
   });
-  
+
   process.on('unhandledRejection', (reason, promise) => {
     parentPort?.postMessage({
       type: 'error',
