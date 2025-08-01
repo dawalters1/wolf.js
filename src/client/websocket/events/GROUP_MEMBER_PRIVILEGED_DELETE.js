@@ -4,7 +4,7 @@ import ChannelMemberCapability from '../../../constants/ChannelMemberCapability.
 
 class GroupMemberDeleteEvent extends BaseEvent {
   constructor (client) {
-    super(client, 'group member delete');
+    super(client, 'group member privileged delete');
   }
 
   async process (data) {

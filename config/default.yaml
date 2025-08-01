@@ -39,6 +39,7 @@ framework:
             version: 1
             limit: 100
             batchType: after
+            subscribe: true 
           bots:
             key: 'groupId'
             version: 1
