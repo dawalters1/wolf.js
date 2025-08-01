@@ -7,10 +7,9 @@ class ObjectionEvent extends BaseEvent {
   }
 
   async process (data) {
-    // API Key is not valid, stop all connection attempts
-    if (data.reconnectSeconds < 0) {
-      this.client.websocket.disconnect();
-    }
+    this.client.websocket.socket.reconnectionDelay = data.reconnectSeconds === -1
+      ? -1
+      : data.reconnectSeconds * 1000;
 
     this.client.emit(
       'loginFailed',

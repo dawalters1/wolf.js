@@ -46,10 +46,9 @@ class WOLF extends EventEmitter {
       ? yaml.load(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8'))
       : {};
 
-    this.config = _.merge({}, baseConfig, frameworkConfig, botConfig);
+    this.config = _.merge({ get: config.get }, baseConfig, frameworkConfig, botConfig);
 
     this.utility = new Utility(this);
-    this.config.get = config.get;
     this.multimedia = new Multimedia(this);
     this.websocket = new Websocket(this);
     this.achievement = new AchievementHelper(this);
@@ -80,17 +79,17 @@ class WOLF extends EventEmitter {
     return /[\n\t,،\s+]/g;
   }
 
-  async login (email, password, opts) {
+  async login (email, password, apiKey, opts) {
     if (this.loggedIn) { return; }
 
     // Assume Configuration
     if (email === undefined && password === undefined) {
       email = this.config.framework.login?.email;
       password = this.config.framework.login?.password;
+      apiKey = this.config.framework.login?.apiKey;
 
       opts = {
         token: this.config.framework.login?.token,
-        apiKey: this.config.framework.login?.apiKey,
         state: this.config.framework.login?.onlineState
       };
     }
@@ -98,8 +97,8 @@ class WOLF extends EventEmitter {
     this.config.framework.login = {
       username: email,
       password,
+      apiKey,
       token: opts?.token ?? `wjs-${nanoid()}`,
-      apiKey: opts?.apiKey,
       state: opts?.onlineState ?? UserPresenceType.ONLINE
     };
 
