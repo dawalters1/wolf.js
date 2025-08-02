@@ -1,10 +1,15 @@
 import _ from 'lodash';
 import Ad from '../entities/ad.js';
+import Link from '../entities/link.js';
+import urlRegexSafe from 'url-regex-safe';
 import { validate } from '../validator/index.js';
 
 function replaceRange (string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
 }
+
+const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
+const isValidUrl = (url) => urlRegex.test(url);
 
 class StringUtility {
   constructor (client) {
@@ -64,6 +69,35 @@ class StringUtility {
     }
 
     return [...string.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)].map(ad => new Ad(this.client, ad));
+  }
+
+  getLinks (string) {
+    { // eslint-disable-line no-lone-blocks
+      validate(string)
+        .isTypeOf('string', `StringUtility.getLinks() parameter, string: ${string} is not type of string`)
+        .isNotNullOrUndefined(`StringUtility.getLinks() parameter, string: ${string} is null or undefined`)
+        .isNotEmptyOrWhitespace(`StringUtility.getLinks() parameter, string: ${string} is empty or whitespace`);
+    }
+
+    const urls = string.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
+
+    const sortedUrls = urls.map(url => url.replace(/\.+$/, '')).sort((a, b) => b.length - a.length);
+
+    const matchedIndices = new Set();
+    const matches = [];
+
+    for (const url of sortedUrls) {
+      const urlPattern = new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu');
+
+      for (const match of string.matchAll(urlPattern)) {
+        if (!matchedIndices.has(match.index) && isValidUrl(match[1])) {
+          matchedIndices.add(match.index);
+          matches.push(match);
+        }
+      }
+    }
+
+    return matches.map(match => new Link(this.client, match));
   }
 
   isEqual (stringA, stringB) {
@@ -126,6 +160,12 @@ class StringUtility {
       .normalize('NFD') // Handles Latin accents
       .replace(/[\u0300-\u036f]/g, '') // Remove Latin combining marks
       .replace(/[\u0610-\u061A\u064B-\u065F\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g, '') // Remove Arabic diacritics
+      .replace(/ç/gi, 'c')
+      .replace(/ğ/gi, 'g')
+      .replace(/ı|i/gi, 'i') // Handles both dotted and dotless I
+      .replace(/ö/gi, 'o')
+      .replace(/ş/gi, 's')
+      .replace(/ü/gi, 'u')
       .toLowerCase();
   }
 

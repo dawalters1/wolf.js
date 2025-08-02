@@ -35,9 +35,7 @@ class SecurityHelper {
    * @returns {Promise<WOLFResponse>}
    */
   async logout () {
-    if (!this.client.loggedIn) {
-      throw new Error('Client is not logged in');
-    }
+    if (!this.client.loggedIn) { throw new Error('Client is not logged in'); }
 
     return this.client.websocket.emit(Command.SECURITY_LOGOUT);
   }

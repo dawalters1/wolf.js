@@ -79,7 +79,8 @@ class AudioHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'AudioHelper.getAudioCount() parameter, opts.{parameter}: {value} {error}');
     }
-    // Implement as needed
+
+    // TODO:
   }
 
   async updateAudioConfig (channelId, opts) {
@@ -147,6 +148,19 @@ class AudioHelper {
     }
 
     return this.slots.get(channelId).resume();
+  }
+
+  async hasClient (channelId) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioHelper.getClientState() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioHelper.getClientState() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThanZero(`AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
+    }
+
+    return this.slots.audioClients.has(channelId);
   }
 
   async getClientState (channelId) {

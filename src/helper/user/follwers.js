@@ -14,10 +14,6 @@ import UserPrivilege from '../../constants/UserPrivilege.js';
 import { validate } from '../../validator/index.js';
 
 class UserFollowerHelper {
-  /**
-     *
-     * @param {import('../../client/WOLF.js').default} client
-     */
   constructor (client) {
     this.client = client;
   }

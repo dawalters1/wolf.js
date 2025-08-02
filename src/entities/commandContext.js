@@ -45,6 +45,16 @@ class CommandContext extends BaseEntity {
 
     return this.client.phrase.getByLanguageAndName(language, name);
   }
+
+  async hasCapability (capability, checkStaff = true, checkAuthorised = true) {
+    if (!this.isChannel) { throw new Error('Command is not channel'); }
+
+    return await this.client.utility.channel.member.hasCapability(this.targetChannelId, this.sourceUserId, capability, checkStaff, checkAuthorised);
+  }
+
+  async hasPrivilege (privilege, requireAll = true) {
+    return await this.client.utility.user.privilege.has(this.sourceUserId, privilege, requireAll);
+  }
 }
 
 export default CommandContext;
