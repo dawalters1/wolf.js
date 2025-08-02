@@ -188,8 +188,12 @@ class Validator {
       isValidObject (matchable, message = 'Value is not a valid object') {
         runEachValidation(item => validate(item).isValidObject(matchable, message));
         return this;
-      }
+      },
 
+      isValidConstant (constants, message = 'Value is not valid') {
+        runEachValidation(item => validate(item).isValidConstant(constants, message));
+        return this;
+      }
       // Add more as needed...
     };
   }
