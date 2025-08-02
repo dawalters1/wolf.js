@@ -80,6 +80,7 @@ export class WelcomeEvent extends BaseEvent {
     );
 
     if (!response.success) {
+      console.log('FROM WELCOME');
       this.client.emit('loginFailed', response);
 
       const subCode = response.headers?.get('subCode') ?? -1;

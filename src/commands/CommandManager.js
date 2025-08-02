@@ -3,17 +3,6 @@ import Command from './Command.js';
 import CommandContext from '../entities/commandContext.js';
 import UserPrivilege from '../constants/UserPrivilege.js';
 
-function isEqual (a, b) {
-  const removeDiacritics = str =>
-    str
-      .normalize('NFD') // Handles Latin accents
-      .replace(/[\u0300-\u036f]/g, '') // Remove Latin combining marks
-      .replace(/[\u0610-\u061A\u064B-\u065F\u06D6-\u06DC\u06DF-\u06E8\u06EA-\u06ED]/g, '') // Remove Arabic diacritics
-      .toLowerCase();
-
-  return removeDiacritics(a) === removeDiacritics(b);
-}
-
 class CommandManager {
   constructor (client) {
     this.client = client;
@@ -113,7 +102,7 @@ class CommandManager {
   }
 
   isCommand (message) {
-    const argument = message.body.split(this.client.SPLIT_REGEX)[0];
+    const argument = message.body.split(this.client.SPLIT_REGEX)[0] ?? '';
 
     return this.commands.some(command => {
       const matchable = this.usePhrases
@@ -121,7 +110,7 @@ class CommandManager {
         : [command.key];
 
       const matchedInput = matchable.find(match =>
-        isEqual(match?.value ?? match, argument)
+        this.client.utility.string.isEqual(match?.value ?? match, argument)
       );
 
       return Boolean(matchedInput);

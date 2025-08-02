@@ -1,40 +1,12 @@
-import _ from 'lodash';
 import { Command } from '../../constants/Command.js';
 import { EmbedType } from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
-import Link from '../../entities/link.js';
 import Message from '../../entities/message.js';
 import { MessageType } from '../../constants/index.js';
 import { nanoid } from 'nanoid';
 import StatusCodes from 'http-status-codes';
-import urlRegexSafe from 'url-regex-safe';
 import { validate } from '../../validator/index.js';
 import WOLFResponse from '../../entities/WOLFResponse.js';
-
-const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
-const isValidUrl = (url) => urlRegex.test(url);
-
-const getLinks = (client, content) => {
-  const urls = content.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
-
-  const sortedUrls = urls.map(url => url.replace(/\.+$/, '')).sort((a, b) => b.length - a.length);
-
-  const matchedIndices = new Set();
-  const matches = [];
-
-  for (const url of sortedUrls) {
-    const urlPattern = new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu');
-
-    for (const match of content.matchAll(urlPattern)) {
-      if (!matchedIndices.has(match.index) && isValidUrl(match[1])) {
-        matchedIndices.add(match.index);
-        matches.push(match);
-      }
-    }
-  }
-
-  return matches.map(match => new Link(client, match));
-};
 
 const getFormattingData = async (client, ads, links) => {
   const data = {
@@ -128,7 +100,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
   while (true) {
     const overflowDeveloperLink = developerInjectedLinks.find(link => link.start < 1000 && link.end > 1000);
     const overflowAd = client.utility.string.getAds(body)?.find(ad => ad.start < 1000 && ad.end > 1000);
-    const overflowLink = getLinks(client, body)?.find(link => link.start < 1000 && link.end > 1000);
+    const overflowLink = client.utility.string.getLinks(body)?.find(link => link.start < 1000 && link.end > 1000);
 
     const splitIndex = (
       overflowDeveloperLink?.start ??
@@ -148,7 +120,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
     const ads = client.utility.string.getAds(chunk);
     const links = [
       ...developerInjectedLinks.filter(l => l.end <= chunk.length),
-      ...getLinks(client, chunk)
+      ...client.utility.string.getLinks(chunk)
     ];
 
     const formattingData = await getFormattingData(client, ads, links);
@@ -235,7 +207,8 @@ class MessagingHelper {
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client.config.framework.mmsEndpoints.message;
-      // TODO: verification
+
+      await this.client.utility._validateBuffer(messageConfig, content, mimeType);
 
       return this.client.multimedia.post(
         messageConfig,
