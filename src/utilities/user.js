@@ -8,7 +8,7 @@ class UserUtility {
     this.client = client;
 
     this.privilege = {
-      has: async (...args) => this._has(args)
+      has: async (...args) => this._has(args[0], args[1], args[2])
     };
   }
 
