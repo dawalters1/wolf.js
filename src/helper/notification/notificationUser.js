@@ -54,7 +54,7 @@ class NotificationUserHelper extends BaseHelper {
       validate(notificationId)
         .isNotNullOrUndefined(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is null or undefined`)
         .isValidNumber(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is not a valid number`)
-        .isGreaterThanZero(`NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+        .isGreaterThan(0, `NotificationUserHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
     }
 
     return (await this.deleteByIds([notificationId]))[0];
@@ -69,7 +69,7 @@ class NotificationUserHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'NotificationUserHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
     }
 
     return await this.client.websocket.emit(
@@ -89,7 +89,7 @@ class NotificationUserHelper extends BaseHelper {
       validate(notificationId)
         .isNotNullOrUndefined(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is null or undefined`)
         .isValidNumber(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is not a valid number`)
-        .isGreaterThanZero(`NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+        .isGreaterThan(0, `NotificationUserHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -108,7 +108,7 @@ class NotificationUserHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'NotificationUserHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()

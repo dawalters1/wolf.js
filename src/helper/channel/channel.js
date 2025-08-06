@@ -5,7 +5,7 @@ import ChannelMemberHelper from './channelMember.js';
 import ChannelRoleHelper from './channelRole.js';
 import ChannelStats from '../../entities/channelStats.js';
 import { Command } from '../../constants/Command.js';
-import { defaultChannelEntities } from '../../options/requestOptions.js';
+import { defaultChannelEntities } from '../../options/options.js';
 import IdHash from '../../entities/idHash.js';
 import { Message } from '../../entities/message.js';
 import Search from '../../entities/search.js';
@@ -27,7 +27,7 @@ class ChannelHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelHelper.getById() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelHelper.getById() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.getById() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -46,7 +46,7 @@ class ChannelHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is null or undefined')
         .isValidNumber('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
@@ -147,7 +147,7 @@ class ChannelHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.getChatHistory() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(chronological)
         .isBoolean(`ChannelHelper.getChatHistory() parameter, chronological: ${chronological} is not a valid boolean`);
@@ -156,12 +156,12 @@ class ChannelHelper extends BaseHelper {
         .isNotRequired()
         .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is null or undefined`)
         .isValidNumber(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.getChatHistory() parameter, timestamp: ${timestamp} is less than or equal to zero`);
 
       validate(limit)
         .isNotNullOrUndefined(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is null or undefined`)
         .isValidNumber(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getChatHistory() parameter, limit: ${limit} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.getChatHistory() parameter, limit: ${limit} is less than or equal to zero`);
     }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(`Channel with ID ${channelId} not found`); }
@@ -198,7 +198,7 @@ class ChannelHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelHelper.getStats() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelHelper.getStats() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.getStats() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.getStats() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -234,7 +234,7 @@ class ChannelHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelHelper.joinById() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelHelper.joinById() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.joinById() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.joinById() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(password)
         .isNotRequired()
@@ -289,7 +289,7 @@ class ChannelHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelHelper.leaveById() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelHelper.leaveById() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(); }

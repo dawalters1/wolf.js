@@ -14,11 +14,11 @@ class WOLFStarHelper {
       validate(userId)
         .isNotNullOrUndefined(`WOLFStarHelper.getById() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`WOLFStarHelper.getById() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`WOLFStarHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `WOLFStarHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'WOLFStarHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([userId], opts))[0];
@@ -33,11 +33,11 @@ class WOLFStarHelper {
         .each()
         .isNotNullOrUndefined('WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'WOLFStarHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const wolfStarMap = new Map();
 

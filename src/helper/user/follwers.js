@@ -24,7 +24,7 @@ class UserFollowerHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserFollowerHelper.count() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserFollowerHelper.count() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserFollowerHelper.count() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserFollowerHelper.count() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(followDirection)
         .isNotNullOrUndefined(`UserFollowerHelper.count() parameter, followDirection: ${followDirection} is null or undefined`)
@@ -122,7 +122,7 @@ class UserFollowerHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserFollowerHelper.follow() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserFollowerHelper.follow() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserFollowerHelper.follow() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserFollowerHelper.follow() parameter, userId: ${userId} is less than or equal to zero`);
     }
     const user = await this.client.user.getById(userId);
 
@@ -151,7 +151,7 @@ class UserFollowerHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserFollowerHelper.unfollow() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserFollowerHelper.unfollow() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserFollowerHelper.unfollow() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserFollowerHelper.unfollow() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     const user = await this.client.user.getById(userId);
@@ -179,7 +179,7 @@ class UserFollowerHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserFollowerHelper.update() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserFollowerHelper.update() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserFollowerHelper.update() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserFollowerHelper.update() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(notificationState)
         .isBoolean(`UserFollowerHelper.update() parameter, notificationState: ${notificationState} is not a valid boolean`);

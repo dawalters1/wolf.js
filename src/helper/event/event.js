@@ -20,7 +20,7 @@ class EventHelper extends BaseHelper {
       validate(eventId)
         .isNotNullOrUndefined(`EventHelper.getById() parameter, eventId: ${eventId} is null or undefined`)
         .isValidNumber(`EventHelper.getById() parameter, eventId: ${eventId} is not a valid number`)
-        .isGreaterThanZero(`EventHelper.getById() parameter, eventId: ${eventId} is less than or equal to zero`);
+        .isGreaterThan(0, `EventHelper.getById() parameter, eventId: ${eventId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -39,7 +39,7 @@ class EventHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('EventHelper.getByIds() parameter, eventId[{index}]: {value} is null or undefined')
         .isValidNumber('EventHelper.getByIds() parameter, eventId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('EventHelper.getByIds() parameter, eventId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'EventHelper.getByIds() parameter, eventId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()

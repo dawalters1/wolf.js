@@ -14,7 +14,7 @@ class TopicRecipeHelper {
       validate(id)
         .isNotNullOrUndefined('TopicRecipeHelper.get() parameter, productId[{index}]: {value} is null or undefined')
         .isValidNumber('TopicRecipeHelper.get() parameter, productId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('TopicRecipeHelper.get() parameter, productId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'TopicRecipeHelper.get() parameter, productId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
         .isNotNullOrUndefined(`TopicRecipeHelper.get() parameter, languageId: ${languageId} is null or undefined`)

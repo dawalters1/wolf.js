@@ -19,7 +19,7 @@ class StoreProductHelper extends BaseHelper {
       validate(productId)
         .isNotNullOrUndefined(`StoreProductHelper.getById() parameter, productId: ${productId} is null or undefined`)
         .isValidNumber(`StoreProductHelper.getById() parameter, productId: ${productId} is not a valid number`)
-        .isGreaterThanZero(`StoreProductHelper.getById() parameter, productId: ${productId} is less than or equal to zero`);
+        .isGreaterThan(0, `StoreProductHelper.getById() parameter, productId: ${productId} is less than or equal to zero`);
 
       validate(languageId)
         .isNotNullOrUndefined(`StoreProductHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
@@ -42,7 +42,7 @@ class StoreProductHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is null or undefined')
         .isValidNumber('StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
         .isNotNullOrUndefined(`StoreProductHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)

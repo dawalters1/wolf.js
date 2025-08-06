@@ -18,7 +18,7 @@ class AuthorisationHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     const has = (userId) => this.cache.has(userId);
@@ -34,7 +34,7 @@ class AuthorisationHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`AuthorisationHelper.authorise() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`AuthorisationHelper.authorise() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`AuthorisationHelper.authorise() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `AuthorisationHelper.authorise() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     const user = await this.client.user.getById(userId);
@@ -51,7 +51,7 @@ class AuthorisationHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     const users = await this.client.user.getByIds(userIds);
@@ -73,7 +73,7 @@ class AuthorisationHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`AuthorisationHelper.deauthorise() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`AuthorisationHelper.deauthorise() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`AuthorisationHelper.deauthorise() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `AuthorisationHelper.deauthorise() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     return this.cache.delete(userId);
@@ -88,7 +88,7 @@ class AuthorisationHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     return userIds.map((userId) => this.cache.delete(userId));

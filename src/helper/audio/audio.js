@@ -18,7 +18,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getAvailableList() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getAvailableList() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getAvailableList() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getAvailableList() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -57,7 +57,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getAudioConfig() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getAudioConfig() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getAudioConfig() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getAudioConfig() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -73,7 +73,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getAudioCount() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getAudioCount() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getAudioCount() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getAudioCount() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -90,7 +90,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.updateAudioConfig() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.updateAudioConfig() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.updateAudioConfig() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.updateAudioConfig() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -106,7 +106,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.stop() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.stop() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.stop() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.stop() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.has(channelId)) {
@@ -123,7 +123,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.pause() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.pause() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.pause() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.pause() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.has(channelId)) {
@@ -140,7 +140,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.join() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.join() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.join() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.join() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.has(channelId)) {
@@ -157,7 +157,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getClientState() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getClientState() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     return this.slots.audioClients.has(channelId);
@@ -170,7 +170,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getClientState() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getClientState() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.has(channelId)) {
@@ -192,7 +192,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.getClientSettings() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.getClientSettings() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.getClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.getClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.has(channelId)) {
@@ -211,7 +211,7 @@ class AudioHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AudioHelper.updateClientSettings() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`AudioHelper.updateClientSettings() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AudioHelper.updateClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AudioHelper.updateClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
     if (!this.slots.slots.has(channelId)) {

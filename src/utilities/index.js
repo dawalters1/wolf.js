@@ -7,7 +7,7 @@ import StringUtility from './string.js';
 import TimerUtility from './timer.js';
 import UserUtility from './user.js';
 
-class Utility {
+class BaseUtility {
   constructor (client) {
     this.client = client;
 

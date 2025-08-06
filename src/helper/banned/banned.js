@@ -18,7 +18,7 @@ class BannedHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'BannedHelper.isBanned() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     const has = (userId) => this.cache.has(userId);
@@ -34,7 +34,7 @@ class BannedHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`BannedHelper.ban() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`BannedHelper.ban() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`BannedHelper.ban() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `BannedHelper.ban() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     const user = await this.client.user.getById(userId);
@@ -51,7 +51,7 @@ class BannedHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('BannedHelper.banAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.banAll() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('BannedHelper.banAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'BannedHelper.banAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     const users = await this.client.user.getByIds(userIds);
@@ -73,7 +73,7 @@ class BannedHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`BannedHelper.unban() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`BannedHelper.unban() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`BannedHelper.unban() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `BannedHelper.unban() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     return this.cache.delete(userId);
@@ -88,7 +88,7 @@ class BannedHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
     return userIds.map((userId) => this.cache.delete(userId));

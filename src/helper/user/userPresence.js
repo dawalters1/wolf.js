@@ -13,11 +13,11 @@ class UserPresenceHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserPresenceHelper.getById() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserPresenceHelper.getById() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserPresenceHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserPresenceHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserPresenceHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([userId], opts))[0];
@@ -32,11 +32,11 @@ class UserPresenceHelper {
         .each()
         .isNotNullOrUndefined('UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserPresenceHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const presenceMap = new Map();
     const users = await this.client.user.getByIds(userIds);

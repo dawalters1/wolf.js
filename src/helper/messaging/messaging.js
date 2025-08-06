@@ -258,12 +258,12 @@ class MessagingHelper {
       validate(targetId)
         .isNotNullOrUndefined(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is null or undefined`)
         .isValidNumber(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is not a valid number`)
-        .isGreaterThanZero(`MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
+        .isGreaterThan(0, `MessagingHelper.deleteMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
 
       validate(timestamp)
         .isNotNullOrUndefined(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is null or undefined`)
         .isValidNumber(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isGreaterThan(0, `MessagingHelper.deleteMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
 
       validate(isChannel)
         .isBoolean(`MessagingHelper.deleteMessage() parameter, isChannel: ${isChannel} is not a boolean`);
@@ -296,12 +296,12 @@ class MessagingHelper {
       validate(targetId)
         .isNotNullOrUndefined(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is null or undefined`)
         .isValidNumber(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is not a valid number`)
-        .isGreaterThanZero(`MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
+        .isGreaterThan(0, `MessagingHelper.restoreMessage() parameter, targetId: ${targetId} is less than or equal to zero`);
 
       validate(timestamp)
         .isNotNullOrUndefined(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is null or undefined`)
         .isValidNumber(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isGreaterThan(0, `MessagingHelper.restoreMessage() parameter, timestamp: ${timestamp} is less than or equal to zero`);
 
       validate(isChannel)
         .isBoolean(`MessagingHelper.restoreMessage() parameter, isChannel: ${isChannel} is not a boolean`);
