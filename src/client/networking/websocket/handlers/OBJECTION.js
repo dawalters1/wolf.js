@@ -1,9 +1,10 @@
 const Response = require('../../../../models/ResponseObject.js');
 
 module.exports = async (api, body) => {
-  if (body.reconnectSeconds <= 0) {
-    api.websocket.socket.disconnect();
-  }
+
+  api.websocket.socket.reconnectionDelay = data.reconnectSeconds === -1
+      ? -1
+      : data.reconnectSeconds * 1000;
 
   return api.emit(
     'loginFailed',
