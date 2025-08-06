@@ -32,7 +32,7 @@ module.exports = class Websocket {
     if (apiKey === undefined) {
       console.warn('APIKey will be required to login in the future');
     }
-    
+
     this.socket.io.backoff.duration = () => {
       if (this.socket.reconnectionDelay === -1) {
         return this.socket.disconnect();
@@ -53,7 +53,7 @@ module.exports = class Websocket {
 
     this.socket.io.on('open', () => this._api.emit(Events.CONNECTING));
 
-    this.socket.on('connect', () => this._api.emit(Events.CONNECTED));
+    this.socket.on('connect', () => {this.socket.reconnectionDelay = 1000; this._api.emit(Events.CONNECTED)});
 
     this.socket.on('connect_error', error => this._api.emit(Events.CONNECTION_ERROR, error));
 
