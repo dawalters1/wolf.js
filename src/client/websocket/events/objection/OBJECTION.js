@@ -13,9 +13,9 @@ class Objection extends Base {
 
   async process (body) {
    
-    if(body.reconnectSeconds < 0){
-        this.client.websocket.disconnect();
-    }
+    this.client.websocket.socket.reconnectionDelay = data.reconnectSeconds === -1
+      ? -1
+      : data.reconnectSeconds * 1000;
 
     return this.client.emit(
         Event.LOGIN_FAILED,
