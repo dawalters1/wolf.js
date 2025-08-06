@@ -70,8 +70,16 @@ class Websocket {
       }
     );
 
+    this.socket.io.backoff.duration = () => {
+      if (this.socket.reconnectionDelay === -1) {
+        return this.socket.disconnect();
+      }
+
+      return this.socket.reconnectionDelay;
+    };
+
     this.socket.io.on('open', () => this.client.emit(Event.CONNECTING));
-    this.socket.on(SocketEvent.CONNECT, () => this.client.emit(Event.CONNECTED));
+    this.socket.on(SocketEvent.CONNECT, () => {this.socket.reconnectionDelay = 1000; this.client.emit(Event.CONNECTED)});
     this.socket.on(SocketEvent.CONNECT_ERROR, error => this.client.emit(Event.CONNECTION_ERROR, error));
     this.socket.on(SocketEvent.CONNECT_TIMEOUT, error => this.client.emit(Event.CONNECTION_TIMEOUT, error));
     this.socket.on(SocketEvent.DISCONNECT, reason => {

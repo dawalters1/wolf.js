@@ -33,10 +33,7 @@ const canPerformActionAgainstMember = async (client, channel, targetMember, targ
     const targetUser = await client.subscriber.getById(targetMember.id);
     const targetMemberHasGap = targetUser?.privilegeList.includes(Privilege.GROUP_ADMIN) ?? false;
 
-    if (targetCapability &&
-      [Capability.SILENCED, Capability.BANNED].includes(targetCapability) &&
-    targetMemberHasGap
-    ) return false;
+    if (targetCapability && [Capability.SILENCED, Capability.BANNED].includes(targetCapability) && targetMemberHasGap ){ return false;}
 
     return sourceMemberHasGap || hasHigherCapability;
   };
