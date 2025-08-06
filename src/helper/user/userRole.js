@@ -14,11 +14,11 @@ class UserRoleHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserRoleHelper.getById() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserRoleHelper.getById() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserRoleHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserRoleHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([userId], opts))[0];
@@ -33,11 +33,11 @@ class UserRoleHelper {
         .each()
         .isNotNullOrUndefined('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const userRoleMap = new Map();
 

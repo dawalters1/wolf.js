@@ -15,7 +15,7 @@ class CharmHelper extends BaseHelper {
       validate(charmId)
         .isNotNullOrUndefined(`CharmHelper.getById() parameter, charmId: ${charmId} is null or undefined`)
         .isValidNumber(`CharmHelper.getById() parameter, charmId: ${charmId} is not a valid number`)
-        .isGreaterThanZero(`CharmHelper.getById() parameter, charmId: ${charmId} is less than or equal to zero`);
+        .isGreaterThan(0, `CharmHelper.getById() parameter, charmId: ${charmId} is less than or equal to zero`);
 
       validate(languageId)
         .isNotNullOrUndefined(`CharmHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
@@ -38,7 +38,7 @@ class CharmHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is null or undefined')
         .isValidNumber('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'CharmHelper.getByIds() parameter, charmId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
         .isNotNullOrUndefined(`CharmHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)
@@ -93,7 +93,7 @@ class CharmHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`CharmHelper.getUserSummary() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`CharmHelper.getUserSummary() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`CharmHelper.getUserSummary() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `CharmHelper.getUserSummary() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -136,7 +136,7 @@ class CharmHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`CharmHelper.getUserStatistics() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `CharmHelper.getUserStatistics() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()

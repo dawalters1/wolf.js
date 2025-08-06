@@ -13,7 +13,7 @@ class StoreProductProfileHelper extends BaseHelper {
       validate(productId)
         .isNotNullOrUndefined(`StoreProductProfileHelper.getProductProfile() parameter, productId: ${productId} is null or undefined`)
         .isValidNumber(`StoreProductProfileHelper.getProductProfile() parameter, productId: ${productId} is not a valid number`)
-        .isGreaterThanZero(`StoreProductProfileHelper.getProductProfile() parameter, productId: ${productId} is less than or equal to zero`);
+        .isGreaterThan(0, `StoreProductProfileHelper.getProductProfile() parameter, productId: ${productId} is less than or equal to zero`);
 
       validate(languageId)
         .isNotNullOrUndefined(`StoreProductProfileHelper.getProductProfile() parameter, languageId: ${languageId} is null or undefined`)
@@ -51,9 +51,8 @@ class StoreProductProfileHelper extends BaseHelper {
         response.headers?.maxAge
       );
     } catch (error) {
-      if (error.code === StatusCodes.NOT_FOUND) {
-        return null;
-      }
+      if (error.code === StatusCodes.NOT_FOUND) { return null; }
+
       throw error;
     }
   }

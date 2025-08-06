@@ -79,7 +79,7 @@ class WOLF extends EventEmitter {
     return /[\n\t,،\s+]/g;
   }
 
-  async login (email, password, apiKey, opts) {
+  login (email, password, apiKey, opts) {
     if (this.loggedIn) { return; }
 
     // Assume Configuration

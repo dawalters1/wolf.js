@@ -42,7 +42,7 @@ class BlockedHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`BlockedHelper.isBlocked() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`BlockedHelper.isBlocked() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`BlockedHelper.isBlocked() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `BlockedHelper.isBlocked() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     await this.list();
@@ -56,7 +56,7 @@ class BlockedHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`BlockedHelper.block() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`BlockedHelper.block() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`BlockedHelper.block() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `BlockedHelper.block() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     return this.client.websocket.emit(
@@ -76,7 +76,7 @@ class BlockedHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`BlockedHelper.unblock() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`BlockedHelper.unblock() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`BlockedHelper.unblock() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `BlockedHelper.unblock() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
     return this.client.websocket.emit(

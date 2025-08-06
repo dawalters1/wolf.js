@@ -13,7 +13,7 @@ class RoleHelper extends BaseHelper {
       validate(roleId)
         .isNotNullOrUndefined(`EventHelper.getById() parameter, roleId: ${roleId} is null or undefined`)
         .isValidNumber(`EventHelper.getById() parameter, roleId: ${roleId} is not a valid number`)
-        .isGreaterThanZero(`EventHelper.getById() parameter, roleId: ${roleId} is less than or equal to zero`);
+        .isGreaterThan(0, `EventHelper.getById() parameter, roleId: ${roleId} is less than or equal to zero`);
 
       validate(languageId)
         .isNotNullOrUndefined(`RoleHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
@@ -37,7 +37,7 @@ class RoleHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('RoleHelper.getByIds() parameter, roleId[{index}]: {value} is null or undefined')
         .isValidNumber('RoleHelper.getByIds() parameter, roleId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('RoleHelper.getByIds() parameter, roleId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'RoleHelper.getByIds() parameter, roleId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
         .isNotNullOrUndefined(`RoleHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)

@@ -40,6 +40,11 @@ class Validator {
     return this.#throwIf(this.value === null, message);
   }
 
+  isNotEmptyOrWhitespace (message = 'String is empty or whitespace') {
+    if (typeof value !== 'string') { return this; }
+    return this.#throwIf(this.value?.trim() === '', message);
+  }
+
   isValidNumber (message = 'Value is not a valid number') {
     return this.#throwIf(typeof this.value !== 'number' || isNaN(this.value), message);
   }
@@ -50,23 +55,6 @@ class Validator {
 
   isGreaterThan (value, message = 'Value must be less than {value}') {
     return this.#throwIf(typeof this.value !== 'number' || this.value <= value, message.replace('{value}', value));
-  }
-
-  isLessThanOrEqual (value, message = 'Value must be less than or equal to {value}') {
-    return this.#throwIf(typeof this.value !== 'number' || this.value > value, message.replace('{value}', value));
-  }
-
-  isGreaterThanOrEqual (value, message = 'Value must be less than or equal to {value}') {
-    return this.#throwIf(typeof this.value !== 'number' || this.value < value, message.replace('{value}', value));
-  }
-
-  // TODO: provide default value? isGreaterThan(num, mesage)
-  isGreaterThanZero (message = 'Value must be greater than zero') {
-    return this.#throwIf(typeof this.value !== 'number' || this.value <= 0, message);
-  }
-
-  isLessThanZero (message = 'Value must be greater than or equal to zero') {
-    return this.#throwIf(typeof this.value !== 'number' || this.value < 0, message);
   }
 
   isString (message = 'Value is not a string') {
@@ -81,27 +69,30 @@ class Validator {
     return this.#throwIf(!(this.value instanceof Stream), message);
   }
 
-  isNotEmptyOrWhitespace (message = 'String is empty or whitespace') {
-    if (typeof value !== 'string') { return this; }
-    return this.#throwIf(this.value?.trim() === '', message);
+  isBuffer (message = 'Value is not a buffer') {
+    return this.#throwIf(!(this.value instanceof Buffer), message);
   }
 
-  isValidDate (message = 'Value is not a valid date') {
+  isArray (message = 'Value is not a valid array') {
+    return this.#throwIf(!Array.isArray(this.value), message);
+  }
+
+  isDate (message = 'Value is not a valid date') {
     const date = new Date(this.value);
     return this.#throwIf(!(date instanceof Date) || isNaN(date.getTime()), message);
   }
 
-  isFuture (message = 'Date is not in the future') {
+  isDateInFuture (message = 'Date is not in the future') {
     const date = new Date(this.value);
     return this.#throwIf(!(date instanceof Date) || isNaN(date.getTime()) || date <= new Date(), message);
   }
 
-  isPast (message = 'Date is not in the past') {
+  isDateInPast (message = 'Date is not in the past') {
     const date = new Date(this.value);
     return this.#throwIf(!(date instanceof Date) || isNaN(date.getTime()) || date >= new Date(), message);
   }
 
-  isBefore (otherDate, message = 'Date is not before the comparison date') {
+  isDateBefore (otherDate, message = 'Date is not before the comparison date') {
     const current = new Date(this.value);
     const compare = new Date(otherDate);
     return this.#throwIf(
@@ -112,90 +103,17 @@ class Validator {
     );
   }
 
-  isBuffer (message = 'Value is not a buffer') {
-    return this.#throwIf(!(this.value instanceof Buffer), message);
-  }
-
   isValidConstant (constants, message = 'Value is not valid') {
     return this.#throwIf(!Object.values(constants).includes(this.value), message);
   }
 
-  isInList (keys, message = 'Value is not valid') {
-    return this.#throwIf(!keys.includes(this.value), message);
-  }
-
-  isValidArray (message = 'Value is not a valid array') {
-    return this.#throwIf(!Array.isArray(this.value), message);
+  isInList (list, message = 'Value is not valid') {
+    return this.#throwIf(!list.includes(this.value), message);
   }
 
   containsNoDuplicates (message = 'Array cannot contain duplicates') {
     this.isValidArray('containsNoDuplicates() can only be used on arrays');
     return this.#throwIf([...new Set(this.value)].length !== this.value.length, message);
-  }
-
-  each () {
-    if (this.#shouldSkip()) { return this; }
-
-    if (!Array.isArray(this.value)) {
-      throw new Error('each() can only be used on arrays');
-    }
-
-    const parentArray = this.value;
-
-    function runEachValidation (fn, message) {
-      parentArray.forEach((item, index) => {
-        try {
-          fn(item);
-        } catch {
-          throw new Error(
-            message.replace('{index}', index).replace('{value}', item)
-          );
-        }
-      });
-    }
-
-    return {
-      // TODO: add missing methods
-      isInstanceOf (instance, message = 'Item is not instance of') {
-        runEachValidation(item => validate(item).isInstanceOf(instance, message), message);
-        return this;
-      },
-      isNotNullOrUndefined (message = 'Item at index {index} is null or undefined ({value})') {
-        runEachValidation(item => validate(item).isNotNullOrUndefined(message), message);
-        return this;
-      },
-
-      isValidNumber (message = 'Item at index {index} is not a valid number ({value})') {
-        runEachValidation(item => validate(item).isValidNumber(message), message);
-        return this;
-      },
-
-      isGreaterThanZero (message = 'Item at index {index} is not > 0 ({value})') {
-        runEachValidation(item => validate(item).isGreaterThanZero(message), message);
-        return this;
-      },
-
-      isLessThanZero (message = 'Item at index {index} is not >= 0 ({value})') {
-        runEachValidation(item => validate(item).isLessThanZero(message), message);
-        return this;
-      },
-
-      isString (message = 'Item at index {index} is not a string ({value})') {
-        runEachValidation(item => validate(item).isString(message), message);
-        return this;
-      },
-
-      isValidObject (matchable, message = 'Value is not a valid object') {
-        runEachValidation(item => validate(item).isValidObject(matchable, message));
-        return this;
-      },
-
-      isValidConstant (constants, message = 'Value is not valid') {
-        runEachValidation(item => validate(item).isValidConstant(constants, message));
-        return this;
-      }
-      // Add more as needed...
-    };
   }
 
   isValidObject (matchable, message = 'Value is not a valid object') {
@@ -341,6 +259,133 @@ class Validator {
 
     check(actual, matchable);
     return this;
+  }
+
+  each () {
+    if (this.#shouldSkip()) { return this; }
+
+    if (!Array.isArray(this.value)) { throw new Error('each() can only be used on arrays'); }
+
+    const parentArray = this.value;
+
+    function runEachValidation (fn, message) {
+      parentArray.forEach((item, index) => {
+        try {
+          fn(item);
+        } catch {
+          throw new Error(
+            message.replace('{index}', index).replace('{value}', item)
+          );
+        }
+      });
+    }
+
+    return {
+      isInstanceOf (instance, message = 'Item[{index}] value: {value} is not instance of {instance}') {
+        runEachValidation(item => validate(item).isInstanceOf(instance, message.replace('{instance}', instance)), message.replace('{instance}', instance));
+        return this;
+      },
+
+      isTypeOf (type, message = 'Item[{index}] value: {value} is not type of {type}') {
+        runEachValidation(item => validate(item).isTypeOf(type, message.replace('{type}', type)), message.replace('{type}', type));
+        return this;
+      },
+
+      isNotNullOrUndefined (message = 'Item[{index}] value: {value} is null or undefined') {
+        runEachValidation(item => validate(item).isNotNullOrUndefined(message), message);
+        return this;
+      },
+
+      isNotNull (message = 'Item[{index}] value: {value} is null') {
+        runEachValidation(item => validate(item).isNotNull(message), message);
+        return this;
+      },
+
+      isNotEmptyOrWhitespace (message = 'Item[{index}] value: {value} is empty or whitespace') {
+        runEachValidation(item => validate(item).isNotEmptyOrWhitespace(message), message);
+        return this;
+      },
+
+      isValidNumber (message = 'Item[{index}] value: {value} is not a valid number') {
+        runEachValidation(item => validate(item).isValidNumber(message), message);
+        return this;
+      },
+
+      isLessThan (number, message = 'Item[{index}] value: {value} is not less than {required}') {
+        runEachValidation(item => validate(item).isLessThan(number, message.replace('{required}', number)), message.replace('{required}', number));
+        return this;
+      },
+
+      isGreaterThan (number, message = 'Item[{index}] value: {value} is not greater than {required}') {
+        runEachValidation(item => validate(item).isGreaterThan(number, message.replace('{required}', number)), message.replace('{required}', number));
+        return this;
+      },
+
+      isString (message = 'Item[{index}] value: {value} is not a string') {
+        runEachValidation(item => validate(item).isString(message), message);
+        return this;
+      },
+
+      isBoolean (message = 'Item[{index}] value: {value} is not a boolean') {
+        runEachValidation(item => validate(item).isBoolean(message), message);
+        return this;
+      },
+
+      isStream (message = 'Item[{index}] value: {value} is not a stream') {
+        runEachValidation(item => validate(item).isStream(message), message);
+        return this;
+      },
+
+      isBuffer (message = 'Item[{index}] value: {value} is not a buffer') {
+        runEachValidation(item => validate(item).isBuffer(message), message);
+        return this;
+      },
+
+      isArray (message = 'Item[{index}] value: {value} is not an array') {
+        runEachValidation(item => validate(item).isArray(message), message);
+        return this;
+      },
+
+      isDate (message = 'Item[{index}] value: {value} is not a valid date') {
+        runEachValidation(item => validate(item).isDate(message), message);
+        return this;
+      },
+
+      isDateInFuture (message = 'Item[{index}] value: {value} is not a date in the future') {
+        runEachValidation(item => validate(item).isDateInFuture(message), message);
+        return this;
+      },
+
+      isDateInPast (message = 'Item[{index}] value: {value} is not a date in the past') {
+        runEachValidation(item => validate(item).isDateInPast(message), message);
+        return this;
+      },
+
+      isDateBefore (otherDate, message = 'Item[{index}] value: {value} is not before {otherDate}') {
+        runEachValidation(item => validate(item).isDateBefore(otherDate, message.replace('{otherDate}', otherDate)), message.replace('{otherDate}', otherDate));
+        return this;
+      },
+
+      isValidConstant (constants, message = 'Item[{index}] value: {value} is not a valid constant') {
+        runEachValidation(item => validate(item).isValidConstant(constants, message));
+        return this;
+      },
+
+      isInList (list, message = 'Item[{index}] value: {value} is not in list') {
+        runEachValidation(item => validate(item).isInList(list, message));
+        return this;
+      },
+
+      containsNoDuplicates (message = 'Item[{index}] value: {value} contains duplicate values') {
+        runEachValidation(item => validate(item).containsNoDuplicates(message));
+        return this;
+      },
+
+      isValidObject (matchable, message = 'Item[{index}] value: {value} is not a valid object') {
+        runEachValidation(item => validate(item).isValidObject(matchable, message));
+        return this;
+      }
+    };
   }
 }
 

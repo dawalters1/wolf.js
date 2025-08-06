@@ -15,13 +15,13 @@ class AchievementChannelHelper {
       validate(channelId)
         .isNotNullOrUndefined(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is null or undefined`)
         .isValidNumber(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`AchievementChannelHelper.get() parameter, achievementId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `AchievementChannelHelper.get() parameter, achievementId: ${channelId} is less than or equal to zero`);
 
       validate(parentId)
         .isNotRequired()
         .isNotNullOrUndefined(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is null or undefined`)
         .isValidNumber(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is not a valid number`)
-        .isGreaterThanZero(`AchievementChannelHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
+        .isGreaterThan(0, `AchievementChannelHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()

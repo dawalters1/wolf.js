@@ -26,11 +26,11 @@ class UserHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`UserHelper.getById() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`UserHelper.getById() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`UserHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `UserHelper.getById() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
     return (await this.getByIds([userId], opts))[0];
@@ -45,11 +45,11 @@ class UserHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('UserHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('UserHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'UserHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()
-        .isValidObject();
+        .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
     const usersMap = new Map();
 

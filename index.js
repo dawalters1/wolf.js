@@ -32,6 +32,7 @@ import {
 import Command from './src/commands/Command.js';
 import CommandManager from './src/commands/CommandManager.js';
 import WOLF from './src/client/WOLF.js';
+
 const exports = {
   WOLF,
   Command,

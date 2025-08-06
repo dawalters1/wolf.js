@@ -73,7 +73,7 @@ class TimerUtility {
       validate(delay)
         .isNotNullOrUndefined(`TimerUtility.add() parameter, delay: ${delay} is null or undefined`)
         .isValidNumber(`TimerUtility.add() parameter, delay: ${delay} is not a valid number`)
-        .isGreaterThanZero(`TimerUtility.add() parameter, delay: ${delay} is less than or equal to zero`);
+        .isGreaterThan(0, `TimerUtility.add() parameter, delay: ${delay} is less than or equal to zero`);
     }
 
     await this.cancel(jobId);
@@ -121,7 +121,7 @@ class TimerUtility {
       validate(delay)
         .isNotNullOrUndefined(`TimerUtility.extend() parameter, delay: ${delay} is null or undefined`)
         .isValidNumber(`TimerUtility.extend() parameter, delay: ${delay} is not a valid number`)
-        .isGreaterThanZero(`TimerUtility.extend() parameter, delay: ${delay} is less than or equal to zero`);
+        .isGreaterThan(0, `TimerUtility.extend() parameter, delay: ${delay} is less than or equal to zero`);
     }
     const job = await this._queue.getJob(jobId);
 

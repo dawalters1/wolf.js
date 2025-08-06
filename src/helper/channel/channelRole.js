@@ -15,7 +15,7 @@ class ChannelRoleHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelRoleHelper.roles() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.roles() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.roles() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.roles() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -54,7 +54,7 @@ class ChannelRoleHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelRoleHelper.users() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.users() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.users() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.users() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -95,17 +95,17 @@ class ChannelRoleHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelRoleHelper.assign() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.assign() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.assign() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.assign() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(userId)
         .isNotNullOrUndefined(`ChannelRoleHelper.assign() parameter, channelId: ${userId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.assign() parameter, channelId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.assign() parameter, channelId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.assign() parameter, channelId: ${userId} is less than or equal to zero`);
 
       validate(roleId)
         .isNotNullOrUndefined(`ChannelRoleHelper.assign() parameter, channelId: ${roleId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.assign() parameter, channelId: ${roleId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.assign() parameter, channelId: ${roleId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.assign() parameter, channelId: ${roleId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
 
@@ -135,17 +135,17 @@ class ChannelRoleHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelRoleHelper.unassign() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.unassign() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.unassign() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.unassign() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(userId)
         .isNotNullOrUndefined(`ChannelRoleHelper.unassign() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.unassign() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.unassign() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.unassign() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(roleId)
         .isNotNullOrUndefined(`ChannelRoleHelper.unassign() parameter, roleId: ${roleId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.unassign() parameter, roleId: ${roleId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.unassign() parameter, roleId: ${roleId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.unassign() parameter, roleId: ${roleId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
 
@@ -172,22 +172,22 @@ class ChannelRoleHelper {
       validate(channelId)
         .isNotNullOrUndefined(`ChannelRoleHelper.reassign() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.reassign() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.reassign() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.reassign() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(oldUserId)
         .isNotNullOrUndefined(`ChannelRoleHelper.reassign() parameter, oldUserId: ${oldUserId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.reassign() parameter, oldUserId: ${oldUserId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.reassign() parameter, oldUserId: ${oldUserId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.reassign() parameter, oldUserId: ${oldUserId} is less than or equal to zero`);
 
       validate(newUserId)
         .isNotNullOrUndefined(`ChannelRoleHelper.reassign() parameter, newUserId: ${newUserId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.reassign() parameter, newUserId: ${newUserId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.reassign() parameter, newUserId: ${newUserId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.reassign() parameter, newUserId: ${newUserId} is less than or equal to zero`);
 
       validate(roleId)
         .isNotNullOrUndefined(`ChannelRoleHelper.reassign() parameter, roleId: ${roleId} is null or undefined`)
         .isValidNumber(`ChannelRoleHelper.reassign() parameter, roleId: ${roleId} is not a valid number`)
-        .isGreaterThanZero(`ChannelRoleHelper.reassign() parameter, roleId: ${roleId} is less than or equal to zero`);
+        .isGreaterThan(0, `ChannelRoleHelper.reassign() parameter, roleId: ${roleId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
 

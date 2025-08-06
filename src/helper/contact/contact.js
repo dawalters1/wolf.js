@@ -48,7 +48,7 @@ class ContactHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`ContactHelper.isContact() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`ContactHelper.isContact() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`ContactHelper.isContact() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `ContactHelper.isContact() parameter, userId: ${userId} is less than or equal to zero`);
     }
     await this.list();
     return this.cache.has(userId);
@@ -61,7 +61,7 @@ class ContactHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`ContactHelper.add() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`ContactHelper.add() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`ContactHelper.add() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `ContactHelper.add() parameter, userId: ${userId} is less than or equal to zero`);
     }
     return this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_ADD,
@@ -80,7 +80,7 @@ class ContactHelper extends BaseHelper {
       validate(userId)
         .isNotNullOrUndefined(`ContactHelper.delete() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`ContactHelper.delete() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`ContactHelper.delete() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `ContactHelper.delete() parameter, userId: ${userId} is less than or equal to zero`);
     }
     return this.client.websocket.emit(
       Command.SUBSCRIBER_CONTACT_DELETE,

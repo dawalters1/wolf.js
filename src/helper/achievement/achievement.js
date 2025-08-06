@@ -23,7 +23,7 @@ class AchievementHelper extends BaseHelper {
       validate(achievementId)
         .isNotNullOrUndefined(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is null or undefined`)
         .isValidNumber(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is not a valid number`)
-        .isGreaterThanZero(`AchievementHelper.getById() parameter, achievementId: ${achievementId} is less than or equal to zero`);
+        .isGreaterThan(0, `AchievementHelper.getById() parameter, achievementId: ${achievementId} is less than or equal to zero`);
 
       validate(languageId)
         .isNotNullOrUndefined(`AchievementHelper.getById() parameter, languageId: ${languageId} is null or undefined`)
@@ -47,7 +47,7 @@ class AchievementHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is null or undefined')
         .isValidNumber('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is less than or equal to zero');
 
       validate(languageId)
         .isNotNullOrUndefined(`AchievementHelper.getByIds() parameter, languageId: ${languageId} is null or undefined`)

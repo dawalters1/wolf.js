@@ -5,8 +5,6 @@ export const UserPrivilege = {
    * User tests bots
    */
   BOT_TESTER: 2, // 1 << 1
-  /** @deprecated */
-  HOST: 4, // 1 << 2
   /**
    * User submits content to bots
    */
@@ -45,8 +43,6 @@ export const UserPrivilege = {
    * User is a staff member
    */
   STAFF: 4096, // 1 << 12
-  /** @deprecated */
-  DJ: 8192, // 1 << 13
   /**
    * User is a developer
    */
@@ -106,10 +102,6 @@ export const UserPrivilege = {
   /**
    * Is this even used?
    */
-  PCS: 268435456, // 1 << 28
-  /** @deprecated */
-  ENTERTAINER: 536870912, // 1 << 29
-  /** @deprecated */
-  SHADOW_BANNED: 1073741824 // 1 << 30
+  PCS: 268435456 // 1 << 28
 };
 export default UserPrivilege;

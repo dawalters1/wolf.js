@@ -55,7 +55,7 @@ class NotificationGlobalHelper extends BaseHelper {
       validate(notificationId)
         .isNotNullOrUndefined(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is null or undefined`)
         .isValidNumber(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is not a valid number`)
-        .isGreaterThanZero(`NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+        .isGreaterThan(0, `NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
     }
 
     return (await this.deleteByIds([notificationId]))[0];
@@ -70,7 +70,7 @@ class NotificationGlobalHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
     }
     return await this.client.websocket.emit(
       Command.NOTIFICATION_GLOBAL_DELETE,
@@ -89,7 +89,7 @@ class NotificationGlobalHelper extends BaseHelper {
       validate(notificationId)
         .isNotNullOrUndefined(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is null or undefined`)
         .isValidNumber(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is not a valid number`)
-        .isGreaterThanZero(`NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
+        .isGreaterThan(0, `NotificationGlobalHelper.getById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()
@@ -108,7 +108,7 @@ class NotificationGlobalHelper extends BaseHelper {
         .each()
         .isNotNullOrUndefined('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is less than or equal to zero');
 
       validate(opts)
         .isNotRequired()

@@ -25,12 +25,12 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.tip() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.tip() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.tip() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.tip() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(userId)
         .isNotNullOrUndefined(`TipHelper.tip() parameter, userId: ${userId} is null or undefined`)
         .isValidNumber(`TipHelper.tip() parameter, userId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.tip() parameter, userId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.tip() parameter, userId: ${userId} is less than or equal to zero`);
 
       validate(context)
         .isValidObject({
@@ -68,12 +68,12 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.getDetails() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.getDetails() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getDetails() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getDetails() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamp)
         .isNotNullOrUndefined(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is null or undefined`)
         .isValidNumber(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getDetails() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getDetails() parameter, timestamp: ${timestamp} is less than or equal to zero`);
     }
 
     try {
@@ -115,12 +115,12 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.getSummary() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.getSummary() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getSummary() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getSummary() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamp)
         .isNotNullOrUndefined(`TipHelper.getSummary() parameter, timestamp: ${timestamp} is null or undefined`)
         .isValidNumber(`TipHelper.getSummary() parameter, timestamp: ${timestamp} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getSummary() parameter, timestamp: ${timestamp} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getSummary() parameter, timestamp: ${timestamp} is less than or equal to zero`);
     }
     return (await this.getSummaries(channelId, [timestamp]))[0];
   }
@@ -133,14 +133,14 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.getSummaries() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.getSummaries() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getSummaries() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getSummaries() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamps)
         .isValidArray(`TipHelper.getSummaries() parameter, timestamps: ${timestamps} is not a valid array`)
         .each()
         .isNotNullOrUndefined('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is null or undefined')
         .isValidNumber('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is not a valid number')
-        .isGreaterThanZero('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is less than or equal to zero');
+        .isGreaterThan(0, 'TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is less than or equal to zero');
     }
     const response = await this.client.websocket.emit(
       Command.TIP_SUMMARY,
@@ -166,7 +166,7 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.getChannelLeaderboard() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.getChannelLeaderboard() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getChannelLeaderboard() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getChannelLeaderboard() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(tipPeriod)
         .isNotNullOrUndefined(`TipHelper.getChannelLeaderboard() parameter, tipPeriod: ${tipPeriod} is null or undefined`)
@@ -217,7 +217,7 @@ class TipHelper extends BaseHelper {
       validate(channelId)
         .isNotNullOrUndefined(`TipHelper.getChannelleaderboardSummary() parameter, channelId: ${channelId} is null or undefined`)
         .isValidNumber(`TipHelper.getChannelleaderboardSummary() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThanZero(`TipHelper.getChannelleaderboardSummary() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isGreaterThan(0, `TipHelper.getChannelleaderboardSummary() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(tipPeriod)
         .isNotNullOrUndefined(`TipHelper.getChannelleaderboardSummary() parameter, tipPeriod: ${tipPeriod} is null or undefined`)

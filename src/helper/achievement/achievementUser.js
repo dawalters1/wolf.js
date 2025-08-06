@@ -15,13 +15,13 @@ class AchievementUserHelper {
       validate(userId)
         .isNotNullOrUndefined(`AchievementUserHelper.get() parameter, achievementId: ${userId} is null or undefined`)
         .isValidNumber(`AchievementUserHelper.get() parameter, achievementId: ${userId} is not a valid number`)
-        .isGreaterThanZero(`AchievementUserHelper.get() parameter, achievementId: ${userId} is less than or equal to zero`);
+        .isGreaterThan(0, `AchievementUserHelper.get() parameter, achievementId: ${userId} is less than or equal to zero`);
 
       validate(parentId)
         .isNotRequired()
         .isNotNullOrUndefined(`AchievementUserHelper.get() parameter, parentId: ${parentId} is null or undefined`)
         .isValidNumber(`AchievementUserHelper.get() parameter, parentId: ${parentId} is not a valid number`)
-        .isGreaterThanZero(`AchievementUserHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
+        .isGreaterThan(0, `AchievementUserHelper.get() parameter, parentId: ${parentId} is less than or equal to zero`);
 
       validate(opts)
         .isNotRequired()

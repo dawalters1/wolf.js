@@ -47,7 +47,7 @@ class EventSubscriptionHelper extends BaseHelper {
       validate(eventId)
         .isNotNullOrUndefined(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is null or undefined`)
         .isValidNumber(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is not a valid number`)
-        .isGreaterThanZero(`EventSubscriptionHelper.add() parameter, eventId: ${eventId} is less than or equal to zero`);
+        .isGreaterThan(0, `EventSubscriptionHelper.add() parameter, eventId: ${eventId} is less than or equal to zero`);
     }
 
     const event = await this.client.event.getById(eventId);
@@ -71,7 +71,7 @@ class EventSubscriptionHelper extends BaseHelper {
       validate(eventId)
         .isNotNullOrUndefined(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is null or undefined`)
         .isValidNumber(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is not a valid number`)
-        .isGreaterThanZero(`EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is less than or equal to zero`);
+        .isGreaterThan(0, `EventSubscriptionHelper.remove() parameter, eventId: ${eventId} is less than or equal to zero`);
     }
 
     const event = await this.client.event.getById(eventId);
