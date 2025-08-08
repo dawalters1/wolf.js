@@ -38,7 +38,7 @@ class StoreProductHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(productIds)
-        .isValidArray(`StoreProductHelper.getByIds() parameter, productIds: ${productIds} is not a valid array`)
+        .isArray(`StoreProductHelper.getByIds() parameter, productIds: ${productIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is null or undefined')
         .isValidNumber('StoreProductHelper.getByIds() parameter, productId[{index}]: {value} is not a valid number')

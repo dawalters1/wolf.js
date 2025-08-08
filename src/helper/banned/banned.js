@@ -14,7 +14,7 @@ class BannedHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`BannedHelper.isBanned() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`BannedHelper.isBanned() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.isBanned() parameter, userIds[{index}]: {value} is not a valid number')
@@ -47,7 +47,7 @@ class BannedHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`BannedHelper.banAll() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`BannedHelper.banAll() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('BannedHelper.banAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.banAll() parameter, userIds[{index}]: {value} is not a valid number')
@@ -84,7 +84,7 @@ class BannedHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`BannedHelper.unbanAll() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`BannedHelper.unbanAll() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is not a valid number')

@@ -42,7 +42,7 @@ class ChannelHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelIds)
-        .isValidArray(`ChannelHelper.getByIds() parameter, channelIds: ${channelIds} is not a valid array`)
+        .isArray(`ChannelHelper.getByIds() parameter, channelIds: ${channelIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is null or undefined')
         .isValidNumber('ChannelHelper.getByIds() parameter, channelId[{index}]: {value} is not a valid number')

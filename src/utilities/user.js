@@ -22,7 +22,7 @@ class UserUtility {
         .isGreaterThan(0, `UserUtility.privilege.has() parameter userId: ${userId}, must be larger than 0`);
 
       validate(privileges)
-        .isValidArray(`UserUtility.privilege.has() parameter, privileges: ${privileges} is not a valid array`)
+        .isArray(`UserUtility.privilege.has() parameter, privileges: ${privileges} is not a valid array`)
         .each()
         .isValidConstant(UserPrivilege, 'UserUtility.privilege.has() parameter, capability[{index}]: {value} is not valid');
 

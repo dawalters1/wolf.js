@@ -5,7 +5,7 @@ class ArrayUtility {
   chunk (array, size) {
     { // eslint-disable-line no-lone-blocks
       validate(array)
-        .isValidArray(`ArrayUtility.chunk() parameter array: ${array}, must be a valid array`);
+        .isArray(`ArrayUtility.chunk() parameter array: ${array}, must be a valid array`);
 
       validate(size)
         .isGreaterThan(0, `ArrayUtility.chunk() parameter size: ${size}, must be larger than 0`);
@@ -17,7 +17,7 @@ class ArrayUtility {
   shuffle (array) {
     { // eslint-disable-line no-lone-blocks
       validate(array)
-        .isValidArray(`ArrayUtility.shuffle() parameter array: ${array}, must be a valid array`);
+        .isArray(`ArrayUtility.shuffle() parameter array: ${array}, must be a valid array`);
     }
     return _.shuffle(array);
   }
@@ -25,7 +25,7 @@ class ArrayUtility {
   choose (array, count = 1) {
     { // eslint-disable-line no-lone-blocks
       validate(array)
-        .isValidArray(`ArrayUtility.choose() parameter array: ${array}, must be a valid array`);
+        .isArray(`ArrayUtility.choose() parameter array: ${array}, must be a valid array`);
 
       validate(count)
         .isGreaterThan(0, `ArrayUtility.choose() parameter count: ${count}, must be larger than 0`);

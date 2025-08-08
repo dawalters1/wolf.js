@@ -43,7 +43,7 @@ class TipHelper extends BaseHelper {
         }, 'EventHelper.getById() parameter, opts.{parameter}: {value} {error}');
 
       validate(charms)
-        .isValidArray()
+        .isArray()
         .each()
         .isValidObject({ id: Number, quantity: Number }, 'EventHelper.tip() parameter, opts.{parameter}: {value} {error}');
     }
@@ -136,7 +136,7 @@ class TipHelper extends BaseHelper {
         .isGreaterThan(0, `TipHelper.getSummaries() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(timestamps)
-        .isValidArray(`TipHelper.getSummaries() parameter, timestamps: ${timestamps} is not a valid array`)
+        .isArray(`TipHelper.getSummaries() parameter, timestamps: ${timestamps} is not a valid array`)
         .each()
         .isNotNullOrUndefined('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is null or undefined')
         .isValidNumber('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is not a valid number')

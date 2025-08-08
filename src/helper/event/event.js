@@ -35,7 +35,7 @@ class EventHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(eventIds)
-        .isValidArray(`EventHelper.getByIds() parameter, eventIds: ${eventIds} is not a valid array`)
+        .isArray(`EventHelper.getByIds() parameter, eventIds: ${eventIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('EventHelper.getByIds() parameter, eventId[{index}]: {value} is null or undefined')
         .isValidNumber('EventHelper.getByIds() parameter, eventId[{index}]: {value} is not a valid number')

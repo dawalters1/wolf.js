@@ -28,7 +28,7 @@ class UserPresenceHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`UserPresenceHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`UserPresenceHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserPresenceHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')

@@ -41,7 +41,7 @@ class UserHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`UserHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`UserHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('UserHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')

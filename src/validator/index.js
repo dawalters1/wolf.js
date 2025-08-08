@@ -112,7 +112,7 @@ class Validator {
   }
 
   containsNoDuplicates (message = 'Array cannot contain duplicates') {
-    this.isValidArray('containsNoDuplicates() can only be used on arrays');
+    this.isArray('containsNoDuplicates() can only be used on arrays');
     return this.#throwIf([...new Set(this.value)].length !== this.value.length, message);
   }
 
