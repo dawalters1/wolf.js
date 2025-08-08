@@ -75,7 +75,7 @@ class Channel extends BaseEntity {
       this.iconInfo = entity.base.iconInfo
         ? this.iconInfo
           ? this.iconInfo.patch(entity.base.iconInfo)
-          : new IconInfo(this.client, entity.base.iconInfo)
+          : new IconInfo(this.client, entity.base.iconInfo, 'channel')
         : null;
       this.memberCount = entity.base.members;
       this.official = entity.base.official;

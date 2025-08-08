@@ -34,7 +34,7 @@ class CharmHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(charmIds)
-        .isValidArray(`CharmHelper.getByIds() parameter, charmIds: ${charmIds} is not a valid array`)
+        .isArray(`CharmHelper.getByIds() parameter, charmIds: ${charmIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is null or undefined')
         .isValidNumber('CharmHelper.getByIds() parameter, charmId[{index}]: {value} is not a valid number')

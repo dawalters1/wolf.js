@@ -43,7 +43,7 @@ class AchievementHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(achievementIds)
-        .isValidArray(`AchievementHelper.getByIds() parameter, achievementIds: ${achievementIds} is not a valid array`)
+        .isArray(`AchievementHelper.getByIds() parameter, achievementIds: ${achievementIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is null or undefined')
         .isValidNumber('AchievementHelper.getByIds() parameter, achievementId[{index}]: {value} is not a valid number')

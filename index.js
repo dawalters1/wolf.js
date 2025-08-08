@@ -33,6 +33,8 @@ import Command from './src/commands/Command.js';
 import CommandManager from './src/commands/CommandManager.js';
 import WOLF from './src/client/WOLF.js';
 
+import WOLFResponse from './src/entities/WOLFResponse.js';
+
 const exports = {
   WOLF,
   Command,
@@ -62,7 +64,8 @@ const exports = {
   UserFollowerType,
   UserPresence,
   UserPrivilege,
-  WOLFStarTalent
+  WOLFStarTalent,
+  WOLFResponse
 };
 
 export {
@@ -95,5 +98,6 @@ export {
   UserPresence,
   UserPrivilege,
   WOLFStarTalent,
+  WOLFResponse,
   exports as default
 };

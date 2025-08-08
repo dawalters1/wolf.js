@@ -156,4 +156,4 @@ class BaseUtility {
   }
 }
 
-export default Utility;
+export default BaseUtility;

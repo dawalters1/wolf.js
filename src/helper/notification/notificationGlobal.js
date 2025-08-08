@@ -66,7 +66,7 @@ class NotificationGlobalHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(notificationIds)
-        .isValidArray(`NotificationGlobalHelper.deleteByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .isArray(`NotificationGlobalHelper.deleteByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationGlobalHelper.deleteByIds() parameter, notificationId[{index}]: {value} is not a valid number')
@@ -104,7 +104,7 @@ class NotificationGlobalHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(notificationIds)
-        .isValidArray(`NotificationGlobalHelper.getByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
+        .isArray(`NotificationGlobalHelper.getByIds() parameter, notificationIds: ${notificationIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is null or undefined')
         .isValidNumber('NotificationGlobalHelper.getByIds() parameter, notificationId[{index}]: {value} is not a valid number')

@@ -29,7 +29,7 @@ class UserRoleHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`UserRoleHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`UserRoleHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')

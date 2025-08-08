@@ -33,7 +33,7 @@ class RoleHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(roleIds)
-        .isValidArray(`RoleHelper.getByIds() parameter, roleIds: ${roleIds} is not a valid array`)
+        .isArray(`RoleHelper.getByIds() parameter, roleIds: ${roleIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('RoleHelper.getByIds() parameter, roleId[{index}]: {value} is null or undefined')
         .isValidNumber('RoleHelper.getByIds() parameter, roleId[{index}]: {value} is not a valid number')

@@ -14,7 +14,7 @@ class AuthorisationHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`AuthorisationHelper.isAuthorised() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`AuthorisationHelper.isAuthorised() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is not a valid number')
@@ -47,7 +47,7 @@ class AuthorisationHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`AuthorisationHelper.authoriseAll() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`AuthorisationHelper.authoriseAll() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.authoriseAll() parameter, userIds[{index}]: {value} is not a valid number')
@@ -84,7 +84,7 @@ class AuthorisationHelper extends BaseHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`AuthorisationHelper.deauthoriseAll() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`AuthorisationHelper.deauthoriseAll() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is null or undefined')
         .isValidNumber('AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is not a valid number')

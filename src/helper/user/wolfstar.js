@@ -29,7 +29,7 @@ class WOLFStarHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(userIds)
-        .isValidArray(`WOLFStarHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
+        .isArray(`WOLFStarHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
         .each()
         .isNotNullOrUndefined('WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
         .isValidNumber('WOLFStarHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
