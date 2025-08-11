@@ -33,14 +33,6 @@ module.exports = class Websocket {
       console.warn('APIKey will be required to login in the future');
     }
 
-    this.socket.io.backoff.duration = () => {
-      if (this.socket.reconnectionDelay === -1) {
-        return this.socket.disconnect();
-      }
-
-      return this.socket.reconnectionDelay;
-    };
-
     this.socket = io(`${connectionSettings.host}:${connectionSettings.port}/?token=${loginSettings.token}${apiKey === undefined ? '' : `&apiKey=${apiKey}`}&device=${connectionSettings.query.device}&state=${loginSettings.onlineState}&version=${connectionSettings?.query?.version || version}`,
       {
         transports: ['websocket'],
@@ -51,9 +43,17 @@ module.exports = class Websocket {
       }
     );
 
+    this.socket.io.backoff.duration = () => {
+      if (this.socket.reconnectionDelay === -1) {
+        return this.socket.disconnect();
+      }
+
+      return this.socket.reconnectionDelay;
+    };
+
     this.socket.io.on('open', () => this._api.emit(Events.CONNECTING));
 
-    this.socket.on('connect', () => {this.socket.reconnectionDelay = 1000; this._api.emit(Events.CONNECTED)});
+    this.socket.on('connect', () => { this.socket.reconnectionDelay = 1000; this._api.emit(Events.CONNECTED); });
 
     this.socket.on('connect_error', error => this._api.emit(Events.CONNECTION_ERROR, error));
 
