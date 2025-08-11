@@ -8,7 +8,6 @@ const { v4: uuidv4 } = require('uuid');
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
 const ResponseObject = require('../../models/ResponseObject');
-const models = require('../../models');
 
 const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
 
