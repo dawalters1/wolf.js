@@ -2,6 +2,7 @@ import AudioSlotHelper from './audioSlot.js';
 import AudioSlotRequestHelper from './audioSlotRequest.js';
 import { ChannelStage } from '../../entities/channelStage.js';
 import { Command } from '../../constants/Command.js';
+import Stream from 'stream';
 import { validate } from '../../validator/index.js';
 
 class AudioHelper {
@@ -97,6 +98,26 @@ class AudioHelper {
         .isValidObject({ forceNew: Boolean }, 'AudioHelper.updateAudioConfig() parameter, opts.{parameter}: {value} {error}');
     }
     // Implement as needed
+  }
+
+  async play (channelId, stream) {
+    channelId = Number(channelId) || channelId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(channelId)
+        .isNotNullOrUndefined(`AudioHelper.stop() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioHelper.stop() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThan(0, `AudioHelper.stop() parameter, channelId: ${channelId} is less than or equal to zero`);
+
+      validate(stream)
+        .isInstanceOf(Stream, `AudioHelper.start() parameter, stream: ${stream} is not a valid stream`);
+    }
+
+    if (!this.slots.has(channelId)) {
+      throw new Error(`Channel with id ${channelId} does not have a client`);
+    }
+
+    return this.slots.get(channelId).play(stream);
   }
 
   async stop (channelId) {
