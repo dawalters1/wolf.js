@@ -105,9 +105,9 @@ class AudioHelper {
 
     { // eslint-disable-line no-lone-blocks
       validate(channelId)
-        .isNotNullOrUndefined(`AudioHelper.stop() parameter, channelId: ${channelId} is null or undefined`)
-        .isValidNumber(`AudioHelper.stop() parameter, channelId: ${channelId} is not a valid number`)
-        .isGreaterThan(0, `AudioHelper.stop() parameter, channelId: ${channelId} is less than or equal to zero`);
+        .isNotNullOrUndefined(`AudioHelper.start() parameter, channelId: ${channelId} is null or undefined`)
+        .isValidNumber(`AudioHelper.start() parameter, channelId: ${channelId} is not a valid number`)
+        .isGreaterThan(0, `AudioHelper.start() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(stream)
         .isInstanceOf(Stream, `AudioHelper.start() parameter, stream: ${stream} is not a valid stream`);
