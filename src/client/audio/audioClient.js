@@ -2,7 +2,6 @@ import ChannelAudioSlotConnectionState from '../../constants/ChannelAudioConnect
 import ffmpeg from 'fluent-ffmpeg';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import Stream from 'node:stream';
 import { Worker } from 'node:worker_threads';
 import wrtc from '@roamhq/wrtc';
 
@@ -297,71 +296,6 @@ class AudioClient {
     this.worker.postMessage({ type: 'enqueue', data: item });
   }
 
-  async processBuffer (buffer) {
-    if (this.destroyed) {
-      throw new AudioClientError('Cannot process buffer on destroyed client', 'CLIENT_DESTROYED');
-    }
-
-    if (!buffer || !(buffer.buffer instanceof ArrayBuffer)) {
-      throw new AudioClientError('Expected an ArrayBuffer', 'INVALID_BUFFER');
-    }
-
-    try {
-      // Interpret buffer as Int16Array because WAV PCM 16-bit samples
-      const samples = new Int16Array(
-        buffer.buffer,
-        buffer.byteOffset,
-        buffer.byteLength / Int16Array.BYTES_PER_ELEMENT
-      );
-
-      let chunkStart = 0;
-
-      while (chunkStart < samples.length && !this.destroyed) {
-        // Calculate samples needed for a complete frame
-        const wantedSamples = AUDIO_CONFIG.FRAMES * AUDIO_CONFIG.CHANNEL_COUNT - this.numLeftoverSamples;
-        const remainingSamples = samples.length - chunkStart;
-
-        if (remainingSamples < wantedSamples) {
-          // Not enough samples for a complete frame, store leftovers
-          const copyLength = Math.min(remainingSamples, this.leftoverSamples.length - this.numLeftoverSamples);
-
-          if (copyLength > 0) {
-            this.leftoverSamples.set(
-              samples.slice(chunkStart, chunkStart + copyLength),
-              this.numLeftoverSamples
-            );
-            this.numLeftoverSamples += copyLength;
-          }
-          break;
-        }
-
-        let chunk = samples.slice(chunkStart, chunkStart + wantedSamples);
-
-        // Combine with leftover samples if any
-        if (this.numLeftoverSamples > 0) {
-          this.leftoverSamples.set(chunk, this.numLeftoverSamples);
-          chunk = new Int16Array(this.leftoverSamples.buffer, 0, AUDIO_CONFIG.FRAMES * AUDIO_CONFIG.CHANNEL_COUNT);
-          this.numLeftoverSamples = 0;
-        }
-
-        // Create audio frame data
-        const frameData = {
-          samples: chunk,
-          sampleRate: AUDIO_CONFIG.SAMPLE_RATE,
-          bitsPerSample: AUDIO_CONFIG.BITRATE,
-          channelCount: AUDIO_CONFIG.CHANNEL_COUNT,
-          numberOfFrames: AUDIO_CONFIG.FRAMES,
-          timestamp: performance.now()
-        };
-
-        this.enqueue(frameData);
-        chunkStart += wantedSamples;
-      }
-    } catch (error) {
-      throw new AudioClientError('Buffer processing failed', 'BUFFER_PROCESSING_ERROR', error);
-    }
-  }
-
   async createSDP () {
     if (this.destroyed) {
       throw new AudioClientError('Cannot create SDP on destroyed client', 'CLIENT_DESTROYED');
@@ -411,54 +345,93 @@ class AudioClient {
   }
 
   async play (data) {
-    if (this.destroyed) {
-      throw new AudioClientError('Cannot play on destroyed client', 'CLIENT_DESTROYED');
-    }
+    if (this.destroyed) { throw new AudioClientError('Cannot play on destroyed client', 'CLIENT_DESTROYED'); }
+    if (!data) { throw new AudioClientError('Audio data is required', 'INVALID_AUDIO_DATA'); }
 
-    if (!data) {
-      throw new AudioClientError('Audio data is required', 'INVALID_AUDIO_DATA');
-    }
-
-    let closed = false;
-
-    // Stop any existing ffmpeg process
+    // Stop any previous FFmpeg
     await this._stopFFmpeg();
 
-    this.ffmpeg = ffmpeg();
+    const FRAME_SIZE = AUDIO_CONFIG.FRAMES * AUDIO_CONFIG.CHANNEL_COUNT * 2; // 480*2*2 = 1920 bytes
+    let leftoverBuffer = Buffer.alloc(0);
+    let ffmpegEnded = false;
+    let nextFrameTime = performance.now();
 
-    this.ffmpeg
-      .input(data)
-      .native()
-      .noVideo()
-      .toFormat('wav')
-      .on('error', (error) => {
-        if (data instanceof Stream) {
-          data?.destroy();
+    // Function to enqueue one 10ms frame
+    const enqueueFrame = () => {
+      if (leftoverBuffer.length < FRAME_SIZE) { return false; }
+
+      const frameBytes = leftoverBuffer.slice(0, FRAME_SIZE);
+      leftoverBuffer = leftoverBuffer.slice(FRAME_SIZE);
+
+      const samples = new Int16Array(FRAME_SIZE / 2);
+      for (let i = 0; i < samples.length; i++) {
+        samples[i] = frameBytes.readInt16LE(i * 2);
+      }
+
+      // Apply client volume/mute
+      if (this.settings.muted || this.settings.volume === 0) {
+        samples.fill(0);
+      } else if (this.settings.volume !== 1) {
+        const volumeFixed = Math.round(this.settings.volume * 32768);
+        for (let i = 0; i < samples.length; i++) {
+          samples[i] = Math.max(-32768, Math.min(32767, (samples[i] * volumeFixed) >> 15));
         }
-        if (!closed) {
-          closed = true;
-          throw new AudioClientError('FFmpeg processing error', 'FFMPEG_ERROR', error);
-        }
-      })
-      .pipe()
-      .on('close', () => {
-        closed = true;
-      })
-      .on('pipe', () => {
-        this.broadcastState = BROADCAST_STATES.PLAYING;
-        this.client.emit('channelAudioClientBroadcastStarted', this.channelId);
-      })
-      .on('data', (buffer) => {
-        if (!closed && !this.destroyed) {
-          this.processBuffer(buffer);
-        }
-      })
-      .on('finish', () => {
+      }
+
+      this.enqueue({
+        samples,
+        sampleRate: AUDIO_CONFIG.SAMPLE_RATE,
+        channelCount: AUDIO_CONFIG.CHANNEL_COUNT,
+        numberOfFrames: AUDIO_CONFIG.FRAMES,
+        bitsPerSample: AUDIO_CONFIG.BITRATE,
+        timestamp: performance.now()
+      });
+
+      return true;
+    };
+
+    // Frame loop to respect 10ms frame duration
+    const frameLoop = () => {
+      if (this.destroyed) { return; }
+
+      const now = performance.now();
+      if (now >= nextFrameTime && enqueueFrame()) {
+        nextFrameTime += AUDIO_CONFIG.FRAME_DURATION_MS;
+      }
+
+      // Finish broadcast only after FFmpeg ends and buffer is empty
+      if (ffmpegEnded && leftoverBuffer.length === 0) {
         this.broadcastState = BROADCAST_STATES.IDLE;
         this.client.emit('channelAudioClientBroadcastFinished', this.channelId);
-        if (!closed) {
-          closed = true;
-        }
+        return;
+      }
+
+      setImmediate(frameLoop);
+    };
+
+    // Start the broadcast
+    this.broadcastState = BROADCAST_STATES.PLAYING;
+    this.client.emit('channelAudioClientBroadcastStarted', this.channelId);
+
+    // Run frame loop
+    frameLoop();
+
+    // Start FFmpeg
+    this.ffmpeg = ffmpeg()
+      .input(data)
+      .toFormat('wav')
+      .audioChannels(AUDIO_CONFIG.CHANNEL_COUNT)
+      .audioFrequency(AUDIO_CONFIG.SAMPLE_RATE)
+      .noVideo()
+      .on('error', err => {
+        this.client.emit('channelAudioClientError', new AudioClientError('FFmpeg processing error', 'FFMPEG_ERROR', err));
+      })
+      .pipe()
+      .on('data', chunk => {
+        leftoverBuffer = Buffer.concat([leftoverBuffer, chunk]);
+      })
+      .on('end', () => {
+        ffmpegEnded = true;
       });
   }
 
