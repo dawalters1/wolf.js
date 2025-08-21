@@ -186,6 +186,182 @@ export class AchievementUserHelper {
   get(userId: number, parentId?: number, opts: AchievementUserOptions): Promise<(AchievementUserEntity|null)[]>
 }
 
+export class AudioHelper {
+
+}
+
+export class AudioSlotHelper {
+
+}
+
+export class AudioSlotRequestHelper {
+
+}
+
+export class AuthorisationHelper {
+
+}
+
+export class BannedHelper {
+
+}
+
+export class ChannelHelper {
+
+}
+
+export class ChannelCategoryHelper {
+
+}
+
+export class ChannelMemberHelper {
+
+}
+
+export class ChannelRoleHelper {
+
+}
+
+export class CharmHelper {
+
+}
+
+export class ContactHelper {
+
+}
+
+export class BlockedHelper {
+   
+}
+
+export class EventHelper {
+
+}
+
+export class EventChannelHelper {
+
+}
+
+export class EventSubscriptionHelper {
+
+}
+
+export class MessagingHelper {
+
+}
+
+export class MetadataHelper {
+
+  metadata(url: string): Promise<MetadataUrl>
+  urlBlacklist(opts?: MetadataUrlBlacklistOptions): Promise<MetadataUrlBlacklist[]>
+}
+
+export class NotificationHelper {
+
+  global: readonly NotificationGlobalHelper;
+  user: readonly NotificationUserHelper;
+}
+
+export class NotificationGlobalHelper {
+
+  list(opts?: NotificationListOptions): Promise<NotificationEntity[]>
+  clear(): Promise<WOLFResponse>
+  deleteById(notificationId: number): Promise<WOLFResponse>
+  deleteByIds(notificationIds: number): Promise<WOLFResponse>
+  getById(notificationId: number, opts?: NotificationOptions): Promise<NotificationGlobalEntity|null>;
+  getByIds(notificationIds: number[], opts?: NotificationOptions): Promise<(NotificationGlobalEntity|null)[]>;
+}
+
+export class NotificationUserHelper {
+list(opts?: NotificationListOptions): Promise<NotificationEntity[]>
+  clear(): Promise<WOLFResponse>
+  deleteById(notificationId: number): Promise<WOLFResponse>
+  deleteByIds(notificationIds: number): Promise<WOLFResponse>
+  getById(notificationId: number, opts?: NotificationOptions): Promise<NotificationUserEntity|null>;
+  getByIds(notificationIds: number[], opts?: NotificationOptions): Promise<(NotificationUserEntity|null)[]>;
+}
+
+export class PhraseHelper {
+   
+  reload(): void;
+  register(phrases: PhraseEntity): void;
+  getByLanguageAndName(language: string, name: string): string;
+  getByCommandAndName(command: CommandContext, name: string): string;
+  getAllByName(name: string): PhraseEntity[];
+  isRequestedPhrase(name: string, input: string): boolean;
+}
+
+export class RoleHelper {
+  getById(userId: number, opts?: RoleOptions): Promise<RoleEntity | null>;
+  getByIds(userIds: number[], opts?: RoleOptions): Promise<(RoleEntity|null)[]>
+}
+
+export class SecurityHelper {
+
+  login(email: string, password: string, state?: UserPresence): Promise<WOLFResponse>;
+  logout(): Promise<WOLFResponse>
+  getToken(opts?: SecurityTokenOptions): Promise<CognitoEntity>
+}
+
+export class StoreHelper {
+
+}
+
+export class StoreProductHelper {
+
+}
+
+export class StoreProductProfileHelper {
+
+}
+
+export class TipHelper {
+
+  tip(channelId: number, userId: number, context: TipContextEntity, charms: TipCharm[]): Promise<WOLFResponse>
+  getDetails(channelId: number, timestamp: number): Promise<TipDetailEntity[]>
+  getSummary(channelId: number, timestamp: number): Promise<TipSummary|null>
+  getSummaries(channelId: number, timestamp: number[]): Promise<(TipSummary|null)[]>
+  getChannelLeaderboard(channelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardEntity|null>;
+  getChannelleaderboardSummary(channelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardEntity|null>;
+  getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardEntity|null>;
+  getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardEntity|null>;
+}
+
+export class UserHelper {
+
+  followers: readonly UserFollowerHelper;
+  wolfstar: readonly WOLFStarHelper;
+  role: readonly UserRoleHelper;
+  presence: readonly UserPresenceHelper;
+
+  getById(userId: number, opts?: UserPresenceOptions): Promise<UserEntity | null>;
+  getByIds(userIds: number[], opts?: UserPresenceOptions): Promise<(UserEntity|null)[]>
+  search(query: String): Promise<SearchEntity[]>
+}
+
+export class UserPresenceHelper {
+  getById(userId: number, opts?: UserPresenceOptions): Promise<UserPresenceEntity | null>;
+  getByIds(userIds: number[], opts?: UserPresenceOptions): Promise<(UserPresenceEntity|null)[]>
+
+}
+
+//TODO: refactor this class it is ass.
+export class UserFollowerHelper {
+
+
+}
+
+export class UserRoleHelper {
+  getById(userId: number, opts?: UserRoleOptions): Promise<UserRoleEntity | null>;
+  getByIds(userIds: number[], opts?: UserRoleOptions): Promise<(UserRoleEntity|null)[]>
+}
+
+export class WOLFStarHelper {
+
+  getById(userId: number, opts?: WOLFStarOptions): Promise<WOLFStarEntity | null>;
+  getByIds(userIds: number[], opts?: WOLFStarOptions): Promise<(WOLFStarEntity|null)[]>
+}
+
 export type {
   AdminAction,
   Avatar,

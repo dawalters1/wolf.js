@@ -69,8 +69,8 @@ export class Websocket {
         return this.socket.disconnect();
       }
 
-      console.log('Reconnection Backoff: ', this.socket.reconnectionDelay);
-      return this.socket.reconnectionDelay;
+      console.log('Reconnection Backoff: ', this.socket.reconnectionDelay ?? 1000);
+      return this.socket.reconnectionDelay ?? 1000;
     };
 
     this.socket.io.on('open', () => this.client.emit('connecting'));
