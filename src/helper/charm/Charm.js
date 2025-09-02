@@ -2,28 +2,13 @@ import models from '../../models/index.js';
 import { Command } from '../../constants/index.js';
 import Base from '../Base.js';
 import validator from '../../validator/index.js';
+import _ from 'lodash';
 
 class Charm extends Base {
   constructor (client) {
     super(client);
 
-    this.charms = [];
-  }
-
-  /**
-   * Request the charms list
-   * @returns {Promise<Array<Charm>>} - The list of charms
-   */
-  async list () {
-    if (this.charms.length) {
-      return this.charms;
-    }
-
-    const response = await this.client.websocket.emit(Command.CHARM_LIST);
-
-    this.charms = response.body?.map((charm) => new models.Charm(this.client, charm)) ?? [];
-
-    return this.charms;
+    this.charms = {};
   }
 
   /**
@@ -31,7 +16,7 @@ class Charm extends Base {
    * @param {Number} id - The ID of the charm
    * @returns {Promise<models.Charm>} - The requested charm
    */
-  async getById (id) {
+  async getById (id, language, forceNew = false) {
     if (validator.isNullOrUndefined(id)) {
       throw new models.WOLFAPIError('id cannot be null or undefined', { id });
     } else if (!validator.isValidNumber(id)) {
@@ -40,7 +25,7 @@ class Charm extends Base {
       throw new models.WOLFAPIError('id cannot be less than or equal to 0', { id });
     }
 
-    return (await this.getByIds([id]))[0];
+    return (await this.getByIds([id], language, forceNew))[0];
   }
 
   /**
@@ -48,7 +33,7 @@ class Charm extends Base {
    * @param {Number | Number[]} ids - The IDs of the charm
    * @returns {Promise<Array<models.Charm>>} - The requested charms
    */
-  async getByIds (ids) {
+  async getByIds (ids, language, forceNew = false) {
     ids = (Array.isArray(ids) ? ids : [ids]).map((id) => validator.isValidNumber(id) ? parseInt(id) : id);
 
     if (!ids.length) {
@@ -69,11 +54,50 @@ class Charm extends Base {
       }
     }
 
-    const charms = await this.list();
-
-    return ids.map((charmId) =>
-      charms.find((charm) => charm.id === charmId) || new models.Charm(this.client, { id: charmId })
-    );
+     const charms = forceNew
+          ? []
+          : this.charms[language]?.filter((charm) =>
+            ids.includes(charm.id)
+          ) ?? [];
+    
+        if (charms.length === ids.length) {
+          return charms;
+        }
+    
+        const idLists = _.chunk(
+          ids.filter(
+            (achievementId) => !charms.some((charm) => charm.id === achievementId)
+          ),
+          this.client._frameworkConfig.get('batching.length')
+        );
+    
+        for (const idList of idLists) {
+          const response = await this.client.websocket.emit(
+            Command.CHARM_LIST,
+            {
+              body: {
+                idList,
+                languageId: parseInt(language)
+              }
+            }
+          );
+    
+          if (response.success) {
+            charms.push(...Object.values(response.body)
+              .map((charmResponse) => new models.Response(charmResponse))
+              .map((charmResponse, index) =>
+                charmResponse.success
+                  ? this._process(new models.Charm(this.client, charmResponse.body), language)
+                  : new models.Charm(this.client, { id: idList[index] }
+                  )
+              )
+            );
+          } else {
+            charms.push(...idList.map((id) => new models.Achievement(this.client, { id })));
+          }
+        }
+    
+        return charms;
   }
 
   /**
@@ -291,10 +315,24 @@ class Charm extends Base {
     );
   }
 
+  _process (value, language) {
+    if (!this.charms[language]) {
+      this.charms[language] = [];
+    }
+
+    (Array.isArray(value) ? value : [value]).forEach((charm) => {
+      const existing = this.charms[language].find((cached) => charm.id === cached.id);
+
+      existing ? patch(existing, value) : this.charms[language].push(value);
+    });
+
+    return value;
+  }
+
   _cleanUp (reconnection = false) {
     if (reconnection) { return false; }
 
-    this.charms = [];
+    this.charms = {};
   }
 }
 
