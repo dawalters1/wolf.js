@@ -1,5 +1,5 @@
-import CacheManager from '../managers/cacheManager.js';
-import ExpiringProperty from '../managers/expiringProperty.js';
+import CacheManager from '../stores/cacheManager.js';
+import ExpiringProperty from '../stores/expiringProperty.js';
 import { User } from './user.js';
 
 export class CurrentUser extends User {

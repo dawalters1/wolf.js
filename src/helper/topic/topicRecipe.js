@@ -1,4 +1,4 @@
-import TopicRecipeManager from '../../managers/topicRecipeManager.js';
+import TopicRecipeManager from '../../stores/topicRecipeManager.js';
 
 class TopicRecipeHelper {
   constructor (client) {

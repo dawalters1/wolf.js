@@ -1,13 +1,13 @@
 import BaseEntity from './baseEntity.js';
-import CacheManager from '../managers/cacheManager.js';
+import CacheManager from '../stores/cacheManager.js';
 import ChannelAudioConfig from './channelAudioConfig.js';
 import ChannelAudioCount from './channelAudioCount.js';
 import ChannelExtended from './channelExtended.js';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.js';
-import ChannelMemberManager from '../managers/channelMemberManager.js';
+import ChannelMemberManager from '../stores/ChannelMemberManager.js';
 import ChannelMessageConfig from './channelMessageConfig.js';
 import ChannelOwner from './channelOwner.js';
-import ExpiringProperty from '../managers/expiringProperty.js';
+import ExpiringProperty from '../stores/expiringProperty.js';
 import IconInfo from './iconInfo.js';
 import { Language, UserPrivilege } from '../constants/index.js';
 
