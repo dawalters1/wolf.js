@@ -1,10 +1,17 @@
 import AchievementCategory from '../../entities/achievementCategory.js';
+import AchievementCategoryStore from '../../stores/AchievementCategoryStore.js';
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
 import { validate } from '../../validator/index.js';
 
 class AchievementCategoryHelper extends BaseHelper {
+  constructor () {
+    super();
+
+    this.store = new AchievementCategoryStore();
+  }
+
   async list (languageId, opts) {
     languageId = Number(languageId) || languageId;
 
@@ -19,10 +26,10 @@ class AchievementCategoryHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cachedAchievementCategories = this.cache.values().filter((achievementCategory) => achievementCategory.languageId === languageId);
+      const cachedAchievementCategories = this.store.get(languageId);
 
-      if (cachedAchievementCategories.languageId) {
-        return cachedAchievementCategories;
+      if (cachedAchievementCategories) {
+        return [...cachedAchievementCategories.values()];
       }
     }
 
@@ -35,14 +42,12 @@ class AchievementCategoryHelper extends BaseHelper {
       }
     );
 
-    return response.body.map((serverAchievementCategory) => {
-      const existing = this.cache.get(serverAchievementCategory.body.id, languageId);
-
-      return this.cache.set(
-        existing?.patch(serverAchievementCategory) ?? new AchievementCategory(this.client, serverAchievementCategory),
-        response.headers?.maxAge
-      );
-    });
+    return this.store.set(
+      languageId,
+      response.body.map((serverAchievementCategory) =>
+        new AchievementCategory(this.client, serverAchievementCategory)
+      )
+    );
   }
 }
 

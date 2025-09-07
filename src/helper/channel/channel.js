@@ -4,6 +4,7 @@ import ChannelCategoryHelper from './channelCategory.js';
 import ChannelMemberHelper from './channelMember.js';
 import ChannelRoleHelper from './channelRole.js';
 import ChannelStats from '../../entities/channelStats.js';
+import ChannelStore from '../../stores/ChannelStore.js';
 import { Command } from '../../constants/Command.js';
 import { defaultChannelEntities } from '../../options/options.js';
 import IdHash from '../../entities/idHash.js';
@@ -15,6 +16,9 @@ import { validate } from '../../validator/index.js';
 class ChannelHelper extends BaseHelper {
   constructor (client) {
     super(client);
+
+    this.store = new ChannelStore();
+
     this.category = new ChannelCategoryHelper(client);
     this.member = new ChannelMemberHelper(client);
     this.role = new ChannelRoleHelper(client);
@@ -56,9 +60,9 @@ class ChannelHelper extends BaseHelper {
     const channelsMap = new Map();
 
     if (!opts?.forceNew) {
-      const cachedChannels = channelIds.map((channelId) => this.cache.get(channelId))
-        .filter((channel) => channel !== null);
-      cachedChannels.forEach(channel => channelsMap.set(channel.id, channel));
+      this.store.get(channelIds)
+        .filter((channel) => channel !== null)
+        .forEach(channel => channelsMap.set(channel.id, channel));
     }
 
     const idsToFetch = channelIds.filter(id => !channelsMap.has(id));
@@ -79,15 +83,11 @@ class ChannelHelper extends BaseHelper {
       );
 
       for (const [channelId, channelResponse] of response.body.entries()) {
-        if (!channelResponse.success) { continue; }
-        const existing = this.cache.get(channelId);
+        if (!channelResponse.success) { this.store.invalidate(channelId); continue; }
 
         channelsMap.set(
           channelId,
-          this.cache.set(
-            existing?.patch(channelResponse.body) ?? new Channel(this.client, channelResponse.body),
-            response.headers?.maxAge
-          )
+          this.cache.set(new Channel(this.client, channelResponse.body), response.headers?.maxAge)
         );
       }
     }
@@ -107,7 +107,8 @@ class ChannelHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cached = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
+      const cached = this.store.get(name);
+
       if (cached) { return cached; }
     }
 
@@ -126,12 +127,7 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      const existing = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
-
-      return this.cache.set(
-        existing?.patch(response.body) ?? new Channel(this.client, response.body),
-        response.headers?.maxAge
-      );
+      return this.cache.set(new Channel(this.client, response.body), response.headers?.maxAge);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return null; }
       throw error;
@@ -333,8 +329,8 @@ class ChannelHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.cache.fetched) {
-      return [...this.cache.values()].filter(channel => channel.isMember);
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.list(true);
     }
 
     const response = await this.client.websocket.emit(
@@ -346,17 +342,20 @@ class ChannelHelper extends BaseHelper {
       }
     );
 
-    this.cache.fetched = true;
+    this.store.fetched = true;
 
     if (response.body.length) {
-      const channels = await this.getByIds(response.body.map(g => g.id));
-      channels.filter(Boolean).forEach((channel, i) => {
-        channel.isMember = true;
-        channel.capabilities = response.body[i].capabilities;
-      });
+      const channels = await this.getByIds(response.body.map((group) => group.id));
+
+      channels
+        .filter(Boolean)
+        .forEach((channel, i) => {
+          channel.isMember = true;
+          channel.capabilities = response.body[i].capabilities;
+        });
     }
 
-    return [...this.cache.values()].filter(channel => channel.isMember);
+    return this.store.list(true);
   }
 
   async search (query) {

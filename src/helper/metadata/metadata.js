@@ -1,5 +1,5 @@
 import Blacklist from '../../entities/blacklist.js';
-import CacheManager from '../../managers/cacheManager.js';
+import CacheManager from '../../stores/cacheManager.js';
 import { Command } from '../../constants/Command.js';
 import Metadata from '../../entities/metadata.js';
 import StatusCodes from 'http-status-codes';
