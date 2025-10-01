@@ -1,6 +1,6 @@
 
 import BaseEntity from './baseEntity.js';
-import ExpiringProperty from '../stores/expiringProperty.js';
+import ExpiringProperty from '../stores_old/expiringProperty.js';
 import TopicPageSectionElementPropertyAspect from './topicPageSectionElementPropertyAspect.js';
 import TopicPageSectionElementPropertyLink from './topicPageSectionElementPropertyLink.js';
 import TopicPageSectionElementPropertyRecipe from './topicPageSectionElementPropertyRecipe.js';

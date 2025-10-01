@@ -1,9 +1,14 @@
+import AuthorisationStore from '../../stores_old/AuthorisationStore.js';
 import BaseHelper from '../baseHelper.js';
 import { validate } from '../../validator/index.js';
 
 class BannedHelper extends BaseHelper {
+  constructor (client) {
+    super(client, AuthorisationStore);
+  }
+
   list () {
-    return this.cache?.values();
+    return this.store?.values();
   }
 
   isBanned (userIds) {
@@ -21,7 +26,7 @@ class BannedHelper extends BaseHelper {
         .isGreaterThan(0, 'BannedHelper.isBanned() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
-    const has = (userId) => this.cache.has(userId);
+    const has = (userId) => this.store.has(userId);
     return isArray
       ? userIds.map((userId) => has(userId))
       : has(userIds);
@@ -39,7 +44,7 @@ class BannedHelper extends BaseHelper {
 
     const user = await this.client.user.getById(userId);
     if (user === null) { throw new Error(`User with ID ${userId} is not found`); }
-    return !!this.cache.set(user);
+    return !!this.store.set(user);
   }
 
   async banAll (userIds) {
@@ -63,7 +68,7 @@ class BannedHelper extends BaseHelper {
       throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
 
-    return users.map((user) => !!this.cache.set(user));
+    return users.map((user) => !!this.store.set(user));
   }
 
   unban (userId) {
@@ -76,7 +81,7 @@ class BannedHelper extends BaseHelper {
         .isGreaterThan(0, `BannedHelper.unban() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
-    return this.cache.delete(userId);
+    return this.store.delete(userId);
   }
 
   unbanAll (userIds) {
@@ -91,11 +96,11 @@ class BannedHelper extends BaseHelper {
         .isGreaterThan(0, 'BannedHelper.unbanAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
-    return userIds.map((userId) => this.cache.delete(userId));
+    return userIds.map((userId) => this.store.delete(userId));
   }
 
   clear () {
-    return this.cache.clear();
+    return this.store.clear();
   }
 }
 

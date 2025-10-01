@@ -1,7 +1,7 @@
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 
 class Store {
-  constructor (store = Map) {
+  constructor (store = Map, values = null, maxAge = null) {
     // eslint-disable-next-line new-cap
     this.store = new store();
 
@@ -26,6 +26,10 @@ class Store {
 
         if (sizePrior > 0 && this.store.size === 0) { this.fetched = false; }
       }, 120);
+    }
+
+    if (values) {
+      return this.set(values, maxAge);
     }
   }
 

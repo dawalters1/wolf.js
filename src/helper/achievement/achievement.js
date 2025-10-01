@@ -1,7 +1,7 @@
 import Achievement from '../../entities/achievement.js';
 import AchievementCategoryHelper from './achievementCategory.js';
 import AchievementChannelHelper from './achievementChannel.js';
-import AchievementStore from '../../stores/AchievementStore.js';
+import AchievementStore from '../../stores_old/AchievementStore.js';
 import AchievementUserHelper from './achievementUser.js';
 import BaseHelper from '../baseHelper.js';
 import { Command, Language } from '../../constants/index.js';
@@ -9,9 +9,7 @@ import { validate } from '../../validator/index.js';
 
 class AchievementHelper extends BaseHelper {
   constructor (client) {
-    super(client);
-
-    this.store = new AchievementStore();
+    super(client, AchievementStore);
 
     this.category = new AchievementCategoryHelper(client);
     this.channel = new AchievementChannelHelper(client);
@@ -94,7 +92,11 @@ class AchievementHelper extends BaseHelper {
 
         achievementsMap.set(
           idsToFetch[index],
-          this.store.set(languageId, new Achievement(this.client, achievementResponse), response.headers?.maxAge)
+          this.store.set(
+            languageId,
+            new Achievement(this.client, achievementResponse),
+            response.headers?.maxAge
+          )
         );
       }
     }

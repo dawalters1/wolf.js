@@ -2,9 +2,9 @@ import BaseHelper from '../baseHelper.js';
 import Channel from '../../entities/channel.js';
 import ChannelCategoryHelper from './channelCategory.js';
 import ChannelMemberHelper from './channelMember.js';
-import ChannelRoleHelper from './channelRole.js';
+import ChannelRoleSummaryHelper from './channelRoleSummary.js';
 import ChannelStats from '../../entities/channelStats.js';
-import ChannelStore from '../../stores/ChannelStore.js';
+import ChannelStore from '../../stores_old/ChannelStore.js';
 import { Command } from '../../constants/Command.js';
 import { defaultChannelEntities } from '../../options/options.js';
 import IdHash from '../../entities/idHash.js';
@@ -15,13 +15,11 @@ import { validate } from '../../validator/index.js';
 
 class ChannelHelper extends BaseHelper {
   constructor (client) {
-    super(client);
-
-    this.store = new ChannelStore();
+    super(client, ChannelStore);
 
     this.category = new ChannelCategoryHelper(client);
     this.member = new ChannelMemberHelper(client);
-    this.role = new ChannelRoleHelper(client);
+    this.role = new ChannelRoleSummaryHelper(client);
   }
 
   async getById (channelId, opts) {
@@ -87,7 +85,7 @@ class ChannelHelper extends BaseHelper {
 
         channelsMap.set(
           channelId,
-          this.cache.set(new Channel(this.client, channelResponse.body), response.headers?.maxAge)
+          this.store.set(new Channel(this.client, channelResponse.body), response.headers?.maxAge)
         );
       }
     }
@@ -127,7 +125,7 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      return this.cache.set(new Channel(this.client, response.body), response.headers?.maxAge);
+      return this.store.set(new Channel(this.client, response.body), response.headers?.maxAge);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return null; }
       throw error;
@@ -180,7 +178,7 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      return response.body?.map(serverMessage => new Message(this.client, serverMessage));
+      return response.body.map(serverMessage => new Message(this.client, serverMessage));
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
       throw error;
