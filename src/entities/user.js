@@ -1,6 +1,6 @@
 import BaseEntity from './baseEntity.js';
-import CacheManager from '../stores/cacheManager.js';
-import ExpiringProperty from '../stores/expiringProperty.js';
+import CacheManager from '../stores_old/cacheManager.js';
+import ExpiringProperty from '../stores_old/expiringProperty.js';
 import IconInfo from './iconInfo.js';
 import { Language, UserFollowerType, UserPrivilege } from '../constants/index.js';
 import UserExtended from './userExtended.js';

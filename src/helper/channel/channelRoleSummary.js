@@ -3,7 +3,7 @@ import ChannelRoleUser from '../../entities/channelRoleUser.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 
-class ChannelRoleHelper {
+class ChannelRoleSummaryHelper {
   constructor (client) {
     this.client = client;
   }
@@ -206,4 +206,4 @@ class ChannelRoleHelper {
   }
 }
 
-export default ChannelRoleHelper;
+export default ChannelRoleSummaryHelper;

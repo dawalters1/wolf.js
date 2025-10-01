@@ -1,15 +1,13 @@
 import AchievementCategory from '../../entities/achievementCategory.js';
-import AchievementCategoryStore from '../../stores/AchievementCategoryStore.js';
+import AchievementCategoryStore from '../../stores_old/AchievementCategoryStore.js';
 import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
 import { validate } from '../../validator/index.js';
 
 class AchievementCategoryHelper extends BaseHelper {
-  constructor () {
-    super();
-
-    this.store = new AchievementCategoryStore();
+  constructor (client) {
+    super(client, AchievementCategoryStore);
   }
 
   async list (languageId, opts) {
@@ -29,7 +27,7 @@ class AchievementCategoryHelper extends BaseHelper {
       const cachedAchievementCategories = this.store.get(languageId);
 
       if (cachedAchievementCategories) {
-        return [...cachedAchievementCategories.values()];
+        return cachedAchievementCategories.values();
       }
     }
 
@@ -46,7 +44,8 @@ class AchievementCategoryHelper extends BaseHelper {
       languageId,
       response.body.map((serverAchievementCategory) =>
         new AchievementCategory(this.client, serverAchievementCategory)
-      )
+      ),
+      response.headers?.maxAge
     );
   }
 }
