@@ -117,7 +117,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('channelId cannot be less than or equal to 0', { channelId });
     }
 
-    return await this._getList(channelId, MemberListType.PRIVILEGED)
+    return await this.getList(channelId, MemberListType.PRIVILEGED)
   }
 
   //Legacy
@@ -134,7 +134,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
     }
 
-    return await this._getList(channelId, MemberListType.REGULAR, returnCurrentList)
+    return await this.getList(channelId, MemberListType.REGULAR, returnCurrentList)
   }
 
   //Legacy
@@ -151,11 +151,11 @@ class Member extends Base {
       throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
     }
 
-    return await this._getList(channelId, MemberListType.SILENCED, returnCurrentList)
+    return await this.getList(channelId, MemberListType.SILENCED, returnCurrentList)
   }
 
     //Legacy
-  async getBannedList (channelId) {
+  async getBannedList (channelId, returnCurrentList = false) {
     if (validator.isNullOrUndefined(channelId)) {
       throw new models.WOLFAPIError('channelId cannot be null or undefined', { channelId });
     } else if (!validator.isValidNumber(channelId)) {
@@ -164,7 +164,11 @@ class Member extends Base {
       throw new models.WOLFAPIError('channelId cannot be less than or equal to 0', { channelId });
     }
 
-    return await this._getList(channelId, MemberListType.BANNED, returnCurrentList)
+    if (!validator.isValidBoolean(returnCurrentList)) {
+      throw new models.WOLFAPIError('returnCurrentList must be a valid boolean', { returnCurrentList });
+    }
+
+    return await this.getList(channelId, MemberListType.BANNED, returnCurrentList)
   }
 
   //Legacy
@@ -177,7 +181,7 @@ class Member extends Base {
       throw new models.WOLFAPIError('channelId cannot be less than or equal to 0', { channelId });
     }
 
-    return await this._getList(channelId, MemberListType.BOTS)
+    return await this.getList(channelId, MemberListType.BOTS)
   } 
 
   async getList(channelId, list, returnCurrentList = false) {
@@ -249,8 +253,9 @@ class Member extends Base {
     );
 
     if(response.success){
-    return channel.members._members.set(userId, new ChannelMember(this.client, {...response.body, targetGroupId: channel.id})).get(userId);
+      return channel.members._members.set(userId, new ChannelMember(this.client, {...response.body, targetGroupId: channel.id})).get(userId);
     }
+
     if(response.code === StatusCodes.NOT_FOUND){
       return null;
     }
