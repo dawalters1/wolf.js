@@ -1,11 +1,14 @@
-import TopicRecipeManager from '../../stores_old/topicRecipeManager.js';
+// import TopicRecipeManager from '../../stores_old/topicRecipeManager.js';
 
-class TopicRecipeHelper {
-  constructor (client) {
-    this.client = client;
-    this.cache = new TopicRecipeManager();
-  }
-/*
+import BaseStore from '../../caching/BaseStore.js';
+import Command from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
+import { StatusCodes } from 'http-status-codes';
+import { TopicPageRecipeType } from '../../constants/index.js';
+import TopicRecipe from '../../entities/topicRecipe.js';
+import { validate } from '../../validator/index.js';
+
+class TopicRecipeHelper extends BaseStore {
   async get (id, languageId, type, opts) {
     id = Number(id) || id;
     languageId = Number(languageId) || languageId;
@@ -30,11 +33,9 @@ class TopicRecipeHelper {
     }
 
     if (!opts?.forceNew) {
-      const cached = this.cache.get(id, languageId);
+      const cachedTopicRecipies = this.store.filter((topicRecipe) => topicRecipe.id === id && topicRecipe.languageId === languageId && topicRecipe.type === type);
 
-      if (cached) {
-        return [...cached.values()];
-      }
+      if (cachedTopicRecipies.length) { return cachedTopicRecipies.values(); }
     }
 
     try {
@@ -59,22 +60,24 @@ class TopicRecipeHelper {
           : await get(results);
       };
 
-      const topicRecipeList = (await get())
-        .map((serverTopicRecipe) => new TopicRecipe(this.client, { ...serverTopicRecipe, recipeId: id }, id, type));
+      for (const topicRecipeResponse of await get()) {
+        if (!topicRecipeResponse.success) {
+          this.store.delete((topicRecipe) => topicRecipe.id === id && topicRecipe.languageId === languageId && topicRecipe.type === type);
+          continue;
+        }
 
-      return [
-        ...this.cache.set(
-          id,
-          languageId,
-          new Set(topicRecipeList),
-          response.headers?.maxAge
-        ).values()
-      ];
+        this.store.set(
+          new TopicRecipe(this.client, topicRecipeResponse.body, type),
+          topicRecipeResponse.headers?.maxAge
+        );
+      }
+
+      return this.store.filter((topicRecipe) => topicRecipe.id === id && topicRecipe.languageId === languageId && topicRecipe.type === type);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
       throw error;
     }
-  } */
+  }
 }
 
 export default TopicRecipeHelper;

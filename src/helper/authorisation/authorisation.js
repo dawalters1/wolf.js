@@ -1,12 +1,7 @@
-import AuthorisationStore from '../../stores_old/AuthorisationStore.js';
 import BaseHelper from '../baseHelper.js';
 import { validate } from '../../validator/index.js';
 
 class AuthorisationHelper extends BaseHelper {
-  constructor (client) {
-    super(client, AuthorisationStore);
-  }
-
   list () {
     return this.store?.values();
   }

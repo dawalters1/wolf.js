@@ -44,7 +44,7 @@ class AudioHelper {
     );
 
     channel._stages.clear();
-    channel._stages.fetched = true;
+    channel._stages._fetched = true;
 
     return response.body.map((serverStage) =>
       channel._stages.set(new ChannelStage(this.client, serverStage))

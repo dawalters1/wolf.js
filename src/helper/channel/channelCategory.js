@@ -1,15 +1,11 @@
 import BaseHelper from '../baseHelper.js';
 import ChannelCategory from '../../entities/channelCategory.js';
-import ChannelCategoryStore from '../../stores_old/ChannelCategoryStore.js';
+// import ChannelCategoryStore from '../../stores_old/ChannelCategoryStore.js';
 import { Command } from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
 import { validate } from '../../validator/index.js';
 
 class ChannelCategoryHelper extends BaseHelper {
-  constructor (client) {
-    super(client, ChannelCategoryStore);
-  }
-
   async list (languageId, opts) {
     languageId = Number(languageId) || languageId;
 
@@ -22,11 +18,14 @@ class ChannelCategoryHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'ChannelCategoryHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew) {
-      const cachedCategories = this.store.get(languageId);
 
-      if (cachedCategories) {
-        return cachedCategories.values();
+    if (opts?.forceNew) {
+      this.store.delete((channelCategory) => channelCategory.languageId === languageId);
+    } else {
+      const cachedCategories = this.store.filter((channelCategory) => channelCategory.languageId === languageId);
+
+      if (cachedCategories.length) {
+        return cachedCategories;
       }
     }
 
@@ -39,12 +38,11 @@ class ChannelCategoryHelper extends BaseHelper {
       }
     );
 
-    return this.store.set(
-      languageId,
-      response.body.map((serverChannelCategory) =>
-        new ChannelCategory(this.client, serverChannelCategory)
-      ),
-      response.headers?.maxAge
+    return response.body.map((serverChannelCategory) =>
+      this.store.set(
+        new ChannelCategory(this.client, serverChannelCategory),
+        response.headers?.maxAge
+      )
     );
   }
 }

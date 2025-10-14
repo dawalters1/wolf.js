@@ -10,8 +10,8 @@ class EventSubscriptionHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventSubscriptionHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.cache.fetched) {
-      return this.cache.values();
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -23,17 +23,17 @@ class EventSubscriptionHelper extends BaseHelper {
       }
     );
 
-    const cachedSubscriptionIds = this.cache.keys();
+    const cachedSubscriptionIds = this.store.keys();
     const newSubscriptionIds = response.body.map((serverEventSubscription) => serverEventSubscription.id);
     const oldSubscriptionIds = cachedSubscriptionIds.filter((subscriptionId) => !newSubscriptionIds.includes(subscriptionId));
-    oldSubscriptionIds.forEach((subscriptionId) => this.cache.delete(subscriptionId));
+    oldSubscriptionIds.forEach((subscriptionId) => this.store.delete(subscriptionId));
 
-    this.cache.fetched = true;
+    this.store._fetched = true;
 
     return response.body.map((serverEventSubscription) => {
-      const existing = this.cache.get(serverEventSubscription.id);
+      const existing = this.store.get(serverEventSubscription.id);
 
-      return this.cache.set(
+      return this.store.set(
         existing?.patch(serverEventSubscription) ?? new EventSubscription(this.client, serverEventSubscription),
         response.headers?.maxAge
       );

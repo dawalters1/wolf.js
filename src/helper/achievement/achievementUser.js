@@ -29,6 +29,7 @@ class AchievementUserHelper {
     }
 
     const user = await this.client.user.getById(userId);
+
     if (user === null) {
       throw new Error(`User with ID ${userId} not found`);
     }
@@ -39,7 +40,7 @@ class AchievementUserHelper {
       achievements = user._achievements.values();
     } else {
       const response = await this.client.websocket.emit(
-        Command.ACHIEVEMENT_SUBSCRIBER_LIST,
+        Command.ACHIEVEMENT_GROUP_LIST,
         {
           headers: {
             version: 2
@@ -50,32 +51,30 @@ class AchievementUserHelper {
         }
       );
 
-      user._achievements.fetched = true;
-      achievements = response.body.map(serverAchievementUser => {
-        const existing = user._achievements.get(serverAchievementUser);
+      user._achievements._fetched = true;
 
-        return user._achievements.set(
-          existing?.patch(serverAchievementUser) ?? new AchievementUser(this.client, serverAchievementUser),
-          response.headers?.maxAge
-        );
-      });
+      achievements = response.body.map(
+        (serverAchievementUser) =>
+          user._achievements.set(
+            new AchievementUser(this.client, serverAchievementUser, userId),
+            response.headers?.maxAge
+          )
+      );
     }
 
-    if (!parentId) {
-      return achievements;
-    }
+    if (!parentId) { return achievements; }
 
-    const parentAchievement = user._achievements.get(parentId);
+    const parentAchievement = user._achievements.get((achievement) => achievement.id === parentId);
     if (parentAchievement === null) {
       throw new Error(`Parent achievement with ID ${parentId} not found`);
     }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...user._achievements.mGet([...parentAchievement.childrenId])];
+      return [parentAchievement, ...parentAchievement.childrenId.map((childId) => user._achievements.get(childId))];
     }
 
     const response = await this.client.websocket.emit(
-      Command.ACHIEVEMENT_GROUP_LIST,
+      Command.ACHIEVEMENT_SUBSCRIBER_LIST,
       {
         headers: {
           version: 2
@@ -89,18 +88,19 @@ class AchievementUserHelper {
 
     parentAchievement.childrenId = new Set(
       response.body
-        .map(serverAchievementUser => serverAchievementUser.id)
+        .map((serverAchievementUser) =>
+          serverAchievementUser.id
+        )
         .filter(id => id !== parentId)
     );
 
-    return response.body.map(serverAchievementUser => {
-      const existing = user._achievements.get(serverAchievementUser);
-
-      return user._achievements.set(
-        existing?.patch(serverAchievementUser) ?? new AchievementUser(this.client, serverAchievementUser),
-        response.headers?.maxAge
-      );
-    });
+    return response.body.map(
+      (serverAchievementUser) =>
+        user._achievements.set(
+          new AchievementUser(this.client, serverAchievementUser),
+          response.headers?.maxAge
+        )
+    );
   }
 }
 

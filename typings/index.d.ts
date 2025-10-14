@@ -1,4 +1,4 @@
-
+import BaseStore from '../src/caching/BaseStore.js';
 import { StatusCodes } from 'http-status-codes';
 import { Stream } from 'stream';
 import {
@@ -186,6 +186,11 @@ export class AchievementUserHelper {
   get(userId: number, parentId?: number, opts: AchievementUserOptions): Promise<(AchievementUserEntity|null)[]>
 }
 
+export class BaseHelper {
+
+  store: BaseStore;
+}
+
 export type {
   AdminAction,
   Avatar,
@@ -214,7 +219,9 @@ export type {
   UserFollowerType,
   UserPresence,
   UserPrivilege,
-  WOLFStarTalent
+  WOLFStarTalent,
+
+  BaseHelper
 };
 
 export type {
@@ -250,5 +257,7 @@ export type {
   UserRoleOptions,
   UserPresenceOptions,
   WOLFStarOptions,
-  LoginOptions
+  LoginOptions,
+
+  BaseHelper
 };

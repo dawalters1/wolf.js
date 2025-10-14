@@ -24,14 +24,9 @@ class StoreProductProfileHelper extends BaseHelper {
         .isValidObject({ forceNew: Boolean }, 'StoreProductProfileHelper.getProductProfile() parameter, opts.{parameter}: {value} {error}');
     }
 
-    const product = await this.client.store.product.getById(productId, languageId);
-
-    if (product === null) {
-      throw new Error(`Product with id ${productId} not found`);
-    }
-
-    if (!opts?.forceNew && this.cache.has(productId, languageId)) {
-      return this.cache.get(productId, languageId);
+    if (!opts?.forceNew) {
+      const cached = this.store.get((productProfile) => productProfile.id === productId && productProfile.languageId === languageId);
+      if (cached) { return cached; }
     }
 
     try {
@@ -45,9 +40,8 @@ class StoreProductProfileHelper extends BaseHelper {
         }
       );
 
-      const existing = this.cache.get(productId, languageId);
-      return this.cache.set(
-        existing?.patch(response.body) ?? new StoreProductProfile(this.client, response.body),
+      return this.store.set(
+        new StoreProductProfile(this.client, response.body),
         response.headers?.maxAge
       );
     } catch (error) {

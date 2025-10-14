@@ -1,6 +1,7 @@
 import BaseEntity from './baseEntity.js';
-import CacheManager from '../stores_old/cacheManager.js';
-import ExpiringProperty from '../stores_old/expiringProperty.js';
+import BaseExpireProperty from '../caching/BaseExpireProperty.js';
+import BaseStore from '../caching/BaseStore.js';
+import FollowStore from '../caching/FollowStore.js';
 import IconInfo from './iconInfo.js';
 import { Language, UserFollowerType, UserPrivilege } from '../constants/index.js';
 import UserExtended from './userExtended.js';
@@ -32,22 +33,13 @@ export class User extends BaseEntity {
     this.reputation = entity.reputation;
     this.status = entity.status;
 
-    this._charmSummary = new CacheManager(60);
-    this._charmStatistics = new ExpiringProperty(300);
-    this._wolfstars = new ExpiringProperty(60);
-    this._achievements = new CacheManager(10);
-    this._roles = new ExpiringProperty(60);
-
-    this._presence = new UserPresence(client, entity);
-
-    this._follow = {
-      follower: {
-        count: new ExpiringProperty(15)
-      },
-      following: {
-        count: new ExpiringProperty(15)
-      }
-    };
+    this._charmSummary = new BaseStore({ ttl: 60 });
+    this._charmStatistics = new BaseExpireProperty({ ttl: 300 });
+    this._wolfstars = new BaseExpireProperty({ ttl: 60 });
+    this._achievements = new BaseStore({ ttl: 10 });
+    this._roles = new BaseExpireProperty({ ttl: 60 });
+    this._presence = new UserPresence(client, entity, false);
+    this._follow = new FollowStore();
 
     this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
   }

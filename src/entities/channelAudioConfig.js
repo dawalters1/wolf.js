@@ -5,17 +5,17 @@ class ChannelAudioConfig extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.enabled = entity.enabled;
-    this.stageId = entity.stageId;
-    this.minRepLevel = entity.minRepLevel;
+    this.enabled = entity.enabled ?? false;
+    this.stageId = entity.stageId ?? 1;
+    this.minRepLevel = entity.minRepLevel ?? 0;
   }
 
   /** @internal */
   patch (entity) {
     this.id = entity.id;
-    this.enabled = entity.enabled;
-    this.stageId = entity.stageId;
-    this.minRepLevel = entity.minRepLevel;
+    this.enabled = entity.enabled ?? false;
+    this.stageId = entity.stageId ?? 1;
+    this.minRepLevel = entity.minRepLevel ?? 0;
     return this;
   }
 }

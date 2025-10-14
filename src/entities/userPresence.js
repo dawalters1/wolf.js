@@ -1,7 +1,7 @@
 import BaseEntity from './baseEntity.js';
 
 export class UserPresence extends BaseEntity {
-  constructor (client, entity) {
+  constructor (client, entity, subscribed = false) {
     super(client);
 
     if ('subscriberId' in entity) {
@@ -16,11 +16,11 @@ export class UserPresence extends BaseEntity {
       this.lastActive = null;
     }
 
-    this.subscribed = false;
+    this.subscribed = subscribed;
   }
 
   /** @internal */
-  patch (entity) {
+  patch (entity, subscribe = false) {
     if ('subscriberId' in entity) {
       this.userId = entity.subscriberId;
       this.state = entity.state;
@@ -32,6 +32,9 @@ export class UserPresence extends BaseEntity {
       this.device = entity.deviceType;
       this.lastActive = this.lastActive ?? null;
     }
+
+    this.subscribed = subscribe;
+
     return this;
   }
 }
