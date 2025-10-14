@@ -13,7 +13,7 @@ class ChannelMemberHelper {
 
   async _getList (channel, list) {
     if (channel._members.metadata[list]) {
-      return channel._members.values().filter(m => m.lists.has(list));
+      return channel._members.filter((member) => member.lists.has(list));
     }
 
     const listConfig = this.client.config.get(`framework.helper.channel.member.list.${list}`);
@@ -48,16 +48,14 @@ class ChannelMemberHelper {
           }
         );
 
-        result.push(...response.body.map(serverMember => {
-          serverMember.channelId = channel.id;
-
-          const existing = channel._members.get(serverMember);
-
-          return channel._members.set(
-            existing?.patch(serverMember, list) ?? new ChannelMember(this.client, serverMember, list),
-            response.headers?.maxAge
-          );
-        }));
+        result.push(...response.body.map(
+          (serverMember) =>
+            channel._members.set(
+              new ChannelMember(this.client, serverMember, channel.id, list),
+              response.headers?.maxAge
+            )
+        )
+        );
 
         const complete = listConfig.batched
           ? response.body.length < listConfig.limit
@@ -98,8 +96,8 @@ class ChannelMemberHelper {
         .isGreaterThan(0, `ChannelMemberHelper.getList() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(list)
-        .isNotNullOrUndefined(`AchievementHelper.getList() parameter, list: ${list} is null or undefined`)
-        .isValidConstant(ChannelMemberListType, `AchievementHelper.getList() parameter, list: ${list} is not valid`);
+        .isNotNullOrUndefined(`ChannelMemberHelper.getList() parameter, list: ${list} is null or undefined`)
+        .isValidConstant(ChannelMemberListType, `ChannelMemberHelper.getList() parameter, list: ${list} is not valid`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (!channel) { throw new Error(`Channel ${channelId} not found`); }
@@ -129,6 +127,7 @@ class ChannelMemberHelper {
     const cached = channel._members.get(userId);
     if (cached) { return cached; }
 
+    console.log('FROM SERVER');
     try {
       const response = await this.client.websocket.emit(
         Command.GROUP_MEMBER,
@@ -145,9 +144,9 @@ class ChannelMemberHelper {
           this.client,
           {
             ...response.body,
-            channelId,
             hash: (await this.client.user.getById(userId)).hash
-          }
+          },
+          channelId
         )
       );
     } catch (err) {

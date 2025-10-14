@@ -29,6 +29,7 @@ class AchievementChannelHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
+
     if (channel === null) {
       throw new Error(`Channel with ID ${channelId} not found`);
     }
@@ -50,28 +51,26 @@ class AchievementChannelHelper {
         }
       );
 
-      channel._achievements.fetched = true;
-      achievements = response.body.map(serverAchievementChannel => {
-        const existing = channel._achievements.get(serverAchievementChannel);
+      channel._achievements._fetched = true;
 
-        return channel._achievements.set(
-          existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel),
-          response.headers?.maxAge
-        );
-      });
+      achievements = response.body.map(
+        (serverAchievementChannel) =>
+          channel._achievements.set(
+            new AchievementChannel(this.client, serverAchievementChannel, channelId),
+            response.headers?.maxAge
+          )
+      );
     }
 
-    if (!parentId) {
-      return achievements;
-    }
+    if (!parentId) { return achievements; }
 
-    const parentAchievement = channel._achievements.get(parentId);
+    const parentAchievement = channel._achievements.get((achievement) => achievement.id === parentId);
     if (parentAchievement === null) {
       throw new Error(`Parent achievement with ID ${parentId} not found`);
     }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...channel._achievements.mGet([...parentAchievement.childrenId])];
+      return [parentAchievement, ...parentAchievement.childrenId.map((childId) => channel._achievements.get(childId))];
     }
 
     const response = await this.client.websocket.emit(
@@ -89,18 +88,18 @@ class AchievementChannelHelper {
 
     parentAchievement.childrenId = new Set(
       response.body
-        .map(serverAchievementChannel => serverAchievementChannel.id)
+        .map((serverAchievementChannel) =>
+          serverAchievementChannel.id
+        )
         .filter(id => id !== parentId)
     );
 
-    return response.body.map(serverAchievementChannel => {
-      const existing = channel._achievements.get(serverAchievementChannel);
-
-      return channel._achievements.set(
-        existing?.patch(serverAchievementChannel) ?? new AchievementChannel(this.client, serverAchievementChannel),
+    return response.body.map((serverAchievementChannel) =>
+      channel._achievements.set(
+        new AchievementChannel(this.client, serverAchievementChannel),
         response.headers?.maxAge
-      );
-    });
+      )
+    );
   }
 }
 

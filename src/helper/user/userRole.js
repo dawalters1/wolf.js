@@ -3,10 +3,6 @@ import UserRole from '../../entities/userRole.js';
 import { validate } from '../../validator/index.js';
 
 class UserRoleHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -39,28 +35,14 @@ class UserRoleHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const userRoleMap = new Map();
 
-    const users = await this.client.user.getByIds(userIds);
+    const idsToFetch = opts?.forceNew
+      ? userIds
+      : userIds.filter((id) => !this.store.has((userRole) => userRole.id === id));
 
-    const missingUserIds = userIds.filter(
-      userId => !users.some(user => user?.id === userId)
-    );
-
-    if (missingUserIds.length > 0) {
-      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
-    }
-
-    if (!opts?.forceNew) {
-      const cachedUserRoles = users.filter(user => user !== null && user._roles?.fetched);
-      cachedUserRoles.forEach(user => userRoleMap.set(user.id, user._roles.value));
-    }
-
-    const idsToFetch = userIds.filter(id => !userRoleMap.has(id));
-
-    if (idsToFetch.length > 0) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
-        Command.WOLFSTAR_PROFILE,
+        Command.SUBSCRIBER_ROLE_SUMMARY,
         {
           headers: {
             version: 2
@@ -71,22 +53,22 @@ class UserRoleHelper {
         }
       );
 
-      [...response.body.entries()]
-        .filter(([, userRoleResponse]) => userRoleResponse.success)
-        .forEach(([userId, userRoleResponse]) => {
-          const user = users.find(user => user?.id === userId);
+      for (const [userId, userRoleResponse] of response.body.entries()) {
+        if (!userRoleResponse.success) {
+          this.store.delete((userRole) => userRole.id === userId);
+          continue;
+        }
 
-          if (user) {
-            user._roles.value =
-              user._roles.value?.patch(userRoleResponse.body) ??
-              new UserRole(this.client, userRoleResponse.body);
-
-            userRoleMap.set(user.id, user._roles.value);
-          }
-        });
+        this.store.set(
+          new UserRole(this.client, userRoleResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return userIds.map(userId => userRoleMap.get(userId) ?? null);
+    return userIds.map((userId) =>
+      this.store.get((userRole) => userRole.id === userId) ?? null
+    );
   }
 }
 

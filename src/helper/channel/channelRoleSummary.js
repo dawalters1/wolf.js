@@ -38,13 +38,12 @@ class ChannelRoleSummaryHelper {
       }
     );
 
-    return response.body.map(serverGroupRole => {
-      const existing = channel._roles.summaries.get(serverGroupRole);
-
-      return channel._roles.summaries.set(
-        existing?.patch(serverGroupRole) ?? new ChannelRole(this.client, serverGroupRole)
-      );
-    });
+    return response.body.map(
+      (serverGroupRole) =>
+        channel._roles.summaries.set(
+          new ChannelRole(this.client, serverGroupRole)
+        )
+    );
   }
 
   async users (channelId, opts) {
@@ -78,12 +77,12 @@ class ChannelRoleSummaryHelper {
       }
     );
 
-    return response.body.map(serverGroupRoleUser => {
-      const existing = channel._roles.users.get(serverGroupRoleUser.subscriberId);
-
-      return channel._roles.users.set(
-        existing?.patch(serverGroupRoleUser) ?? new ChannelRoleUser(this.client, serverGroupRoleUser));
-    });
+    return response.body.map(
+      (serverGroupRoleUser) =>
+        channel._roles.users.set(
+          new ChannelRoleUser(this.client, serverGroupRoleUser)
+        )
+    );
   }
 
   async assign (channelId, userId, roleId) {

@@ -31,31 +31,29 @@ class TopicHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cached = this.cache.get(name, languageId);
+      const cached = this.store.find((topic) => this.client.utility.string.isEqual(topic.name, name) && topic.languageId === languageId);
 
-      if (cached) {
-        return cached;
-      }
+      if (cached) { return cached; }
+    }
 
-      try {
-        const response = await this.client.websocket.emit(
-          Command.TOPIC_PAGE_LAYOUT,
-          {
-            body: {
-              name,
-              languageId
-            }
+    try {
+      const response = await this.client.websocket.emit(
+        Command.TOPIC_PAGE_LAYOUT,
+        {
+          body: {
+            name,
+            languageId
           }
-        );
+        }
+      );
 
-        return this.cache.set(
-          this.cache.get(name)?.patch(response.body) ?? new TopicPage(this.client, response.body),
-          response.headers?.maxAge
-        );
-      } catch (error) {
-        if (error.code === StatusCodes.NOT_FOUND) { return null; };
-        throw error;
-      }
+      return this.store.set(
+        new TopicPage(this.client, response.body),
+        response.headers?.maxAge
+      );
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) { return null; };
+      throw error;
     }
   }
 }

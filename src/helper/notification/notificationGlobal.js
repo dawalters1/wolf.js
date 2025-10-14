@@ -11,8 +11,8 @@ class NotificationGlobalHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationGlobalHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.client.me?.notificationsGlobal?.fetched) {
-      return this.client.me.notificationsGlobal.values();
+    if (!opts?.forceNew && this.client.me?.notifications.global?.fetched) {
+      return this.client.me._notifications.global.values();
     }
 
     const get = async (results = []) => {
@@ -34,14 +34,14 @@ class NotificationGlobalHelper extends BaseHelper {
         : await get(results);
     };
 
-    this.client.me.notificationsGlobal.fetched = true;
+    this.client.me._notifications.global._fetched = true;
 
-    return (await get()).map((serverNotification) => {
-      const existing = this.client.me.notificationsGlobal.get(serverNotification);
-
-      return this.client.me.notificationsGlobal.set(
-        existing?.patch(serverNotification) ?? new Notification(this.client, serverNotification));
-    });
+    return (await get())
+      .map((serverNotification) =>
+        this.client.me._notifications.global.set(
+          new Notification(this.client, serverNotification)
+        )
+      );
   }
 
   async clear () {
@@ -114,18 +114,12 @@ class NotificationGlobalHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'NotificationGlobalHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const notificationsMap = new Map();
 
-    if (!opts?.forceNew) {
-      const cachedNotificationGlobals = notificationIds.map((notificationId) => this.cache.get(notificationId))
-        .filter((notificationGlobal) => notificationGlobal !== null);
-
-      cachedNotificationGlobals.forEach((notificationGlobal) => {
-        notificationsMap.set(notificationGlobal.id, notificationGlobal);
-      });
-    }
-
-    const idsToFetch = notificationIds.filter((id) => !notificationsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? notificationIds
+      : notificationIds.filter((notificationId) =>
+        !this.client.me._notifications.global.has((notification) => notification.id === notificationId)
+      );
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -137,21 +131,24 @@ class NotificationGlobalHelper extends BaseHelper {
         }
       );
 
-      [...response.body.entries()]
-        .filter(([_, res]) => res.success)
-        .forEach(([id, res]) => {
-          const existing = this.cache.get(id);
+      for (const [index, notificationResponse] of response.body.entries()) {
+        const notificationId = idsToFetch[index];
 
-          notificationsMap.set(
-            res.body.id,
-            this.cache.set(
-              existing?.patch(res.body) ?? new NotificationGlobal(this.client, res.body),
-              response.headers?.maxAge)
-          );
-        });
+        if (!notificationResponse.success) {
+          this.client.me._notifications.global.delete((notification) => notification.id === notificationId);
+          continue;
+        }
+
+        this.client.me._notifications.global.set(
+          new NotificationGlobal(this.client, notificationResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return notificationIds.map((id) => notificationsMap.get(id) ?? null);
+    return notificationIds.map((notificationId) =>
+      this.client.me._notifications.global.get((notification) => notification.id === notificationId)
+    );
   }
 }
 

@@ -1,13 +1,14 @@
 import BaseEntity from './baseEntity.js';
-import CacheManager from '../stores_old/cacheManager.js';
+import BaseExpireProperty from '../caching/BaseExpireProperty.js';
+import BaseStore from '../caching/BaseStore.js';
 import ChannelAudioConfig from './channelAudioConfig.js';
 import ChannelAudioCount from './channelAudioCount.js';
 import ChannelExtended from './channelExtended.js';
 import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.js';
-import ChannelMemberManager from '../stores_old/ChannelMemberManager.js';
+import ChannelMemberStore from '../caching/ChannelMemberStore.js';
 import ChannelMessageConfig from './channelMessageConfig.js';
 import ChannelOwner from './channelOwner.js';
-import ExpiringProperty from '../stores_old/expiringProperty.js';
+import ChannelRoleStore from '../caching/ChannelRoleStore.js';
 import IconInfo from './iconInfo.js';
 import { Language, UserPrivilege } from '../constants/index.js';
 
@@ -17,18 +18,20 @@ class Channel extends BaseEntity {
 
     this.id = entity.base.id;
     this.name = entity.base.name;
-    this.hash = entity.base.hash;
-    this.reputation = entity.base.reputation;
+    this.hash = entity.base.hash ?? null;
+    this.reputation = entity.base.reputation ?? 0;
     this.premium = entity.base.premium;
-    this.icon = entity.base.icon;
-    this.iconHash = entity.base.iconHash;
+    this.icon = entity.base.icon ?? null;
+    this.iconHash = entity.base.iconHash ?? null;
     this.iconInfo = entity.base.iconInfo
       ? new IconInfo(client, entity.base.iconInfo)
       : null;
-    this.memberCount = entity.base.members;
+    this.memberCount = entity.base.members ?? 0;
     this.official = entity.base.official;
     this.peekable = entity.base.peekable;
     this.owner = new ChannelOwner(client, entity.base.owner);
+
+    // TODO: redo this
     this.extended = entity.extended
       ? new ChannelExtended(client, entity.extended)
       : null;
@@ -46,18 +49,14 @@ class Channel extends BaseEntity {
     this.isMember = false;
     this.capabilities = ChannelMemberCapability.NONE;
 
-    this._achievements = new CacheManager(300);
-    this._stats = new ExpiringProperty(300);
-    this._stages = new CacheManager(300);
-    this._events = new CacheManager();
-    this._audioSlots = new CacheManager();
-    this._audioSlotRequests = new CacheManager();
-    this._members = new ChannelMemberManager();
-
-    this._roles = {
-      summaries: new CacheManager(),
-      users: new CacheManager()
-    };
+    this._achievements = new BaseStore({ ttl: 300 });
+    this._stats = new BaseExpireProperty({ ttl: 300 });
+    this._stages = new BaseStore({ ttl: 300 });
+    this._events = new BaseStore();
+    this._audioSlots = new BaseStore();
+    this._audioSlotRequests = new BaseStore({ ttl: 300 });
+    this._members = new ChannelMemberStore();
+    this._roles = new ChannelRoleStore();
 
     this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
   }
@@ -67,17 +66,17 @@ class Channel extends BaseEntity {
     if (entity.base) {
       this.id = entity.base.id;
       this.name = entity.base.name;
-      this.hash = entity.base.hash;
-      this.reputation = entity.base.reputation;
+      this.hash = entity.base.hash ?? null;
+      this.reputation = entity.base.reputation ?? 0;
       this.premium = entity.base.premium;
-      this.icon = entity.base.icon;
-      this.iconHash = entity.base.iconHash;
+      this.icon = entity.base.icon ?? null;
+      this.iconHash = entity.base.iconHash ?? null;
       this.iconInfo = entity.base.iconInfo
         ? this.iconInfo
           ? this.iconInfo.patch(entity.base.iconInfo)
           : new IconInfo(this.client, entity.base.iconInfo, 'channel')
         : null;
-      this.memberCount = entity.base.members;
+      this.memberCount = entity.base.members ?? 0;
       this.official = entity.base.official;
       this.peekable = entity.base.peekable;
       this.owner = this.owner.patch(entity.base.owner);

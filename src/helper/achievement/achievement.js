@@ -1,7 +1,6 @@
 import Achievement from '../../entities/achievement.js';
 import AchievementCategoryHelper from './achievementCategory.js';
 import AchievementChannelHelper from './achievementChannel.js';
-import AchievementStore from '../../stores_old/AchievementStore.js';
 import AchievementUserHelper from './achievementUser.js';
 import BaseHelper from '../baseHelper.js';
 import { Command, Language } from '../../constants/index.js';
@@ -9,7 +8,7 @@ import { validate } from '../../validator/index.js';
 
 class AchievementHelper extends BaseHelper {
   constructor (client) {
-    super(client, AchievementStore);
+    super(client);
 
     this.category = new AchievementCategoryHelper(client);
     this.channel = new AchievementChannelHelper(client);
@@ -59,19 +58,9 @@ class AchievementHelper extends BaseHelper {
         .isValidObject({ forceNew: Boolean }, 'AchievementHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
 
-    const achievementsMap = new Map();
-
-    if (!opts?.forceNew) {
-      const cachedAchievementsByLanguage = this.store.get(languageId);
-
-      if (cachedAchievementsByLanguage) {
-        achievementIds.map((achievementId) => cachedAchievementsByLanguage.get(achievementId))
-          .filter((achievement) => achievement !== null)
-          .forEach((achievement) => achievementsMap.set(achievement.id, achievement));
-      }
-    }
-
-    const idsToFetch = achievementIds.filter((id) => !achievementsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? achievementIds
+      : achievementIds.filter((achievementId) => !this.store.has((achievement) => achievement.id === achievementId && achievement.languageId === languageId));
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -85,23 +74,23 @@ class AchievementHelper extends BaseHelper {
       );
 
       for (const [index, achievementResponse] of response.body.entries()) {
+        const achievementId = idsToFetch[index];
+
         if (!achievementResponse.success) {
-          this.store.invalidate(languageId, idsToFetch[index]);
+          this.store.delete((achievement) => achievement.id === achievementId && achievement.languageId === languageId);
           continue;
         }
 
-        achievementsMap.set(
-          idsToFetch[index],
-          this.store.set(
-            languageId,
-            new Achievement(this.client, achievementResponse),
-            response.headers?.maxAge
-          )
+        this.store.set(
+          new Achievement(this.client, achievementResponse),
+          response.headers?.maxAge
         );
       }
     }
 
-    return achievementIds.map((achievementId) => achievementsMap.get(achievementId) ?? null);
+    return achievementIds.map((achievementId) =>
+      this.store.get((achievement) => achievement.id === achievementId && achievement.languageId === languageId)
+    );
   }
 }
 

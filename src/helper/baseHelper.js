@@ -1,14 +1,19 @@
-import Store from "../stores_old/Store.js";
+import BaseStore from '../caching/BaseStore.js';
 
 class BaseHelper {
   /**
    * @param {any} client
-   * @param {import('../stores_old/Store.js').default} store
    */
-  constructor (client, store) {
+  constructor (client) {
     this.client = client;
 
-    this.store = new store()
+    this.store = new BaseStore();
+  }
+
+  resolveId (languageId, ids) {
+    return Array.isArray(ids)
+      ? ids.map((id) => `${languageId}-${id}`)
+      : `${languageId}-${ids}`;
   }
 }
 

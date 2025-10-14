@@ -55,7 +55,7 @@ class EventChannelHelper extends BaseHelper {
         : await get(results);
     };
 
-    channel._events.fetched = true;
+    channel._events._fetched = true;
 
     return (await get()).map((serverGroupEvent) => {
       const existing = channel._events.get(serverGroupEvent.id);

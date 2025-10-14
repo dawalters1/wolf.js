@@ -101,7 +101,7 @@ class UserFollowerHelper {
         : await get(results);
     };
 
-    this.client.me._follow[followDirection].list.fetched = true;
+    this.client.me._follow[followDirection].list._fetched = true;
 
     return (await get()).map((serverFollowData) => {
       const existing = this.client.me._follow[followDirection].list.get(serverFollowData.id);

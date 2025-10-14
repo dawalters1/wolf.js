@@ -56,7 +56,7 @@ export class WelcomeEvent extends BaseEvent {
       .filter(helper => !excludeOnCleanup.includes(helper.constructor.name));
 
     helpers.forEach(helper => {
-      helper.cache.clear();
+      helper.store.clear();
       this.cleanup(helper); // recursive clear
     });
   }

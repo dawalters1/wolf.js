@@ -42,14 +42,13 @@ class AudioSlotRequestHelper {
     );
 
     channel._audioSlotRequests.clear();
-    channel._audioSlotRequests.fetched = true;
+    channel._audioSlotRequests._fetched = true;
 
-    return response.body.map((serverAudioRequest) => {
-      const existing = channel._audioSlotRequests.get(serverAudioRequest);
-      return channel._audioSlotRequests.set(
-        existing?.patch(serverAudioRequest) ?? new ChannelAudioSlotRequest(this.client, serverAudioRequest)
-      );
-    });
+    return response.body.map((serverAudioRequest) =>
+      channel._audioSlotRequests.set(
+        new ChannelAudioSlotRequest(this.client, serverAudioRequest)
+      )
+    );
   }
 
   async add (channelId, slotId, userId) {

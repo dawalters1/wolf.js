@@ -46,15 +46,13 @@ class AudioSlotHelper extends BaseHelper {
       }
     );
 
-    channel._audioSlots.fetched = true;
-    return response.body.map((serverSlot) => {
-      serverSlot.channelId = channelId;
+    channel._audioSlots._fetched = true;
 
-      const existing = channel._audioSlots.get(serverSlot);
-
-      return channel._audioSlots.set(existing?.patch(serverSlot) ?? new ChannelAudioSlot(this.client, serverSlot)
-      );
-    });
+    return response.body.map((serverSlot) =>
+      channel._audioSlots.set(
+        new ChannelAudioSlot(this.client, serverSlot, channelId)
+      )
+    );
   }
 
   async get (channelId, slotId) {

@@ -47,16 +47,11 @@ class RoleHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'RoleHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const roleMap = new Map();
-
-    if (!opts?.forceNew) {
-      const cachedRoles = roleIds.map((roleId) => this.cache.get(roleId, languageId))
-        .filter((role) => role !== null);
-
-      cachedRoles.forEach((role) => roleMap.set(role.id, role));
-    }
-
-    const idsToFetch = roleIds.filter((id) => !roleMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? roleIds
+      : roleIds.filter((roleId) =>
+        !this.store.has((role) => role.id === roleId && role.languageId === languageId)
+      );
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -69,21 +64,23 @@ class RoleHelper extends BaseHelper {
         }
       );
 
-      [...response.body.entries()].filter(([_, res]) => res.success)
-        .forEach(([roleId, res]) => {
-          const existing = this.cache.get(roleId, languageId);
+      for (const [index, roleResponse] of response.body.entries()) {
+        const roleId = idsToFetch[index];
 
-          roleMap.set(
-            roleId,
-            this.cache.set(
-              existing?.patch(res.body) ?? new Role(this.client, res.body),
-              response.headers?.maxAge
-            )
-          );
-        });
+        if (!roleResponse.success) {
+          this.store.delete((role) => role.id === roleId && role.languageId === languageId);
+          continue;
+        }
+
+        this.store.set(
+          new Role(this.client, roleResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
-
-    return roleIds.map((roleId) => roleMap.get(roleId) ?? null);
+    return roleIds.map((roleId) =>
+      this.store.get((role) => role.id === roleId && role.languageId === languageId)
+    );
   }
 }
 

@@ -4,11 +4,11 @@ import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.js
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.js';
 
 export class ChannelMember extends BaseEntity {
-  constructor (client, entity, source) {
+  constructor (client, entity, channelId, source) {
     super(client);
 
     this.id = entity.id;
-    this.channelId = entity.channelId;
+    this.channelId = channelId;
     this.hash = entity.hash;
     this.capabilities = entity.capabilities;
 

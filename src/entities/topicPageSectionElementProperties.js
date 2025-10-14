@@ -1,6 +1,6 @@
 
 import BaseEntity from './baseEntity.js';
-import ExpiringProperty from '../stores_old/expiringProperty.js';
+// import ExpiringProperty from '../stores_old/expiringProperty.js';
 import TopicPageSectionElementPropertyAspect from './topicPageSectionElementPropertyAspect.js';
 import TopicPageSectionElementPropertyLink from './topicPageSectionElementPropertyLink.js';
 import TopicPageSectionElementPropertyRecipe from './topicPageSectionElementPropertyRecipe.js';
@@ -29,10 +29,10 @@ export class TopicPageSectionElementProperties extends BaseEntity {
     this.subHeading = entity?.subHeading ?? null;
     this.body = entity?.body ?? null;
     this.imageUrl = entity?.imageUrl ?? null;
-
+    /*
     this._recipeData = entity.recipe
       ? new ExpiringProperty(300)
-      : null;
+      : null; */
   }
 }
 

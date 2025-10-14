@@ -7,10 +7,10 @@ class AchievementChannelAdditionalInfo extends BaseEntity {
     this.awardedAt = entity.awardedAt
       ? new Date(entity.awardedAt)
       : null;
-    this.eTag = entity.eTag;
-    this.steps = entity.steps;
-    this.total = entity.total;
-    this.categoryId = entity.categoryId;
+    this.eTag = entity.eTag ?? null;
+    this.steps = entity.steps ?? null;
+    this.total = entity.total ?? null;
+    this.categoryId = entity.categoryId ?? null;
   }
 
   /** @internal */
@@ -18,10 +18,10 @@ class AchievementChannelAdditionalInfo extends BaseEntity {
     this.awardedAt = entity?.awardedAt
       ? new Date(entity.awardedAt)
       : null;
-    this.eTag = entity.eTag;
-    this.steps = entity.steps;
-    this.total = entity.total;
-    this.categoryId = entity.categoryId;
+    this.eTag = entity.eTag ?? null;
+    this.steps = entity.steps ?? null;
+    this.total = entity.total ?? null;
+    this.categoryId = entity.categoryId ?? null;
 
     return this;
   }

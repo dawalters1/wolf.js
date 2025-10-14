@@ -51,16 +51,10 @@ class UserHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const usersMap = new Map();
 
-    if (!opts?.forceNew) {
-      const cachedUsers = userIds.map((userId) => this.cache.get(userId))
-        .filter((user) => user !== null);
-
-      cachedUsers.forEach((user) => usersMap.set(user.id, user));
-    }
-
-    const idsToFetch = userIds.filter((id) => !usersMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? userIds
+      : userIds.filter((userId) => !this.store.has((user) => user.id === userId));
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -77,31 +71,30 @@ class UserHelper extends BaseHelper {
         }
       );
 
-      [...response.body.entries()].filter(([, userResponse]) => userResponse.success)
-        .forEach(([userId, userResponse]) => {
-          const existing = this.cache.get(userId);
+      for (const [userId, userResponse] of response.body.entries()) {
+        if (!userResponse.success) {
+          this.store.delete((user) => user.id === userId);
+          continue;
+        }
 
-          const user = existing
-            ? existing?.patch(userResponse.body)
-            : userId === this.client.config.framework.login.userId
-              ? new CurrentUser(this.client, userResponse.body)
-              : new User(this.client, userResponse.body);
+        const user = userId === this.client.config.framework.login.userId
+          ? new CurrentUser(this.client, userResponse.body)
+          : new User(this.client, userResponse.body);
 
-          if (user instanceof CurrentUser) {
-            this.client._me = user;
-          }
+        if (user instanceof CurrentUser) {
+          this.client._me = user;
+        }
 
-          usersMap.set(
-            userId,
-            this.cache.set(
-              user,
-              response.headers?.maxAge
-            )
-          );
-        });
+        this.store.set(
+          user,
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return userIds.map((userId) => usersMap.get(userId) ?? null);
+    return userIds.map((userId) =>
+      this.store.get((user) => user.id === userId)
+    );
   }
 
   async search (query) {
