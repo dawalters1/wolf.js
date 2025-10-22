@@ -12,7 +12,7 @@ class NotificationGlobalHelper extends BaseHelper {
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationGlobalHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.client.me?.notifications.global?.fetched) {
-      return this.client.me._notifications.global.values();
+      return this.client.me.notificationStore.global.values();
     }
 
     const get = async (results = []) => {
@@ -34,11 +34,11 @@ class NotificationGlobalHelper extends BaseHelper {
         : await get(results);
     };
 
-    this.client.me._notifications.global._fetched = true;
+    this.client.me.notificationStore.global.fetched = true;
 
     return (await get())
       .map((serverNotification) =>
-        this.client.me._notifications.global.set(
+        this.client.me.notificationStore.global.set(
           new Notification(this.client, serverNotification)
         )
       );
@@ -118,7 +118,7 @@ class NotificationGlobalHelper extends BaseHelper {
     const idsToFetch = opts?.forceNew
       ? notificationIds
       : notificationIds.filter((notificationId) =>
-        !this.client.me._notifications.global.has((notification) => notification.id === notificationId)
+        !this.client.me.notificationStore.global.has((notification) => notification.id === notificationId)
       );
 
     if (idsToFetch.length) {
@@ -135,11 +135,11 @@ class NotificationGlobalHelper extends BaseHelper {
         const notificationId = idsToFetch[index];
 
         if (!notificationResponse.success) {
-          this.client.me._notifications.global.delete((notification) => notification.id === notificationId);
+          this.client.me.notificationStore.global.delete((notification) => notification.id === notificationId);
           continue;
         }
 
-        this.client.me._notifications.global.set(
+        this.client.me.notificationStore.global.set(
           new NotificationGlobal(this.client, notificationResponse.body),
           response.headers?.maxAge
         );
@@ -147,7 +147,7 @@ class NotificationGlobalHelper extends BaseHelper {
     }
 
     return notificationIds.map((notificationId) =>
-      this.client.me._notifications.global.get((notification) => notification.id === notificationId)
+      this.client.me.notificationStore.global.get((notification) => notification.id === notificationId)
     );
   }
 }

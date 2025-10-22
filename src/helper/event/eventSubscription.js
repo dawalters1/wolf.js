@@ -28,7 +28,7 @@ class EventSubscriptionHelper extends BaseHelper {
     const oldSubscriptionIds = cachedSubscriptionIds.filter((subscriptionId) => !newSubscriptionIds.includes(subscriptionId));
     oldSubscriptionIds.forEach((subscriptionId) => this.store.delete(subscriptionId));
 
-    this.store._fetched = true;
+    this.store.fetched = true;
 
     return response.body.map((serverEventSubscription) => {
       const existing = this.store.get(serverEventSubscription.id);

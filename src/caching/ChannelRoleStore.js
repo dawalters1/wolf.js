@@ -2,7 +2,7 @@ import BaseStore from './BaseStore.js';
 
 class ChannelRoleStore {
   constructor () {
-    this.summaries = new BaseStore();
+    this.users = new BaseStore();
     this.roles = new BaseStore();
   }
 }

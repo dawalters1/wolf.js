@@ -11,12 +11,33 @@ import { validate } from '../../validator/index.js';
 import WOLFStarHelper from './wolfstar.js';
 
 class UserHelper extends BaseHelper {
+  #followers;
+  #wolfstar;
+  #role;
+  #presence;
+
   constructor (client) {
     super(client);
-    this.followers = new UserFollowerHelper(client);
-    this.wolfstar = new WOLFStarHelper(client);
-    this.role = new UserRoleHelper(client);
-    this.presence = new UserPresenceHelper(client);
+    this.#followers = new UserFollowerHelper(client);
+    this.#wolfstar = new WOLFStarHelper(client);
+    this.#role = new UserRoleHelper(client);
+    this.#presence = new UserPresenceHelper(client);
+  }
+
+  get followers () {
+    return this.#followers;
+  }
+
+  get wolfstar () {
+    return this.#wolfstar;
+  }
+
+  get role () {
+    return this.#role;
+  }
+
+  get presence () {
+    return this.#presence;
   }
 
   async getById (userId, opts) {
@@ -82,7 +103,7 @@ class UserHelper extends BaseHelper {
           : new User(this.client, userResponse.body);
 
         if (user instanceof CurrentUser) {
-          this.client._me = user;
+          this.client.me = user;
         }
 
         this.store.set(

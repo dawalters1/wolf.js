@@ -8,8 +8,8 @@ class GlobalNotificationListDelete extends BaseEvent {
 
   async process (data) {
     const wasDeleted = [
-      this.client.me && this.client.me._notifications.global.delete(data.id),
-      this.client.notification.global.cache.delete(data.id)
+      this.client.me && this.client.me.notificationStore.global.delete(data.id),
+      this.client.notification.global.store.delete(data.id)
     ].some(Boolean);
 
     if (wasDeleted === false) { return; }

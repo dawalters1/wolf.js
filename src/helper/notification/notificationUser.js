@@ -12,7 +12,7 @@ class NotificationUserHelper extends BaseHelper {
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationUserHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
     if (!opts?.forceNew && this.client.me?.notifications.user?.fetched) {
-      return this.client.me._notifications.user.values();
+      return this.client.me.notificationStore.user.values();
     }
 
     const get = async (results = []) => {
@@ -32,11 +32,11 @@ class NotificationUserHelper extends BaseHelper {
         : await get(results);
     };
 
-    this.client.me._notifications.user._fetched = true;
+    this.client.me.notificationStore.user.fetched = true;
 
     return (await get())
       .map((serverNotification) =>
-        this.client.me._notifications.user.set(
+        this.client.me.notificationStore.user.set(
           new Notification(this.client, serverNotification)
         )
       );
@@ -134,11 +134,11 @@ class NotificationUserHelper extends BaseHelper {
         const notificationId = idsToFetch[index];
 
         if (!notificationResponse.success) {
-          this.client.me._notifications.user.delete((notification) => notification.id === notificationId);
+          this.client.me.notificationStore.user.delete((notification) => notification.id === notificationId);
           continue;
         }
 
-        this.client.me._notifications.user.set(
+        this.client.me.notificationStore.user.set(
           new NotificationUser(this.client, notificationResponse.body),
           response.headers?.maxAge
         );
@@ -146,7 +146,7 @@ class NotificationUserHelper extends BaseHelper {
     }
 
     return notificationIds.map((notificationId) =>
-      this.client.me._notifications.user.get((notification) => notification.id === notificationId)
+      this.client.me.notificationStore.user.get((notification) => notification.id === notificationId)
     );
   }
 }

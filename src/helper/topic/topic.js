@@ -7,10 +7,15 @@ import TopicRecipeHelper from './topicRecipe.js';
 import { validate } from '../../validator/index.js';
 
 class TopicHelper extends BaseHelper {
+  #recipe;
   constructor (client) {
-    super(client, 300);
+    super(client);
 
-    this.recipe = new TopicRecipeHelper(client);
+    this.#recipe = new TopicRecipeHelper(client);
+  }
+
+  get recipe () {
+    return this.#recipe;
   }
 
   async get (name, languageId, opts) {

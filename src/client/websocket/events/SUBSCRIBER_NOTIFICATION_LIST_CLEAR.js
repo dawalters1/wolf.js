@@ -6,9 +6,9 @@ class GlobalNotificationListClear extends BaseEvent {
   }
 
   async process () {
-    if (this.client.notification.global.cache.size() === 0) { return; }
+    if (this.client.notification.global.store.size() === 0) { return; }
 
-    this.client.notification.global.cache.clear();
+    this.client.notification.global.store.clear();
 
     this.client.emit('globalNotificationClear');
   }

@@ -6,7 +6,7 @@ class SubscriberUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const oldUser = this.client.user.cache.get(data.id)?.clone() ?? null;
+    const oldUser = this.client.user.store.get(data.id)?.clone() ?? null;
 
     if (oldUser === null || oldUser.hash === data.hash) { return; }
 
@@ -15,13 +15,13 @@ class SubscriberUpdateEvent extends BaseEvent {
     if (newUser === null) { return; }
 
     const contactables = [
-      this.client.contact.cache.get(data.id) ?? null,
-      this.client.contact.blocked.cache.get(data.id) ?? null
+      this.client.contact.store.get(data.id) ?? null,
+      this.client.contact.blocked.store.get(data.id) ?? null
     ];
 
     contactables.forEach((contact) => contact?.patch(newUser));
 
-    this.client.channel.cache.values().forEach((channel) => {
+    this.client.channel.store.values().forEach((channel) => {
       if (channel.owner.id === oldUser.id) {
         channel.owner.patch(newUser);
       }

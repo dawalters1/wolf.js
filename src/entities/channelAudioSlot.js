@@ -19,34 +19,6 @@ export class ChannelAudioSlot extends BaseEntity {
     this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
   }
 
-  /** @internal */
-  patch (entity) {
-    const data = 'slot' in entity
-      ? entity.slot
-      : entity;
-
-    this.id = data.id;
-    this.channelId = entity?.id ?? entity.channelId;
-    this.isLocked = data.locked;
-    this.isMuted = data.occupierMuted;
-    this.userId = data.occupierId;
-    this.isReserved = data.reservedOccupierId !== undefined;
-
-    this.reservation = this.reservation
-      ? data.reservedOccupierId
-        ? this.reservation.patch(data)
-        : undefined
-      : data.reservedOccupierId
-        ? new ChannelAudioSlotReservation(this.client, entity)
-        : undefined;
-
-    this.connectionState = data.connectionState;
-    this.uuid = data.uuid;
-    this.isOccupied = data.occupierId !== null || this.reservation !== undefined;
-
-    return this;
-  }
-
   async join () {
     return this.client.audio.join(this.channelId, this.id);
   }

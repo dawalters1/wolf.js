@@ -1,3 +1,4 @@
+import BaseHelper from '../baseHelper.js';
 import BaseStore from '../../caching/BaseStore.js';
 import Blacklist from '../../entities/blacklist.js';
 import { Command } from '../../constants/Command.js';
@@ -5,11 +6,13 @@ import Metadata from '../../entities/metadata.js';
 import StatusCodes from 'http-status-codes';
 import { validate } from '../../validator/index.js';
 
-class MetadataHelper {
+class MetadataHelper extends BaseHelper {
+  #blacklistStore;
+  #metadataStore;
   constructor (client) {
-    this.client = client;
-    this._blacklist = new BaseStore();
-    this._metadata = new BaseStore();
+    super(client);
+    this.#blacklistStore = new BaseStore();
+    this.#metadataStore = new BaseStore();
   }
 
   async metadata (url) {
@@ -20,7 +23,7 @@ class MetadataHelper {
     }
     const normalizedUrl = url.toLocaleLowerCase();
 
-    const cached = this._metadata.get((blacklist) => blacklist.url === normalizedUrl);
+    const cached = this.#metadataStore.get((blacklist) => blacklist.url === normalizedUrl);
 
     if (cached) { return cached; }
 
@@ -34,7 +37,7 @@ class MetadataHelper {
         }
       );
 
-      return this._metadata.set(new Metadata(this.client, response.body));
+      return this.#metadataStore.set(new Metadata(this.client, response.body));
     } catch (error) {
       if (
         error.code === StatusCodes.FORBIDDEN ||
@@ -47,19 +50,19 @@ class MetadataHelper {
   }
 
   async urlBlacklist (opts) {
-    if (!opts?.forceNew && this._blacklist.fetched) {
-      return this._blacklist.values();
+    if (!opts?.forceNew && this.#blacklistStore.fetched) {
+      return this.#blacklistStore.values();
     }
 
     const response = await this.client.websocket.emit(
       Command.METADATA_URL_BLACKLIST
     );
 
-    this._blacklist._fetched = true;
-    this._blacklist.clear();
+    this.#blacklistStore.fetched = true;
+    this.#blacklistStore.clear();
 
     return response.body.map((serverBlacklist) =>
-      this._blacklist.set(new Blacklist(this.client, serverBlacklist)
+      this.#blacklistStore.set(new Blacklist(this.client, serverBlacklist)
       )
     );
   }

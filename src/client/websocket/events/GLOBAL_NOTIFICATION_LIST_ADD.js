@@ -9,7 +9,7 @@ class GlobalNotificationListAddEvent extends BaseEvent {
   async process (data) {
     this.client.emit(
       'globalNotificationAdd',
-      this.client.me._notifications.global.set(
+      this.client.me.notificationStore.global.set(
         new Notification(
           this.client,
           data

@@ -9,15 +9,6 @@ export class ChannelEvent extends BaseEntity {
     this.additionalInfo = new ChannelEventAdditionalInfo(client, entity.additionalInfo);
   }
 
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.additionalInfo = this.additionalInfo
-      ? this.additionalInfo.patch(entity.additionalInfo)
-      : new ChannelEventAdditionalInfo(this.client, entity.additionalInfo);
-    return this;
-  }
-
   async get () {
 
   }

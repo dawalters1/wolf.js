@@ -12,19 +12,6 @@ class AchievementUserAdditionalInfo extends BaseEntity {
     this.total = entity.total ?? null;
     this.categoryId = entity.categoryId ?? null;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.awardedAt = entity?.awardedAt
-      ? new Date(entity.awardedAt)
-      : null;
-    this.eTag = entity.eTag ?? null;
-    this.steps = entity.steps ?? null;
-    this.total = entity.total ?? null;
-    this.categoryId = entity.categoryId ?? null;
-
-    return this;
-  }
 }
 
 export default AchievementUserAdditionalInfo;

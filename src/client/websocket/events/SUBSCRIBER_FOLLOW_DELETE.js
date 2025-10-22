@@ -6,7 +6,7 @@ class SubscriberFollowDeleteEvent extends BaseEvent {
   }
 
   async process (data) {
-    const wasDeleted = this.client.me._follow.following.list.delete(data.id);
+    const wasDeleted = this.client.me.followStore.following.list.delete(data.id);
 
     if (!wasDeleted) { return; }
 

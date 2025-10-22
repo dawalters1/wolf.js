@@ -6,9 +6,9 @@ class SubscriberNotificationListClear extends BaseEvent {
   }
 
   async process () {
-    if (this.client.notification.user.cache.size() === 0) { return; }
+    if (this.client.notification.user.store.size() === 0) { return; }
 
-    this.client.notification.user.cache.clear();
+    this.client.notification.user.store.clear();
 
     this.client.emit('userNotificationClear');
   }

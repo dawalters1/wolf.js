@@ -6,11 +6,21 @@ import EventSubscriptionHelper from './eventSubscription.js';
 import { validate } from '../../validator/index.js';
 
 class EventHelper extends BaseHelper {
+  #channel;
+  #subscription;
   constructor (client) {
     super(client);
 
-    this.channel = new EventChannelHelper(client);
-    this.subscription = new EventSubscriptionHelper(client);
+    this.#channel = new EventChannelHelper(client);
+    this.#subscription = new EventSubscriptionHelper(client);
+  }
+
+  get channel () {
+    return this.#channel;
+  }
+
+  get subscription () {
+    return this.#subscription;
   }
 
   async getById (eventId, opts) {

@@ -6,13 +6,13 @@ class GroupAudioRequestAddEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
-    if (channel._audioSlotRequests.size() === 0) { return; }
+    if (channel.audioSlotRequestStore.size() === 0) { return; }
 
-    channel._audioSlotRequests.clear();
+    channel.audioSlotRequestStore.clear();
 
     this.client.emit('channelAudioSlotRequestClear');
   }

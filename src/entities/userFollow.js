@@ -16,13 +16,6 @@ export class UserFollow extends BaseEntity {
   async toggleNotification () {
     return await this.client.user.followers.update(this.userId, !this.notification);
   }
-
-  /** @internal */
-  patch (entity) {
-    this.userId = entity.subscriberId;
-    this.notification = entity.notification;
-    this.hash = entity.hash;
-  }
 }
 
 export default UserFollow;

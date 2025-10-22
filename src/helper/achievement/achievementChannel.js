@@ -36,8 +36,8 @@ class AchievementChannelHelper {
 
     let achievements;
 
-    if (!opts?.forceNew && channel._achievements.fetched) {
-      achievements = channel._achievements.values();
+    if (!opts?.forceNew && channel.achievementStore.fetched) {
+      achievements = channel.achievementStore.values();
     } else {
       const response = await this.client.websocket.emit(
         Command.ACHIEVEMENT_GROUP_LIST,
@@ -51,11 +51,11 @@ class AchievementChannelHelper {
         }
       );
 
-      channel._achievements._fetched = true;
+      channel.achievementStore.fetched = true;
 
       achievements = response.body.map(
         (serverAchievementChannel) =>
-          channel._achievements.set(
+          channel.achievementStore.set(
             new AchievementChannel(this.client, serverAchievementChannel, channelId),
             response.headers?.maxAge
           )
@@ -64,13 +64,13 @@ class AchievementChannelHelper {
 
     if (!parentId) { return achievements; }
 
-    const parentAchievement = channel._achievements.get((achievement) => achievement.id === parentId);
+    const parentAchievement = channel.achievementStore.get((achievement) => achievement.id === parentId);
     if (parentAchievement === null) {
       throw new Error(`Parent achievement with ID ${parentId} not found`);
     }
 
     if (parentAchievement.childrenId) {
-      return [parentAchievement, ...parentAchievement.childrenId.map((childId) => channel._achievements.get(childId))];
+      return [parentAchievement, ...parentAchievement.childrenId.map((childId) => channel.achievementStore.get(childId))];
     }
 
     const response = await this.client.websocket.emit(
@@ -95,7 +95,7 @@ class AchievementChannelHelper {
     );
 
     return response.body.map((serverAchievementChannel) =>
-      channel._achievements.set(
+      channel.achievementStore.set(
         new AchievementChannel(this.client, serverAchievementChannel),
         response.headers?.maxAge
       )

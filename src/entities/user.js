@@ -9,6 +9,14 @@ import UserPresence from './userPresence.js';
 import UserSelectedCharmList from './userSelectedCharmList.js';
 
 export class User extends BaseEntity {
+  #charmSummaryStore;
+  #charmStatisticsStore;
+  #wolfstarStore;
+  #achievementStore;
+  #roleStore;
+  #presenceStore;
+  #followStore;
+
   constructor (client, entity) {
     super(client);
 
@@ -33,17 +41,55 @@ export class User extends BaseEntity {
     this.reputation = entity.reputation;
     this.status = entity.status;
 
-    this._charmSummary = new BaseStore({ ttl: 60 });
-    this._charmStatistics = new BaseExpireProperty({ ttl: 300 });
-    this._wolfstars = new BaseExpireProperty({ ttl: 60 });
-    this._achievements = new BaseStore({ ttl: 10 });
-    this._roles = new BaseExpireProperty({ ttl: 60 });
-    this._presence = new UserPresence(client, entity, false);
-    this._follow = new FollowStore();
+    this.#charmSummaryStore = new BaseStore({ ttl: 60 });
+    this.#charmStatisticsStore = new BaseExpireProperty({ ttl: 300 });
+    this.#wolfstarStore = new BaseExpireProperty({ ttl: 60 });
+    this.#achievementStore = new BaseStore({ ttl: 10 });
+    this.#roleStore = new BaseStore({ ttl: 60 });
+    this.#presenceStore = new UserPresence(client, entity, false);
+    this.#followStore = new FollowStore();
 
-    this.language = client.utility.toLanguageKey(this?.extended?.language ?? Language.ENGLISH);
+    this.language = client.utility.toLanguageKey(
+      this?.extended?.language ?? Language.ENGLISH
+    );
   }
 
+  /** @internal */
+  get charmSummaryStore () {
+    return this.#charmSummaryStore;
+  }
+
+  /** @internal */
+  get charmStatisticsStore () {
+    return this.#charmStatisticsStore;
+  }
+
+  /** @internal */
+  get wolfstarStore () {
+    return this.#wolfstarStore;
+  }
+
+  /** @internal */
+  get achievementStore () {
+    return this.#achievementStore;
+  }
+
+  /** @internal */
+  get roleStore () {
+    return this.#roleStore;
+  }
+
+  /** @internal */
+  get presenceStore () {
+    return this.#presenceStore;
+  }
+
+  /** @internal */
+  get followStore () {
+    return this.#followStore;
+  }
+
+  // === Public methods ===
   async follow () {
     return this.client.user.followers.follow(this.id);
   }
@@ -60,56 +106,32 @@ export class User extends BaseEntity {
     return this.client.user.followers.count(this.id, UserFollowerType.FOLLOWING);
   }
 
-  async getAchievements (parentId) {
-    return this.client.achievement.user.get(this.id, parentId);
+  async getAchievements (parentId, opts) {
+    return this.client.achievement.user.get(this.id, parentId, opts);
   }
 
-  async getCharmSummary () {
-    return this.client.charm.getUserSummary(this.id);
+  async getCharmSummary (opts) {
+    return this.client.charm.getUserSummary(this.id, opts);
   }
 
-  async getCharmStatistics () {
-    return this.client.charm.getUserStatistics(this.id);
+  async getCharmStatistics (opts) {
+    return this.client.charm.getUserStatistics(this.id, opts);
   }
 
-  async getPresence () {
-    return this.client.user.presence.getById(this.id);
+  async getPresence (opts) {
+    return this.client.user.presence.getById(this.id, opts);
   }
 
-  async getWOLFStarsProfile () {
-    return this.client.user.wolfstar.getById(this.id);
+  async getWOLFStarsProfile (opts) {
+    return this.client.user.wolfstar.getById(this.id, opts);
   }
 
   async sendPrivateMessage (content, opts) {
     return this.client.messaging.sendPrivateMessage(this.id, content, opts);
   }
 
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.categoryIds = entity.categoryIds;
-    this.charms = this.charms.patch(entity.charms);
-    this.extended =
-    entity.extended
-      ? this.extended?.patch(entity.extended) ?? new UserExtended(this.client, entity.extended)
-      : null;
-    this.followable = entity.followable;
-    this.hash = entity.hash;
-    this.icon = entity.icon;
-    this.iconHash = entity.iconHash;
-    this.iconInfo = entity.iconInfo
-      ? this.iconInfo?.patch(entity.iconInfo) ?? new IconInfo(this.client, entity.iconInfo)
-      : null;
-    this.nickname = entity.nickname;
-    this.privileges = entity.privileges;
-    this.privilegeList = Object.values(UserPrivilege).filter(
-      (value) => (this.privileges & value) === value
-    );
-    this.reputation = entity.reputation;
-    this.status = entity.status;
-    this._presence = this._presence.patch(entity);
-
-    return this;
+  async getRoles (opts) {
+    return this.client.user.role.getById(this.id, opts);
   }
 }
 

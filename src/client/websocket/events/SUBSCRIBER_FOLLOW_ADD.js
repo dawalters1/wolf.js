@@ -7,11 +7,11 @@ class SubscriberFollowAddEvent extends BaseEvent {
   }
 
   async process (data) {
-    if (!this.client.me._follow.following.list._fetched) { return; }
+    if (!this.client.me.followStore.following.list.fetched) { return; }
 
     return this.client.emit(
       'userFollowAdd',
-      this.client.me._follow.following.list.set(
+      this.client.me.followStore.following.list.set(
         new UserFollow(
           this.client,
           {

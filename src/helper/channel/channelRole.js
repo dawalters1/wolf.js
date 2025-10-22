@@ -3,7 +3,7 @@ import ChannelRoleUser from '../../entities/channelRoleUser.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 
-class ChannelRoleSummaryHelper {
+class ChannelRoleHelper {
   constructor (client) {
     this.client = client;
   }
@@ -25,8 +25,8 @@ class ChannelRoleSummaryHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._roles.summaries.fetched) {
-      return channel._roles.summaries.values();
+    if (!opts?.forceNew && channel.roleStore.users.fetched) {
+      return channel.roleStore.users.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -40,7 +40,7 @@ class ChannelRoleSummaryHelper {
 
     return response.body.map(
       (serverGroupRole) =>
-        channel._roles.summaries.set(
+        channel.roleStore.users.set(
           new ChannelRole(this.client, serverGroupRole)
         )
     );
@@ -63,8 +63,8 @@ class ChannelRoleSummaryHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._roles.users.fetched) {
-      return channel._roles.users.values();
+    if (!opts?.forceNew && channel.roleStore.users.fetched) {
+      return channel.roleStore.users.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -78,10 +78,13 @@ class ChannelRoleSummaryHelper {
     );
 
     return response.body.map(
-      (serverGroupRoleUser) =>
-        channel._roles.users.set(
+      (serverGroupRoleUser) => {
+        serverGroupRoleUser.groupId = channelId;
+
+        return channel.roleStore.users.set(
           new ChannelRoleUser(this.client, serverGroupRoleUser)
-        )
+        );
+      }
     );
   }
 
@@ -205,4 +208,4 @@ class ChannelRoleSummaryHelper {
   }
 }
 
-export default ChannelRoleSummaryHelper;
+export default ChannelRoleHelper;

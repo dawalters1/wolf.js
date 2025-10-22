@@ -14,7 +14,7 @@ class GroupMemberAddEvent extends BaseEvent {
       channel.isMember = data.capabilities !== ChannelMemberCapability.BANNED;
     }
 
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
