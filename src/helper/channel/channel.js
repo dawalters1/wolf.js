@@ -2,7 +2,7 @@ import BaseHelper from '../baseHelper.js';
 import Channel from '../../entities/channel.js';
 import ChannelCategoryHelper from './channelCategory.js';
 import ChannelMemberHelper from './channelMember.js';
-import ChannelRoleSummaryHelper from './channelRoleSummary.js';
+import ChannelRoleHelper from './channelRole.js';
 import ChannelStats from '../../entities/channelStats.js';
 import { Command } from '../../constants/Command.js';
 import { defaultChannelEntities } from '../../options/options.js';
@@ -13,12 +13,27 @@ import { StatusCodes } from 'http-status-codes';
 import { validate } from '../../validator/index.js';
 
 class ChannelHelper extends BaseHelper {
+  #category;
+  #member;
+  #roles;
   constructor (client) {
     super(client);
 
-    this.category = new ChannelCategoryHelper(client);
-    this.member = new ChannelMemberHelper(client);
-    this.role = new ChannelRoleSummaryHelper(client);
+    this.#category = new ChannelCategoryHelper(client);
+    this.#member = new ChannelMemberHelper(client);
+    this.#roles = new ChannelRoleHelper(client);
+  }
+
+  get category () {
+    return this.#category;
+  }
+
+  get member () {
+    return this.#member;
+  }
+
+  get roles () {
+    return this.#roles;
   }
 
   async getById (channelId, opts) {
@@ -203,7 +218,7 @@ class ChannelHelper extends BaseHelper {
     const channel = await this.getById(channelId);
     if (!channel) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
-    if (!opts?.forceNew && channel._stats.fetched) { return channel._stats.value(); }
+    if (!opts?.forceNew && channel.statsStore.fetched) { return channel.statsStore.value(); }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_STATS,
@@ -214,7 +229,7 @@ class ChannelHelper extends BaseHelper {
       }
     );
 
-    channel._stats.value = new ChannelStats(this.client, response.body);
+    channel.statsStore.value = new ChannelStats(this.client, response.body);
     return channel.stats;
   }
 
@@ -342,7 +357,7 @@ class ChannelHelper extends BaseHelper {
       }
     );
 
-    this.store._fetched = true;
+    this.store.fetched = true;
 
     if (response.body.length) {
       const channels = await this.getByIds(response.body.map((group) => group.id));

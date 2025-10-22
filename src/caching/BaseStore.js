@@ -1,19 +1,31 @@
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
 
 class BaseStore {
-  constructor (options = {}) {
-    this.store = new Set();
-    this._fetched = false;
-    this.ttl = options?.ttl
-      ? options.ttl * 1000
-      : null;
-    this.maxSize = options?.maxSize > 0
-      ? options.maxSize
-      : Infinity;
+  #store = new Set();
+  #fetched = false;
+  #ttl = null;
+  #maxSize = Infinity;
+  #sweepHandle = null;
 
-    if (options?.sweepInterval) {
-      this._sweepHandle = setInterval(() => this.sweepExpired(), options.sweepInterval);
+  constructor (options = {}) {
+    if (options.ttl) { this.#ttl = options.ttl * 1000; }
+    if (options.maxSize > 0) { this.#maxSize = options.maxSize; }
+
+    if (options.sweepInterval) {
+      this.#sweepHandle = setInterval(() => this.sweepExpired(), options.sweepInterval);
     }
+  }
+
+  set fetched (val) {
+    this.#fetched = val;
+  }
+
+  get fetched () {
+    return this.#fetched;
+  }
+
+  get size () {
+    return this.#store.size;
   }
 
   #touch (entry) {
@@ -21,11 +33,11 @@ class BaseStore {
   }
 
   #ensureSizeLimit () {
-    while (this.size > this.maxSize) {
+    while (this.size > this.#maxSize) {
       let oldest = null;
       let oldestTime = Infinity;
 
-      for (const entry of this.store) {
+      for (const entry of this.#store) {
         if (entry.lastUsed < oldestTime) {
           oldestTime = entry.lastUsed;
           oldest = entry;
@@ -33,15 +45,13 @@ class BaseStore {
       }
 
       if (!oldest) { break; }
-      this.store.delete(oldest);
+      this.#store.delete(oldest);
     }
   }
 
   #findEntry (fn) {
-    for (const entry of this.store) {
-      if (fn(entry.value, entry.value)) {
-        return entry;
-      }
+    for (const entry of this.#store) {
+      if (fn(entry.value, entry.value)) { return entry; }
     }
     return null;
   }
@@ -49,9 +59,13 @@ class BaseStore {
   set (value, maxAge = null) {
     const now = Date.now();
     const key = getKeyProperty(value);
-    const existing = 'languageId' in value
-      ? this.#findEntry((entry) => entry[key] === value[entry] && entry.languageId === value.languageId)
-      : this.#findEntry((entry) => entry[key] === value[entry]);
+
+    const existing = value instanceof Object
+      ? 'languageId' in value
+        ? this.#findEntry((entry) => entry[key] === value[key] && entry.languageId === value.languageId)
+        : this.#findEntry((entry) => entry[key] === value[key])
+      : this.#findEntry((entry) => entry === value);
+
     let entryValue;
 
     if (existing) {
@@ -63,21 +77,27 @@ class BaseStore {
         existing.value = value;
       }
 
-      existing.ttl = maxAge
-        ? now + (maxAge * 1000)
-        : this.ttl ?? existing.ttl;
+      existing.expiresAt = maxAge
+        ? now + maxAge * 1000
+        : this.#ttl
+          ? now + this.#ttl
+          : existing.expiresAt;
+
       this.#touch(existing);
       entryValue = existing.value;
     } else {
       const entry = {
         value,
-        ttl: maxAge
-          ? now + maxAge
-          : null,
+        expiresAt: maxAge
+          ? now + maxAge * 1000
+          : this.#ttl
+            ? now + this.#ttl
+            : null,
         lastUsed: now
       };
-      this.store.add(entry);
+      this.#store.add(entry);
       entryValue = value;
+      this.#fetched = true;
     }
 
     this.#ensureSizeLimit();
@@ -91,8 +111,9 @@ class BaseStore {
 
     if (!entry) { return null; }
 
-    if (entry.ttl && entry.ttl <= Date.now()) {
-      this.store.delete(entry);
+    if (entry.expiresAt && entry.expiresAt <= Date.now()) {
+      this.#store.delete(entry);
+      if (this.size === 0) { this.#fetched = false; }
       return null;
     }
 
@@ -104,8 +125,9 @@ class BaseStore {
     const entry = this.#findEntry(fn);
     if (!entry) { return false; }
 
-    if (entry.ttl && entry.ttl <= Date.now()) {
-      this.store.delete(entry);
+    if (entry.expiresAt && entry.expiresAt <= Date.now()) {
+      this.#store.delete(entry);
+      if (this.size === 0) { this.#fetched = false; }
       return false;
     }
 
@@ -114,61 +136,55 @@ class BaseStore {
 
   delete (fn) {
     let removed = 0;
-    for (const entry of Array.from(this.store)) {
+    for (const entry of Array.from(this.#store)) {
       if (fn(entry.value, entry.value)) {
-        this.store.delete(entry);
+        this.#store.delete(entry);
         removed++;
       }
     }
+    if (this.size === 0) { this.#fetched = false; }
     return removed;
   }
 
   clear () {
-    this._fetched = false;
-    this.store.clear();
+    this.#fetched = false;
+    this.#store.clear();
   }
 
   destroy () {
-    if (this._sweepHandle) { clearInterval(this._sweepHandle); }
+    if (this.#sweepHandle) { clearInterval(this.#sweepHandle); }
   }
 
   values () {
-    return Array.from(this.store, (entry) => entry.value);
+    return Array.from(this.#store, (entry) => entry.value);
   }
 
   forEach (fn) {
-    for (const entry of this.store) { fn(entry.value, entry.value, this); }
-  }
-
-  get size () {
-    return this.store.size;
+    for (const entry of this.#store) { fn(entry.value, entry.value, this); }
   }
 
   isExpired (value) {
     const entry = this.#findEntry(value);
-    return !!(entry && entry.ttl && entry.ttl <= Date.now());
+    return !!(entry && entry.expiresAt && entry.expiresAt <= Date.now());
   }
 
   sweepExpired () {
     const now = Date.now();
     let removed = 0;
-    for (const entry of Array.from(this.store)) {
-      if (entry.ttl && entry.ttl <= now) {
-        this.store.delete(entry);
+
+    for (const entry of Array.from(this.#store)) {
+      if (entry.expiresAt && entry.expiresAt <= now) {
+        this.#store.delete(entry);
         removed++;
       }
     }
 
-    // All items expired reset fetched state
-    if (removed && this.size === 0) {
-      this._fetched = false;
-    }
-
+    if (removed && this.size === 0) { this.#fetched = false; }
     return removed;
   }
 
   find (fn) {
-    for (const entry of this.store) {
+    for (const entry of this.#store) {
       if (fn(entry.value, entry.value)) { return entry.value; }
     }
     return null;
@@ -176,7 +192,7 @@ class BaseStore {
 
   filter (fn) {
     const result = [];
-    for (const entry of this.store) {
+    for (const entry of this.#store) {
       if (fn(entry.value, entry.value)) { result.push(entry.value); }
     }
     return result;
@@ -184,27 +200,30 @@ class BaseStore {
 
   map (fn) {
     const result = [];
-    for (const entry of this.store) {
+    for (const entry of this.#store) {
       result.push(fn(entry.value, entry.value));
     }
     return result;
   }
 
   array () {
-    return Array.from(this.store, e => e.value);
+    return Array.from(this.#store, (entry) => entry.value);
   }
 
   first () {
-    return this.store.values().next()?.value ?? null;
+    return this.#store.values().next().value?.value ?? null;
   }
 
   last () {
-    return this.values().slice(-1)?.value ?? null;
+    const arr = Array.from(this.#store);
+    return arr.length
+      ? arr[arr.length - 1].value
+      : null;
   }
 
   toMap (keyFn) {
     const result = new Map();
-    for (const entry of this.store) {
+    for (const entry of this.#store) {
       const v = entry.value;
       result.set(keyFn(v), v);
     }

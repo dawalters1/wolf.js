@@ -108,8 +108,8 @@ class CharmHelper extends BaseHelper {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user._charmSummary.fetched) {
-      return user._charmSummary.values();
+    if (!opts?.forceNew && user.charmSummaryStore.fetched) {
+      return user.charmSummaryStore.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -121,14 +121,15 @@ class CharmHelper extends BaseHelper {
       }
     );
 
-    user._charmSummary._fetched = true;
+    user.charmSummaryStore.fetched = true;
 
-    return response.body.map(serverCharmSummary => {
-      const existing = user._charmSummary.get(serverCharmSummary.charmId);
-
-      return user._charmSummary.set(
-        existing?.patch(serverCharmSummary) ?? new CharmSummary(this.client, serverCharmSummary));
-    });
+    return response.body.map(
+      (serverCharmSummary) =>
+        user.charmSummaryStore.set(
+          new CharmSummary(this.client, serverCharmSummary),
+          response.headers?.maxAge
+        )
+    );
   }
 
   async getUserStatistics (userId, opts) {
@@ -150,8 +151,8 @@ class CharmHelper extends BaseHelper {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user._charmStatistics.fetched) {
-      return user._charmStatistics.value;
+    if (!opts?.forceNew && user.charmStatisticsStore.fetched) {
+      return user.charmStatisticsStore.value;
     }
 
     const response = await this.client.websocket.emit(
@@ -164,9 +165,9 @@ class CharmHelper extends BaseHelper {
       }
     );
 
-    user._charmStatistics.value = user._charmStatistics.value?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
+    user.charmStatisticsStore.value = user.charmStatisticsStore.value?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
 
-    return user._charmStatistics.value;
+    return user.charmStatisticsStore.value;
   }
 }
 

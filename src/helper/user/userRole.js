@@ -1,8 +1,11 @@
+import BaseHelper from '../baseHelper.js';
+import BaseStore from '../../caching/BaseStore.js';
 import { Command } from '../../constants/Command.js';
+import { StatusCodes } from 'http-status-codes';
 import UserRole from '../../entities/userRole.js';
 import { validate } from '../../validator/index.js';
 
-class UserRoleHelper {
+class UserRoleHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -17,30 +20,13 @@ class UserRoleHelper {
         .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
-    return (await this.getByIds([userId], opts))[0];
-  }
+    const user = await this.client.user.getById(userId);
 
-  async getByIds (userIds, opts) {
-    userIds = userIds.map((userId) => Number(userId) || userId);
-
-    { // eslint-disable-line no-lone-blocks
-      validate(userIds)
-        .isArray(`UserRoleHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
-        .each()
-        .isNotNullOrUndefined('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
-        .isValidNumber('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThan(0, 'UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
-
-      validate(opts)
-        .isNotRequired()
-        .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
+    if (!opts?.forceNew && user.roleStore.fetched) {
+      return user.roleStore.values();
     }
 
-    const idsToFetch = opts?.forceNew
-      ? userIds
-      : userIds.filter((id) => !this.store.has((userRole) => userRole.id === id));
-
-    if (idsToFetch.length) {
+    try {
       const response = await this.client.websocket.emit(
         Command.SUBSCRIBER_ROLE_SUMMARY,
         {
@@ -48,27 +34,25 @@ class UserRoleHelper {
             version: 2
           },
           body: {
-            idList: idsToFetch
+            subscriberId: userId
           }
         }
       );
 
-      for (const [userId, userRoleResponse] of response.body.entries()) {
-        if (!userRoleResponse.success) {
-          this.store.delete((userRole) => userRole.id === userId);
-          continue;
-        }
-
-        this.store.set(
-          new UserRole(this.client, userRoleResponse.body),
+      response.body.map((serverUserRole) =>
+        user.roleStore.set(
+          new UserRole(this.client, serverUserRole),
           response.headers?.maxAge
-        );
+        )
+      );
+    } catch (error) {
+      if (error.code !== StatusCodes.NOT_FOUND) {
+        throw error;
       }
     }
 
-    return userIds.map((userId) =>
-      this.store.get((userRole) => userRole.id === userId) ?? null
-    );
+    user.roleStore.fetched = true;
+    return user.roleStore.values();
   }
 }
 

@@ -6,12 +6,6 @@ export class TopicRecipeAdditionalInfo extends BaseEntity {
 
     this.hash = entity.hash;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.hash = entity.hash;
-    return this;
-  }
 }
 
 export default TopicRecipeAdditionalInfo;

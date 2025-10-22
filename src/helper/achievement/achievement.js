@@ -7,12 +7,28 @@ import { Command, Language } from '../../constants/index.js';
 import { validate } from '../../validator/index.js';
 
 class AchievementHelper extends BaseHelper {
+  #category;
+  #channel;
+  #user;
+
   constructor (client) {
     super(client);
 
-    this.category = new AchievementCategoryHelper(client);
-    this.channel = new AchievementChannelHelper(client);
-    this.user = new AchievementUserHelper(client);
+    this.#category = new AchievementCategoryHelper(client);
+    this.#channel = new AchievementChannelHelper(client);
+    this.#user = new AchievementUserHelper(client);
+  }
+
+  get category () {
+    return this.#category;
+  }
+
+  get channel () {
+    return this.#channel;
+  }
+
+  get user () {
+    return this.#user;
   }
 
   async getById (achievementId, languageId, opts) {

@@ -10,7 +10,7 @@ class SubscriberContactAddEvent extends BaseEvent {
     this.client.emit(
       'userChannelEventSubscriptionAdd',
 
-      this.client.event.subscription.cache.set(
+      this.client.event.subscription.store.set(
         new EventSubscription(
           this.client,
           data

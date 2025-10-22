@@ -7,23 +7,21 @@ class GroupRoleSubscriberAssignEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.id);
+    const channel = this.client.channel.store.get(data.id);
 
     if (channel === null) { return; }
 
-    const [role, user] = [
-      channel._roles.summaries.get(data.additionalInfo.roleId),
-      channel._roles.users.get(data.additionalInfo.subscriberId)
-    ];
+    const channelRole = channel.roleStore.users.get(data.additionalInfo.roleId);
+    const user = this.client.user.store.get(data.additionalInfo.subscriberId);
 
-    role?.userIdList?.add(data.additionalInfo.subscriberId);
+    if (user) { user.roleStore.clear(); }
+
+    channelRole?.userIdList?.add(data.additionalInfo.subscriberId);
 
     this.client.emit(
       'channelRoleUserAssign',
-      channel._roles.users.set(
-        user
-          ? user.patch(data)
-          : new ChannelRoleUser(this.client, data)
+      channel.roleStore.users.set(
+        new ChannelRoleUser(this.client, data)
       )
     );
   }

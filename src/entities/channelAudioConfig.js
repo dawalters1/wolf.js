@@ -9,15 +9,6 @@ class ChannelAudioConfig extends BaseEntity {
     this.stageId = entity.stageId ?? 1;
     this.minRepLevel = entity.minRepLevel ?? 0;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.enabled = entity.enabled ?? false;
-    this.stageId = entity.stageId ?? 1;
-    this.minRepLevel = entity.minRepLevel ?? 0;
-    return this;
-  }
 }
 
 export default ChannelAudioConfig;

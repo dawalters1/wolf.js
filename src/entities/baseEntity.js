@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 class BaseEntity {
+  #client;
   /**
  * Creates an instance of BaseEntity.
  **
@@ -8,12 +9,29 @@ class BaseEntity {
  * @param {import('../client/WOLF.js').default} client The client instance
  */
   constructor (client) {
-    this.client = client;
+    this.#client = client;
   }
 
-  /** @internal */
-  patch (_entity, ..._args) {
-    // Implementation can be added here if needed
+  get client () {
+    return this.#client;
+  }
+
+  patch (newData, oldData = null) {
+    oldData = oldData || this;
+
+    for (const key in newData) {
+      const newValue = newData[key];
+      const oldValue = oldData[key];
+
+      if (newValue && typeof newValue === 'object' && !Array.isArray(newValue)) {
+        if (!oldValue || typeof oldValue !== 'object' || Array.isArray(oldValue)) {
+          oldData[key] = {};
+        }
+        this.patch(newValue, oldData[key]);
+      } else {
+        oldData[key] = newValue;
+      }
+    }
   }
 
   /** @internal */

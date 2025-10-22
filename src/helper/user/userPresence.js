@@ -1,11 +1,9 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import UserPresence from '../../entities/userPresence.js';
 import { validate } from '../../validator/index.js';
-class UserPresenceHelper {
-  constructor (client) {
-    this.client = client;
-  }
 
+class UserPresenceHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -55,7 +53,7 @@ class UserPresenceHelper {
       ? userIds
       : userIds.filter((userId) => {
         const user = users.find((user) => user.id === userId);
-        return !user || (subscribe && !user._presence?.subscribed);
+        return !user || (subscribe && !user.presenceStore?.subscribed);
       });
 
     if (idsToFetch.length) {
@@ -76,11 +74,11 @@ class UserPresenceHelper {
 
         const user = users.find((user) => user?.id === userId);
 
-        user._presence = user._presence?.patch(response.body, subscribe) ?? new UserPresence(this.client, presenceResponse.body, subscribe);
+        user.presenceStore = user.presenceStore?.patch(response.body, subscribe) ?? new UserPresence(this.client, presenceResponse.body, subscribe);
       }
     }
 
-    return userIds.map((userId) => users.find((user) => user.id === userId)._presence ?? null);
+    return userIds.map((userId) => users.find((user) => user.id === userId).presenceStore ?? null);
   }
 }
 

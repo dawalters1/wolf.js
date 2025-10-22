@@ -24,7 +24,7 @@ class BlockedHelper extends BaseHelper {
       }
     );
 
-    this.store._fetched = true;
+    this.store.fetched = true;
     this.store.clear();
 
     return response.body.map(

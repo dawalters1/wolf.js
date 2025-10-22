@@ -1,12 +1,9 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 import WOLFStar from '../../entities/wolfstar.js';
 
-class WOLFStarHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class WOLFStarHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -54,7 +51,7 @@ class WOLFStarHelper {
       ? userIds
       : userIds.filter((userId) => {
         const user = users.find((user) => user.id === userId);
-        return user !== null && user._wolfstars?.fetched;
+        return user !== null && !user.wolfstarStore?.fetched;
       });
 
     if (idsToFetch.length) {
@@ -77,11 +74,11 @@ class WOLFStarHelper {
 
         const user = users.find((user) => user?.id === userId);
 
-        user._wolfstars.value = user._wolfstars.value?.patch(wolfstarResponse.body) ?? new WOLFStar(this.client, wolfstarResponse.body);
+        user.wolfstarStore.value = user.wolfstarStore.value?.patch(wolfstarResponse.body) ?? new WOLFStar(this.client, wolfstarResponse.body);
       }
     }
 
-    return userIds.map((userId) => users.find((user) => user.id === userId)._wolfstars.value ?? null);
+    return userIds.map((userId) => users.find((user) => user.id === userId).wolfstarStore.value ?? null);
   }
 }
 

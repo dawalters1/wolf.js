@@ -7,13 +7,5 @@ export class NotificationAdditionalInfo extends BaseEntity {
     this.createdAt = new Date(entity.createdAt ?? Date.now());
     this.eTag = entity.eTag;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.createdAt = new Date(entity.createdAt);
-    this.eTag = entity.eTag;
-
-    return this;
-  }
 }
 export default NotificationAdditionalInfo;

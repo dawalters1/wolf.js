@@ -7,15 +7,15 @@ class GroupEventCreateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
-    if (!channel._events._fetched) { return; }
+    if (!channel.eventStore.fetched) { return; }
 
     this.client.emit(
       'channelEventCreate',
-      channel._events.set(
+      channel.eventStore.set(
         new ChannelEvent(this.client, data)
       )
     );

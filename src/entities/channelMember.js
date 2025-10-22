@@ -19,21 +19,6 @@ export class ChannelMember extends BaseEntity {
     );
   }
 
-  /** @internal */
-  patch (entity, list) {
-    if ('capabilities' in entity) {
-      this.capabilities = entity.capabilities;
-      if (list) {
-        this.lists.add(list);
-      }
-    }
-
-    this.id = entity.id;
-    this.hash = entity.hash;
-
-    return this;
-  }
-
   _getParentList (capabilities) {
     switch (capabilities) {
       case ChannelMemberCapability.OWNER:

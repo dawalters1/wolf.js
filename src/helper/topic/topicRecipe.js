@@ -1,5 +1,6 @@
 // import TopicRecipeManager from '../../stores_old/topicRecipeManager.js';
 
+import BaseHelper from '../baseHelper.js';
 import BaseStore from '../../caching/BaseStore.js';
 import Command from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
@@ -8,7 +9,7 @@ import { TopicPageRecipeType } from '../../constants/index.js';
 import TopicRecipe from '../../entities/topicRecipe.js';
 import { validate } from '../../validator/index.js';
 
-class TopicRecipeHelper extends BaseStore {
+class TopicRecipeHelper extends BaseHelper {
   async get (id, languageId, type, opts) {
     id = Number(id) || id;
     languageId = Number(languageId) || languageId;

@@ -7,8 +7,8 @@ class SubscriberNotificationListDelete extends BaseEvent {
 
   async process (data) {
     const wasDeleted = [
-      this.client.me && this.client.me._notifications.user.delete(data.id),
-      this.client.notification.user.cache.delete(data.id)
+      this.client.me && this.client.me.notificationStore.user.delete(data.id),
+      this.client.notification.user.store.delete(data.id)
     ].some(Boolean);
 
     if (wasDeleted === false) { return; }

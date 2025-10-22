@@ -11,15 +11,6 @@ export class Role extends BaseEntity {
     this.name = entity.name;
     this.hexColur = entity.hexColur;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.description = entity.description;
-    this.emojiUrl = entity.emojiUrl;
-    this.name = entity.name;
-    this.hexColur = entity.hexColur;
-
-    return this;
-  }
 }
+
+export default Role;

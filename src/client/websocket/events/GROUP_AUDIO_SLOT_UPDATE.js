@@ -6,13 +6,13 @@ class GroupAudioCountUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.id);
+    const channel = this.client.channel.store.get(data.id);
 
     if (channel === null) { return; }
 
-    if (channel._audioSlots === null) { return; }
+    if (channel.audioSlotStore === null) { return; }
 
-    const oldChannelAudioSlot = channel._audioSlots.get(data.slot.id);
+    const oldChannelAudioSlot = channel.audioSlotStore.get(data.slot.id);
 
     if (oldChannelAudioSlot === null) { return; }
 

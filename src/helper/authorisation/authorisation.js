@@ -39,7 +39,7 @@ class AuthorisationHelper extends BaseHelper {
 
     const user = await this.client.user.getById(userId);
     if (user === null) { throw new Error(`User with ID ${userId} is not found`); }
-    return !!this.store.set(user);
+    return !!this.store.set(userId);
   }
 
   async authoriseAll (userIds) {
@@ -63,7 +63,7 @@ class AuthorisationHelper extends BaseHelper {
       throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
 
-    return users.map((user) => !!this.store.set(user));
+    return users.map((user) => !!this.store.set(user.id));
   }
 
   deauthorise (userId) {

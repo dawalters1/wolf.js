@@ -31,8 +31,8 @@ class EventChannelHelper extends BaseHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._events.fetched) {
-      return channel._events.values();
+    if (!opts?.forceNew && channel.eventStore.fetched) {
+      return channel.eventStore.values();
     }
 
     const get = async (results = []) => {
@@ -55,12 +55,12 @@ class EventChannelHelper extends BaseHelper {
         : await get(results);
     };
 
-    channel._events._fetched = true;
+    channel.eventStore.fetched = true;
 
     return (await get()).map((serverGroupEvent) => {
-      const existing = channel._events.get(serverGroupEvent.id);
+      const existing = channel.eventStore.get(serverGroupEvent.id);
 
-      return channel._events.set(
+      return channel.eventStore.set(
         existing?.patch(serverGroupEvent) ?? new ChannelEvent(this.client, serverGroupEvent));
     });
   }

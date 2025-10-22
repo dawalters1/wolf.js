@@ -5,9 +5,14 @@ import Contact from '../../entities/contact.js';
 import { validate } from '../../validator/index.js';
 
 class ContactHelper extends BaseHelper {
+  #blocked;
   constructor (client) {
     super(client);
-    this.blocked = new BlockedHelper(client);
+    this.#blocked = new BlockedHelper(client);
+  }
+
+  get blocked () {
+    return this.#blocked;
   }
 
   async list (opts) {
@@ -29,7 +34,7 @@ class ContactHelper extends BaseHelper {
       }
     );
 
-    this.store._fetched = true;
+    this.store.fetched = true;
     this.store.clear();
 
     return response.body.map(

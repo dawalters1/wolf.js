@@ -10,17 +10,6 @@ export class AchievementUser extends BaseEntity {
     this.childrenId = entity.childrenId ?? null;
   }
 
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.additionalInfo = this.additionalInfo
-      ? this.additionalInfo.patch(entity.additionalInfo)
-      : new AchievementUserAdditionalInfo(this.client, entity.additionalInfo);
-    this.childrenId = entity.childrenId ?? this.childrenId;
-
-    return this;
-  }
-
   async achievement (languageId) {
     return this.client.achievement.getById(this.id, languageId);
   }

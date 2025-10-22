@@ -18,7 +18,7 @@ class GroupMemberDeleteEvent extends BaseEvent {
       return this.client.emit('leftChannel', channel);
     }
 
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 

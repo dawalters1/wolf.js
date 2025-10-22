@@ -6,20 +6,20 @@ class GroupEventUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
-    if (!channel._events._fetched) { return; }
+    if (!channel.eventStore.fetched) { return; }
 
-    const event = channel._events.get(data.id);
+    const event = channel.eventStore.get(data.id);
 
     if (event === null) { return; } // this shouldn't happen
 
     const newEvent = await this.client.event.getById(data.id, { forceNew: true });
 
     if (newEvent.isRemoved) {
-      channel._events.delete(data.id);
+      channel.eventStore.delete(data.id);
 
       return this.client.emit(
         'channelEventDelete',

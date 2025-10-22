@@ -7,14 +7,6 @@ class Cognito extends BaseEntity {
     this.identity = entity.identity;
     this.token = entity.token;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.identity = entity.identity;
-    this.token = entity.token;
-
-    return this;
-  }
 }
 
 export default Cognito;

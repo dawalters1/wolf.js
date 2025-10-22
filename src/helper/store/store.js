@@ -1,12 +1,24 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import StoreProductHelper from './storeProduct.js';
 import { validate } from '../../validator/index.js';
 
-class StoreHelper {
+class StoreHelper extends BaseHelper {
+  #balance = -1;
+  #product;
   constructor (client) {
-    this.client = client;
-    this.product = new StoreProductHelper(this.client);
-    this._balance = -1;
+    super(client);
+    this.#product = new StoreProductHelper(this.client);
+    this.#balance = -1;
+  }
+
+  get product () {
+    return this.#product;
+  }
+
+  /** @internal */
+  set product (value) {
+    this.#balance = value;
   }
 
   async balance (opts) {
@@ -15,13 +27,13 @@ class StoreHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'StoreProductProfileHelper.getProductProfile() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts.forceNew && this._balance >= 0) {
-      return this._balance;
+    if (!opts.forceNew && this.#balance >= 0) {
+      return this.#balance;
     }
 
     const response = await this.client.websocket.emit(Command.STORE_CREDIT_BALANCE);
-    this._balance = response.body.balance;
-    return this._balance;
+    this.#balance = response.body.balance;
+    return this.#balance;
   }
 }
 
