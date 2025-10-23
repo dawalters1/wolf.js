@@ -127,7 +127,6 @@ class ChannelMemberHelper {
     const cached = channel._members.get(userId);
     if (cached) { return cached; }
 
-    console.log('FROM SERVER');
     try {
       const response = await this.client.websocket.emit(
         Command.GROUP_MEMBER,

@@ -226,7 +226,8 @@ class WOLF extends EventEmitter {
 
       opts = {
         token: this.#config.framework.login?.token,
-        state: this.#config.framework.login?.onlineState
+        state: this.#config.framework.login?.onlineState,
+        type: this.#config.framework.login?.type ?? 'email'
       };
     }
 
@@ -235,7 +236,8 @@ class WOLF extends EventEmitter {
       password,
       apiKey,
       token: opts?.token ?? `wjs-${nanoid()}`,
-      state: opts?.onlineState ?? UserPresenceType.ONLINE
+      state: opts?.onlineState ?? UserPresenceType.ONLINE,
+      type: opts?.type ?? 'email'
     };
 
     // Validation

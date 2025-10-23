@@ -1,8 +1,13 @@
 
 class BaseEvent {
+  #client;
   constructor (client, event) {
-    this.client = client;
+    this.#client = client;
     this.event = event;
+  }
+
+  get client () {
+    return this.#client;
   }
 
   async process (data) {

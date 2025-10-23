@@ -124,7 +124,7 @@ class ChannelHelper extends BaseHelper {
     if (!opts?.forceNew) {
       const cached = this.store.find((channel) => channel.name.toLowerCase() === name.toLowerCase());
 
-      if (cached) { console.log('cached'); return cached; }
+      if (cached) { return cached; }
     }
 
     try {

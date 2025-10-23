@@ -1,4 +1,4 @@
-const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[1];
+const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[0];
 
 class BaseStore {
   #store = new Set();
@@ -45,13 +45,16 @@ class BaseStore {
       }
 
       if (!oldest) { break; }
+
       this.#store.delete(oldest);
     }
   }
 
   #findEntry (fn) {
     for (const entry of this.#store) {
-      if (fn(entry.value, entry.value)) { return entry; }
+      if (fn(entry.value)) {
+        return entry;
+      }
     }
     return null;
   }
@@ -97,7 +100,6 @@ class BaseStore {
       };
       this.#store.add(entry);
       entryValue = value;
-      this.#fetched = true;
     }
 
     this.#ensureSizeLimit();

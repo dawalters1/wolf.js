@@ -14,7 +14,7 @@ class SecurityHelper {
    * @param {UserPresence} [state]
    * @returns {Promise<import('../../entities/WOLFResponse.js').default>}
    */
-  async login (email, password, state = UserPresence.ONLINE) {
+  async login (email, password) {
     return await this.client.websocket.emit(
       Command.SECURITY_LOGIN,
       {
@@ -22,8 +22,8 @@ class SecurityHelper {
           version: 2
         },
         body: {
-          type: 'email',
-          onlineState: state,
+          type: this.client.config.framework.login.type,
+          onlineState: this.client.config.framework.login.state,
           username: email,
           password
         }

@@ -62,25 +62,11 @@ export class WelcomeEvent extends BaseEvent {
   }
 
   async login () {
-    const { username, password, state } = this.client.config.framework.login;
+    const { username, password } = this.client.config.framework.login;
 
-    const response = await this.client.websocket.emit(
-      Command.SECURITY_LOGIN,
-      {
-        headers: {
-          version: 2
-        },
-        body: {
-          type: 'email',
-          onlineState: state,
-          username,
-          password
-        }
-      }
-    );
+    const response = await this.client.security.login(username, password);
 
     if (!response.success) {
-      console.log('FROM WELCOME');
       this.client.emit('loginFailed', response);
 
       const subCode = response.headers?.get('subCode') ?? -1;
