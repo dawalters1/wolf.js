@@ -73,7 +73,6 @@ class CommandManager {
         this.client.utility.string.isEqual(match?.value ?? match, argument)
       );
 
-      // console.log(context);
       if (!matchedInput) { continue; }
 
       context.body = context.body.slice((matchedInput?.value ?? matchedInput).length).trim();

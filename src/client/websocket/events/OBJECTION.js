@@ -12,7 +12,7 @@ class ObjectionEvent extends BaseEvent {
       : data.reconnectSeconds * 1000;
 
     this.client.emit(
-      'loginFailed',
+      'objection',
       new WOLFResponse(
         {
           code: data.code,

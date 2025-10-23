@@ -11,11 +11,13 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
  * @param {import('../WOLF.js').default} client
  */
 class Multimedia {
+  #axios;
+  #client;
   constructor (client) {
-    this.client = client;
-    this.axios = axios.create();
+    this.#client = client;
+    this.#axios = axios.create();
 
-    this.axios.interceptors.request.use(
+    this.#axios.interceptors.request.use(
       aws4Interceptor({
         instance: axios,
         options: {
@@ -57,10 +59,10 @@ class Multimedia {
   }
 
   async post (config, body) {
-    return await this.axios(
+    return await this.#axios(
       {
         method: 'POST',
-        baseURL: this.client.config.endpointConfig.mmsUploadEndpoint,
+        baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
         url: config.path,
         data: body
           ? { body }
@@ -72,10 +74,10 @@ class Multimedia {
   }
 
   async delete (config, body) {
-    return await this.axios(
+    return await this.#axios(
       {
         method: 'DELETE',
-        baseURL: this.client.config.endpointConfig.mmsUploadEndpoint,
+        baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
         url: config.path,
         data: body
           ? { body }
