@@ -27,7 +27,7 @@ class AudioSlotHelper extends BaseHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     if (!channel.isMember && !channel.peekable) { throw new Error(`Channel with id ${channelId} is not peekable`); }
 
@@ -71,7 +71,7 @@ class AudioSlotHelper extends BaseHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
@@ -94,7 +94,7 @@ class AudioSlotHelper extends BaseHelper {
         .isGreaterThan(0, `AudioSlotHelper.lock() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
@@ -102,7 +102,7 @@ class AudioSlotHelper extends BaseHelper {
     if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to update slot lock state'); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (slot.isLocked) { throw new Error(`Slot with ID ${slotId} is already locked`); }
 
@@ -132,7 +132,7 @@ class AudioSlotHelper extends BaseHelper {
         .isGreaterThan(0, `AudioSlotHelper.unlock() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
@@ -140,7 +140,7 @@ class AudioSlotHelper extends BaseHelper {
     if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to update slot lock state'); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (!slot.isLocked) { throw new Error(`Slot with ID ${slotId} is not locked`); }
 
@@ -171,7 +171,7 @@ class AudioSlotHelper extends BaseHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
@@ -179,13 +179,13 @@ class AudioSlotHelper extends BaseHelper {
     if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to update slot mute state'); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (!slot.isOccupied) { throw new Error(`Slot with ID ${slotId} is not occupied`); }
     if (slot.isMuted) { throw new Error(`Slot with ID ${slotId} is already muted`); }
 
     const member = await this.client.channel.member.getMember(channelId, slot.userId);
-    if (member === null) { throw new Error(`Channel Member ${slot.userId} not found in Channel ${channelId}`); }
+    if (member === null) { throw new Error(`Channel Member ${slot.userId} Not Found in Channel ${channelId}`); }
 
     if (member.id !== this.client.me?.id && !await channel.canPerformActionAgainstMember(member)) { throw new Error('Bot lacks Channel Capabilities to mute slot occupier'); }
 
@@ -217,19 +217,19 @@ class AudioSlotHelper extends BaseHelper {
         .isGreaterThan(0, `AudioSlotHelper.unmute() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (!slot.isOccupied) { throw new Error(`Slot with ID ${slotId} is not occupied`); }
     if (!slot.isMuted) { throw new Error(`Slot with ID ${slotId} is not muted`); }
 
     const member = await this.client.channel.member.getMember(channelId, slot.userId);
-    if (member === null) { throw new Error(`Channel Member ${slot.userId} not found in Channel ${channelId}`); }
+    if (member === null) { throw new Error(`Channel Member ${slot.userId} Not Found in Channel ${channelId}`); }
 
     if (member.id !== this.client.me?.id) { throw new Error('Bot is not slot occupier'); }
 
@@ -261,7 +261,7 @@ class AudioSlotHelper extends BaseHelper {
         .isGreaterThan(0, `AudioSlotHelper.kick() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
@@ -269,12 +269,12 @@ class AudioSlotHelper extends BaseHelper {
     if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to kick slot occupier'); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (!slot.isOccupied) { throw new Error(`Slot with ID ${slotId} is not occupied`); }
 
     const member = await this.client.channel.member.getMember(channelId, slot.userId);
-    if (member === null) { throw new Error(`Channel Member ${slot.userId} not found in Channel ${channelId}`); }
+    if (member === null) { throw new Error(`Channel Member ${slot.userId} Not Found in Channel ${channelId}`); }
 
     if (member.id !== this.client.me?.id && !await channel.canPerformActionAgainstMember(member)) { throw new Error('Bot lacks Channel Capabilities to kick slot occupier'); }
 
@@ -353,13 +353,13 @@ class AudioSlotHelper extends BaseHelper {
         .isGreaterThan(0, `AudioSlotHelper.leave() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
     const slot = await this.get(channelId, slotId);
-    if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+    if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
 
     if (!slot.isOccupied) { throw new Error(`Slot with ID ${slotId} is not occupied`); }
 

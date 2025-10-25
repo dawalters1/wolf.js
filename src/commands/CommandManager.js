@@ -4,22 +4,26 @@ import CommandContext from '../entities/commandContext.js';
 import UserPrivilege from '../constants/UserPrivilege.js';
 
 class CommandManager {
-  constructor (client) {
-    this.client = client;
-    this.commands = [];
-    this.usePhrases = this.client.config.framework.commands.phrases;
+  #client;
+  #commands;
+  #usePhrases;
 
-    this.client.on('message', async (message) => {
-      const ignoreSettings = this.client.config.framework.commands.ignore;
+  constructor (client) {
+    this.#client = client;
+    this.#commands = [];
+    this.#usePhrases = client.config.framework.commands.phrases;
+
+    client.on('message', async (message) => {
+      const ignoreSettings = client.config.framework.commands.ignore;
 
       if (!message.body) { return; }
 
-      if (this.client.banned.isBanned(message.sourceUserId)) { return; }
+      if (this.#client.banned.isBanned(message.sourceUserId)) { return; }
 
-      if (ignoreSettings.self && message.userId === this.client.me.id) { return; }
+      if (ignoreSettings.self && message.userId === client.me.id) { return; }
 
       const context = this._getCommand(
-        this.commands,
+        this.#commands,
         {
           isChannel: message.isChannel,
           body: message.body,
@@ -35,11 +39,11 @@ class CommandManager {
 
       if (!context.callback) { return; }
 
-      if (ignoreSettings.official && (await this.client.user.getById(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
+      if (ignoreSettings.official && (await client.user.getById(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
 
       if (ignoreSettings.unofficial) {
         const unofficialCharmIds = client.config.charm.unofficial;
-        const charmSummary = await this.client.charm.getUserSummary(context.userId);
+        const charmSummary = await client.charm.getUserSummary(context.userId);
 
         if (charmSummary.some((charm) => unofficialCharmIds.includes(charm.charmId))) { return; }
       }
@@ -47,14 +51,14 @@ class CommandManager {
       const callback = context.callback;
       Reflect.deleteProperty(context, 'callback');
 
-      return callback.call(this, new CommandContext(this.client, context));
+      return callback.call(this, new CommandContext(client, context));
     });
 
-    this.client.commandManager = this;
+    client.commandManager = this;
   }
 
   _getCommand (commands, context) {
-    const argument = context.body.split(this.client.SPLIT_REGEX)[0];
+    const argument = context.body.split(this.#client.SPLIT_REGEX)[0];
 
     for (const command of commands) {
       const isChannel = context.isChannel && command.commandCallbackTypes.includes(Command.getCallback.CHANNEL);
@@ -65,12 +69,12 @@ class CommandManager {
 
       if (!(isChannel || isPrivate || isBoth)) { continue; }
 
-      const matchable = this.usePhrases
-        ? this.client.phrase.getAllByName(command.key)
+      const matchable = this.#usePhrases
+        ? this.#client.phrase.getAllByName(command.key)
         : [command.key];
 
       const matchedInput = matchable.find(match =>
-        this.client.utility.string.isEqual(match?.value ?? match, argument)
+        this.#client.utility.string.isEqual(match?.value ?? match, argument)
       );
 
       if (!matchedInput) { continue; }
@@ -97,19 +101,20 @@ class CommandManager {
   }
 
   async register (commands) {
-    this.commands = commands;
+    this.#commands = commands;
   }
 
+  /** @internal */
   isCommand (message) {
-    const argument = message.body.split(this.client.SPLIT_REGEX)[0] ?? '';
+    const argument = message.body.split(this.#client.SPLIT_REGEX)[0] ?? '';
 
-    return this.commands.some(command => {
-      const matchable = this.usePhrases
-        ? this.client.phrase.getAllByName(command.key)
+    return this.#commands.some(command => {
+      const matchable = this.#usePhrases
+        ? this.#client.phrase.getAllByName(command.key)
         : [command.key];
 
       const matchedInput = matchable.find(match =>
-        this.client.utility.string.isEqual(match?.value ?? match, argument)
+        this.#client.utility.string.isEqual(match?.value ?? match, argument)
       );
 
       return Boolean(matchedInput);

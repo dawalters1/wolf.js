@@ -40,7 +40,7 @@ class AudioHelper extends BaseHelper {
 
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     if (!opts?.forceNew && channel.stageStore.fetched) {
       return channel.stageStore.values();

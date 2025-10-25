@@ -52,7 +52,7 @@ class EventSubscriptionHelper extends BaseHelper {
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+    if (event === null) { throw new Error(`Event with ID ${eventId} Not Found`); }
 
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_ADD,
@@ -76,7 +76,7 @@ class EventSubscriptionHelper extends BaseHelper {
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+    if (event === null) { throw new Error(`Event with ID ${eventId} Not Found`); }
 
     return await this.client.websocket.emit(
       Command.SUBSCRIBER_GROUP_EVENT_DELETE,
