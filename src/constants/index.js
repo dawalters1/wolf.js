@@ -25,6 +25,6 @@ export * from './TipPeriod.js';
 export * from './TipType.js';
 export * from './TopicPageRecipeType.js';
 export * from './UserFollowType.js';
-export * from './UserPresence.js';
+export * from './OnlineState.js';
 export * from './UserPrivilege.js';
 export * from './WOLFStarTalent.js';

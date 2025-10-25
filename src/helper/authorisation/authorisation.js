@@ -38,7 +38,7 @@ class AuthorisationHelper extends BaseHelper {
     }
 
     const user = await this.client.user.getById(userId);
-    if (user === null) { throw new Error(`User with ID ${userId} is not found`); }
+    if (user === null) { throw new Error(`User with ID ${userId} is Not Found`); }
     return !!this.store.set(userId);
   }
 
@@ -60,7 +60,7 @@ class AuthorisationHelper extends BaseHelper {
     );
 
     if (missingUserIds.length > 0) {
-      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} Not Found`);
     }
 
     return users.map((user) => !!this.store.set(user.id));

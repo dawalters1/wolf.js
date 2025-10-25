@@ -100,7 +100,7 @@ class ChannelMemberHelper {
         .isValidConstant(ChannelMemberListType, `ChannelMemberHelper.getList() parameter, list: ${list} is not valid`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (!channel) { throw new Error(`Channel ${channelId} not found`); }
+    if (!channel) { throw new Error(`Channel ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not a member of channel ${channelId}`); }
     return this._getList(channel, list);
   }
@@ -121,7 +121,7 @@ class ChannelMemberHelper {
         .isGreaterThan(0, `ChannelMemberHelper.getMember() parameter, userId: ${userId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (!channel) { throw new Error(`Channel ${channelId} not found`); }
+    if (!channel) { throw new Error(`Channel ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not a member of channel ${channelId}`); }
 
     const cached = channel._members.get(userId);
@@ -156,11 +156,11 @@ class ChannelMemberHelper {
 
   async #updateCapability (channelId, userId, target, allowedFrom) {
     const channel = await this.client.channel.getById(channelId);
-    if (!channel) { throw new Error(`Channel ${channelId} not found`); }
+    if (!channel) { throw new Error(`Channel ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not a member of channel ${channelId}`); }
 
     const member = await this.getMember(channelId, userId);
-    if (!member) { throw new Error('Member not found'); }
+    if (!member) { throw new Error('Member Not Found'); }
 
     if (!await channel.canPerformActionAgainstMember(member, target)) {
       throw new Error(`Insufficient permissions to change capability to ${ChannelMemberCapability[target]}`);
@@ -319,11 +319,11 @@ class ChannelMemberHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
-    if (!channel) { throw new Error(`Channel ${channelId} not found`); }
+    if (!channel) { throw new Error(`Channel ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not a member of channel ${channelId}`); }
 
     const member = await this.getMember(channelId, userId);
-    if (!member) { throw new Error('Member not found'); }
+    if (!member) { throw new Error('Member Not Found'); }
 
     if (!await channel.canPerformActionAgainstMember(member, ChannelMemberCapability.BANNED)) {
       throw new Error('Insufficient permissions to kick member');

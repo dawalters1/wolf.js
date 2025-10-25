@@ -175,7 +175,7 @@ class ChannelHelper extends BaseHelper {
         .isGreaterThan(0, `ChannelHelper.getChatHistory() parameter, limit: ${limit} is less than or equal to zero`);
     }
     const channel = await this.getById(channelId);
-    if (!channel) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (!channel) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     if (!channel.isMember && !channel.peekable) { throw new Error(`Channel ${channelId} is not peekable`); }
 

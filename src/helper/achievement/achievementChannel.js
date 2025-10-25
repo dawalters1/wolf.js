@@ -1,12 +1,9 @@
 import AchievementChannel from '../../entities/achievementChannel.js';
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 
-class AchievementChannelHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class AchievementChannelHelper extends BaseHelper {
   async get (channelId, parentId, opts) {
     channelId = Number(channelId) || channelId;
     parentId = Number(parentId) || parentId;
@@ -31,7 +28,7 @@ class AchievementChannelHelper {
     const channel = await this.client.channel.getById(channelId);
 
     if (channel === null) {
-      throw new Error(`Channel with ID ${channelId} not found`);
+      throw new Error(`Channel with ID ${channelId} Not Found`);
     }
 
     let achievements;
@@ -66,7 +63,7 @@ class AchievementChannelHelper {
 
     const parentAchievement = channel.achievementStore.get((achievement) => achievement.id === parentId);
     if (parentAchievement === null) {
-      throw new Error(`Parent achievement with ID ${parentId} not found`);
+      throw new Error(`Parent achievement with ID ${parentId} Not Found`);
     }
 
     if (parentAchievement.childrenId) {

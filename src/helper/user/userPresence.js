@@ -44,7 +44,7 @@ class UserPresenceHelper extends BaseHelper {
     );
 
     if (missingUserIds.length > 0) {
-      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} Not Found`);
     }
 
     const subscribe = opts?.subscribe ?? true;
