@@ -12,6 +12,18 @@ class ChannelMemberStore extends BaseStore {
       silenced: false
     };
   }
+
+  reset () {
+    this.metadata = {
+      privileged: false,
+      regular: false,
+      bots: false,
+      banned: false,
+      silenced: false
+    };
+
+    this.clear();
+  }
 }
 
 export default ChannelMemberStore;

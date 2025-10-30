@@ -13,7 +13,7 @@ class GroupMemberDeleteEvent extends BaseEvent {
 
       channel.isMember = false;
       channel.capabilities = ChannelMemberCapability.NONE;
-      channel.memberStore.clear();
+      channel.memberStore.reset();
 
       return this.client.emit('leftChannel', channel);
     }
