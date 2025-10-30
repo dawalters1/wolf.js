@@ -13,7 +13,7 @@ class ChannelMemberStore extends BaseStore {
     };
   }
 
-  reset () {
+  clear () {
     this.metadata = {
       privileged: false,
       regular: false,
@@ -22,7 +22,8 @@ class ChannelMemberStore extends BaseStore {
       silenced: false
     };
 
-    this.clear();
+    this.store.clear();
+    this.fetched = false;
   }
 }
 
