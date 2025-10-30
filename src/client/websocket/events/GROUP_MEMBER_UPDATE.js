@@ -22,7 +22,7 @@ class GroupMemberAddEvent extends BaseEvent {
       channel.owner.patch(await this.client.user.getById(data.subscriberId));
     }
 
-    const member = channel._members.get(data.subscriberId);
+    const member = channel.memberStore.get(data.subscriberId);
 
     if (member === null) { return; };
     const memberOld = member.clone();

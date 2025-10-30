@@ -13,7 +13,7 @@ class GroupMemberDeleteEvent extends BaseEvent {
 
       channel.isMember = false;
       channel.capabilities = ChannelMemberCapability.NONE;
-      channel._members.clear();
+      channel.memberStore.clear();
 
       return this.client.emit('leftChannel', channel);
     }
@@ -22,11 +22,11 @@ class GroupMemberDeleteEvent extends BaseEvent {
 
     if (channel === null) { return; }
 
-    const member = channel._members.get(data.subscriberId);
+    const member = channel.memberStore.get(data.subscriberId);
 
     if (member === null) { return; };
 
-    channel._members.delete(data.subscriberId);
+    channel.memberStore.delete(data.subscriberId);
 
     return this.client.emit(
       'channelMemberDelete',

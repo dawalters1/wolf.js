@@ -19,7 +19,7 @@ class Channel extends BaseEntity {
   #eventStore;
   #audioSlotStore;
   #audioSlotRequestStore;
-  #membersStore;
+  #memberStore;
   #roleStore;
 
   constructor (client, entity) {
@@ -64,7 +64,7 @@ class Channel extends BaseEntity {
     this.#eventStore = new BaseStore();
     this.#audioSlotStore = new BaseStore();
     this.#audioSlotRequestStore = new BaseStore({ ttl: 300 });
-    this.#membersStore = new ChannelMemberStore();
+    this.#memberStore = new ChannelMemberStore();
     this.#roleStore = new ChannelRoleStore();
 
     this.language = client.utility.toLanguageKey(
@@ -103,8 +103,8 @@ class Channel extends BaseEntity {
   }
 
   /** @internal */
-  get membersStore () {
-    return this.#membersStore;
+  get memberStore () {
+    return this.#memberStore;
   }
 
   /** @internal */

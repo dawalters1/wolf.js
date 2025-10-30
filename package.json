@@ -6,7 +6,7 @@
   "typings": "typings/index.d.js",
   "type": "module",
   "scripts": {
-    "test": "mocha --exit --recursive --timeout 10000 ./test",
+  "test": "npx mocha --exit --reporter spec \"./test/integration/testcases/**/*.js\"",
     "lint": "eslint --fix --ext .js,.jsx .js"
   },
   "files": [
@@ -83,8 +83,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "mocha": "^11.6.0",
+    "mocha": "^11.7.4",
     "prettier": "^3.5.3",
-    "typescript-eslint": "^8.34.0"
+    "typescript-eslint": "^8.34.0",
+    "sinon": "^21.0.0"
   }
 }
