@@ -24,7 +24,7 @@ class GroupMemberAddEvent extends BaseEvent {
     return this.client.emit(
       'channelMemberAdd',
       channel,
-      channel._members.set(
+      channel.memberStore.set(
         new ChannelMember(
           this.client,
           {

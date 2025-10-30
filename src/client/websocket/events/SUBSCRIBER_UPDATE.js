@@ -26,7 +26,7 @@ class SubscriberUpdateEvent extends BaseEvent {
         channel.owner.patch(newUser);
       }
 
-      channel._members.get(oldUser.id)?.patch(newUser);
+      channel.memberStore.get(oldUser.id)?.patch(newUser);
     });
 
     this.client.emit(

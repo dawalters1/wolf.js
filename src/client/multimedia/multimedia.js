@@ -28,7 +28,7 @@ class Multimedia {
           getCredentials: async () => {
             const getCredentials = async (forceNew = false) => {
               try {
-                const cognito = await this.client.security.getToken({ forceNew });
+                const cognito = await this.#client.security.getToken({ forceNew });
 
                 const cognitoIdentity = new CognitoIdentityClient({
                   credentials: fromCognitoIdentity({

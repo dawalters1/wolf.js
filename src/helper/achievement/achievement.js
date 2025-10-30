@@ -80,7 +80,7 @@ class AchievementHelper extends BaseHelper {
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
-        Command.ACHIEVEMENT,
+        Command.ACHIVEMENT,
         {
           body: {
             idList: idsToFetch,

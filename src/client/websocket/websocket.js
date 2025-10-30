@@ -49,13 +49,13 @@ export class Websocket {
       fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
     ).version;
 
-    if (apiKey === undefined) {
+    if (!apiKey) {
       console.warn('APIKey will be required to login in the future');
     }
 
-    const socketUrl = `${host}:${port}/?token=${token}${apiKey === undefined
-      ? ''
-      : `&apiKey=${apiKey}`}&device=${device}&state=${state}&version=${version || packageVersion}`;
+    const socketUrl = `${host}:${port}/?token=${token}${apiKey
+      ? `&apiKey=${apiKey}`
+      : ''}&device=${device}&state=${state}&version=${version || packageVersion}`;
 
     this.socket = io(socketUrl, {
       transports: ['websocket'],
@@ -63,18 +63,27 @@ export class Websocket {
       autoConnect: false
     });
 
-    // This should work??
+    // Override duration logic
+    const originalDuration = this.socket.io.backoff.duration.bind(this.socket.io.backoff);
+
     this.socket.io.backoff.duration = () => {
-      if (this.socket.reconnectionDelay === -1) {
+      const useOverride = 'reconnectionDelayOverride' in this.socket;
+
+      const delay = useOverride
+        ? this.socket.reconnectionDelayOverride
+        : originalDuration();
+
+      Reflect.deleteProperty(this.socket, 'reconnectionDelayOverride');
+
+      if (delay === -1) {
         return this.socket.disconnect();
       }
 
-      console.log('Reconnection Backoff: ', this.socket.reconnectionDelay);
-      return this.socket.reconnectionDelay;
+      return delay;
     };
 
     this.socket.io.on('open', () => this.client.emit('connecting'));
-    this.socket.on('connect', () => { this.socket.reconnectionDelay = 1000; this.client.emit('connected'); });
+    this.socket.on('connect', () => this.client.emit('connected'));
     this.socket.on('connect_error', error => this.client.emit('connectError', error));
     this.socket.on('connect_timeout', () => this.client.emit('connectTimeout'));
     this.socket.on('disconnect', reason => {
@@ -88,9 +97,12 @@ export class Websocket {
     this.socket.io.on('reconnect_attempt', attempt => this.client.emit('reconnectAttempt', attempt));
     this.socket.io.on('reconnect', () => this.client.emit('reconnected'));
     this.socket.io.on('reconnect_failed', () => this.client.emit('reconnectFailed'));
+    this.socket.io.on('reconnect_error', () => this.client.emit('reconnectFailed'));
     this.socket.on('ping', () => this.client.emit('ping'));
     this.socket.on('pong', latency => this.client.emit('pong', latency));
-
+    this.socket.io.on('close', (reason) => {
+      console.log('[ENGINE CLOSE]', reason);
+    });
     this.socket.onAny((event, args) => {
       const handler = this.handlers.get(event);
       if (!handler) { return; }
