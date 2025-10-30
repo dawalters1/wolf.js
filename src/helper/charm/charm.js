@@ -77,7 +77,7 @@ class CharmHelper extends BaseHelper {
         }
 
         this.store.set(
-          new Charm(this.client, charmResponse),
+          new Charm(this.client, charmResponse.body),
           response.headers?.maxAge
         );
       }
