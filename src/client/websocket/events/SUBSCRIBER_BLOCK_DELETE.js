@@ -6,7 +6,7 @@ class SubscriberBlockDeleteEvent extends BaseEvent {
   }
 
   async process (data) {
-    const wasDeleted = this.client.contact.blocked.store.delete(data.targetId);
+    const wasDeleted = this.client.contact.blocked.store.delete((blocked) => blocked.id === data.targetId);
 
     if (wasDeleted === false) { return; }
 

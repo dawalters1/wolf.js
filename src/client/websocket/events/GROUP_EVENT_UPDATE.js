@@ -19,7 +19,7 @@ class GroupEventUpdateEvent extends BaseEvent {
     const newEvent = await this.client.event.getById(data.id, { forceNew: true });
 
     if (newEvent.isRemoved) {
-      channel.eventStore.delete(data.id);
+      channel.eventStore.delete((event) => event.id === data.id);
 
       return this.client.emit(
         'channelEventDelete',

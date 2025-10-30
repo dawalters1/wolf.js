@@ -26,7 +26,7 @@ class GroupMemberDeleteEvent extends BaseEvent {
 
     if (member === null) { return; };
 
-    channel.memberStore.delete(data.subscriberId);
+    channel.memberStore.delete((member) => member.id === data.subscriberId);
 
     return this.client.emit(
       'channelMemberDelete',
