@@ -16,6 +16,10 @@ class BaseStore {
     }
   }
 
+  get store () {
+    return this.#store;
+  }
+
   set fetched (val) {
     this.#fetched = val;
   }
