@@ -98,7 +98,7 @@ class AchievementHelper extends BaseHelper {
         }
 
         this.store.set(
-          new Achievement(this.client, achievementResponse),
+          new Achievement(this.client, achievementResponse.body),
           response.headers?.maxAge
         );
       }
