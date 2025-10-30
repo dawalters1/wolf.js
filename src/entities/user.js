@@ -48,8 +48,10 @@ export class User extends BaseEntity {
     this.#roleStore = new BaseStore({ ttl: 60 });
     this.#presenceStore = new UserPresence(client, entity, false);
     this.#followStore = new FollowStore();
+  }
 
-    this.language = client.utility.toLanguageKey(
+  get language () {
+    return this.client.utility.toLanguageKey(
       this?.extended?.language ?? Language.ENGLISH
     );
   }

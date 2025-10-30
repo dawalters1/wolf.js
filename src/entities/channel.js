@@ -21,6 +21,8 @@ class Channel extends BaseEntity {
   #audioSlotRequestStore;
   #memberStore;
   #roleStore;
+  #isMember = false;
+  #capabilities = ChannelMemberCapability.NONE;
 
   constructor (client, entity) {
     super(client);
@@ -55,9 +57,6 @@ class Channel extends BaseEntity {
       : null;
     this.verificationTier = entity.base.verificationTier;
 
-    this.isMember = false;
-    this.capabilities = ChannelMemberCapability.NONE;
-
     this.#achievementStore = new BaseStore({ ttl: 300 });
     this.#statsStore = new BaseExpireProperty({ ttl: 300 });
     this.#stageStore = new BaseStore({ ttl: 300 });
@@ -66,10 +65,21 @@ class Channel extends BaseEntity {
     this.#audioSlotRequestStore = new BaseStore({ ttl: 300 });
     this.#memberStore = new ChannelMemberStore();
     this.#roleStore = new ChannelRoleStore();
+  }
 
-    this.language = client.utility.toLanguageKey(
+  get language () {
+    this.language = this.client.utility.toLanguageKey(
       this?.extended?.language ?? Language.ENGLISH
     );
+  }
+
+  /** @internal */
+  set isMember (value) {
+    this.#isMember = value;
+  }
+
+  set capabilities (value) {
+    this.#capabilities = value;
   }
 
   /** @internal */
@@ -114,6 +124,14 @@ class Channel extends BaseEntity {
 
   get isOwner () {
     return this.client.me.id === this.owner.id;
+  }
+
+  get isMember () {
+    return this.#isMember;
+  }
+
+  get capabilities () {
+    return this.#capabilities;
   }
 
   hasCapability (required) {
