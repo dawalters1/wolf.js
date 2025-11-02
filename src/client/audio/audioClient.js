@@ -2,7 +2,6 @@ import ChannelAudioSlotConnectionState from '../../constants/ChannelAudioConnect
 import ffmpeg from 'fluent-ffmpeg';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import Stream from 'node:stream';
 import { Worker } from 'node:worker_threads';
 import wrtc from '@roamhq/wrtc';
 
@@ -339,8 +338,6 @@ class AudioClient {
 
     this.#ffmpeg
       .input(data)
-      .native()
-      .noVideo()
       .toFormat('wav')
       .on('error', (error) => {
         if (data instanceof Stream) { data?.destroy(); }
