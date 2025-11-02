@@ -1,12 +1,9 @@
 import AchievementUser from '../../entities/achievementUser.js';
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 
-class AchievementUserHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class AchievementUserHelper extends BaseHelper {
   async get (userId, parentId, opts) {
     userId = Number(userId) || userId;
     parentId = Number(parentId) || parentId;
@@ -31,7 +28,7 @@ class AchievementUserHelper {
     const user = await this.client.user.getById(userId);
 
     if (user === null) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new Error(`User with ID ${userId} Not Found`);
     }
 
     let achievements;
@@ -66,7 +63,7 @@ class AchievementUserHelper {
 
     const parentAchievement = user.achievementStore.get((achievement) => achievement.id === parentId);
     if (parentAchievement === null) {
-      throw new Error(`Parent achievement with ID ${parentId} not found`);
+      throw new Error(`Parent achievement with ID ${parentId} Not Found`);
     }
 
     if (parentAchievement.childrenId) {

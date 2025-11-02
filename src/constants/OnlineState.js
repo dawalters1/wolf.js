@@ -1,5 +1,5 @@
 
-export const UserPresence = {
+export const OnlineState = {
   /**
    * User is offline
    */
@@ -21,4 +21,4 @@ export const UserPresence = {
    */
   IDLE: 9
 };
-export default UserPresence;
+export default OnlineState;

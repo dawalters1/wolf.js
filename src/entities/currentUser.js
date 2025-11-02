@@ -5,7 +5,6 @@ import NotificationStore from '../caching/NotificationStore.js';
 import { User } from './user.js';
 
 export class CurrentUser extends User {
-  // === Private store fields ===
   #notificationStore;
   #followStore;
 

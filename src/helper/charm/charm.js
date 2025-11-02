@@ -105,7 +105,7 @@ class CharmHelper extends BaseHelper {
     const user = await this.client.user.getById(userId);
 
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new Error(`User with ID ${userId} Not Found`);
     }
 
     if (!opts?.forceNew && user.charmSummaryStore.fetched) {
@@ -148,7 +148,7 @@ class CharmHelper extends BaseHelper {
     const user = await this.client.user.getById(userId);
 
     if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
+      throw new Error(`User with ID ${userId} Not Found`);
     }
 
     if (!opts?.forceNew && user.charmStatisticsStore.fetched) {

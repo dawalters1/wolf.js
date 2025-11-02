@@ -8,10 +8,6 @@ export class ChannelEvent extends BaseEntity {
     this.id = entity.id;
     this.additionalInfo = new ChannelEventAdditionalInfo(client, entity.additionalInfo);
   }
-
-  async get () {
-
-  }
 }
 
 export default ChannelEvent;
