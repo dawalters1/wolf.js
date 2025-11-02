@@ -15,13 +15,6 @@ export class IdHash extends BaseEntity {
     this.hash = entity.hash;
     this.isChannel = isChannel;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.hash = entity.hash;
-    return this;
-  }
 }
 
 export default IdHash;

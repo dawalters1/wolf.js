@@ -11,8 +11,8 @@ class NotificationUserHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'NotificationUserHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.client.me?.notificationsUser?.fetched) {
-      return this.client.me.notificationsUser.values();
+    if (!opts?.forceNew && this.client.me?.notifications.user?.fetched) {
+      return this.client.me.notificationStore.user.values();
     }
 
     const get = async (results = []) => {
@@ -32,15 +32,14 @@ class NotificationUserHelper extends BaseHelper {
         : await get(results);
     };
 
-    this.client.me.notificationsUser.fetched = true;
+    this.client.me.notificationStore.user.fetched = true;
 
-    return (await get()).map((serverNotification) => {
-      const existing = this.client.me.notificationsUser.get(serverNotification);
-
-      return this.client.me.notificationsUser.set(
-        existing?.patch(serverNotification) ?? new Notification(this.client, serverNotification)
+    return (await get())
+      .map((serverNotification) =>
+        this.client.me.notificationStore.user.set(
+          new Notification(this.client, serverNotification)
+        )
       );
-    });
   }
 
   async clear () {
@@ -114,18 +113,12 @@ class NotificationUserHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'NotificationUserHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const notificationsMap = new Map();
 
-    if (!opts?.forceNew) {
-      const cachedNotificationUsers = notificationIds.map((notificationId) => this.cache.get(notificationId))
-        .filter((notificationUser) => notificationUser !== null);
-
-      cachedNotificationUsers.forEach((notificationUser) =>
-        notificationsMap.set(notificationUser.id, notificationUser)
+    const idsToFetch = opts?.forceNew
+      ? notificationIds
+      : notificationIds.filter((notificationId) =>
+        !this.store.has((notification) => notification.id === notificationId)
       );
-    }
-
-    const idsToFetch = notificationIds.filter((id) => !notificationsMap.has(id));
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -137,22 +130,24 @@ class NotificationUserHelper extends BaseHelper {
         }
       );
 
-      [...response.body.entries()]
-        .filter(([_, res]) => res.success)
-        .forEach(([id, res]) => {
-          const existing = this.cache.get(id);
+      for (const [index, notificationResponse] of response.body.entries()) {
+        const notificationId = idsToFetch[index];
 
-          notificationsMap.set(
-            res.body.id,
-            this.cache.set(
-              existing?.patch(res.body) ?? new NotificationUser(this.client, res.body),
-              response.headers?.maxAge
-            )
-          );
-        });
+        if (!notificationResponse.success) {
+          this.client.me.notificationStore.user.delete((notification) => notification.id === notificationId);
+          continue;
+        }
+
+        this.client.me.notificationStore.user.set(
+          new NotificationUser(this.client, notificationResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return notificationIds.map((id) => notificationsMap.get(id) ?? null);
+    return notificationIds.map((notificationId) =>
+      this.client.me.notificationStore.user.get((notification) => notification.id === notificationId)
+    );
   }
 }
 

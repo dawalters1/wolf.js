@@ -1,12 +1,11 @@
+import BaseHelper from '../baseHelper.js';
+import BaseStore from '../../caching/BaseStore.js';
 import { Command } from '../../constants/Command.js';
+import { StatusCodes } from 'http-status-codes';
 import UserRole from '../../entities/userRole.js';
 import { validate } from '../../validator/index.js';
 
-class UserRoleHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class UserRoleHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -21,72 +20,39 @@ class UserRoleHelper {
         .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getById() parameter, opts.{parameter}: {value} {error}');
     }
 
-    return (await this.getByIds([userId], opts))[0];
-  }
+    const user = await this.client.user.getById(userId);
 
-  async getByIds (userIds, opts) {
-    userIds = userIds.map((userId) => Number(userId) || userId);
-
-    { // eslint-disable-line no-lone-blocks
-      validate(userIds)
-        .isArray(`UserRoleHelper.getByIds() parameter, userIds: ${userIds} is not a valid array`)
-        .each()
-        .isNotNullOrUndefined('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is null or undefined')
-        .isValidNumber('UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is not a valid number')
-        .isGreaterThan(0, 'UserRoleHelper.getByIds() parameter, userId[{index}]: {value} is less than or equal to zero');
-
-      validate(opts)
-        .isNotRequired()
-        .isValidObject({ forceNew: Boolean }, 'UserRoleHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
-    }
-    const userRoleMap = new Map();
-
-    const users = await this.client.user.getByIds(userIds);
-
-    const missingUserIds = userIds.filter(
-      userId => !users.some(user => user?.id === userId)
-    );
-
-    if (missingUserIds.length > 0) {
-      throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
+    if (!opts?.forceNew && user.roleStore.fetched) {
+      return user.roleStore.values();
     }
 
-    if (!opts?.forceNew) {
-      const cachedUserRoles = users.filter(user => user !== null && user._roles?.fetched);
-      cachedUserRoles.forEach(user => userRoleMap.set(user.id, user._roles.value));
-    }
-
-    const idsToFetch = userIds.filter(id => !userRoleMap.has(id));
-
-    if (idsToFetch.length > 0) {
+    try {
       const response = await this.client.websocket.emit(
-        Command.WOLFSTAR_PROFILE,
+        Command.SUBSCRIBER_ROLE_SUMMARY,
         {
           headers: {
             version: 2
           },
           body: {
-            idList: idsToFetch
+            subscriberId: userId
           }
         }
       );
 
-      [...response.body.entries()]
-        .filter(([, userRoleResponse]) => userRoleResponse.success)
-        .forEach(([userId, userRoleResponse]) => {
-          const user = users.find(user => user?.id === userId);
-
-          if (user) {
-            user._roles.value =
-              user._roles.value?.patch(userRoleResponse.body) ??
-              new UserRole(this.client, userRoleResponse.body);
-
-            userRoleMap.set(user.id, user._roles.value);
-          }
-        });
+      response.body.map((serverUserRole) =>
+        user.roleStore.set(
+          new UserRole(this.client, serverUserRole),
+          response.headers?.maxAge
+        )
+      );
+    } catch (error) {
+      if (error.code !== StatusCodes.NOT_FOUND) {
+        throw error;
+      }
     }
 
-    return userIds.map(userId => userRoleMap.get(userId) ?? null);
+    user.roleStore.fetched = true;
+    return user.roleStore.values();
   }
 }
 

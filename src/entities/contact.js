@@ -11,10 +11,5 @@ export class Contact extends BaseEntity {
       : entity;
     this.additionalInfo = new ContactAdditionalInfo(client, additionalInfo);
   }
-
-  /** @internal */
-  patch (entity) {
-    return this;
-  }
 }
 export default Contact;

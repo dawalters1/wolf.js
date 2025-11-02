@@ -1,25 +1,24 @@
-import CacheManager from '../managers/cacheManager.js';
+import BaseStore from '../caching/BaseStore.js';
 
 class BaseHelper {
+  #client;
   /**
    * @param {any} client
-   * @param {number|null} ttl
-   * @param {'default'|'language'} cacheType
    */
-  constructor (client, ttl = null) {
-    this.client = client;
+  constructor (client) {
+    this.#client = client;
 
-    this.cacheManager = new CacheManager(ttl);
+    this.store = new BaseStore();
   }
 
-  get cache () {
-    return this.cacheManager;
+  get client () {
+    return this.#client;
   }
 
-  createKey (key, languageId) {
-    return languageId
-      ? `${key}.languageId:${languageId}`
-      : key;
+  resolveId (languageId, ids) {
+    return Array.isArray(ids)
+      ? ids.map((id) => `${languageId}-${id}`)
+      : `${languageId}-${ids}`;
   }
 }
 

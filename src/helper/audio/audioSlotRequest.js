@@ -29,7 +29,7 @@ class AudioSlotRequestHelper {
     const audioConfig = await channel.getAudioConfig();
     if (!audioConfig?.enabled) { throw new Error(`Channel with ID ${channelId} does not have stage enabled`); }
 
-    if (!opts?.forceNew && channel._audioSlotRequests.fetched) { return channel._audioSlotRequests.values(); }
+    if (!opts?.forceNew && channel.audioSlotRequestStore.fetched) { return channel.audioSlotRequestStore.values(); }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_AUDIO_REQUEST_LIST,
@@ -41,15 +41,14 @@ class AudioSlotRequestHelper {
       }
     );
 
-    channel._audioSlotRequests.clear();
-    channel._audioSlotRequests.fetched = true;
+    channel.audioSlotRequestStore.clear();
+    channel.audioSlotRequestStore.fetched = true;
 
-    return response.body.map((serverAudioRequest) => {
-      const existing = channel._audioSlotRequests.get(serverAudioRequest);
-      return channel._audioSlotRequests.set(
-        existing?.patch(serverAudioRequest) ?? new ChannelAudioSlotRequest(this.client, serverAudioRequest)
-      );
-    });
+    return response.body.map((serverAudioRequest) =>
+      channel.audioSlotRequestStore.set(
+        new ChannelAudioSlotRequest(this.client, serverAudioRequest)
+      )
+    );
   }
 
   async add (channelId, slotId, userId) {

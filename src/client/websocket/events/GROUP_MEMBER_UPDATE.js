@@ -14,7 +14,7 @@ class GroupMemberAddEvent extends BaseEvent {
       channel.isMember = data.capabilities !== ChannelMemberCapability.BANNED;
     }
 
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
@@ -22,7 +22,7 @@ class GroupMemberAddEvent extends BaseEvent {
       channel.owner.patch(await this.client.user.getById(data.subscriberId));
     }
 
-    const member = channel._members.get(data.subscriberId);
+    const member = channel.memberStore.get(data.subscriberId);
 
     if (member === null) { return; };
     const memberOld = member.clone();

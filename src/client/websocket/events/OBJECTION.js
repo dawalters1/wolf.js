@@ -7,12 +7,12 @@ class ObjectionEvent extends BaseEvent {
   }
 
   async process (data) {
-    this.client.websocket.socket.reconnectionDelay = data.reconnectSeconds === -1
+    this.client.websocket.socket.reconnectionDelayOverride = data.reconnectSeconds === -1
       ? -1
       : data.reconnectSeconds * 1000;
 
     this.client.emit(
-      'loginFailed',
+      'objection',
       new WOLFResponse(
         {
           code: data.code,

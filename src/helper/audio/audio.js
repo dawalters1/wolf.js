@@ -1,15 +1,27 @@
 import AudioSlotHelper from './audioSlot.js';
 import AudioSlotRequestHelper from './audioSlotRequest.js';
+import BaseHelper from '../baseHelper.js';
 import { ChannelStage } from '../../entities/channelStage.js';
 import { Command } from '../../constants/Command.js';
 import Stream from 'stream';
 import { validate } from '../../validator/index.js';
 
-class AudioHelper {
+class AudioHelper extends BaseHelper {
+  #slots;
+  #slotRequest;
   constructor (client) {
-    this.client = client;
-    this.slots = new AudioSlotHelper(client);
-    this.slotRequest = new AudioSlotRequestHelper(client);
+    super(client);
+
+    this.#slots = new AudioSlotHelper(client);
+    this.#slotRequest = new AudioSlotRequestHelper(client);
+  }
+
+  get slots () {
+    return this.#slots;
+  }
+
+  get slotRequest () {
+    return this.#slotRequest;
   }
 
   async getAvailableList (channelId, opts) {
@@ -30,8 +42,8 @@ class AudioHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._stages.fetched) {
-      return channel._stages.values();
+    if (!opts?.forceNew && channel.stageStore.fetched) {
+      return channel.stageStore.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -43,11 +55,11 @@ class AudioHelper {
       }
     );
 
-    channel._stages.clear();
-    channel._stages.fetched = true;
+    channel.stageStore.clear();
+    channel.stageStore.fetched = true;
 
     return response.body.map((serverStage) =>
-      channel._stages.set(new ChannelStage(this.client, serverStage))
+      channel.stageStore.set(new ChannelStage(this.client, serverStage))
     );
   }
 
@@ -113,11 +125,11 @@ class AudioHelper {
         .isInstanceOf(Stream, `AudioHelper.start() parameter, stream: ${stream} is not a valid stream`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    return this.slots.get(channelId).play(stream);
+    return this.#slots.get(channelId).play(stream);
   }
 
   async stop (channelId) {
@@ -130,11 +142,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.stop() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    return this.slots.get(channelId).stop();
+    return this.#slots.get(channelId).stop();
   }
 
   async pause (channelId) {
@@ -147,11 +159,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.pause() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    return this.slots.get(channelId).pause();
+    return this.#slots.get(channelId).pause();
   }
 
   async resume (channelId) {
@@ -164,11 +176,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.join() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    return this.slots.get(channelId).resume();
+    return this.#slots.get(channelId).resume();
   }
 
   async hasClient (channelId) {
@@ -181,7 +193,7 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    return this.slots.audioClients.has(channelId);
+    return this.#slots.audioClients.has(channelId);
   }
 
   async getClientState (channelId) {
@@ -194,11 +206,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.getClientState() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    const client = this.slots.get(channelId);
+    const client = this.#slots.get(channelId);
 
     return {
       connectionState: client.connectionState,
@@ -216,11 +228,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.getClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.has(channelId)) {
+    if (!this.#slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    const client = this.slots.get(channelId);
+    const client = this.#slots.get(channelId);
 
     return client.audioSource.settings;
   }
@@ -235,11 +247,11 @@ class AudioHelper {
         .isGreaterThan(0, `AudioHelper.updateClientSettings() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
 
-    if (!this.slots.slots.has(channelId)) {
+    if (!this.#slots.slots.has(channelId)) {
       throw new Error(`Channel with id ${channelId} does not have a client`);
     }
 
-    const client = this.slots.get(channelId);
+    const client = this.#slots.get(channelId);
 
     client.updateSettings(settings);
   }

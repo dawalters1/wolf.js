@@ -7,13 +7,6 @@ export class UserRole extends BaseEntity {
     this.roleId = entity.roleId;
     this.channelIdList = new Set(entity.groupIdList);
   }
-
-  /** @internal */
-  patch (entity) {
-    this.roleId = entity.roleId;
-    this.channelIdList = new Set(entity.groupIdList);
-    return this;
-  }
 }
 
 export default UserRole;

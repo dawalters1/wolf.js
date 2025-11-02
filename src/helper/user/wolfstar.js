@@ -1,12 +1,9 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 import WOLFStar from '../../entities/wolfstar.js';
 
-class WOLFStarHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class WOLFStarHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -39,7 +36,6 @@ class WOLFStarHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'WOLFStarHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const wolfStarMap = new Map();
 
     const users = await this.client.user.getByIds(userIds);
 
@@ -51,14 +47,14 @@ class WOLFStarHelper {
       throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
 
-    if (!opts?.forceNew) {
-      const cachedWOLFStar = users.filter(user => user !== null && user._wolfstars?.fetched);
-      cachedWOLFStar.forEach(user => wolfStarMap.set(user.id, user._wolfstars.value));
-    }
+    const idsToFetch = opts?.forceNew
+      ? userIds
+      : userIds.filter((userId) => {
+        const user = users.find((user) => user.id === userId);
+        return user !== null && !user.wolfstarStore?.fetched;
+      });
 
-    const idsToFetch = userIds.filter(id => !wolfStarMap.has(id));
-
-    if (idsToFetch.length > 0) {
+    if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
         Command.WOLFSTAR_PROFILE,
         {
@@ -71,21 +67,18 @@ class WOLFStarHelper {
         }
       );
 
-      [...response.body.entries()]
-        .filter(([, wolfStarResponse]) => wolfStarResponse.success)
-        .forEach(([userId, wolfStarResponse]) => {
-          const user = users.find(user => user?.id === userId);
+      for (const [userId, wolfstarResponse] of response.body.entries()) {
+        if (!wolfstarResponse.success) {
+          continue;
+        }
 
-          if (user) {
-            user._wolfstars.value = user._wolfstars.value?.patch(wolfStarResponse.body) ??
-              new WOLFStar(this.client, wolfStarResponse.body);
+        const user = users.find((user) => user?.id === userId);
 
-            wolfStarMap.set(user.id, user._wolfstars.value);
-          }
-        });
+        user.wolfstarStore.value = user.wolfstarStore.value?.patch(wolfstarResponse.body) ?? new WOLFStar(this.client, wolfstarResponse.body);
+      }
     }
 
-    return userIds.map(userId => wolfStarMap.get(userId) ?? null);
+    return userIds.map((userId) => users.find((user) => user.id === userId).wolfstarStore.value ?? null);
   }
 }
 

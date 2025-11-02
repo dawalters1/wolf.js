@@ -56,31 +56,17 @@ export class WelcomeEvent extends BaseEvent {
       .filter(helper => !excludeOnCleanup.includes(helper.constructor.name));
 
     helpers.forEach(helper => {
-      helper.cache.clear();
+      helper.store.clear();
       this.cleanup(helper); // recursive clear
     });
   }
 
   async login () {
-    const { username, password, state } = this.client.config.framework.login;
+    const { username, password } = this.client.config.framework.login;
 
-    const response = await this.client.websocket.emit(
-      Command.SECURITY_LOGIN,
-      {
-        headers: {
-          version: 2
-        },
-        body: {
-          type: 'email',
-          onlineState: state,
-          username,
-          password
-        }
-      }
-    );
+    const response = await this.client.security.login(username, password);
 
     if (!response.success) {
-      console.log('FROM WELCOME');
       this.client.emit('loginFailed', response);
 
       const subCode = response.headers?.get('subCode') ?? -1;

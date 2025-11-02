@@ -3,7 +3,7 @@ import { validate } from '../../validator/index.js';
 
 class AuthorisationHelper extends BaseHelper {
   list () {
-    return this.cache?.values();
+    return this.store?.values();
   }
 
   isAuthorised (userIds) {
@@ -21,7 +21,7 @@ class AuthorisationHelper extends BaseHelper {
         .isGreaterThan(0, 'AuthorisationHelper.isAuthorised() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
-    const has = (userId) => this.cache.has(userId);
+    const has = (userId) => this.store.has(userId);
     return isArray
       ? userIds.map((userId) => has(userId))
       : has(userIds);
@@ -39,7 +39,7 @@ class AuthorisationHelper extends BaseHelper {
 
     const user = await this.client.user.getById(userId);
     if (user === null) { throw new Error(`User with ID ${userId} is not found`); }
-    return !!this.cache.set(user);
+    return !!this.store.set(userId);
   }
 
   async authoriseAll (userIds) {
@@ -63,7 +63,7 @@ class AuthorisationHelper extends BaseHelper {
       throw new Error(`Users with IDs ${missingUserIds.join(', ')} not found`);
     }
 
-    return users.map((user) => !!this.cache.set(user));
+    return users.map((user) => !!this.store.set(user.id));
   }
 
   deauthorise (userId) {
@@ -76,7 +76,7 @@ class AuthorisationHelper extends BaseHelper {
         .isGreaterThan(0, `AuthorisationHelper.deauthorise() parameter, userId: ${userId} is less than or equal to zero`);
     }
 
-    return this.cache.delete(userId);
+    return this.store.delete(userId);
   }
 
   deauthoriseAll (userIds) {
@@ -91,13 +91,13 @@ class AuthorisationHelper extends BaseHelper {
         .isGreaterThan(0, 'AuthorisationHelper.deauthoriseAll() parameter, userIds[{index}]: {value} is less than or equal to zero');
     }
 
-    return userIds.map((userId) => this.cache.delete(userId));
+    return userIds.map((userId) => this.store.delete(userId));
   }
 
   unauthorise = this.deauthorise;
 
   clear () {
-    return this.cache.clear();
+    return this.store.clear();
   }
 }
 

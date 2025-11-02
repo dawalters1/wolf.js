@@ -4,11 +4,11 @@ import { ChannelMemberCapability } from '../constants/ChannelMemberCapability.js
 import { ChannelMemberListType } from '../constants/ChannelMemberListType.js';
 
 export class ChannelMember extends BaseEntity {
-  constructor (client, entity, source) {
+  constructor (client, entity, channelId, source) {
     super(client);
 
     this.id = entity.id;
-    this.channelId = entity.channelId;
+    this.channelId = channelId;
     this.hash = entity.hash;
     this.capabilities = entity.capabilities;
 
@@ -17,21 +17,6 @@ export class ChannelMember extends BaseEntity {
         (list) => list !== undefined
       )
     );
-  }
-
-  /** @internal */
-  patch (entity, list) {
-    if ('capabilities' in entity) {
-      this.capabilities = entity.capabilities;
-      if (list) {
-        this.lists.add(list);
-      }
-    }
-
-    this.id = entity.id;
-    this.hash = entity.hash;
-
-    return this;
   }
 
   _getParentList (capabilities) {

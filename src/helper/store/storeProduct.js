@@ -52,16 +52,13 @@ class StoreProductHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'StoreProductHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const productsMap = new Map();
-
-    if (!opts?.forceNew) {
-      const cachedProducts = productIds.map((productId) => this.cache.get(productId, languageId))
-        .filter((product) => product !== null);
-
-      cachedProducts.forEach((product) => productsMap.set(product.id, product));
-    }
-
-    const idsToFetch = productIds.filter((id) => !productsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? productIds
+      : productIds.filter((productId) =>
+        !this.store.has((product) =>
+          product.id === productId && product.languageId === languageId
+        )
+      );
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -74,22 +71,29 @@ class StoreProductHelper extends BaseHelper {
         }
       );
 
-      response.body
-        .filter((res) => res.success)
-        .forEach((serverStoreProduct) => {
-          const existing = this.cache.get(serverStoreProduct.body.id, languageId);
+      for (const [index, serverStoreProductResponse] of response.body.entries()) {
+        const productId = idsToFetch[index];
 
-          productsMap.set(
-            serverStoreProduct.body.id,
-            this.cache.set(
-              existing?.patch(serverStoreProduct.body) ?? new StoreProduct(this.client, serverStoreProduct.body),
-              response.headers?.maxAge
-            )
+        if (!serverStoreProductResponse.success) {
+          this.store.delete(
+            (serverStoreProduct) =>
+              serverStoreProduct.id === productId && serverStoreProduct.languageId === languageId
           );
-        });
+          continue;
+        }
+
+        this.store.set(
+          new StoreProduct(this.client, serverStoreProductResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return productIds.map((id) => productsMap.get(id) ?? null);
+    return productIds.map((productId) =>
+      this.store.get((product) =>
+        product.id === productId && product.languageId === languageId
+      )
+    );
   }
 
   async purchase () {

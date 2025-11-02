@@ -6,7 +6,7 @@ class GroupUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const oldChannel = this.client.channel.cache.get(data.id)?.clone() ?? null;
+    const oldChannel = this.client.channel.store.get(data.id)?.clone() ?? null;
 
     if (oldChannel === null || oldChannel.hash === data.hash) { return; }
 

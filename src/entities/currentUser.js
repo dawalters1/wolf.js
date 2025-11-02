@@ -1,24 +1,29 @@
-import CacheManager from '../managers/cacheManager.js';
-import ExpiringProperty from '../managers/expiringProperty.js';
+import BaseExpireProperty from '../caching/BaseExpireProperty.js';
+import BaseStore from '../caching/BaseStore.js';
+import FollowStore from '../caching/FollowStore.js';
+import NotificationStore from '../caching/NotificationStore.js';
 import { User } from './user.js';
 
 export class CurrentUser extends User {
+  // === Private store fields ===
+  #notificationStore;
+  #followStore;
+
   constructor (client, entity) {
     super(client, entity);
 
-    this.notificationsGlobal = new CacheManager();
-    this.notificationsUser = new CacheManager();
+    this.#notificationStore = new NotificationStore();
+    this.#followStore = new FollowStore();
+  }
 
-    this._follow = {
-      followers: {
-        count: new ExpiringProperty(15),
-        list: new CacheManager(120)
-      },
-      following: {
-        count: new ExpiringProperty(15),
-        list: new CacheManager(3600)
-      }
-    };
+  /** @internal */
+  get notificationStore () {
+    return this.#notificationStore;
+  }
+
+  /** @internal */
+  get followStore () {
+    return this.#followStore;
   }
 }
 

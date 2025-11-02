@@ -13,20 +13,20 @@ class GroupMemberDeleteEvent extends BaseEvent {
 
       channel.isMember = false;
       channel.capabilities = ChannelMemberCapability.NONE;
-      channel._members.clear();
+      channel.memberStore.clear();
 
       return this.client.emit('leftChannel', channel);
     }
 
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
-    const member = channel._members.get(data.subscriberId);
+    const member = channel.memberStore.get(data.subscriberId);
 
     if (member === null) { return; };
 
-    channel._members.delete(data.subscriberId);
+    channel.memberStore.delete((member) => member.id === data.subscriberId);
 
     return this.client.emit(
       'channelMemberDelete',

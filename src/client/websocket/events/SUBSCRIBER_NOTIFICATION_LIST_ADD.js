@@ -9,7 +9,7 @@ class SubscriberNotificationListAddEvent extends BaseEvent {
   async process (data) {
     this.client.emit(
       'userNotificationAdd',
-      this.client.me.notificationsUser.set(
+      this.client.me.notificationStore.user.set(
         new Notification(
           this.client,
           data

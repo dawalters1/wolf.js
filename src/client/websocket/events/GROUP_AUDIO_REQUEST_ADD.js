@@ -7,13 +7,13 @@ class GroupAudioRequestAddEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
     this.client.emit(
       'channelAudioSlotRequestAdd',
-      channel._audioSlotRequests.set(
+      channel.audioSlotRequestStore.set(
         new ChannelAudioSlotRequest(
           this.client,
           data

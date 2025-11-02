@@ -10,15 +10,5 @@ export class NotificationGlobalFeed extends BaseEntity {
     this.imageUrl = entity.imageUrl;
     this.link = entity.link;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.title = entity.title;
-    this.body = entity.body;
-    this.imageUrl = entity.imageUrl;
-    this.link = entity.link;
-
-    return this;
-  }
 }
 export default NotificationGlobalFeed;
