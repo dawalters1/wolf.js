@@ -50,6 +50,7 @@ class MetadataHelper {
     }
   }
 
+  // TODO: rename Blacklist to MetadataUrlBlacklist
   async urlBlacklist (opts) {
     if (!opts?.forceNew && this._blacklist.fetched) {
       return [...this._blacklist.values()];

@@ -204,7 +204,7 @@ class TipHelper extends BaseHelper {
       return new TipLeaderboard(this.client, response.body);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {
-        return [];
+        return null;
       }
       throw error;
     }
@@ -255,7 +255,7 @@ class TipHelper extends BaseHelper {
       return new TipLeaderboardSummary(this.client, response.body);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {
-        return [];
+        return null;
       }
       throw error;
     }
@@ -298,7 +298,7 @@ class TipHelper extends BaseHelper {
       return new TipLeaderboard(this.client, response.body);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {
-        return [];
+        return null;
       }
       throw error;
     }
@@ -323,7 +323,7 @@ class TipHelper extends BaseHelper {
       return new TipLeaderboardSummary(this.client, response.body);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {
-        return [];
+        return null;
       }
       throw error;
     }
