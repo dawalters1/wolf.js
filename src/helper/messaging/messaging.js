@@ -83,7 +83,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
   body = body.toString().trim();
   let offset = 0;
 
-  let developerInjectedLinks = [...body.matchAll(/\[(.+?)\]\((.+?)\)/gu)].reduce((results, match) => {
+  let developerInjectedLinks = [...body.matchAll(/\[(.+?)\]\((.+?)\)/gu)].reverse().reduce((results, match) => {
     body = body.replace(match[0], match[1]);
     results.push({
       start: match.index - offset,
