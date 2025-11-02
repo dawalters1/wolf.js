@@ -33,7 +33,7 @@ class UserFollowerHelper extends BaseHelper {
     }
     const user = await this.client.user.getById(userId);
 
-    if (user === null) { throw new Error(); }
+    if (user === null) { throw new Error(`User with ID ${userId} Not Found`); }
 
     if (followDirection === UserFollowerType.FOLLOWER && !user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) {
       throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`);
@@ -121,9 +121,10 @@ class UserFollowerHelper extends BaseHelper {
         .isValidNumber(`UserFollowerHelper.follow() parameter, userId: ${userId} is not a valid number`)
         .isGreaterThan(0, `UserFollowerHelper.follow() parameter, userId: ${userId} is less than or equal to zero`);
     }
+
     const user = await this.client.user.getById(userId);
 
-    if (user === null) { throw new Error(); }
+    if (user === null) { throw new Error(`User with ID ${userId} Not Found`); }
 
     if (!user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) { throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`); }
 
@@ -153,7 +154,7 @@ class UserFollowerHelper extends BaseHelper {
 
     const user = await this.client.user.getById(userId);
 
-    if (user === null) { throw new Error(); }
+    if (user === null) { throw new Error(`User with ID ${userId} Not Found`); }
 
     const followingList = await this.list(UserFollowerType.FOLLOWING);
 
@@ -184,7 +185,7 @@ class UserFollowerHelper extends BaseHelper {
 
     const user = await this.client.user.getById(userId);
 
-    if (user === null) { throw new Error(); }
+    if (user === null) { throw new Error(`User with ID ${userId} Not Found`); }
 
     const followingList = await this.list(UserFollowerType.FOLLOWING);
 

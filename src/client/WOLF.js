@@ -16,6 +16,7 @@ import MetadataHelper from '../helper/metadata/metadata.js';
 import Multimedia from './multimedia/multimedia.js';
 import { nanoid } from 'nanoid';
 import NotificationHelper from '../helper/notification/notification.js';
+import { OnlineState } from '../constants/index.js';
 import path, { dirname } from 'node:path';
 import PhraseHelper from '../helper/phrase/phrase.js';
 import RoleHelper from '../helper/role/role.js';
@@ -24,7 +25,6 @@ import StoreHelper from '../helper/store/store.js';
 import TipHelper from '../helper/tip/tip.js';
 import TopicHelper from '../helper/topic/topic.js';
 import UserHelper from '../helper/user/user.js';
-import { UserPresence as UserPresenceType } from '../constants/index.js';
 import Utility from '../utilities/index.js';
 import { Websocket } from './websocket/websocket.js';
 import yaml from 'js-yaml';
@@ -119,6 +119,7 @@ class WOLF extends EventEmitter {
     return this.#me;
   }
 
+  /** @internal */
   set me (value) {
     this.#me = value;
   }
@@ -236,7 +237,7 @@ class WOLF extends EventEmitter {
       password,
       apiKey,
       token: opts?.token ?? `wjs-${nanoid()}`,
-      state: opts?.onlineState ?? UserPresenceType.ONLINE,
+      state: opts?.onlineState ?? OnlineState.ONLINE,
       type: opts?.type ?? 'email'
     };
 

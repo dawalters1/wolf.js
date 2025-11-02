@@ -40,12 +40,12 @@ class TipHelper extends BaseHelper {
             __required_if: { key: 'type', value: ContextType.MESSAGE },
             __not_required_if: { key: 'type', value: ContextType.STAGE }
           }
-        }, 'EventHelper.getById() parameter, opts.{parameter}: {value} {error}');
+        }, 'TipHelper.getById() parameter, opts.{parameter}: {value} {error}');
 
       validate(charms)
         .isArray()
         .each()
-        .isValidObject({ id: Number, quantity: Number }, 'EventHelper.tip() parameter, opts.{parameter}: {value} {error}');
+        .isValidObject({ id: Number, quantity: Number }, 'TipHelper.tip() parameter, opts.{parameter}: {value} {error}');
     }
     return await this.client.websocket.emit(
       Command.TIP_ADD,

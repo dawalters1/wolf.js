@@ -1,13 +1,10 @@
+import BaseHelper from '../baseHelper.js';
 import Cognito from '../../entities/cognito.js';
 import { Command } from '../../constants/Command.js';
 import { UserPresence } from '../../constants/index.js';
 import { validate } from '../../validator/index.js';
 
-class SecurityHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class SecurityHelper extends BaseHelper {
   /**
    * @param {string} email
    * @param {string} password

@@ -16,6 +16,7 @@ class BaseEntity {
     return this.#client;
   }
 
+  /** @internal */
   patch (newData, oldData = null) {
     oldData = oldData || this;
 

@@ -1,3 +1,4 @@
+
 export enum AdminAction {
   /**
    * User has no power in the channel
@@ -116,6 +117,7 @@ export enum ChannelMemberCapability {
    */
   CO_OWNER = 64
 }
+
 export enum ChannelMemberListType {
   PRIVILEGED = 'privileged',
   REGULAR = 'regular',
@@ -285,7 +287,7 @@ export enum UserFollowerType {
   FOLLOWER = 'follower'
 }
 
-export enum UserPresence {
+export enum OnlineState {
   /**
    * User is offline
    */
@@ -348,3 +350,34 @@ export enum WOLFStarTalent {
   COMEDY = 7,
   IMITATING_VOICES = 8
 }
+
+export type {
+  AdminAction,
+  Avatar,
+  AvatarType,
+  ChannelAudioSlotConnectionState,
+  ChannelEventType,
+  ChannelMemberCapability,
+  ChannelMemberListType,
+  ChannelVerificationTier,
+  ContextType,
+  DeviceType,
+  EmbedType,
+  Gender,
+  IconSize,
+  Language,
+  LoginType,
+  LookingFor,
+  MessageFilterTierLevel,
+  MessageType,
+  Relationship,
+  Search,
+  TipDirection,
+  TipPeriod,
+  TipType,
+  TopicPageRecipeType,
+  UserFollowerType,
+  OnlineState,
+  UserPrivilege,
+  WOLFStarTalent
+};

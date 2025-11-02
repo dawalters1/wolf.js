@@ -29,7 +29,7 @@ class EventChannelHelper extends BaseHelper {
     }
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     if (!opts?.forceNew && channel.eventStore.fetched) {
       return channel.eventStore.values();
@@ -79,7 +79,7 @@ class EventChannelHelper extends BaseHelper {
     }
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const responses = [];
 
@@ -124,11 +124,11 @@ class EventChannelHelper extends BaseHelper {
     }
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+    if (event === null) { throw new Error(`Event with ID ${eventId} Not Found`); }
 
     const responses = [];
 
@@ -173,11 +173,11 @@ class EventChannelHelper extends BaseHelper {
     }
     const channel = await this.client.channel.getById(channelId);
 
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
     const event = await this.client.event.getById(eventId);
 
-    if (event === null) { throw new Error(`Event with ID ${eventId} not found`); }
+    if (event === null) { throw new Error(`Event with ID ${eventId} Not Found`); }
 
     return await this.client.websocket.emit(
       Command.GROUP_EVENT_UPDATE,

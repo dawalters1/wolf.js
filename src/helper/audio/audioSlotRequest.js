@@ -1,13 +1,10 @@
+import BaseHelper from '../baseHelper.js';
 import ChannelAudioSlotRequest from '../../entities/channelAudioSlotRequest.js';
 import { ChannelMemberCapability } from '../../constants/index.js';
 import { Command } from '../../constants/Command.js';
 import { validate } from '../../validator/index.js';
 
-class AudioSlotRequestHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class AudioSlotRequestHelper extends BaseHelper {
   async list (channelId, opts) {
     channelId = Number(channelId) || channelId;
 
@@ -23,7 +20,7 @@ class AudioSlotRequestHelper {
     }
 
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${channelId}`); }
 
     const audioConfig = await channel.getAudioConfig();
@@ -71,7 +68,7 @@ class AudioSlotRequestHelper {
         .isGreaterThan(0, `AudioSlotRequestHelper.add() parameter, userId: ${userId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${channelId}`); }
 
     const audioConfig = await channel.getAudioConfig();
@@ -83,7 +80,7 @@ class AudioSlotRequestHelper {
       if (!channel.hasCapability(ChannelMemberCapability.MOD)) { throw new Error('Bot lacks Channel Capabilities to add slot request'); }
 
       const slot = slots[slotId - 1] ?? null;
-      if (slot === null) { throw new Error(`Slot with ID ${slotId} not found`); }
+      if (slot === null) { throw new Error(`Slot with ID ${slotId} Not Found`); }
       if (slot.isLocked) { throw new Error(`Slot with ID ${slotId} is locked`); }
       if (slots.some((slot) => slot.userId === userId)) { throw new Error(`Channel Member ${userId} already occupies a slot in Channel with ID ${channelId}`); }
       if (slots.some((slot) => slot.reservation?.userId === userId)) { throw new Error(`User with ID ${userId} already has a slot reservation in Channel with ID ${channelId}`); }
@@ -133,7 +130,7 @@ class AudioSlotRequestHelper {
         .isGreaterThan(0, `AudioSlotRequestHelper.remove() parameter, slotId: ${slotId} is less than or equal to zero`);
     }
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${channelId}`); }
 
     const audioConfig = await channel.getAudioConfig();
@@ -144,7 +141,7 @@ class AudioSlotRequestHelper {
 
       const slots = await channel.audioSlots();
       const slot = slots.find(s => s.id === slotId) ?? null;
-      if (slot === null) { throw new Error(`Slot with id ${slotId} not found`); }
+      if (slot === null) { throw new Error(`Slot with id ${slotId} Not Found`); }
       if (!slot.reservation?.userId) { throw new Error(`Slot with id ${slotId} does not have a reservation`); }
 
       return await this.client.websocket.emit(
@@ -177,7 +174,7 @@ class AudioSlotRequestHelper {
 
   async clear (channelId) {
     const channel = await this.client.channel.getById(channelId);
-    if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
+    if (channel === null) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${channelId}`); }
 
     const audioConfig = await channel.getAudioConfig();
