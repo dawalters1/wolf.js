@@ -1,7 +1,7 @@
 import { parentPort } from 'node:worker_threads';
 import { performance } from 'node:perf_hooks';
 
-// Configuration defaults
+/** ---------------- CONFIG & CONSTANTS ---------------- **/
 let config = {
   frameDurationMs: 10,
   sampleRate: 48000,
@@ -9,205 +9,236 @@ let config = {
   frames: 480,
   maxQueueSize: 100,
   maxDriftMs: 5,
-  minPreloadFrames: 3
+  minPreloadFrames: 3,
+  statsIntervalMs: 1000
 };
 
-// Worker state
+const VOLUME_PRECISION_BITS = 15;
+
+/** ---------------- CIRCULAR QUEUE ---------------- **/
+class CircularQueue {
+  constructor (maxSize) {
+    this.queue = new Array(maxSize);
+    this.start = 0;
+    this.end = 0;
+    this.size = 0;
+    this.maxSize = maxSize;
+  }
+
+  enqueue = (item) => {
+    if (this.size === this.maxSize) { this.start = (this.start + 1) % this.maxSize; }
+    this.queue[this.end] = item;
+    this.end = (this.end + 1) % this.maxSize;
+    this.size = Math.min(this.size + 1, this.maxSize);
+  };
+
+  dequeue = () => {
+    if (this.size === 0) { return null; }
+    const item = this.queue[this.start];
+    this.start = (this.start + 1) % this.maxSize;
+    this.size--;
+    return item;
+  };
+
+  get length () { return this.size; }
+
+  clear = () => {
+    this.start = this.end = this.size = 0;
+  };
+}
+
+/** ---------------- STATE ---------------- **/
 const state = {
-  bufferQueue: [],
+  bufferQueue: new CircularQueue(config.maxQueueSize),
   processing: false,
   paused: false,
   shutdown: false,
   underrunCount: 0,
-  nextFrameTime: 0,
+  nextFrameTimeMs: 0,
   volume: 1,
   muted: false
 };
 
-// Fixed-point precision for volume
-const VOLUME_PRECISION_BITS = 15;
+/** ---------------- UTILITIES ---------------- **/
+const clampInt16 = (value) => Math.min(32767, Math.max(-32768, Math.round(value)));
 
-// Clamp to 16-bit signed integer
-function clampInt16 (value) {
-  return Math.min(32767, Math.max(-32768, Math.round(value)));
-}
-
-// Apply volume in-place
-function applyVolume (samples, volume, muted) {
-  if (muted || volume === 0) {
-    samples.fill(0);
-    return;
-  }
-
+const applyVolume = (samples, volume, muted) => {
+  if (muted || volume === 0) { return samples.fill(0); }
   if (volume === 1) { return; }
 
   const volumeFixed = Math.round(volume * (1 << VOLUME_PRECISION_BITS));
   for (let i = 0; i < samples.length; i++) {
     samples[i] = clampInt16((samples[i] * volumeFixed) >> VOLUME_PRECISION_BITS);
   }
-}
+};
 
-// Validate audio frame
-function validateAudioFrame (data) {
+const validateAudioFrame = (data) => {
   if (!data || typeof data !== 'object') { return false; }
   if (!(data.samples instanceof Int16Array)) { return false; }
   if (typeof data.sampleRate !== 'number' || data.sampleRate <= 0) { return false; }
   if (typeof data.channelCount !== 'number' || data.channelCount <= 0) { return false; }
   if (typeof data.numberOfFrames !== 'number' || data.numberOfFrames <= 0) { return false; }
+  return data.samples.length === data.numberOfFrames * data.channelCount;
+};
 
-  const expectedSamples = data.numberOfFrames * data.channelCount;
-  return data.samples.length === expectedSamples;
-}
+const calculateFrameDuration = (sampleRate, frames) => (frames / sampleRate) * 1000;
 
-// Calculate frame duration in ms
-function calculateFrameDuration (sampleRate, frames) {
-  return (frames / sampleRate) * 1000;
-}
+const safePostError = (msg, error) => {
+  parentPort?.postMessage({
+    type: 'error',
+    error: `${msg}: ${error.stack || error.message}`
+  });
+};
 
-// Initialize worker
-function initialize (newConfig) {
-  if (newConfig && typeof newConfig === 'object') {
-    config = { ...config, ...newConfig };
+/** ---------------- INITIALIZATION ---------------- **/
+const initialize = (newConfig) => {
+  try {
+    if (newConfig && typeof newConfig === 'object') {
+      config = { ...config, ...newConfig };
+      state.bufferQueue = new CircularQueue(config.maxQueueSize);
+    }
+    config.frameDurationMs = calculateFrameDuration(config.sampleRate, config.frames);
+    state.nextFrameTimeMs = performance.now();
+    state.paused = false;
+    state.processing = false;
+    state.underrunCount = 0;
+
+    parentPort?.postMessage({ type: 'initialized', config });
+  } catch (err) {
+    safePostError('Initialization failed', err);
   }
-  config.frameDurationMs = calculateFrameDuration(config.sampleRate, config.frames);
+};
 
-  state.nextFrameTime = performance.now();
-  state.bufferQueue.length = 0;
-  state.processing = false;
-  state.paused = false;
-  state.underrunCount = 0;
+/** ---------------- AUDIO QUEUE ---------------- **/
+const enqueueAudioData = (data) => {
+  try {
+    if (!validateAudioFrame(data)) {
+      parentPort?.postMessage({ type: 'error', error: 'Invalid audio frame data' });
+      return;
+    }
+    state.bufferQueue.enqueue(data);
 
-  parentPort?.postMessage({ type: 'initialized', config: { ...config } });
-}
-
-// Enqueue audio data
-function enqueueAudioData (data) {
-  if (!validateAudioFrame(data)) {
-    parentPort?.postMessage({ type: 'error', error: 'Invalid audio frame data' });
-    return;
+    if (!state.processing && !state.paused && state.bufferQueue.length >= config.minPreloadFrames) {
+      startProcessing();
+    }
+  } catch (err) {
+    safePostError('Enqueue failed', err);
   }
+};
 
-  if (state.bufferQueue.length >= config.maxQueueSize) {
-    state.bufferQueue.shift(); // drop oldest frame
+/** ---------------- SETTINGS ---------------- **/
+const updateSettings = (settings) => {
+  try {
+    if (!settings || typeof settings !== 'object') { return; }
+    if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 2) {
+      state.volume = settings.volume;
+    }
+    if (typeof settings.muted === 'boolean') { state.muted = settings.muted; }
+  } catch (err) {
+    safePostError('Settings update failed', err);
   }
+};
 
-  state.bufferQueue.push(data);
-
-  if (!state.processing && !state.paused && state.bufferQueue.length >= config.minPreloadFrames) {
-    startProcessing();
-  }
-}
-
-// Update settings
-function updateSettings (settings) {
-  if (!settings || typeof settings !== 'object') { return; }
-
-  if (typeof settings.volume === 'number' && settings.volume >= 0 && settings.volume <= 2) {
-    state.volume = settings.volume;
-  }
-
-  if (typeof settings.muted === 'boolean') {
-    state.muted = settings.muted;
-  }
-}
-
-// Pause/resume
-function pauseProcessing () {
-  state.paused = true;
-  state.processing = false;
-}
-
-function resumeProcessing () {
-  state.paused = false;
-  if (!state.processing && state.bufferQueue.length >= config.minPreloadFrames) {
-    startProcessing();
-  }
-}
-
-// Start processing loop
-function startProcessing () {
+/** ---------------- PROCESSING LOOP ---------------- **/
+const startProcessing = () => {
   if (state.processing || state.shutdown) { return; }
   state.processing = true;
-  setImmediate(processNext);
-}
+  requestNextFrame();
+};
 
-// Process next frame
-function processNext () {
-  if (state.paused || state.shutdown) {
-    state.processing = false;
-    return;
-  }
-
-  if (state.bufferQueue.length === 0) {
-    handleUnderrun();
-    return;
-  }
-
+const requestNextFrame = () => {
+  if (state.paused || state.shutdown) { return; }
   const now = performance.now();
-  if (now < state.nextFrameTime) {
-    setTimeout(processNext, Math.max(0, state.nextFrameTime - now));
-    return;
+  const delay = Math.max(0, state.nextFrameTimeMs - now);
+  setTimeout(processNext, delay);
+};
+
+const processNext = () => {
+  try {
+    if (state.paused || state.shutdown) {
+      state.processing = false;
+      return;
+    }
+
+    const data = state.bufferQueue.dequeue();
+    if (!data) { return handleUnderrun(); }
+
+    const samples = new Int16Array(data.samples);
+    applyVolume(samples, state.volume, state.muted);
+
+    parentPort?.postMessage({ type: 'audioFrame', data: { ...data, samples } });
+
+    state.nextFrameTimeMs += config.frameDurationMs;
+    if (performance.now() > state.nextFrameTimeMs + config.maxDriftMs) {
+      state.nextFrameTimeMs = performance.now() + config.frameDurationMs;
+    }
+
+    requestNextFrame();
+  } catch (err) {
+    safePostError('Frame processing failed', err);
+    setTimeout(processNext, config.frameDurationMs);
   }
+};
 
-  const data = state.bufferQueue.shift();
-
-  // Process in-place
-  applyVolume(data.samples, state.volume, state.muted);
-
-  parentPort?.postMessage({ type: 'audioFrame', data });
-
-  // Smooth drift correction
-  const drift = now - state.nextFrameTime;
-  if (Math.abs(drift) > config.maxDriftMs) {
-    state.nextFrameTime += drift * 0.1;
-  } else {
-    state.nextFrameTime += config.frameDurationMs;
-  }
-
-  setImmediate(processNext);
-}
-
-// Handle underrun
-function handleUnderrun () {
+/** ---------------- UNDERRUN ---------------- **/
+const handleUnderrun = () => {
   state.underrunCount++;
   state.processing = false;
   parentPort?.postMessage({ type: 'underrun', count: state.underrunCount });
-}
+};
 
-// Shutdown worker
-function shutdown () {
+/** ---------------- PAUSE / RESUME ---------------- **/
+const pauseProcessing = () => { state.paused = true; state.processing = false; };
+const resumeProcessing = () => {
+  state.paused = false;
+  if (!state.processing && state.bufferQueue.length >= config.minPreloadFrames) { startProcessing(); }
+};
+
+/** ---------------- SHUTDOWN ---------------- **/
+const shutdown = () => {
   state.shutdown = true;
   state.processing = false;
-  state.bufferQueue.length = 0;
+  state.bufferQueue.clear();
   parentPort?.postMessage({ type: 'shutdown' });
+};
+
+/** ---------------- STATS MONITORING ---------------- **/
+if (config.statsIntervalMs > 0) {
+  setInterval(() => {
+    parentPort?.postMessage({
+      type: 'stats',
+      queueLength: state.bufferQueue.length,
+      underrunCount: state.underrunCount,
+      nextFrameTimeMs: state.nextFrameTimeMs
+    });
+  }, config.statsIntervalMs);
 }
 
-// Message handler
-function handleMessage (msg) {
-  if (!msg || typeof msg.type !== 'string') {
-    parentPort?.postMessage({ type: 'error', error: 'Invalid message format' });
-    return;
+/** ---------------- MESSAGE HANDLER ---------------- **/
+const handleMessage = (msg) => {
+  try {
+    if (!msg || typeof msg.type !== 'string') { return; }
+    switch (msg.type) {
+      case 'init': initialize(msg.config); break;
+      case 'enqueue': enqueueAudioData(msg.data); break;
+      case 'updateSettings': updateSettings(msg.settings); break;
+      case 'updateVolume':
+        if (typeof msg.volume === 'number') { updateSettings({ volume: msg.volume }); }
+        break;
+      case 'pause': pauseProcessing(); break;
+      case 'resume': resumeProcessing(); break;
+      case 'shutdown': shutdown(); break;
+      default:
+        parentPort?.postMessage({ type: 'error', error: `Unknown message type: ${msg.type}` });
+    }
+  } catch (err) {
+    safePostError('Message handling failed', err);
   }
+};
 
-  switch (msg.type) {
-    case 'init': initialize(msg.config); break;
-    case 'enqueue': enqueueAudioData(msg.data); break;
-    case 'updateSettings': updateSettings(msg.settings); break;
-    case 'pause': pauseProcessing(); break;
-    case 'resume': resumeProcessing(); break;
-    case 'shutdown': shutdown(); break;
-    case 'updateVolume':
-      if (typeof msg.volume === 'number') { updateSettings({ volume: msg.volume }); }
-      break;
-    default:
-      parentPort?.postMessage({ type: 'error', error: `Unknown message type: ${msg.type}` });
-  }
-}
-
-// Setup message handling
+/** ---------------- WORKER SETUP ---------------- **/
 if (parentPort) {
   parentPort.on('message', handleMessage);
-
-  process.on('uncaughtException', e => parentPort?.postMessage({ type: 'error', error: `Uncaught exception: ${e.message}` }));
-  process.on('unhandledRejection', r => parentPort?.postMessage({ type: 'error', error: `Unhandled rejection: ${r}` }));
+  process.on('uncaughtException', (err) => safePostError('Uncaught exception', err));
+  process.on('unhandledRejection', (reason) => safePostError('Unhandled rejection', reason));
 }

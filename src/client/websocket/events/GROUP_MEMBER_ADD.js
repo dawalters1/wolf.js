@@ -17,14 +17,14 @@ class GroupMemberAddEvent extends BaseEvent {
       return this.client.emit('joinedChannel', channel);
     }
 
-    const channel = this.client.channel.cache.get(data.groupId);
+    const channel = this.client.channel.store.get(data.groupId);
 
     if (channel === null) { return; }
 
     return this.client.emit(
       'channelMemberAdd',
       channel,
-      channel._members.set(
+      channel.memberStore.set(
         new ChannelMember(
           this.client,
           {

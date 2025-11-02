@@ -25,8 +25,8 @@ class ChannelRoleHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._roles.summaries.fetched) {
-      return channel._roles.summaries.values();
+    if (!opts?.forceNew && channel.roleStore.users.fetched) {
+      return channel.roleStore.users.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -38,13 +38,12 @@ class ChannelRoleHelper {
       }
     );
 
-    return response.body.map(serverGroupRole => {
-      const existing = channel._roles.summaries.get(serverGroupRole);
-
-      return channel._roles.summaries.set(
-        existing?.patch(serverGroupRole) ?? new ChannelRole(this.client, serverGroupRole)
-      );
-    });
+    return response.body.map(
+      (serverGroupRole) =>
+        channel.roleStore.users.set(
+          new ChannelRole(this.client, serverGroupRole)
+        )
+    );
   }
 
   async users (channelId, opts) {
@@ -64,8 +63,8 @@ class ChannelRoleHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${channelId} not found`); }
 
-    if (!opts?.forceNew && channel._roles.users.fetched) {
-      return channel._roles.users.values();
+    if (!opts?.forceNew && channel.roleStore.users.fetched) {
+      return channel.roleStore.users.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -78,12 +77,15 @@ class ChannelRoleHelper {
       }
     );
 
-    return response.body.map(serverGroupRoleUser => {
-      const existing = channel._roles.users.get(serverGroupRoleUser.subscriberId);
+    return response.body.map(
+      (serverGroupRoleUser) => {
+        serverGroupRoleUser.groupId = channelId;
 
-      return channel._roles.users.set(
-        existing?.patch(serverGroupRoleUser) ?? new ChannelRoleUser(this.client, serverGroupRoleUser));
-    });
+        return channel.roleStore.users.set(
+          new ChannelRoleUser(this.client, serverGroupRoleUser)
+        );
+      }
+    );
   }
 
   async assign (channelId, userId, roleId) {

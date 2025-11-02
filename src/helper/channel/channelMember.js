@@ -12,8 +12,8 @@ class ChannelMemberHelper {
   }
 
   async _getList (channel, list) {
-    if (channel._members.metadata[list]) {
-      return channel._members.values().filter(m => m.lists.has(list));
+    if (channel.memberStore.metadata[list]) {
+      return channel.memberStore.filter((member) => member.lists.has(list));
     }
 
     const listConfig = this.client.config.get(`framework.helper.channel.member.list.${list}`);
@@ -48,22 +48,20 @@ class ChannelMemberHelper {
           }
         );
 
-        result.push(...response.body.map(serverMember => {
-          serverMember.channelId = channel.id;
-
-          const existing = channel._members.get(serverMember);
-
-          return channel._members.set(
-            existing?.patch(serverMember, list) ?? new ChannelMember(this.client, serverMember, list),
-            response.headers?.maxAge
-          );
-        }));
+        result.push(...response.body.map(
+          (serverMember) =>
+            channel.memberStore.set(
+              new ChannelMember(this.client, serverMember, channel.id, list),
+              response.headers?.maxAge
+            )
+        )
+        );
 
         const complete = listConfig.batched
           ? response.body.length < listConfig.limit
           : true;
 
-        channel._members.metadata[list] = complete;
+        channel.memberStore.metadata[list] = complete;
 
         return complete
           ? result
@@ -98,8 +96,8 @@ class ChannelMemberHelper {
         .isGreaterThan(0, `ChannelMemberHelper.getList() parameter, channelId: ${channelId} is less than or equal to zero`);
 
       validate(list)
-        .isNotNullOrUndefined(`AchievementHelper.getList() parameter, list: ${list} is null or undefined`)
-        .isValidConstant(ChannelMemberListType, `AchievementHelper.getList() parameter, list: ${list} is not valid`);
+        .isNotNullOrUndefined(`ChannelMemberHelper.getList() parameter, list: ${list} is null or undefined`)
+        .isValidConstant(ChannelMemberListType, `ChannelMemberHelper.getList() parameter, list: ${list} is not valid`);
     }
     const channel = await this.client.channel.getById(channelId);
     if (!channel) { throw new Error(`Channel ${channelId} not found`); }
@@ -126,7 +124,7 @@ class ChannelMemberHelper {
     if (!channel) { throw new Error(`Channel ${channelId} not found`); }
     if (!channel.isMember) { throw new Error(`Not a member of channel ${channelId}`); }
 
-    const cached = channel._members.get(userId);
+    const cached = channel.memberStore.get(userId);
     if (cached) { return cached; }
 
     try {
@@ -140,14 +138,14 @@ class ChannelMemberHelper {
         }
       );
 
-      return channel._members.set(
+      return channel.memberStore.set(
         new ChannelMember(
           this.client,
           {
             ...response.body,
-            channelId,
             hash: (await this.client.user.getById(userId)).hash
-          }
+          },
+          channelId
         )
       );
     } catch (err) {

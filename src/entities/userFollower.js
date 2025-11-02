@@ -7,12 +7,6 @@ export class UserFollower extends BaseEntity {
     this.followerId = entity.followerId;
     this.hash = entity.hash;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.followerId = entity.followerId;
-    this.hash = entity.hash;
-  }
 }
 
 export default UserFollower;

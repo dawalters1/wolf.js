@@ -7,14 +7,6 @@ export class AchievementCategory extends BaseEntity {
     this.id = entity.id;
     this.name = entity.name;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.name = entity.name;
-
-    return this;
-  }
 }
 
 export default AchievementCategory;

@@ -7,14 +7,6 @@ class CharmStatisticExtended extends BaseEntity {
     this.mostGiftedReceivedCharmId = entity.mostGiftedReceivedCharmId;
     this.mostGiftedSentCharmId = entity.mostGiftedSentCharmId;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.mostGiftedReceivedCharmId = entity.mostGiftedReceivedCharmId;
-    this.mostGiftedSentCharmId = entity.mostGiftedSentCharmId;
-
-    return this;
-  }
 }
 
 export default CharmStatisticExtended;

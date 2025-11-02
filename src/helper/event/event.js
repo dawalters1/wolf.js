@@ -6,11 +6,21 @@ import EventSubscriptionHelper from './eventSubscription.js';
 import { validate } from '../../validator/index.js';
 
 class EventHelper extends BaseHelper {
+  #channel;
+  #subscription;
   constructor (client) {
     super(client);
 
-    this.channel = new EventChannelHelper(client);
-    this.subscription = new EventSubscriptionHelper(client);
+    this.#channel = new EventChannelHelper(client);
+    this.#subscription = new EventSubscriptionHelper(client);
+  }
+
+  get channel () {
+    return this.#channel;
+  }
+
+  get subscription () {
+    return this.#subscription;
   }
 
   async getById (eventId, opts) {
@@ -46,15 +56,9 @@ class EventHelper extends BaseHelper {
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'EventHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
 
-    const eventsMap = new Map();
-
-    if (!opts?.forceNew) {
-      const cachedEvents = eventIds.map((eventId) => this.cache.get(eventId))
-        .filter((event) => event !== null);
-      cachedEvents.forEach(event => eventsMap.set(event.id, event));
-    }
-
-    const idsToFetch = eventIds.filter(id => !eventsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? eventIds
+      : eventIds.filter((eventId) => !this.store.has((event) => event.id === eventId));
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -67,22 +71,22 @@ class EventHelper extends BaseHelper {
         }
       );
 
-      [...response.body.values()]
-        .filter(eventResponse => eventResponse.success)
-        .forEach(eventResponse => {
-          const existing = this.cache.get(eventResponse.body.id);
+      for (const [index, eventResponse] of response.body.entries()) {
+        const eventId = idsToFetch[index];
 
-          eventsMap.set(
-            eventResponse.body.id,
-            this.cache.set(
-              existing?.patch(eventResponse.body) ?? new Event(this.client, eventResponse.body),
-              response.headers?.maxAge
-            )
-          );
-        });
+        if (!eventResponse.success) {
+          this.store.delete((event) => event.id === eventId);
+          continue;
+        }
+        this.store.set(
+          new Event(this.client, eventResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
-
-    return eventIds.map(eventId => eventsMap.get(eventId) ?? null);
+    return eventIds.map((eventId) =>
+      this.store.get((event) => event.id === eventId)
+    );
   }
 }
 

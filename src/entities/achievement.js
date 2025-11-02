@@ -6,15 +6,15 @@ class Achievement extends BaseEntity {
 
     this.id = entity.id;
     this.languageId = entity.languageId;
-    this.parentId = entity.parentId;
-    this.typeId = entity.typeId;
-    this.name = entity.name;
-    this.description = entity.description;
-    this.imageUrl = entity.imageUrl;
-    this.category = entity.category;
-    this.levelId = entity.levelId;
-    this.levelName = entity.levelName;
-    this.acquisitionPercentage = entity.acquisitionPercentage;
+    this.parentId = entity.parentId ?? null;
+    this.typeId = entity.typeId ?? null;
+    this.name = entity.name ?? null;
+    this.description = entity.description ?? null;
+    this.imageUrl = entity.imageUrl ?? null;
+    this.category = entity.category ?? null;
+    this.levelId = entity.levelId ?? null;
+    this.levelName = entity.levelName ?? null;
+    this.acquisitionPercentage = entity.acquisitionPercentage ?? null;
   }
 }
 

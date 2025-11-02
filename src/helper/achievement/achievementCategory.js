@@ -19,9 +19,9 @@ class AchievementCategoryHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cachedAchievementCategories = this.cache.values().filter((achievementCategory) => achievementCategory.languageId === languageId);
+      const cachedAchievementCategories = this.store.filter((category) => category.languageId === languageId);
 
-      if (cachedAchievementCategories.languageId) {
+      if (cachedAchievementCategories.length) {
         return cachedAchievementCategories;
       }
     }
@@ -35,14 +35,12 @@ class AchievementCategoryHelper extends BaseHelper {
       }
     );
 
-    return response.body.map((serverAchievementCategory) => {
-      const existing = this.cache.get(serverAchievementCategory.body.id, languageId);
-
-      return this.cache.set(
-        existing?.patch(serverAchievementCategory) ?? new AchievementCategory(this.client, serverAchievementCategory),
+    return response.body.map((serverAchievementCategory) =>
+      this.store.set(
+        new AchievementCategory(this.client, serverAchievementCategory),
         response.headers?.maxAge
-      );
-    });
+      )
+    );
   }
 }
 

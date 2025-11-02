@@ -13,7 +13,7 @@ class SubscriberContactAddEvent extends BaseEvent {
 
     this.client.emit(
       'contactAdd',
-      this.client.contact.cache.set(new Contact(this.client, user))
+      this.client.contact.store.set(new Contact(this.client, user))
     );
   }
 }

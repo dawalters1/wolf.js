@@ -8,15 +8,6 @@ export class ChannelRole extends BaseEntity {
     this.userIdList = new Set(entity.subscriberIdList);
     this.maxSeats = entity.maxSeats;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.roleId = entity.roleId;
-    this.userIdList = new Set(entity.subscriberIdList);
-    this.maxSeats = entity.maxSeats;
-
-    return this;
-  }
 }
 
 export default ChannelRole;

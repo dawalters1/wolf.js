@@ -98,7 +98,10 @@ class TipHelper extends BaseHelper {
           : await get(results);
       };
 
-      return (await get()).map((serverTipDetails) => new TipDetail(this.client, serverTipDetails));
+      return (await get())
+        .map((serverTipDetails) =>
+          new TipDetail(this.client, serverTipDetails)
+        );
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) {
         return null;
@@ -142,6 +145,7 @@ class TipHelper extends BaseHelper {
         .isValidNumber('TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is not a valid number')
         .isGreaterThan(0, 'TipHelper.getSummaries() parameter, timestamp[{index}]: {value} is less than or equal to zero');
     }
+
     const response = await this.client.websocket.emit(
       Command.TIP_SUMMARY,
       {
@@ -154,9 +158,11 @@ class TipHelper extends BaseHelper {
     );
 
     return [...response.body.entries()]
-      .map(([, tipSummaryResponse]) => tipSummaryResponse.success
-        ? new TipSummary(this.client, tipSummaryResponse.body)
-        : null);
+      .map(([, serverTipSummaryResponse]) =>
+        serverTipSummaryResponse.success
+          ? new TipSummary(this.client, serverTipSummaryResponse.body)
+          : null
+      );
   }
 
   async getChannelLeaderboard (channelId, tipPeriod, tipType, tipDirection) {

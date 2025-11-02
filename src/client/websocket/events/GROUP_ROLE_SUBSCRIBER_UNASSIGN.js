@@ -6,15 +6,18 @@ class GroupRoleSubscriberUnassignEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.id);
+    const channel = this.client.channel.store.get(data.id);
+    const user = this.client.user.store.get(data.additionalInfo.subscriberId);
+
+    if (user) { user.roleStore.clear(); }
 
     if (channel === null) { return; }
 
-    const role = channel._roles.summaries.get(data.additionalInfo.roleId);
+    const role = channel.roleStore.users.get(data.additionalInfo.roleId);
 
     role?.userIdList?.delete(data.additionalInfo.subscriberId);
 
-    const wasDeleted = channel._roles.users.delete(data.additionalInfo.subscriberId);
+    const wasDeleted = channel.roleStore.users.delete((channelRoleUser) => channelRoleUser.userId === data.additionalInfo.subscriberId && channelRoleUser.roleId === data.additionalInfo.roleId);
 
     if (wasDeleted === false) { return; }
 

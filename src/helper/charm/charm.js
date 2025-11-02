@@ -48,15 +48,14 @@ class CharmHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ forceNew: Boolean }, 'CharmHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const charmsMap = new Map();
 
-    if (!opts?.forceNew) {
-      const cachedCharms = charmIds.map((charmId) => this.cache.get(charmId, languageId))
-        .filter(charm => charm !== null);
-      cachedCharms.forEach(charm => charmsMap.set(charm.id, charm));
-    }
-
-    const idsToFetch = charmIds.filter(id => !charmsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? charmIds
+      : charmIds.filter(
+        (charmId) => !this.store.has(
+          (charm) => charm.id === charmId && charm.languageId === languageId
+        )
+      );
 
     if (idsToFetch.length > 0) {
       const response = await this.client.websocket.emit(
@@ -69,21 +68,24 @@ class CharmHelper extends BaseHelper {
         }
       );
 
-      [...response.body.values()].filter(charmResponse => charmResponse.success)
-        .forEach(charmResponse => {
-          const existing = this.cache.get(charmResponse.body.id);
+      for (const [index, charmResponse] of response.body.entries()) {
+        const charmId = idsToFetch[index];
 
-          charmsMap.set(
-            charmResponse.body.id,
-            this.cache.set(
-              existing?.patch(charmResponse.body) ?? new Charm(this.client, charmResponse.body),
-              response.headers?.maxAge
-            )
-          );
-        });
+        if (!charmResponse.success) {
+          this.store.delete((charm) => charm.id === charmId && charm.languageId === languageId);
+          continue;
+        }
+
+        this.store.set(
+          new Charm(this.client, charmResponse.body),
+          response.headers?.maxAge
+        );
+      }
     }
 
-    return charmIds.map(id => charmsMap.get(id) ?? null);
+    return charmIds.map((charmId) =>
+      this.store.get((charm) => charm.id === charmId && charm.languageId === languageId)
+    );
   }
 
   async getUserSummary (userId, opts) {
@@ -106,8 +108,8 @@ class CharmHelper extends BaseHelper {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user._charmSummary.fetched) {
-      return user._charmSummary.values();
+    if (!opts?.forceNew && user.charmSummaryStore.fetched) {
+      return user.charmSummaryStore.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -119,14 +121,15 @@ class CharmHelper extends BaseHelper {
       }
     );
 
-    user._charmSummary.fetched = true;
+    user.charmSummaryStore.fetched = true;
 
-    return response.body.map(serverCharmSummary => {
-      const existing = user._charmSummary.get(serverCharmSummary.charmId);
-
-      return user._charmSummary.set(
-        existing?.patch(serverCharmSummary) ?? new CharmSummary(this.client, serverCharmSummary));
-    });
+    return response.body.map(
+      (serverCharmSummary) =>
+        user.charmSummaryStore.set(
+          new CharmSummary(this.client, serverCharmSummary),
+          response.headers?.maxAge
+        )
+    );
   }
 
   async getUserStatistics (userId, opts) {
@@ -148,8 +151,8 @@ class CharmHelper extends BaseHelper {
       throw new Error(`User with ID ${userId} not found`);
     }
 
-    if (!opts?.forceNew && user._charmStatistics.fetched) {
-      return user._charmStatistics.value;
+    if (!opts?.forceNew && user.charmStatisticsStore.fetched) {
+      return user.charmStatisticsStore.value;
     }
 
     const response = await this.client.websocket.emit(
@@ -162,9 +165,9 @@ class CharmHelper extends BaseHelper {
       }
     );
 
-    user._charmStatistics.value = user._charmStatistics.value?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
+    user.charmStatisticsStore.value = user.charmStatisticsStore.value?.patch(response.body) ?? new CharmStatistic(this.client, response.body);
 
-    return user._charmStatistics.value;
+    return user.charmStatisticsStore.value;
   }
 }
 

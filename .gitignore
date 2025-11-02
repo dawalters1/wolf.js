@@ -102,4 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+
+test/integration/fixtures/details.json
+
 © 2021 GitHub, Inc.

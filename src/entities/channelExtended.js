@@ -13,29 +13,15 @@ class ChannelExtended extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.discoverable = entity.discoverable;
-    this.advancedAdmin = entity.advancedAdmin;
-    this.locked = entity.locked;
-    this.questionable = entity.questionable;
-    this.entryLevel = entity.entryLevel;
-    this.passworded = entity.passworded;
-    this.language = entity.language;
+    this.discoverable = entity.discoverable ?? false;
+    this.advancedAdmin = entity.advancedAdmin ?? false;
+    this.locked = entity.locked ?? false;
+    this.hub = entity?.hub;
+    this.questionable = entity.questionable ?? false;
+    this.entryLevel = entity.entryLevel ?? 0;
+    this.passworded = entity.passworded ?? false;
+    this.language = entity.language ?? null;
     this.longDescription = entity.longDescription || null;
-  }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.discoverable = entity.discoverable;
-    this.advancedAdmin = entity.advancedAdmin;
-    this.locked = entity.locked;
-    this.questionable = entity.questionable;
-    this.entryLevel = entity.entryLevel;
-    this.passworded = entity.passworded;
-    this.language = entity.language;
-    this.longDescription = entity.longDescription || null;
-
-    return this;
   }
 }
 

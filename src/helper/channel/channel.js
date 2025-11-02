@@ -13,11 +13,27 @@ import { StatusCodes } from 'http-status-codes';
 import { validate } from '../../validator/index.js';
 
 class ChannelHelper extends BaseHelper {
+  #category;
+  #member;
+  #roles;
   constructor (client) {
     super(client);
-    this.category = new ChannelCategoryHelper(client);
-    this.member = new ChannelMemberHelper(client);
-    this.role = new ChannelRoleHelper(client);
+
+    this.#category = new ChannelCategoryHelper(client);
+    this.#member = new ChannelMemberHelper(client);
+    this.#roles = new ChannelRoleHelper(client);
+  }
+
+  get category () {
+    return this.#category;
+  }
+
+  get member () {
+    return this.#member;
+  }
+
+  get roles () {
+    return this.#roles;
   }
 
   async getById (channelId, opts) {
@@ -53,15 +69,11 @@ class ChannelHelper extends BaseHelper {
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.getByIds() parameter, opts.{parameter}: {value} {error}');// TODO: entities
     }
 
-    const channelsMap = new Map();
-
-    if (!opts?.forceNew) {
-      const cachedChannels = channelIds.map((channelId) => this.cache.get(channelId))
-        .filter((channel) => channel !== null);
-      cachedChannels.forEach(channel => channelsMap.set(channel.id, channel));
-    }
-
-    const idsToFetch = channelIds.filter(id => !channelsMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? channelIds
+      : channelIds.filter((channelId) =>
+        !this.store.has((channel) => channel.id === channelId)
+      );
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -78,21 +90,24 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      for (const [channelId, channelResponse] of response.body.entries()) {
-        if (!channelResponse.success) { continue; }
-        const existing = this.cache.get(channelId);
+      for (const [index, channelResponse] of response.body.entries()) {
+        const channelId = idsToFetch[index];
 
-        channelsMap.set(
-          channelId,
-          this.cache.set(
-            existing?.patch(channelResponse.body) ?? new Channel(this.client, channelResponse.body),
-            response.headers?.maxAge
-          )
+        if (!channelResponse.success) {
+          this.store.delete((channel) => channel.id === channelId);
+          continue;
+        }
+
+        this.store.set(
+          new Channel(this.client, channelResponse.body),
+          response.headers?.maxAge
         );
       }
     }
 
-    return channelIds.map(id => channelsMap.get(id) ?? null);
+    return channelIds.map((channelId) =>
+      this.store.get((channel) => channel.id === channelId)
+    );
   }
 
   async getByName (name, opts) {
@@ -107,7 +122,8 @@ class ChannelHelper extends BaseHelper {
     }
 
     if (!opts?.forceNew) {
-      const cached = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
+      const cached = this.store.find((channel) => channel.name.toLowerCase() === name.toLowerCase());
+
       if (cached) { return cached; }
     }
 
@@ -126,12 +142,7 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      const existing = [...this.cache.values()].find(channel => channel.name.toLowerCase().trim() === name.toLowerCase().trim()) ?? null;
-
-      return this.cache.set(
-        existing?.patch(response.body) ?? new Channel(this.client, response.body),
-        response.headers?.maxAge
-      );
+      return this.store.set(new Channel(this.client, response.body), response.headers?.maxAge);
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return null; }
       throw error;
@@ -184,7 +195,7 @@ class ChannelHelper extends BaseHelper {
         }
       );
 
-      return response.body?.map(serverMessage => new Message(this.client, serverMessage));
+      return response.body.map(serverMessage => new Message(this.client, serverMessage));
     } catch (error) {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
       throw error;
@@ -205,9 +216,9 @@ class ChannelHelper extends BaseHelper {
         .isValidObject({ forceNew: Boolean }, 'ChannelHelper.getStats() parameter, opts.{parameter}: {value} {error}');
     }
     const channel = await this.getById(channelId);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with ID ${channelId} Not Found`); }
 
-    if (!opts?.forceNew && channel._stats.fetched) { return channel.stats; }
+    if (!opts?.forceNew && channel.statsStore.fetched) { return channel.statsStore.value(); }
 
     const response = await this.client.websocket.emit(
       Command.GROUP_STATS,
@@ -218,7 +229,7 @@ class ChannelHelper extends BaseHelper {
       }
     );
 
-    channel._stats.value = channel.stats?.patch(response.body) ?? new ChannelStats(this.client, response.body);
+    channel.statsStore.value = new ChannelStats(this.client, response.body);
     return channel.stats;
   }
 
@@ -242,7 +253,7 @@ class ChannelHelper extends BaseHelper {
         .isNotEmptyOrWhitespace(`ChannelHelper.joinById() parameter, password: ${password} is empty or whitespace`);
     }
     const channel = await this.getById(channelId);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (channel.isMember) { throw new Error(`Already member of Channel with id ${channelId}`); }
 
     return this.client.websocket.emit(
@@ -268,7 +279,7 @@ class ChannelHelper extends BaseHelper {
         .isNotEmptyOrWhitespace(`ChannelHelper.joinByName() parameter, password: ${password} is empty or whitespace`);
     }
     const channel = await this.getByName(name);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with Name ${name} Not Found`); }
     if (channel.isMember) { throw new Error(`Already member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
@@ -292,7 +303,7 @@ class ChannelHelper extends BaseHelper {
         .isGreaterThan(0, `ChannelHelper.leaveById() parameter, channelId: ${channelId} is less than or equal to zero`);
     }
     const channel = await this.getById(channelId);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with ID ${channelId} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
@@ -312,7 +323,7 @@ class ChannelHelper extends BaseHelper {
         .isNotEmptyOrWhitespace(`ChannelHelper.leaveByName() parameter, name: ${name} is empty or whitespace`);
     }
     const channel = await this.getByName(name);
-    if (!channel) { throw new Error(); }
+    if (!channel) { throw new Error(`Channel with Name ${name} Not Found`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with id ${channel.id}`); }
 
     return this.client.websocket.emit(
@@ -333,8 +344,8 @@ class ChannelHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ChannelHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.cache.fetched) {
-      return [...this.cache.values()].filter(channel => channel.isMember);
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.filter((channel) => channel.isMember);
     }
 
     const response = await this.client.websocket.emit(
@@ -346,17 +357,20 @@ class ChannelHelper extends BaseHelper {
       }
     );
 
-    this.cache.fetched = true;
+    this.store.fetched = true;
 
     if (response.body.length) {
-      const channels = await this.getByIds(response.body.map(g => g.id));
-      channels.filter(Boolean).forEach((channel, i) => {
-        channel.isMember = true;
-        channel.capabilities = response.body[i].capabilities;
-      });
+      const channels = await this.getByIds(response.body.map((group) => group.id));
+
+      channels
+        .filter(Boolean)
+        .forEach((channel, index) => {
+          channel.isMember = true;
+          channel.capabilities = response.body[index].capabilities;
+        });
     }
 
-    return [...this.cache.values()].filter(channel => channel.isMember);
+    return this.store.filter((channel) => channel.isMember);
   }
 
   async search (query) {

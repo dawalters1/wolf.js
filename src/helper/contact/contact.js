@@ -5,9 +5,14 @@ import Contact from '../../entities/contact.js';
 import { validate } from '../../validator/index.js';
 
 class ContactHelper extends BaseHelper {
+  #blocked;
   constructor (client) {
     super(client);
-    this.blocked = new BlockedHelper(client);
+    this.#blocked = new BlockedHelper(client);
+  }
+
+  get blocked () {
+    return this.#blocked;
   }
 
   async list (opts) {
@@ -16,8 +21,8 @@ class ContactHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'ContactHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.cache.fetched) {
-      return this.cache.values();
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -29,16 +34,16 @@ class ContactHelper extends BaseHelper {
       }
     );
 
-    this.cache.fetched = true;
+    this.store.fetched = true;
+    this.store.clear();
 
-    return response.body.map(serverContact => {
-      const existing = this.cache.get(serverContact.id);
-
-      return this.cache.set(
-        existing?.patch(serverContact) ?? new Contact(this.client, serverContact),
-        response.headers?.maxAge
-      );
-    });
+    return response.body.map(
+      (serverContact) =>
+        this.store.set(
+          new Contact(this.client, serverContact),
+          response.headers?.maxAge
+        )
+    );
   }
 
   async isContact (userId) {
@@ -51,7 +56,7 @@ class ContactHelper extends BaseHelper {
         .isGreaterThan(0, `ContactHelper.isContact() parameter, userId: ${userId} is less than or equal to zero`);
     }
     await this.list();
-    return this.cache.has(userId);
+    return this.store.has(userId);
   }
 
   async add (userId) {

@@ -10,8 +10,9 @@ class BlockedHelper extends BaseHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'BlockedHelper.list() parameter, opts.{parameter}: {value} {error}');
     }
-    if (!opts?.forceNew && this.cache.fetched) {
-      return this.cache.values();
+
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.values();
     }
 
     const response = await this.client.websocket.emit(
@@ -23,16 +24,16 @@ class BlockedHelper extends BaseHelper {
       }
     );
 
-    this.cache.fetched = true;
+    this.store.fetched = true;
+    this.store.clear();
 
-    return response.body.map(serverContact => {
-      const existing = this.cache.get(serverContact.id);
-
-      return this.cache.set(
-        existing?.patch(serverContact) ?? new Contact(this.client, serverContact),
-        response.headers?.maxAge
-      );
-    });
+    return response.body.map(
+      (serverContact) =>
+        this.store.set(
+          new Contact(this.client, serverContact),
+          response.headers?.maxAge
+        )
+    );
   }
 
   async isBlocked (userId) {
@@ -46,7 +47,7 @@ class BlockedHelper extends BaseHelper {
     }
 
     await this.list();
-    return this.cache.has(userId);
+    return this.store.has(userId);
   }
 
   async block (userId) {

@@ -6,7 +6,7 @@ class GroupAudioCountUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const channel = this.client.channel.cache.get(data.id);
+    const channel = this.client.channel.store.get(data.id);
 
     if (channel === null) { return; }
 

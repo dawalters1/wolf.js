@@ -1,11 +1,9 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
+import UserPresence from '../../entities/userPresence.js';
 import { validate } from '../../validator/index.js';
 
-class UserPresenceHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class UserPresenceHelper extends BaseHelper {
   async getById (userId, opts) {
     userId = Number(userId) || userId;
 
@@ -38,7 +36,7 @@ class UserPresenceHelper {
         .isNotRequired()
         .isValidObject({ subscribe: Boolean, forceNew: Boolean }, 'UserPresenceHelper.getByIds() parameter, opts.{parameter}: {value} {error}');
     }
-    const presenceMap = new Map();
+
     const users = await this.client.user.getByIds(userIds);
 
     const missingUserIds = userIds.filter(
@@ -51,16 +49,12 @@ class UserPresenceHelper {
 
     const subscribe = opts?.subscribe ?? true;
 
-    if (!opts?.forceNew) {
-      const cachedPresence = users.filter(
-        (user) => user !== null && (subscribe
-          ? user._presence?.subscribed
-          : true)
-      );
-      cachedPresence.forEach((user) => presenceMap.set(user.id, user._presence));
-    }
-
-    const idsToFetch = userIds.filter((id) => !presenceMap.has(id));
+    const idsToFetch = opts?.forceNew
+      ? userIds
+      : userIds.filter((userId) => {
+        const user = users.find((user) => user.id === userId);
+        return !user || (subscribe && !user.presenceStore?.subscribed);
+      });
 
     if (idsToFetch.length) {
       const response = await this.client.websocket.emit(
@@ -73,19 +67,18 @@ class UserPresenceHelper {
         }
       );
 
-      [...response.body.entries()].filter(([, presenceResponse]) => presenceResponse.success)
-        .forEach(([userId, presenceResponse]) => {
-          const user = users.find((user) => user?.id === userId);
+      for (const [userId, presenceResponse] of response.body.entries()) {
+        if (!presenceResponse.success) {
+          continue;
+        }
 
-          if (user && user._presence) {
-            user._presence.patch(presenceResponse.body);
-            user._presence.subscribed = subscribe;
-            presenceMap.set(userId, user._presence);
-          }
-        });
+        const user = users.find((user) => user?.id === userId);
+
+        user.presenceStore = user.presenceStore?.patch(response.body, subscribe) ?? new UserPresence(this.client, presenceResponse.body, subscribe);
+      }
     }
 
-    return userIds.map((userId) => presenceMap.get(userId) ?? null);
+    return userIds.map((userId) => users.find((user) => user.id === userId).presenceStore ?? null);
   }
 }
 

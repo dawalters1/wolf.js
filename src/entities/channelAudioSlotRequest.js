@@ -14,17 +14,6 @@ export class ChannelAudioSlotRequest extends BaseEntity {
       this.reservedExpiresAt = new Date(entity.expiresAt);
     }
   }
-
-  /** @internal */
-  patch (entity) {
-    if ('reservedOccupierId' in entity) {
-      this.reservedUserId = entity.reservedOccupierId;
-      this.channelId = entity.groupId;
-      this.reservedExpiresAt = new Date(entity.reservedExpiresAt);
-    }
-
-    return this;
-  }
 }
 
 export default ChannelAudioSlotRequest;

@@ -6,6 +6,7 @@
 // subscriber-follow-list
 // subscriber-follower-list
 
+import BaseHelper from '../baseHelper.js';
 import Command from '../../constants/Command.js';
 import UserFollow from '../../entities/userFollow.js';
 import UserFollower from '../../entities/userFollower.js';
@@ -13,11 +14,7 @@ import UserFollowerType from '../../constants/UserFollowType.js';
 import UserPrivilege from '../../constants/UserPrivilege.js';
 import { validate } from '../../validator/index.js';
 
-class UserFollowerHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class UserFollowerHelper extends BaseHelper {
   async count (userId, followDirection, opts) {
     userId = Number(userId) || userId;
     { // eslint-disable-line no-lone-blocks
@@ -42,8 +39,8 @@ class UserFollowerHelper {
       throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`);
     }
 
-    if (!opts?.forceNew && user._follow[followDirection].count._fetched) {
-      return user._follow[followDirection].count.value;
+    if (!opts?.forceNew && user.followStore[followDirection].count.fetched) {
+      return user.followStore[followDirection].count.value;
     }
 
     const response = await this.client.websocket.emit(
@@ -57,9 +54,9 @@ class UserFollowerHelper {
       }
     );
 
-    user._follow[followDirection].count.value = response.body.total;
+    user.followStore[followDirection].count.value = response.body.total;
 
-    return user._follow[followDirection].count.value;
+    return user.followStore[followDirection].count.value;
   }
 
   async list (followDirection, opts) {
@@ -76,8 +73,8 @@ class UserFollowerHelper {
       throw new Error('Bot is not WOLFStar PRO or a Content Creator');
     }
 
-    if (!opts?.forceNew && this.client.me._follow[followDirection].list._fetched) {
-      return this.client.me._follow[followDirection].list.values();
+    if (!opts?.forceNew && this.client.me.followStore[followDirection].list.fetched) {
+      return this.client.me.followStore[followDirection].list.values();
     }
 
     const get = async (results = []) => {
@@ -101,12 +98,12 @@ class UserFollowerHelper {
         : await get(results);
     };
 
-    this.client.me._follow[followDirection].list.fetched = true;
+    this.client.me.followStore[followDirection].list.fetched = true;
 
     return (await get()).map((serverFollowData) => {
-      const existing = this.client.me._follow[followDirection].list.get(serverFollowData.id);
+      const existing = this.client.me.followStore[followDirection].list.get(serverFollowData.id);
 
-      return this.client.me._follow[followDirection].list.set(
+      return this.client.me.followStore[followDirection].list.set(
         existing?.patch(serverFollowData) ??
            followDirection === UserFollowerType.FOLLOWER
           ? new UserFollower(this.client, serverFollowData)

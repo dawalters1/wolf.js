@@ -6,7 +6,7 @@ class SubscriberFollowUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const following = this.client.me._follow.following.list.get(data.id);
+    const following = this.client.me.followStore.following.list.get(data.id);
 
     if (!following) { return; }
     const oldFollowing = following.clone();

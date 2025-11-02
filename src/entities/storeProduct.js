@@ -19,22 +19,6 @@ class StoreProduct extends BaseEntity {
 
     this.profile = undefined;
   }
-
-  /** @internal */
-  patch (entity) {
-    this.id = entity.id;
-    this.name = entity.name;
-    this.targetType = entity.targetType;
-    this.imageUrl = entity.imageUrl;
-    this.credits = entity.credits;
-    this.reputationLevel = entity.reputationLevel;
-    this.promotionText = entity.promotionText;
-    this.isLimited = entity.isLimited;
-    this.botId = entity.botId;
-    this.charmId = entity.charmId;
-
-    return this;
-  }
 }
 
 export default StoreProduct;

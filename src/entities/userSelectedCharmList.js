@@ -6,12 +6,6 @@ export class UserSelectedCharmList extends BaseEntity {
     super(client);
     this.selectedList = entity.selectedList.map(charm => new UserSelectedCharm(client, charm));
   }
-
-  /** @internal */
-  patch (entity) {
-    this.selectedList = entity.selectedList.map(charm => new UserSelectedCharm(this.client, charm));
-    return this;
-  }
 }
 
 export default UserSelectedCharmList;

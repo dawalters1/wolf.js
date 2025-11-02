@@ -1,3 +1,4 @@
+import BaseHelper from '../baseHelper.js';
 import { Command } from '../../constants/Command.js';
 import { EmbedType } from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
@@ -166,11 +167,7 @@ const buildMessages = async (client, recipient, isChannel, body, opts) => {
   return messages;
 };
 
-class MessagingHelper {
-  constructor (client) {
-    this.client = client;
-  }
-
+class MessagingHelper extends BaseHelper {
   async _subscribeToChannel (channelId) {
     const requestBody = {
       headers: {

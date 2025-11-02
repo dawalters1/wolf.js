@@ -6,7 +6,7 @@ class SubscriberContactDeleteEvent extends BaseEvent {
   }
 
   async process (data) {
-    const wasDeleted = this.client.event.subscription.cache.delete(data.id);
+    const wasDeleted = this.client.event.subscription.store.delete((event) => event.id === data.id);
 
     if (wasDeleted === false) { return; }
 
