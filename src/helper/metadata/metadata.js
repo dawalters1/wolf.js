@@ -49,6 +49,7 @@ class MetadataHelper extends BaseHelper {
     }
   }
 
+  // TODO: rename Blacklist to MetadataUrlBlacklist
   async urlBlacklist (opts) {
     if (!opts?.forceNew && this.#blacklistStore.fetched) {
       return this.#blacklistStore.values();

@@ -58,7 +58,7 @@ class NotificationGlobalHelper extends BaseHelper {
         .isGreaterThan(0, `NotificationGlobalHelper.deleteById() parameter, notificationId: ${notificationId} is less than or equal to zero`);
     }
 
-    return (await this.deleteByIds([notificationId]))[0];
+    return await this.deleteByIds([notificationId]);
   }
 
   async deleteByIds (notificationIds) {
