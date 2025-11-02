@@ -10,7 +10,7 @@ class GroupAudioRequestAddEvent extends BaseEvent {
 
     if (channel === null) { return; }
 
-    if (channel.audioSlotRequestStore.size() === 0) { return; }
+    if (channel.audioSlotRequestStore.size === 0) { return; }
 
     channel.audioSlotRequestStore.clear();
 
