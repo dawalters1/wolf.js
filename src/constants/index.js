@@ -3,6 +3,7 @@ export * from './Avatar.js';
 export * from './AvatarType.js';
 export * from './ChannelAudioConnectionState.js';
 export * from './ChannelEventType.js';
+export * from './ChannelHub.js';
 export * from './ChannelMemberCapability.js';
 export * from './ChannelMemberListType.js';
 export * from './ChannelVerificationTier.js';

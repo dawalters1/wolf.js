@@ -83,6 +83,11 @@ export enum ChannelEventType {
   OTHER = 9
 }
 
+export enum ChannelHub {
+  NONE = 'none',
+  GAMING = 'gaming'
+}
+
 export enum ChannelMemberCapability {
   /**
    * User is not a member
@@ -357,6 +362,7 @@ export type {
   AvatarType,
   ChannelAudioSlotConnectionState,
   ChannelEventType,
+  ChannelHub,
   ChannelMemberCapability,
   ChannelMemberListType,
   ChannelVerificationTier,

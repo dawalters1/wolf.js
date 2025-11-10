@@ -1,10 +1,3 @@
-// subscriber-follow-add
-// subscriber-follow-delete
-// subscriber-follow-update
-// subscriber-follow-count
-// subscriber-follower-count
-// subscriber-follow-list
-// subscriber-follower-list
 
 import BaseHelper from '../baseHelper.js';
 import Command from '../../constants/Command.js';

@@ -25,7 +25,7 @@ import {
   TipType,
   TopicPageRecipeType,
   UserFollowerType,
-  UserPresence,
+  OnlineState,
   UserPrivilege,
   WOLFStarTalent
 } from './src/constants/index.js';
@@ -62,7 +62,7 @@ const exports = {
   TipType,
   TopicPageRecipeType,
   UserFollowerType,
-  UserPresence,
+  OnlineState,
   UserPrivilege,
   WOLFStarTalent,
   WOLFResponse
@@ -95,7 +95,7 @@ export {
   TipType,
   TopicPageRecipeType,
   UserFollowerType,
-  UserPresence,
+  OnlineState,
   UserPrivilege,
   WOLFStarTalent,
   WOLFResponse,

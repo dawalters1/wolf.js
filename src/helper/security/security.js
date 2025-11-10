@@ -1,14 +1,14 @@
 import BaseHelper from '../baseHelper.js';
 import Cognito from '../../entities/cognito.js';
 import { Command } from '../../constants/Command.js';
-import { UserPresence } from '../../constants/index.js';
+import { OnlineState } from '../../constants/index.js';
 import { validate } from '../../validator/index.js';
 
 class SecurityHelper extends BaseHelper {
   /**
    * @param {string} email
    * @param {string} password
-   * @param {UserPresence} [state]
+   * @param {OnlineState} [state]
    * @returns {Promise<import('../../entities/WOLFResponse.js').default>}
    */
   async login (email, password) {

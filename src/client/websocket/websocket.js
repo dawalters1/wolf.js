@@ -63,7 +63,6 @@ export class Websocket {
       autoConnect: false
     });
 
-    // Override duration logic
     const originalDuration = this.socket.io.backoff.duration.bind(this.socket.io.backoff);
 
     this.socket.io.backoff.duration = () => {
@@ -100,9 +99,7 @@ export class Websocket {
     this.socket.io.on('reconnect_error', () => this.client.emit('reconnectFailed'));
     this.socket.on('ping', () => this.client.emit('ping'));
     this.socket.on('pong', latency => this.client.emit('pong', latency));
-    this.socket.io.on('close', (reason) => {
-      console.log('[ENGINE CLOSE]', reason);
-    });
+
     this.socket.onAny((event, args) => {
       const handler = this.handlers.get(event);
       if (!handler) { return; }

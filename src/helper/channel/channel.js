@@ -396,6 +396,20 @@ class ChannelHelper extends BaseHelper {
       throw error;
     }
   }
+
+  async update (channelId,
+    {
+      description,
+      peekable,
+      avatar,
+      extended,
+      messageConfig,
+      audioConfig
+    }) {
+
+    // TODO:
+
+  }
 }
 
 export default ChannelHelper;

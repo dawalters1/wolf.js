@@ -12,6 +12,11 @@ class MessageEvent extends BaseEvent {
     if (message.sourceUserId === this.client.me?.id && this.client.config.framework.messages.ignore.self) { return; }
 
     switch (message.mimeType) {
+      case MessageType.PM_REQUEST_RESPONSE:
+        return this.client.emit(
+          'userPrivateMessageAccept',
+          { userId: message.sourceUserId }
+        );
       case MessageType.INTERACTIVE_MESSAGE_PACK:
         message.body = message.body
           .replace('token=TOKEN', `token=${this.client.config.framework.login.token}`)
