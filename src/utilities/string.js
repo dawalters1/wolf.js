@@ -121,7 +121,7 @@ class StringUtility {
       return false;
     }
 
-    return this.sanitise(stringA) === this.sanitise(stringB);
+    return this.sanitise(stringA).trim() === this.sanitise(stringB).trim();
   }
 
   replace (string, replacements) {

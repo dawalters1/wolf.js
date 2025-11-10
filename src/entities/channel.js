@@ -29,6 +29,7 @@ class Channel extends BaseEntity {
 
     this.id = entity.base.id;
     this.giftAnimationDisabled = entity.base.giftAnimationDisabled;
+    this.description = entity.base.description;
     this.name = entity.base.name;
     this.hash = entity.base.hash ?? null;
     this.reputation = entity.base.reputation ?? 0;
@@ -67,17 +68,12 @@ class Channel extends BaseEntity {
     this.#roleStore = new ChannelRoleStore();
   }
 
-  get language () {
-    this.language = this.client.utility.toLanguageKey(
-      this?.extended?.language ?? Language.ENGLISH
-    );
-  }
-
   /** @internal */
   set isMember (value) {
     this.#isMember = value;
   }
 
+  /** @internal */
   set capabilities (value) {
     this.#capabilities = value;
   }
@@ -132,6 +128,12 @@ class Channel extends BaseEntity {
 
   get capabilities () {
     return this.#capabilities;
+  }
+
+  get language () {
+    this.language = this.client.utility.toLanguageKey(
+      this?.extended?.language ?? Language.ENGLISH
+    );
   }
 
   hasCapability (required) {

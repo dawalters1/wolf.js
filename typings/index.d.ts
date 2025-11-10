@@ -12,6 +12,7 @@ import {
   AvatarType,
   ChannelAudioSlotConnectionState,
   ChannelEventType,
+  ChannelHub,
   ChannelMemberCapability,
   ChannelMemberListType,
   ChannelVerificationTier,
@@ -324,8 +325,19 @@ export class AuthorisationHelper extends BaseHelper {
 }
 
 export class BannedHelper extends BaseHelper {
+  /**
+   * Get all the banned users
+   */
   list(): number[];
+  /**
+   * Check to see if a user is banned
+   * @param userIds The ID or IDs of the users to check
+   */
   isBanned(userIds: number | number[]): boolean | boolean[];
+  /**
+   * Ban a user
+   * @param userId The ID of the user
+   */
   ban(userId: number): Promise<boolean>;
   banAll(userIds: number[]): Promise<boolean[]>;
   unban(userId: number): boolean;
@@ -879,7 +891,7 @@ export class ChannelExtended extends BaseEntity {
   discoverable: boolean;
   advancedAdmin: boolean;
   locked: boolean;
-  hub: any;
+  hub: ChannelHub;
   questionable: boolean;
   entryLevel: number;
   passworded: boolean;
@@ -1996,6 +2008,7 @@ export type {
   BaseStore,
   ChannelAudioSlotConnectionState,
   ChannelEventType,
+  ChannelHub,
   ChannelMemberCapability,
   ChannelMemberListType,
   ChannelVerificationTier,
