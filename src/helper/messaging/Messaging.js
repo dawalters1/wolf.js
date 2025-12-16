@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const Message = require('../../models/MessageObject');
 const MessageSubscription = require('./MessageSubscription');
 const ResponseObject = require('../../models/ResponseObject');
+const getLinkPreviewData = require('../../utils/GetLinkPreviewData/getLinkPreviewData.js');
 
 const inRange = (start, end, value) => ((value - start) * (value - end) <= 0);
 
@@ -177,26 +178,13 @@ const getEmbedData = async (api, formatting, options) => {
         continue;
       }
 
-      const response = await api.getLinkMetadata(item.url);
+      const linkPreviewData = await getLinkPreviewData(api, item.url);
 
-      if (!response.success) {
+      if (!linkPreviewData) {
         continue;
       }
 
-      const metadata = response.body;
-
-      const preview = {
-        type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
-        url: api._botConfig.get('validation.link.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
-      };
-
-      if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
-        preview.title = metadata?.title ?? '-';
-
-        preview.body = metadata?.description ?? '-';
-      }
-
-      return [preview];
+      return [linkPreviewData];
     }
   }
 };
