@@ -6,6 +6,7 @@ import validator from '../../validator/index.js';
 import { fileTypeFromBuffer } from 'file-type';
 import validateMultimediaConfig from '../../utils/validateMultimediaConfig.js';
 import { nanoid } from 'nanoid';
+import getLinkPreviewData from '../../utils/getLinkPreviewData.js';
 
 /**
  *
@@ -109,26 +110,13 @@ const getEmbedData = async (client, formatting, options) => {
         continue;
       }
 
-      const response = await client.misc.metadata(item.url);
+      const linkPreviewData = await getLinkPreviewData(client, item.url);
 
-      if (!response.success) {
+      if (!linkPreviewData) {
         continue;
       }
 
-      const metadata = response.body;
-
-      const preview = {
-        type: !metadata.title && metadata.imageSize ? EmbedType.IMAGE_PREVIEW : EmbedType.LINK_PREVIEW,
-        url: client._frameworkConfig.get('validation.links.protocols').some((proto) => item.url.toLowerCase().startsWith(proto)) ? item.url : `http://${item.url}`
-      };
-
-      if (preview.type === EmbedType.LINK_PREVIEW && metadata.title) {
-        preview.title = metadata?.title ?? '-';
-
-        preview.body = metadata?.description ?? '-';
-      }
-
-      return [preview];
+      return [linkPreviewData];
     }
   }
 };
