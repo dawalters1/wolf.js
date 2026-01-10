@@ -1,133 +1,143 @@
 
-import { StatusCodes } from 'http-status-codes';
-import type { Stream } from 'stream';
+import BaseExpireProperty from "../caching/BaseExpireProperty.js";
+import BaseStore from "../caching/BaseStore.js";
+import ChannelMember from "./channelMember.js";
+import WOLFResponse from "./WOLFResponse.js";
+import {MessageSendOptions} from '../options/options.js';
+import { EventEmitter } from 'node:events';
 
-export class Response<t = undefined> {
-    /**
-     * Status of the request
-     */
-    public code: StatusCodes;
-    /**
-     * The body of the request
-     */
-    public body: t;
-    /**
-     * The headers of the request
-     */
-    public headers: { [key: string]: any }
+import {
+  AdminAction,
+  Avatar,
+  AvatarType,
+  ChannelAudioSlotConnectionState,
+  ChannelEventType,
+  ChannelHub,
+  ChannelMemberCapability,
+  ChannelMemberListType,
+  ChannelVerificationTier,
+  ContextType,
+  DeviceType,
+  EmbedType,
+  Gender,
+  IconSize,
+  Language,
+  LoginType,
+  LookingFor,
+  MessageFilterTierLevel,
+  MessageType,
+  Relationship,
+  Search,
+  TipDirection,
+  TipPeriod,
+  TipType,
+  TopicPageRecipeType,
+  UserFollowerType,
+  OnlineState,
+  UserPrivilege,
+  WOLFStarTalent
+} from './constants.js';
 
+export default class WOLF extends EventEmitter {
+  constructor();
+
+  loggedIn: boolean;
+  commandManager?: CommandManager | undefined;
+  me: CurrentUser | undefined;
+
+  config: any;
+  utility: Utility;
+  multimedia: Multimedia;
+  websocket: Websocket;
+  achievement: AchievementHelper;
+  audio: AudioHelper;
+  authorisation: AuthorisationHelper;
+  banned: BannedHelper;
+  channel: ChannelHelper;
+  charm: CharmHelper;
+  contact: ContactHelper;
+  event: EventHelper;
+  messaging: MessagingHelper;
+  notification: NotificationHelper;
+  phrase: PhraseHelper;
+  user: UserHelper;
+  security: SecurityHelper;
+  store: StoreHelper;
+  tip: TipHelper;
+  topic: TopicHelper;
+  role: RoleHelper;
+  metadata: MetadataHelper;
+
+  readonly SPLIT_REGEX: RegExp;
+
+  login(
     /**
-     * Whether or not the status Code is within success range
+     * The email associated with the account
      */
-    public success: boolean;
+    email?: string,
+    /**
+     * The password associated with the account
+     */
+    password?: string,
+    /**
+     * The API key provided by WOLF
+     */
+    apiKey?: string,
+    /**
+     * Additional login options
+     */
+    opts?: LoginOptions
+  ): Promise<void>;  
+  
+  constructor(client: WOLF);
+}
+
+export type CommandCallback = (commandContext: CommandContext) => any;
+
+export interface CommandCallbackMap {
+  channel?: CommandCallback;
+  private?: CommandCallback;
+  both?: CommandCallback;
+}
+
+export declare class Command {
+  static readonly getCallback: {
+    CHANNEL: 'channel';
+    PRIVATE: 'private';
+    BOTH: 'both';
+  };
+  constructor(
+    key: string,
+    callbackObject: CommandCallbackMap,
+    children?: Command[]
+  );
+}
+
+export class CommandManager {
+
+  /**
+   * Register the commands
+   * @param commands The commands to register
+   */
+  register(commands: Command[]): void;
+
+  constructor(client: WOLF);
 }
 
 
-export class WOLF {
-    public constructor();
+export class BaseEntity {
+  /**
+   * Creates an instance of BaseEntity.
+   * @param client The client instance
+   */
+  constructor(client: WOLF);
 
-    /**
-     * The bot configuration
-     */
-    readonly config: Configuration;
-    /**
-     * Exposes the Achievement methods
-     */
-    readonly achievement: AchievementHelper;
-    /**
-     * Exposes the Authorization methods
-     */
-    readonly authorization: AuthorizationHelper;
-    /**
-    * Exposes the Banned methods
-    */
-    readonly banned: BannedHelper;
-    /**
-    * Exposes the Charm methods
-    */
-    readonly charm: CharmHelper;
-    /**
-     * Exposes the Channel methods
-     */
-    readonly channel: ChannelHelper;
-    /**
-    * Exposes the Command Handler methods
-    */
-    readonly commandHandler: CommandHandler;
-    /**
-    * Exposes the Contact methods
-    */
-    readonly contact: ContactHelper;
-    /**
-    * Exposes the Discovery methods
-    */
-    readonly discovery: DiscoveryHelper;
-    /**
-    * Exposes the Event methods
-    */
-    readonly event: EventHelper;
-    /**
-    * Exposes the Group methods
-    * @deprecated use {@link channel} instead
-    */
-    readonly group: ChannelHelper;
-    /**
-     * Exposes the Logging methods
-     */
-    readonly log: LogHelper;
-    /**
-    * Exposes the Messaging methods
-    */
-    readonly messaging: MessagingHelper;
-    /**
-    * Exposes the Multimedia methods
-    */
-    readonly multimedia: Multimedia;
-    /**
-    * Exposes the methods that don't fit into any of the existing helpers
-    */
-    readonly misc: MiscHelper;
-    /**
-    * Exposes the Notifications methods
-    */
-    readonly notification: NotificationHelper;
-    /**
-    * Exposes the Phrase methods
-    */
-    readonly phrase: PhraseHelper;
-    /**
-     * Exposes the Role methods
-     */
-    readonly role: RoleHelper;
-    /**
-    * Exposes the Stage methods
-    */
-    readonly stage: StageHelper;
-    /**
-    * Exposes the Store methods
-    */
-    readonly store: StoreHelper;
-    /**
-    * Exposes the Subscriber methods
-    */
-    readonly subscriber: SubscriberHelper;
-    /**
-    * Exposes the Tipping methods
-    */
-    readonly tipping: TippingHelper;
-    /**
-    * Exposes the Topic methods
-    */
-    readonly topic: TopicHelper;
-    /**
-    * Exposes the Utility methods
-    */
-    readonly utility: Utility;
-    /**
-    * Exposes the Websocket methods
-    */
-    readonly websocket: Websocket;
+  /**
+   * Gets the client instance.
+   */
+  get client(): WOLF;
 
+<<<<<<< HEAD
     /**
      * Login to WOLF using credentials stored in configuration
      */
@@ -141,642 +151,237 @@ export class WOLF {
      * @param loginType - The loginType (Default: Email)
      */
     public login(email: string, password: string, apiKey?: string, onlineState?: OnlineState, loginType?: LoginType): Promise<void>;
+=======
+  /** @internal */
+  protected patch(newData: Record<string, any>, oldData?: Record<string, any> | null): void;
+>>>>>>> 2af9a5522db867b270d85bcd4729dc6318a4ab82
 
-    /**
-     * Connect to the service without login details
-     * - Note: Will login if details are in config
-     */
-    public connect(): Promise<void>;
-    /**
-     * Reconnect the websocket and relog if possible
-     */
-    public reconnect(): Promise<void>;
-    /**
-     * Disconnect the websocket
-     */
-    public disconnect(): Promise<void>;
-    /**
-     * Logout of WOLF
-     */
-    public logout(): Promise<void>;
+  /** @internal */
+  protected clone<T = this>(): T;
 
-    /**
-     * EventEmitter
-     * @param event - The event name
-     * @param listener - The event handler
-     */
-    public on<evtStr extends keyof ClientEvents>(event: evtStr, listener: (...args: ClientEvents[evtStr]) => Promise<void>): this;
-
-    /**
-     * The account currently logged in
-     */
-    readonly currentSubscriber: Subscriber;
-
-    /**
-     * Split string at commas, newlines, spaces, etc
-     */
-    readonly SPLIT_REGEX: RegExp;
-
-    /**
-     * Update the current logged in account profile
-     * @param profileData - The new profile data
-     */
-    public update(profileData: { nickname?: string, status?: string, dateOfBirth?: Date, about?: string, gender?: Gender, language?: Language, lookingFor?: LookingFor, name?: string, relationship?: Relationship, urls?: Array<string>, avatar?: Buffer, categoryIds?: Array<number> }): Promise<Response>;
-
+  /** @internal */
+  protected json(): Record<string, any>;  
+  
+  constructor(client: WOLF);
 }
 
-export class Websocket {
-    private constructor(client: WOLF);
-
-    /**
-     * Send a request to the server
-     * @param command - The command
-     * @param body - The command body
-     */
-    public emit<T>(command: string, body?: Object): Response<T>;
-}
-
-export class Multimedia {
-    private constructor(client: WOLF);
-
-
-    /**
-     * Send a request to the multimedia service
-     * @param config - The route configuration
-     * @param body - The data to uplodate
-     */
-    public request<T>(config: any, body: object): Promise<Response<T>>
-
-    /**
-     * Upload to the multimedia service
-     * @deprecated Use {@link request()} instead
-     * @param config - The route configuration
-     * @param body - The data to uplodate
-     */
-    public upload<T>(config: any, body: object): Promise<Response<T>>
-}
-
-export class Configuration {
-    /**
-     * The ID of the currently logged in account
-     */
-    public subscriberId: number;
-    /**
-     * The keyword belonging to the project
-     * - Default: default
-     */
-    public keyword: string;
-    /**
-     * The framework settings
-     */
-    public framework: {
-        /**
-         * The ID of the developer
-         * - Default: undefined
-         */
-        developer: number;
-
-        /**
-         * The ID of the owner
-         * - Default: undefined
-         */
-        owner: number;
-        /**
-         * The default language of responses
-         * - Default: en
-         */
-        language: string;
-        /**
-         * Login details
-         */
-        login: {
-            /**
-             * The email belonging to the account
-             */
-            email: string;
-            /**
-             * The password belonging to the account
-             */
-            password: string;
-            /**
-             * The online state the bot should appear as
-             * - Default: 1
-             */
-            onlineState: OnlineState;
-            /**
-             * The account token (Automatically generated if none provided)
-             * - Default: undefined
-             */
-            token: string,
-
-            /**
-             * The account login type
-             * - Default: Email
-             */
-            type: LoginType
-        },
-        /**
-         * Command settings
-         */
-        commands: {
-            /**
-             * Command ignore settings
-             */
-            ignore: {
-                /**
-                 * Whether or not the bot should allow official bots to use commands
-                 * - Default: false
-                 */
-                official: boolean;
-                /**
-                 * Whether or not the bot should allow unofficial bots to use commands
-                 * - Default: false
-                 */
-                unofficial: boolean;
-                /**
-                 * Whether or not the bot should allow itself to use commands
-                 * - Default: true
-                 */
-                self: boolean;
-            }
-        },
-        /**
-         * Message settings
-         */
-        messages: {
-            /**
-             * Message ignore settings
-             */
-            ignore: {
-                /**
-                 * Whether or not the bot should process its own messages
-                 * - Default: false
-                 */
-                self: boolean;
-            }
-        },
-        /**
-         * Subscription settings
-         */
-        subscriptions: {
-            /**
-             * Message subscriptions
-             */
-            messages: {
-                /**
-                 * Group settings
-                 * @deprecated use {@link channel} instead
-                 */
-                group: {
-                    /**
-                     * Whether or not the bot should receive group messages
-                     * - Default: true
-                     */
-                    enabled: boolean;
-                    /**
-                     * Whether or not the bot should receive group messages tip events
-                     * - Default: true
-                     */
-                    tipping: boolean;
-                },
-                channel: {
-                    /**
-                     * Whether or not the bot should receive channel messages
-                     * - Default: true
-                     */
-                    enabled: boolean;
-                    /**
-                     * Whether or not the bot should receive channel messages tip events
-                     * - Default: true
-                     */
-                    tipping: boolean;
-                },
-                /**
-                 * Private settings
-                 */
-                private: {
-                    /**
-                     * Whether or not the bot should receive private messages
-                     * - Default: true
-                     */
-                    enabled: boolean;
-                    /**
-                     * Whether or not the bot should receive private messages tip events (Not Implemented)
-                     * - Default: false
-                     */
-                    tipping: boolean;
-                }
-            }
-        },
-        rateLimiter: {
-            /**
-             * Whether or not the internal rate limiter should be enabled
-             * - Default: false (Broken)
-             */
-            enabled: boolean
-        }
-    }
-
-    /**
-     * Get a specific property from the config
-     * @param route - The route to a property EX: x.y.z
-     */
-    public get(route: string): any;
-}
-
-export class CommandHandler {
-    private constructor(client: WOLF);
-
-    /**
-     * Register commands
-     * @param commands - The commands to register
-     */
-    public register(commands: Array<Command>): void;
-    /**
-     * Check whether a message is a command or not
-     * @param message - The message to check
-     */
-    public isCommand(message: Message): boolean;
-}
-
-export class Command {
-    /**
-     *
-     * @param phraseName - The phrase name
-     * @param callbackObject - The command callbacks
-     * @param children - The sub commands for the command
-     */
-    constructor(phraseName: string, callbackObject: {
-        /**
-         * @deprecated use {@link channel} instead
-         */
-        group: (command: CommandContext, ...args: any) => void,
-        channel: (command: CommandContext, ...args: any) => void,
-        private: (command: CommandContext, ...args: any) => void,
-        both: (command: CommandContext, ...args: any) => void
-    }, children?: Array<Command>)
-}
-export class BaseHelper {
-    public constructor(client: WOLF);
-
-    readonly client: WOLF;
-
-    private _cleanUp(reconnection: boolean)
-}
-
-//#region Helpers
 export class AchievementHelper extends BaseHelper {
-    private constructor(client)
+  /**
+   * The achievement category helper
+   */
+  get category(): AchievementCategoryHelper;
+  /**
+   * The achievement channel helper
+   */
+  get channel(): AchievementChannelHelper;
+  /**
+   * The achievement user helper
+   */
+  get user(): AchievementUserHelper;
+  /**
+   * Fetch an achievement
+   * @param achievementId The ID of the achievement
+   * @param languageId The language of the achievement
+   * @param opts The request options
+   */
+  getById(achievementId: number, languageId: number, opts?: AchievementOptions): Promise<Achievement | null>;
+  /**
+   * Fetch multiple achievements
+   * @param achievementIds The ID of the achievements
+   * @param languageId The language of the achievements
+   * @param opts The request options
+   */
+  getByIds(achievementIds: number[], languageId: number, opts?: AchievementOptions): Promise<(Achievement | null)[]>;
 
-    /**
-     * Exposes the Achievement Category methods
-     */
-    readonly category: AchievementCategoryHelper;
-    /**
-     * Exposes the Channel Achievement methods
-     */
-    readonly channel: AchievementChannelHelper;
-    /**
-     * Exposes the Group Achievement methods
-     * @deprecated use {@link channel} instead
-     */
-    readonly group: AchievementChannelHelper;
-    /**
-     * Exposes the Subscriber Achievement methods
-     */
-    readonly subscriber: AchievementSubscriberHelper;
-    /**
-     * Get an achievement
-     * @param id - The ID of the achievement
-     * @param language - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, language: Language, forceNew?: boolean): Promise<Achievement>;
-    /**
-     * Get achievements
-     * @param ids - The list of achievement IDs
-     * @param language - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, language: Language, forceNew?: boolean): Promise<Array<Achievement>>;
+  constructor(client: WOLF);
 }
 
 export class AchievementCategoryHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Request the Achievement Categories
-     * @param language - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getList(language: Language, forceNew?: boolean): Promise<Array<Achievement>>;
+  /**
+   * Fetch the achievement categories
+   * @param languageId The language of the achievement categories
+   * @param opts The request options
+   */
+  list(languageId: number, opts?: AchievementCategoryOptions): Promise<AchievementCategory[]>;
+  
+  constructor(client: WOLF);
 }
 
 export class AchievementChannelHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Request Achievement list for a channel
-     * @param targetChannelId - The ID of the channel to request
-     * @param parentId - Provide if requesting child achievements (Optional)
-     */
-    public getById(targetChannelId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
+  /**
+   * Fetch a channels achievements
+   * @param channelId The ID of the channel
+   * @param parentId The ID of the parent achievement (Leave null to request all)
+   * @param opts The request options
+   */
+  get(channelId: number, parentId?: number, opts?: AchievementChannelOptions): Promise<AchievementChannel[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class AchievementSubscriberHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Request Achievement list for a subscriber
-     * @param subscriberId - The ID of the subscriber to request
-     * @param parentId - Provide if requesting child achievements (Optional)
-     */
-    public getById(subscriberId: number, parentId?: number): Promise<Array<AchievementUnlockable>>;
+export class AchievementUserHelper extends BaseHelper {
+  /**
+   * Fetch a users achievements
+   * @param userId The ID of the user
+   * @param parentId The ID of the parent achievement (Leave null to request all)
+   * @param opts The request options
+   */
+  get(userId: number, parentId?: number, opts?: AchievementUserOptions): Promise<AchievementUser[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class AuthorizationHelper extends BaseHelper {
-    private constructor(client);
+export class AudioHelper extends BaseHelper {  
+  get slots(): AudioSlotHelper;  
+  get slotRequest(): AudioSlotRequestHelper;  
+  getAvailableList(channelId: number, opts?: any): Promise<ChannelStage[]>;  
+  getAudioConfig(channelId: number, opts?: any): Promise<any>;  
+  getAudioCount(channelId: number, opts?: any): Promise<any>;  
+  updateAudioConfig(channelId: number, opts?: any): Promise<any>;  
+  play(channelId: number, stream: Stream): Promise<any>;  
+  stop(channelId: number): Promise<any>;  
+  pause(channelId: number): Promise<any>;  
+  resume(channelId: number): Promise<any>;  
+  hasClient(channelId: number): Promise<boolean>;  
+  getClientState(channelId: number): Promise<{ connectionState: any; broadcastState: any }>;  
+  getClientSettings(channelId: number): Promise<any>;  
+  updateClientSettings(channelId: number, settings: any): Promise<void>;  
+  
+  constructor(client: WOLF);
+}
 
-    /**
-     * Get a list of authorized subscribers
-     */
-    public list(): Array<number>;
-    /**
-     * Clear the list of authorized subscribers
-     */
-    public clear(): void;
-    /**
-     * Check whether or not a subscriber ID is authorized
-     * @param targetSubscriberIds - The ID or IDs to check
-     */
-    public isAuthorized(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Add subscriber ID or IDs to the authorization list
-     * @param targetSubscriberIds - The ID or IDs to authorized
-     */
-    public authorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Remove subscriber ID or IDs from the authorization list
-     * @param targetSubscriberIds - The ID or IDs to unauthorize
-     */
-    public unauthorize(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
+export class AudioSlotHelper extends BaseHelper {
+  list(channelId: number, opts?: any): Promise<ChannelAudioSlot[]>;
+  get(channelId: number, slotId: number): Promise<ChannelAudioSlot | null>;
+  lock(channelId: number, slotId: number): Promise<any>;
+  unlock(channelId: number, slotId: number): Promise<any>;
+  mute(channelId: number, slotId: number): Promise<any>;
+  unmute(channelId: number, slotId: number): Promise<any>;
+  kick(channelId: number, slotId: number): Promise<any>;
+  join(channelId: number, slotId: number): Promise<any>;
+  leave(channelId: number, slotId: number): Promise<any>;
+  audioClients: Map<number, AudioClient>;  
+  
+  constructor(client: WOLF);
+}
+
+export class AudioSlotRequestHelper extends BaseHelper {
+  /**
+   * Fetch a channels slot requests
+   * @param channelId The ID of the channel
+   * @param opts The request options
+   */
+  list(channelId: number, opts?: any): Promise<ChannelAudioSlotRequest[]>;
+  /**
+   * Add or request an audio slot
+   * @param channelId The ID of the channel
+   * @param slotId The ID of the slot
+   * @param userId The ID of the user (Leave null to have the bot request a slot)
+   */
+  add(channelId: number, slotId?: number, userId?: number): Promise<WOLFResponse>;
+  /**
+   * Remove/Cancel an audio slot request
+   * @param channelId The ID of the channel
+   * @param slotId The ID of the slot
+   */
+  remove(channelId: number, slotId?: number): Promise<WOLFResponse>;
+  /**
+   * Clear all audio slot requests
+   * @param channelId The ID of the channel
+   */
+  clear(channelId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+}
+
+export class AuthorisationHelper extends BaseHelper {
+  /**
+   * Get all authorised users
+   */
+  list(): number[];
+  /**
+   * Check to see if a user is authorised
+   * @param userIds The ID or IDs of the users to check
+   */
+  isAuthorised(userIds: number | number[]): boolean | boolean[];
+  /**
+   * Authorise a user
+   * @param userId The ID of the user
+   */
+  authorise(userId: number): Promise<boolean>;
+  /**
+   * Authorise multiple users
+   * @param userIds The IDs of the users
+   */
+  authoriseAll(userIds: number[]): Promise<boolean[]>;
+  /**
+   * Unauthorise a user
+   * @param userId The ID of the user
+   */
+  deauthorise(userId: number): boolean;
+  /**
+   * Unauthorise multiple users
+   * @param userIds The IDs of the users
+   */
+  deauthoriseAll(userIds: number[]): boolean[];
+  /**
+   * Unauthorise a user
+   * @param userId The ID of users
+   */
+  unauthorise(userId: number): boolean;
+  /**
+   * Unauthorise multiple users
+   * @param userIds The IDs of the users
+   */
+  unauthoriseAll(userIds: number[]): boolean;
+  /**
+   * Clear the authorised list
+   */
+  clear(): void;
 }
 
 export class BannedHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-    * Get a list of banned subscribers
-    */
-    public list(): Array<number>;
-    /**
-     * Clear the list of banned subscribers
-     */
-    public clear(): void;
-    /**
-     * Check whether or not a subscriber ID is banned
-     * @param targetSubscriberIds - The ID or IDs to check
-     */
-    public isBanned(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Add subscriber ID or IDs to the banned list
-     * @param targetSubscriberIds - The ID or IDs to ban
-     */
-    public ban(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Remove subscriber ID or IDs from the banned list
-     * @param targetSubscriberIds - The ID or IDs to unban
-     */
-    public unban(targetSubscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-}
-
-export class CharmHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the list of charms
-     */
-    public list(): Array<Charm>;
-    /**
-     * Get a charm
-     * @param id - The ID of the charm
-     */
-    public getById(id: number): Promise<Charm>;
-    /**
-     * Get charms
-     * @param ids - The list of charm IDs
-     */
-    public getByIds(ids: number | Array<number>): Promise<Charm | Array<Charm>>;
-    /**
-     * Get a subscribers charm summary
-     * @param subscriberId - The ID of the subscriber
-     */
-    public getSubscriberSummary(subscriberId: number): Promise<Array<CharmSummary>>
-    /**
-     * Get a subscribers gifting statistics
-     * @param subscriberId - The ID of the subscriber
-     */
-    public getSubscriberStatistics(subscriberId: number): Promise<CharmStatistics>
-    /**
-     * Get the list of active charms a subscriber has
-     * @param subscriberId - The ID of the subscriber
-     * @param limit - How many should be requested (Default: 25)
-     * @param offset - Where the request should start at (Default: 0)
-     */
-    public getSubscriberActiveList(subscriberId: number, limit?: number, offset?: number): Promise<Array<CharmExpiry>>
-    /**
-     * Get the list of expired charms a subscriber has
-     * @param subscriberId - The ID of the subscriber
-     * @param limit - How many should be requested (Default: 25)
-     * @param offset - Where the request should start at (Default: 0)
-     */
-    public getSubscriberExpiredList(subscriberId: number, limit?: number, offset?: number): Promise<Array<CharmExpiry>>
-    /**
-     * Get the list of charms a subscriber has selected
-     * @param subscriberId - The ID of the subscriber
-     */
-    public getSubscriberSelectedList(subscriberId: number): Promise<SubscriberSelectedCharm>
-    /**
-     * Delete charms from the bots Active or Expired list
-     * @param charmIds - The ID or IDs of the charms to delete
-     */
-    public delete(charmIds: number | Array<number>): Promise<Response>
-    /**
-     * Set a charm on the bots profile
-     * @param charms - The charm to set
-     */
-    public set(charms: CharmSelectedBuilder): Promise<Response>;
-}
-
-export class ContactHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Exposes the Blocked methods
-     */
-    readonly blocked: BlockedHelper;
-    /**
-     * Get the Bots contacts list
-     */
-    public list(subscribe?: boolean): Promise<Array<Contact>>;
-    /**
-     * Check whether or not a subscriber is a contact
-     * @param subscriberIds - The ID of the subscriber
-     */
-    public isContact(subscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Add a subscriber as a contact
-     * @param subscriberId - The ID of the subscriber
-     */
-    public add(subscriberId: number): Promise<Response>;
-    /**
-     * Remove a subscriber as a contact
-     * @param subscriberId - The ID of the subscriber
-     */
-    public delete(subscriberId: number): Promise<Response>;
-}
-
-export class BlockedHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the Bots blocked list
-     */
-    public list(subscribe?: boolean): Promise<Array<Contact>>;
-    /**
-     * Check whether or not a subscriber is blocked
-     * @param subscriberIds - The ID of the subscriber
-     */
-    public isBlocked(subscriberIds: number | Array<number>): Promise<boolean | Array<boolean>>
-    /**
-     * Block a subscriber
-     * @param subscriberId - The ID of the subscriber
-     */
-    public block(subscriberId: number): Promise<Response>;
-    /**
-     * Unblock a subscriber
-     * @param subscriberId - The ID of the subscriber
-     */
-    public unblock(subscriberId: number): Promise<Response>;
-}
-
-export class DiscoveryHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the discovery page
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public get(languageId: Language, forceNew?: boolean): Promise<Discovery>;
-}
-
-export class EventHelper extends BaseHelper {
-    private constructor(client);
-    /**
-     * Exposes the channel event methods
-     */
-    readonly channel: ChannelEventHelper;
-    /**
-     * Exposes the group event methods
-     * @deprecated use {@link channel} instead
-     */
-    readonly group: ChannelEventHelper;
-    /**
-     * Exposes the subscriber event subscription methods
-     */
-    readonly subscription: EventSubscriptionHelper;
-
-    /**
-     * Get an event
-     * @param id - The ID of the event
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, forceNew?: boolean): Promise<Event>;
-    /**
-     * Get events
-     * @param ids - The list of event IDs
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, forceNew?: boolean): Promise<Event | Array<Event>>;
-}
-
-export class ChannelEventHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the channels event list
-     * @param targetChannelId - The ID of the channel
-     * @param subscribe - Whether or not to subscribe to the channels event list
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getList(targetChannelId: number, subscribe?: boolean, forceNew?: boolean): Promise<Array<Event>>;
-
-    /**
-     * Create an event without a thumbnail
-     * @param targetChannelId - The ID of the channel
-     * @param eventData - The event data
-     */
-    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string }): Promise<Response<Event>>
-    /**
-     * Create an event with a thumbnail
-     * @param targetChannelId - The ID of the channel
-     * @param eventData - The event data
-     */
-    public create(targetChannelId: number, eventData: { title: string, startsAt: Date, endsAt: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string, thumbnail: Buffer }): Promise<[Response<Event>, Response]>
-    /**
-     * Update an existing event using the existing thumbnail
-     * @param targetChannelId - The ID of the channel
-     * @param eventId - The ID of the event
-     * @param eventData - The new event data
-     */
-    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string }): Promise<Response<any>>
-    /**
-     * Update an existing event using a new thumbnail
-     * @param targetChannelId - The ID of the channel
-     * @param eventId - The ID of the event
-     * @param eventData - The new event data
-     */
-    public update(targetChannelId: number, eventId: number, eventData: { title?: string, startsAt?: Date, endsAt?: Date, category?: EventCategory, hostedBy?: number, shortDescription?: string, longDescription?: string, thumbnail?: Buffer }): Promise<[Response<Event>, Response]>
-
-    /**
-     * Update an events thumbnail
-     * @param eventId - The ID of the event
-     * @param thumbnail - The new thumbnail
-     */
-    public updateThumbnail(eventId: number, thumbnail: Buffer): Promise<Response>
-
-    /**
-     * Cancel an event
-     * @param targetChannelId - The ID of the channel
-     * @param eventId - The ID of the event
-     */
-    public delete(targetChannelId: number, eventId: number): Promise<Response>
-}
-
-export class EventSubscriptionHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get list of Bots event subscriptions
-     * @param subscribe - Whether or not to subscribe to subscription changes (Default: true)
-     */
-    public getList(subscribe?: boolean): Promise<Array<Event>>;
-    /**
-     * Add an event to the bots event subscription list
-     * @param eventId - The ID of the event
-     */
-    public add(eventId: number): Promise<Response>;
-    /**
-     * Remove an event from the bots event subscription list
-     * @param eventId - The ID of the event
-     */
-    public remove(eventId: number): Promise<Response>;
+  /**
+   * Get all the banned users
+   */
+  list(): number[];
+  /**
+   * Check to see if a user is banned
+   * @param userIds The ID or IDs of the users to check
+   */
+  isBanned(userIds: number | number[]): boolean | boolean[];
+  /**
+   * Ban a user
+   * @param userId The ID of the user
+   */
+  ban(userId: number): Promise<boolean>;
+  banAll(userIds: number[]): Promise<boolean[]>;
+  unban(userId: number): boolean;
+  unbanAll(userIds: number[]): boolean[];
+  clear(): void;
 }
 
 export class ChannelHelper extends BaseHelper {
-    private constructor(client);
+  readonly category: ChannelCategoryHelper;
+  readonly member: ChannelMemberHelper;
+  readonly roles: ChannelRoleHelper;
+  getById(channelId: number, opts?: ChannelOptions): Promise<Channel | null>;
+  getByIds(channelIds: number[], opts?: ChannelOptions): Promise<(Channel | null)[]>;
+  getByName(name: string, opts?: ChannelOptions): Promise<Channel | null>;
+  getChatHistory(channelId: number, chronological?: boolean, timestamp?: number, limit?: number): Promise<Message[]>;
+  getStats(channelId: number, opts?: ChannelStatsOptions): Promise<ChannelStats>;
+  getRecommendations(): Promise<IdHash[]>;
+  joinById(channelId: number, password?: string): Promise<WOLFResponse>;
+  joinByName(name: string, password?: string): Promise<WOLFResponse>;
+  leaveById(channelId: number): Promise<WOLFResponse>;
+  leaveByName(name: string): Promise<WOLFResponse>;
+  list(opts?: any): Promise<Channel[]>;
+  search(query: string): Promise<Search[]>;  
+  
+  constructor(client: WOLF);
+}
 
+<<<<<<< HEAD
     readonly channels: Channel[];
     /**
      * Exposes the Channel Member methods
@@ -960,877 +565,199 @@ export class ChannelMemberHelper extends BaseHelper {
      * @param subscriberId - The ID of the subscriber
      */
     public kick(targetChannelId: number, subscriberId: number): Promise<Response>;
+=======
+export class ChannelCategoryHelper extends BaseHelper {
+  list(languageId: number, opts?: ChannelCategoryOptions): Promise<ChannelCategory[]>;  
+  
+  constructor(client: WOLF);
 }
 
-/**
- * @deprecated
- */
-export class ChannelRoleHelperDeprecated extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the context of a Channel role
-     * @param roleId - The ID of the role
-     * @param languageId - The Language
-     * @param forceNew - Whether or not to request new from the server
-     * @deprecated use {@link WOLF.role.getById} instead
-     */
-    public getById(roleId: number, languageId: Language, forceNew: false): Promise<ChannelRoleContext>;
-
-    /**
-     * Get the context of Channel roles
-     * @param roleIds - The ID of the roles
-     * @param languageId - The Language
-     * @param forceNew - Whether or not to request new from the server
-     * @deprecated use {@link WOLF.role.getByIds} instead
-     */
-    public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew: false): Promise<Array<ChannelRoleContext>>;
-
-    /**
-     *
-     * @param id - The ID of the channel
-     * @param forceNew - Whether or not to request new from the server
-     * @deprecated use {@link client.role.channel.list} instead
-     */
-    public roles(id: number, forceNew: boolean): Promise<Array<ChannelRole>>;
-
-    /**
-     * Get the list of members with Channel Roles
-     * @param id - The ID of the channel
-     * @param subscribe - Whether or not to subscribe to member updates
-     * @param forceNew  - Whether or not to request new from the server
-     * @deprecated use {@link client.role.channel.members} instead
-     */
-    public members(id: number, subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
-
-    /**
-     * Assign a Channel Role
-     * @param id - The ID of the channel
-     * @param subscriberId - The ID of the subscriber to give the role to
-     * @param roleId - The ID of the role to assign
-     * @deprecated use {@link client.role.channel.assign} instead
-     */
-    public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
-
-    /**
-     * Reassign a Channel Role
-     * @param id - The ID of the channel
-     * @param oldSubscriberId - The ID of the subscriber that currently has the role
-     * @param newSubscriberId - The ID of the subscriber to give the role to
-     * @param roleId - The role to reassign
-     * @deprecated use {@link client.role.channel.reassign} instead
-     */
-    public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
-
-    /**
-     * Unassign a Channel Role
-     * @param id - The ID of the channel
-     * @param subscriberId - The ID of the subscriber
-     * @param roleId - The ID of the role to remove
-     * @deprecated use {@link client.role.channel.unassign} instead
-     */
-    public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
+export class ChannelMemberHelper extends BaseHelper {
+  getList(channelId: number, list: ChannelMemberListType): Promise<ChannelMember[]>;
+  getMember(channelId: number, userId: number): Promise<ChannelMember | null>;
+  coowner(channelId: number, userId: number): Promise<WOLFResponse>;
+  admin(channelId: number, userId: number): Promise<WOLFResponse>;
+  mod(channelId: number, userId: number): Promise<WOLFResponse>;
+  regular(channelId: number, userId: number): Promise<WOLFResponse>;
+  silence(channelId: number, userId: number): Promise<WOLFResponse>;
+  ban(channelId: number, userId: number): Promise<WOLFResponse>;
+  kick(channelId: number, userId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+>>>>>>> 2af9a5522db867b270d85bcd4729dc6318a4ab82
 }
 
-export class LogHelper extends BaseHelper {
-    public constructor(client: WOLF);
 
-    /**
-     * Log a debug message
-     * @param message - The message
-     */
-    public debug(message: string): void;
-    /**
-     * Log a info message
-     * @param message - The message
-     */
-    public info(message: string): void;
-    /**
-     * Log a warn message
-     * @param message - The message
-     */
-    public warn(message: string): void;
-    /**
-     * Log a error message
-     * @param message - The message
-     */
-    public error(message: string): void;
+export class ChannelRoleHelper extends BaseHelper {
+  roles(channelId: number, opts?: any): Promise<ChannelRole[]>;
+  users(channelId: number, opts?: any): Promise<ChannelRoleUser[]>;
+  assign(channelId: number, userId: number, roleId: number): Promise<WOLFResponse>;
+  unassign(channelId: number, userId: number, roleId: number): Promise<WOLFResponse>;
+  reassign(channelId: number, oldUserId: number, newUserId: number, roleId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+}
+
+export class CharmHelper extends BaseHelper {
+  getById(charmId: number, languageId: number, opts?: any): Promise<Charm | null>;
+  getByIds(charmIds: number[], languageId: number, opts?: any): Promise<(Charm | null)[]>;
+  getUserSummary(userId: number, opts?: any): Promise<CharmSummary[]>;
+  getUserStatistics(userId: number, opts?: any): Promise<CharmStatistic | null>;  
+  
+  constructor(client: WOLF);
+}
+
+export class BlockedHelper extends BaseHelper {
+  list(opts?: ContactOptions): Promise<Contact[]>;
+  isBlocked(userId: number): Promise<boolean>;
+  block(userId: number): Promise<WOLFResponse>;
+  unblock(userId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+}
+
+export class ContactHelper extends BaseHelper {
+  readonly blocked: BlockedHelper;
+  list(opts?: ContactOptions): Promise<Contact[]>;
+  isContact(userId: number): Promise<boolean>;
+  add(userId: number): Promise<WOLFResponse>;
+  delete(userId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+}
+export class EventHelper extends BaseHelper {
+  readonly channel: EventChannelHelper;
+  readonly subscription: EventSubscriptionHelper;
+  getById(eventId: number, opts?: EventOptions): Promise<Event | null>;
+  getByIds(eventIds: number[], opts?: EventOptions): Promise<(Event | null)[]>;  
+  
+  constructor(client: WOLF);
+}
+
+
+export class EventChannelHelper extends BaseHelper {
+
+  list(channelId: number, opts?: EventChannelOptions): Promise<ChannelEvent[]>;
+  create(channelId: number, eventData: any): Promise<Event>;
+  update(channelId: number, eventId: number, eventData: any): Promise<Event>;
+  delete(channelId: number, eventId: number): Promise<any>;  
+  
+  constructor(client: WOLF);
+}
+
+export class EventSubscriptionHelper extends BaseHelper {
+  list(opts?: any): Promise<EventSubscription[]>;
+  add(eventId: number): Promise<WOLFResponse>;
+  remove(eventId: number): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
 }
 
 export class MessagingHelper extends BaseHelper {
-    private constructor(client);
-
-    readonly subscription: MessagingSubscriptionHelper;
-
-    /**
-     * Send a group message
-     * @deprecated use {@link sendChannelMessage} instead
-     * @param targetChannelId - The ID of the group
-     * @param content - The message
-     * @param options - The sending options
-     */
-    public sendGroupMessage(targetChannelId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
-    /**
-     * Send a channel message
-     * @param targetChannelId - The ID of the channel
-     * @param content - The message
-     * @param options - The sending options
-     */
-    public sendChannelMessage(targetChannelId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
-
-    /**
-     * Send a private message
-     * @param targetSubscriberId - The ID of the subscriber
-     * @param content - The message
-     * @param options - The sending options
-     */
-    public sendPrivateMessage(targetSubscriberId: number, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
-    /**
-     * Send a message based on command or message
-     * @param commandOrMessage - The command or message to send from
-     * @param content - The message
-     * @param options - The sending options
-     */
-    public sendMessage(commandOrMessage: Command | Message, content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse> | Response<Array<MessageResponse>>>;
-    /**
-     * Get message edit history
-     * @deprecated use {@link getChannelMessageEditHistory} instead
-     * @param targetChannelId - The ID of the group
-     * @param timestamp - The timestamp of the message
-     */
-    public getGroupMessageEditHistory(targetChannelId: number, timestamp: number): Promise<Array<MessageUpdate>>;
-    /**
-    * Get message edit history
-    * @param targetChannelId - The ID of the channel
-    * @param timestamp - The timestamp of the message
-    */
-    public getChannelMessageEditHistory(targetChannelId: number, timestamp: number): Promise<Array<MessageUpdate>>;
-    /**
-     * Delete a group message
-     * @deprecated use {@link deleteChannelMessage} instead
-     * @param targetChannelId - The ID of the group
-     * @param timestamp - The timestamp of the message
-     */
-    public deleteGroupMessage(targetChannelId: number, timestamp: number): Promise<Response>;
-    /**
-     * Delete a channel message
-     * @param targetChannelId - The ID of the channel
-     * @param timestamp - The timestamp of the message
-     */
-    public deleteChannelMessage(targetChannelId: number, timestamp: number): Promise<Response>;
-    /**
-     * Restore a delete group message
-     * @deprecated use {@link restoreChannelMessage} instead
-     * @param targetChannelId - The ID of the group
-     * @param timestamp - The timestamp of the message
-     */
-    public restoreGroupMessage(targetChannelId: number, timestamp: number): Promise<Response>;
-    /**
-     * Restore a delete channel message
-     * @param targetChannelId - The ID of the channel
-     * @param timestamp - The timestamp of the message
-     */
-    public restoreChannelMessage(targetChannelId: number, timestamp: number): Promise<Response>;
-
-    /**
-     * Get the bots conversation list
-     */
-    public getConversationList(): Promise<Array<Message>>;
+  sendChannelMessage(channelId: number, content: string | Buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  sendPrivateMessage(userId: number, content: string | Buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  deleteMessage(targetId: number, timestamp: number, isChannel?: boolean): Promise<any>;
+  restoreMessage(targetId: number, timestamp: number, isChannel?: boolean): Promise<any>;  
+  
+  constructor(client: WOLF);
 }
 
-export class MessagingSubscriptionHelper extends BaseHelper {
-    private constructor(client);
-
-    readonly subscriptions: {
-        [key: string]: {
-            id: string,
-            predicate: Function,
-            def: Promise<Message>,
-            timeout: Number
-        }
-    }
-    /**
-     * Watch for a specific message
-     * @param predicate - Predicate to match
-     * @param timeout - How long to wait
-     */
-    public nextMessage(predicate: Function, timeout?: Number): Promise<Message | undefined>
-    /**
-     * Wait for the next group message
-     * @deprecated use {@link nextChannelMessage} instead
-     * @param targetChannelId - The ID of the group
-     * @param timeout - How long to wait
-     */
-    public nextGroupMessage(targetChannelId: number, timeout?: Number): Promise<Message | undefined>
-    /**
-     * Wait for the next channel message
-     * @param targetChannelId - The ID of the channel
-     * @param timeout - How long to wait
-     */
-    public nextChannelMessage(targetChannelId: number, timeout?: Number): Promise<Message | undefined>
-    /**
-     * Wait for the next subscriber message
-     * @param sourceSubscriberId - The ID of the subscriber
-     * @param timeout - How long to wait
-     */
-    public nextPrivateMessage(sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
-    /**
-     * Wait for the next message in a group by a specific subscriber
-     * @deprecated use {@link nextChannelSubscriberMessage} instead
-     * @param targetChannelId - The ID of the channel
-     * @param sourceSubscriberId - The ID of the subscriber
-     * @param timeout - How long to wait
-     */
-    public nextGroupSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
-
-    /**
-     * Wait for the next message in a channel by a specific subscriber
-     * @param targetChannelId - The ID of the channel
-     * @param sourceSubscriberId - The ID of the subscriber
-     * @param timeout - How long to wait
-     */
-    public nextChannelSubscriberMessage(targetChannelId: number, sourceSubscriberId: number, timeout?: Number): Promise<Message | undefined>
-
-}
-
-export class MiscHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get metadata for a url
-     * @param url - The URL
-     */
-    public metadata(url: string): Promise<LinkMetadata>;
-    /**
-     * Get list of blacklisted links
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public linkBlacklist(forceNew?: boolean): Promise<Array<BlacklistLink>>;
-    /**
-     * Get the AWS security token
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getSecurityToken(forceNew?: boolean): Promise<any>;
-    /**
-     * Get Bot message settings
-     */
-    public getMessageSettings(): Promise<MessageSettings>;
-    /**
-     * Set the Bot message settings
-     * @param messageFilterTier - The spam filter tier
-     */
-    public updateMessageSettings(messageFilterTier: MessageFilterTier): Promise<Response>;
+export class MetadataHelper extends BaseHelper {
+  metadata(url: string): Promise<Metadata>;
+  urlBlacklist(opts?: any): Promise<Blacklist[]>;  
+  
+  constructor(client: WOLF);
 }
 
 export class NotificationHelper extends BaseHelper {
-    private constructor(client);
-
-    readonly ubscriber: NotificationSubscriberHelper;
-    readonly global: NotificationGlobalHelper;
-
-    /**
-     * Get notifications
-     * @param forceNew - Whether or not to request new from the server
-     * @deprecated
-     */
-    public list(forceNew?: boolean): Promise<Array<LegacyNotification>>;
-    /**
-     * Clear notifications list
-     * @deprecated
-     */
-    public clear(): Promise<Response>;
-}
-
-export class NotificationSubscriberHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get a subscriber notification
-     * @param id - The id of the notification
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, languageId: Language, forceNew?: boolean): Promise<Notification>;
-
-    /**
-     * Get multiple subscriber notifications
-     * @param ids - The ids of the notifications
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Notification | Array<Notification>>;
-
-    /**
-     * Get your accounts subscriber notifications list
-     * @param languageId - The language to request in
-     * @param limit - How many to request
-     * @param offset - Where to request at
-     * @param subscribe - Whether or not to subscribe to updates (Default: true)
-     * @param forceNew - Whether or not to request new form the server
-     */
-    public list(languageId: Language, limit?: number, offset?: number, subscribe?: boolean, forceNew?: boolean): Promise<Array<Notification>>;
-
-    /**
-     * Clear the accounts subscriber notifications list
-     */
-    public clear(): Promise<Response>;
-
-    /**
-     * Delete subscriber notifications
-     * @param ids - The ids of the notifications
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public delete(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Array<Response>>;
-
+  readonly global: NotificationGlobalHelper;
+  readonly user: NotificationUserHelper;
 }
 
 export class NotificationGlobalHelper extends BaseHelper {
-    private constructor(client);
+  list(opts?: NotificationOptions): Promise<any>;
+  clear(): Promise<WOLFResponse>;
+  deleteById(notificationId: number): Promise<WOLFResponse>;
+  deleteByIds(notificationIds: number[]): Promise<WOLFResponse>;
+  getById(notificationId: number, opts?: any): Promise<Notification|null>;
+  getByIds(notificationIds: number[], opts?: any): Promise<(Notification|null)[]>;  
+  
+  constructor(client: WOLF);
+}
 
-    /**
-     * Get a global notification
-     * @param id - The id of the notification
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, languageId: Language, forceNew: boolean): Promise<Notification>;
-
-    /**
-     * Get multiple global notifications
-     * @param ids - The ids of the notifications
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Notification | Array<Notification>>;
-
-    /**
-     * Get your accounts global notifications list
-     * @param languageId - The language to request in
-     * @param limit - How many to request
-     * @param offset - Where to request at
-     * @param subscribe - Whether or not to subscribe to updates (Default: true)
-     * @param forceNew - Whether or not to request new form the server
-     */
-    public list(languageId: Language, limit: number, offset: number, subscribe: boolean, forceNew?: boolean): Promise<Array<Notification>>;
-
-    /**
-     * Clear the accounts global notifications list
-     */
-    public clear(): Promise<Response>;
-
-    /**
-     * Delete global notifications
-     * @param ids - The ids of the notifications
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public delete(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<Array<Response>>;
+export class NotificationUserHelper extends BaseHelper {
+  list(opts?: NotificationOptions): Promise<any>;
+  clear(): Promise<WOLFResponse>;
+  deleteById(notificationId: number): Promise<WOLFResponse>;
+  deleteByIds(notificationIds: number[]): Promise<WOLFResponse>;
+  getById(notificationId: number, opts?: any): Promise<Notification|null>;
+  getByIds(notificationIds: number[], opts?: any): Promise<(Notification|null)[]>;  
+  
+  constructor(client: WOLF);
 }
 
 export class PhraseHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Load list of phrases
-     * @param phrases - The phrase list
-     */
-    public load(phrases: Array<Phrase>): void;
-    /**
-     * Get total phrase count and phrases per language
-     */
-    public count(): PhraseCount;
-    /**
-     * Get all phrases with a specific name
-     * @param name - The phrase name
-     */
-    public getAllByName(name: string): Array<Phrase>;
-    /**
-     * Get a phrase by language and name
-     * @param language - The language
-     * @param name - The name
-     */
-    public getByLanguageAndName(language: string, name: string): string;
-    /**
-     * Get a phrase by command and name
-     * @param command - The command
-     * @param name - The name
-     */
-    public getByCommandAndName(command: CommandContext, name: string): string;
-    /**
-     * Check whether or not a string is a specific phrase
-     * @param name - The name
-     * @param input - The input
-     */
-    public isRequestedPhrase(name: string, input: string): boolean;
+  reload(): void;
+  register(phrases: { name: string; value: string; language: string }[]): void;
+  getByLanguageAndName(language: string, name: string): string;
+  getByCommandAndName(command: Command, name: string): string;
+  getAllByName(name: string): string[];
+  isRequestedPhrase(name: string, input: string): boolean;
 }
 
 export class RoleHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * The subscriber related methods
-     */
-    public subscriber: SubscriberRoleHelper;
-    /**
-     * The channel related methods
-     */
-    public channel: ChannelRoleHelper;
-
-    /**
-     * Get the context of a Channel role
-     * @param roleId - The ID of the role
-     * @param languageId - The Language
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(roleId: number, languageId: Language, forceNew?: Boolean): Promise<ChannelRoleContext>;
-    /**
-     * Get the context of Channel roles
-     * @param roleIds - The ID of the roles
-     * @param languageId - The Language
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(roleIds: number | Array<number>, languageId: Language, forceNew?: Boolean): Promise<Array<ChannelRoleContext>>;
+  getById(roleId: number, languageId: number, opts?: any): Promise<Role|null>;
+  getByIds(roleIds: number[], languageId: number, opts?: any): Promise<(Role|null)[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelRoleHelper extends BaseHelper {
-    private constructor(client);
-    /**
-     *
-     * @param id - The ID of the channel
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public list(id: number, forceNew?: Boolean): Promise<Array<ChannelRole>>
-    /**
-     * Get the list of members with Channel Roles
-     * @param id - The ID of the channel
-     * @param subscribe - Whether or not to subscribe to member updates
-     * @param forceNew  - Whether or not to request new from the server
-     */
-    public members(id: number, forceNew?: Boolean): Promise<Array<ChannelRoleMember>>
-    /**
-     * Assign a Channel Role
-     * @param id - The ID of the channel
-     * @param subscriberId - The ID of the subscriber to give the role to
-     * @param roleId - The ID of the role to assign
-     */
-    public assign(id: number, subscriberId: number, roleId: number): Promise<Response>;
-
-    /**
-     * Reassign a Channel Role
-     * @param id - The ID of the channel
-     * @param oldSubscriberId - The ID of the subscriber that currently has the role
-     * @param newSubscriberId - The ID of the subscriber to give the role to
-     * @param roleId - The role to reassign
-     */
-    public reassign(id: number, oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
-
-    /**
-     * Unassign a Channel Role
-     * @param id - The ID of the channel
-     * @param subscriberId - The ID of the subscriber
-     * @param roleId - The ID of the role to remove
-     */
-    public unassign(id: number, subscriberId: number, roleId: number): Promise<Response>;
-}
-
-export class SubscriberRoleHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get the channels that the subscriber has a role in
-     * @param id The ID of the subscriber
-     */
-    public channels(id: number): Promise<Array<SubscriberRole>>;
-}
-
-export class StageHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Exposes the Stage Request methods
-     */
-    readonly request: StageRequestHelper;
-    /**
-     * Exposes the Stage Slot methods
-     */
-    readonly slot: StageSlotHelper;
-
-    /**
-     * Gets all stages available for a channel
-     * @param targetChannelId - The ID of the channel
-     * @param forceNew - Whether or not to get new from the server
-     */
-    public getAvailableStages(targetChannelId: number, forceNew?: boolean): Promise<Array<ChannelStage>>
-    /**
-     * Get a channels stage settings
-     * @param targetChannelId - The ID of the channel
-     */
-    public getAudioConfig(targetChannelId: number): Promise<ChannelAudioConfig>;
-    /**
-     * Update the channels audio config
-     * @param targetChannelId - The ID of the channel
-     * @param audioConfig - The new audio config
-     */
-    public updateAudioConfig(targetChannelId: number, audioConfig: { stageId?: number, enabled?: boolean, minRepLevel?: number }): Promise<Response>;
-    /**
-     * Get a channels stage settings
-     * @param targetChannelId - The ID of the channel
-     */
-    public getAudioCount(targetChannelId: number): Promise<ChannelAudioCounts>;
-    /**
-     * Play audio on stage
-     * @param targetChannelId - The ID of the channel (Must join first)
-     * @param data - The audio stream
-     */
-    public play(targetChannelId: number, data: Stream): Promise<void>;
-    /**
-     * Stop playing audio on a stage (Will remain on stage)
-     * @param targetChannelId - The ID of the channel
-     */
-    public stop(targetChannelId: number): Promise<void>;
-    /**
-     * Pause the current broadcast (Download continues in background)
-     * @param targetChannelId - The ID of the channel
-     */
-    public pause(targetChannelId: number): Promise<void>;
-    /**
-     * Resume the current broadcast
-     * @param targetChannelId - The ID of the channel
-     */
-    public resume(targetChannelId: number): Promise<void>;
-    /**
-     * Whether or not the bot is on stage
-     * @param targetChannelId - The ID of the channel
-     */
-    public onStage(targetChannelId: number): Promise<boolean>
-    /**
-     * Get the current broadcast state of the client for a channel
-     * @param targetChannelId - The ID of the channel
-     */
-    public getBroadcastState(targetChannelId: number): Promise<StageBroadcastState>;
-    /**
-     * Whether or not the client for the channel is ready to broadcast
-     * @param targetChannelId - The ID of the channel
-     */
-    public isReady(targetChannelId: number): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is broadcasting
-     * @param targetChannelId - The ID of the channel
-     */
-    public isPlaying(targetChannelId: number): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is paused
-     * @param targetChannelId - The ID of the channel
-     */
-    public isPaused(targetChannelId: number): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is idling
-     * @param targetChannelId - The ID of the channel
-     */
-    public isIdle(targetChannelId: number): Promise<boolean>;
-    /**
-     * Get the duration of the current broadcast
-     * @param targetChannelId - The ID of the channel
-     */
-    public duration(targetChannelId: number): Promise<number>;
-    /**
-     * Get the volume of the current broadcast
-     * @param targetChannelId - The ID of the channel
-     */
-    public getVolume(targetChannelId: number): Promise<number>
-    /**
-     * Change the volume of the current broadcast (Causes static :()
-     * @param targetChannelId - The ID of the channel
-     * @param volume - The volume value
-     */
-    public setVolume(targetChannelId: number, volume: number): Promise<void>;
-    /**
-    * Get the slot the bot is on
-    * @param targetChannelId - The ID of the channel
-    */
-    public getSlotId(targetChannelId: number): Promise<number>;
-}
-
-export class StageRequestHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get list of current stage slot requests
-     * @param targetChannelId - The ID of the channel
-     * @param subscribe - Whether or not to subscribe to list updates
-     * @param forceNew - Whether or not to fetch new from the server
-     */
-    public list(targetChannelId: number, subscribe?: boolean, forceNew?: boolean): Promise<ChannelAudioSlotRequest>;
-    /**
-     * Add request to stage request list
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     * @param subscriberId - The ID of the subscriber (Leave blank if bot is requesting for self)
-     */
-    public add(targetChannelId: number, slotId: number, subscriberId?: number): Promise<Response>
-    /**
-     * Remove a request from stage request list
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public delete(targetChannelId: number, slotId: number): Promise<Response>
-    /**
-     * Clear the channels current stage slot requests
-     * @param targetChannelId - The ID of the channel
-     */
-    public clear(targetChannelId: number): Promise<Response>
-}
-
-export class StageSlotHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get list of slots
-     * @param targetChannelId - The ID of the channel
-     * @param subscribe - Whether or not to subscribe to slot updates
-     */
-    public list(targetChannelId: number, subscribe?: boolean): Promise<Array<ChannelAudioSlot>>
-    /**
-     * Get a channel slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public get(targetChannelId: number, slotId: number): Promise<ChannelAudioSlot>;
-    /**
-     * Lock a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public lock(targetChannelId: number, slotId: number): Promise<Response>;
-    /**
-     * Unlock a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public unlock(targetChannelId: number, slotId: number): Promise<Response>;
-    /**
-     * Mute a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public mute(targetChannelId: number, slotId: number): Promise<Response>;
-    /**
-     * Unmute a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public unmute(targetChannelId: number, slotId: number): Promise<Response>;
-    /**
-     * Kick a user from a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public kick(targetChannelId: number, slotId: number): Promise<Response>;
-    /**
-     * Join a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public join(targetChannelId: number, slotId: number): Promise<Response<Object>>;
-    /**
-     * Leave a slot
-     * @param targetChannelId - The ID of the channel
-     * @param slotId - The ID of the slot
-     */
-    public leave(targetChannelId: number, slotId: number): Promise<Response<Object>>;
+export class SecurityHelper extends BaseHelper {
+  login(email: string, password: string): Promise<WOLFResponse>;
+  logout(): Promise<WOLFResponse>;
+  getToken(opts?: any): Promise<Cognito>;  
+  
+  constructor(client: WOLF);
 }
 
 export class StoreHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get list of purchasable credits
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getCreditList(languageId: Language, forceNew?: boolean): Promise<Array<StoreProductCredits>>;
-    /**
-     * Get store
-     * @param languageId - The language to request in
-     * @param includeCredits - Whether or not to include the purchasable credit list
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public get(languageId: Language, includeCredits: boolean, forceNew?: boolean): Promise<Store>;
-    /**
-     * Request partial products from the server
-     * @param ids - The list of product IDs
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getProducts(ids: number | Array<number>, languageId: Language, forceNew?: boolean): Promise<StoreProductPartial | Array<StoreProductPartial>>;
-    /**
-     * Get products full profile
-     * @param id - The ID of the product
-     * @param languageId - The language to request in
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getFullProduct(id: number, languageId: Language, forceNew?: boolean): Promise<StoreProduct>;
-    /**
-     * Purchase a product
-     * @param productDurationId - The ID of the product duration
-     * @param quantity - The quantity to purchase
-     * @param ids - The ID of channel or users to purchase for
-     */
-    public purchase(productDurationId: number, quantity: number, ids: number | Array<number>): Promise<Response>;
-    /**
-     * Get the Bots credit balance
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getCreditBalance(forceNew?: boolean): Promise<number>
+  readonly product: StoreProductHelper;
+  balance(opts?: StoreBalanceOptions): Promise<number>;  
+  
+  constructor(client: WOLF);
 }
 
-export class SubscriberHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Exposes the Presence methods
-     */
-    readonly presence: SubscriberPresenceHelper;
-    /**
-     * Exposes the Wolfstars methods
-     */
-    readonly wolfstars: WolfStarsHelper;
-    /**
-     * Get a subscriber profile
-     * @param id - The ID of the subscriber
-     * @param subscribe - Whether or not to subscribe to profile updates
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, subscribe?: boolean, forceNew?: boolean): Promise<Subscriber>;
-    /**
-     * Get subscriber profiles
-     * @param ids - The list of subscriber IDs
-     * @param subscribe - Whether or not to subscribe to profile updates
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Subscriber | Array<Subscriber>>;
-    /**
-     * Get chat history
-     * @param id - The ID of the subscriber
-     * @param timestamp - The timestamp to start at
-     * @param limit - How many messages to request (Default: 15)
-     */
-    public getChatHistory(id: number, timestamp?: number, limit?: number): Promise<Array<Message>>;
-    /**
-     * Search for a subscriber
-     * @param query - The search params
-     */
-    public search(query: string): Promise<Array<Search>>;
+export class StoreProductHelper extends BaseHelper {
+  readonly profile: StoreProductProfileHelper;
+  getById(productId: number, languageId: number, opts?: StoreProductOptions): Promise<StoreProduct | null>;
+  getByIds(productIds: number[], languageId: number, opts?: StoreProductOptions): Promise<(StoreProduct | null)[]>;
+  /** NOT IMPLEMENTED */
+  purchase(): Promise<any>;  
+  
+  constructor(client: WOLF);
 }
 
-
-export class WolfStarsHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get a subscribers Wolfstar statistics
-     * @param subscriberId - The ID of the subscriber
-     */
-    public getProfile(subscriberId: number): Promise<WolfstarsProfile>;
+export class StoreProductProfileHelper extends BaseHelper {
+  get(productId: number, languageId: number, opts?: any): Promise<StoreProductProfile | null>;  
+  
+  constructor(client: WOLF);
 }
 
-export class SubscriberPresenceHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Get a subscriber presence
-     * @param id - The ID of the subscriber
-     * @param subscribe - Whether or not to subscribe to presence updates
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getById(id: number, subscribe?: boolean, forceNew?: boolean): Promise<Presence>;
-    /**
-     * Get subscribers presences
-     * @param ids - The list of subscriber IDs
-     * @param subscribe - Whether or not to subscribe to presence updates
-     * @param forceNew - Whether or not to request new from the server
-     */
-    public getByIds(ids: number | Array<number>, subscribe?: boolean, forceNew?: boolean): Promise<Presence | Array<Presence>>;
-}
-
-export class TippingHelper extends BaseHelper {
-    private constructor(client);
-
-    /**
-     * Tip a subscriber
-     * @param targetSubscriberId - The ID of the subscriber
-     * @param targetChannelId - The ID of the channel
-     * @param context - The context
-     * @param charms - The charms to tip
-     */
-    public tip(targetSubscriberId: number, targetChannelId: number, context: { type: ContextType, id: number | undefined }, charms: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
-    /**
-     * Get a messages tip details
-     * @param targetChannelId - The ID of the channel
-     * @param timestamp - The timestamp of the message
-     * @param limit - How many should be requested (Default: 20)
-     * @param offset - Where the request should start at (Default: 0)
-     */
-    public getDetails(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<TipDetail>;
-    /**
-     * Get a messages tip summary
-     * @param targetChannelId - The ID of the channel
-     * @param timestamp - The timestamp of the message
-     * @param limit - How many should be requested (Default: 20)
-     * @param offset - Where the request should start at (Default: 0)
-     */
-    public getSummary(targetChannelId: number, timestamp: number, limit?: number, offset?: number): Promise<TipSummary>;
-    /**
-     * Get a groups tipping leaderboard
-     * @deprecated use {@link getChannelLeaderboard} instead
-     * @param targetChannelId - The ID of the channel
-     * @param tipPeriod - The tipping period
-     * @param tipType - The tipping type
-     * @param tipDirection - The tipping direction
-     */
-    public getGroupLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboard>;
-    /**
-    * Get a channels tipping leaderboard
-    * @param targetChannelId - The ID of the channel
-    * @param tipPeriod - The tipping period
-    * @param tipType - The tipping type
-    * @param tipDirection - The tipping direction
-    */
-    public getChannelLeaderboard(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<ipLeaderboard>;
-    /**
-     * Get a groups tipping leaderboard summary
-     * @deprecated use {@link getChannelLeaderboardSummary} instead
-     * @param targetChannelId - The ID of the channel
-     * @param tipPeriod - The tipping period
-     * @param tipType - The tipping type
-     * @param tipDirection - The tipping direction
-     */
-    public getGroupLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummary>;
-    /**
-     * Get a channels tipping leaderboard summary
-     * @param targetChannelId - The ID of the channel
-     * @param tipPeriod - The tipping period
-     * @param tipType - The tipping type
-     * @param tipDirection - The tipping direction
-     */
-    public getChannelLeaderboardSummary(targetChannelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection: TipDirection): Promise<TipLeaderboardSummary>;
-
-    /**
-     * Get the global tipping leaderboard
-     * @param tipPeriod - The tipping period
-     * @param tipType - The tipping type
-     * @param tipDirection - The tipping direction
-     */
-    public getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboard>;
-    /**
-     * Get the global tipping leaderboard summary
-     * @param tipPeriod - The tipping period
-     */
-    public getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSummary>;
+export class TipHelper extends BaseHelper {
+  tip(channelId: number, userId: number, context: ContextType, charms: any[]): Promise<WOLFResponse>;
+  getDetails(channelId: number, timestamp: number): Promise<TipDetail | null>;
+  getSummary(channelId: number, timestamp: number): Promise<TipSummary | null>;
+  getSummaries(channelId: number, timestamps: number[]): Promise<(TipSummary | null)[]>;
+  getChannelLeaderboard(channelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboard[]>;
+  getChannelleaderboardSummary(channelId: number, tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboardSummary[]>;
+  getGlobalLeaderboard(tipPeriod: TipPeriod, tipType: TipType, tipDirection?: TipDirection): Promise<TipLeaderboard[]>;
+  getGlobalLeaderboardSummary(tipPeriod: TipPeriod): Promise<TipLeaderboardSummary[]>;  
+  
+  constructor(client: WOLF);
 }
 
 export class TopicHelper extends BaseHelper {
+<<<<<<< HEAD
     private constructor(client);
 
     /**
@@ -3244,712 +2171,840 @@ export class ChannelMessageConfig extends BaseModel {
         slowModeRateInSeconds: number;
     };
 }
-
-export class ChannelRole extends BaseModel {
-    private constructor(client: WOLF, data: object, channelId: number);
-
-    public channelId: number;
-    public roleId: number;
-    public subscriberIdList: Array<number>;
-    public maxSeats: number;
-
-    /**
-     * Request the profiles of all subscribers with this role
-     */
-    public subscribers(): Promise<Array<Subscriber>>;
-    /**
-     * Assign a Channel Role
-     * @param subscriberId - The ID of the subscriber
-     */
-    public assign(subscriberId: number): Promise<Response>;
-    /**
-     * Reassign a Channel Role
-     * @param oldSubscriberId - The ID of the subscriber that currently has the role
-     * @param newSubscriberId - The ID of the subscriber to assign the role to
-     */
-    public reassign(oldSubscriberId: number, newSubscriberId: number): Promise<Response>;
-    /**
-     * Unassign a Channel Role
-     * @param subscriberId - The ID of the subscriber
-     */
-    public unassign(subscriberId: number): Promise<Response>
-
-    /**
-     * Get the roles context
-     */
-    public role(languageId: Language): Promise<ChannelRoleContext>;
-
-    toJSON(): {
-        channelId: number,
-        roleId: number,
-        subscriberIdList: Array<number>,
-        maxSeats: number,
-    }
+=======
+  readonly recipe: TopicRecipeHelper;
+  get(name: string, languageId: Language, opts?: any): Promise<TopicPage | null>;  
+  
+  constructor(client: WOLF);
 }
 
-
-export class ChannelRoleContext extends BaseModel {
-    private constructor(client: WOLF, data: object, channelId: number);
-
-    public id: number;
-    public description: string;
-    public emojiUrl: string;
-    public hexColour: string;
-    public name: string;
-
-    toJSON(): {
-        id: number,
-        description: string,
-        emojiUrl: string,
-        hexColour: string,
-        name: string
-    }
+export class TopicRecipeHelper extends BaseHelper {
+  get(
+    id: number,
+    languageId: Language,
+    type: TopicPageRecipeType,
+    opts?: any
+  ): Promise<TopicRecipe[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelRoleMember extends BaseModel {
-    private constructor(client: WOLF, data: object, channelId: number);
-
-    public channelId: number;
-    public roleId: number;
-    public subscriberId: number;
-
-    /**
-     * Get the subscribers profile
-     */
-    public subscriber(): Promise<Subscriber>;
-    /**
-     * Reassign the Channel Role
-     * @param newSubscriberId - The ID of the subscriber to assign the role to
-     */
-    public reassign(newSubscriberId: number): Promise<Response>;
-    /**
-     * Unassign the Channel Role
-     */
-    public unassign(): Promise<Response>
-
-    /**
-     * Get the roles context
-     */
-    public role(languageId: Language): Promise<ChannelRoleContext>;
-
-    toJSON(): {
-        channelId: number,
-        roleId: number,
-        subscriberId: number
-    }
+export declare class UserFollowerHelper extends BaseHelper {
+  count(userId: number, direction: UserFollowerType, opts?: any): Promise<number>;
+  list(direction: UserFollowerType, opts?: any): Promise<(UserFollow | UserFollower)[]>;
+  follow(userId: number): Promise<WOLFResponse>;
+  unfollow(userId: number): Promise<WOLFResponse>;
+  update(userId: number, notificationState: boolean): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelRoleContainer extends BaseModel {
-    private constructor(client: WOLF, channelId: number);
+export declare class UserHelper extends BaseHelper {
+  readonly followers: UserFollowerHelper;
+  readonly wolfstar: WOLFStarHelper;
+  readonly role: UserRoleHelper;
+  readonly presence: UserPresenceHelper;
 
-    /**
-     * Request the Channel Roles
-     * @param forceNew -
-     */
-    public roles(forceNew: boolean): Promise<Array<ChannelRole>>;
-    /**
-     * Request the Channel Role Members list
-     * @param subscribe -
-     * @param forceNew
-     */
-    public members(subscribe: boolean, forceNew: boolean): Promise<Array<ChannelRoleMember>>;
-    /**
-     * Assign a Channel Role
-     * @param subscriberId - The ID of the subscriber
-     * @param roleId - The ID of the role
-     */
-    public assign(subscriberId: number, roleId: number): Promise<Response>;
-    /**
-     * Reassign a Channel Role
-     * @param oldSubscriberId - The ID of the subscriber that currently has the role
-     * @param newSubscriberId - The ID of the subscriber to assign the role to
-     * @param roleId - The ID of the role
-     */
-    public reassign(oldSubscriberId: number, newSubscriberId: number, roleId: number): Promise<Response>;
-    /**
-     * Unassign a Channel Role
-     * @param subscriberId - The ID of the subscriber
-     * @param roleId - The ID of the Role
-     */
-    public unassign(subscriberId: number, roleId: number): Promise<Response>
-
-    toJSON(): {
-        members: Array<{
-            roleId: number,
-            subscriberId: number
-        }>,
-        roles: Array<{
-            roleId: number,
-            subscriberIdsList: Array<number>,
-            maxSeats: number
-        }>
-    }
+  getById(userId: number, opts?: UserOptions): Promise<User | CurrentUser | null>;
+  getByIds(userIds: number[], opts?: UserOptions): Promise<(User | CurrentUser | null)[]>;
+  search(query: string): Promise<Search[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelStage extends BaseModel {
-    private constructor(client: WOLF, data: object, targetChannelId: number)
-
-    public id: number;
-    public expireTime: Date;
-    public targetChannelId: number;
-
-    /**
-     * Set the stage for the channel
-     */
-    public set(): Promise<Response>;
-
-    toJSON(): {
-        id: number,
-        expireTime: Date,
-        targetChannelId: number
-    }
+export declare class UserPresenceHelper extends BaseHelper {
+  getById(userId: number, opts?: UserPresenceOptions): Promise<UserPresence | null>;
+  getByIds(userIds: number[], opts?: UserPresenceOptions): Promise<(UserPresence | null)[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelStats extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public details: ChannelStatsDetail;
-    public next30: Array<ChannelStatsActive>;
-    public top25: Array<ChannelStatsTop>;
-    public topAction: Array<ChannelStatsTop>;
-    public topEmoticon: Array<ChannelStatsTop>;
-    public topHappy: Array<ChannelStatsTop>;
-    public topImage: Array<ChannelStatsTop>;
-    public topQuestion: Array<ChannelStatsTop>;
-    public topSad: Array<ChannelStatsTop>;
-    public topSwear: Array<ChannelStatsTop>;
-    public topText: Array<ChannelStatsTop>;
-    public topWord: Array<ChannelStatsTop>;
-    public trends: Array<ChannelStatsTrend>;
-    public trendsDay: Array<ChannelStatsTrend>;
-    public trendsHours: Array<ChannelStatsTrend>;
-
-    toJSON(): {
-
-        details: {
-            actionCount: number;
-            emoticonCount: number;
-            id: number;
-            happyCount: number;
-            imageCOunt: number;
-            lineCount: number;
-            memberCount: number;
-            name: string;
-            owner: {
-                id: number,
-                hash: string,
-                nickname: string
-            };
-            packCount: number;
-            questionCount: number;
-            spokenCount: number;
-            sadCount: number;
-            swearCount: number;
-            textCount: number;
-            voiceCount: number;
-            wordCount: number;
-            timestamp: number;
-        };
-        next30: Array<{
-            actionCount: number;
-            emoticonCount: number;
-            channelId: number;
-            groupId: number;
-            happyEmoticonCount: number;
-            imageCount: number;
-            lineCount: number;
-            message: string;
-            nickname: string;
-            randomQoute: string;
-            packCount: number;
-            sadEmoticonCount: number;
-            subId: number;
-            swearCount: number;
-            textCount: number;
-            voiceCount: number;
-            wordCount: number;
-        }>;
-        top25: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topAction: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topEmoticon: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topHappy: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topImage: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topQuestion: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topSad: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topSwear: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topText: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        topWord: Array<{
-            nickname: string;
-            randomQoute: string;
-            subId: number;
-            value: number;
-            percentage: number;
-        }>;
-        trends: Array<{
-            day: number;
-            hour: number;
-            lineCount: number;
-        }>;
-        trendsDay: Array<{
-            day: number;
-            hour: number;
-            lineCount: number;
-        }>;
-        trendsHours: Array<{
-            day: number;
-            hour: number;
-            lineCount: number;
-        }>;
-    };
+export declare class UserRoleHelper extends BaseHelper {
+  getById(userId: number, opts?: UserRoleOptions): Promise<UserRole[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelStatsActive extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public actionCount: number;
-    public emoticonCount: number;
-    public channelId: number;
-    /**
-     * @deprecated use {@link channelId} instead
-     */
-    public groupId: number;
-    public happyEmoticonCount: number;
-    public imageCount: number;
-    public lineCount: number;
-    public message: string;
-    public nickname: string;
-    public randomQoute: string;
-    public packCount: number;
-    public sadEmoticonCount: number;
-    public subId: number;
-    public swearCount: number;
-    public textCount: number;
-    public voiceCount: number;
-    public wordCount: number;
-
-    /**
-     * Get the subscribers profile
-     */
-    public subscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        actionCount: number;
-        emoticonCount: number;
-        groupId: number;
-        channelId: number;
-        happyEmoticonCount: number;
-        imageCount: number;
-        lineCount: number;
-        message: string;
-        nickname: string;
-        randomQoute: string;
-        packCount: number;
-        sadEmoticonCount: number;
-        subId: number;
-        swearCount: number;
-        textCount: number;
-        voiceCount: number;
-        wordCount: number;
-    };
+export declare class WOLFStarHelper extends BaseHelper {
+  getById(userId: number, opts?: WOLFStarOptions): Promise<WOLFStar | null>;
+  getByIds(userIds: number[], opts?: WOLFStarOptions): Promise<(WOLFStar | null)[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class ChannelStatsDetail extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class Achievement extends BaseEntity {
+  id: number;
+  languageId: Language;
+  parentId: number | null;
+  typeId: number | null;
+  name: string | null;
+  description: string | null;
+  imageUrl: string | null;
+  category: string | null;
+  levelId: number | null;
+  levelName: string | null;
+  acquisitionPercentage: number | null;
 
-    public actionCount: number;
-    public emoticonCount: number;
-    public id: number;
-    public happyCount: number;
-    public imageCount: number;
-    public lineCount: number;
-    public memberCount: number;
-    public name: string;
-    public owner: IdHash;
-    public packCount: number;
-    public questionCount: number;
-    public spokenCount: number;
-    public sadCount: number;
-    public swearCount: number;
-    public textCount: number;
-    public voiceCount: number;
-    public wordCount: number;
-    public timestamp: number;
-
-    toJSON(): {
-        actionCount: number;
-        emoticonCount: number;
-        id: number;
-        happyCount: number;
-        imageCount: number;
-        lineCount: number;
-        memberCount: number;
-        name: string;
-        owner: {
-            id: number,
-            hash: string,
-            nickname: string
-        };
-        packCount: number;
-        questionCount: number;
-        spokenCount: number;
-        sadCount: number;
-        swearCount: number;
-        textCount: number;
-        voiceCount: number;
-        wordCount: number;
-        timestamp: number;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
-export class ChannelStatsTop extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class AchievementCategory extends BaseEntity {
+  id: number;
+  name: string;
 
-    public nickname: string;
-    public randomQuote: string;
-    public subId: number;
-    public value: number;
-    public percentage: number;
-
-    /**
-     * Get the subscribers profile
-     */
-    public subscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        nickname: string;
-        randomQuote: string;
-        subId: number;
-        value: number;
-        percentage: number;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
-export class ChannelStatsTrend extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class AchievementChannel extends BaseEntity {
+  id: number;
+  additionalInfo: AchievementChannelAdditionalInfo;
+  childrenId: number | null;
 
-    public day: number;
-    public hour: number;
-    public lineCount: number;
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 
-    toJSON(): {
-        day: number;
-        hour: number;
-        lineCount: number;
-    };
+  achievement(languageId: Language): Promise<Achievement | null>;  
+  
+  constructor(client: WOLF);
 }
 
-export class GroupSubscriberUpdate extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class AchievementChannelAdditionalInfo extends BaseEntity {
+  awardedAt: Date | null;
+  eTag: string | null;
+  steps: number | null;
+  total: number | null;
+  categoryId: number | null;
 
-    /**
-     * @deprecated use {@link channelId} instead
-     */
-    public groupId: number;
-    public channelId: number;
-    public sourceId: number;
-    public targetId: number;
-    public action: string;
-
-    /**
-     * Get the profile of the group the action was performed in
-     * @deprecated use {@link channel} instead
-     */
-    public group(): Promise<Channel>;
-    /**
-     * Get the profile of the channel the action was performed in
-     */
-    public channel(): Promise<Channel>;
-    /**
-     * Get the profile of the user who performed the action
-     */
-    public sourceSubscriber(): Promise<Subscriber>;
-    /**
-     * Get the profile of the user who the action was performed on
-     */
-    public targetSubscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        groupId: number;
-        channelId: number;
-        sourceId: number;
-        targetId: number;
-        action: string;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
-export class IconInfo extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class AchievementUser extends BaseEntity {
+  id: number;
+  additionalInfo: AchievementUserAdditionalInfo;
+  childrenId: number | null;
 
-    public availableSizes: IconInfoAvailableSize;
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 
-    /**
-     * Get the url for the specified size if it exists, else the closest available
-     * @param size - The size
-     */
-    public get(size: IconSize): string;
-
-    toJSON(): {
-        availableTypes: Array<Avatar>,
-        availableSizes: {
-            small: string;
-            medium: string;
-            large: string;
-            xlarge: string;
-        }
-    };
+  achievement(languageId: Language): Promise<Achievement | null>;  
+  
+  constructor(client: WOLF);
 }
 
-export class IconInfoAvailableSize extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class AchievementUserAdditionalInfo extends BaseEntity {
+  awardedAt: Date | null;
+  eTag: string | null;
+  steps: number | null;
+  total: number | null;
+  categoryId: number | null;
 
-    public small: string;
-    public medium: string;
-    public large: string;
-    public xlarge: string;
-
-    /**
-     * Get the url for the specified size if it exists, else the closest available
-     * @param size - The size
-     */
-    get(size: IconSize): string;
-
-    toJSON(): {
-        small: string;
-        medium: string;
-        large: string;
-        xlarge: string;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
-export class IdHash extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class Ad extends BaseEntity {
+  start: number;
+  end: number;
+  ad: string;
+  channelName: string;
 
-    public id: number;
-    public hash: string;
-    public nickname: string;
-    public isSubscriber: boolean;
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 
-    public subscriber(): Promise<Subscriber>;
-    public group(): Promise<Channel>;
-
-    toJSON(): {
-        id: number;
-        hash: string;
-        nickname: string;
-    };
+  /**
+   * Get the specified Channel
+   */
+  channel(opts?: any): Promise<Channel | null>;  
+  
+  constructor(client: WOLF);
 }
 
-export class Link extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class Blacklist extends BaseEntity {
+  id: number;
+  regex: string;
 
-    public start: number;
-    public end: number;
-    public link: string;
-
-    /**
-     * Get the link metadata
-     */
-    public metadata(): Promise<LinkMetadata>;
-
-    toJSON(): {
-        start: number;
-        end: number;
-        link: string;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
-export class LinkMetadata extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class Channel extends BaseEntity {
+  id: number;
+  giftAnimationDisabled: boolean;
+  name: string;
+  hash: string | null;
+  reputation: number;
+  premium: boolean;
+  icon: string | null;
+  iconHash: string | null;
+  iconInfo: IconInfo | null;
+  memberCount: number;
+  official: boolean;
+  peekable: boolean;
+  owner: ChannelOwner;
+  extended: ChannelExtended | null;
+  audioConfig: ChannelAudioConfig | null;
+  audioCount: ChannelAudioCount | null;
+  messageConfig: ChannelMessageConfig | null;
+  verificationTier: ChannelVerificationTier;
+  isMember: boolean;
+  capabilities: ChannelMemberCapability;
+  language: Language;
 
-    public description: string;
-    public domain: string;
-    public imageSize: number;
-    public imageUrl: string;
-    public isOfficial: boolean;
-    public title: string;
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 
-    toJSON(): {
-        description: string;
-        domain: string;
-        imageSize: number;
-        imageUrl: string;
-        isOfficial: boolean;
-        title: string;
-    };
+  get isOwner(): boolean;
+
+  hasCapability(required: ChannelMemberCapability): boolean;
+
+  canPerformActionAgainstMember(
+    targetMember: ChannelMember,
+    targetCapability: ChannelMemberCapability
+  ): Promise<boolean>;
+
+  join(password?: string): Promise<WOLFResponse>;
+  leave(): Promise<WOLFResponse>;
+  getAudioConfig(): Promise<ChannelAudioConfig | null>;
+  getAudioSlots(): Promise<ChannelAudioSlot[]>;
+  getAchievements(parentId?: number): Promise<AchievementChannel[]>;
+  getAudioSlotRequests(): Promise<ChannelAudioSlotRequest[]>;
+  getEvents(): Promise<ChannelEvent[]>;
+  getMember(userId: number): Promise<ChannelMember|null>;
+  getMembers(list: any): Promise<ChannelMember[]>;
+  getRoles(): Promise<ChannelRole[]>;
+  getRoleUsers(): Promise<ChannelRoleUser[]>;
+  getStages(): Promise<ChannelStage[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export class Message extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class ChannelAudioConfig extends BaseEntity {
+  id: number;
+  enabled: boolean;
+  stageId: number;
+  minRepLevel: number;
 
-    public id: string;
-    public body: string;
-    public sourceSubscriberId: number;
-    public targetChannelId: number;
-    /**
-     * @deprecated use {@link targetChannelId} instead
-     */
-    public targetGroupId: number;
-    public embeds: Array<MessageEmbed>;
-    public metadata: MessageMetadata;
-    /**
-     * @deprecated use {@link isChannel} instead
-     */
-    public isGroup: boolean;
-    public isChannel: boolean;
-    public timestamp: number;
-    public edited: MessageEdit;
-    public type: MessageType;
-    public isCommand: boolean;
-
-    /**
-     * Reply to the message
-     * @param content - The message
-     * @param options - The message send options
-     */
-    public reply(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
-    /**
-     * Send the subscriber who sent the message a private message
-     * @param content - The message
-     * @param options - The message send options
-     */
-    public replyPrivate(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
-    /**
-     * Delete the current message
-     */
-    public delete(): Promise<Response>;
-    /**
-     * Restore the current message
-     */
-    public restore(): Promise<Response>;
-    /**
-     * Get the edit history for the message
-     */
-    public getEditHistory(): Promise<Array<MessageUpdate>>
-    /**
-     * Get the subscriber profile
-     */
-    public subscriber(): Promise<Subscriber>;
-    /**
-     * Get the group profile
-     * @deprecated use {@link channel} instead
-     */
-    public group(): Promise<Channel>;
-    /**
-     * Get the channel profile
-     */
-    public channel(): Promise<Channel>;
-    /**
-     * Tip the message
-     * @param charm - The charm to tip
-     */
-    public tip(charm: { id: number, quantity: number } | Array<{ id: number, quantity: number }>): Promise<Response>;
-
-    toJSON(): {
-        id: string;
-        body: string;
-        sourceSubscriberId: number;
-        targetChannelId: number;
-        targetGroupId: number;
-        embeds: Array<{
-            type: EmbedType;
-            groupId: number;
-            channelId: number;
-            url: string;
-            title: string;
-            image: Buffer;
-            body: string;
-        }>;
-        metadata: {
-            formatting: {
-                groupLinks: Array<{
-                    start: number;
-                    end: number;
-                    groupId: number;
-
-                }>;
-                channelLinks: Array<{
-                    start: number;
-                    end: number;
-                    channelId: number;
-
-                }>;
-                links: Array<{
-                    start: number;
-                    end: number;
-                    url: string;
-                }>
-            };
-            isDeleted: boolean;
-            isEdited: boolean;
-            isSpam: boolean;
-            isTipped: boolean;
-        };
-        isGroup: boolean;
-        isChannel: boolean;
-        timestamp: number;
-        edited: {
-            subscriberId: number;
-            timestamp: number;
-        };
-        type: MessageType;
-        isCommand: boolean;
-    };
+  constructor(
+    client: WOLF,
+    entity: any
+  );
 }
 
+export class ChannelAudioCount extends BaseEntity {
+  broadcasterCount: number;
+  consumerCount: number;
+  id: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelAudioSlot extends BaseEntity {
+  id: number;
+  channelId: number;
+  isLocked: boolean;
+  isMuted: boolean;
+  userId: number | null;
+  isReserved: boolean;
+  reservation?: ChannelAudioSlotReservation;
+  connectionState: any;
+  uuid: string;
+  isOccupied: boolean;
+
+  constructor(
+    client: WOLF,
+    entity: any,
+    channelId: number
+  );
+
+  join(): Promise<WOLFResponse>;
+  leave(): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
+}
+
+export class ChannelAudioSlotRequest extends BaseEntity {
+  reservedUserId: number;
+  channelId: number;
+  reservedExpiresAt: Date;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelAudioSlotReservation extends BaseEntity {
+  userId: number;
+  expiresAt: Date;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelCategory extends BaseEntity {
+  id: number;
+  languageId: Language;
+  description: string | null;
+  imageUrl: string | null;
+  name: string;
+  pageName: string;
+  recipeId: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelEvent extends BaseEntity {
+  id: number;
+  additionalInfo: ChannelEventAdditionalInfo;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelEventAdditionalInfo extends BaseEntity {
+  eTag: string;
+  endsAt: Date;
+  startsAt: Date;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelExtended extends BaseEntity {
+  id: number;
+  discoverable: boolean;
+  advancedAdmin: boolean;
+  locked: boolean;
+  hub: ChannelHub;
+  questionable: boolean;
+  entryLevel: number;
+  passworded: boolean;
+  language: any | null;
+  longDescription: string | null;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelMember extends BaseEntity {
+  id: number;
+  channelId: number;
+  hash: string;
+  capabilities: ChannelMemberCapability;
+  lists: Set<ChannelMemberListType>;
+
+  constructor(
+    client: WOLF,
+    entity: any,
+    channelId: number,
+    source?: ChannelMemberListType
+  );
+
+  regular(): Promise<WOLFResponse>;
+  mod(): Promise<WOLFResponse>;
+  admin(): Promise<WOLFResponse>;
+  coowner(): Promise<WOLFResponse>;
+  kick(): Promise<WOLFResponse>;
+  ban(): Promise<WOLFResponse>;
+  message(content: string | Buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;  
+  
+  constructor(client: WOLF);
+}
+
+export class ChannelMessageConfig extends BaseEntity {
+  disableImage: boolean;
+  disableImageFilter: boolean;
+  disableVoice: boolean;
+  disableHyperlink: boolean;
+  slowModeRateInSeconds: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelOwner extends BaseEntity {
+  id: number;
+  hash: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelRole extends BaseEntity {
+  roleId: number;
+  userIdList: Set<number>;
+  maxSeats: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelRoleUser extends BaseEntity {
+  userId: number;
+  roleId: number;
+  channelId: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStage extends BaseEntity {
+  id: number;
+  expireTime: Date | null;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStats extends BaseEntity {
+  details: ChannelStatsDetails;
+  trends: ChannelStatsTrend[];
+  trendsHour: ChannelStatsTrend[];
+  trendsDay: ChannelStatsTrend[];
+  top25: ChannelStatsDetails[];
+  next30: ChannelStatsDetails[];
+  topWord: ChannelStatsTop[];
+  topText: ChannelStatsTop[];
+  topQuestion: ChannelStatsTop[];
+  topEmoticon: ChannelStatsTop[];
+  topHappy: ChannelStatsTop[];
+  topSad: ChannelStatsTop[];
+  topSwear: ChannelStatsTop[];
+  topImage: ChannelStatsTop[];
+  topAction: ChannelStatsTop[];
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStatsDetails extends BaseEntity {
+  id: number;
+  actionCount: number;
+  emoticonCount: number;
+  channelId: number;
+  happyEmoticonCount: number;
+  imageCount: number;
+  lineCount: number;
+  memberCount: number;
+  name: string;
+  owner?: ChannelStatsOwner;
+  message: string;
+  nickname: string;
+  packCount: number;
+  questionCount: number;
+  randomQuote: string;
+  sadEmoticonCount: number;
+  userId: number;
+  swearCount: number;
+  textCount: number;
+  voiceCount: number;
+  wordCount: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStatsOwner extends BaseEntity {
+  level: number;
+  nickname: string;
+  userId: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStatsTop extends BaseEntity {
+  nickname: string;
+  randomQuote: string;
+  userId: number;
+  wordsPerLine: number;
+  value: number;
+  percentage: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ChannelStatsTrend extends BaseEntity {
+  day: string;
+  hour: number;
+  lineCount: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class Charm extends BaseEntity {
+  id: number;
+  languageId: Language;
+  cost: number;
+  description: string;
+  imageUrl: string;
+  name: string;
+  productId: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CharmActive extends BaseEntity {
+  id: number;
+  charmId: number;
+  userId: number;
+  sourceUserId: number;
+  expireTime: Date | null;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CharmExpired extends BaseEntity {
+  id: number;
+  charmId: number;
+  userId: number;
+  sourceUserId: number;
+  expireTime: Date | null;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CharmStatistic extends BaseEntity {
+  extended: CharmStatisticExtended | null;
+  totalActive: number;
+  totalExpired: number;
+  totalGiftedReceived: number;
+  totalGiftedSent: number;
+  totalLifetime: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CharmStatisticExtended extends BaseEntity {
+  mostGiftedReceivedCharmId: number;
+  mostGiftedSentCharmId: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CharmSummary extends BaseEntity {
+  charmId: number;
+  expireTime: Date | null;
+  giftCount: number;
+  total: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class Cognito extends BaseEntity {
+  identity: string;
+  token: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CommandContext extends BaseEntity {
+  isChannel: boolean;
+  body: string;
+  language: string;
+  targetChannelId?: number;
+  sourceUserId?: number;
+  timestamp: number;
+  type: string;
+  route: string;
+  bodyParts: string[];
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+
+  getUser(): Promise<User|null>;
+  getChannel(): Promise<Channel|null>;
+  sendReply(content: string | buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  sendPrivateReply(content: string | buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  getPhrase(language: string, name?: string): string;
+  hasCapability(capability: ChannelMemberCapability, checkStaff?: boolean, checkAuthorised?: boolean): Promise<boolean>;
+  hasPrivilege(privilege: UserPrivilege|UserPrivilege[], requireAll?: boolean): Promise<boolean>;  
+  
+  constructor(client: WOLF);
+}
+
+export class Contact extends BaseEntity {
+  id: number;
+  additionalInfo: ContactAdditionalInfo;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class ContactAdditionalInfo extends BaseEntity {
+  nicknameShort: string;
+  onlineState: any;
+  hash: string;
+  privileges: any;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class CurrentUser extends User {
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class EndpointConfig extends BaseEntity {
+  avatarEndpoint: string;
+  mmsUploadEndpoint: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class Event extends BaseEntity {
+  id: number;
+  attendanceCount: number;
+  category: string;
+  createdBy: number;
+  endsAt: Date;
+  groupId: number;
+  hostedBy: number;
+  imageUrl: string;
+  isRemoved: boolean;
+  longDescription: string;
+  shortDescription: string;
+  startsAt: Date;
+  title: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class EventSubscription extends BaseEntity {
+  id: number;
+  groupId: number;
+  additionalInfo: EventSubscriptionAdditionalInfo;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class EventSubscriptionAdditionalInfo extends BaseEntity {
+  eTag: string;
+  endsAt: Date;
+  startsAt: Date;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class IconInfo extends BaseEntity {
+  targetType: string;
+  availableSizes: Record<string, string>;
+  availableTypes: Set<string>;
+  targetId?: number;
+
+  constructor(
+    client: WOLF,
+    entity: any,
+    targetType: string
+  );
+>>>>>>> 2af9a5522db867b270d85bcd4729dc6318a4ab82
+
+  get(size: string): string;
+}
+
+export class IdHash extends BaseEntity {
+  id: number;
+  hash: string;
+  isChannel: boolean;
+
+  constructor(
+    client: WOLF,
+    entity: any,
+    isChannel?: boolean
+  );
+}
+
+export class Link extends BaseEntity {
+  start: number;
+  end: number;
+  link: string;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class Message extends BaseEntity {
+  id: number;
+  flightId: string;
+  sourceUserId: number | null;
+  targetChannelId: number | null;
+  isChannel: boolean;
+  timestamp: number;
+  mimeType: string;
+  body: string;
+  metadata: MessageMetadata | null;
+  edited: MessageEdited | null;
+  isCommand: boolean;
+  bodyParts: string[];
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+
+  getUser(): Promise<User|null>;
+  getChannel(): Promise<Channel|null>;
+  tip(tipCharms: any): Promise<WOLFResponse>;
+  sendReply(content: string | buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  delete(): Promise<any>;
+  restore(): Promise<any>;  
+  
+  constructor(client: WOLF);
+}
+
+export class MessageEdited extends BaseEntity {
+  userId: number;
+  timestamp: number;
+
+  constructor(
+    client: WOLF,
+    entity: any
+  );
+}
+
+export class MessageMetadataFormattingChannelLink extends BaseEntity {
+  start: number;
+  end: number;
+  channelId: number | null;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class MessageMetadataFormattingUrl extends BaseEntity {
+  start: number;
+  end: number;
+  url: string;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class MessageMetadataFormatting extends BaseEntity {
+  channelLinks: MessageMetadataFormattingChannelLink[] | null;
+  links: MessageMetadataFormattingUrl[] | null;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class MessageMetadata extends BaseEntity {
+  formatting: MessageMetadataFormatting | null;
+  isDeleted: boolean;
+  isEdited: boolean;
+  isSpam: boolean;
+  isTipped: boolean;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class MessageSend {
+  uuid: string;
+  timestamp: number;
+  slowModeInSeconds: number | null;
+
+  constructor(client: WOLF, entity: any);
+}
+
+<<<<<<< HEAD
 export class MessageEdit extends BaseModel {
     private constructor(client: WOLF, data: object)
 
@@ -4182,2187 +3237,787 @@ export class MessageSettingFilter extends BaseModel {
         tier: MessageFilterTier
     };
 }
+=======
+export class MessageUpdate {
+  sourceUserId: number | null;
+  targetChannelId: number | null;
+  isChannel: boolean;
+  timestamp: number;
+  body: string;
+  metadata: MessageMetadata | null;
+  edited: MessageEdited | null;
+  isCommand: boolean;
+>>>>>>> 2af9a5522db867b270d85bcd4729dc6318a4ab82
 
-export class MessageUpdate extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public data: string;
-    public metadata: MessageMetadata;
-    public subscriberId: number;
-    public timestamp: number;
-
-    /**
-     * Get the subscriber profile
-     */
-    public subscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        data: string;
-        metadata: {
-            formatting: {
-                groupLinks: Array<{
-                    start: number;
-                    end: number;
-                    groupId: number;
-                }>;
-                channelLinks: Array<{
-                    start: number;
-                    end: number;
-                    channelId: number;
-                }>;
-                links: Array<{
-                    start: number;
-                    end: number;
-                    url: string;
-                }>
-            };
-            isDeleted: boolean;
-            isEdited: boolean;
-            isSpam: boolean;
-            isTipped: boolean;
-        };
-        subscriberId: number;
-        timestamp: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class Notification extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public context: string;
-    public createdAt: Date;
-    public expiresAt: Date;
-    public feed: NotificationFeed;
-    public id: number;
-    public notificationId: number;
-    public presentationType: string;
-    public typeId: number;
-
-    public exists: boolean;
-}
+export class Metadata extends BaseEntity {
+  imageUrl: string;
+  description: string;
+  domain: string;
+  imageSize: number;
+  isOfficial: boolean;
+  title: string;
 
-export class NotificationFeed extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public body: string;
-    public imageUrl: string;
-    public languageId: Language;
-    public link: string;
-    public title: string;
+  constructor(client: WOLF, entity: any);
 }
 
+export class NotificationAdditionalInfo extends BaseEntity {
+  createdAt: Date;
+  eTag: string;
 
-export class LegacyNotification extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public actions: Array<NotificationAction>;
-    public endAt: Date;
-    public favourite: boolean;
-    public global: boolean;
-    public id: number;
-    public imageUrl: string;
-    public layoutType: number;
-    public link: string;
-    public message: string;
-    public metadata: any;
-    public newsStreamType: number;
-    public persistent: boolean;
-    public startsAt: Date;
-    public title: string;
-    public type: string;
-
-    toJSON(): {
-        actions: Array<{
-            id: number;
-            titleText: string;
-            actionurl: string;
-            external: boolean;
-            imageUrl: string;
-        }>;
-        endAt: Date;
-        favourite: boolean;
-        global: boolean;
-        id: number;
-        imageUrl: string;
-        layoutType: number;
-        link: string;
-        message: string;
-        metadata: any;
-        newsStreamType: number;
-        persistent: boolean;
-        startsAt: Date;
-        title: string;
-        type: string;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class NotificationAction extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public titleText: string;
-    public actionUrl: string;
-    public external: boolean;
-    public imageUrl: string;
-
-    toJSON(): {
-        id: number;
-        titleText: string;
-        actionUrl: string;
-        external: boolean;
-        imageUrl: string;
-    };
-}
+export class Notification extends BaseEntity {
+  id: number;
+  additionalInfo: NotificationAdditionalInfo;
 
-export class Phrase extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public name: string;
-    public value: string;
-    public language: string;
-
-    toJSON(): {
-        name: string;
-        value: string;
-        language: string;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class PhraseRoute {
-    public name: string;
-    public language: string;
-
-    toJSON(): {
-        name: string;
-        language: string;
-    }
+export class NotificationGlobalFeed extends BaseEntity {
+  languageId: Language;
+  title: string;
+  body: string;
+  imageUrl: string;
+  link: string;
+
+  constructor(client: WOLF, entity: any);
 }
+
+export class NotificationGlobalPopup extends BaseEntity {
+  title: string;
+  languageId: Language;
+  body: string;
+  imageUrl: string;
+  link: string;
+  dismissText: string;
+  linkText: string;
+  priority: number;
 
-export class PhraseCount extends BaseModel {
-    private constructor(client: WOLF, data: object)
+  constructor(client: WOLF, entity: any);
+}
 
-    public phrases: number;
-    public phrasesPerLanguage: { [key: string]: number }
+export class NotificationGlobal extends BaseEntity {
+  context: any;
+  createdAt: Date;
+  expiresAt: Date;
+  feed?: NotificationGlobalFeed;
+  popup?: NotificationGlobalPopup;
+  id: number;
+  notificationId: number;
+  presentationType: any;
+  typeId: number;
 
-    toJSON(): {
-        phrases: number;
-        phrasesPerLanguage: { [key: string]: number }
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class Presence extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public device: DeviceType;
-    public state: OnlineState;
-    public lastActive: Date;
-    public subscriberId: number;
-
-    /**
-     * Get the subscriber profile
-     */
-    public subscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        device: DeviceType;
-        state: OnlineState;
-        lastActive: Date;
-        subscriberId: number;
-    };
-}
+export class NotificationUserFeed extends BaseEntity {
+  languageId: Language;
+  title: string;
+  body: string;
+  imageUrl: string;
+  link: string;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class NotificationUserPopup extends BaseEntity {
+  title: string;
+  languageId: Language;
+  body: string;
+  imageUrl: string;
+  link: string;
+  dismissText: string;
+  linkText: string;
+  priority: number;
+
+  constructor(client: WOLF, entity: any);
+}
 
-export class Search extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public searchType: SearchType;
-    public id: number;
-    public hash: string;
-    public reason: string;
-
-    /**
-     * Get the channel or subscriber profile
-     */
-    public getProfile(): Promise<Subscriber | Channel>;
-
-    toJSON(): {
-        searchType: SearchType;
-        id: number;
-        hash: string;
-        reason: string;
-    };
+export class NotificationUser extends BaseEntity {
+  context: any;
+  createdAt: Date;
+  expiresAt: Date;
+  feed?: NotificationUserFeed;
+  popup?: NotificationUserPopup;
+  id: number;
+  notificationId: number;
+  presentationType: any;
+  typeId: number;
+
+  constructor(client: WOLF, entity: any);
 }
-
-export class StageClientDurationUpdate extends BaseModel {
-    private constructor(client: WOLF, data: object);
-
-    public targetChannelId: number;
-    /**
-     * @deprecated use {@link targetChannelId} instead
-     */
-    public targetGroupId: number;
-    public slotId: number;
-
-
-    /**
-     * Play audio on stage
-     * @param data - The audio stream
-     */
-    public play(data: Stream): Promise<void>;
-    /**
-     * Stop playing audio on a stage (Will remain on stage)
-     */
-    public stop(): Promise<void>;
-    /**
-     * Pause the current broadcast (Download continues in background)
-     */
-    public pause(): Promise<void>;
-    /**
-     * Resume the current broadcast
-     */
-    public resume(): Promise<void>;
-    /**
-     * Leave the slot that bot was on
-     */
-    public leave(): Promise<Response>;
-    /**
-     * Get the current broadcast state of the client for a channel
-     */
-    public getBroadcastState(): Promise<StageBroadcastState>;
-    /**
-     * Whether or not the client for the channel is ready to broadcast
-     */
-    public isReady(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is broadcasting
-     */
-    public isPlaying(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is paused
-     */
-    public isPaused(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is idling
-     */
-    public isIdle(): Promise<boolean>;
-    /**
-     * Get the duration of the current broadcast
-     */
-    public duration(): Promise<number>;
-    /**
-     * Get the slot the bot is on
-     */
-    public getSlotId(): Promise<number>;
-
-    toJSON(): {
-        targetGroupId: number,
-        targetChannelId: number,
-        duration: number;
-    }
+
+export class Role extends BaseEntity {
+  id: number;
+  languageId: Language;
+  description: string;
+  emojiUrl: string;
+  name: string;
+  hexColur: string;
+
+  constructor(client: WOLF, entity: any);
 }
 
-export class StageClientGeneralUpdate extends BaseModel {
-    private constructor(client: WOLF, data: object);
-
-    public targetChannelId: number;
-    /**
-     * @deprecated use {@link targetChannelId} instead
-     */
-    public targetGroupId: number;
-    public sourceSubscriberId: number;
-    public slotId: number;
-
-    /**
-     * Play audio on stage
-     * @param data - The audio stream
-     */
-    public play(data: Stream): Promise<void>;
-    /**
-     * Stop playing audio on a stage (Will remain on stage)
-     */
-    public stop(): Promise<void>;
-    /**
-     * Pause the current broadcast (Download continues in background)
-     */
-    public pause(): Promise<void>;
-    /**
-     * Resume the current broadcast
-     */
-    public resume(): Promise<void>;
-    /**
-     * Leave the slot that bot was on
-     */
-    public leave(): Promise<Response>;
-    /**
-     * Get the current broadcast state of the client for a channel
-     */
-    public getBroadcastState(): Promise<StageBroadcastState>;
-    /**
-     * Whether or not the client for the channel is ready to broadcast
-     */
-    public isReady(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is broadcasting
-     */
-    public isPlaying(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is paused
-     */
-    public isPaused(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is idling
-     */
-    public isIdle(): Promise<boolean>;
-    /**
-     * Get the duration of the current broadcast
-     */
-    public duration(): Promise<number>;
-    /**
-     * Get the slot the bot is on
-     */
-    public getSlotId(): Promise<number>;
-
-    toJSON(): {
-        targetGroupId: number;
-        targetChannelId: number;
-        sourceSubscriberId: number;
-    }
-}
+export class Search extends BaseEntity {
+  id: number;
+  hash: string;
+  type: string;
+  reason: string;
+
+  constructor(client: WOLF, entity: any);
+}
+
+export class StoreProduct extends BaseEntity {
+  id: number;
+  languageId: Language;
+  name: string;
+  targetType: string;
+  imageUrl: string;
+  credits: number;
+  reputationLevel: number;
+  promotionText: string;
+  isLimited: boolean;
+  botId?: number;
+  charmId?: number;
+  profile?: StoreProductProfile;
 
-export class StageClientViewerCountUpdate extends BaseModel {
-    private constructor(client: WOLF, data: object);
-
-    public targetChannelId: number;
-    /**
-     * @deprecated use {@link targetChannelId} instead
-     */
-    public targetGroupId: number;
-    public slotId: number;
-
-    public oldBroadcasterCount: number;
-    public newBroadcasterCount: number;
-    public oldConsumerCount: number;
-    public newConsumerCount: number;
-
-    /**
-     * Play audio on stage
-     * @param data - The audio stream
-     */
-    public play(data: Stream): Promise<void>;
-    /**
-     * Stop playing audio on a stage (Will remain on stage)
-     */
-    public stop(): Promise<void>;
-    /**
-     * Pause the current broadcast (Download continues in background)
-     */
-    public pause(): Promise<void>;
-    /**
-     * Resume the current broadcast
-     */
-    public resume(): Promise<void>;
-    /**
-     * Leave the slot that bot was on
-     */
-    public leave(): Promise<Response>;
-    /**
-     * Get the current broadcast state of the client for a channel
-     */
-    public getBroadcastState(): Promise<StageBroadcastState>;
-    /**
-     * Whether or not the client for the channel is ready to broadcast
-     */
-    public isReady(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is broadcasting
-     */
-    public isPlaying(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is paused
-     */
-    public isPaused(): Promise<boolean>;
-    /**
-     * Whether or not the client for the channel is idling
-     */
-    public isIdle(): Promise<boolean>;
-    /**
-     * Get the duration of the current broadcast
-     */
-    public duration(): Promise<number>;
-    /**
-     * Get the slot the bot is on
-     */
-    public getSlotId(): Promise<number>;
-
-    toJSON(): {
-        targetChannelId: number;
-        targetGroupId: number;
-        oldBroadcasterCount: number;
-        newBroadcasterCount: number;
-        oldConsumerCount: number;
-        newConsumerCount: number;
-    }
-}
+  constructor(client: WOLF, entity: any);
+}
+
+export class StoreProductDuration extends BaseEntity {
+  id: number;
+  credits: number;
+  days: number;
 
-export class Store extends BaseModel {
-    private constructor(client: WOLF, data: object, languageId: Language)
-
-    public id: number;
-    public title: string;
-    public languageId: Language;
-    public credits: Array<StoreProductCredits>;
-    public sections: Array<StoreSection>;
-
-    /**
-     * Get a page or section
-     * @param value - The page or ID
-     * @param offset - The product or page offset
-     */
-    public get(value: number | string, offset?: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
-
-    /**
-     * Get the available credit list
-     */
-    public getCreditList(): Promise<Array<StoreProductCredits>>;
-
-    toJSON(): {
-        id: number;
-        title: string;
-        languageId: Language;
-        credits: Array<{
-            id: number;
-            credits: number;
-            code: string;
-            imageUrl: string;
-            name: string;
-            description: string;
-        }>;
-        sections: Array<{
-            id: number;
-            languageId: Language;
-            validity: {
-                fromTime: Date;
-                endTime: Date;
-            };
-
-            title: string;
-            images: Array<string>
-            description: string;
-            videos: Array<{
-                aspect: {
-                    width: number;
-                    height: number;
-                };
-                autoplay: boolean;
-                loop: boolean;
-                muted: boolean;
-                url: string;
-            }>;
-            additionalDescriptions: Array<string>
-        }>;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class StorePage extends BaseModel {
-    private constructor(client: WOLF, data: object, languageId: Language)
-
-    public id: number;
-    public title: string;
-    public languageId: Language;
-    public sections: Array<StoreSection>;
-
-    /**
-     * Get a page or section
-     * @param value - Page Name, ID
-     * @param offset - Product or page offset
-     */
-    public get(value: number | string, offset?: number): Promise<StoreSection | StorePage | Array<StoreProductPartial>>;
-
-    toJSON(): {
-        id: number;
-        title: string;
-        languageId: Language;
-        sections: Array<{
-            id: number;
-            languageId: Language;
-            validity: {
-                fromTime: Date;
-                endTime: Date;
-            };
-
-            title: string;
-            images: Array<string>
-            description: string;
-            videos: Array<{
-                aspect: {
-                    width: number;
-                    height: number;
-                };
-                autoplay: boolean;
-                loop: boolean;
-                muted: boolean;
-                url: string;
-            }>;
-            additionalDescriptions: Array<string>
-        }>;
-    };
-}
+export class StoreProductImage extends BaseEntity {
+  url: string;
 
-export class StoreProduct extends BaseModel {
-    private constructor(client: WOLF, data: object, languageId: Language)
-
-    public languageId: Language;
-    public id: number;
-    public durationList: Array<StoreProductDuration>;
-    public extraInfo: number;
-    public heroImageUrl: string;
-    public imageList: Array<StoreProductImage>;
-    public isLimited: boolean;
-    public isRemoved: boolean;
-    public isStocked: boolean;
-    public name: string;
-    public promotionText: string;
-    public recipeId: number;
-    public reputationLevel: number;
-    public targetType: string;
-    public typeId: number;
-    public userLevel: number;
-    public webContentUrl: string;
-
-    /**
-     * Purchase an item
-     * @param duration - The duration ID
-     * @param quantity - How many to buy
-     * @param targetChannelIds - The target user or channel IDs
-     */
-    public purchase(duration: StoreProductDuration | number, quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
-    /**
-     * Purchase an item
-     * @param quantity - How many to buy
-     * @param targetChannelIds - The target user or channel IDs
-     */
-    public purchase(quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
-
-    toJSON(): {
-        languageId: Language;
-        id: number;
-        durationList: Array<{
-            id: number;
-            days: number;
-            credits: number;
-        }>;
-        extraInfo: number;
-        heroImageUrl: string;
-        imageList: Array<{
-            url: string
-        }>;
-        isLimited: boolean;
-        isRemoved: boolean;
-        isStocked: boolean;
-        name: string;
-        promotionText: string;
-        recipeId: number;
-        reputationLevel: number;
-        targetType: string;
-        typeId: number;
-        userLevel: number;
-        webContentUrl: string;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class StoreProductCredits extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public credits: number;
-    public code: string;
-    public imageUrl: string;
-    public name: string;
-    public description: string;
-
-    toJSON(): {
-        id: number;
-        credits: number;
-        code: string;
-        imageUrl: string;
-        name: string;
-        description: string;
-    };
-}
+export class StoreProductProfile extends BaseEntity {
+  id: number;
+  languageId: Language;
+  name: string;
+  description: string;
+  heroImageUrl: string;
+  webContentUrl: string;
+  typeId: number;
+  targetType: string;
+  userLevel: number;
+  reputationLevel: number;
+  isStocked: boolean;
+  isLimited: boolean;
+  isPremium: boolean;
+  isRemoved: boolean;
+  durationList: Set<StoreProductDuration>;
+  imageList: Set<StoreProductImage>;
+  extraInfo: any;
+  recipeId: number;
 
-export class StoreProductDuration extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public days: number;
-    public credits: number;
-
-    /**
-     * Purchase an item
-     * @param quantity - How many to buy
-     * @param targetChannelIds - The target user or channel IDs
-     */
-    public purchase(quantity: number, targetChannelIds: number | Array<number>): Promise<Response>;
-
-    toJSON(): {
-        id: number;
-        days: number;
-        credits: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class StoreProductImage extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class TimerJob {
+  client: WOLF;
+  handler: string | undefined;
+  data: any;
+  delay: number | undefined;
+  timestamp: number | undefined;
+  id: string | undefined;
+  remaining: number | undefined;
 
-    public url: string;
+  constructor(client: WOLF, job: any);
 
-    toJSON(): {
-        url: string
-    };
+  cancel(): Promise<any>;
+  delay(delay: number): Promise<any>;  
+  
+  constructor(client: WOLF);
 }
 
-export class StoreProductPartial extends BaseModel {
-    private constructor(client: WOLF, data: object, languageId: Language)
-
-    public credits: number;
-    public id: number;
-    public languageId: Language;
-    public imageUrl: string;
-    public isLimited: boolean;
-    public name: string;
-    public promotionText: string;
-    public reputationLevel: number;
-    public targetType: string;
-    public charmId: number;
-    public botId: number;
-
-    /**
-     * Get a products full profile
-     * @param languageId - The language
-     */
-    public getFullProduct(languageId?: Language): Promise<StoreProduct>;
-
-    toJSON(): {
-        credits: number;
-        id: number;
-        languageId: Language;
-        imageUrl: string;
-        isLimited: boolean;
-        name: string;
-        promotionText: string;
-        reputationLevel: number;
-        targetType: string;
-        charmId: number;
-        botId: number;
-    };
-}
+export class TipContext {
+  type: string;
+  id: any | null;
 
-export class StoreSection extends BaseModel {
-    private constructor(client: WOLF, data: object, languageId: Language, fromSubPage: boolean)
-
-    public id: number;
-    public languageId: Language;
-    public validity: Validity;
-
-    public title: string;
-    public images: Array<string>
-    public description: string;
-    public videos: Array<TopicSectionVideo>;
-    public additionalDescriptions: Array<string>
-
-    /**
-     * Get the page or products on the store section
-     * @param offset - Page or product ID offset
-     */
-    public get(offset?: number): Promise<StorePage | Array<StoreProductPartial>>;
-
-    toJSON(): {
-        id: number;
-        languageId: Language;
-        validity: {
-            fromTime: Date;
-            endTime: Date;
-        };
-
-        title: string;
-        images: Array<string>
-        description: string;
-        videos: Array<{
-            aspect: {
-                width: number;
-                height: number;
-            };
-            autoplay: boolean;
-            loop: boolean;
-            muted: boolean;
-            url: string;
-        }>;
-        additionalDescriptions: Array<string>
-    };
+  constructor(type: string, id?: any);
 }
 
-export class Subscriber extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public charms: SubscriberSelectedCharm;
-    public categoryIds: Array<number>;
-    public deviceType: DeviceType;
-    public extended: SubscriberExtended;
-    public hash: string;
-    public icon: number;
-    public iconHash: string;
-    public iconInfo: IconInfo;
-    public id: number;
-    public nickname: string;
-    public onlineState: OnlineState;
-    public reputation: number;
-    public privileges: Privilege;
-    public privilegeList: Array<Privilege>;
-    public status: string;
-    public language: string;
-
-    public exists: boolean;
-
-    public percentage: number;
-
-    /**
-     * Get the subscribers avatar URL
-     * @param size - The size
-     */
-    public getAvatarUrl(size: IconSize): string;
-    /**
-     * Get the subscribers avatar
-     * @param size - The size
-     */
-    public getAvatar(size: IconSize): Promise<Buffer>;
-
-    /**
-     * Add the subscriber to the bots blocked list
-     */
-    public block(): Promise<Response>;
-    /**
-     * Remove the subscriber from the bots blocked list
-     */
-    public unblock(): Promise<Response>;
-    /**
-     * Add the subscriber as a contact
-     */
-    public add(): Promise<Response>;
-    /**
-     * Delete subscriber as a contact
-     */
-    public delete(): Promise<Response>;
-    /**
-     * Send a message to the subscriber
-     * @param content - The message
-     * @param options - The message send options
-     */
-    public sendMessage(content: string | Buffer, options?: MessageSendOptions): Promise<Response<MessageResponse>>;
-
-    /**
-     * Update the bots profile
-     * @param profileData - The new profile data
-     */
-    public update(profileData: { nickname?: string, status?: string, dateOfBirth?: Date, about?: string, gender?: Gender, language?: Language, lookingFor?: LookingFor, name?: string, relationship?: Relationship, urls?: Array<string>, avatar?: Buffer, categoryIds?: Array<number> }): Promise<Response>;
-
-    toJSON(): {
-        charms: SubscriberSelectedCharm;
-        deviceType: DeviceType;
-        categoryIds: Array<number>,
-        extended: {
-            dateOfBirth: Date,
-            about: string;
-            gender: Gender;
-            language: Language;
-            lookingFor: LookingFor;
-            /**
-             * @deprecated use {@link lookingForList} instead
-             */
-            lookingForExtended: Array<LookingFor>;
-            lookingForList: Array<LookingFor>;
-            name: string;
-            relationship: Relationship;
-            urls: Array<string>;
-            utcOffset: number;
-        };
-        hash: string;
-        icon: number;
-        iconHash: string;
-        iconInfo: {
-            availableTypes: Array<Avatar>,
-            availableSizes: {
-                small: string;
-                medium: string;
-                large: string;
-                xlarge: string;
-            }
-        };
-        id: number;
-        nickname: string;
-        onlineState: OnlineState;
-        reputation: number;
-        privileges: Privilege;
-        privilegeList: Array<Privilege>;
-        status: string;
-        language: string;
-
-        exists: boolean;
-        subscribed: boolean;
-        percentage: number;
-    };
-
-    /**
-     * Subscribe to profile updates
-     */
-    public subscribe(): Promise<Subscriber>;
-    /**
-     * Unsubscribe from profile updates
-     */
-    public unsubscribe(): Promise<Response>;
-}
+export class TipCharm extends BaseEntity {
+  id: any;
+  quantity: number | null;
+  charmId: any | null;
+  credits: any | null;
+  magnitude: any | null;
+  user: IdHash | null;
 
-export class SubscriberEvent extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    /**
-     * @deprecated use {@link channelId} instead
-     */
-    public groupId: number;
-    public channelId: number;
-    public additionalInfo: SubscriberEventAdditionalInfo;
-
-    /**
-     * Get an event profile
-     */
-    public get(): Promise<Event>;
-    /**
-     * Add an event to the bots subscription list
-     */
-    public subscribe(): Promise<Response>;
-    /**
-     * Remove an event from the bots subscription list
-     */
-    public unsubscribe(): Promise<Response>;
-
-    toJSON(): {
-        id: number;
-        groupId: number;
-        channelId: number;
-        additionalInfo: {
-            eTag: string;
-            endsAt: Date;
-            startsAt: Date;
-        };
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class SubscriberEventAdditionalInfo extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public eTag: string;
-    public endsAt: Date;
-    public startsAt: Date;
-
-    toJSON(): {
-        eTag: string;
-        endsAt: Date;
-        startsAt: Date;
-    };
-}
+export class Tip extends BaseEntity {
+  charmList: TipCharm[];
+  channelId: any;
+  isChannel: boolean;
+  sourceUserId: any;
+  userId: number;
+  context: TipContext;
+  version: number;
 
-export class SubscriberExtended extends BaseModel {
-    private constructor(client: WOLF, data: object)
-    public about: string;
-    public dateOfBirth: Date;
-    public gender: Gender;
-    public language: Language;
-    public lookingFor: LookingFor;
-    public lookingForExtended: Array<LookingFor>;
-    /**
-     * @deprecated use {@link lookingForList} instead
-     */
-    public lookingForList: Array<LookingFor>;
-    public name: string;
-    public relationship: Relationship;
-    public urls: Array<string>;
-    public utcOffset: number;
-
-    toJSON(): {
-        about: string;
-        gender: Gender;
-        language: Language;
-        lookingFor: LookingFor;
-        /**
-         * @deprecated use {@link lookingForList} instead
-         */
-        lookingForExtended: Array<LookingFor>;
-        lookingForList: Array<LookingFor>;
-        name: string;
-        relationship: Relationship;
-        urls: Array<string>;
-        utcOffset: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
-
-export class SubscriberRole extends BaseModel {
-    private constructor(client: WOLF, data: object)
 
-    public roleId: number;
-    public channelIdList: Array<number>;
+export class TipDetail extends BaseEntity {
+  id: number;
+  list: Set<TipCharm>;
+  version: number;
 
-    /**
-     * Get the role
-     * @param language - The language
-     * @param forceNew - Whether or not to get new data from the server
-     */
-    public role(language: Language, forceNew?: boolean): Promise<ChannelRoleContext>;
-
-    public channels(subscribe?: boolean, forceNew?: boolean): Promise<Array<Channel>>;
+  constructor(client: WOLF, entity: any);
 }
 
-export class SubscriberSelectedCharm extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public selectedList: Array<CharmSelected>;
-
-    /**
-     * Set the charm displayed on the profile
-     * @param charm - The new charms to set
-     */
-    public set(charm: CharmSelectedBuilder | Array<CharmSelectedBuilder>): Promise<Response>;
-    /**
-     * Clear the selected charm being displayed on the profile
-     */
-    public clear(): Promise<Response>;
-
-    toJSON(): {
-        selectedList: Array<{
-            charmId: number;
-            position: number;
-        }>
-    };
-}
+export class TipLeaderboardItem extends BaseEntity {
+  rank: number;
+  charmId: number;
+  quantity: number;
+  credits: number;
+  channel: IdHash | null;
+  user: IdHash | null;
 
-export class TimerJob extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public handler: string;
-    public data: Object;
-    public duration: number;
-    public timestamp: number;
-    public id: string;
-    public remaining: number;
-
-    /**
-     * Cancel an event
-     */
-    cancel(): Promise<void>;
-    /**
-     * Change the time event time
-     * @param duration - How long to wait
-     */
-    delay(duration: number): Promise<void>
-
-    toJSON(): {
-        handler: string;
-        data: Object;
-        duration: number;
-        timestamp: number;
-        id: string;
-        remaining: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class Tip extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public charmList: Array<TipCharm>;
-    public channelId: number;
-    /**
-     * @deprecated use {@link channelId} instead
-     */
-    public groupId: number;
-    /**
-    * @deprecated use {@link isChannel} instead
-    */
-    public isGroup: boolean;
-    public isChannel: boolean;
-    public sourceSubscriberId: number;
-    public subscriberId: number;
-    public context: TipContext;
-
-    /**
-     * Get all the charms tipped
-     */
-    public charms(): Promise<Array<Charm>>;
-    /**
-     * Get the group the tip happened in
-     * @deprecated use {@link channel} instead
-     */
-    public group(): Promise<Channel>;
-    /**
-     * Get the channel the tip happened in
-     */
-    public channel(): Promise<Channel>;
-    /**
-     * Get the subscriber who tipped
-     */
-    public sourceSubscriber(): Promise<Subscriber>;
-    /**
-     * Get the subscriber that was tipped
-     */
-    public targetSubscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        charmList: Array<{
-            id: number;
-            quantity: number;
-            credits: number;
-            magnitude: number;
-            subscriber: {
-                id: number,
-                hash: string,
-                nickname: string | undefined,
-            };
-        }>;
-        groupId: number;
-        channelId: number;
-        isGroup: boolean;
-        isChannel: boolean;
-        sourceSubscriberId: number;
-        subscriberId: number;
-        context: {
-            type: ContextType;
-            id: number;
-        };
-    };
-}
+export class TipLeaderboard extends BaseEntity {
+  leaderboard: Set<TipLeaderboardItem>;
 
-export class TipCharm extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public quantity: number;
-    public credits: number;
-    public magnitude: number;
-    public subscriber: IdHash;
-
-    /**
-     * Get the charm
-     */
-    public charm(): Promise<Charm>;
-
-    toJSON(): {
-        id: number;
-        quantity: number;
-        credits: number;
-        magnitude: number;
-        subscriber: {
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        };
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class TipContext extends BaseModel {
-    private constructor(client: WOLF, data: object)
+export class TipLeaderboardSummary extends BaseEntity {
+  topGifters: Set<IdHash>;
+  topChannels: Set<IdHash>;
+  topSpenders: Set<IdHash>;
 
-    public type: ContextType;
-    public id: number;
-
-    toJSON(): {
-        type: ContextType;
-        id: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class TipDetail extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public list: Array<TipCharm>;
-    public version: number;
-
-    /**
-     * Get the tipped charm
-     */
-    public charms(): Promise<Array<Charm>>;
-
-    toJSON(): {
-        id: number;
-        list: Array<{
-            id: number;
-            quantity: number;
-            credits: number;
-            magnitude: number;
-            subscriber: {
-                id: number,
-                hash: string,
-                nickname: string | undefined,
-            };
-        }>;
-        version: number;
-    };
-}
+export class TipSummary {
+  id: number;
+  list: Set<TipCharm>;
+  version: number;
 
-export class TipLeaderboard extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public leaderboard: Array<TipLeaderboardItem>;
-
-    toJSON(): {
-        leaderboard: Array<{
-            rank: number;
-            charmId: number;
-            quantity: number;
-            credits: number;
-            group: {
-                id: number,
-                hash: string,
-                nickname: string | undefined,
-            };
-            subscriber: {
-                id: number,
-                hash: string,
-                nickname: string | undefined,
-            };
-        }>
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class TipLeaderboardItem extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public rank: number;
-    public charmId: number;
-    public quantity: number;
-    public credits: number;
-    /**
-     * @deprecated use {@link channel} instead
-     */
-    public group: IdHash;
-    public channel: IdHash;
-    public subscriber: IdHash;
-
-    /**
-     * Get the charm
-     */
-    public charm(): Promise<Charm>;
-
-    toJSON(): {
-        rank: number;
-        charmId: number;
-        quantity: number;
-        credits: number;
-        group: {
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        };
-        channel: {
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        };
-        subscriber: {
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        };
-    };
-}
+export class TopicPage {
+  name: string;
+  languageId: Language;
+  id: number;
+  title: string;
+  showBalance: boolean;
+  sectionList: Map<string, Set<any>>;
 
-export class TipLeaderboardSummary extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public topGifters: Array<IdHash>;
-    /**
-     * @deprecated use {@link topChannels} instead
-     */
-    public topGroups: Array<IdHash>;
-    public topChannels: Array<IdHash>;
-    public topSpenders: Array<IdHash>;
-
-    toJSON(): {
-        topGifters: Array<{
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        }>;
-        topGroups: Array<{
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        }>;
-        topChannels: Array<{
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        }>;
-        topSpenders: Array<{
-            id: number,
-            hash: string,
-            nickname: string | undefined,
-        }>;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class TipSummary extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public id: number;
-    public charmList: Array<TipCharm>;
-    public version: number;
-
-    /**
-     * Get all charms tipped
-     */
-    public charms(): Promise<Array<Charm>>;
-
-    toJSON(): {
-        id: number;
-        charmList: Array<{
-            id: number;
-            quantity: number;
-            credits: number;
-            magnitude: number;
-            subscriber: {
-                id: number,
-                hash: string,
-                nickname: string | undefined,
-            };
-        }>;
-        version: number;
-    };
-}
+export class TopicPageSection {
+  id: number;
+  validity: TopicPageSectionValidity | null;
+  colour: TopicPageSectionColour | null;
+  elementList: TopicPageSectionElement[];
 
-export class TopicSectionVideo extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public aspect: TopicSectionVideoAspect;
-    public autoplay: boolean;
-    public loop: boolean;
-    public muted: boolean;
-    public url: string;
-
-    toJSON(): {
-        aspect: {
-
-            width: number;
-            height: number;
-        };
-        autoplay: boolean;
-        loop: boolean;
-        muted: boolean;
-        url: string;
-    };
+  constructor(client: WOLF, entity: any, languageId: Language);
 }
 
-export class TopicSectionVideoAspect extends BaseModel {
-    private constructor(client: WOLF, data: object)
+// TopicPageSectionColour
+export class TopicPageSectionColour {
+  background: string | null;
+  hasLightContent: boolean;
 
-    public width: number;
-    public height: number;
-
-    toJSON(): {
-        width: number;
-        height: number;
-    };
+  constructor(client: WOLF, entity: any);
 }
-
-export class Translation extends BaseModel {
-    private constructor(client: WOLF, data: object)
 
-    public languageId: Language;
-    public text: string;
+export class TopicPageSectionElement {
+  onInvalid: any | null;
+  properties: any | null;
+  type: string;
 
-    toJSON(): {
-        languageId: Language;
-        text: string;
-    };
+  constructor(client: WOLF, entity: any, languageId: Language);
 }
 
-export class Validity extends BaseModel {
-    private constructor(client: WOLF, data: object)
+// TopicPageSectionElementProperties
+export class TopicPageSectionElementProperties {
+  type: string;
+  onInvalid: any | null;
+  size: any | null;
+  style: any | null;
+  context: any | null;
+  refreshSeconds: number | null;
+  text: string | null;
+  aspect: any | null;
+  recipe: any | null;
+  link: any | null;
+  heading: string | null;
+  subHeading: string | null;
+  body: string | null;
+  imageUrl: string | null;
 
-    public fromTime: Date;
-    public endTime: Date;
-
-    toJSON(): {
-        fromTime: Date;
-        endTime: Date;
-    };
+  constructor(client: WOLF, entity: any, languageId: Language);
 }
-
-export class ValidUrl extends BaseModel {
-    private constructor(client: WOLF, data: object)
 
-    public url: string;
-    public hostname: string;
+export class TopicPageSectionElementPropertyAspect {
+  width: number | null;
+  height: number | null;
 
-    toJSON(): {
-        url: string;
-        hostname: string;
-    };
+  constructor(client: WOLF, entity: any);
 }
-
-export class Welcome extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public ip: string;
-    public token: string;
-    public country: string;
-    public endpointConfig: WelcomeEndpoint;
-    public subscriber: Subscriber;
-
-    toJSON(): {
-        ip: string;
-        token: string;
-        country: string;
-        endpointConfig: {
-            avatarEndpoint: string;
-            mmsUploadEndpoint: string;
-        };
-        subscriber: Subscriber;
-    };
-}
-
-export class WelcomeEndpoint extends BaseModel {
-    private constructor(client: WOLF, data: object)
 
-    public avatarEndpoint: string;
-    public mmsUploadEndpoint: string;
+export class TopicPageSectionElementPropertyLink {
+  text: string | null;
+  url: string | null;
 
-    toJSON(): {
-        avatarEndpoint: string;
-        mmsUploadEndpoint: string;
-    };
+  constructor(client: WOLF, entity: any);
 }
 
-export class WOLFAPIError extends Error {
-    private constructor(error: Error, param)
+export class TopicPageSectionElementPropertyRecipe {
+  id: any | null;
+  min: number | null;
+  max: number | null;
+  languageId: Language;
+  type: string;
 
-    public params: any
+  constructor(client: WOLF, entity: any, type: string, languageId: Language);
 }
 
-export class WolfstarsProfile extends BaseModel {
-    private constructor(client: WOLF, data: object)
-
-    public maxListeners: number;
-    public shows: number;
-    public subscriberId: number;
-    public talentList: Array<WolfstarTalent>;
-    public totalListeners: number;
-    public exists: boolean;
-
-    /**
-     * Get the subscriber linked to the wolfstar profile
-     */
-    public subscriber(): Promise<Subscriber>;
-
-    toJSON(): {
-        maxListeners: number;
-        shows: number;
-        subscriberId: number;
-        talentList: Array<WolfstarTalent>;
-        totalListeners: number;
-        exists: boolean;
-
-    };
-}
+export class TopicPageSectionValidity {
+  endTime: Date | null;
+  fromTime: Date | null;
 
-//#endregion
-
-//#region Constants
-
-export const Constants: {
-    AdminAction: AdminAction;
-    Avatar: Avatar,
-    Capability: Capability;
-    Category: Category;
-    ContextType: ContextType;
-    DeviceType: DeviceType;
-    EmbedType: EmbedType;
-    EventCategory: EventCategory,
-    Gender: Gender;
-    IconSize: IconSize,
-    Language: Language;
-    LoginType: LoginType;
-    LookingFor: LookingFor;
-    MemberListType: MemberListType,
-    MessageFilterTier: MessageFilterTier;
-    MessageType: MessageType;
-    OnlineState: OnlineState;
-    Privilege: Privilege;
-    Relationship: Relationship;
-    SearchType: SearchType;
-    StageBroadcastState: StageBroadcastState;
-    StageConnectionState: StageConnectionState;
-    TipDirection: TipDirection;
-    TipPeriod: TipPeriod;
-    TipType: TipType;
-    TopicPageRecipeType: TopicPageRecipeType;
-    VerificationTier: VerificationTier,
-    WolfstarTalent: WolfstarTalent;
+  constructor(client: WOLF, entity: any);
 }
 
-export enum AdminAction {
-    REGULAR = 0,
-    ADMIN = 1,
-    MOD = 2,
-    BAN = 4,
-    SILENCE = 8,
-    KICK = 16,
-    JOIN = 17,
-    LEAVE = 18,
-    OWNER = 32,
-}
+export class TopicRecipe {
+  recipeId: any;
+  id: any;
+  languageId: Language;
+  additionalInfo: any;
+  type: any;
 
-export enum Avatar {
-    GIF = 'gif',
-    JPG = 'jpg',
-    JPEG = 'jpeg',
-    M4A = 'm4a',
-    MP4 = 'mp4'
+  constructor(client: WOLF, entity: any, type: any);
+  get(): Promise<any>;  
+  
+  constructor(client: WOLF);
 }
 
-export enum Capability {
-    NOT_MEMBER = -1,
-    REGULAR = 0,
-    ADMIN = 1,
-    MOD = 2,
-    BANNED = 4,
-    SILENCED = 8,
-    OWNER = 32,
-}
+export class TopicRecipeAdditionalInfo {
+  hash: string;
 
-export enum Category {
-    NOT_SPECIFIED = 0,
-    BUSINESS = 8,
-    EDUCATION = 10,
-    ENTERTAINMENT = 26,
-    GAMING = 12,
-    LIFESTYLE = 13,
-    MUSIC = 14,
-    NEWS_AND_POLITICS = 15,
-    PHOTOGRAPHY = 16,
-    SCIENCE_AND_TECH = 25,
-    SOCIAL_AND_PEOPLE = 17,
-    SPORTS = 19,
-    TRAVEL_AND_LOCAL = 18,
+  constructor(client: WOLF, entity: any);
 }
 
-export enum ContextType {
-    MESSAGE = "message",
-    STAGE = "stage",
-}
+export class User {
+  id: any;
+  categoryIds: any[];
+  charms: any;
+  extended: any | null;
+  followable: boolean;
+  hash: string;
+  icon: string;
+  iconHash: string;
+  iconInfo: any | null;
+  nickname: string;
+  privileges: number;
+  privilegeList: number[];
+  reputation: number;
+  status: any;
+  language: string;
 
-export enum DeviceType {
-    OTHER = 0,
-    BOT = 1,
-    IPHONE = 5,
-    IPAD = 6,
-    ANDROID = 7,
-    WEB = 8,
-    VR = 11,
-}
+  constructor(client: WOLF, entity: any);
 
-export enum EmbedType {
-    IMAGE_PREVIEW = "imagePreview",
-    /**
-     * @deprecated use {@link CHANNEL_PREVIEW} instead
-     */
-    GROUP_PREVIEW = "groupPreview",
-    CHANNEL_PREVIEW = "groupPreview",
-    LINK_PREVIEW = "linkPreview",
+  follow(): Promise<WOLFResponse>;
+  unfollow(): Promise<WOLFResponse>;
+  getFollowerCount(): Promise<number>;
+  getFollowingCount(): Promise<number>;
+  getAchievements(parentId: any, opts?: any): Promise<AchievementUser[]>;
+  getCharmSummary(opts?: any): Promise<CharmSummary[]>;
+  getCharmStatistics(opts?: any): Promise<CharmStatistic>;
+  getPresence(opts?: any): Promise<UserPresence|null>;
+  getWOLFStarsProfile(opts?: any): Promise<WOLFStar|null>;
+  sendPrivateMessage(content: string | buffer, opts?: MessageSendOptions): Promise<WOLFResponse<MessageSend>>;
+  getRoles(opts?: any): Promise<UserRole[]>;  
+  
+  constructor(client: WOLF);
 }
 
-export enum EventCategory {
-    NONE = 0,
-    CHALLENGES = 1,
-    MUSIC_SHOW = 2,
-    POETRY = 3,
-    TALK_SHOW = 4,
-    WOLFSTAR_EVENT = 5,
-    WOLF_EVENT = 6,
-    COMEDY = 7,
-    SCIENCE_HEALTH = 8,
-    OTHER = 9,
-}
+export class UserExtended {
+  about: string | null;
+  dateOfBirth: Date | null;
+  gender: string | null;
+  language: string | null;
+  lookingFor: string | null;
+  urls: Set<string>;
 
-export enum Gender {
-    NOT_SPECIFIED = 0,
-    MALE = 1,
-    FEMALE = 2,
+  constructor(client: WOLF, entity: any);
 }
 
-export enum IconSize {
-    SMALL = "small",
-    MEDIUM = "medium",
-    LARGE = "large",
-    XLARGE = "xlarge"
-}
+export class UserFollow {
+  userId: any;
+  notification: boolean;
+  hash: string;
 
-export enum Language {
-    NOT_SPECIFIED = 0,
-    ENGLISH = 1,
-    GERMAN = 3,
-    SPANISH = 4,
-    FRENCH = 6,
-    POLISH = 10,
-    CHINESE_SIMPLIFIED = 11,
-    RUSSIAN = 12,
-    ITALIAN = 13,
-    ARABIC = 14,
-    PERSIAN_FARSI = 15,
-    GREEK = 16,
-    PORTUGUESE = 17,
-    HINDI = 18,
-    JAPANESE = 19,
-    LATIN_SPANISH = 20,
-    SLOVAK = 21,
-    CZECH = 22,
-    DANISH = 24,
-    FINNISH = 25,
-    HUNGARIAN = 27,
-    BAHASA_INDONESIA = 28,
-    MALAY = 29,
-    DUTCH = 30,
-    NORWEGIAN = 31,
-    SWEDISH = 32,
-    THAI = 33,
-    TURKISH = 34,
-    VIETNAMESE = 35,
-    KOREAN = 36,
-    BRAZILIAN_PORTUGUESE = 37,
-    ESTONIAN = 39,
-    KAZAKH = 41,
-    LATVIAN = 42,
-    LITHUANIAN = 43,
-    UKRAINIAN = 44,
-    BULGARIAN = 45,
+  constructor(client: WOLF, entity: any);
+  unfollow(): Promise<WOLFResponse>;
+  toggleNotification(): Promise<WOLFResponse>;  
+  
+  constructor(client: WOLF);
 }
 
-export enum LogLevel {
-    OFF = 0,
-    ERROR = 1,
-    WARN = 2,
-    INFO = 3,
-    DEBUG = 4
-}
+export class UserFollower {
+  followerId: any;
+  hash: string;
 
-export enum LoginType {
-    EMAIL = "email",
-    GOOGLE = "google",
-    FACEBOOK = "facebook",
-    TWITTER = "twitter",
-    SNAPCHAT = "snapchat",
-    APPLE = "apple",
+  constructor(client: WOLF, entity: any);
 }
 
-export enum LookingFor {
-    NOT_SPECIFIED = 0,
-    FRIENDSHIP = 1,
-    DATING = 2,
-    RELATIONSHIP = 4,
-    NETWORKING = 8,
-}
+export class UserPresence {
+  userId: number;
+  state: OnlineState;
+  device: DeviceType;
+  lastActive: any | null;
+  subscribed: boolean;
 
-export enum MemberListType {
-    PRIVILEGED = "privileged",
-    REGULAR = "regular",
-    SILENCED = "silenced",
-    BANNED = "banned",
-    BOTS = "bots",
-    MISCELLANEOUS = "miscellaneous"
+  constructor(client: WOLF, entity: any, subscribed?: boolean);
 }
 
-export enum MessageFilterTier {
-    OFF = 0,
-    RELAXED = 3,
-    RECOMMENDED = 2,
-    STRICT = 1,
-}
+export class UserRole {
+  roleId: number;
+  channelIdList: Set<number>;
 
-export enum MessageType {
-    TEXT_PLAIN = "text/plain",
-    TEXT_HTML = "text/html",
-    TEXT_IMAGE = "text/image_link",
-    IMAGE_JPEG = "image/jpeg",
-    IMAGE_GIF = "image/gif",
-    AUDIO_AAC = "audio/aac",
-    TEXT_VOICE = "text/voice_link",
-    AUDIO_SPEEX = "audio/x-speex",
-    IMAGE_JPEGHTML = "image/jpeghtml",
-    /**
-     * @deprecated use {@link APPLICATION_PALRINGO_CHANNEL_ACTION} instead
-     */
-    APPLICATION_PALRINGO_GROUP_ACTION = "application/palringo-group-action",
-    APPLICATION_PALRINGO_CHANNEL_ACTION = "application/palringo-group-action",
-    APPLICATION_PALRINGO_INTERACTIVE_MESSAGE_PACK = "application/palringo-interactive-message-pack",
-    TEXT_PALRINGO_PRIVATE_REQUEST_RESPONSE = "text/palringo-private-request-response",
+  constructor(client: WOLF, entity: any);
 }
 
-export enum OnlineState {
-    OFFLINE = 0,
-    ONLINE = 1,
-    AWAY = 2,
-    INVISIBLE = 3,
-    BUSY = 5,
-    IDLE = 9,
-}
+export class UserSelectedCharm {
+  charmId: number;
+  position: number;
 
-export enum Privilege {
-    SUBSCRIBER = 1,
-    BOT_TESTER = 2,
-    /**
-     * @deprecated in favor of Channel Roles
-     */
-    HOST = 4,
-    CONTENT_SUBMITER = 8,
-    SELECTCLUB_1 = 16,
-    ELITECLUB_1 = 64,
-    RANK_1 = 128,
-    VOLUNTEER = 512,
-    SELECTCLUB_2 = 1024,
-    ALPHA_TESTER = 2048,
-    STAFF = 4096,
-    /**
-     * @deprecated in favor of Channel Roles
-     */
-    DJ = 8192,
-    DEVELOPER = 16384,
-    ELITECLUB_2 = 131072,
-    /**
-     * @deprecated in favor of Channel Roles
-     */
-    WELCOMER = 262144,
-    VALID_EMAIL = 524288,
-    PREMIUM_ACCOUNT = 1048576,
-    WOLF_STAR = 2097152,
-    WOLF_STAR_PRO = 8388608,
-    ELITECLUB_3 = 4194304,
-    USER_ADMIN = 16777216,
-    GROUP_ADMIN = 33554432,
-    BOT = 67108864,
-    ENTERTAINER = 536870912,
-    /**
-     * @deprecated no longer used
-     */
-    SHADOW_BANNED = 1073741824,
+  constructor(client: WOLF, entity: any);
 }
 
-export enum Relationship {
-    NOT_SPECIFIED = 0,
-    SINGLE = 1,
-    RELATIONSHIP = 2,
-    ENGAGED = 3,
-    MARRIED = 4,
-    COMPLICATED = 5,
-    OPEN = 6,
-}
+// UserSelectedCharmList
+export class UserSelectedCharmList {
+  selectedList: UserSelectedCharm[];
 
-export enum SearchType {
-    /**
-     * @deprecated use {@link CHANNEL} instead
-     */
-    GROUP = "group",
-    CHANNEL = "group",
-    SUBSCRIBER = "subscriber",
+  constructor(client: WOLF, entity: any);
 }
 
-export enum StageBroadcastState {
-    IDLE = 0,
-    PLAYING = 1,
-    PAUSED = 2
-}
+export class Welcome {
+  ip: string;
+  country: string;
+  loggedInUser: any;
+  isLoggedIn: boolean;
+  token: string;
+  endpointConfig: any;
 
-export enum StageConnectionState {
-    INITIALISING = "initialising",
-    DISCONNECTED = "disconnected",
-    CONNECTING = "connecting",
-    CONNECTED = "connected",
-    READY = "ready"
+  constructor(client: WOLF, entity: any);
 }
 
-export enum TipDirection {
-    SENT = "sent",
-    RECEIVED = "received",
-}
+export class WOLFResponse {
+  code: number;
+  body?: any;
+  headers?: Map<string, string>;
 
-export enum TipPeriod {
-    ALL_TIME = "alltime",
-    DAY = "day",
-    WEEK = "week",
-    MONTH = "month",
+  constructor(entity: any);
+  get success(): boolean;
 }
 
-export enum TipType {
-    CHARM = "charm",
-    SUBSCRIBER = "subscriber",
-    /**
-     * @deprecated use {@link CHANNEL} instead
-     */
-    GROUP = "group",
-    CHANNEL = "group",
-}
+export class WOLFStar {
+  userId: number;
+  shows: any[];
+  maxListeners: number;
+  totalListeners: number;
+  talentList: WOLFStarTalent[];
 
-export enum TopicPageRecipeType {
-    EVENT = "event",
-    USER = "user",
-    /**
-     * @deprecated use {@link CHANNEL} instead
-     */
-    GROUP = "group",
-    CHANNEL = "group",
-    PRODUCT = "product"
+  constructor(client: WOLF, entity: any);
 }
 
-export enum VerificationTier {
-    NONE = 'none',
-    PREMIUM = 'premium',
-    VERIFIED = 'verified'
-}
 
-export enum WolfstarTalent {
-    MUSIC = 1,
-    ENTERTAINMENT = 2,
-    TALK_SHOW = 3,
-    STORY_TELLING = 4,
-    VOICE_OVER = 5,
-    POETRY = 6,
-    COMEDY = 7,
-    IMITATING_VOICES = 8,
-}
+export const defaultChannelEntities: ChannelEntities[];
+
+/**
+ * Union of all allowed channel entity strings.
+ */
+export type ChannelEntities = 
+  | 'base'
+  | 'extended'
+  | 'audioCounts'
+  | 'audioConfig'
+  | 'messageConfig';
 
-//#endregion
-
-//#region Client events
-
-export interface ClientEvents {
-
-    /**
-     * Client connected to the server
-     */
-    connected: [],
-    /**
-     * Client is connecting to the server
-     */
-    connecting: [],
-    /**
-     * Client encountered an occurred while connecting to the server
-     */
-    connectError: [error: Error],
-    /**
-     * Client encountered a timeout while connecting to the server
-     */
-    connectTimeout: [error: Error],
-    /**
-     * Client disconnected from the server
-     */
-    disconnected: [reason: string],
-    /**
-     * An websocket error occurred
-     */
-    error: [error: Error],
-    /**
-     * Fires when a global notification has been received
-     */
-    globalNotificationAdd: [notification: Notification],
-    /**
-     * Fires when the global notification list has been cleared
-     */
-    globalNotificationClear: [],
-    /**
-     * Fires when a global notification has been deleted
-     */
-    globalNotificationDelete: [notification: Notification],
-    /**
-     * Fires when a group audio count updates
-     * @deprecated use {@link channelAudioCountUpdate} instead
-     */
-    groupAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
-    /**
-     * Fires when a channel audio count updates
-     */
-    channelAudioCountUpdate: [oldCounts: ChannelAudioCounts, newCounts: ChannelAudioCounts],
-    /**
-     * Fired when a group audio request is added
-     * @deprecated use {@link channelAudioRequestAdd} instead
-     */
-    groupAudioRequestAdd: [request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a channel audio request is added
-     */
-    channelAudioRequestAdd: [request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a group audio request list is cleared
-     * @deprecated use {@link channelAudioRequestListClear} instead
-     */
-    groupAudioRequestListClear: [group: Channel, subscriberId: number],
-    /**
-     * Fired when a channel audio request list is cleared
-     */
-    channelAudioRequestListClear: [channel: Channel, subscriberId: number],
-    /**
-     * Fired when a group audio request is deleted
-     * @deprecated use {@link channelAudioRequestDelete} instead
-     */
-    groupAudioRequestDelete: [group: Channel, request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a channel audio request is deleted
-     */
-    channelAudioRequestDelete: [channel: Channel, request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a group audio request expires
-     * @deprecated use {@link channelAudioRequestExpire} instead
-     */
-    groupAudioRequestExpire: [group: Channel, request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a channel audio request expires
-     */
-    channelAudioRequestExpire: [channel: Channel, request: ChannelAudioSlotRequest],
-    /**
-     * Fired when a group audio slot is updated
-     * @deprecated use {@link channelAudioSlotUpdate} instead
-     */
-    groupAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
-    /**
-     * Fired when a channel audio slot is updated
-     */
-    channelAudioSlotUpdate: [oldSlot: ChannelAudioSlot, newSlot: ChannelAudioSlotUpdate],
-    /**
-     * Fired when a groups audio configuration is updated
-     * @deprecated use {@link channelAudioUpdate} instead
-     */
-    groupAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
-    /**
-     * Fired when a channels audio configuration is updated
-     */
-    channelAudioUpdate: [oldConfig: ChannelAudioConfig, newConfig: ChannelAudioConfig],
-    /**
-     * Fired when a group event is created
-     * @deprecated use {@link channelEventCreate} instead
-     */
-    groupEventCreate: [group: Channel, event: Event],
-    /**
-     * Fired when a channel event is created
-     */
-    channelEventCreate: [channel: Channel, event: Event],
-    /**
-     * Fired when a group event is deleted
-     * @deprecated use {@link channelEventDelete} instead
-     */
-    groupEventDelete: [group: Channel, event: Event],
-    /**
-     * Fired when a channel event is deleted
-     */
-    channelEventDelete: [channel: Channel, event: Event],
-    /**
-     * Fired when a group event is updated
-     * @deprecated use {@link channelEventUpdate} instead
-     */
-    groupEventUpdate: [group: Channel, oldEvent: Event, newEvent: Event],
-    /**
-     * Fired when a channel event is updated
-     */
-    channelEventUpdate: [channel: Channel, oldEvent: Event, newEvent: Event],
-    /**
-     * Fired when a group member joins
-     * @deprecated use channelMemberAdd
-     */
-    groupMemberAdd: [group: Channel, subscriber: Subscriber],
-    /**
-     * Fired when a channel member joins
-     */
-    channelMemberAdd: [channel: Channel, subscriber: Subscriber],
-    /**
-     * Fired when a group member leaves
-     * @deprecated use {@link channelMemberDelete} instead
-     */
-    groupMemberDelete: [group: Channel, subscriber: Subscriber],
-    /**
-     * Fired when a channel member leaves
-     */
-    channelMemberDelete: [channel: Channel, subscriber: Subscriber],
-    /**
-     * Fired when a group member is updated
-     * @deprecated use {@link channelMemberUpdate} instead
-     */
-    groupMemberUpdate: [group: Channel, update: GroupSubscriberUpdate],
-    /**
-     * Fired when a channel member is updated
-     */
-    channelMemberUpdate: [channel: Channel, update: GroupSubscriberUpdate],
-    /**
-     * Fired when a group message is received
-     * @deprecated use channelMessage
-     */
-    groupMessage: [message: Message],
-    /**
-     * Fired when a channel message is received
-     */
-    channelMessage: [message: Message],
-    /**
-     * Fired when a group message is updated
-     * @deprecated use channelMessageUpdate
-     */
-    groupMessageUpdate: [message: Message],
-    /**
-     * Fired when a channel message is updated
-     */
-    channelMessageUpdate: [message: Message],
-    /**
-     * Fired when a group member has a Channel Role added
-     */
-    channelRoleAssign: [channel: Channel, channelRoleMember: ChannelRoleMember],
-    /**
-     * Fired when a group member has a Channel Role removed
-     */
-    channelRoleUnassign: [channel: Channel, channelRoleMember: ChannelRoleMember],
-    /**
-     * Fired when a group message is tipped
-     * @deprecated use {@link channelTipAdd} instead
-     */
-    groupTipAdd: [tip: Tip],
-    /**
-     * Fired when a channel message is tipped
-     */
-    channelTipAdd: [tip: Tip],
-    /**
-     * Fired when a group profile is updated
-     * @deprecated use {@link channelUpdate} instead
-     */
-    groupUpdate: [oldGroup: Channel, newGroup: Channel],
-    /**
-     * Fired when a channel profile is updated
-     */
-    channelUpdate: [oldChannel: Channel, newChannel: Channel],
-    /**
-     * Fired when an internal framework error occurs
-     */
-    internalError: [error: Error],
-    /**
-     * Fires when the bot joins a group
-     * @deprecated use {@link joinedChannel} instead
-     */
-    joinedGroup: [group: Channel, subscriber: Subscriber],
-    /**
-     * Fires when the bot joins a channel
-     */
-    joinedChannel: [channel: Channel, subscriber: Subscriber],
-    /**
-     * Fires when the bot leaves a group
-     * @deprecated use {@link leftChannel} instead
-     */
-    leftGroup: [group: Channel, subscriber: Subscriber],
-    /**
-     * Fires when the bot leaves a channel
-     */
-    leftChannel: [channel: Channel, subscriber: Subscriber],
-    /**
-     * Fires when a log is saved
-     */
-    log: [{ level: LogLevel, message: string }],
-    /**
-     * Fires when login fails
-     */
-    loginFailed: [response: Response<any>],
-    /**
-     * Fires when login succeeds
-     */
-    loginSuccess: [subscriber: Subscriber],
-    /**
-     * @deprecated This no longer works as the old notification system has been disabled, use newer notification methods & events
-     *  {@link subscriberNotificationAdd}
-     *  {@link subscriberNotificationClear}
-     *  {@link subscriberNotificationDelete}
-     *  {@link globalNotificationAdd}
-     *  {@link globalNotificationClear}
-     *  {@link globalNotificationDelete}
-     */
-    notificationReceived: [Notification: LegacyNotification | Notification],
-
-    /**
-     * Fires when a packet is received from the server
-     */
-    packetReceived: [eventString: string, data: object],
-    /**
-     * Fires when a packet is sent to the server
-     */
-    packetSent: [command: string, body: object],
-    /**
-     * Fires when a packet response was not within the range of success upon retry (if failing code is retryable)
-     */
-    packetFailed: [command: string, body: object],
-    /**
-     * Fires when a packet response was a failing code and was retryable
-     */
-    packetRetry: [command: string, body: object, attempt: number],
-    /**
-     * Fires when the server pings
-     */
-    ping: [],
-    /**
-     * Fires when the client pongs
-     */
-    pong: [latency: number],
-    /**
-     * Fires when a subscribers presence updates
-     */
-    presenceUpdate: [oldPresence: Presence, newPresence: Presence],
-    /**
-     * Fires when a private message is received
-     */
-    privateMessage: [message: Message],
-    /**
-     * Fires when a subscriber accepts a private message request
-     */
-    privateMessageAcceptResponse: [subscriber: Subscriber],
-    /**
-     * Fires when a private message is updated
-     */
-    privateMessageUpdate: [],
-    /**
-     * Fires when a private message is tipped
-     */
-    privateTipAdd: [tip: Tip],
-    /**
-     * Fires when the clients internal rate limit is triggered
-     */
-    rateLimit: [rateLimit: { queue: string, until: Date }],
-    /**
-     * Fires when the client is ready for uses
-     */
-    ready: [],
-    /**
-     * Fires when the client reconnects to the server and is ready for use
-     */
-    resume: [],
-    /**
-     * Fires when the client reconnects to the server
-     */
-    reconnected: [],
-    /**
-     * Fires when the client is attempting to reconnect to the server
-     */
-    reconnecting: [attempt: number],
-    /**
-     * Fires when the client fails to reconnect to the server
-     */
-    reconnectFailed: [error: Error],
-    /**
-     * Fires when a stage broadcast ends
-     */
-    stageClientEnd: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client connects
-     */
-    stageClientConnected: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is connecting
-     */
-    stageClientConnecting: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client disconnects
-     */
-    stageClientDisconnected: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage clients broadcast duration updates
-     */
-    stageClientDuration: [data: StageClientDurationUpdate],
-    /**
-     * Fires when a stage client encounters an error
-     */
-    stageClientError: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is kicked
-     */
-    stageClientKicked: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is muted
-     */
-    stageClientMuted: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is ready to broadcast
-     */
-    stageClientReady: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client starts broadcasting
-     */
-    stageClientStart: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is stopped
-     */
-    stageClientStopped: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client is unmuted
-     */
-    stageClientUnmuted: [data: StageClientGeneralUpdate],
-    /**
-     * Fires when a stage client viewer count changes
-     */
-    stageClientViewerCountChanged: [data: StageClientViewerCountUpdate],
-    /**
-     * Fires when the bots credit balance changes
-     */
-    storeCreditBalanceUpdate: [oldBalance: number, newBalance: number],
-    /**
-     * Fires when a user is added to the bots blocked list
-     */
-    subscriberBlockAdd: [contact: Contact],
-    /**
-     * Fires when a user is removed from the bots blocked list
-     */
-    subscriberBlockDelete: [contact: Contact],
-    /**
-     * Fires when a user is added as a contact
-     */
-    subscriberContactAdd: [contact: Contact],
-    /**
-     * Fires when a user is removed as a contact
-     */
-    subscriberContactDelete: [contact: Contact],
-    /**
-    * Fires when a  subscriber notification has been received
-    */
-    subscriberNotificationAdd: [notification: Notification],
-    /**
-     * Fires when the  subscriber notification list has been cleared
-     */
-    subscriberNotificationClear: [],
-    /**
-     * Fires when a  subscriber notification has been deleted
-     */
-    subscriberNotificationDelete: [notification: Notification],
-
-    /**
-     * Fires when the bot subscribes to an event
-     * @deprecated use {@link subscriberChannelEventAdd} instead
-     */
-    subscriberGroupEventAdd: [event: Event],
-    /**
-     * Fires when the bot subscribes to an event
-     */
-    subscriberChannelEventAdd: [event: Event],
-    /**
-     * Fires when the bot unsubscribes from an event
-     * @deprecated use {@link subscriberChannelEventDelete} instead
-     */
-    subscriberGroupEventDelete: [event: Event],
-    /**
-     * Fires when the bot unsubscribes from an event
-     */
-    subscriberChannelEventDelete: [event: Event],
-    /**
-     * Fires when a subscribers profile is updated
-     */
-    subscriberUpdate: [oldSubscriber: Subscriber, newSubscriber: Subscriber],
-    /**
-     * Fires when the client receives the welcome event
-     */
-    welcome: [welcome: Welcome],
+export interface BaseOptions {
+  /**
+   * Whether or not to request new data from the service
+   */
+  forceNew?: boolean;
 }
 
-//#endregion
+export interface SubscribableOptions extends BaseOptions {
+  /**
+   * Whether or not to subscribe to updates
+   */
+  subscribe?: boolean;
+}
+
+export interface ExtendedUserOptions extends SubscribableOptions {
+  /**
+   * Whether or not to request the extended version of an entity
+   */
+  extended?: boolean;
+}
+
+export interface ChannelEntityOptions extends SubscribableOptions {
+  entities?: ChannelEntities[];
+}
+
+// Specific options interfaces
+export type AchievementUserOptions = BaseOptions;
+export type AchievementChannelOptions = BaseOptions;
+export type AchievementCategoryOptions = BaseOptions;
+export type AchievementOptions = BaseOptions;
+export type AudioChannelListOptions = BaseOptions;
+export type ChannelAudioSlotRequestOptions = SubscribableOptions;
+export type ChannelCategoryOptions = BaseOptions;
+export type ChannelListOptions = SubscribableOptions;
+export type ChannelOptions = ChannelEntityOptions;
+export type ChannelStatsOptions = BaseOptions;
+export type ChannelRoleOptions = BaseOptions;
+export type ChannelRoleUserOptions = SubscribableOptions;
+export type CharmOptions = BaseOptions;
+export type CharmUserStatisticsOptions = ExtendedUserOptions;
+export type CharmUserSummaryOptions = BaseOptions;
+export type ContactOptions = SubscribableOptions;
+export type EventChannelOptions = SubscribableOptions;
+export type EventOptions = SubscribableOptions;
+export type EventSubscriptionOptions = SubscribableOptions;
+export type NotificationOptions = SubscribableOptions;
+export type RoleOptions = BaseOptions;
+export type SecurityTokenOptions = BaseOptions;
+export type StageSlotOptions = SubscribableOptions;
+export type StoreProductOptions = BaseOptions;
+export type StoreProductProfileOptions = BaseOptions;
+export type UserOptions = ExtendedUserOptions;
+export type UserRoleOptions = BaseOptions;
+export type UserPresenceOptions = SubscribableOptions;
+export type WOLFStarOptions = BaseOptions;
+
+export type LoginOptions = {
+  /**
+   * V3 Session Token (Automatically generated if none is provided)
+   */
+  token?: string;
+  /**
+   * Online State to show
+   */
+  onlineState?: OnlineState ;
+  /**
+   * The log in type, email, facebook, snapchat, etc
+   */
+  type?: string;
+}
+
+export interface CommandOptions {
+  key: string;
+  callbackObject: CommandCallbackMap;
+  children?: Command[];
+}
+
+export type {
+  Command,
+  CommandCallback,
+  CommandCallbackMap,
+  CommandManager,
+  Achievement,
+  AchievementCategory,
+  AchievementCategoryOptions,
+  AchievementChannel,
+  AchievementChannelAdditionalInfo,
+  AchievementChannelOptions,
+  AchievementOptions,
+  AchievementUser,
+  AchievementUserAdditionalInfo,
+  AchievementUserOptions,
+  Ad,
+  AdminAction,
+  AudioChannelListOptions,
+  Avatar,
+  AvatarType,
+  BaseExpireProperty,
+  BaseEntity,
+  BaseOptions,
+  Blacklist,
+  BaseStore,
+  ChannelAudioSlotConnectionState,
+  ChannelEventType,
+  ChannelHub,
+  ChannelMemberCapability,
+  ChannelMemberListType,
+  ChannelVerificationTier,
+  ContextType,
+  Channel,
+  ChannelAudioConfig,
+  ChannelAudioCount,
+  ChannelAudioSlot,
+  ChannelAudioSlotConnectionState,
+  ChannelAudioSlotRequest,
+  ChannelAudioSlotRequestOptions,
+  ChannelAudioSlotReservation,
+  ChannelCategory,
+  ChannelCategoryOptions,
+  ChannelEntities,
+  ChannelEntityOptions,
+  ChannelEvent,
+  ChannelEventAdditionalInfo,
+  ChannelEventType,
+  ChannelExtended,
+  ChannelListOptions,
+  ChannelMember,
+  ChannelMemberCapability,
+  ChannelMemberListType,
+  ChannelMessageConfig,
+  ChannelOptions,
+  ChannelOwner,
+  ChannelRole,
+  ChannelRoleOptions,
+  ChannelRoleUser,
+  ChannelRoleUserOptions,
+  ChannelStage,
+  ChannelStats,
+  ChannelStatsDetails,
+  ChannelStatsOptions,
+  ChannelStatsOwner,
+  ChannelStatsTop,
+  ChannelStatsTrend,
+  ChannelVerificationTier,
+  Charm,
+  CharmActive,
+  CharmExpired,
+  CharmOptions,
+  CharmStatistic,
+  CharmStatisticExtended,
+  CharmSummary,
+  CharmUserStatisticsOptions,
+  CharmUserSummaryOptions,
+  Cognito,
+  CommandContext,
+  Contact,
+  ContactAdditionalInfo,
+  ContactOptions,
+  ContextType,
+  CurrentUser,
+  DeviceType,
+  defaultChannelEntities,
+  EmbedType,
+  EndpointConfig,
+  Event,
+  EventChannelOptions,
+  EventOptions,
+  EventSubscription,
+  EventSubscriptionAdditionalInfo,
+  EventSubscriptionOptions,
+  ExtendedUserOptions,
+  Gender,
+  IconSize,
+  IconSize,
+  IdHash,
+  Language,
+  LoginType,
+  LookingFor,
+  Language,
+  Link,
+  LoginOptions,
+  LoginType,
+  LookingFor,
+  MessageFilterTierLevel,
+  MessageSendOptions,
+  MessageType,
+  Message,
+  MessageEdited,
+  MessageMetadata,
+  MessageMetadataFormatting,
+  MessageMetadataFormattingChannelLink,
+  MessageMetadataFormattingUrl,
+  MessageSendOptions,
+  MessageSend,
+  MessageUpdate,
+  Metadata,
+  Notification,
+  NotificationAdditionalInfo,
+  NotificationGlobal,
+  NotificationGlobalFeed,
+  NotificationGlobalPopup,
+  NotificationOptions,
+  NotificationUser,
+  NotificationUserFeed,
+  NotificationUserPopup,
+  Relationship,
+  Role,
+  RoleOptions,
+  Search,
+  SecurityTokenOptions,
+  StageSlotOptions,
+  StoreProduct,
+  StoreProductDuration,
+  StoreProductImage,
+  StoreProductOptions,
+  StoreProductProfile,
+  StoreProductProfileOptions,
+  TipDirection,
+  TipPeriod,
+  TipType,
+  TopicPageRecipeType,
+  TimerJob,
+  Tip,
+  TipCharm,
+  TipContext,
+  TipDetail,
+  TipDirection,
+  TipLeaderboard,
+  TipLeaderboardItem,
+  TipLeaderboardSummary,
+  TipSummary,
+  TopicPage,
+  TopicPageRecipeType,
+  TopicPageSectionColour,
+  TopicPageSectionElement,
+  TopicPageSectionElementProperties,
+  TopicPageSectionElementPropertyAspect,
+  TopicPageSectionElementPropertyLink,
+  TopicPageSectionElementPropertyRecipe,
+  TopicPageSectionValidity,
+  TopicRecipe,
+  TopicRecipeAdditionalInfo,
+  UserFollowerType,
+  UserPrivilege,
+  User,
+  UserExtended,
+  UserFollow,
+  UserFollower,
+  UserFollowerType,
+  UserOptions,
+  UserPresence,
+  UserPresenceOptions,
+  OnlineState,
+  UserPrivilege,
+  UserRole,
+  UserRoleOptions,
+  UserSelectedCharm,
+  UserSelectedCharmList,
+  WOLF,
+  WOLFStarTalent,
+  WOLFResponse,
+  WOLFStar,
+  WOLFStarOptions,
+};
