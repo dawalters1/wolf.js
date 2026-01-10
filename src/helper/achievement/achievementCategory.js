@@ -1,0 +1,47 @@
+import AchievementCategory from '../../entities/achievementCategory.js';
+import BaseHelper from '../baseHelper.js';
+import { Command } from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
+import { validate } from '../../validator/index.js';
+
+class AchievementCategoryHelper extends BaseHelper {
+  async list (languageId, opts) {
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(languageId)
+        .isNotNullOrUndefined(`AchievementCategoryHelper.list() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `AchievementCategoryHelper.list() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ forceNew: Boolean }, 'AchievementCategoryHelper.list() parameter, opts.{parameter}: {value} {error}');
+    }
+
+    if (!opts?.forceNew) {
+      const cachedAchievementCategories = this.store.filter((category) => category.languageId === languageId);
+
+      if (cachedAchievementCategories.length) {
+        return cachedAchievementCategories;
+      }
+    }
+
+    const response = await this.client.websocket.emit(
+      Command.ACHIEVEMENT_CATEGORY_LIST,
+      {
+        body: {
+          languageId
+        }
+      }
+    );
+
+    return response.body.map((serverAchievementCategory) =>
+      this.store.set(
+        new AchievementCategory(this.client, serverAchievementCategory),
+        response.headers?.maxAge
+      )
+    );
+  }
+}
+
+export default AchievementCategoryHelper;

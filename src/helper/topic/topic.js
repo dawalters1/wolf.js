@@ -1,0 +1,66 @@
+import BaseHelper from '../baseHelper.js';
+import Command from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
+import { StatusCodes } from 'http-status-codes';
+import TopicPage from '../../entities/topicPage.js';
+import TopicRecipeHelper from './topicRecipe.js';
+import { validate } from '../../validator/index.js';
+
+class TopicHelper extends BaseHelper {
+  #recipe;
+  constructor (client) {
+    super(client);
+
+    this.#recipe = new TopicRecipeHelper(client);
+  }
+
+  get recipe () {
+    return this.#recipe;
+  }
+
+  async get (name, languageId, opts) {
+    languageId = Number(languageId) || languageId;
+
+    { // eslint-disable-line no-lone-blocks
+      validate(name)
+        .isNotNullOrUndefined(`TopicHelper.get() parameter, name: ${name} is null or undefined`)
+        .isNotEmptyOrWhitespace(`TopicHelper.get() parameter, name: ${name} is empty or whitespace`);
+
+      validate(languageId)
+        .isNotNullOrUndefined(`TopicHelper.get() parameter, languageId: ${languageId} is null or undefined`)
+        .isValidConstant(Language, `TopicHelper.get() parameter, languageId: ${languageId} is not valid`);
+
+      validate(opts)
+        .isNotRequired()
+        .isValidObject({ forceNew: Boolean }, 'TopicHelper.get() parameter, opts.{parameter}: {value} {error}');
+    }
+
+    if (!opts?.forceNew) {
+      const cached = this.store.find((topic) => this.client.utility.string.isEqual(topic.name, name) && topic.languageId === languageId);
+
+      if (cached) { return cached; }
+    }
+
+    try {
+      const response = await this.client.websocket.emit(
+        Command.TOPIC_PAGE_LAYOUT,
+        {
+          body: {
+            name,
+            languageId
+          }
+        }
+      );
+
+      return this.store.set(
+        new TopicPage(this.client, response.body),
+        response.headers?.maxAge
+      );
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) { return null; };
+      throw error;
+    }
+  }
+}
+
+export default TopicHelper;
