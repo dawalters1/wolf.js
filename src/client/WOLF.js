@@ -91,7 +91,7 @@ class WOLF extends EventEmitter {
     this.#phrase = new PhraseHelper(this);
     this.#user = new UserHelper(this);
     this.#security = new SecurityHelper(this);
-    //  this.#store = new StoreHelper(this);
+    this.#store = new StoreHelper(this);
     this.#tip = new TipHelper(this);
     //   this.#topic = new TopicHelper(this);
     this.#role = new RoleHelper(this);
