@@ -54,10 +54,10 @@ export default class Cache {
     }
   }
 
-  #findEntry (fn) {
-    for (const entry of this.#store) {
-      if (fn(entry.value)) {
-        return entry;
+  #findEntryBy (fn) {
+    for (const [key, entry] of this.#store) {
+      if (fn(entry.value, key)) {
+        return { key, entry };
       }
     }
     return null;
@@ -69,9 +69,9 @@ export default class Cache {
 
     const existing = value instanceof Object
       ? 'languageId' in value
-        ? this.#findEntry((entry) => entry[key] === value[key] && entry.languageId === value.languageId)
-        : this.#findEntry((entry) => entry[key] === value[key])
-      : this.#findEntry((entry) => entry === value);
+        ? this.#findEntryBy((entry) => entry[key] === value[key] && entry.languageId === value.languageId)
+        : this.#findEntryBy((entry) => entry[key] === value[key])
+      : this.#findEntryBy((entry) => entry === value);
 
     let entryValue;
 
@@ -116,29 +116,36 @@ export default class Cache {
     this.fetched = true;
   }
 
-  get (idOrFunc) {
-    const entry = typeof idOrFunc === 'function'
-      ? this.#findEntry(idOrFunc)
-      : this.#findEntry((entry) => entry[getKeyProperty(entry)] === idOrFunc);
+  get (keyOrFn) {
+    const result = typeof keyOrFn === 'function'
+      ? this.#findEntryBy(keyOrFn)
+      : { key: keyOrFn, entry: this.#store.get(keyOrFn) };
 
-    if (!entry) { return null; }
+    if (!result || !result.entry) { return null; }
+
+    const { key, entry } = result;
 
     if (entry.expiresAt && entry.expiresAt <= Date.now()) {
-      this.#store.delete(entry);
+      this.#store.delete(key);
       if (this.size === 0) { this.#fetched = false; }
       return null;
     }
 
-    this.#touch(entry);
+    this.#touch(key, entry);
     return entry.value;
   }
 
-  has (fn) {
-    const entry = this.#findEntry(fn);
-    if (!entry) { return false; }
+  has (keyOrFn) {
+    const result = typeof keyOrFn === 'function'
+      ? this.#findEntryBy(keyOrFn)
+      : { key: keyOrFn, entry: this.#store.get(keyOrFn) };
+
+    if (!result || !result.entry) { return false; }
+
+    const { key, entry } = result;
 
     if (entry.expiresAt && entry.expiresAt <= Date.now()) {
-      this.#store.delete(entry);
+      this.#store.delete(key);
       if (this.size === 0) { this.#fetched = false; }
       return false;
     }
@@ -146,15 +153,22 @@ export default class Cache {
     return true;
   }
 
-  delete (fn) {
+  delete (keyOrFn) {
+    if (typeof keyOrFn !== 'function') {
+      const removed = this.#store.delete(keyOrFn);
+      if (removed && this.size === 0) { this.#fetched = false; }
+      return removed;
+    }
+
     let removed = 0;
-    for (const entry of Array.from(this.#store)) {
-      if (fn(entry.value, entry.value)) {
-        this.#store.delete(entry);
+    for (const [key, entry] of Array.from(this.#store)) {
+      if (keyOrFn(entry.value, key)) {
+        this.#store.delete(key);
         removed++;
       }
     }
-    if (this.size === 0) { this.#fetched = false; }
+
+    if (removed && this.size === 0) { this.#fetched = false; }
     return removed;
   }
 
@@ -178,7 +192,7 @@ export default class Cache {
   }
 
   isExpired (value) {
-    const entry = this.#findEntry(value);
+    const entry = this.#findEntryBy(value);
     return !!(entry && entry.expiresAt && entry.expiresAt <= Date.now());
   }
 

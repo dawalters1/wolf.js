@@ -41,23 +41,19 @@ members:
   regular:
     key: 'id'
     version: 1
-    limit: 100
     batchType: after
   bots:
     key: 'groupId'
     version: 1
     batchType: offset
-    limit: 50 
   silenced:
     key: 'groupId'
     version: 1
     batchType: offset
-    limit: 50 
   banned:
     key: 'id'
     version: 1
     batchType: after
-    limit: 50 
 
 batching:
   length: 50

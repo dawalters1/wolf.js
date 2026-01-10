@@ -4,7 +4,7 @@ import AchievementChannelHelper from './AchievementChannel.js';
 import AchievementUserHelper from './AchievementUser.js';
 import BaseHelper from '../BaseHelper.js';
 
-export class AchievementHelper extends BaseHelper {
+export default class AchievementHelper extends BaseHelper {
   #category = null;
   #channel = null;
   #user = null;
