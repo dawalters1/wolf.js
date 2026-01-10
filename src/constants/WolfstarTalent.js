@@ -1,19 +1,12 @@
-export const MUSIC = 1;
-export const ENTERTAINMENT = 2;
-export const TALK_SHOW = 3;
-export const STORY_TELLING = 4;
-export const VOICE_OVER = 5;
-export const POETRY = 6;
-export const COMEDY = 7;
-export const IMITATING_VOICES = 8;
 
-export default {
-  MUSIC,
-  ENTERTAINMENT,
-  TALK_SHOW,
-  STORY_TELLING,
-  VOICE_OVER,
-  POETRY,
-  COMEDY,
-  IMITATING_VOICES
+export const WOLFStarTalent = {
+  MUSIC: 1,
+  ENTERTAINMENT: 2,
+  TALK_SHOW: 3,
+  STORY_TELLING: 4,
+  VOICE_OVER: 5,
+  POETRY: 6,
+  COMEDY: 7,
+  IMITATING_VOICES: 8
 };
+export default WOLFStarTalent;
