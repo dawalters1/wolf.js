@@ -1,4 +1,4 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
 export class EventSubscriptionAdditionalInfo extends BaseEntity {
   constructor (client, entity) {
@@ -9,4 +9,3 @@ export class EventSubscriptionAdditionalInfo extends BaseEntity {
     this.startsAt = new Date(entity.startsAt);
   }
 }
-export default EventSubscriptionAdditionalInfo;

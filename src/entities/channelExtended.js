@@ -1,14 +1,7 @@
-// ChannelExtended.js
-import BaseEntity from './baseEntity.js';
 
-class ChannelExtended extends BaseEntity {
-  /**
- * Creates an instance of ChannelExtended.
- **
- * @constructor
- * @param {import('../client/WOLF.js').default} client The client instance
- * @param {*} entity The data parameter
- */
+import BaseEntity from './BaseEntity.js';
+
+export default class ChannelExtended extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -24,5 +17,3 @@ class ChannelExtended extends BaseEntity {
     this.longDescription = entity.longDescription || null;
   }
 }
-
-export default ChannelExtended;

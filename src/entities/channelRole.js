@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelRole extends BaseEntity {
+export default class ChannelRole extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ export class ChannelRole extends BaseEntity {
     this.maxSeats = entity.maxSeats;
   }
 }
-
-export default ChannelRole;

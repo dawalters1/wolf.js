@@ -1,13 +1,7 @@
 import _ from 'lodash';
 
-class BaseEntity {
+export default class BaseEntity {
   #client;
-  /**
- * Creates an instance of BaseEntity.
- **
- * @constructor
- * @param {import('../client/WOLF.js').default} client The client instance
- */
   constructor (client) {
     this.#client = client;
   }
@@ -46,5 +40,3 @@ class BaseEntity {
     return _.omit(this, 'client');
   }
 }
-
-export default BaseEntity;

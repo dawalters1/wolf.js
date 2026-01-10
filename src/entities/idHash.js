@@ -1,14 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class IdHash extends BaseEntity {
-  /**
- * Creates an instance of IdHash.
- **
- * @constructor
- * @param {import('../client/WOLF.js').default} client The client instance
- * @param {*} entity The entity object
- * @param {boolean} [isChannel=false]
- */
+export default class IdHash extends BaseEntity {
   constructor (client, entity, isChannel = false) {
     super(client);
     this.id = entity.id;
@@ -16,5 +8,3 @@ export class IdHash extends BaseEntity {
     this.isChannel = isChannel;
   }
 }
-
-export default IdHash;

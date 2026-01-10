@@ -1,11 +1,9 @@
-import BaseEntity from './baseEntity.js';
-import UserSelectedCharm from './userSelectedCharm.js';
+import BaseEntity from './BaseEntity.js';
+import UserSelectedCharm from './UserSelectedCharm.js';
 
 export class UserSelectedCharmList extends BaseEntity {
   constructor (client, entity) {
     super(client);
-    this.selectedList = entity.selectedList.map(charm => new UserSelectedCharm(client, charm));
+    this.selectedList = new Set(entity.selectedList.map(charm => new UserSelectedCharm(client, charm)));
   }
 }
-
-export default UserSelectedCharmList;

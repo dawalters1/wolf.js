@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class MessageEdited extends BaseEntity {
+export default class MessageEdited extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,4 +8,3 @@ export class MessageEdited extends BaseEntity {
     this.timestamp = entity.timestamp;
   }
 }
-export default MessageEdited;

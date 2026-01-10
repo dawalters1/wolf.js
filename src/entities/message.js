@@ -1,14 +1,9 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 import ContextType from '../constants/ContextType.js';
-import MessageEdited from './messageEdited.js';
-import MessageMetadata from './messageMetadata.js';
+import MessageEdited from './MessageEdited.js';
+import MessageMetadata from './MessageMetadata.js';
 
-export class Message extends BaseEntity {
-  /**
-   *
-   * @param {import('../client/WOLF.js').default} client
-   * @param {*} entity
-   */
+export default class Message extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -34,49 +29,4 @@ export class Message extends BaseEntity {
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
     this.bodyParts = this.body?.split(this.client.SPLIT_REGEX)?.filter(Boolean) ?? [];
   }
-
-  async getUser () {
-    return this.client.user.getById(this.sourceUserId);
-  }
-
-  async getChannel () {
-    if (!this.isChannel) { throw new Error(); }
-
-    return this.client.channel.getById(this.targetChannelId);
-  }
-
-  async tip (tipCharms) {
-    if (!this.isChannel) { throw new Error(''); }
-
-    return this.client.tip.tip(
-      this.targetChannelId,
-      this.sourceUserId,
-      {
-        type: ContextType.MESSAGE,
-        timestamp: this.timestamp
-      },
-      tipCharms
-    );
-  }
-
-  async sendReply (content, opts) {
-    if (this.isChannel) {
-      return this.client.messaging.sendChannelMessage(this.targetChannelId, content, opts);
-    }
-    return this.client.messaging.sendPrivateMessage(this.sourceUserId, content, opts);
-  }
-
-  async delete () {
-    if (!this.isChannel) { throw new Error(); }
-
-    return this.client.messaging.deleteMessage(this.targetChannelId, this.timestamp);
-  }
-
-  async restore () {
-    if (!this.isChannel) { throw new Error(); }
-
-    return this.client.messaging.restoreMessage(this.targetChannelId, this.timestamp);
-  }
 }
-
-export default Message;

@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelCategory extends BaseEntity {
+export default class ChannelCategory extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -13,5 +13,3 @@ export class ChannelCategory extends BaseEntity {
     this.recipeId = entity.recipeId;
   }
 }
-
-export default ChannelCategory;

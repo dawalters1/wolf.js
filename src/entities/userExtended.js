@@ -1,7 +1,6 @@
+import BaseEntity from './BaseEntity.js';
 
-import BaseEntity from './baseEntity.js';
-
-export class UserExtended extends BaseEntity {
+export default class UserExtended extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -15,5 +14,3 @@ export class UserExtended extends BaseEntity {
     this.urls = new Set(entity.urls ?? []);
   }
 }
-
-export default UserExtended;

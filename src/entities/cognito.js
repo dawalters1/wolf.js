@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class Cognito extends BaseEntity {
+export default class Cognito extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,5 +8,3 @@ class Cognito extends BaseEntity {
     this.token = entity.token;
   }
 }
-
-export default Cognito;

@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelStage extends BaseEntity {
+export default class ChannelStage extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -10,5 +10,3 @@ export class ChannelStage extends BaseEntity {
       : null;
   }
 }
-
-export default ChannelStage;

@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class TopicPageSectionColour extends BaseEntity {
+export default class TopicPageSectionColour extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,5 +8,3 @@ export class TopicPageSectionColour extends BaseEntity {
     this.hasLightContent = entity?.hasLightContent ?? false;
   }
 }
-
-export default TopicPageSectionColour;

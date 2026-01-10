@@ -1,8 +1,8 @@
-import BaseEntity from './baseEntity.js';
-import StoreProductDuration from './storeProductDuration.js';
-import StoreProductImage from './storeProductImage.js';
+import BaseEntity from './BaseEntity.js';
+import StoreProductDuration from './StoreProductDuration.js';
+import StoreProductImage from './StoreProductImage.js';
 
-class StoreProductProfile extends BaseEntity {
+export default class StoreProductProfile extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -20,11 +20,9 @@ class StoreProductProfile extends BaseEntity {
     this.isLimited = entity.isLimited;
     this.isPremium = entity.isPremium;
     this.isRemoved = entity.isRemoved;
-    this.durationList = new Set(entity.durationList.map(d => new StoreProductDuration(this.client, d)));
-    this.imageList = new Set(entity.imageList.map(i => new StoreProductImage(this.client, i)));
+    this.durationList = new Set(entity.durationList.map((duration) => new StoreProductDuration(this.client, duration)));
+    this.imageList = new Set(entity.imageList.map((image) => new StoreProductImage(this.client, image)));
     this.extraInfo = entity.extraInfo;
     this.recipeId = entity.recipeId;
   }
 }
-
-export default StoreProductProfile;

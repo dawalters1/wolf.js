@@ -1,7 +1,6 @@
+import BaseEntity from './BaseEntity.js';
 
-import BaseEntity from './baseEntity.js';
-
-export class TopicPageSectionElementPropertyAspect extends BaseEntity {
+export default class TopicPageSectionElementPropertyAspect extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +8,3 @@ export class TopicPageSectionElementPropertyAspect extends BaseEntity {
     this.height = entity?.height ?? null;
   }
 }
-
-export default TopicPageSectionElementPropertyAspect;

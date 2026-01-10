@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class CharmExpired extends BaseEntity {
+export default class CharmExpired extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -13,5 +13,3 @@ class CharmExpired extends BaseEntity {
       : null;
   }
 }
-
-export default CharmExpired;

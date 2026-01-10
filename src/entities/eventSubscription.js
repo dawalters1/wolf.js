@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import EventSubscriptionAdditionalInfo from './eventSubscriptionAdditionalInfo.js';
+import BaseEntity from './BaseEntity.js';
+import EventSubscriptionAdditionalInfo from './EventSubscriptionAdditionalInfo.js';
 
-export class EventSubscription extends BaseEntity {
+export default class EventSubscription extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -10,4 +10,3 @@ export class EventSubscription extends BaseEntity {
     this.additionalInfo = new EventSubscriptionAdditionalInfo(client, entity.additionalInfo);
   }
 }
-export default EventSubscription;

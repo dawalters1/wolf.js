@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class ChannelStatsTrend extends BaseEntity {
+export default class ChannelStatsTrend extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ class ChannelStatsTrend extends BaseEntity {
     this.lineCount = entity.lineCount;
   }
 }
-
-export default ChannelStatsTrend;

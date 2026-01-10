@@ -1,3 +1,4 @@
+import BaseUtility from './BaseUtility.js';
 import ChannelUtility from './channel.js';
 import imageSize from 'image-size';
 import Language from '../constants/Language.js';
@@ -7,32 +8,15 @@ import StringUtility from './string.js';
 import TimerUtility from './timer.js';
 import UserUtility from './user.js';
 
-class BaseUtility {
+export default class Utilities extends BaseUtility {
   constructor (client) {
-    this.client = client;
+    super(client);
 
     this.channel = new ChannelUtility(client);
     this.string = new StringUtility(client);
     this.number = new NumberUtility();
     this.timer = new TimerUtility(client);
     this.user = new UserUtility(client);
-  }
-
-  /** @internal */
-  async _validateBuffer (config, buffer, mimeType) {
-    const mimeTypeConfig = config.validation.mimeTypes.find((supportedMimeType) => supportedMimeType.mimeType === mimeType);
-
-    if (!mimeTypeConfig) { throw new Error(`MimeType type '${mimeType}' is unsupported`); }
-
-    if (mimeType.startsWith('image/') && config.validation.square) {
-      const { width, height } = imageSize(buffer);
-
-      if (width !== height) { throw new Error('Image must be square'); }
-    }
-
-    if (Buffer.byteLength(buffer) > mimeTypeConfig.size) { throw new Error(`Buffer must be no larger than '${mimeTypeConfig.size}' it is ${Buffer.byteLength(buffer)} `); }
-
-    return true;
   }
 
   async delay (time, type = 'milliseconds') {
@@ -155,5 +139,3 @@ class BaseUtility {
     return languageIdMap[languageId] ?? 'en';
   }
 }
-
-export default BaseUtility;

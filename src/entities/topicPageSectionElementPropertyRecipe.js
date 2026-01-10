@@ -1,7 +1,7 @@
 
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class TopicPageSectionElementPropertyRecipe extends BaseEntity {
+export default class TopicPageSectionElementPropertyRecipe extends BaseEntity {
   constructor (client, entity, type, languageId) {
     super(client);
 
@@ -12,5 +12,3 @@ export class TopicPageSectionElementPropertyRecipe extends BaseEntity {
     this.type = type;
   }
 }
-
-export default TopicPageSectionElementPropertyRecipe;

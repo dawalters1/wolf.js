@@ -1,7 +1,7 @@
-import MessageEdited from './messageEdited.js';
-import MessageMetadata from './messageMetadata.js';
+import MessageEdited from './MessageEdited.js';
+import MessageMetadata from './MessageMetadata.js';
 
-export class MessageUpdate {
+export default class MessageUpdate {
   constructor (client, entity) {
     this.sourceUserId = entity.originator
       ? entity.originator.id
@@ -22,5 +22,3 @@ export class MessageUpdate {
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
   }
 }
-
-export default MessageUpdate;

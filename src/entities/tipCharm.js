@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import IdHash from './idHash.js';
+import BaseEntity from './BaseEntity.js';
+import IdHash from './IdHash.js';
 
-class TipCharm extends BaseEntity {
+export default class TipCharm extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -15,5 +15,3 @@ class TipCharm extends BaseEntity {
       : null;
   }
 }
-
-export default TipCharm;

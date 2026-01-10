@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class WOLFStar extends BaseEntity {
+export default class WOLFStar extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -11,5 +11,3 @@ export class WOLFStar extends BaseEntity {
     this.talentList = entity.talentList;
   }
 }
-
-export default WOLFStar;

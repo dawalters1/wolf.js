@@ -10,7 +10,7 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
 /**
  * @param {import('../WOLF.js').default} client
  */
-class Multimedia {
+export default class Multimedia {
   #axios;
   #client;
   constructor (client) {
@@ -88,5 +88,3 @@ class Multimedia {
       .catch((error) => new WOLFResponse({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
   }
 }
-
-export default Multimedia;

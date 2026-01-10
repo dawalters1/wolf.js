@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class ChannelAudioSlotReservation extends BaseEntity {
+export default class ChannelAudioSlotReservation extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,5 +8,3 @@ class ChannelAudioSlotReservation extends BaseEntity {
     this.expiresAt = new Date(entity.reservedExpiresAt);
   }
 }
-
-export default ChannelAudioSlotReservation;

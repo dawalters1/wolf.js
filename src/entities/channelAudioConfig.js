@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class ChannelAudioConfig extends BaseEntity {
+export default class ChannelAudioConfig extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -10,5 +10,3 @@ class ChannelAudioConfig extends BaseEntity {
     this.minRepLevel = entity.minRepLevel ?? 0;
   }
 }
-
-export default ChannelAudioConfig;

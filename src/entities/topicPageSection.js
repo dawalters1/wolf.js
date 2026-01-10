@@ -1,9 +1,9 @@
-import BaseEntity from './baseEntity.js';
-import TopicPageSectionColour from './topicPageSectionColour.js';
-import TopicPageSectionElement from './topicPageSectionElement.js';
-import TopicPageSectionValidity from './topicPageSectionValidity.js';
+import BaseEntity from './BaseEntity.js';
+import TopicPageSectionColour from './TopicPageSectionColour.js';
+import TopicPageSectionElement from './TopicPageSectionElement.js';
+import TopicPageSectionValidity from './TopicPageSectionValidity.js';
 
-export class TopicPageSection extends BaseEntity {
+export default class TopicPageSection extends BaseEntity {
   constructor (client, entity, languageId) {
     super(client);
 
@@ -19,5 +19,3 @@ export class TopicPageSection extends BaseEntity {
     );
   }
 }
-
-export default TopicPageSection;

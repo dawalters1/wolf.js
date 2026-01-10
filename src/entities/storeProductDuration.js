@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class StoreProductDuration extends BaseEntity {
+export default class StoreProductDuration extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ class StoreProductDuration extends BaseEntity {
     this.days = entity.days;
   }
 }
-
-export default StoreProductDuration;

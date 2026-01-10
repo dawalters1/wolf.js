@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { validate } from '../../validator/index.js';
 
-class PhraseHelper extends BaseHelper {
+export default class PhraseHelper extends BaseHelper {
   constructor (client) {
     super(client);
 
@@ -80,5 +80,3 @@ class PhraseHelper extends BaseHelper {
     return phrases.some((phrase) => this.client.utility.string.isEqual(phrase.value, input));
   }
 }
-
-export default PhraseHelper;

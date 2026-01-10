@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class ChannelStatsTop extends BaseEntity {
+export default class ChannelStatsTop extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -12,5 +12,3 @@ class ChannelStatsTop extends BaseEntity {
     this.percentage = entity.percentage;
   }
 }
-
-export default ChannelStatsTop;

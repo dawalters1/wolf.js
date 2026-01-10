@@ -1,7 +1,6 @@
+import BaseEntity from './BaseEntity.js';
 
-import BaseEntity from './baseEntity.js';
-
-export class TopicPageSectionElementPropertyLink extends BaseEntity {
+export default class TopicPageSectionElementPropertyLink extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +8,3 @@ export class TopicPageSectionElementPropertyLink extends BaseEntity {
     this.url = entity?.url ?? null;
   }
 }
-
-export default TopicPageSectionElementPropertyLink;

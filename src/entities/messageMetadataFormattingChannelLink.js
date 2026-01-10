@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class MessageMetadataFormattingChannelLink extends BaseEntity {
+export default class MessageMetadataFormattingChannelLink extends BaseEntity {
   constructor (client, entity) {
     super(client);
     this.start = entity.start;
@@ -8,4 +8,3 @@ export class MessageMetadataFormattingChannelLink extends BaseEntity {
     this.channelId = entity.groupId || null;
   }
 }
-export default MessageMetadataFormattingChannelLink;

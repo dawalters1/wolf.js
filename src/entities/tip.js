@@ -1,8 +1,8 @@
-import BaseEntity from './baseEntity.js';
-import TipCharm from './tipCharm.js';
-import TipContext from './tipContext.js';
+import BaseEntity from './BaseEntity.js';
+import TipCharm from './TipCharm.js';
+import TipContext from './TipContext.js';
 
-class Tip extends BaseEntity {
+export default class Tip extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -15,5 +15,3 @@ class Tip extends BaseEntity {
     this.version = entity.version;
   }
 }
-
-export default Tip;

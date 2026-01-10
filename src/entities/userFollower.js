@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class UserFollower extends BaseEntity {
+export default class UserFollower extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,5 +8,3 @@ export class UserFollower extends BaseEntity {
     this.hash = entity.hash;
   }
 }
-
-export default UserFollower;

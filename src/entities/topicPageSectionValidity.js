@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class TopicPageSectionValidity extends BaseEntity {
+export default class TopicPageSectionValidity extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -12,5 +12,3 @@ export class TopicPageSectionValidity extends BaseEntity {
       : null;
   }
 }
-
-export default TopicPageSectionValidity;

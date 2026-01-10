@@ -1,4 +1,4 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
 export class IconInfo extends BaseEntity {
   constructor (client, entity, targetType) {
@@ -19,9 +19,8 @@ export class IconInfo extends BaseEntity {
     const availableSizes = Object.keys(this.availableSizes);
 
     // Find the next available size after the requested one
-    const nextUp = availableSizes.find((key, idx) =>
-      idx > availableSizes.indexOf(size) && this[key]
-    );
+    const nextUp = availableSizes.find((key, index) => index > availableSizes.indexOf(size) && this[key]);
+
     if (nextUp) {
       return `${baseUrl}${this.availableSizes[nextUp]}`;
     }
@@ -31,9 +30,8 @@ export class IconInfo extends BaseEntity {
       availableSizes.indexOf(b) - availableSizes.indexOf(a)
     );
 
-    const nextDown = sortedDesc.find((key, idx) =>
-      idx > sortedDesc.indexOf(size) && this.availableSizes[key]
-    );
+    const nextDown = sortedDesc.find((key, index) => index > sortedDesc.indexOf(size) && this.availableSizes[key]);
+
     if (nextDown) {
       return `${baseUrl}${this.availableSizes[nextDown]}`;
     }

@@ -1,15 +1,15 @@
 
-import BaseEntity from './baseEntity.js';
-// import ExpiringProperty from '../stores_old/expiringProperty.js';
-import TopicPageSectionElementPropertyAspect from './topicPageSectionElementPropertyAspect.js';
-import TopicPageSectionElementPropertyLink from './topicPageSectionElementPropertyLink.js';
-import TopicPageSectionElementPropertyRecipe from './topicPageSectionElementPropertyRecipe.js';
+import BaseEntity from './BaseEntity.js';
+import TopicPageSectionElementPropertyAspect from './TopicPageSectionElementPropertyAspect.js';
+import TopicPageSectionElementPropertyLink from './TopicPageSectionElementPropertyLink.js';
+import TopicPageSectionElementPropertyRecipe from './TopicPageSectionElementPropertyRecipe.js';
 
-export class TopicPageSectionElementProperties extends BaseEntity {
+export default class TopicPageSectionElementProperties extends BaseEntity {
   constructor (client, entity, languageId) {
     super(client);
 
     this.type = entity.type;
+    this.languageId = languageId;
     this.onInvalid = entity?.onInvalid ?? null;
     this.size = entity?.size ?? null;
     this.style = entity?.style ?? null;
@@ -29,11 +29,5 @@ export class TopicPageSectionElementProperties extends BaseEntity {
     this.subHeading = entity?.subHeading ?? null;
     this.body = entity?.body ?? null;
     this.imageUrl = entity?.imageUrl ?? null;
-    /*
-    this._recipeData = entity.recipe
-      ? new ExpiringProperty(300)
-      : null; */
   }
 }
-
-export default TopicPageSectionElementProperties;

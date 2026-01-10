@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelMessageConfig extends BaseEntity {
+export default class ChannelMessageConfig extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -11,4 +11,3 @@ export class ChannelMessageConfig extends BaseEntity {
     this.slowModeRateInSeconds = entity.slowModeRateInSeconds;
   }
 }
-export default ChannelMessageConfig;

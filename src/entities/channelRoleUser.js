@@ -1,19 +1,11 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelRoleUser extends BaseEntity {
+export default class ChannelRoleUser extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
-    if ('additionalInfo' in entity) {
-      this.userId = entity.additionalInfo.subscriberId;
-      this.roleId = entity.additionalInfo.roleId;
-      this.channelId = entity.id;
-    } else {
-      this.userId = entity.subscriberId;
-      this.channelId = entity.groupId;
-      this.roleId = entity.roleId;
-    }
+    this.userId = entity.additionalInfo?.subscriberId ?? entity.subscriberId;
+    this.channelId = entity?.id ?? entity.groupId;
+    this.roleId = entity.additionalInfo?.roleId ?? entity.roleId;
   }
 }
-
-export default ChannelRoleUser;

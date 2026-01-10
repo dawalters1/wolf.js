@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class CharmSummary extends BaseEntity {
+export default class CharmSummary extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -12,5 +12,3 @@ export class CharmSummary extends BaseEntity {
     this.total = entity.total;
   }
 }
-
-export default CharmSummary;

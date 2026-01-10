@@ -1,18 +1,20 @@
-import BaseEntity from './baseEntity.js';
-import IdHash from './idHash.js';
+import BaseEntity from './BaseEntity.js';
+import IdHash from './IdHash.js';
 
-export class TipLeaderboardSummary extends BaseEntity {
+export default class TipLeaderboardSummary extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
-    this.topGifters = new Set();
-    this.topChannels = new Set();
-    this.topSpenders = new Set();
+    this.totalSpend = entity?.totalSpend ?? undefined;
+    this.topGifters = new Set(entity.topGifters?.map((topGifter) => new IdHash(this.client, topGifter)));
+    this.topSpenders = new Set(entity.topSpenders?.map((topSpender) => new IdHash(this.client, topSpender)));
 
-    entity.topGifters?.forEach(topGifter => this.topGifters.add(new IdHash(this.client, topGifter)));
-    entity.topGroups?.forEach(topChannel => this.topChannels.add(new IdHash(this.client, topChannel, true)));
-    entity.topSpenders?.forEach(topSpender => this.topSpenders.add(new IdHash(this.client, topSpender)));
+    if (entity.topChannels) {
+      this.topChannels = new Set(entity.topGroups?.map((topChannel) => new IdHash(this.client, topChannel, true)));
+    }
+
+    if (entity.topCharms) {
+      this.topCharms = new Set(entity.topCharms);
+    }
   }
 }
-
-export default TipLeaderboardSummary;
