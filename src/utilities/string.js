@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import Ad from '../../../../entities/ad.js';
+import Ad from '../entities/ad.js';
 import BaseUtility from './BaseUtility.js';
-import Link from '../../../../entities/link.js';
+import Link from '../entities/link.js';
 import urlRegexSafe from 'url-regex-safe';
 import { validate } from '../validator/index.js';
 
