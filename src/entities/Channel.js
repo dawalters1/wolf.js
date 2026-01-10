@@ -23,6 +23,8 @@ class Channel extends BaseEntity {
     this.peekable = entity.base.peekable;
     this.owner = new ChannelOwner(client, entity.base.owner);
     this.verificationTier = entity.base.verificationTier;
+
+    // TODO: expand this for remaining properties
   }
 }
 
