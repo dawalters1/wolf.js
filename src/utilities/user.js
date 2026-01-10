@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import UserPrivilege from '../constants/UserPrivilege.js';
 import { validate } from '../validator/index.js';
-import WOLFResponse from '../../../../entities/WOLFResponse.js';
+import WOLFResponse from '../entities/WOLFResponse.js';
 
 class UserUtility {
   constructor (client) {
