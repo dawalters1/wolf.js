@@ -1,15 +1,24 @@
-export const OFFLINE = 0;
-export const ONLINE = 1;
-export const AWAY = 2;
-export const INVISIBLE = 3;
-export const BUSY = 5;
-export const IDLE = 9;
 
-export default {
-  OFFLINE,
-  ONLINE,
-  AWAY,
-  INVISIBLE,
-  BUSY,
-  IDLE
+export const OnlineState = {
+  /**
+   * User is offline
+   */
+  OFFLINE: 0,
+  /**
+   * User is online
+   */
+  ONLINE: 1,
+  /**
+   * User is away
+   */
+  AWAY: 2,
+  /**
+   * User is away
+   */
+  BUSY: 5,
+  /**
+   * User is idle
+   */
+  IDLE: 9
 };
+export default OnlineState;
