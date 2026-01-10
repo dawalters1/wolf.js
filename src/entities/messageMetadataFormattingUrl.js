@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class MessageMetadataFormattingUrl extends BaseEntity {
+export default class MessageMetadataFormattingUrl extends BaseEntity {
   constructor (client, entity) {
     super(client);
     this.start = entity.start;
@@ -8,4 +8,3 @@ class MessageMetadataFormattingUrl extends BaseEntity {
     this.url = entity.url;
   }
 }
-export default MessageMetadataFormattingUrl;

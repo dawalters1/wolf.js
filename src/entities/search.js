@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class Search extends BaseEntity {
+export default class Search extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -10,5 +10,3 @@ class Search extends BaseEntity {
     this.reason = entity.reason;
   }
 }
-
-export default Search;

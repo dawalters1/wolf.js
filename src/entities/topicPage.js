@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import TopicPageSection from './topicPageSection.js';
+import BaseEntity from './BaseEntity.js';
+import TopicPageSection from './TopicPageSection.js';
 
-export class TopicPage extends BaseEntity {
+export default class TopicPage extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -13,5 +13,3 @@ export class TopicPage extends BaseEntity {
     this.sectionList = new Map([[entity.languageId, new Set(entity.sectionList.map((serverSection) => new TopicPageSection(this.client, serverSection, entity.languageId)))]]);
   }
 }
-
-export default TopicPage;

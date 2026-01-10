@@ -1,8 +1,7 @@
+import BaseEntity from './BaseEntity.js';
+import IdHash from './IdHash.js';
 
-import BaseEntity from './baseEntity.js';
-import IdHash from './idHash.js';
-
-export class TipLeaderboardItem extends BaseEntity {
+export default class TipLeaderboardItem extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -18,5 +17,3 @@ export class TipLeaderboardItem extends BaseEntity {
       : null;
   }
 }
-
-export default TipLeaderboardItem;

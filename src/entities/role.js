@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class Role extends BaseEntity {
+export default class Role extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -12,5 +12,3 @@ export class Role extends BaseEntity {
     this.hexColur = entity.hexColur;
   }
 }
-
-export default Role;

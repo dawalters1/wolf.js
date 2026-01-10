@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class Achievement extends BaseEntity {
+export default class Achievement extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -17,5 +17,3 @@ class Achievement extends BaseEntity {
     this.acquisitionPercentage = entity.acquisitionPercentage ?? null;
   }
 }
-
-export default Achievement;

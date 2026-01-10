@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelOwner extends BaseEntity {
+export default class ChannelOwner extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,4 +8,3 @@ export class ChannelOwner extends BaseEntity {
     this.hash = entity.hash;
   }
 }
-export default ChannelOwner;

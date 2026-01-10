@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class MessageSend extends BaseEntity {
+export default class MessageSend extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ export class MessageSend extends BaseEntity {
     this.slowModeRateInSeconds = entity.slowModeRateInSeconds ?? null;
   }
 }
-
-export default MessageSend;

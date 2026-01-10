@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class StoreProduct extends BaseEntity {
+export default class StoreProduct extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -16,9 +16,5 @@ class StoreProduct extends BaseEntity {
     this.isLimited = entity.isLimited;
     this.botId = entity.botId;
     this.charmId = entity.charmId;
-
-    this.profile = undefined;
   }
 }
-
-export default StoreProduct;

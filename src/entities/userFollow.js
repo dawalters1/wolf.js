@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class UserFollow extends BaseEntity {
+export default class UserFollow extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -17,5 +17,3 @@ export class UserFollow extends BaseEntity {
     return await this.client.user.followers.update(this.userId, !this.notification);
   }
 }
-
-export default UserFollow;

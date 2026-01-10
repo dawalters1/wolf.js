@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import EndpointConfig from './endpointConfig.js';
+import BaseEntity from './BaseEntity.js';
+import EndpointConfig from './EndpointConfig.js';
 
-export class Welcome extends BaseEntity {
+export default class Welcome extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -13,5 +13,3 @@ export class Welcome extends BaseEntity {
     this.endpointConfig = new EndpointConfig(client, entity.endpointConfig);
   }
 }
-
-export default Welcome;

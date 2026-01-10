@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import ContactAdditionalInfo from './contactAdditionalInfo.js';
+import BaseEntity from './BaseEntity.js';
+import ContactAdditionalInfo from './ContactAdditionalInfo.js';
 
-export class Contact extends BaseEntity {
+export default class Contact extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -12,4 +12,3 @@ export class Contact extends BaseEntity {
     this.additionalInfo = new ContactAdditionalInfo(client, additionalInfo);
   }
 }
-export default Contact;

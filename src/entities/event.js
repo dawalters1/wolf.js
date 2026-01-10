@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class Event extends BaseEntity {
+export default class Event extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -19,4 +19,3 @@ export class Event extends BaseEntity {
     this.title = entity.title;
   }
 }
-export default Event;

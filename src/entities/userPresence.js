@@ -1,23 +1,13 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class UserPresence extends BaseEntity {
-  constructor (client, entity, subscribed = false) {
+export default class UserPresence extends BaseEntity {
+  constructor (client, entity) {
     super(client);
 
-    if ('subscriberId' in entity) {
-      this.userId = entity.subscriberId;
-      this.state = entity.state;
-      this.device = entity.device;
-      this.lastActive = entity.lastActive;
-    } else {
-      this.userId = entity.id;
-      this.state = entity.onlineState;
-      this.device = entity.deviceType;
-      this.lastActive = null;
-    }
-
-    this.subscribed = subscribed;
+    this.userId = entity.id ?? entity.subscriberId;
+    this.state = entity.onlineState ?? entity.state;
+    this.device = entity.deviceType ?? entity.device;
+    this.lastActive = entity.lastActive ?? null;
+    this.subscribed = entity?.subscribed ?? false;
   }
 }
-
-export default UserPresence;

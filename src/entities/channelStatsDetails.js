@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import ChannelStatsOwner from './channelStatsOwner.js';
+import BaseEntity from './BaseEntity.js';
+import ChannelStatsOwner from './ChannelStatsOwner.js';
 
-export class ChannelStatsDetails extends BaseEntity {
+export default class ChannelStatsDetails extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -30,5 +30,3 @@ export class ChannelStatsDetails extends BaseEntity {
     this.wordCount = entity.wordCount;
   }
 }
-
-export default ChannelStatsDetails;

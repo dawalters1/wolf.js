@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class Link extends BaseEntity {
+export default class Link extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ export class Link extends BaseEntity {
     this.link = entity[0];
   }
 }
-
-export default Link;

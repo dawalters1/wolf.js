@@ -1,5 +1,4 @@
-
-class TimerJob {
+export default class TimerJob {
   constructor (client, job) {
     this.client = client;
 
@@ -21,5 +20,3 @@ class TimerJob {
     return await this.client.utility.timer.delay(this.id, delay);
   }
 }
-
-export default TimerJob;

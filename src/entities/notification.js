@@ -1,8 +1,7 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
+import NotificationAdditionalInfo from './NotificationAdditionalInfo.js';
 
-import NotificationAdditionalInfo from './notificationAdditionalInfo.js';
-
-export class Notification extends BaseEntity {
+export default class Notification extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -10,4 +9,3 @@ export class Notification extends BaseEntity {
     this.additionalInfo = new NotificationAdditionalInfo(client, entity.additionalInfo);
   }
 }
-export default Notification;

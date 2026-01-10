@@ -1,17 +1,15 @@
+import BaseEntity from './BaseEntity.js';
+import TopicPageSectionElementProperties from './TopicPageSectionElementProperties.js';
 
-import BaseEntity from './baseEntity.js';
-import TopicPageSectionElementProperties from './topicPageSectionElementProperties.js';
-
-export class TopicPageSectionElement extends BaseEntity {
+export default class TopicPageSectionElement extends BaseEntity {
   constructor (client, entity, languageId) {
     super(client);
 
+    this.languageId = languageId;
     this.onInvalid = entity?.onInvalid ?? null;
     this.properties = entity.properties
-      ? new TopicPageSectionElementProperties(this.client, entity.properties, languageId)
+      ? new TopicPageSectionElementProperties(this.client, entity.properties, this.languageId)
       : null;
     this.type = entity.type;
   }
 }
-
-export default TopicPageSectionElement;

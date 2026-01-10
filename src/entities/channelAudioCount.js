@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class ChannelAudioCount extends BaseEntity {
+export default class ChannelAudioCount extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,4 +9,3 @@ export class ChannelAudioCount extends BaseEntity {
     this.id = entity.id;
   }
 }
-export default ChannelAudioCount;

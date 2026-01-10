@@ -1,7 +1,6 @@
+import BaseEntity from './BaseEntity.js';
 
-import BaseEntity from './baseEntity.js';
-
-class Charm extends BaseEntity {
+export default class Charm extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -14,5 +13,3 @@ class Charm extends BaseEntity {
     this.productId = entity.productId;
   }
 }
-
-export default Charm;

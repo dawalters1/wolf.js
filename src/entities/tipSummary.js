@@ -1,15 +1,12 @@
-import BaseEntity from './baseEntity.js';
-import TipCharm from './tipCharm.js';
+import BaseEntity from './BaseEntity.js';
+import TipCharm from './TipCharm.js';
 
-export class TipSummary extends BaseEntity {
+export default class TipSummary extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
     this.id = entity.id;
-    this.list = new Set();
-    entity.charmList?.forEach(tipCharm => this.list.add(new TipCharm(this.client, tipCharm)));
+    this.list = new Set(entity.charmList?.map((tipCharm) => new TipCharm(this.client, tipCharm)));
     this.version = entity.version;
   }
 }
-
-export default TipSummary;

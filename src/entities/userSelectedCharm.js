@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-export class UserSelectedCharm extends BaseEntity {
+export default class UserSelectedCharm extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -8,5 +8,3 @@ export class UserSelectedCharm extends BaseEntity {
     this.position = entity.position;
   }
 }
-
-export default UserSelectedCharm;

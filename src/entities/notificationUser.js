@@ -1,9 +1,9 @@
 
-import BaseEntity from './baseEntity.js';
-import NotificationUserFeed from './notificationUserFeed.js';
-import NotificationUserPopup from './notificationUserPopup.js';
+import BaseEntity from './BaseEntity.js';
+import NotificationFeed from './NotificationFeed.js';
+import NotificationPopup from './NotificationPopup.js';
 
-class NotificationUser extends BaseEntity {
+export default class NotificationUser extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -11,10 +11,10 @@ class NotificationUser extends BaseEntity {
     this.createdAt = new Date(entity.createdAt);
     this.expiresAt = new Date(entity.expiresAt);
     this.feed = entity.feed
-      ? new NotificationUserFeed(client, entity.feed)
+      ? new NotificationFeed(client, entity.feed)
       : undefined;
     this.popup = entity.popup
-      ? new NotificationUserPopup(client, entity.popup)
+      ? new NotificationPopup(client, entity.popup)
       : undefined;
     this.id = entity.id;
     this.notificationId = entity.notificationId;
@@ -22,5 +22,3 @@ class NotificationUser extends BaseEntity {
     this.typeId = entity.typeId;
   }
 }
-
-export default NotificationUser;

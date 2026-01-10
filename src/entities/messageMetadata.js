@@ -1,8 +1,7 @@
+import BaseEntity from './BaseEntity.js';
+import MessageMetadataFormatting from './MessageMetadataFormatting.js';
 
-import BaseEntity from './baseEntity.js';
-import MessageMetadataFormatting from './messageMetadataFormatting.js';
-
-export class MessageMetadata extends BaseEntity {
+export default class MessageMetadata extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -16,4 +15,3 @@ export class MessageMetadata extends BaseEntity {
     this.isTipped = entity.isTipped || false;
   }
 }
-export default MessageMetadata;

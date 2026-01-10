@@ -1,5 +1,5 @@
-import BaseEntity from './baseEntity.js';
-import ChannelAudioSlotReservation from './channelAudioSlotReservation.js';
+import BaseEntity from './BaseEntity.js';
+import ChannelAudioSlotReservation from './ChannelAudioSlotReservation.js';
 
 export class ChannelAudioSlot extends BaseEntity {
   constructor (client, entity, channelId) {
@@ -17,14 +17,6 @@ export class ChannelAudioSlot extends BaseEntity {
     this.connectionState = entity.connectionState;
     this.uuid = entity.uuid;
     this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
-  }
-
-  async join () {
-    return this.client.audio.join(this.channelId, this.id);
-  }
-
-  async leave () {
-    return this.client.audio.leave();
   }
 }
 

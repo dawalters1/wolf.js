@@ -1,18 +1,17 @@
-import AchievementUserAdditionalInfo from './achievementUserAdditionalInfo.js';
-import BaseEntity from './baseEntity.js';
+import AchievementUserAdditionalInfo from './AchievementUserAdditionalInfo.js';
+import BaseEntity from './BaseEntity.js';
 
-export class AchievementUser extends BaseEntity {
+export default class AchievementUser extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
     this.id = entity.id;
+    this.userId = entity.userId;
     this.additionalInfo = new AchievementUserAdditionalInfo(client, entity.additionalInfo);
     this.childrenId = entity.childrenId ?? null;
   }
 
-  async achievement (languageId) {
-    return this.client.achievement.getById(this.id, languageId);
+  async fetch (languageId) {
+    return this.client.achievement.fetch(this.id, languageId);
   }
 }
-
-export default AchievementUser;

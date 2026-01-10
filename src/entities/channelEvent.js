@@ -1,7 +1,7 @@
-import BaseEntity from './baseEntity.js';
-import ChannelEventAdditionalInfo from './channelEventAdditionalInfo.js';
+import BaseEntity from './BaseEntity.js';
+import ChannelEventAdditionalInfo from './ChannelEventAdditionalInfo.js';
 
-export class ChannelEvent extends BaseEntity {
+export default class ChannelEvent extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -9,5 +9,3 @@ export class ChannelEvent extends BaseEntity {
     this.additionalInfo = new ChannelEventAdditionalInfo(client, entity.additionalInfo);
   }
 }
-
-export default ChannelEvent;

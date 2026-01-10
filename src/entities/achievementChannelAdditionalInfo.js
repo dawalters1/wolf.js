@@ -1,6 +1,6 @@
-import BaseEntity from './baseEntity.js';
+import BaseEntity from './BaseEntity.js';
 
-class AchievementChannelAdditionalInfo extends BaseEntity {
+export default class AchievementChannelAdditionalInfo extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -13,5 +13,3 @@ class AchievementChannelAdditionalInfo extends BaseEntity {
     this.categoryId = entity.categoryId ?? null;
   }
 }
-
-export default AchievementChannelAdditionalInfo;
