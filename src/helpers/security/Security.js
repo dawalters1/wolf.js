@@ -1,5 +1,7 @@
 import BaseHelper from '../BaseHelper.js';
 import Cognito from '../../entities/Cognito.js';
+import { nanoid } from 'nanoid';
+import OnlineState from '../../constants/OnlineState.js';
 
 export default class SecurityHelper extends BaseHelper {
   #cognito;
@@ -12,10 +14,6 @@ export default class SecurityHelper extends BaseHelper {
   // eslint-disable-next-line accessor-pairs
   set cognito (value) {
     this.#cognito = value;
-  }
-
-  async login (email, password, apiKey, type, state) {
-
   }
 
   async logout () {
