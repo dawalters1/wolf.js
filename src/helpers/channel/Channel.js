@@ -35,9 +35,8 @@ export default class ChannelHelper extends BaseHelper {
   async fetch (idsOrName, opts) {
     const normalisedChannelIdOrName = this.normaliseNumber(idsOrName);
 
-    if (!idsOrName || idsOrName instanceof Object) {
+    if (!normalisedChannelIdOrName || this.isObject(normalisedChannelIdOrName)) {
       opts = normalisedChannelIdOrName;
-
       if (!opts?.forceNew && this.store.fetched) {
         return this.store.filter((item) => item.isMember);
       }
@@ -71,7 +70,7 @@ export default class ChannelHelper extends BaseHelper {
     }
 
     // Developer provided a name
-    if (isNaN(idsOrName)) {
+    if (!Array.isArray(normalisedChannelIdOrName) && isNaN(normalisedChannelIdOrName)) {
       if (!opts?.forceNew) {
         const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName));
 
@@ -198,7 +197,7 @@ export default class ChannelHelper extends BaseHelper {
 
   async leave (channelIdOrName) {
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
-    const isById = channelIdOrName instanceof Number;
+    const isById = normalisedChannelIdOrName instanceof Number;
 
     const channel = await this.fetch(normalisedChannelIdOrName);
 

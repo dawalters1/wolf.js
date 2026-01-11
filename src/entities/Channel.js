@@ -1,8 +1,19 @@
 import BaseEntity from './BaseEntity.js';
+import Cache from '../cache/Cache.js';
+import ChannelMemberCache from '../cache/ChannelMemberCache.js';
 import ChannelOwner from './ChannelOwner.js';
+import ChannelRoleStore from '../cache/ChannelRoleCache.js';
 import IconInfo from './IconInfo.js';
 
-class Channel extends BaseEntity {
+export default class Channel extends BaseEntity {
+  #achievementStore = new Cache();
+  #audioSlotStore = new Cache();
+  #audioSlotRequestStore = new Cache();
+  #eventStore = new Cache();
+  #memberStore = new ChannelMemberCache();
+  #roleStore = new ChannelRoleStore();
+  #slotStore = new Cache();
+
   constructor (client, entity) {
     super(client);
 
@@ -26,6 +37,32 @@ class Channel extends BaseEntity {
 
     // TODO: expand this for remaining properties
   }
-}
 
-export default Channel;
+  get achievementStore () {
+    return this.#achievementStore;
+  }
+
+  get audioSlotStore () {
+    return this.#audioSlotStore;
+  }
+
+  get audioSlotRequestStore () {
+    return this.#audioSlotRequestStore;
+  }
+
+  get eventStore () {
+    return this.#eventStore;
+  }
+
+  get memberStore () {
+    return this.#memberStore;
+  }
+
+  get roleStore () {
+    return this.#roleStore;
+  }
+
+  get slotStore () {
+    return this.#slotStore;
+  }
+}

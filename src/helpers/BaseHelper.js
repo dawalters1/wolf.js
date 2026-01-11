@@ -17,8 +17,12 @@ export default class BaseHelper {
     return this.#store;
   }
 
+  isObject (value) {
+    return typeof value === 'object' && value !== null && !Array.isArray(value);
+  }
+
   normaliseNumber (num) {
-    return Number(num) || num;
+    return Number(num) || num || null;
   }
 
   normaliseNumbers (ids) {

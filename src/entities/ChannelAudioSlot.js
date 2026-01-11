@@ -1,7 +1,7 @@
 import BaseEntity from './BaseEntity.js';
 import ChannelAudioSlotReservation from './ChannelAudioSlotReservation.js';
 
-export class ChannelAudioSlot extends BaseEntity {
+export default class ChannelAudioSlot extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
@@ -19,5 +19,3 @@ export class ChannelAudioSlot extends BaseEntity {
     this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
   }
 }
-
-export default ChannelAudioSlot;

@@ -3,8 +3,64 @@ import ChannelMember from '../../entities/ChannelMember.js';
 import ChannelMemberCapability from '../../constants/ChannelMemberCapability.js';
 import ChannelMemberListType from '../../constants/ChannelMemberListType.js';
 import { StatusCodes } from 'http-status-codes';
+import UserPrivilege from '../../constants/UserPrivilege.js';
 
 export default class ChannelMemberHelper extends BaseHelper {
+  async #canPerformAction (channel, targetMember, newCapability) {
+    if (newCapability === ChannelMemberCapability.OWNER) { return false; }
+    if (channel.isOwner) { return true; }
+
+    const sourceMemberHasGap =
+      this.client.me?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
+
+    const hasHigherCapability = (() => {
+      switch (channel.capabilities) {
+        case ChannelMemberCapability.CO_OWNER:
+          return [
+            ChannelMemberCapability.ADMIN,
+            ChannelMemberCapability.MOD,
+            ChannelMemberCapability.REGULAR,
+            ChannelMemberCapability.NONE,
+            ChannelMemberCapability.BANNED
+          ].includes(targetMember.capabilities);
+        case ChannelMemberCapability.ADMIN:
+          return channel.extended?.advancedAdmin
+            ? [
+                ChannelMemberCapability.ADMIN,
+                ChannelMemberCapability.MOD,
+                ChannelMemberCapability.REGULAR,
+                ChannelMemberCapability.SILENCED,
+                ChannelMemberCapability.BANNED,
+                ChannelMemberCapability.NONE
+              ].includes(targetMember.capabilities)
+            : [
+                ChannelMemberCapability.MOD,
+                ChannelMemberCapability.REGULAR,
+                ChannelMemberCapability.SILENCED,
+                ChannelMemberCapability.BANNED,
+                ChannelMemberCapability.NONE
+              ].includes(targetMember.capabilities);
+        case ChannelMemberCapability.MOD:
+          return [
+            ChannelMemberCapability.REGULAR,
+            ChannelMemberCapability.SILENCED,
+            ChannelMemberCapability.BANNED,
+            ChannelMemberCapability.NONE
+          ].includes(targetMember.capabilities);
+        default:
+          return false;
+      }
+    })();
+
+    const targetUser = await this.client.user.fetch(targetMember.id);
+    const targetMemberHasGap =
+      targetUser?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
+
+    if (newCapability && [ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(newCapability) && targetMemberHasGap) { return false; }
+
+    return sourceMemberHasGap || hasHigherCapability;
+  }
+
   async #fetchList (channel, list) {
     if (channel.memberStore.metadata[list]) {
       return channel.memberStore.filter((item) => item.lists.has(list));
@@ -121,7 +177,7 @@ export default class ChannelMemberHelper extends BaseHelper {
     }
   }
 
-  async #updateCapability (channelId, userId, target, allowedFrom) {
+  async #updateCapability (channelId, userId, newCapabilities, allowedFrom) {
     const channel = await this.client.channel.getById(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }
@@ -129,7 +185,9 @@ export default class ChannelMemberHelper extends BaseHelper {
     const member = await this.getMember(channelId, userId);
     if (member === null) { throw new Error(`Member with ID ${userId} NOT FOUND in Channel with ID ${channel.id}`); }
 
-    // TODO: validation
+    if (!await this.#canPerformAction(channel, member, newCapabilities)) { throw new Error(`Insufficient capabilities to change capability to ${ChannelMemberCapability[newCapabilities]}`); }
+
+    if (!allowedFrom.includes(member.capabilities)) { throw new Error(`Invalid transition from ${ChannelMemberCapability[member.capabilities]} to ${ChannelMemberCapability[newCapabilities]}`); }
 
     return this.client.websocket.emit(
       'group member update',
@@ -137,7 +195,7 @@ export default class ChannelMemberHelper extends BaseHelper {
         body: {
           groupId: channelId,
           id: userId,
-          capabilities: target
+          capabilities: newCapabilities
         }
       }
     );
@@ -163,9 +221,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async coowner (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.CO_OWNER,
       [
         ChannelMemberCapability.ADMIN,
@@ -176,9 +237,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async admin (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.ADMIN,
       [
         ChannelMemberCapability.CO_OWNER,
@@ -189,9 +253,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async mod (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.MOD,
       [
         ChannelMemberCapability.CO_OWNER,
@@ -202,9 +269,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async regular (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.REGULAR,
       [
         ChannelMemberCapability.CO_OWNER,
@@ -216,9 +286,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async silence (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.SILENCED,
       [
         ChannelMemberCapability.REGULAR
@@ -227,9 +300,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async kick (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.SILENCED,
       [
         ChannelMemberCapability.REGULAR,
@@ -240,9 +316,12 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async ban (channelId, memberId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedMemberId = this.normaliseNumber(memberId);
+
     return this.#updateCapability(
-      channelId,
-      memberId,
+      normalisedChannelId,
+      normalisedMemberId,
       ChannelMemberCapability.BANNED,
       [
         ChannelMemberCapability.REGULAR,

@@ -1,5 +1,6 @@
 
 // import FollowStore from '../caching/FollowStore.js';
+import NotificationCache from '../cache/NotificationCache.js';
 import User from './User.js';
 
 export default class CurrentUser extends User {
@@ -9,7 +10,11 @@ export default class CurrentUser extends User {
   constructor (client, entity) {
     super(client, entity);
 
-    // this.#notificationStore = new NotificationStore();
+    this.#notificationStore = new NotificationCache();
     // this.#followStore = new FollowStore();
+  }
+
+  get notificationStore () {
+    return this.#notificationStore;
   }
 }
