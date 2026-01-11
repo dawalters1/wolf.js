@@ -7,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 export default class AudioHelper extends BaseHelper {
   #slots;
   #slotRequest;
+
   constructor (client) {
     super(client);
     this.#slots = new AudioSlotHelper(client);

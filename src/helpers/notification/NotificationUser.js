@@ -5,9 +5,12 @@ import NotificationUser from '../../entities/NotificationUser.js';
 
 export default class NotificationUserHelper extends BaseHelper {
   async fetch (notificationIds, opts) {
+    const isArrayResponse = Array.isArray(notificationIds);
+    const normalisedNotificationIds = this.normaliseNumbers(notificationIds);
+
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    if (!notificationIds || notificationIds instanceof Object) {
+    if (!normalisedNotificationIds || this.isObject(normalisedNotificationIds)) {
       opts = notificationIds;
 
       if (!opts?.forceNew && this.client.me.notificationStore.user.fetched) { return this.client.me.notificationStore.user.values(); }
@@ -42,12 +45,9 @@ export default class NotificationUserHelper extends BaseHelper {
         );
     }
 
-    const isArrayResponse = Array.isArray(notificationIds);
-    const normalisedEventIds = this.normaliseNumbers(notificationIds);
-
     const idsToFetch = opts?.forceNew
-      ? normalisedEventIds
-      : normalisedEventIds.filter((eventId) =>
+      ? normalisedNotificationIds
+      : normalisedNotificationIds.filter((eventId) =>
         !this.store.has((item) => item.id === eventId)
       );
 
@@ -79,9 +79,9 @@ export default class NotificationUserHelper extends BaseHelper {
       }
     }
 
-    const notifications = normalisedEventIds.map((eventId) =>
+    const notifications = normalisedNotificationIds.map((notificationId) =>
       this.store.get(
-        (item) => item.id === eventId
+        (item) => item.id === notificationId
       )
     );
 

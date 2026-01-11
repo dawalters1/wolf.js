@@ -4,9 +4,12 @@ import NotificationGlobal from '../../entities/NotificationGlobal.js';
 
 export default class NotificationGlobalHelper extends BaseHelper {
   async fetch (notificationIds, opts) {
+    const isArrayResponse = Array.isArray(notificationIds);
+    const normalisedNotificationIds = this.normaliseNumbers(notificationIds);
+
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    if (!notificationIds || notificationIds instanceof Object) {
+    if (!normalisedNotificationIds || this.isObject(normalisedNotificationIds)) {
       opts = notificationIds;
 
       if (!opts?.forceNew && this.client.me.notificationStore.global.fetched) { return this.client.me.notificationStore.global.values(); }
@@ -40,9 +43,6 @@ export default class NotificationGlobalHelper extends BaseHelper {
           )
         );
     }
-
-    const isArrayResponse = Array.isArray(notificationIds);
-    const normalisedNotificationIds = this.normaliseNumbers(notificationIds);
 
     const idsToFetch = opts?.forceNew
       ? normalisedNotificationIds

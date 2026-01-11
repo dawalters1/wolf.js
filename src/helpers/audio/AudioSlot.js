@@ -1,9 +1,13 @@
 import BaseHelper from '../BaseHelper.js';
+import Channel from '../../entities/Channel.js';
 import ChannelAudioSlot from '../../entities/ChannelAudioSlot.js';
+import StageClient from '../../client/stage/Stage.js';
 
 export default class AudioSlotHelper extends BaseHelper {
+  #clients = new Map();
+
   async fetch (channelId, slotId, opts) {
-    if (slotId instanceof Object) {
+    if (this.isObject(slotId)) {
       opts = slotId;
       slotId = null;
     }
@@ -11,9 +15,11 @@ export default class AudioSlotHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
-    const channel = await this.client.channel.fetch(normalisedSlotId);
+    const channel = await this.client.channel.fetch(normalisedChannelId);
 
-    if (!slotId === null) {
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+
+    if (normalisedSlotId === null) {
       if (!opts?.forceNew && channel.audioSlotStore.fetched) { return channel.audioSlotStore.values(); }
 
       const response = await this.client.websocket.emit(
@@ -32,7 +38,7 @@ export default class AudioSlotHelper extends BaseHelper {
         serverSlot.groupId = normalisedChannelId;
 
         return channel.audioSlotStore.set(
-          new ChannelAudioSlot(this.client, serverSlot, channelId)
+          new ChannelAudioSlot(this.client, serverSlot)
         );
       });
     }
@@ -150,7 +156,77 @@ export default class AudioSlotHelper extends BaseHelper {
     );
   }
 
-  async join (channelId, slotId, sdp) {
+  async join (channelId, slotId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedSlotId = this.normaliseNumber(slotId);
 
+    if (this.#clients.has(normalisedChannelId)) { return; }
+
+    const channel = await this.client.channel.fetch(normalisedChannelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${normalisedChannelId}`); }
+
+    const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
+
+    if (slot === null) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} NOT FOUND`); }
+
+    if (slot.isOccupied) {
+      if (slot.userId !== this.client.me.id) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} is occupied`); }
+      await this.leave(normalisedChannelId, normalisedSlotId);
+    }
+
+    const client = new StageClient(this.client, normalisedChannelId);
+
+    this.#clients.set(normalisedChannelId, client);
+
+    const sdp = await client.createSDP();
+
+    try {
+      const response = await this.client.websocket.emit(
+        'group audio broadcast',
+        {
+          id: normalisedChannelId,
+          slotId: normalisedSlotId,
+          sdp
+        }
+      );
+
+      await client.setResponse(normalisedSlotId, response.body.sdp);
+
+      return response;
+    } catch (error) {
+      this.#clients.delete(normalisedChannelId);
+
+      throw error;
+    }
+  }
+
+  async leave (channelId, slotId) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedSlotId = this.normaliseNumber(slotId);
+
+    const channel = await this.client.channel.fetch(normalisedChannelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${normalisedChannelId}`); }
+
+    const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
+
+    if (slot === null) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (slot.userId !== this.client.me.id) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} not occupied by bot`); }
+
+    this.#clients.delete(normalisedChannelId);
+
+    return await this.client.websocket.emit(
+      'group audio broadcast disconnect',
+      {
+        body: {
+          id: channelId,
+          slotId,
+          occupierId: slot.userId
+        }
+      }
+    );
   }
 }

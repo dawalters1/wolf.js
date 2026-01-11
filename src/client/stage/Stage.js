@@ -2,6 +2,7 @@ import ChannelAudioSlotConnectionState from '../../constants/ChannelAudioConnect
 import ffmpeg from 'fluent-ffmpeg';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import Stream from 'node:stream';
 import { Worker } from 'node:worker_threads';
 import wrtc from '@roamhq/wrtc';
 
@@ -312,11 +313,7 @@ export default class Stage {
     const sdpPromise = this.#peerConnection.createOffer({ offerToReceiveAudio: false, offerToReceiveVideo: false })
       .then(offer => this.#peerConnection.setLocalDescription(offer).then(() => this.#peerConnection.localDescription?.sdp));
 
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new AudioClientError('SDP creation timeout', 'SDP_TIMEOUT')), AUDIO_CONFIG.SDP_CREATION_TIMEOUT_MS);
-    });
-
-    return Promise.race([sdpPromise, timeoutPromise]);
+    return sdpPromise;
   }
 
   async setResponse (slotId, sdp) {
