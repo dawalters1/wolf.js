@@ -2,15 +2,15 @@ import BaseEntity from './BaseEntity.js';
 import TopicPageRecipeType from '../constants/TopicPageRecipeType.js';
 import TopicRecipeAdditionalInfo from './TopicRecipeAdditionalInfo.js';
 
-export class TopicRecipe extends BaseEntity {
-  constructor (client, entity, type) {
+export default class TopicRecipe extends BaseEntity {
+  constructor (client, entity) {
     super(client);
 
     this.recipeId = entity.recipeId;
     this.id = entity.id;
     this.languageId = entity.languageId;
     this.additionalInfo = new TopicRecipeAdditionalInfo(this.client, entity.additionalInfo);
-    this.type = type;
+    this.type = entity.type;
   }
 
   async fetch () {

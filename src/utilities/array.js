@@ -1,17 +1,30 @@
 import _ from 'lodash';
 import BaseUtility from './BaseUtility.js';
-import { validate } from '../validator/index.js';
 
 export default class ArrayUtility extends BaseUtility {
   chunk (array, size) {
-    return _.chunk(array, size);
+    const normalisedArray = this.normaliseArray(array);
+    const normalisedSize = this.normaliseNumber(size);
+
+    // TODO: validation
+
+    return _.chunk(normalisedArray, normalisedSize);
   }
 
   shuffle (array) {
-    return _.shuffle(array);
+    const normalisedArray = this.normaliseArray(array);
+
+    // TODO: validation
+
+    return _.shuffle(normalisedArray);
   }
 
   choose (array, count = 1) {
-    return _.sampleSize(array, count);
+    const normalisedArray = this.normaliseArray(array);
+    const normalisedCount = this.normaliseNumber(count);
+
+    // TODO: validation
+
+    return _.sampleSize(normalisedArray, normalisedCount);
   }
 }

@@ -71,9 +71,9 @@ export default class ChannelHelper extends BaseHelper {
     }
 
     // Developer provided a name
-    if (idsOrName instanceof String) {
+    if (isNaN(idsOrName)) {
       if (!opts?.forceNew) {
-        const cached = this.store.find((item) => item.name.toLowerCase() === normalisedChannelIdOrName.toLowerCase());
+        const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName));
 
         if (cached) { return cached; }
       }
@@ -94,7 +94,10 @@ export default class ChannelHelper extends BaseHelper {
 
         return this.store.set(new Channel(this.client, response.body), response.headers?.maxAge);
       } catch (error) {
-        if (error.code === StatusCodes.NOT_FOUND) { return null; }
+        if (error.code === StatusCodes.NOT_FOUND) {
+          this.store.delete((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName));
+          return null;
+        }
         throw error;
       }
     }

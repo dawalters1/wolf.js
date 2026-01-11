@@ -17,7 +17,7 @@ export default class MessagingHelper extends BaseHelper {
           ads.slice(0, 25).map(async ad => ({
             start: ad.start,
             end: ad.end,
-            groupId: (await ad.channel())?.id
+            groupId: (await ad.fetch())?.id
           }))
         ),
         links: links.map(link => ({
@@ -124,12 +124,13 @@ export default class MessagingHelper extends BaseHelper {
       const chunk = body.slice(0, splitIndex).trim();
 
       const ads = this.client.utility.string.getAds(chunk);
+
       const links = [
         ...developerInjectedLinks.filter((link) => link.end <= chunk.length),
         ...this.client.utility.string.getLinks(chunk)
       ];
 
-      const formattingData = await this.#getFormattingData(ads, links);
+      const formattingData = await this.#getFormattingData(ads, links.flat());
       const embeds = embedsAttached
         ? undefined
         : await this.#getEmbedData(formattingData, opts);

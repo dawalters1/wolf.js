@@ -2,11 +2,11 @@ import BaseEntity from './BaseEntity.js';
 import ChannelAudioSlotReservation from './ChannelAudioSlotReservation.js';
 
 export class ChannelAudioSlot extends BaseEntity {
-  constructor (client, entity, channelId) {
+  constructor (client, entity) {
     super(client);
 
     this.id = entity.id;
-    this.channelId = channelId;
+    this.channelId = entity.groupId;
     this.isLocked = entity.locked;
     this.isMuted = entity.occupierMuted;
     this.userId = entity.occupierId;

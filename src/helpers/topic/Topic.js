@@ -34,12 +34,13 @@ export default class TopicHelper extends BaseHelper {
       );
 
       return this.store.set(
-        new Topic(this.client, response.body),
+        new TopicPage(this.client, response.body),
         response.headers?.maxAge
       );
     } catch (error) {
       if (error.code !== StatusCodes.NOT_FOUND) { throw error; };
 
+      this.store.delete((item) => this.client.utility.string.isEqual(item.name, name) && item.languageId === languageId);
       return null;
     }
   }

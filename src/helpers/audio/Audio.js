@@ -46,6 +46,7 @@ export default class AudioHelper extends BaseHelper {
       );
     } catch (error) {
       if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
+      channel.stageStore.clear();
     }
 
     channel.stageStore.fetched = true;

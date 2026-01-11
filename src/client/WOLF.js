@@ -13,7 +13,7 @@ import EventHelper from '../helpers/event/Event.js';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import MessagingHelper from '../helpers/messaging/Messaging.js';
-import MetadataHelper from '../helpers/metadata/metadata.js';
+// import MetadataHelper from '../helpers/metadata/metadata.js';
 import Multimedia from './multimedia/Multimedia.js';
 import { nanoid } from 'nanoid';
 import NotificationHelper from '../helpers/notification/Notification.js';
@@ -93,7 +93,7 @@ class WOLF extends EventEmitter {
     this.#security = new SecurityHelper(this);
     this.#store = new StoreHelper(this);
     this.#tip = new TipHelper(this);
-    //   this.#topic = new TopicHelper(this);
+    this.#topic = new TopicHelper(this);
     this.#role = new RoleHelper(this);
     // this.#metadata = new MetadataHelper(this);
   }

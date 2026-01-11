@@ -20,12 +20,12 @@ export default class Cache {
     return this.#store;
   }
 
-  set fetched (val) {
-    this.#fetched = val;
-  }
-
   get fetched () {
     return this.#fetched;
+  }
+
+  set fetched (val) {
+    this.#fetched = val;
   }
 
   get size () {
@@ -49,16 +49,13 @@ export default class Cache {
       }
 
       if (!oldest) { break; }
-
       this.#store.delete(oldest);
     }
   }
 
   #findEntryBy (fn) {
-    for (const [key, entry] of this.#store) {
-      if (fn(entry.value, key)) {
-        return { key, entry };
-      }
+    for (const entry of this.#store) {
+      if (fn(entry.value)) { return entry; }
     }
     return null;
   }
@@ -67,11 +64,15 @@ export default class Cache {
     const now = Date.now();
     const key = getKeyProperty(value);
 
-    const existing = value instanceof Object
-      ? 'languageId' in value
-        ? this.#findEntryBy((entry) => entry[key] === value[key] && entry.languageId === value.languageId)
-        : this.#findEntryBy((entry) => entry[key] === value[key])
-      : this.#findEntryBy((entry) => entry === value);
+    let existing;
+    if (value instanceof Object) {
+      existing =
+        'languageId' in value
+          ? this.#findEntryBy(e => e[key] === value[key] && e.languageId === value.languageId)
+          : this.#findEntryBy(e => e[key] === value[key]);
+    } else {
+      existing = this.#findEntryBy(e => e === value);
+    }
 
     let entryValue;
 
@@ -111,41 +112,38 @@ export default class Cache {
   }
 
   setAll (values, maxAge) {
-    values.forEach((value) => this.set(value, maxAge));
-
+    values.forEach(value => this.set(value, maxAge));
     this.fetched = true;
   }
 
   get (keyOrFn) {
-    const result = typeof keyOrFn === 'function'
-      ? this.#findEntryBy(keyOrFn)
-      : { key: keyOrFn, entry: this.#store.get(keyOrFn) };
+    const entry =
+      typeof keyOrFn === 'function'
+        ? this.#findEntryBy(keyOrFn)
+        : this.#findEntryBy(v => v[getKeyProperty(v)] === keyOrFn);
 
-    if (!result || !result.entry) { return null; }
-
-    const { key, entry } = result;
+    if (!entry) { return null; }
 
     if (entry.expiresAt && entry.expiresAt <= Date.now()) {
-      this.#store.delete(key);
+      this.#store.delete(entry);
       if (this.size === 0) { this.#fetched = false; }
       return null;
     }
 
-    this.#touch(key, entry);
+    this.#touch(entry);
     return entry.value;
   }
 
   has (keyOrFn) {
-    const result = typeof keyOrFn === 'function'
-      ? this.#findEntryBy(keyOrFn)
-      : { key: keyOrFn, entry: this.#store.get(keyOrFn) };
+    const entry =
+      typeof keyOrFn === 'function'
+        ? this.#findEntryBy(keyOrFn)
+        : this.#findEntryBy(v => v[getKeyProperty(v)] === keyOrFn);
 
-    if (!result || !result.entry) { return false; }
-
-    const { key, entry } = result;
+    if (!entry) { return false; }
 
     if (entry.expiresAt && entry.expiresAt <= Date.now()) {
-      this.#store.delete(key);
+      this.#store.delete(entry);
       if (this.size === 0) { this.#fetched = false; }
       return false;
     }
@@ -154,17 +152,21 @@ export default class Cache {
   }
 
   delete (keyOrFn) {
-    if (typeof keyOrFn !== 'function') {
-      const removed = this.#store.delete(keyOrFn);
-      if (removed && this.size === 0) { this.#fetched = false; }
-      return removed;
-    }
-
     let removed = 0;
-    for (const [key, entry] of Array.from(this.#store)) {
-      if (keyOrFn(entry.value, key)) {
-        this.#store.delete(key);
-        removed++;
+
+    if (typeof keyOrFn === 'function') {
+      for (const entry of Array.from(this.#store)) {
+        if (keyOrFn(entry.value)) {
+          this.#store.delete(entry);
+          removed++;
+        }
+      }
+    } else {
+      for (const entry of Array.from(this.#store)) {
+        if (entry.value[getKeyProperty(entry.value)] === keyOrFn) {
+          this.#store.delete(entry);
+          removed++;
+        }
       }
     }
 
@@ -172,7 +174,7 @@ export default class Cache {
     return removed;
   }
 
-  clear (keepState) {
+  clear (keepState = false) {
     this.#fetched = keepState
       ? this.fetched
       : false;
@@ -184,15 +186,17 @@ export default class Cache {
   }
 
   values () {
-    return Array.from(this.#store, (entry) => entry.value);
+    return Array.from(this.#store, entry => entry.value);
   }
 
   forEach (fn) {
-    for (const entry of this.#store) { fn(entry.value, entry.value, this); }
+    for (const entry of this.#store) {
+      fn(entry.value, entry.value, this);
+    }
   }
 
   isExpired (value) {
-    const entry = this.#findEntryBy(value);
+    const entry = this.#findEntryBy(v => v === value || v[getKeyProperty(v)] === getKeyProperty(value));
     return !!(entry && entry.expiresAt && entry.expiresAt <= Date.now());
   }
 
@@ -235,7 +239,7 @@ export default class Cache {
   }
 
   array () {
-    return Array.from(this.#store, (entry) => entry.value);
+    return Array.from(this.#store, entry => entry.value);
   }
 
   first () {
@@ -252,8 +256,7 @@ export default class Cache {
   toMap (keyFn) {
     const result = new Map();
     for (const entry of this.#store) {
-      const v = entry.value;
-      result.set(keyFn(v), v);
+      result.set(keyFn(entry.value), entry.value);
     }
     return result;
   }

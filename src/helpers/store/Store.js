@@ -1,5 +1,5 @@
 import BaseHelper from '../BaseHelper.js';
-import StoreProductHelper from './StoreProductHelper.js';
+import StoreProduct from './StoreProduct.js';
 
 export default class StoreHelper extends BaseHelper {
   #balance = null;
@@ -8,7 +8,7 @@ export default class StoreHelper extends BaseHelper {
   constructor (client) {
     super(client);
 
-    this.#product = new StoreProductHelper(client);
+    this.#product = new StoreProduct(client);
   }
 
   get product () {

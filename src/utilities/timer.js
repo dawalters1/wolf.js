@@ -1,7 +1,6 @@
 import BaseUtility from './BaseUtility.js';
 import BullQueue from 'bull';
 import TimerJob from '../entities/timerJob.js';
-import { validate } from '../validator/index.js';
 
 export default class TimerUtility extends BaseUtility {
   #handlers = new Map();
@@ -41,8 +40,11 @@ export default class TimerUtility extends BaseUtility {
   }
 
   async add (jobId, handler, data, delay) {
-    delay = Number(delay) || delay;
     if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
+
+    const normalisedDelay = this.normaliseNumber(delay);
+
+    // TODO: validation
 
     await this.cancel(jobId);
 
@@ -50,7 +52,7 @@ export default class TimerUtility extends BaseUtility {
       handler,
       data,
       {
-        delay,
+        delay: normalisedDelay,
         attempts: 8,
         removeOnComplete: true,
         removeOnFail: true,
@@ -64,6 +66,8 @@ export default class TimerUtility extends BaseUtility {
   async cancel (jobId) {
     if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
+    // TODO: validation
+
     const job = await this.#queue.getJob(jobId);
 
     if (!job) { return null; }
@@ -73,9 +77,11 @@ export default class TimerUtility extends BaseUtility {
   }
 
   async extend (jobId, delay) {
-    delay = Number(delay) || delay;
-
     if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
+
+    const normalisedDelay = this.normaliseNumber(delay);
+
+    // TODO: validation
 
     const job = await this.#queue.getJob(jobId);
 
@@ -85,6 +91,11 @@ export default class TimerUtility extends BaseUtility {
 
     Reflect.deleteProperty(job.opts, 'timestamp'); // Remove this else the duration wont update #stupid.
 
-    return this.add(jobId, job.name, job.data, delay);
+    return this.add(
+      jobId,
+      job.name,
+      job.data,
+      normalisedDelay
+    );
   }
 }

@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 import BaseHelper from '../BaseHelper.js';
+import CurrentUser from '../../entities/CurrentUser.js';
 import { StatusCodes } from 'http-status-codes';
+import User from '../../entities/User.js';
 import UserPresenceHelper from './UserPresence.js';
 import UserRoleHelper from './UserRole.js';
 import WOLFStarHelper from './WOLFStar.js';
