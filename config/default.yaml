@@ -1,178 +1,154 @@
 
-commandKey: 098984a71d03bae4079c602344a52e09920001ca73
+framework:
+  commandKey: 098984a71d03bae4079c602344a52e09920001ca73
 
-charms:
-  unofficial:
-    - 813
-    - 814
+  charms:
+    unofficial:
+      - 813
+      - 814
 
-connection:
-  host: https://v3-rc.palringo.com
-  port: 443
-  query:
-    device: wjsframework
-  mocha:
-    email: null
-    password: null
-  requests:
-    retryCodes:
-      - 500
-      - 502
-      - 503
-      - 504
-      - 408
-    attempts: 3
-    essential:
-      - message group subscribe
-      - message private subscribe
-      - security login
-      - security logout
+  connection:
+    host: https://v3-rc.palringo.com
+    port: 443
+    query:
+      device: wjsframework
+    mocha:
+      email: null
+      password: null
+    requests:
+      retryCodes:
+        - 500
+        - 502
+        - 503
+        - 504
+        - 408
+      attempts: 3
+      essential:
+        - message group subscribe
+        - message private subscribe
+        - security login
+        - security logout
 
-avatar:
-  placeholder: >-
-    https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
-
-members:
-  privileged:
-    key: 'id'
-    version: 3
-    subscribe: true 
-  regular:
-    key: 'id'
-    version: 1
-    batchType: after
-  bots:
-    key: 'groupId'
-    version: 1
-    batchType: offset
-  silenced:
-    key: 'groupId'
-    version: 1
-    batchType: offset
-  banned:
-    key: 'id'
-    version: 1
-    batchType: after
-
-batching:
-  length: 50
-
-multimedia:
-  event:
-    method: post
-    route: group-event-image-update
-    version: 1
-    mimes:
-      - type: image/jpeg
-        size: 1048576
-    square: false
-  messaging:
-    method: post
-    route: send-message
-    version: 1
-    mimes:
-      - type: image/jpeg
-        size: 1048576
-      - type: image/gif
-        size: 3145728
-      - type: audio/x-m4a
-        size: 1048576
-      - type: audio/mp4
-        size: 1048576
-    square: false
   avatar:
-    subscriber:
+    placeholder: >-
+      https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
+
+  members:
+    privileged:
+      key: 'id'
+      version: 3
+      subscribe: true 
+    regular:
+      key: 'id'
+      version: 1
+      batchType: after
+    bots:
+      key: 'groupId'
+      version: 1
+      batchType: offset
+    silenced:
+      key: 'groupId'
+      version: 1
+      batchType: offset
+    banned:
+      key: 'id'
+      version: 1
+      batchType: after
+
+  batching:
+    length: 50
+
+  multimedia:
+    event:
       method: post
-      route: subscriber-avatar-update
+      route: group-event-image-update
+      version: 1
+      mimes:
+        - type: image/jpeg
+          size: 1048576
+      square: false
+    messaging:
+      method: post
+      route: send-message
       version: 1
       mimes:
         - type: image/jpeg
           size: 1048576
         - type: image/gif
-          size: 2621440
-      square: true
-    channel:
-      list: true
-    notification:
-      global: true
-      user: true
-    messaging:
-      channel: true
-      private: true
-    tipping:
-      channel: true
-      private: false
-
-  commands:
-    phrases: true
-    language: en
-    ignore:
-      self: true
-      official: false
-      unofficial: false
-
-  helper:
-    channel:
-      member:
-        list:
-          privileged:
-            key: 'id'
-            version: 3
-            subscribe: true 
-          regular:
-            key: 'id'
-            version: 1
-            limit: 100
-            batchType: after
-            subscribe: true 
-          bots:
-            key: 'groupId'
-            version: 1
-            batchType: offset
-            limit: 50 
-          silenced:
-            key: 'groupId'
-            version: 1
-            batchType: offset
-            limit: 50 
-          banned:
-            key: 'id'
-            version: 1
-            batchType: after
-            limit: 50 
-
-  messages:
-    ignore:
-      self: true
-
-  mmsEndpoints:
-    message: 
-      path: '/v1/send-message'
-      methods:
-        - post
-      validation:
-        mimeTypes:
-          - mimeType: image/jpeg
+          size: 3145728
+        - type: audio/x-m4a
+          size: 1048576
+        - type: audio/mp4
+          size: 1048576
+      square: false
+    avatar:
+      subscriber:
+        method: post
+        route: subscriber-avatar-update
+        version: 1
+        mimes:
+          - type: image/jpeg
             size: 1048576
-          - mimeType: image/gif
-            size: 3145728
-          - mimeType: audio/x-m4a
-            size: 1048576
-          - mimeType: audio/mp4
-            size: 1048576
-        square: false
-    event:
-      path: '/v1/group-event-update'
-      methods:
-        - post
-      validation:
-        mimeTypes:
-          - mimeType: image/jpeg
-            size: 1048576
-        square: false        
-    avatars:
+          - type: image/gif
+            size: 2621440
+        square: true
       channel:
-        path: '/v1/group-avatar-update'
+        list: true
+      notification:
+        global: true
+        user: true
+      messaging:
+        channel: true
+        private: true
+      tipping:
+        channel: true
+        private: false
+
+    commands:
+      phrases: true
+      language: en
+      ignore:
+        self: true
+        official: false
+        unofficial: false
+
+    helper:
+      channel:
+        member:
+          list:
+            privileged:
+              key: 'id'
+              version: 3
+              subscribe: true 
+            regular:
+              key: 'id'
+              version: 1
+              limit: 100
+              batchType: after
+              subscribe: true 
+            bots:
+              key: 'groupId'
+              version: 1
+              batchType: offset
+              limit: 50 
+            silenced:
+              key: 'groupId'
+              version: 1
+              batchType: offset
+              limit: 50 
+            banned:
+              key: 'id'
+              version: 1
+              batchType: after
+              limit: 50 
+
+    messages:
+      ignore:
+        self: true
+
+    mmsEndpoints:
+      message: 
+        path: '/v1/send-message'
         methods:
           - post
         validation:
@@ -180,16 +156,54 @@ multimedia:
             - mimeType: image/jpeg
               size: 1048576
             - mimeType: image/gif
-              size: 2621440
-          square: true          
-      user:
-        path: '/v1/subscriber-avatar-update'
+              size: 3145728
+            - mimeType: audio/x-m4a
+              size: 1048576
+            - mimeType: audio/mp4
+              size: 1048576
+          square: false
+      event:
+        path: '/v1/group-event-update'
         methods:
-          - post          
+          - post
         validation:
           mimeTypes:
             - mimeType: image/jpeg
               size: 1048576
-            - mimeType: image/gif
-              size: 2621440
-          square: true          
+          square: false        
+      avatars:
+        channel:
+          path: '/v1/group-avatar-update'
+          methods:
+            - post
+          validation:
+            mimeTypes:
+              - mimeType: image/jpeg
+                size: 1048576
+              - mimeType: image/gif
+                size: 2621440
+            square: true          
+        user:
+          path: '/v1/subscriber-avatar-update'
+          methods:
+            - post          
+          validation:
+            mimeTypes:
+              - mimeType: image/jpeg
+                size: 1048576
+              - mimeType: image/gif
+                size: 2621440
+            square: true          
+
+  subscriptions:
+    channel:
+      list: true
+    tipping:
+      channel: true
+      private: false
+    notification:
+      user: false
+      global: false
+    messaging:
+      user: true
+      channel: true

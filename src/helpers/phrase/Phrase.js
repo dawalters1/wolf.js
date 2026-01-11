@@ -2,7 +2,6 @@ import BaseHelper from '../BaseHelper.js';
 import Command from '../../commands/Command.js';
 import fs from 'node:fs';
 import path from 'node:path';
-import { validate } from '../../validator/index.js';
 
 export default class PhraseHelper extends BaseHelper {
   constructor (client) {

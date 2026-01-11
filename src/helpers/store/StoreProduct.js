@@ -1,12 +1,12 @@
 import BaseHelper from '../BaseHelper.js';
 import StoreProduct from '../../entities/StoreProduct.js';
-import StoreProductProfileHelper from './StoreProductProfileHelper.js';
+import StoreProductProfile from './StoreProductProfile.js';
 
 export default class StoreProductHelper extends BaseHelper {
   #profile;
   constructor (client) {
     super(client);
-    this.#profile = new StoreProductProfileHelper(client);
+    this.#profile = new StoreProductProfile(client);
   }
 
   get profile () {

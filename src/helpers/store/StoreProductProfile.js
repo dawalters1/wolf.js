@@ -2,7 +2,7 @@ import BaseHelper from '../BaseHelper.js';
 import { StatusCodes } from 'http-status-codes';
 import StoreProductProfile from '../../entities/StoreProductProfile.js';
 
-export default class StoreProductHelper extends BaseHelper {
+export default class StoreProductProfileHelper extends BaseHelper {
   async fetch (productId, languageId, opts) {
     const normalisedProductId = this.normaliseNumber(productId);
     const normalisedLanguageId = this.normaliseNumber(languageId);
@@ -32,6 +32,7 @@ export default class StoreProductHelper extends BaseHelper {
       );
     } catch (error) {
       if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
+      this.store.delete((item) => item.id === productId && item.languageId === normalisedLanguageId);
       return null;
     }
   }

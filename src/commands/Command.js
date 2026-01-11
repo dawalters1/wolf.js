@@ -1,4 +1,3 @@
-import { validate } from '../validator/index.js';
 
 const callbacks = {
   CHANNEL: 'channel',
@@ -7,16 +6,6 @@ const callbacks = {
 };
 
 const validateCommand = (command) => {
-  validate(command)
-    .isInstanceOf(Command)
-    .isValidObject(
-      {
-        key: String,
-        callbackObject: Object,
-        children: Array
-      }
-    );
-
   Object.keys(command.callbackObject).forEach(callback => {
     if (!Object.values(callbacks).includes(callback)) {
       throw new Error('Invalid callback', { callback });

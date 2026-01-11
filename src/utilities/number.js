@@ -1,5 +1,4 @@
 import BaseUtility from './BaseUtility.js';
-import { validate } from '../validator/index.js';
 
 export default class NumberUtility extends BaseUtility {
   addCommas (arg) {
@@ -28,5 +27,9 @@ export default class NumberUtility extends BaseUtility {
 
   toPersianNumbers (arg) {
     return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '۰۱۲۳۴۵۶۷۸۹'[char]);
+  }
+
+  random (min, max) {
+    return Math.floor(Math.random() * max) + min;
   }
 }

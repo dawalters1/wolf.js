@@ -1,5 +1,4 @@
 import BaseHelper from '../BaseHelper.js';
-import { validate } from '../../validator/index.js';
 
 export default class AuthorisationHelper extends BaseHelper {
   list () {

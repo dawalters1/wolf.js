@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import BaseEvent from './events/baseEvent.js';
+import BaseEvent from './events/BaseEvent.js';
 import { fileURLToPath, pathToFileURL } from 'url';
-import fs from 'fs';
+import fs from 'fs/promises';
 import io from 'socket.io-client';
 import path, { dirname } from 'path';
 import WOLFResponse from '../../entities/WOLFResponse.js';
@@ -97,7 +97,7 @@ export default class Websocket {
         const handler = new EventClass(this.#client);
 
         if (handler instanceof BaseEvent) {
-          this.#handlers.set(handler.event, handler);
+          this.#handlers.set(handler.eventName, handler);
         }
       } catch (err) {
         console.error(`Failed to load event file ${filePath}:`, err);
@@ -110,7 +110,7 @@ export default class Websocket {
     const { state, token, apiKey } = framework.login;
 
     const packageVersion = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
+      await fs.readFile(path.join(__dirname, '../../../package.json'), 'utf-8')
     ).version;
 
     if (!apiKey) {
@@ -165,7 +165,7 @@ export default class Websocket {
     this.#socket.on('pong', latency => this.#client.emit('pong', latency));
 
     this.#socket.onAny((event, args) => {
-      const handler = this.handlers.get(event);
+      const handler = this.#handlers.get(event);
       if (!handler) { return; }
       return handler.process(args?.body ?? args);
     });

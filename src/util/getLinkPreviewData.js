@@ -1,8 +1,10 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
-const ExpiryMap = require('expiry-map');
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+import ExpiryMap from 'expiry-map';
 
-const expiryMap = new ExpiryMap(120000);
+const hasProtocol = (url) => {
+  return /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url);
+};
 
 const axiosClient = axios.create({
   maxRedirects: 5,
@@ -10,7 +12,6 @@ const axiosClient = axios.create({
   validateStatus: () => true
 });
 
-// Prevent localhost calls
 axiosClient.interceptors.request.use(config => {
   const controller = new AbortController();
   const targetUrl = new URL(config.url, config.baseURL);
@@ -29,14 +30,16 @@ axiosClient.interceptors.request.use(config => {
   return config;
 });
 
-export default async (api, url) => {
-  if (expiryMap.has(url)) { return expiryMap.get(url); }
+const expiryMap = new ExpiryMap(300000); // Keep results for 5 minutes
 
-  const metadata = await (async () => {
+export default async (url) => {
+  if (expiryMap.has(url)) {
+    return expiryMap.get(url); // Get from cache, because lets not flag ourselves.
+  }
+
+  const retrieve = async () => {
     try {
-      const hasProtocol = api._botConfig.get('validation.link.protocols').some((proto) => url.toLowerCase().startsWith(proto));
-
-      const formattedUrl = hasProtocol
+      const formattedUrl = hasProtocol(url)
         ? url
         : `http://${url}`; // format if it only starts with www.
 
@@ -61,7 +64,7 @@ export default async (api, url) => {
         maxContentLength: 1024 * 1024,
         maxBodyLength: 128 * 1024,
         headers: {
-          'User-Agent': 'WOLFJSBOT/3.0'
+          'User-Agent': 'WOLFJSBOT/1.0'
         },
         responseType: 'text'
       });
@@ -69,16 +72,16 @@ export default async (api, url) => {
       const $ = cheerio.load(page.data);
 
       const title =
-        $('#pageTitle')?.first()?.text()?.trim() ||
-        $('meta[property="og:title"]')?.attr('content')?.trim() ||
-        $('meta[name="twitter:title"]')?.attr('content')?.trim() ||
-        $('title')?.first()?.text()?.trim() ||
+        $('#pageTitle').first().text().trim() ||
+        $('meta[property="og:title"]').attr('content')?.trim() ||
+        $('meta[name="twitter:title"]').attr('content')?.trim() ||
+        $('title').first().text().trim() ||
         '-';
 
       const description =
-        $('meta[property="og:description"]')?.attr('content')?.trim() ||
-        $('meta[name="description"]')?.attr('content')?.trim() ||
-        $('meta[name="twitter:description"]')?.attr('content')?.trim() ||
+        $('meta[property="og:description"]').attr('content')?.trim() ||
+        $('meta[name="description"]').attr('content')?.trim() ||
+        $('meta[name="twitter:description"]').attr('content')?.trim() ||
         '-';
 
       return {
@@ -90,9 +93,7 @@ export default async (api, url) => {
     } catch {
       return null; // error occurred
     }
-  })();
+  };
 
-  expiryMap.set(url, metadata);
-
-  return metadata;
+  return expiryMap.set(url, await retrieve()).get(url); // cache result and retrieve it
 };

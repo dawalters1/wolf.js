@@ -1,5 +1,6 @@
 import BaseEvent from './BaseEvent.js';
 import MessageSubscriptionType from '../../../constants/MessageSubscriptionType.js';
+import { STATUS_CODES } from 'http';
 import TipSubscriptionTargetType from '../../../constants/TipSubscriptionTargetType.js';
 import Welcome from '../../../entities/Welcome.js';
 
@@ -68,18 +69,24 @@ export default class WelcomeEvent extends BaseEvent {
         }
       );
 
+      this.client.loggedIn = true;
       this.client.config.framework.login.userId = response.body.subscriber?.id;
       this.client.config.cognito = response.body.cognito;
 
       this.client.emit('loginSuccess', await this.#synchronise());
+
       return true;
     } catch (error) {
+      if (this.client.loggedIn) { throw error; } // Error occurred during sync
+
       this.client.emit('loginFailed', error);
 
       const subCode = error.headers?.get('subCode') ?? -1;
       if (subCode > 1) { return false; }
 
-      return await this.#login(); // Retry login
+      await this.client.utility.delay(this.client.utility.number.random(100, 5000));
+
+      return await this.#login();
     }
   }
 

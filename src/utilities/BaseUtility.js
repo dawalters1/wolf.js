@@ -10,6 +10,12 @@ export default class BaseUtility {
     return this.#client;
   }
 
+  normaliseArray (array) {
+    return Array.isArray(array)
+      ? array
+      : [array];
+  }
+
   normaliseNumber (num) {
     return Number(num) || num;
   }

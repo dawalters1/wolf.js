@@ -1,16 +1,26 @@
-import { StatusCodes } from 'http-status-codes';
-import UserPrivilege from '../constants/UserPrivilege.js';
-import { validate } from '../validator/index.js';
-import WOLFResponse from '../entities/WOLFResponse.js';
+import BaseUtility from './BaseUtility.js';
 
-class UserUtility {
+export default class UserUtility extends BaseUtility {
   constructor (client) {
-    this.client = client;
+    super(client);
 
     this.privilege = {
-      has: async (...args) => this._has(args[0], args[1], args[2])
+      has: async (...args) => this.#has(args[0], args[1], args[2])
     };
   }
-}
 
-export default UserUtility;
+  async #has (userId, privileges, requireAll = false) {
+    const normalisedUserId = this.normaliseNumber(userId);
+    const normalisedPrivileges = this.normaliseArray(privileges);
+
+    // TODO: validation
+
+    const user = await this.client.user.fetch(userId);
+
+    if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
+
+    return normalisedPrivileges[requireAll
+      ? 'every'
+      : 'some']((privilege) => user.privilegeList.includes(privilege));
+  }
+}
