@@ -33,28 +33,6 @@ framework:
     placeholder: >-
       https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
 
-  members:
-    privileged:
-      key: 'id'
-      version: 3
-      subscribe: true 
-    regular:
-      key: 'id'
-      version: 1
-      batchType: after
-    bots:
-      key: 'groupId'
-      version: 1
-      batchType: offset
-    silenced:
-      key: 'groupId'
-      version: 1
-      batchType: offset
-    banned:
-      key: 'id'
-      version: 1
-      batchType: after
-
   batching:
     length: 50
 
@@ -123,24 +101,20 @@ framework:
             regular:
               key: 'id'
               version: 1
-              limit: 100
               batchType: after
               subscribe: true 
             bots:
               key: 'groupId'
               version: 1
               batchType: offset
-              limit: 50 
             silenced:
               key: 'groupId'
               version: 1
               batchType: offset
-              limit: 50 
             banned:
               key: 'id'
               version: 1
               batchType: after
-              limit: 50 
 
     messages:
       ignore:

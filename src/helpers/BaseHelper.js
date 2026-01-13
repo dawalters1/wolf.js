@@ -18,7 +18,10 @@ export default class BaseHelper {
   }
 
   isObject (value) {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
+    if (value === null) { return false; }
+    if (value === undefined) { return false; }
+
+    return typeof value === 'object' && !Array.isArray(value);
   }
 
   normaliseNumber (num) {

@@ -1,3 +1,4 @@
+import AvatarType from '../constants/AvatarType.js';
 import BaseEntity from './BaseEntity.js';
 import IconInfo from './IconInfo.js';
 import UserExtended from './UserExtended.js';
@@ -19,7 +20,7 @@ export default class User extends BaseEntity {
     this.icon = entity.icon;
     this.iconHash = entity.iconHash;
     this.iconInfo = entity.iconInfo
-      ? new IconInfo(client, entity.iconInfo, 'user')
+      ? new IconInfo(client, entity.iconInfo, AvatarType.USER)
       : null;
     this.nickname = entity.nickname;
     this.privileges = entity.privileges;

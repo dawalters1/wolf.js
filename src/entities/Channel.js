@@ -1,3 +1,4 @@
+import AvatarType from '../constants/AvatarType.js';
 import BaseEntity from './BaseEntity.js';
 import Cache from '../cache/Cache.js';
 import ChannelMemberCache from '../cache/ChannelMemberCache.js';
@@ -27,7 +28,7 @@ export default class Channel extends BaseEntity {
     this.icon = entity.base.icon ?? null;
     this.iconHash = entity.base.iconHash ?? null;
     this.iconInfo = entity.base.iconInfo
-      ? new IconInfo(client, entity.base.iconInfo)
+      ? new IconInfo(client, entity.base.iconInfo, AvatarType.CHANNEL)
       : null;
     this.memberCount = entity.base.members ?? 0;
     this.official = entity.base.official;
