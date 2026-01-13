@@ -54,9 +54,9 @@ class Member extends Base {
     // Hard code the limits because developers love to break things
     const limit = (() => {
       switch (list) {
-        case MemberListType.PRIVILEGED: return 2500;
+        case MemberListType.PRIVILEGED: return undefined;
         case MemberListType.REGULAR: return 100;
-        case MemberListType.SILENCED:return 50;
+        case MemberListType.SILENCED:
         case MemberListType.BOTS: return 50;
         case MemberListType.BANNED: return 50;
         default: throw new Error(`Unknown list type: ${list}`);
@@ -73,11 +73,17 @@ class Member extends Base {
             },
             body: {
               [listConfig.key]: channel.id,
-              limit,
               after: listConfig.batchType === 'after' ? result.at(-1)?.id : undefined,
               filter: listConfig.batchType === 'offset' ? list : undefined,
               offset: listConfig.batchType === 'offset' ? result.length : undefined,
-              subscribe: 'subscribe' in listConfig ? listConfig.subscribe : undefined
+              subscribe: 'subscribe' in listConfig ? listConfig.subscribe : undefined,
+              ...(limit
+                ? {
+                    [listConfig.batchType === 'offset'
+                      ? 'maxResults'
+                      : 'limit']: limit
+                  }
+                : {})
             }
           }
         );
