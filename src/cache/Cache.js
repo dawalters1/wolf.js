@@ -1,5 +1,3 @@
-import Channel from '../entities/Channel.js';
-import ChannelAudioSlot from '../entities/ChannelAudioSlot.js';
 
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[0];
 

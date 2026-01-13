@@ -185,12 +185,7 @@ export default class Websocket {
 
     const emitOnce = (attempt = 0) =>
       new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          reject(new Error('ACK timeout'));
-        }, 5000);
-
         this.#socket.emit(command, body, async (ack) => {
-          clearTimeout(timeout);
           try {
             const parsedAck = this.#parseAck(ack, body?.body?.languageId);
             const response = new WOLFResponse(parsedAck);
@@ -234,9 +229,7 @@ export default class Websocket {
       const chunkRequest = { ...requestBody, body: { ...requestBody.body, idList: idChunk } };
       const chunkKey = createInFlightKey(command, chunkRequest);
 
-      if (this.#inFlight.has(chunkKey)) {
-        return this.#inFlight.get(chunkKey);
-      }
+      if (this.#inFlight.has(chunkKey)) { return this.#inFlight.get(chunkKey); }
 
       const promise = this.#emit(command, chunkRequest).finally(() => this.#inFlight.delete(chunkKey));
       this.#inFlight.set(chunkKey, promise);

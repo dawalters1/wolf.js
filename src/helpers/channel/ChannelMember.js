@@ -81,9 +81,9 @@ export default class ChannelMemberHelper extends BaseHelper {
     // Hard code the limits because developers love to break things
     const limit = (() => {
       switch (list) {
-        case ChannelMemberListType.PRIVILEGED: return 2500;
+        case ChannelMemberListType.PRIVILEGED: return undefined;
         case ChannelMemberListType.REGULAR: return 100;
-        case ChannelMemberListType.SILENCED:return 50;
+        case ChannelMemberListType.SILENCED:
         case ChannelMemberListType.BOTS: return 50;
         case ChannelMemberListType.BANNED: return 50;
         default: throw new Error(`Unknown list type: ${list}`);
@@ -100,7 +100,6 @@ export default class ChannelMemberHelper extends BaseHelper {
             },
             body: {
               [listConfig.key]: channel.id,
-              limit,
               after: listConfig.batchType === 'after'
                 ? result.at(-1)?.id
                 : undefined,
@@ -112,7 +111,14 @@ export default class ChannelMemberHelper extends BaseHelper {
                 : undefined,
               subscribe: 'subscribe' in listConfig
                 ? listConfig.subscribe
-                : undefined
+                : undefined,
+              ...(limit
+                ? {
+                    [listConfig.batchType === 'offset'
+                      ? 'maxResults'
+                      : 'limit']: limit
+                  }
+                : {})
             }
           }
         );
@@ -123,11 +129,10 @@ export default class ChannelMemberHelper extends BaseHelper {
               new ChannelMember(this.client, serverMember, channel.id, list),
               response.headers?.maxAge
             )
-        )
-        );
+        ));
 
-        const complete = listConfig.batched
-          ? response.body.length < listConfig.limit
+        const complete = limit && listConfig.batched
+          ? response.body.length < limit
           : true;
 
         channel.memberStore.metadata[list] = complete;
@@ -211,13 +216,13 @@ export default class ChannelMemberHelper extends BaseHelper {
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }
 
-    if (normalisedMemberIdOrListType instanceof Number) {
-      // TODO: Validate number
-      return this.#fetchMember(channel, normalisedMemberIdOrListType, opts);
+    if (!isNaN(normalisedMemberIdOrListType)) {
+    // TODO: Validate list type
+      return this.#fetchList(channel, normalisedMemberIdOrListType);
     }
 
-    // TODO: Validate list type
-    return this.#fetchList(channel, normalisedMemberIdOrListType);
+    // TODO: Validate number
+    return this.#fetchMember(channel, normalisedMemberIdOrListType, opts);
   }
 
   async coowner (channelId, memberId) {
