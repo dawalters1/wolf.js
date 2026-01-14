@@ -1,22 +1,19 @@
-import BaseEvent from './baseEvent.js';
-import Notification from '../../../entities/notification.js';
+import BaseEvent from './BaseEvent.js';
+import Notification from '../../../entities/Notification.js';
 
-class GlobalNotificationListAddEvent extends BaseEvent {
+export default class GlobalNotificationListAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'global notification list add');
   }
 
   async process (data) {
-    this.client.emit(
-      'globalNotificationAdd',
-      this.client.me.notificationStore.global.set(
-        new Notification(
-          this.client,
-          data
-        )
-      )
+    const notification = this.client.me.notificationStore.global.add(
+      new Notification(this.client, data)
+    );
+
+    return this.client.emit(
+      'globalNotificationAdded',
+      notification
     );
   }
 }
-
-export default GlobalNotificationListAddEvent;

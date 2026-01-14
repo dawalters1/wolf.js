@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 
-export class WOLFResponse {
+export default class WOLFResponse {
   constructor (entity) {
     this.code = entity.code;
 
@@ -19,5 +19,3 @@ export class WOLFResponse {
     return this.code >= StatusCodes.OK && this.code < StatusCodes.MULTIPLE_CHOICES;
   }
 }
-
-export default WOLFResponse;

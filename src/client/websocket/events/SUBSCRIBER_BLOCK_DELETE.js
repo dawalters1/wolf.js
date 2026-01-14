@@ -1,20 +1,20 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class SubscriberBlockDeleteEvent extends BaseEvent {
+export default class SubscriberBlockDeleteEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber block delete');
   }
 
   async process (data) {
-    const wasDeleted = this.client.contact.blocked.store.delete((blocked) => blocked.id === data.targetId);
+    const contact = this.client.contact.blocked.store.get((item) => item.id === data.targetId);
 
-    if (wasDeleted === false) { return; }
+    if (contact === null) { return; }
+
+    this.client.contact.blocked.store.delete((item) => item.id === data.targetId);
 
     this.client.emit(
-      'blockDelete',
-      data.targetId
+      'userUnblocked',
+      contact
     );
   }
 }
-
-export default SubscriberBlockDeleteEvent;

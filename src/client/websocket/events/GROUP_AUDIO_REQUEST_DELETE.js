@@ -1,21 +1,27 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class GroupAudioRequestAddEvent extends BaseEvent {
+export default class GroupAudioRequestDeleteEvent extends BaseEvent {
   constructor (client) {
-    super(client, 'group audio request clear');
+    super(client, 'group audio request delete');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
 
-    if (channel.audioSlotRequestStore.size === 0) { return; }
+    const channelAudioSlotRquest = channel.audioSlotRequestStore.get((item) => item.id === data.id);
 
-    channel.audioSlotRequestStore.clear();
+    if (channelAudioSlotRquest === null) { return; }
 
-    this.client.emit('channelAudioSlotRequestClear');
+    channel.audioSlotRequestStore.delete((item) => item.id === data.id);
+
+    return this.client.emit(
+      channelAudioSlotRquest.expiresAt.getTime() <= Date.now()
+        ? 'channelAudioSlotRequestExpired'
+        : 'channelAudioSlotRequestDeleted',
+      channel,
+      channelAudioSlotRquest
+    );
   }
 }
-
-export default GroupAudioRequestAddEvent;

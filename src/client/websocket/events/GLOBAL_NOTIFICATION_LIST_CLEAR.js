@@ -1,20 +1,14 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class GlobalNotificationListClear extends BaseEvent {
+export default class GlobalNotificationListClearEvent extends BaseEvent {
   constructor (client) {
     super(client, 'global notification list clear');
   }
 
   async process () {
-    if (this.client.me.notificationStore.global.store.size === 0) { return; }
+    this.client.me.notificationStore.global.clear(); // Clear currently fetched notification list
+    this.client.notification.global.store.clear(); // Clear any fetched notification data
 
-    const notificationIds = this.client.me.notificationStore.global.values()
-      .map((notification) => notification.id);
-
-    this.client.notification.global.store.delete((notification) => notificationIds.includes(notification.id));
-
-    this.client.emit('globalNotificationClear');
+    return this.client.emit('globalNotificationsCleared');
   }
 }
-
-export default GlobalNotificationListClear;

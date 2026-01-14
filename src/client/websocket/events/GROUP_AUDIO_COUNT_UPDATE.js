@@ -1,25 +1,25 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelAudioCount from '../../../entities/ChannelAudioCount.js';
 
-class GroupAudioCountUpdateEvent extends BaseEvent {
+export default class GroupAudioCountUpdateEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group audio count update');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.id);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
 
-    if (channel.audioCount === null) { return; }
+    const oldChannelAudioCount = channel.audioCount?.clone() ?? null;
 
-    const oldChannelAudioCount = channel.audioCount.clone();
+    channel.audioCount = channel.audioCount?.patch(data) ?? new ChannelAudioCount(this.client, data);
 
-    this.client.emit(
-      'channelAudioCountUpdate',
+    return this.client.emit(
+      'channelAudioCountUpdated',
+      channel,
       oldChannelAudioCount,
-      channel.audioCount?.patch(data)
+      channel.audioCount
     );
   }
 }
-
-export default GroupAudioCountUpdateEvent;

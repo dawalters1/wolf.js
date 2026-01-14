@@ -1,21 +1,21 @@
-// * eslint-disable @typescript-eslint/no-non-null-assertion * /
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class GlobalNotificationListDelete extends BaseEvent {
+export default class GlobalNotificationDeleteEvent extends BaseEvent {
   constructor (client) {
-    super(client, 'global notification list delete');
+    super(client, 'global notification delete');
   }
 
   async process (data) {
-    const wasDeleted = [
-      this.client.me && this.client.me.notificationStore.global.delete((notification) => notification.id === data.id),
-      this.client.notification.global.store.delete((notification) => notification.id === data.id)
-    ].some(Boolean);
+    const notification = this.client.notificationStore.global.get((item) => item.id === data.id);
 
-    if (wasDeleted === false) { return; }
+    this.client.notificationStore.global.delete((item) => item.id === data.id);
+    this.client.notification.global.delete((item) => item.id === data.id);
 
-    this.client.emit('globalNotificationDelete', data.id);
+    if (notification === null) { return; }
+
+    return this.client.emit(
+      'globalNotificationDeleted',
+      notification
+    );
   }
 }
-
-export default GlobalNotificationListDelete;

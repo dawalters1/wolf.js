@@ -1,25 +1,28 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class GroupUpdateEvent extends BaseEvent {
+export default class GroupUpdateEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group update');
   }
 
   async process (data) {
-    const oldChannel = this.client.channel.store.get(data.id)?.clone() ?? null;
+    const channel = this.client.channel.store.get((item) => item.id === data.id)?.clone() ?? null;
 
-    if (oldChannel === null || oldChannel.hash === data.hash) { return; }
+    if (channel === null || channel.hash === data.hash) { return; }
 
-    const newChannel = await this.client.channel.getById(data.id, { forceNew: true });
+    const newChannel = await this.client.channel.fetch(data.id, { forceNew: true });
 
-    if (newChannel === null) { return; }
+    if (newChannel === null) {
+      return this.client.emit(
+        'channelDeleted',
+        channel
+      );
+    }
 
-    this.client.emit(
-      'channelProfileUpdate',
-      oldChannel,
+    return this.client.emit(
+      'channelUpdated',
+      channel,
       newChannel
     );
   }
 }
-
-export default GroupUpdateEvent;

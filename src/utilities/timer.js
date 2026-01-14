@@ -1,26 +1,18 @@
+import BaseUtility from './BaseUtility.js';
 import BullQueue from 'bull';
 import TimerJob from '../entities/timerJob.js';
-import { validate } from '../validator/index.js';
 
-class TimerUtility {
-  constructor (client) {
-    this.client = client;
-  }
+export default class TimerUtility extends BaseUtility {
+  #handlers = new Map();
+  #queue;
 
   async register (handlers) {
-    if (this._handlers) { return; }
+    if (this.#handlers) { return; }
     if (!this.client.config.redis) { throw new Error('Configuration lacks redis config'); }
 
-    validate(handlers)
-      .isInstanceOf(Object, `TimerUtility.register() parameter, handlers: ${handlers} must be an object`);
+    this.#handlers = handlers;
 
-    validate(Object.values(handlers))
-      .each()
-      .isInstanceOf(Function, 'TimerUtility.register() parameter, handler[{index}]: {value} must be a function');
-
-    this._handlers = handlers;
-
-    this._queue = new BullQueue(
+    this.#queue = new BullQueue(
       `${this.client.config.keyword}-bull-timer`,
       {
         redis: this.client.config.get('redis'),
@@ -28,25 +20,19 @@ class TimerUtility {
       }
     );
 
-    this._queue.process('*', (job) => {
-      if (!Object.keys(this._handlers).includes(job.name)) {
+    this.#queue.process('*', (job) => {
+      if (!Object.keys(this.#handlers).includes(job.name)) {
         throw new Error(`[Timer]: Handler "${job.name}" does not exist in handlers`);
       }
 
-      this._handlers[job.name].call(this, job.data);
+      this.#handlers[job.name].call(this, job.data);
     });
   }
 
   async get (jobId) {
-    if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
-    { // eslint-disable-line no-lone-blocks
-      validate(jobId)
-        .isNotNullOrUndefined(`TimerUtility.get() parameter, jobId: ${jobId} is null or undefined`)
-        .isNotEmptyOrWhitespace(`TimerUtility.get() parameter, jobId: ${jobId} is empty or whitespace`);
-    }
-
-    const job = await this._queue.getJob(jobId);
+    const job = await this.#queue.getJob(jobId);
 
     return job
       ? new TimerJob(this.client, job)
@@ -54,35 +40,19 @@ class TimerUtility {
   }
 
   async add (jobId, handler, data, delay) {
-    delay = Number(delay) || delay;
-    if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
-    { // eslint-disable-line no-lone-blocks
-      validate(jobId)
-        .isNotNullOrUndefined(`TimerUtility.add() parameter, jobId: ${jobId} is null or undefined`)
-        .isNotEmptyOrWhitespace(`TimerUtility.add() parameter, jobId: ${jobId} is empty or whitespace`);
+    const normalisedDelay = this.normaliseNumber(delay);
 
-      validate(handler)
-        .isNotNullOrUndefined(`TimerUtility.add() parameter, handler: ${handler} is null or undefined`)
-        .isNotEmptyOrWhitespace(`TimerUtility.add() parameter, handler: ${handler} is empty or whitespace`)
-        .isInList(Object.keys(this._handlers), `TimerUtility.add() parameter, handler: ${handler} is not valid`);
-
-      validate(data)
-        .isInstanceOf(Object, `TimerUtility.add() parameter, data: ${data} must be an object`);
-
-      validate(delay)
-        .isNotNullOrUndefined(`TimerUtility.add() parameter, delay: ${delay} is null or undefined`)
-        .isValidNumber(`TimerUtility.add() parameter, delay: ${delay} is not a valid number`)
-        .isGreaterThan(0, `TimerUtility.add() parameter, delay: ${delay} is less than or equal to zero`);
-    }
+    // TODO: validation
 
     await this.cancel(jobId);
 
-    const job = await this._queue.add(
+    const job = await this.#queue.add(
       handler,
       data,
       {
-        delay,
+        delay: normalisedDelay,
         attempts: 8,
         removeOnComplete: true,
         removeOnFail: true,
@@ -94,13 +64,11 @@ class TimerUtility {
   }
 
   async cancel (jobId) {
-    if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
-    { // eslint-disable-line no-lone-blocks
-      validate(jobId)
-        .isNotNullOrUndefined(`TimerUtility.cancel() parameter, jobId: ${jobId} is null or undefined`)
-        .isNotEmptyOrWhitespace(`TimerUtility.cancel() parameter, jobId: ${jobId} is empty or whitespace`);
-    }
-    const job = await this._queue.getJob(jobId);
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
+
+    // TODO: validation
+
+    const job = await this.#queue.getJob(jobId);
 
     if (!job) { return null; }
 
@@ -109,21 +77,13 @@ class TimerUtility {
   }
 
   async extend (jobId, delay) {
-    delay = Number(delay) || delay;
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
-    if (!this._handlers) { throw new Error('TimerUtility has not been initalised'); }
+    const normalisedDelay = this.normaliseNumber(delay);
 
-    { // eslint-disable-line no-lone-blocks
-      validate(jobId)
-        .isNotNullOrUndefined(`TimerUtility.extend() parameter, jobId: ${jobId} is null or undefined`)
-        .isNotEmptyOrWhitespace(`TimerUtility.extend() parameter, jobId: ${jobId} is empty or whitespace`);
+    // TODO: validation
 
-      validate(delay)
-        .isNotNullOrUndefined(`TimerUtility.extend() parameter, delay: ${delay} is null or undefined`)
-        .isValidNumber(`TimerUtility.extend() parameter, delay: ${delay} is not a valid number`)
-        .isGreaterThan(0, `TimerUtility.extend() parameter, delay: ${delay} is less than or equal to zero`);
-    }
-    const job = await this._queue.getJob(jobId);
+    const job = await this.#queue.getJob(jobId);
 
     if (!job) { return null; }
 
@@ -131,8 +91,11 @@ class TimerUtility {
 
     Reflect.deleteProperty(job.opts, 'timestamp'); // Remove this else the duration wont update #stupid.
 
-    return this.add(jobId, job.name, job.data, delay);
+    return this.add(
+      jobId,
+      job.name,
+      job.data,
+      normalisedDelay
+    );
   }
 }
-
-export default TimerUtility;

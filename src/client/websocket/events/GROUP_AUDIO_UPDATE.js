@@ -1,26 +1,25 @@
-import BaseEvent from './baseEvent.js';
-import ChannelAudioConfig from '../../../entities/channelAudioConfig.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelAudioConfig from '../../../entities/ChannelAudioConfig.js';
 
-class GroupAudioUpdateEvent extends BaseEvent {
+export default class GroupAudioUpdateEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group audio update');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.id);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
-    const oldAudioConfig = channel.audioConfig?.clone();
+
+    const oldChannelAudioConfig = channel.audioConfig?.clone() ?? null;
 
     channel.audioConfig = channel.audioConfig?.patch(data) ?? new ChannelAudioConfig(this.client, data);
 
-    this.client.emit(
-      'channelAudioUpdate',
-      data.sourceSubscriberId,
-      oldAudioConfig,
+    return this.client.emit(
+      'channelAudioCountUpdated',
+      channel,
+      oldChannelAudioConfig,
       channel.audioConfig
     );
   }
 }
-
-export default GroupAudioUpdateEvent;

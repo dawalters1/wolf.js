@@ -1,23 +1,17 @@
-import BaseEvent from './baseEvent.js';
-import EventSubscription from '../../../entities/eventSubscription.js';
-
-class SubscriberContactAddEvent extends BaseEvent {
+import BaseEvent from './BaseEvent.js';
+import EventSubscription from '../../../entities/EventSubscription.js';
+export default class SubscriberGroupEventAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber group event add');
   }
 
   async process (data) {
-    this.client.emit(
-      'userChannelEventSubscriptionAdd',
+    const eventSubscription = new EventSubscription(this.client, data);
+    this.client.event.subscription.store.set(eventSubscription);
 
-      this.client.event.subscription.store.set(
-        new EventSubscription(
-          this.client,
-          data
-        )
-      )
+    return this.client.emit(
+      'eventSubscriptionAdded',
+      eventSubscription
     );
   }
 }
-
-export default SubscriberContactAddEvent;

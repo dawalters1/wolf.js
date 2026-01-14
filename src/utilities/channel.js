@@ -1,49 +1,33 @@
+import BaseUtility from './BaseUtility.js';
 import ChannelMemberCapability from '../constants/ChannelMemberCapability.js';
-import { StatusCodes } from 'http-status-codes';
 import UserPrivilege from '../constants/UserPrivilege.js';
-import { validate } from '../validator/index.js';
-import WOLFResponse from '../entities/WOLFResponse.js';
 
-class ChannelUtility {
+export default class ChannelUtility extends BaseUtility {
   constructor (client) {
-    this.client = client;
+    super(client);
 
     this.member = {
-      hasCapability: async (...args) => this._hasCapability(args[0], args[1], args[2], args[3], args[4])
+      hasCapability: async (...args) => this.#hasCapability(args[0], args[1], args[2], args[3], args[4])
     };
   }
 
-  async _hasCapability (channelId, userId, capability, checkStaff = true, checkAuthorised = true) {
-    channelId = Number(channelId) || channelId;
-    userId = Number(userId) || userId;
+  async #hasCapability (channelId, userId, capability, checkStaff = true, checkAuthorised = true) {
+    const normalisedChannelId = this.normaliseNumber(channelId);
+    const normalisedUserId = this.normaliseNumber(userId);
 
-    { // eslint-disable-line no-lone-blocks
-      validate(channelId)
-        .isGreaterThan(0, `ChannelUtility.member.hasCapability() parameter channelId: ${channelId}, must be larger than 0`);
+    // TODO: validation
 
-      validate(userId)
-        .isGreaterThan(0, `ChannelUtility.member.hasCapability() parameter userId: ${userId}, must be larger than 0`);
+    if (this.client.config.framework.developerId === normalisedUserId) { return true; }
 
-      validate(capability)
-        .isNotNullOrUndefined(`ChannelUtility.member.hasCapability() parameter, capability: ${capability} is null or undefined`)
-        .isValidConstant(ChannelMemberCapability, `ChannelUtility.member.hasCapability() parameter, capability: ${capability} is not valid`);
+    if (checkAuthorised && this.client.authorised.isAuthorised(normalisedUserId)) { return true; }
 
-      validate(checkStaff)
-        .isBoolean(`ChannelUtility.member.hasCapability() parameter, checkStaff: ${checkStaff} is not a valid boolean`);
+    if (checkStaff && await this.client.utility.user.has(normalisedUserId, UserPrivilege.STAFF)) { return true; }
 
-      validate(checkAuthorised)
-        .isBoolean(`ChannelUtility.member.hasCapability() parameter, checkAuthorised: ${checkAuthorised} is not a valid boolean`);
-    }
+    const channelMember = await this.client.channel.member.fetch(normalisedChannelId, normalisedUserId);
 
-    try {
-      if (this.client.config.framework.developer === userId) { return true; }
+    if (channelMember === null) { throw new Error(`Member with ID ${normalisedUserId} NOT FOUND in Channel with ID ${normalisedChannelId}`); }
 
-      if (checkAuthorised && this.client.authorised.isAuthorised(userId)) { return true; }
-
-      if (checkStaff && (await this.client.user.getById(userId)).privilegedList.includes(UserPrivilege.STAFF)) { return true; }
-
-      const channelMember = await this.client.channel.member.get(channelId, userId);
-
+    const hasCapability = (() => {
       switch (capability) {
         case ChannelMemberCapability.OWNER:
           return [ChannelMemberCapability.OWNER].includes(channelMember.capability);
@@ -56,14 +40,8 @@ class ChannelUtility {
         default:
           return true;
       }
-    } catch (error) {
-      if (error instanceof WOLFResponse) {
-        if (error.code === StatusCodes.NOT_FOUND) { return false; }
-      }
+    })();
 
-      throw error;
-    }
+    return hasCapability;
   }
 }
-
-export default ChannelUtility;

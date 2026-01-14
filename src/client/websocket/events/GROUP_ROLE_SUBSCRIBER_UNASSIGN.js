@@ -1,32 +1,31 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelRoleUser from '../../../entities/ChannelRoleUser.js';
 
-class GroupRoleSubscriberUnassignEvent extends BaseEvent {
+export default class GroupRoleSubscriberUnassignEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group role subscriber unassign');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.id);
-    const user = this.client.user.store.get(data.additionalInfo.subscriberId);
+    const [channel, user] = [
+      this.client.channel.store.get((item) => item.id === data.id),
+      this.client.user.store.get((item) => item.id === data.additionalInfo.subscriberId)
+    ];
 
-    if (user) { user.roleStore.clear(); }
+    user.roleStore?.clear();
 
     if (channel === null) { return; }
 
-    const role = channel.roleStore.users.get(data.additionalInfo.roleId);
+    const channelRole = new ChannelRoleUser(this.client, data);
 
-    role?.userIdList?.delete(data.additionalInfo.subscriberId);
+    channel.roleStore.roles.get((item) => item.roleId === channelRole.roleId)?.userIdList?.delete(channelRole.userId);
+    channel.roleStore.users.delete((item) => item.roleId === channelRole.roleId && item.roleId === channelRole.userId);
 
-    const wasDeleted = channel.roleStore.users.delete((channelRoleUser) => channelRoleUser.userId === data.additionalInfo.subscriberId && channelRoleUser.roleId === data.additionalInfo.roleId);
-
-    if (wasDeleted === false) { return; }
-
-    this.client.emit(
-      'channelRoleUserUnassign',
-      data.additionalInfo.subscriberId,
-      data.additionalInfo.roleId
+    return this.client.emit(
+      'channelRoleUnassigned',
+      channel,
+      user,
+      channelRole
     );
   }
 }
-
-export default GroupRoleSubscriberUnassignEvent;

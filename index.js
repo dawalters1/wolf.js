@@ -1,6 +1,3 @@
-
-process.on('unhandledRejection', (error) => console.error(error));
-
 import {
   AdminAction,
   Avatar,
@@ -29,13 +26,17 @@ import {
   UserPrivilege,
   WOLFStarTalent
 } from './src/constants/index.js';
+
 import Command from './src/commands/Command.js';
 import CommandManager from './src/commands/CommandManager.js';
 import WOLF from './src/client/WOLF.js';
-
 import WOLFResponse from './src/entities/WOLFResponse.js';
 
-const exports = {
+process.on('unhandledRejection', (error) => {
+  console.error(error);
+});
+
+const api = {
   WOLF,
   Command,
   CommandManager,
@@ -68,6 +69,8 @@ const exports = {
   WOLFResponse
 };
 
+export default api;
+
 export {
   WOLF,
   Command,
@@ -98,6 +101,5 @@ export {
   OnlineState,
   UserPrivilege,
   WOLFStarTalent,
-  WOLFResponse,
-  exports as default
+  WOLFResponse
 };

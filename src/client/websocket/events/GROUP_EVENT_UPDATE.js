@@ -1,49 +1,38 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelEvent from '../../../entities/ChannelEvent.js';
 
-class GroupEventUpdateEvent extends BaseEvent {
+export default class GroupEventUpdateEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group event update');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
 
-    if (!channel.eventStore.fetched) { return; }
+    const oldEvent = channel.eventStore.get((item) => item.id === data.id);
 
-    const event = channel.eventStore.get(data.id);
+    const { isRemoved } = await this.client.event.fetch(data.id, { forceNew: true });
 
-    if (event === null) { return; } // this shouldn't happen
-
-    const newEvent = await this.client.event.getById(data.id, { forceNew: true });
-
-    if (newEvent.isRemoved) {
-      channel.eventStore.delete((event) => event.id === data.id);
+    if (isRemoved) {
+      channel.eventStore.delete((item) => item.id === data.id);
 
       return this.client.emit(
-        'channelEventDelete',
-        data.id
+        'channelEventDeleted',
+        channel,
+        oldEvent
       );
     }
 
-    const oldEvent = event.clone();
+    const event = new ChannelEvent(this.client, data);
+    channel.eventStore.set(event);
 
-    this.client.emit(
-      'channelEventUpdate',
+    return this.client.emit(
+      'channelEventUpdated',
+      channel,
       oldEvent,
-      event.patch(
-        {
-          id: data.id,
-          additionalInfo: {
-            startsAt: newEvent.startsAt,
-            endsAt: newEvent.endsAt,
-            eTag: data.eTag
-          }
-        }
-      )
+      event
     );
   }
 }
-
-export default GroupEventUpdateEvent;

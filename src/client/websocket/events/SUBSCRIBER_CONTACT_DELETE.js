@@ -1,20 +1,20 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class SubscriberContactDeleteEvent extends BaseEvent {
+export default class SubscriberContactDeleteEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber contact delete');
   }
 
   async process (data) {
-    const wasDeleted = this.client.contact.store.delete((contact) => contact.id === data.targetId);
+    const contact = this.client.contact.store.get((item) => item.id === data.targetId);
 
-    if (wasDeleted === false) { return; }
+    if (contact === null) { return; }
+
+    this.client.contact.store.delete((item) => item.id === data.targetId);
 
     this.client.emit(
-      'contactDelete',
-      data.targetId
+      'userDeleted',
+      contact
     );
   }
 }
-
-export default SubscriberContactDeleteEvent;
