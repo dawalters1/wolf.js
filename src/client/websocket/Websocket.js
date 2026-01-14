@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import BaseEvent from './events/baseEvent.js';
+import BaseEvent from './events/BaseEvent.js';
 import { fileURLToPath, pathToFileURL } from 'url';
-import fs from 'fs';
+import fs from 'fs/promises';
 import io from 'socket.io-client';
 import path, { dirname } from 'path';
 import WOLFResponse from '../../entities/WOLFResponse.js';
@@ -88,19 +88,15 @@ export default class Websocket {
       .map(e => path.join(eventsDir, e.name));
 
     await Promise.all(filePaths.map(async (filePath) => {
-      try {
-        const imported = await import(pathToFileURL(filePath).toString());
-        const EventClass = imported.default;
+      const imported = await import(pathToFileURL(filePath).toString());
+      const EventClass = imported.default;
 
-        if (typeof EventClass !== 'function') { return; }
+      if (typeof EventClass !== 'function') { return; }
 
-        const handler = new EventClass(this.#client);
+      const handler = new EventClass(this.#client);
 
-        if (handler instanceof BaseEvent) {
-          this.#handlers.set(handler.event, handler);
-        }
-      } catch (err) {
-        console.error(`Failed to load event file ${filePath}:`, err);
+      if (handler instanceof BaseEvent) {
+        this.#handlers.set(handler.eventName, handler);
       }
     }));
 
@@ -110,7 +106,7 @@ export default class Websocket {
     const { state, token, apiKey } = framework.login;
 
     const packageVersion = JSON.parse(
-      fs.readFileSync(path.join(__dirname, '../../../package.json'), 'utf-8')
+      await fs.readFile(path.join(__dirname, '../../../package.json'), 'utf-8')
     ).version;
 
     if (!apiKey) {
@@ -165,7 +161,7 @@ export default class Websocket {
     this.#socket.on('pong', latency => this.#client.emit('pong', latency));
 
     this.#socket.onAny((event, args) => {
-      const handler = this.handlers.get(event);
+      const handler = this.#handlers.get(event);
       if (!handler) { return; }
       return handler.process(args?.body ?? args);
     });
@@ -187,19 +183,19 @@ export default class Websocket {
     const retryCodes = new Set([408, 429, 500, 502, 504]);
     const maxAttempts = 3;
 
-    const emitOnce = (requestBody, attempt = 0) =>
+    const emitOnce = (attempt = 0) =>
       new Promise((resolve, reject) => {
-        this.#socket?.emit(command, requestBody, async (ack) => {
+        this.#socket.emit(command, body, async (ack) => {
           try {
-            const parsedAck = this.#parseAck(ack, requestBody?.body?.languageId);
+            const parsedAck = this.#parseAck(ack, body?.body?.languageId);
             const response = new WOLFResponse(parsedAck);
 
             if (!response.success) {
               if (!retryCodes.has(response.code) || attempt >= maxAttempts) {
-                console.log('[RequestFailed]', command, requestBody, '\nResponse', response);
+                console.log('[RequestFailed]', command, body, '\nResponse', response);
                 return reject(response);
               }
-              return resolve(await emitOnce(requestBody, attempt + 1));
+              return resolve(await emitOnce(attempt + 1));
             }
 
             resolve(response);
@@ -209,7 +205,7 @@ export default class Websocket {
         });
       });
 
-    return emitOnce(body);
+    return emitOnce();
   }
 
   async emit (command, body) {
@@ -233,9 +229,7 @@ export default class Websocket {
       const chunkRequest = { ...requestBody, body: { ...requestBody.body, idList: idChunk } };
       const chunkKey = createInFlightKey(command, chunkRequest);
 
-      if (this.#inFlight.has(chunkKey)) {
-        return this.#inFlight.get(chunkKey);
-      }
+      if (this.#inFlight.has(chunkKey)) { return this.#inFlight.get(chunkKey); }
 
       const promise = this.#emit(command, chunkRequest).finally(() => this.#inFlight.delete(chunkKey));
       this.#inFlight.set(chunkKey, promise);
