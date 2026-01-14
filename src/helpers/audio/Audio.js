@@ -6,20 +6,14 @@ import { StatusCodes } from 'http-status-codes';
 
 export default class AudioHelper extends BaseHelper {
   #slots;
-  #slotRequest;
 
   constructor (client) {
     super(client);
     this.#slots = new AudioSlotHelper(client);
-    this.#slotRequest = new AudioSlotRequestHelper(client);
   }
 
   get slots () {
     return this.#slots;
-  }
-
-  get slotRequest () {
-    return this.#slotRequest;
   }
 
   async available (channelId, opts) {
@@ -56,17 +50,41 @@ export default class AudioHelper extends BaseHelper {
 
   async play (channelId, stream) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    const client = this.#slots.clients.get(normalisedChannelId);
+
+    if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
+
+    return client.play(stream);
   }
 
   async pause (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    const client = this.#slots.clients.get(normalisedChannelId);
+
+    if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
+
+    return client.pause();
   }
 
   async resume (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    const client = this.#slots.clients.get(normalisedChannelId);
+
+    if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
+
+    return client.resume();
   }
 
   async stop (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    const client = this.#slots.clients.get(normalisedChannelId);
+
+    if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
+
+    return client.stop();
   }
 }

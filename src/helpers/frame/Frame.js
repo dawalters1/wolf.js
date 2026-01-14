@@ -50,6 +50,19 @@ export default class FrameHelper extends BaseHelper {
       : frames[0];
   }
 
+  async delete (frameIds) {
+    const normalisedFrameIds = this.normaliseNumbers(frameIds);
+
+    return this.client.websocket.emit(
+      'frame subscriber delete',
+      {
+        body: {
+          idList: normalisedFrameIds
+        }
+      }
+    );
+  }
+
   async set (frameId) {
     const normalisedFrameId = this.normaliseNumber(frameId);
 
@@ -62,6 +75,12 @@ export default class FrameHelper extends BaseHelper {
           frameId: normalisedFrameId
         }
       }
+    );
+  }
+
+  async clear () {
+    return this.client.websocket.emit(
+      'frame subscriber delete selected'
     );
   }
 

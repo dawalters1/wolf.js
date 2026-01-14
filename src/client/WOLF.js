@@ -10,6 +10,7 @@ import config from 'config';
 import ContactHelper from '../helpers/contact/Contact.js';
 import { EventEmitter } from 'node:events';
 import EventHelper from '../helpers/event/Event.js';
+import FrameHelper from '../helpers/frame/Frame.js';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import MessagingHelper from '../helpers/messaging/Messaging.js';
@@ -48,6 +49,7 @@ class WOLF extends EventEmitter {
   #charm;
   #contact;
   #event;
+  #frame;
   #messaging;
   #notification;
   #phrase;
@@ -86,6 +88,7 @@ class WOLF extends EventEmitter {
     this.#charm = new CharmHelper(this);
     this.#contact = new ContactHelper(this);
     this.#event = new EventHelper(this);
+    this.#frame = new FrameHelper(this);
     this.#messaging = new MessagingHelper(this);
     this.#notification = new NotificationHelper(this);
     this.#phrase = new PhraseHelper(this);
@@ -171,6 +174,10 @@ class WOLF extends EventEmitter {
 
   get event () {
     return this.#event;
+  }
+
+  get frame(){
+    return this.#frame;
   }
 
   get messaging () {

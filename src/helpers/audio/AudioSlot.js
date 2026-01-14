@@ -1,10 +1,24 @@
+import AudioSlotRequestHelper from './AudioSlotRequest.js';
 import BaseHelper from '../BaseHelper.js';
-import Channel from '../../entities/Channel.js';
 import ChannelAudioSlot from '../../entities/ChannelAudioSlot.js';
 import StageClient from '../../client/stage/Stage.js';
 
 export default class AudioSlotHelper extends BaseHelper {
   #clients = new Map();
+  #request;
+  constructor (client) {
+    super(client);
+
+    this.#request = new AudioSlotRequestHelper(client);
+  }
+
+  get request () {
+    return this.#request;
+  }
+
+  get clients () {
+    return this.#clients;
+  }
 
   async fetch (channelId, slotId, opts) {
     if (this.isObject(slotId)) {
