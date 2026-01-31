@@ -3,6 +3,7 @@ import AudioSlotRequestHelper from './AudioSlotRequest.js';
 import BaseHelper from '../BaseHelper.js';
 import ChannelStage from '../../entities/ChannelStage.js';
 import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validation/Validation.js';
 
 export default class AudioHelper extends BaseHelper {
   #slots;
@@ -18,6 +19,21 @@ export default class AudioHelper extends BaseHelper {
 
   async available (channelId, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.available)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.available)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 
@@ -51,6 +67,15 @@ export default class AudioHelper extends BaseHelper {
   async play (channelId, stream) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
+    validate(normalisedChannelId, this, this.play)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(stream, this, this.play)
+      .isNotNullOrUndefined()
+      .isStream(stream);
+
     const client = this.#slots.clients.get(normalisedChannelId);
 
     if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
@@ -60,6 +85,11 @@ export default class AudioHelper extends BaseHelper {
 
   async pause (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.pause)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const client = this.#slots.clients.get(normalisedChannelId);
 
@@ -71,6 +101,11 @@ export default class AudioHelper extends BaseHelper {
   async resume (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
+    validate(normalisedChannelId, this, this.resume)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     const client = this.#slots.clients.get(normalisedChannelId);
 
     if (client === null) { throw new Error(`Channel with ID ${normalisedChannelId} does not have a Stage Client`); }
@@ -80,6 +115,11 @@ export default class AudioHelper extends BaseHelper {
 
   async stop (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.stop)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const client = this.#slots.clients.get(normalisedChannelId);
 

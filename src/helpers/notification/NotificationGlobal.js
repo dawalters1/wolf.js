@@ -1,6 +1,7 @@
 import BaseHelper from '../BaseHelper.js';
 import Notification from '../../entities/Notification.js';
 import NotificationGlobal from '../../entities/NotificationGlobal.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class NotificationGlobalHelper extends BaseHelper {
   async fetch (notificationIds, opts) {
@@ -11,6 +12,20 @@ export default class NotificationGlobalHelper extends BaseHelper {
 
     if (!normalisedNotificationIds || this.isObject(normalisedNotificationIds)) {
       opts = notificationIds;
+
+      validate(opts, this, this.fetch)
+        .isNotRequired()
+        .forEachProperty(
+          {
+            forceNew: validator => validator
+              .isNotRequired()
+              .isBoolean(),
+
+            subscribe: validator => validator
+              .isNotRequired()
+              .isBoolean()
+          }
+        );
 
       if (!opts?.forceNew && this.client.me.notificationStore.global.fetched) { return this.client.me.notificationStore.global.values(); }
 
@@ -43,6 +58,20 @@ export default class NotificationGlobalHelper extends BaseHelper {
           )
         );
     }
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const idsToFetch = opts?.forceNew
       ? normalisedNotificationIds

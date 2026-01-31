@@ -2,6 +2,7 @@ import BaseHelper from '../BaseHelper.js';
 import Cognito from '../../entities/Cognito.js';
 import { nanoid } from 'nanoid';
 import OnlineState from '../../constants/OnlineState.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class SecurityHelper extends BaseHelper {
   #cognito;
@@ -23,6 +24,16 @@ export default class SecurityHelper extends BaseHelper {
   }
 
   async securityToken (opts) {
+    validate(opts, this, this.securityToken)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     if (!opts?.forceNew && this.#cognito) { return this.#cognito; }
 
     const response = await this.client.websocket.emit('security token refresh');

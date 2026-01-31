@@ -1,15 +1,38 @@
 import BaseHelper from '../BaseHelper.js';
 import ChannelAudioSlotRequest from '../../entities/ChannelAudioSlotRquest.js';
+import ChannelMemberCapability from '../../constants/ChannelMemberCapability.js';
+import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validation/Validation.js';
 
 // TODO: check capabilities, check if stage is enabled
 export default class AudioSlotRequestHelper extends BaseHelper {
   async fetch (channelId, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     const channel = await this.client.channel.fetch(channelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!channel.audioConfig.enabled) { throw new Error(`Channel with ID ${normalisedChannelId} does not have stage enabled`); }
 
     if (!opts?.forceNew && channel.audioSlotRequestStore.fetched) { return channel.audioSlotRequestStore.values(); }
     try {
@@ -22,21 +45,50 @@ export default class AudioSlotRequestHelper extends BaseHelper {
       );
 
       channel.audioSlotRequestStore.fetched = true;
-      return response.body.map(
+      response.body.map(
         (serverChannelAudioSlotRequest) =>
           channel.roleStore.roles.set(
             new ChannelAudioSlotRequest(this.client, serverChannelAudioSlotRequest)
           )
       );
     } catch (error) {
-      // TODO:
+      if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
+
+      channel.audioSlotRequestStore.fetched = true;
     }
+
+    return channel.audioSlotRequestStore.values();
   }
 
   async add (channelId, slotId, userId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
     const normalisedUserId = this.normaliseNumber(userId);
+
+    validate(normalisedChannelId, this, this.clear)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.clear)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    if (normalisedSlotId !== null) {
+      validate(normalisedUserId, this, this.clear)
+        .isNotNullOrUndefined()
+        .isValidNumber()
+        .isNumberGreaterThanZero();
+    }
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!channel.audioConfig.enabled) { throw new Error(`Channel with ID ${normalisedChannelId} does not have stage enabled`); }
 
     const slots = await this.client.audio.slots.fetch(normalisedChannelId);
 
@@ -57,6 +109,8 @@ export default class AudioSlotRequestHelper extends BaseHelper {
         }
       );
     }
+
+    if (!await this.client.utility.channel.member.hasCapability(normalisedChannelId, this.client.me.id, ChannelMemberCapability.MOD)) { throw new Error(`Bot lacks Channel Capabilities to add slot request in Channel with ID ${normalisedChannelId}`); }
 
     const slot = await this.client.audio.slots.fetch(normalisedChannelId, normalisedSlotId);
 
@@ -89,6 +143,24 @@ export default class AudioSlotRequestHelper extends BaseHelper {
   async delete (channelId, slotId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.delete)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.delete)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!channel.audioConfig.enabled) { throw new Error(`Channel with ID ${normalisedChannelId} does not have stage enabled`); }
+
     const slots = await this.client.audio.slots.fetch(normalisedChannelId);
 
     if (normalisedSlotId === null) {
@@ -105,6 +177,8 @@ export default class AudioSlotRequestHelper extends BaseHelper {
         }
       );
     }
+
+    if (!await this.client.utility.channel.member.hasCapability(normalisedChannelId, this.client.me.id, ChannelMemberCapability.MOD)) { throw new Error(`Bot lacks Channel Capabilities to delete slot request in Channel with ID ${normalisedChannelId}`); }
 
     const slot = await this.client.audio.slots.fetch(normalisedChannelId, normalisedSlotId);
 
@@ -128,6 +202,20 @@ export default class AudioSlotRequestHelper extends BaseHelper {
 
   async clear (channelId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.clear)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!channel.audioConfig.enabled) { throw new Error(`Channel with ID ${normalisedChannelId} does not have stage enabled`); }
+
+    if (!await this.client.utility.channel.member.hasCapability(normalisedChannelId, this.client.me.id, ChannelMemberCapability.MOD)) { throw new Error(`Bot lacks Channel Capabilities to clear slot requests in Channel with ID ${normalisedChannelId}`); }
 
     const requests = await this.fetch(normalisedChannelId);
 

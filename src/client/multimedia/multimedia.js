@@ -28,7 +28,7 @@ export default class Multimedia {
           getCredentials: async () => {
             const getCredentials = async (forceNew = false) => {
               try {
-                const cognito = await this.#client.security.getToken({ forceNew });
+                const cognito = await this.#client.security.securityToken({ forceNew });
 
                 const cognitoIdentity = new CognitoIdentityClient({
                   credentials: fromCognitoIdentity({
@@ -63,7 +63,7 @@ export default class Multimedia {
       {
         method: 'POST',
         baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
-        url: config.path,
+        url: `v${config.version}/${config.route}`,
         data: body
           ? { body }
           : undefined
@@ -78,7 +78,7 @@ export default class Multimedia {
       {
         method: 'DELETE',
         baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
-        url: config.path,
+        url: `v${config.version}/${config.route}`,
         data: body
           ? { body }
           : undefined

@@ -2,6 +2,7 @@ import AvatarType from '../constants/AvatarType.js';
 import axios from 'axios';
 import BaseUtility from './BaseUtility.js';
 import IconSize from '../constants/IconSize.js';
+import { validate } from '../validation/Validation.js';
 
 export default class AvatarUtility extends BaseUtility {
   async #download (targetType, targetId, size, type) {
@@ -27,7 +28,18 @@ export default class AvatarUtility extends BaseUtility {
   async channel (channelId, size, type) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.channel)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(size)
+      .isNotNullOrUndefined()
+      .in(Object.values(IconSize));
+
+    validate(type)
+      .isNotNullOrUndefined()
+      .in(Object.values(AvatarType));
 
     return await this.#download(AvatarType.CHANNEL, normalisedChannelId, size, type);
   }
@@ -35,7 +47,18 @@ export default class AvatarUtility extends BaseUtility {
   async user (userId, size, type) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    // TODO: validation
+    validate(normalisedUserId, this, this.user)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(size)
+      .isNotNullOrUndefined()
+      .in(Object.values(IconSize));
+
+    validate(type)
+      .isNotNullOrUndefined()
+      .in(Object.values(AvatarType));
 
     return await this.#download(AvatarType.USER, normalisedUserId, size, type);
   }

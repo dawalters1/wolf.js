@@ -14,15 +14,19 @@ export default class BaseEntity {
   patch (newData, oldData = null) {
     oldData = oldData || this;
 
-    for (const key in newData) {
+    const allowedKeys = Object.keys(oldData);
+    const newKeys = Object.keys(newData).filter((key) => allowedKeys.includes(key));
+
+    for (const key of newKeys) {
       const newValue = newData[key];
       const oldValue = oldData[key];
 
-      if (newValue && typeof newValue === 'object' && !Array.isArray(newValue)) {
-        if (!oldValue || typeof oldValue !== 'object' || Array.isArray(oldValue)) {
-          oldData[key] = {};
-        }
-        this.patch(newValue, oldData[key]);
+      if (newValue === undefined) {
+        Reflect.deleteProperty(this, key);
+      } else if (oldValue === null || Array.isArray(newValue) || newValue instanceof Set) {
+        oldData[key] = newValue;
+      } else if (typeof newValue === 'object') {
+        this.patch(newValue, oldValue);
       } else {
         oldData[key] = newValue;
       }

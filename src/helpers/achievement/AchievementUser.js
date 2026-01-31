@@ -1,10 +1,32 @@
 import AchievementUser from '../../entities/AchievementUser.js';
 import BaseHelper from '../BaseHelper.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class AchievementUserHelper extends BaseHelper {
   async fetch (userId, parentId, opts) {
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedParentId = this.normaliseNumber(parentId);
+
+    validate(normalisedUserId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedParentId, this, this.fetch)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const user = await this.client.user.fetch(userId);
 

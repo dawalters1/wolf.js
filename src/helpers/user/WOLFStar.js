@@ -1,17 +1,33 @@
 import BaseHelper from '../BaseHelper.js';
+import { validate } from '../../validation/Validation.js';
 import WOLFStar from '../../entities/WOLFStar.js';
 
 export default class WOLFStarHelper extends BaseHelper {
-  async fetch (ids, opts) {
-    const isArrayResponse = Array.isArray(ids);
+  async fetch (userIds, opts) {
+    const isArrayResponse = Array.isArray(userIds);
 
-    const normalisedIds = this.normaliseNumbers(ids);
+    const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
-    const users = await this.client.user.fetch(normalisedIds);
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
-    const missingUserIds = normalisedIds.filter(
+    const users = await this.client.user.fetch(normalisedUserIds);
+
+    const missingUserIds = normalisedUserIds.filter(
       (id) => !users.some((user) => user?.id === id)
     );
 
@@ -20,9 +36,9 @@ export default class WOLFStarHelper extends BaseHelper {
     }
 
     const idsToFetch = opts?.forceNew
-      ? normalisedIds
-      : normalisedIds.filter((id) => {
-        const user = users.find((user) => user.id === id);
+      ? normalisedUserIds
+      : normalisedUserIds.filter((userId) => {
+        const user = users.find((user) => user.id === userId);
         return !user.wolfstarStore.fetched;
       });
 

@@ -43,6 +43,8 @@ export default async (url) => {
         ? url
         : `http://${url}`; // format if it only starts with www.
 
+      if (formattedUrl.startsWith('wolf://')) { return null; }
+
       const head = await axiosClient.head(formattedUrl);
       const contentType = head.headers['content-type'];
 

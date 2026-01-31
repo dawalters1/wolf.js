@@ -34,7 +34,7 @@ import yaml from 'js-yaml';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-class WOLF extends EventEmitter {
+export class WOLF extends EventEmitter {
   #loggedIn = false;
   #me = undefined;
   #config;
@@ -176,7 +176,7 @@ class WOLF extends EventEmitter {
     return this.#event;
   }
 
-  get frame(){
+  get frame () {
     return this.#frame;
   }
 

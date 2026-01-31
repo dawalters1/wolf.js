@@ -1,11 +1,34 @@
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
 import Role from '../../entities/Role.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class RoleHelper extends BaseHelper {
   async fetch (roleIds, languageId, opts) {
     const isArrayResponse = Array.isArray(roleIds);
     const normalisedRoleIds = this.normaliseNumbers(roleIds);
     const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(normalisedRoleIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const idsToFetch = opts?.forceNew
       ? normalisedRoleIds

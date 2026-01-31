@@ -1,6 +1,7 @@
 import BaseHelper from '../BaseHelper.js';
 import { StatusCodes } from 'http-status-codes';
 import UserRole from '../../entities/UserRole.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class UserRoleHelper extends BaseHelper {
   constructor (client) {
@@ -9,7 +10,21 @@ export default class UserRoleHelper extends BaseHelper {
 
   async fetch (id, opts) {
     const normalisedId = this.normaliseNumber(id);
-    // TODO: validation
+
+    validate(normalisedId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const user = await this.client.user.fetch(normalisedId);
 

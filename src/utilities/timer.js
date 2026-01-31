@@ -1,6 +1,7 @@
 import BaseUtility from './BaseUtility.js';
 import BullQueue from 'bull';
 import TimerJob from '../entities/timerJob.js';
+import { validate } from '../validation/Validation.js';
 
 export default class TimerUtility extends BaseUtility {
   #handlers = new Map();
@@ -32,6 +33,10 @@ export default class TimerUtility extends BaseUtility {
   async get (jobId) {
     if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
+    validate(jobId, this, this.get)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
     const job = await this.#queue.getJob(jobId);
 
     return job
@@ -44,7 +49,19 @@ export default class TimerUtility extends BaseUtility {
 
     const normalisedDelay = this.normaliseNumber(delay);
 
-    // TODO: validation
+    validate(jobId, this, this.add)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
+    validate(handler, this, this.add)
+      .isNotNullOrUndefined()
+      .isNotWhitespace()
+      .in(Object.keys(this.#handlers));
+
+    validate(normalisedDelay, this, this.add)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberLessThanZero();
 
     await this.cancel(jobId);
 
@@ -66,7 +83,9 @@ export default class TimerUtility extends BaseUtility {
   async cancel (jobId) {
     if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
-    // TODO: validation
+    validate(jobId, this, this.cancel)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
 
     const job = await this.#queue.getJob(jobId);
 
@@ -81,7 +100,14 @@ export default class TimerUtility extends BaseUtility {
 
     const normalisedDelay = this.normaliseNumber(delay);
 
-    // TODO: validation
+    validate(jobId, this, this.add)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
+    validate(normalisedDelay, this, this.add)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberLessThanZero();
 
     const job = await this.#queue.getJob(jobId);
 

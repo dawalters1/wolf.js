@@ -2,6 +2,7 @@ import BaseHelper from '../BaseHelper.js';
 import Event from '../../entities/Event.js';
 import EventChannelHelper from './EventChannel.js';
 import EventSubscriptionHelper from './EventSubscription.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class EventHelper extends BaseHelper {
   #channel;
@@ -26,6 +27,23 @@ export default class EventHelper extends BaseHelper {
     const isArrayResponse = Array.isArray(eventIds);
     const normalisedEventIds = this.normaliseNumbers(eventIds);
 
+    validate(normalisedEventIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     const idsToFetch = opts?.forceNew
       ? normalisedEventIds
       : normalisedEventIds.filter((eventId) => !this.store.has((item) => item.id === eventId));
@@ -44,7 +62,7 @@ export default class EventHelper extends BaseHelper {
         }
       );
 
-      const maxAge = response.headers.maxAge;
+      const maxAge = response.headers?.maxAge;
 
       for (const [index, childResponse] of response.body.entries()) {
         const id = idsToFetch[index];

@@ -4,19 +4,40 @@ import CharmActive from '../../entities/CharmActive.js';
 import CharmExpired from '../../entities/CharmExpired.js';
 import CharmStatistic from '../../entities/CharmStatistic.js';
 import CharmSummary from '../../entities/CharmSummary.js';
+import Language from '../../constants/Language.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class CharmHelper extends BaseHelper {
   async fetch (charmIds, languageId, opts) {
     const isArrayResponse = Array.isArray(charmIds);
 
-    const normalisedIds = this.normaliseNumbers(charmIds);
+    const normalisedCharmIds = this.normaliseNumbers(charmIds);
     const normalisedLanguageId = this.normaliseNumber(languageId);
 
-    // TODO: validation
+    validate(normalisedCharmIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
-    const idsToFetch = opts.forceNew
-      ? normalisedIds
-      : normalisedIds.filter(
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
+    const idsToFetch = opts?.forceNew
+      ? normalisedCharmIds
+      : normalisedCharmIds.filter(
         (charmId) =>
           !this.store.has(
             (item) => item.id === charmId && item.languageId === normalisedLanguageId
@@ -53,7 +74,7 @@ export default class CharmHelper extends BaseHelper {
       }
     }
 
-    const charms = normalisedIds.map((charmId) =>
+    const charms = normalisedCharmIds.map((charmId) =>
       this.store.get(
         (item) => item.id === charmId && item.languageId === normalisedLanguageId
       )
@@ -67,7 +88,10 @@ export default class CharmHelper extends BaseHelper {
   async summary (userId, opts) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    // TODO: validation
+    validate(normalisedUserId, this, this.summary)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const user = await this.client.user.fetch(normalisedUserId);
 
@@ -99,9 +123,12 @@ export default class CharmHelper extends BaseHelper {
   async statistics (userId, opts) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    // TODO: validation
+    validate(normalisedUserId, this, this.statistics)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
-    const user = await this.client.user.getById(normalisedUserId);
+    const user = await this.client.user.fetch(normalisedUserId);
 
     if (!user) {
       throw new Error(`User with ID ${normalisedUserId} NOT FOUND`);

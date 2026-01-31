@@ -21,6 +21,7 @@ const validateCommand = (command) => {
       return previous;
     }, {});
 
+  // TODO
   if (Object.entries(childPhraseNameCountMap).some((result) => result[1] > 1)) {
     throw new Error('children commands must be unique and cannot share keys', { parent: command.key, children: Object.entries(childPhraseNameCountMap).filter((entry) => entry[1] > 1).map((entry) => entry[0]) });
   }
