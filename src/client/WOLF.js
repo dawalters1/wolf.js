@@ -1,38 +1,40 @@
+
 import _ from 'lodash';
-import AchievementHelper from '../helper/achievement/achievement.js';
-import AudioHelper from '../helper/audio/audio.js';
-import AuthorisationHelper from '../helper/authorisation/authorisation.js';
-import BannedHelper from '../helper/banned/banned.js';
-import ChannelHelper from '../helper/channel/channel.js';
-import CharmHelper from '../helper/charm/charm.js';
+import AchievementHelper from '../helpers/achievement/Achievement.js';
+import AudioHelper from '../helpers/audio/Audio.js';
+import AuthorisationHelper from '../helpers/authorisation/Authorisation.js';
+import BannedHelper from '../helpers/banned/Banned.js';
+import ChannelHelper from '../helpers/channel/Channel.js';
+import CharmHelper from '../helpers/charm/Charm.js';
 import config from 'config';
-import ContactHelper from '../helper/contact/contact.js';
+import ContactHelper from '../helpers/contact/Contact.js';
 import { EventEmitter } from 'node:events';
-import EventHelper from '../helper/event/event.js';
+import EventHelper from '../helpers/event/Event.js';
+import FrameHelper from '../helpers/frame/Frame.js';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
-import MessagingHelper from '../helper/messaging/messaging.js';
-import MetadataHelper from '../helper/metadata/metadata.js';
-import Multimedia from './multimedia/multimedia.js';
+import MessagingHelper from '../helpers/messaging/Messaging.js';
+// import MetadataHelper from '../helpers/metadata/metadata.js';
+import Multimedia from './multimedia/Multimedia.js';
 import { nanoid } from 'nanoid';
-import NotificationHelper from '../helper/notification/notification.js';
+import NotificationHelper from '../helpers/notification/Notification.js';
 import { OnlineState } from '../constants/index.js';
 import path, { dirname } from 'node:path';
-import PhraseHelper from '../helper/phrase/phrase.js';
-import RoleHelper from '../helper/role/role.js';
-import SecurityHelper from '../helper/security/security.js';
-import StoreHelper from '../helper/store/store.js';
-import TipHelper from '../helper/tip/tip.js';
-import TopicHelper from '../helper/topic/topic.js';
-import UserHelper from '../helper/user/user.js';
+import PhraseHelper from '../helpers/phrase/Phrase.js';
+import RoleHelper from '../helpers/role/Role.js';
+import SecurityHelper from '../helpers/security/Security.js';
+import StoreHelper from '../helpers/store/Store.js';
+import TipHelper from '../helpers/tip/Tip.js';
+import TopicHelper from '../helpers/topic/Topic.js';
+import UserHelper from '../helpers/user/User.js';
 import Utility from '../utilities/index.js';
-import { Websocket } from './websocket/websocket.js';
+import Websocket from './websocket/Websocket.js';
 import yaml from 'js-yaml';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-class WOLF extends EventEmitter {
+export class WOLF extends EventEmitter {
   #loggedIn = false;
   #me = undefined;
   #config;
@@ -47,6 +49,7 @@ class WOLF extends EventEmitter {
   #charm;
   #contact;
   #event;
+  #frame;
   #messaging;
   #notification;
   #phrase;
@@ -85,6 +88,7 @@ class WOLF extends EventEmitter {
     this.#charm = new CharmHelper(this);
     this.#contact = new ContactHelper(this);
     this.#event = new EventHelper(this);
+    this.#frame = new FrameHelper(this);
     this.#messaging = new MessagingHelper(this);
     this.#notification = new NotificationHelper(this);
     this.#phrase = new PhraseHelper(this);
@@ -94,7 +98,7 @@ class WOLF extends EventEmitter {
     this.#tip = new TipHelper(this);
     this.#topic = new TopicHelper(this);
     this.#role = new RoleHelper(this);
-    this.#metadata = new MetadataHelper(this);
+    // this.#metadata = new MetadataHelper(this);
   }
 
   get loggedIn () {
@@ -172,6 +176,10 @@ class WOLF extends EventEmitter {
     return this.#event;
   }
 
+  get frame () {
+    return this.#frame;
+  }
+
   get messaging () {
     return this.#messaging;
   }
@@ -227,8 +235,7 @@ class WOLF extends EventEmitter {
 
       opts = {
         token: this.#config.framework.login?.token,
-        state: this.#config.framework.login?.onlineState,
-        type: this.#config.framework.login?.type ?? 'email'
+        state: this.#config.framework.login?.onlineState
       };
     }
 
@@ -237,8 +244,7 @@ class WOLF extends EventEmitter {
       password,
       apiKey,
       token: opts?.token ?? `wjs-${nanoid()}`,
-      state: opts?.onlineState ?? OnlineState.ONLINE,
-      type: opts?.type ?? 'email'
+      state: opts?.onlineState ?? OnlineState.ONLINE
     };
 
     // Validation

@@ -1,39 +1,39 @@
+import BaseEvent from './BaseEvent.js';
+import ChannelMember from '../../../entities/ChannelMember.js';
 
-import BaseEvent from './baseEvent.js';
-import ChannelMemberCapability from '../../../constants/ChannelMemberCapability.js';
-
-class GroupMemberDeleteEvent extends BaseEvent {
+export default class GroupMemberDeleteEvent extends BaseEvent {
   constructor (client) {
-    super(client, 'group member privileged delete');
+    super(client, 'group member delete');
   }
 
   async process (data) {
     if (data.subscriberId === this.client.me.id) {
-      const channel = await this.client.channel.getById(data.groupId);
+      const channel = await this.client.channel.fetch(data.groupId);
 
       channel.isMember = false;
-      channel.capabilities = ChannelMemberCapability.NONE;
+      channel.capabilities = data.capabilities;
       channel.memberStore.clear();
 
-      return this.client.emit('leftChannel', channel);
+      return this.client.emit(
+        'leftChannel',
+        channel
+      );
     }
 
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.groupId);
 
     if (channel === null) { return; }
 
-    const member = channel.memberStore.get(data.subscriberId);
+    const channelMember = channel.memberStore.get((item) => item.id === data.subscriberId);
 
-    if (member === null) { return; };
+    if (channelMember === null) { return; }
 
-    channel.memberStore.delete((member) => member.id === data.subscriberId);
+    channel.memberStore.delete((item) => item.id === data.subscriberId);
 
     return this.client.emit(
-      'channelMemberDelete',
+      'channelMemberLeft',
       channel,
-      member
+      channelMember
     );
   }
 }
-
-export default GroupMemberDeleteEvent;

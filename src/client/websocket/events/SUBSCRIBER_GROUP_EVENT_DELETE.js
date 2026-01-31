@@ -1,20 +1,20 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class SubscriberContactDeleteEvent extends BaseEvent {
+export default class SubscriberGroupEventDeleteEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber group event delete');
   }
 
   async process (data) {
-    const wasDeleted = this.client.event.subscription.store.delete((event) => event.id === data.id);
+    const eventSubscription = this.client.event.subscription.store.get((item) => item.id === data.id);
 
-    if (wasDeleted === false) { return; }
+    if (eventSubscription === null) { return; }
 
-    this.client.emit(
-      'userChannelEventSubscriptionDelete',
-      data.id
+    this.client.event.subscription.store.delete((item) => item.id === data.id);
+
+    return this.client.emit(
+      'eventSubscriptionDeleted',
+      eventSubscription
     );
   }
 }
-
-export default SubscriberContactDeleteEvent;

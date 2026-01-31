@@ -10,7 +10,7 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
 /**
  * @param {import('../WOLF.js').default} client
  */
-class Multimedia {
+export default class Multimedia {
   #axios;
   #client;
   constructor (client) {
@@ -28,7 +28,7 @@ class Multimedia {
           getCredentials: async () => {
             const getCredentials = async (forceNew = false) => {
               try {
-                const cognito = await this.#client.security.getToken({ forceNew });
+                const cognito = await this.#client.security.securityToken({ forceNew });
 
                 const cognitoIdentity = new CognitoIdentityClient({
                   credentials: fromCognitoIdentity({
@@ -63,7 +63,7 @@ class Multimedia {
       {
         method: 'POST',
         baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
-        url: config.path,
+        url: `v${config.version}/${config.route}`,
         data: body
           ? { body }
           : undefined
@@ -78,7 +78,7 @@ class Multimedia {
       {
         method: 'DELETE',
         baseURL: this.#client.config.endpointConfig.mmsUploadEndpoint,
-        url: config.path,
+        url: `v${config.version}/${config.route}`,
         data: body
           ? { body }
           : undefined
@@ -88,5 +88,3 @@ class Multimedia {
       .catch((error) => new WOLFResponse({ code: error.response?.code || error.response?.status, headers: error.response?.headers }));
   }
 }
-
-export default Multimedia;

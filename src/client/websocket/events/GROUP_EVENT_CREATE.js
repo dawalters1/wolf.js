@@ -1,25 +1,23 @@
-import BaseEvent from './baseEvent.js';
-import ChannelEvent from '../../../entities/channelEvent.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelEvent from '../../../entities/ChannelEvent.js';
 
-class GroupEventCreateEvent extends BaseEvent {
+export default class GroupEventCreateEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group event create');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
 
-    if (!channel.eventStore.fetched) { return; }
+    const event = new ChannelEvent(this.client, data);
+    channel.eventStore.set(event);
 
-    this.client.emit(
-      'channelEventCreate',
-      channel.eventStore.set(
-        new ChannelEvent(this.client, data)
-      )
+    return this.client.emit(
+      'channelEventCreated',
+      channel,
+      event
     );
   }
 }
-
-export default GroupEventCreateEvent;

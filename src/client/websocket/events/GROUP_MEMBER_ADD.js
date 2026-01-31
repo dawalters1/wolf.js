@@ -1,40 +1,41 @@
+import BaseEvent from './BaseEvent.js';
+import ChannelMember from '../../../entities/ChannelMember.js';
 
-import BaseEvent from './baseEvent.js';
-import ChannelMember from '../../../entities/channelMember.js';
-
-class GroupMemberAddEvent extends BaseEvent {
+export default class GroupMemberAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group member add');
   }
 
   async process (data) {
     if (data.subscriberId === this.client.me.id) {
-      const channel = await this.client.channel.getById(data.groupId);
+      const channel = await this.client.channel.fetch(data.groupId);
 
       channel.isMember = true;
       channel.capabilities = data.capabilities;
 
-      return this.client.emit('joinedChannel', channel);
+      return this.client.emit(
+        'joinedChannel',
+        channel
+      );
     }
 
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.groupId);
 
     if (channel === null) { return; }
 
+    const { hash } = await this.client.user.fetch(data.subscriberId);
+    const channelMember = new ChannelMember(
+      {
+        ...data,
+        hash
+      }
+    );
+    channel.memberStore.set(channelMember);
+
     return this.client.emit(
-      'channelMemberAdd',
+      'channelMemberJoined',
       channel,
-      channel.memberStore.set(
-        new ChannelMember(
-          this.client,
-          {
-            ...data,
-            hash: (await this.client.user.getById(data.subscriberId)).hash
-          }
-        )
-      )
+      channelMember
     );
   }
 }
-
-export default GroupMemberAddEvent;

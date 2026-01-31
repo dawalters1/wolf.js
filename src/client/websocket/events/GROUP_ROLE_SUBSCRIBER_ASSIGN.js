@@ -1,30 +1,31 @@
-import BaseEvent from './baseEvent.js';
-import ChannelRoleUser from '../../../entities/channelRoleUser.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelRoleUser from '../../../entities/ChannelRoleUser.js';
 
-class GroupRoleSubscriberAssignEvent extends BaseEvent {
+export default class GroupRoleSubscriberAssignEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group role subscriber assign');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.id);
+    const [channel, user] = [
+      this.client.channel.store.get((item) => item.id === data.id),
+      this.client.user.store.get((item) => item.id === data.additionalInfo.subscriberId)
+    ];
+
+    user.roleStore?.clear();
 
     if (channel === null) { return; }
 
-    const channelRole = channel.roleStore.users.get(data.additionalInfo.roleId);
-    const user = this.client.user.store.get(data.additionalInfo.subscriberId);
+    const channelRole = new ChannelRoleUser(this.client, data);
 
-    if (user) { user.roleStore.clear(); }
+    channel.roleStore.roles.get((item) => item.roleId === channelRole.roleId)?.userIdList?.add(channelRole.userId);
+    channel.roleStore.users.set(channelRole);
 
-    channelRole?.userIdList?.add(data.additionalInfo.subscriberId);
-
-    this.client.emit(
-      'channelRoleUserAssign',
-      channel.roleStore.users.set(
-        new ChannelRoleUser(this.client, data)
-      )
+    return this.client.emit(
+      'channelRoleAssigned',
+      channel,
+      user,
+      channelRole
     );
   }
 }
-
-export default GroupRoleSubscriberAssignEvent;

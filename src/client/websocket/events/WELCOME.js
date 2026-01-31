@@ -1,111 +1,115 @@
-import BaseEvent from './baseEvent.js';
-import BaseHelper from '../../../helper/baseHelper.js';
-import { Command } from '../../../constants/Command.js';
-import Welcome from '../../../entities/welcome.js';
+import BaseEvent from './BaseEvent.js';
+import MessageSubscriptionType from '../../../constants/MessageSubscriptionType.js';
+import { STATUS_CODES } from 'http';
+import TipSubscriptionTargetType from '../../../constants/TipSubscriptionTargetType.js';
+import Welcome from '../../../entities/Welcome.js';
 
-// Lets not wipe important data on reconnect
-const excludeOnCleanup = ['AudioHelper', 'BannedHelper', 'AuthorisationHelper'];
-
-export class WelcomeEvent extends BaseEvent {
+export default class WelcomeEvent extends BaseEvent {
   constructor (client) {
     super(client, 'welcome');
   }
 
-  async synchronise () {
-    const { channel, notification, messaging, tipping } = this.client.config.framework.subscriptions;
+  async #synchronise () {
+    const { channel, notification, messaging, tipping } =
+    this.client.config.framework.subscriptions;
 
     const sessionContext = {
-      user: await this.client.user.getById(this.client.config.framework.login.userId)
+      user: await this.client.user.fetch(
+        this.client.config.framework.login.userId
+      )
     };
 
-    const subscriptions = [
-      ['channels', channel.list
-        ? this.client.channel.list({ forceNew: true })
-        : undefined],
-      ['userNotifications', notification.user
-        ? this.client.notification.user.list({ forceNew: true })
-        : undefined],
-      ['globalNotifications', notification.global
-        ? this.client.notification.global.list({ forceNew: true })
-        : undefined],
-      [null, messaging.channel
-        ? this.client.messaging._subscribeToChannel()
-        : undefined],
-      [null, messaging.private
-        ? this.client.messaging._subscribeToPrivate()
-        : undefined],
-      [null, tipping.channel
-        ? this.client.tip._subscribeToChannel()
-        : undefined]
-    ];
+    const tasks = {
+      channels: channel.list && this.client.channel.fetch({ forceNew: true }),
 
-    const results = await Promise.all(subscriptions.map(([, promise]) => promise));
+      userNotifications: notification.user && this.client.notification.user.fetch({ forceNew: true }),
 
-    return subscriptions.reduce((context, [key], index) => {
-      if (key && results[index] !== undefined) {
-        context[key] = results[index];
+      globalNotifications: notification.global && this.client.notification.global.fetch({ forceNew: true }),
+
+      _channelMessageSubscription: messaging.channel && this.client.messaging.subscribe(MessageSubscriptionType.CHANNEL),
+
+      _privateMessageSubscription: messaging.private && this.client.messaging.subscribe(MessageSubscriptionType.PRIVATE),
+
+      _tipChannelSubscription: tipping.channel && this.client.tip.subscribe(TipSubscriptionTargetType.CHANNEL)
+    };
+
+    const entries = Object.entries(tasks)
+      .filter(([, task]) => task !== false && task !== undefined);
+
+    const results = await Promise.all(entries.map(([, task]) => task));
+
+    for (let i = 0; i < entries.length; i++) {
+      const [key] = entries[i];
+
+      // only attach data we actually want on the context
+      if (!key.startsWith('_')) {
+        sessionContext[key] = results[i];
       }
-      return context;
-    }, sessionContext);
-  }
-
-  async cleanup (base) {
-    const helpers = Object.keys(base)
-      .filter(key => base[key] instanceof BaseHelper)
-      .map(key => base[key])
-      .filter(helper => !excludeOnCleanup.includes(helper.constructor.name));
-
-    helpers.forEach(helper => {
-      helper.store.clear();
-      this.cleanup(helper); // recursive clear
-    });
-  }
-
-  async login () {
-    const { username, password } = this.client.config.framework.login;
-
-    const response = await this.client.security.login(username, password);
-
-    if (!response.success) {
-      this.client.emit('loginFailed', response);
-
-      const subCode = response.headers?.get('subCode') ?? -1;
-      if (subCode > 1) { return false; }
-
-      return await this.login(); // Retry login
     }
 
-    this.client.config.framework.login.userId = response.body.subscriber?.id;
-    this.client.config.cognito = response.body.cognito;
+    return sessionContext;
+  }
 
-    this.client.emit('loginSuccess', await this.synchronise());
-    return true;
+  async #login () {
+    try {
+      const { username, password, state } = this.client.config.framework.login;
+
+      const response = await this.client.websocket.emit(
+        'security login',
+        {
+          headers: {
+            version: 2
+          },
+          body: {
+            type: 'email',
+            onlineState: state,
+            username,
+            password
+          }
+        }
+      );
+
+      this.client.loggedIn = true;
+      this.client.config.framework.login.userId = response.body.subscriber?.id;
+      this.client.config.cognito = response.body.cognito;
+
+      this.client.emit('loginSuccess', await this.#synchronise());
+
+      return true;
+    } catch (error) {
+      if (this.client.loggedIn) { throw error; } // Error occurred during sync
+
+      this.client.emit('loginFailed', error);
+
+      const subCode = error.headers?.get('subCode') ?? -1;
+      if (subCode > 1) { return false; }
+
+      await this.client.utility.delay(this.client.utility.number.random(100, 5000));
+
+      return await this.#login();
+    }
   }
 
   async process (data) {
     const welcome = new Welcome(this.client, data);
+    const loggedInUserChanged = this.client.me && welcome.loggedInUser && welcome.loggedInUser.id !== this.client.me.id;
 
-    this.cleanup(this.client);
-    this.client.emit('welcome', welcome);
+    this.client.config.framework.login.userId = welcome.loggedInUser?.id ?? undefined;
 
     this.client.config.endpointConfig = welcome.endpointConfig;
-
-    const isSameUser = welcome.loggedInUser?.id === this.client.me?.id;
-    this.client.config.cognito = isSameUser
+    this.client.config.cognito = loggedInUserChanged
       ? this.client.config.cognito
       : undefined;
 
     if (welcome.loggedInUser === null) {
-      const success = await this.login();
-      if (!success) { return; }
+      const successfulLogin = await this.#login();
+
+      if (!successfulLogin) { return; }
     } else {
-      this.client.config.framework.login.userId = welcome.loggedInUser.id;
       this.client.emit('resume', await this.synchronise());
     }
 
     this.client.loggedIn = true;
-    this.client.emit('ready');
+    return this.client.emit('ready');
   }
 }
-
-export default WelcomeEvent;

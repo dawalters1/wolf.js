@@ -1,20 +1,21 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class SubscriberNotificationListDelete extends BaseEvent {
+export default class UserNotificationDeleteEvent extends BaseEvent {
   constructor (client) {
-    super(client, 'subscriber notification list delete');
+    super(client, 'user notification delete');
   }
 
   async process (data) {
-    const wasDeleted = [
-      this.client.me && this.client.me.notificationStore.user.delete((notification) => notification.id === data.id),
-      this.client.notification.user.store.delete((notification) => notification.id === data.id)
-    ].some(Boolean);
+    const notification = this.client.notificationStore.user.get((item) => item.id === data.id);
 
-    if (wasDeleted === false) { return; }
+    this.client.notificationStore.user.delete((item) => item.id === data.id);
+    this.client.notification.user.delete((item) => item.id === data.id);
 
-    this.client.emit('userNotificationDelete', data.id);
+    if (notification === null) { return; }
+
+    return this.client.emit(
+      'userNotificationDeleted',
+      notification
+    );
   }
 }
-
-export default SubscriberNotificationListDelete;

@@ -1,15 +1,16 @@
-import ChannelUtility from './channel.js';
+import BaseUtility from './BaseUtility.js';
+import ChannelUtility from './Channel.js';
 import imageSize from 'image-size';
 import Language from '../constants/Language.js';
 import moment from 'moment';
-import NumberUtility from './number.js';
-import StringUtility from './string.js';
-import TimerUtility from './timer.js';
-import UserUtility from './user.js';
+import NumberUtility from './Number.js';
+import StringUtility from './String.js';
+import TimerUtility from './Timer.js';
+import UserUtility from './User.js';
 
-class BaseUtility {
+export default class Utilities extends BaseUtility {
   constructor (client) {
-    this.client = client;
+    super(client);
 
     this.channel = new ChannelUtility(client);
     this.string = new StringUtility(client);
@@ -18,33 +19,21 @@ class BaseUtility {
     this.user = new UserUtility(client);
   }
 
-  /** @internal */
-  async _validateBuffer (config, buffer, mimeType) {
-    const mimeTypeConfig = config.validation.mimeTypes.find((supportedMimeType) => supportedMimeType.mimeType === mimeType);
-
-    if (!mimeTypeConfig) { throw new Error(`MimeType type '${mimeType}' is unsupported`); }
-
-    if (mimeType.startsWith('image/') && config.validation.square) {
-      const { width, height } = imageSize(buffer);
-
-      if (width !== height) { throw new Error('Image must be square'); }
-    }
-
-    if (Buffer.byteLength(buffer) > mimeTypeConfig.size) { throw new Error(`Buffer must be no larger than '${mimeTypeConfig.size}' it is ${Buffer.byteLength(buffer)} `); }
-
-    return true;
-  }
-
   async delay (time, type = 'milliseconds') {
+    const normalisedTime = this.normaliseNumber(time);
+
     return new Promise((resolve) =>
       setTimeout(resolve, type === 'seconds'
-        ? time * 1000
-        : time)
+        ? normalisedTime * 1000
+        : normalisedTime
+      )
     );
   }
 
   toReadableTime (time, language, type = 'milliseconds') {
-    const info = moment.duration(time, type)._data;
+    const normalisedTime = this.normaliseNumber(time);
+
+    const info = moment.duration(normalisedTime, type)._data;
     const parts = [];
 
     const timeUnits = [
@@ -113,6 +102,8 @@ class BaseUtility {
   }
 
   toLanguageKey (languageId) {
+    const normalisedNumber = this.normaliseNumber(languageId);
+
     const languageIdMap = {
       14: 'ar',
       28: 'in',
@@ -152,8 +143,6 @@ class BaseUtility {
       35: 'vi'
     };
 
-    return languageIdMap[languageId] ?? 'en';
+    return languageIdMap[normalisedNumber] ?? 'en';
   }
 }
-
-export default BaseUtility;

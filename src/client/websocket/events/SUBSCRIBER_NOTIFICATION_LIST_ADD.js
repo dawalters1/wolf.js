@@ -1,22 +1,19 @@
-import BaseEvent from './baseEvent.js';
-import Notification from '../../../entities/notification.js';
+import BaseEvent from './BaseEvent.js';
+import Notification from '../../../entities/Notification.js';
 
-class SubscriberNotificationListAddEvent extends BaseEvent {
+export default class UserNotificationListAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber notification list add');
   }
 
   async process (data) {
-    this.client.emit(
-      'userNotificationAdd',
-      this.client.me.notificationStore.user.set(
-        new Notification(
-          this.client,
-          data
-        )
-      )
+    const notification = this.client.me.notificationStore.user.add(
+      new Notification(this.client, data)
+    );
+
+    return this.client.emit(
+      'userNotificationAdded',
+      notification
     );
   }
 }
-
-export default SubscriberNotificationListAddEvent;

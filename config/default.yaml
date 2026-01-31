@@ -1,30 +1,75 @@
 
-framework: 
+framework:
+  commandKey: 098984a71d03bae4079c602344a52e09920001ca73
+
+  charms:
+    unofficial:
+      - 813
+      - 814
+
   connection:
     host: https://v3-rc.palringo.com
     port: 443
     query:
-      device: wjs
-  subscriptions:
-    channel:
-      list: true
-    notification:
-      global: true
-      user: true
-    messaging:
-      channel: true
-      private: true
-    tipping:
-      channel: true
-      private: false
+      device: wjsframework
+    mocha:
+      email: null
+      password: null
+    requests:
+      retryCodes:
+        - 500
+        - 502
+        - 503
+        - 504
+        - 408
+      attempts: 3
+      essential:
+        - message group subscribe
+        - message private subscribe
+        - security login
+        - security logout
 
-  commands:
-    phrases: true
-    language: en
-    ignore:
-      self: true
-      official: false
-      unofficial: false
+  avatar:
+    placeholder: >-
+      https://d1gymp1zkvlptp.cloudfront.net/profiles/avatars/{type}/placeholder_{lastNumOfId}.jpg
+
+  batching:
+    length: 50
+
+  multimedia:
+    event:
+      method: post
+      route: group-event-image-update
+      version: 1
+      mimes:
+        - type: image/jpeg
+          size: 1048576
+      square: false
+    messaging:
+      method: post
+      route: send-message
+      version: 1
+      mimes:
+        - type: image/jpeg
+          size: 1048576
+        - type: image/gif
+          size: 3145728
+        - type: audio/x-m4a
+          size: 1048576
+        - type: audio/mp4
+          size: 1048576
+      square: false
+    avatar:
+      subscriber:
+        method: post
+        route: subscriber-avatar-update
+        version: 1
+        mimes:
+          - type: image/jpeg
+            size: 1048576
+          - type: image/gif
+            size: 2621440
+        square: true
 
   helper:
     channel:
@@ -37,57 +82,24 @@ framework:
           regular:
             key: 'id'
             version: 1
-            limit: 100
             batchType: after
             subscribe: true 
           bots:
             key: 'groupId'
             version: 1
             batchType: offset
-            limit: 50 
           silenced:
             key: 'groupId'
             version: 1
             batchType: offset
-            limit: 50 
           banned:
             key: 'id'
             version: 1
             batchType: after
-            limit: 50 
 
-  messages:
-    ignore:
-      self: true
-
-  mmsEndpoints:
-    message: 
-      path: '/v1/send-message'
-      methods:
-        - post
-      validation:
-        mimeTypes:
-          - mimeType: image/jpeg
-            size: 1048576
-          - mimeType: image/gif
-            size: 3145728
-          - mimeType: audio/x-m4a
-            size: 1048576
-          - mimeType: audio/mp4
-            size: 1048576
-        square: false
-    event:
-      path: '/v1/group-event-update'
-      methods:
-        - post
-      validation:
-        mimeTypes:
-          - mimeType: image/jpeg
-            size: 1048576
-        square: false        
-    avatars:
-      channel:
-        path: '/v1/group-avatar-update'
+    mmsEndpoints:
+      message: 
+        path: '/v1/send-message'
         methods:
           - post
         validation:
@@ -95,16 +107,68 @@ framework:
             - mimeType: image/jpeg
               size: 1048576
             - mimeType: image/gif
-              size: 2621440
-          square: true          
-      user:
-        path: '/v1/subscriber-avatar-update'
+              size: 3145728
+            - mimeType: audio/x-m4a
+              size: 1048576
+            - mimeType: audio/mp4
+              size: 1048576
+          square: false
+      event:
+        path: '/v1/group-event-update'
         methods:
-          - post          
+          - post
         validation:
           mimeTypes:
             - mimeType: image/jpeg
               size: 1048576
-            - mimeType: image/gif
-              size: 2621440
-          square: true          
+          square: false        
+      avatars:
+        channel:
+          path: '/v1/group-avatar-update'
+          methods:
+            - post
+          validation:
+            mimeTypes:
+              - mimeType: image/jpeg
+                size: 1048576
+              - mimeType: image/gif
+                size: 2621440
+            square: true          
+        user:
+          path: '/v1/subscriber-avatar-update'
+          methods:
+            - post          
+          validation:
+            mimeTypes:
+              - mimeType: image/jpeg
+                size: 1048576
+              - mimeType: image/gif
+                size: 2621440
+            square: true          
+
+  subscriptions:
+    channel:
+      list: true
+    tipping:
+      channel: true
+      private: false
+    notification:
+      user: false
+      global: false
+    messaging:
+      private: true
+      channel: true
+
+  commands:
+    phrases: true
+    language: en
+    ignore:
+      self: true
+      official: false
+      unofficial: false
+
+  messages:
+    ignore:
+      self: true
+      official: false
+      unofficial: true

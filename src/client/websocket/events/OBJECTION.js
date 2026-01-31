@@ -1,7 +1,7 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 import WOLFResponse from '../../../entities/WOLFResponse.js';
 
-class ObjectionEvent extends BaseEvent {
+export default class ObjectionEvent extends BaseEvent {
   constructor (client) {
     super(client, 'objection');
   }
@@ -11,7 +11,7 @@ class ObjectionEvent extends BaseEvent {
       ? -1
       : data.reconnectSeconds * 1000;
 
-    this.client.emit(
+    return this.client.emit(
       'objection',
       new WOLFResponse(
         {
@@ -27,5 +27,3 @@ class ObjectionEvent extends BaseEvent {
     );
   }
 }
-
-export default ObjectionEvent;

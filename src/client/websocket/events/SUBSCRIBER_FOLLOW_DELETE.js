@@ -1,20 +1,7 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 
-class SubscriberFollowDeleteEvent extends BaseEvent {
+export default class SubscriberFollowDeleteEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber follow delete');
   }
-
-  async process (data) {
-    const wasDeleted = this.client.me.followStore.following.list.delete((following) => following.userId === data.id);
-
-    if (!wasDeleted) { return; }
-
-    return this.client.emit(
-      'userFollowDelete',
-      data.id
-    );
-  }
 }
-
-export default SubscriberFollowDeleteEvent;

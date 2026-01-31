@@ -1,17 +1,11 @@
-import { validate } from '../validator/index.js';
+import BaseUtility from './BaseUtility.js';
+import { validate } from '../validation/Validation.js';
 
-class NumberUtility {
-  /**
-   *
-   * @param {string|number} arg - The string or number to update
-   * @returns
-   */
+export default class NumberUtility extends BaseUtility {
   addCommas (arg) {
-    { // eslint-disable-line no-lone-blocks
-      validate(arg)
-        .isNotNullOrUndefined(`NumberUtility.addCommas() parameter, arg: ${arg} is null or undefined`)
-        .isNotEmptyOrWhitespace(`NumberUtility.addCommas() parameter, arg: ${arg} is empty or whitespace`);
-    }
+    validate(arg, this, this.addCommas)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
 
     const [integerPart, decimalPart] = arg.toString().split('.');
 
@@ -23,40 +17,48 @@ class NumberUtility {
   }
 
   toEnglishNumbers (arg) {
-    { // eslint-disable-line no-lone-blocks
-      validate(arg)
-        .isNotNullOrUndefined(`NumberUtility.toEnglishNumbers() parameter, arg: ${arg} is null or undefined`)
-        .isNotEmptyOrWhitespace(`NumberUtility.toEnglishNumbers() parameter, arg: ${arg} is empty or whitespace`);
-    }
+    validate(arg, this, this.toEnglishNumbers)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
 
-    arg = arg.toString()
+    const fixedArg = arg.toString()
       .replace(/[٠-٩]/g, c => String(c.charCodeAt(0) - 0x0660)) // Arabic
       .replace(/[۰-۹]/g, c => String(c.charCodeAt(0) - 0x06F0)); // Persian
 
-    return isNaN(arg)
-      ? arg
-      : Number(arg);
+    return isNaN(fixedArg)
+      ? fixedArg
+      : Number(fixedArg);
   }
 
   toArabicNumbers (arg) {
-    { // eslint-disable-line no-lone-blocks
-      validate(arg)
-        .isNotNullOrUndefined(`NumberUtility.toArabicNumbers() parameter, arg: ${arg} is null or undefined`)
-        .isNotEmptyOrWhitespace(`NumberUtility.toArabicNumbers() parameter, arg: ${arg} is empty or whitespace`);
-    }
+    validate(arg, this, this.toArabicNumbers)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
 
     return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '٠١٢٣٤٥٦٧٨٩'[char]);
   }
 
   toPersianNumbers (arg) {
-    { // eslint-disable-line no-lone-blocks
-      validate(arg)
-        .isNotNullOrUndefined(`NumberUtility.toPersianNumbers() parameter, arg: ${arg} is null or undefined`)
-        .isNotEmptyOrWhitespace(`NumberUtility.toPersianNumbers() parameter, arg: ${arg} is empty or whitespace`);
-    }
+    validate(arg, this, this.toPersianNumbers)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
 
     return this.toEnglishNumbers(arg).toString().replace(/[0-9]/g, char => '۰۱۲۳۴۵۶۷۸۹'[char]);
   }
-}
 
-export default NumberUtility;
+  random (min, max) {
+    const normalisedMin = this.normaliseNumber(min);
+    const normalisedMax = this.normaliseNumber(max);
+
+    validate(normalisedMin, this, this.random)
+      .isNotNullOrUndefined()
+      .isValidNumber();
+
+    validate(normalisedMax, this, this.random)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero(normalisedMax);
+
+    return Math.floor(Math.random() * max) + min;
+  }
+}

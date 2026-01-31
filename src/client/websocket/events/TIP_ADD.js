@@ -1,20 +1,19 @@
-import BaseEvent from './baseEvent.js';
-import Tip from '../../../entities/tip.js';
-class TipAddEvent extends BaseEvent {
+import BaseEvent from './BaseEvent.js';
+import Tip from '../../../entities/Tip.js';
+
+export default class TipAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'tip add');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.groupId);
 
     if (channel === null) { return; }
 
-    this.client.emit(
+    return this.client.emit(
       'tipAdd',
       new Tip(this.client, data)
     );
   }
 }
-
-export default TipAddEvent;

@@ -1,56 +1,46 @@
 import _ from 'lodash';
 import Ad from '../entities/ad.js';
+import BaseUtility from './BaseUtility.js';
 import Link from '../entities/link.js';
 import urlRegexSafe from 'url-regex-safe';
-import { validate } from '../validator/index.js';
+import { validate } from '../validation/Validation.js';
 
 function replaceRange (string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
 }
 
-const urlRegex = /^(https?:\/\/)?(www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/[^\s]*)?$/gui;
-const isValidUrl = (url) => urlRegex.test(url);
+const isValidUrl = (url) => {
+  try {
+    const parsed = new URL(url.startsWith('http')
+      ? url
+      : `http://${url}`);
 
-class StringUtility {
-  constructor (client) {
-    this.client = client;
+    const isLocalHost = (parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1' || parsed.hostname === '::1');
+
+    return !isLocalHost;
+  } catch {
+    return false;
   }
+};
 
+export default class StringUtility extends BaseUtility {
   chunk (string, length = 1000, splitChar = '\n', joinChar = '\n') {
-    length = Number(length) || length;
+    const normalisedLength = this.normaliseNumber(length);
 
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.chunk() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.chunk() parameter, string: ${string} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, string: ${string} is empty or whitespace`);
-
-      validate(length)
-        .isGreaterThan(0, `StringUtility.chunk() parameter, length: ${length} must be lstringer than 0`);
-
-      validate(splitChar)
-        .isNotNullOrUndefined(`StringUtility.chunk() parameter, splitChar: ${splitChar} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, splitChar: ${splitChar} is empty or whitespace`);
-
-      validate(joinChar)
-        .isNotNullOrUndefined(`StringUtility.chunk() parameter, joinChar: ${joinChar} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.chunk() parameter, joinChar: ${joinChar} is empty or whitespace`);
-    }
-
-    if (string.length <= length) {
+    if (string.length <= normalisedLength) {
       return [string];
     }
 
     const lines = string.split(splitChar).filter(Boolean);
 
     if (lines.length === 0) {
-      throw new Error(`String is longer than ${length} characters and contains no ${splitChar} characters`);
+      throw new Error(`String is longer than ${normalisedLength} characters and contains no ${splitChar} characters`);
     }
 
     return lines.reduce((result, line) => {
       const lastLine = result[result.length - 1];
 
-      if (lastLine && (lastLine.length + line.length + 1 <= length)) {
+      if (lastLine && (lastLine.length + line.length + 1 <= normalisedLength)) {
         result[result.length - 1] = `${lastLine}${joinChar}${line}`;
       } else {
         result.push(line.trim());
@@ -61,43 +51,49 @@ class StringUtility {
   }
 
   getAds (string) {
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.getAds() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.getAds() parameter, string: ${string} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.getAds() parameter, string: ${string} is empty or whitespace`);
-    }
+    validate(string, this, this.getAds)
+      .isNotNullOrUndefined();
 
-    return [...string.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)].map(ad => new Ad(this.client, ad));
+    return [...string.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)]
+      .map(ad =>
+        new Ad(this.client, ad)
+      );
   }
 
   getLinks (string) {
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.getLinks() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.getLinks() parameter, string: ${string} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.getLinks() parameter, string: ${string} is empty or whitespace`);
-    }
+    validate(string, this, this.getLinks)
+      .isNotNullOrUndefined();
 
     const urls = string.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
 
+    if (!urls.length) { return []; }
+
     const sortedUrls = urls.map(url => url.replace(/\.+$/, '')).sort((a, b) => b.length - a.length);
 
-    const matchedIndices = new Set();
-    const matches = [];
+    const results = [];
 
     for (const url of sortedUrls) {
-      const urlPattern = new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu');
+      const pattern = new RegExp(`(?:(?<!\\d|\\p{Letter}))(${_.escapeRegExp(url)})(?:(?!\\d|\\p{Letter}))`, 'gu');
 
-      for (const match of string.matchAll(urlPattern)) {
-        if (!matchedIndices.has(match.index) && isValidUrl(match[1])) {
-          matchedIndices.add(match.index);
-          matches.push(match);
-        }
+      for (const match of string.matchAll(pattern)) {
+        if (results.some(existing => existing.index === match.index)) { continue; }
+
+        if (!isValidUrl(match[1])) { continue; }
+
+        results.push(match);
       }
     }
 
-    return matches.map(match => new Link(this.client, match));
+    return results.map(
+      (match) =>
+        new Link(this.client,
+          {
+            start: match.index,
+            end: match.index + match[1].length,
+            link: match[1]
+          }
+        )
+    );
   }
 
   isEqual (stringA, stringB) {
@@ -125,13 +121,6 @@ class StringUtility {
   }
 
   replace (string, replacements) {
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`)
-        .isNotEmptyOrWhitespace(`StringUtility.replace() parameter, string: ${string} is empty or whitespace`);
-    }
-
     return Object.entries(replacements)
       .map((replacement) => [...string.matchAll(new RegExp(_.escapeRegExp(`{${replacement[0]}}`), 'g'))]
         .map((match) =>
@@ -150,11 +139,8 @@ class StringUtility {
   }
 
   sanitise (string) {
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`);
-    }
+    validate(string, this, this.sanitise)
+      .isNotNullOrUndefined();
 
     return string
       .normalize('NFD') // Handles Latin accents
@@ -170,16 +156,11 @@ class StringUtility {
   }
 
   trimAds (string) {
-    { // eslint-disable-line no-lone-blocks
-      validate(string)
-        .isTypeOf('string', `StringUtility.replace() parameter, string: ${string} is not type of string`)
-        .isNotNullOrUndefined(`StringUtility.replace() parameter, string: ${string} is null or undefined`);
-    }
+    validate(string, this, this.trimAds)
+      .isNotNullOrUndefined();
 
     const ads = this.getAds(string);
 
     return ads.reverse().reduce((result, match) => result.substring(0, match.start) + match[3] + result.substring(match.end), string);
   }
 }
-
-export default StringUtility;

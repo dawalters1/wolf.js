@@ -1,26 +1,23 @@
-import BaseEvent from './baseEvent.js';
-import ChannelAudioSlotRequest from '../../../entities/channelAudioSlotRequest.js';
+import BaseEvent from './BaseEvent.js';
+import ChannelAudioSlotRquest from '../../../entities/ChannelAudioSlotRquest.js';
 
-class GroupAudioRequestAddEvent extends BaseEvent {
+export default class GroupAudioRequestAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'group audio request add');
   }
 
   async process (data) {
-    const channel = this.client.channel.store.get(data.groupId);
+    const channel = this.client.channel.store.get((item) => item.id === data.id);
 
     if (channel === null) { return; }
 
-    this.client.emit(
-      'channelAudioSlotRequestAdd',
-      channel.audioSlotRequestStore.set(
-        new ChannelAudioSlotRequest(
-          this.client,
-          data
-        )
-      )
+    const channelAudioSlotRquest = new ChannelAudioSlotRquest(this.client, data);
+
+    channel.audioSlotRequestStore.set(channelAudioSlotRquest);
+
+    return this.client.emit(
+      'channelAudioSlotRequested',
+      channelAudioSlotRquest
     );
   }
 }
-
-export default GroupAudioRequestAddEvent;

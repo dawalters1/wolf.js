@@ -1,8 +1,8 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 import { Language, MessageType } from '../../../constants/index.js';
-import { Message } from '../../../entities/message.js';
+import Message from '../../../entities/Message.js';
 
-class MessageEvent extends BaseEvent {
+export default class MessageEvent extends BaseEvent {
   constructor (client) {
     super(client, 'message send');
   }
@@ -34,10 +34,8 @@ class MessageEvent extends BaseEvent {
       ? 'channelMessage'
       : 'privateMessage', 'message'];
 
-    events.forEach((event) =>
+    return events.map((event) =>
       this.client.emit(event, message)
     );
   }
 }
-
-export default MessageEvent;

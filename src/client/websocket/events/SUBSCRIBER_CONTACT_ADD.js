@@ -1,21 +1,22 @@
-import BaseEvent from './baseEvent.js';
+import BaseEvent from './BaseEvent.js';
 import Contact from '../../../entities/contact.js';
 
-class SubscriberContactAddEvent extends BaseEvent {
+export default class SubscriberContactAddEvent extends BaseEvent {
   constructor (client) {
     super(client, 'subscriber contact add');
   }
 
   async process (data) {
-    const user = await this.client.user.getById(data.targetId);
+    const user = await this.client.user.fetch(data.targetId);
 
     if (user === null) { return; }
 
+    const contact = new Contact(this.client, user);
+    this.client.contact.store.set(contact);
+
     this.client.emit(
-      'contactAdd',
-      this.client.contact.store.set(new Contact(this.client, user))
+      'userAdded',
+      contact
     );
   }
 }
-
-export default SubscriberContactAddEvent;
