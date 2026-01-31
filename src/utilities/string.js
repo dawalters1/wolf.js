@@ -3,6 +3,7 @@ import Ad from '../entities/ad.js';
 import BaseUtility from './BaseUtility.js';
 import Link from '../entities/link.js';
 import urlRegexSafe from 'url-regex-safe';
+import { validate } from '../validation/Validation.js';
 
 function replaceRange (string, start, end, substitute) {
   return string.substring(0, start) + substitute + string.substring(end);
@@ -50,6 +51,9 @@ export default class StringUtility extends BaseUtility {
   }
 
   getAds (string) {
+    validate(string, this, this.getAds)
+      .isNotNullOrUndefined();
+
     return [...string.matchAll(/(?<![\p{Letter}\d])\[((?:[^[\]])+?)\](?![\p{Letter}\d])/gu)]
       .map(ad =>
         new Ad(this.client, ad)
@@ -57,6 +61,9 @@ export default class StringUtility extends BaseUtility {
   }
 
   getLinks (string) {
+    validate(string, this, this.getLinks)
+      .isNotNullOrUndefined();
+
     const urls = string.match(urlRegexSafe({ localhost: true, returnString: false })) || [];
 
     if (!urls.length) { return []; }
@@ -132,6 +139,9 @@ export default class StringUtility extends BaseUtility {
   }
 
   sanitise (string) {
+    validate(string, this, this.sanitise)
+      .isNotNullOrUndefined();
+
     return string
       .normalize('NFD') // Handles Latin accents
       .replace(/[\u0300-\u036f]/g, '') // Remove Latin combining marks
@@ -146,6 +156,9 @@ export default class StringUtility extends BaseUtility {
   }
 
   trimAds (string) {
+    validate(string, this, this.trimAds)
+      .isNotNullOrUndefined();
+
     const ads = this.getAds(string);
 
     return ads.reverse().reduce((result, match) => result.substring(0, match.start) + match[3] + result.substring(match.end), string);

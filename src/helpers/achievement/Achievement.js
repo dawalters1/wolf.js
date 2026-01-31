@@ -3,6 +3,8 @@ import AchievementCategoryHelper from './AchievementCategory.js';
 import AchievementChannelHelper from './AchievementChannel.js';
 import AchievementUserHelper from './AchievementUser.js';
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class AchievementHelper extends BaseHelper {
   #category = null;
@@ -29,15 +31,34 @@ export default class AchievementHelper extends BaseHelper {
     return this.#user;
   }
 
-  async fetch (achievementIds, languageId, opts = {}) {
+  async fetch (achievementIds, languageId, opts) {
     const isArrayResponse = Array.isArray(achievementIds);
 
     const normalisedAchievementIds = this.normaliseNumbers(achievementIds);
     const normalisedLanguageId = this.normaliseNumber(languageId);
 
-    // TODO: validation
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
-    const idsToFetch = opts.forceNew
+    validate(normalisedAchievementIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedLanguageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    const idsToFetch = opts?.forceNew
       ? normalisedAchievementIds
       : normalisedAchievementIds.filter(
         (achievementId) =>

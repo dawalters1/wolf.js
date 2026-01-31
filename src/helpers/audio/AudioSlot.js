@@ -1,7 +1,9 @@
 import AudioSlotRequestHelper from './AudioSlotRequest.js';
 import BaseHelper from '../BaseHelper.js';
 import ChannelAudioSlot from '../../entities/ChannelAudioSlot.js';
+import ChannelMemberCapability from '../../constants/ChannelMemberCapability.js';
 import StageClient from '../../client/stage/Stage.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class AudioSlotHelper extends BaseHelper {
   #clients = new Map();
@@ -28,6 +30,30 @@ export default class AudioSlotHelper extends BaseHelper {
 
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.fetch)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 
@@ -66,6 +92,23 @@ export default class AudioSlotHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
+    validate(normalisedChannelId, this, this.lock)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.lock)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!await this.client.utility.channel.member.hasCapability(normalisedChannelId, this.client.me.id, ChannelMemberCapability.MOD)) { throw new Error(`Bot lacks Channel Capabilities to add slot request in Channel with ID ${normalisedChannelId}`); }
+
     const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
 
     if (slot === null) { throw new Error(`Slot with ID ${normalisedChannelId} in Channel with ID ${normalisedChannelId} NOT FOUND`); }
@@ -87,6 +130,23 @@ export default class AudioSlotHelper extends BaseHelper {
   async unlock (channelId, slotId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.unlock)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.unlock)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
+    if (!await this.client.utility.channel.member.hasCapability(normalisedChannelId, this.client.me.id, ChannelMemberCapability.MOD)) { throw new Error(`Bot lacks Channel Capabilities to add slot request in Channel with ID ${normalisedChannelId}`); }
 
     const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
 
@@ -110,11 +170,28 @@ export default class AudioSlotHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
+    validate(normalisedChannelId, this, this.mute)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.mute)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
     const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
 
     if (slot === null) { throw new Error(`Slot with ID ${normalisedChannelId} in Channel with ID ${normalisedChannelId} NOT FOUND`); }
 
     if (!slot.isMuted) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} is muted`); }
+
+    if (slot.occupierId !== this.client.me.id && !await this.client.utility.channel.member.canPerformActionAgainst(normalisedChannelId, slot.occupierId)) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       'group audio broadcast update',
@@ -130,6 +207,21 @@ export default class AudioSlotHelper extends BaseHelper {
   async unmute (channelId, slotId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.unmute)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.unmute)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
 
     const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
 
@@ -154,11 +246,28 @@ export default class AudioSlotHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
+    validate(normalisedChannelId, this, this.kick)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.kick)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    const channel = await this.client.channel.fetch(channelId);
+
+    if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+    if (!channel.isMember) { throw new Error(`Bot is not member of Channel with ID ${normalisedChannelId}`); }
+
     const slot = await this.fetch(normalisedChannelId, normalisedSlotId);
 
     if (slot === null) { throw new Error(`Slot with ID ${normalisedChannelId} in Channel with ID ${normalisedChannelId} NOT FOUND`); }
 
     if (slot.occupierId === null) { throw new Error(`Slot with ID ${normalisedSlotId} in Channel with ID ${normalisedChannelId} is not occupied`); }
+
+    if (slot.occupierId !== this.client.me.id && !await this.client.utility.channel.member.canPerformActionAgainst(normalisedChannelId, slot.occupierId)) { throw new Error(''); }
 
     return await this.client.websocket.emit(
       'group audio broadcast disconnect',
@@ -173,6 +282,16 @@ export default class AudioSlotHelper extends BaseHelper {
   async join (channelId, slotId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.join)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.join)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     if (this.#clients.has(normalisedChannelId)) { return; }
 
@@ -219,6 +338,16 @@ export default class AudioSlotHelper extends BaseHelper {
   async leave (channelId, slotId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
+
+    validate(normalisedChannelId, this, this.leave)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedSlotId, this, this.leave)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 

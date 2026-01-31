@@ -1,4 +1,5 @@
 import BaseEntity from './BaseEntity.js';
+import getLinkPreviewData from '../util/getLinkPreviewData.js';
 
 export default class Link extends BaseEntity {
   constructor (client, entity) {
@@ -7,5 +8,9 @@ export default class Link extends BaseEntity {
     this.start = entity.start;
     this.end = entity.end;
     this.link = entity.link;
+  }
+
+  async preview () {
+    return await getLinkPreviewData(this.link);
   }
 }

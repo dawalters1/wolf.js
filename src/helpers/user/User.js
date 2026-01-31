@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import User from '../../entities/User.js';
 import UserPresenceHelper from './UserPresence.js';
 import UserRoleHelper from './UserRole.js';
+import { validate } from '../../validation/Validation.js';
 import WOLFStarHelper from './WOLFStar.js';
 
 export default class UserHelper extends BaseHelper {
@@ -37,7 +38,30 @@ export default class UserHelper extends BaseHelper {
 
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+
+          extended: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const idsToFetch = opts?.forceNew
       ? normalisedUserIds
@@ -85,6 +109,10 @@ export default class UserHelper extends BaseHelper {
   }
 
   async search (query) {
+    validate(query, this, this.search)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
     try {
       const response = await this.client.websocket.emit(
         'search',

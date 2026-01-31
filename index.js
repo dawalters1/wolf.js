@@ -1,3 +1,20 @@
+
+/**
+ * Get the item at an index in the Set
+ * @param {Number} index
+ * @returns Specified index
+ */
+// eslint-disable-next-line no-extend-native
+Set.prototype.get = function (index) {
+  if (typeof index !== 'number' || index < 0) { return undefined; }
+  let i = 0;
+  for (const item of this) {
+    if (i === index) { return item; }
+    i++;
+  }
+  return undefined; // index out of range
+};
+
 import {
   AdminAction,
   Avatar,
@@ -33,6 +50,7 @@ import WOLF from './src/client/WOLF.js';
 import WOLFResponse from './src/entities/WOLFResponse.js';
 
 process.on('unhandledRejection', (error) => {
+  if (error instanceof WOLFResponse) { return; }
   console.error(error);
 });
 

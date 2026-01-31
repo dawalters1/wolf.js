@@ -1,11 +1,13 @@
 import BaseHelper from '../BaseHelper.js';
 import Channel from '../../entities/Channel.js';
 import ChannelCategorHelper from './ChannelCategory.js';
+import ChannelEntities from '../../constants/ChannelEntities.js';
 import ChannelMemberHelper from './ChannelMember.js';
 import ChannelRoleHelper from './ChannelRole.js';
 import Message from '../../entities/Message.js';
 import Search from '../../entities/Search.js';
 import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validation/Validation.js';
 
 export default class ChannelHelper extends BaseHelper {
   #category;
@@ -37,6 +39,25 @@ export default class ChannelHelper extends BaseHelper {
 
     if (!normalisedChannelIdOrName || this.isObject(normalisedChannelIdOrName)) {
       opts = normalisedChannelIdOrName;
+
+      validate(opts, this, this.fetch)
+        .isNotRequired()
+        .forEachProperty(
+          {
+            forceNew: validator => validator
+              .isNotRequired()
+              .isBoolean(),
+            subscribe: validator => validator
+              .isNotRequired()
+              .isBoolean(),
+            entities: validator => validator
+              .isNotRequired()
+              .isArray()
+              .each()
+              .in(Object.values(ChannelEntities))
+          }
+        );
+
       if (!opts?.forceNew && this.store.fetched) {
         return this.store.filter((item) => item.isMember);
       }
@@ -56,7 +77,7 @@ export default class ChannelHelper extends BaseHelper {
       if (response.body.length > 0) {
         const channelIdList = response.body.map((serverChannelListGroup) => serverChannelListGroup.id);
 
-        const channels = await this.fetch(channelIdList);
+        const channels = await this.fetch(channelIdList, opts);
 
         channels
           .filter(Boolean)
@@ -69,10 +90,30 @@ export default class ChannelHelper extends BaseHelper {
       return this.store.filter((item) => item.isMember);
     }
 
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          entities: validator => validator
+            .isNotRequired()
+            .isArray()
+            .each()
+            .in(Object.values(ChannelEntities))
+        }
+      );
+
     // Developer provided a name
     if (!Array.isArray(normalisedChannelIdOrName) && isNaN(normalisedChannelIdOrName)) {
       if (!opts?.forceNew) {
-        const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName));
+        const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName) && opts?.entities
+          ? opts.entities.some((entity) => !(entity in item))
+          : true);
 
         if (cached) { return cached; }
       }
@@ -106,7 +147,10 @@ export default class ChannelHelper extends BaseHelper {
 
     const idsToFetch = opts?.forceNew
       ? normalisedChannelIds
-      : normalisedChannelIds.filter((channelId) => !this.store.has((item) => item.id === channelId));
+      : normalisedChannelIds.filter(channelId => {
+        const cached = this.store.get(channelId);
+        return !cached || (opts?.entities && opts.entities.some(entity => !(entity in cached)));
+      });
 
     if (idsToFetch.length > 0) {
       const response = await this.client.websocket.emit(
@@ -219,6 +263,10 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async search (query) {
+    validate(query, this, this.search)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
     try {
       const response = await this.client.websocket.emit(
         'search',

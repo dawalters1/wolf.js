@@ -1,5 +1,6 @@
 import BaseHelper from '../BaseHelper.js';
 import UserPresence from '../../entities/UserPresence.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class WOLFStarHelper extends BaseHelper {
   async fetch (userIds, opts) {
@@ -7,7 +8,26 @@ export default class WOLFStarHelper extends BaseHelper {
 
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const subscribe = opts?.subscribe ?? true;
 

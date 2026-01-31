@@ -1,4 +1,4 @@
-import ExpiringPropertyManager from './ExpiringPropertyManager.js';
+import ExpiringPropertyCacheManager from './ExpiringPropertyCacheManager.js';
 
 export default class PropertyCache {
   #fetched = false;
@@ -10,7 +10,7 @@ export default class PropertyCache {
     this.ttl = ttl;
     this.autoRefresh = autoRefresh;
 
-    ExpiringPropertyManager.register?.(this);
+    ExpiringPropertyCacheManager.register?.(this);
   }
 
   set fetched (value) {

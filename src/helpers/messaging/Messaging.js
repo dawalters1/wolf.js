@@ -1,13 +1,15 @@
 import BaseHelper from '../BaseHelper.js';
 import EmbedType from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
-import getLinkPreviewData from '../../util/getLinkPreviewData.js';
 import Message from '../../entities/Message.js';
 import MessageSubscriptionType from '../../constants/MessageSubscriptionType.js';
 import MessageType from '../../constants/MessageType.js';
 import { nanoid } from 'nanoid';
 import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validation/Validation.js';
 import WOLFResponse from '../../entities/WOLFResponse.js';
+
+const ZERO_WIDTH_LINK_REGEX = /\[([\p{Cf}\s]+)\]\(([^)]+)\)/gu;
 
 export default class MessagingHelper extends BaseHelper {
   async #getFormattingData (ads, links) {
@@ -55,9 +57,8 @@ export default class MessagingHelper extends BaseHelper {
       }
 
       if ('url' in item) {
-        if (item.url.startsWith('wolf://')) { continue; }
+        const linkPreviewData = item.preview();
 
-        const linkPreviewData = await getLinkPreviewData(item.url);
         if (linkPreviewData === null) { continue; }
 
         return [linkPreviewData];
@@ -76,9 +77,13 @@ export default class MessagingHelper extends BaseHelper {
 
     body = body.trim();
 
+    // If inside the brackets is a zero width or unicode space, this breaks, jank fix is to replace with Braille pattern blank
+    body = [...body.matchAll(ZERO_WIDTH_LINK_REGEX)]
+      .reverse()
+      .reduce((result, match) => result.replace(match[0], `[${'\u2800'}](${match[2]})`), body);
+
     let offset = 0;
     let developerInjectedLinks = [...body.matchAll(/\[(.+?)\]\((.+?)\)/gu)]
-      .reverse()
       .reduce((result, match) => {
         body = body.replace(match[0], match[1]);
 
@@ -185,12 +190,13 @@ export default class MessagingHelper extends BaseHelper {
       : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
-      const multimedia = this.client.config.framework.mmsEndpoints.message;
+      const multimedia = this.client.config.framework.multimedia.messaging;
 
+      if (!multimedia) { throw new Error('Message multimeda not found'); }
       // TODO: some form of validation
 
       const isAudio = ['audio/x-m4a', 'audio/x-mp4'].includes(mimeType);
-
+      return;
       return this.client.multimedia.post(
         multimedia,
         {
@@ -210,7 +216,7 @@ export default class MessagingHelper extends BaseHelper {
     const messages = await this.#buildMessages(id, content, isChannel, opts);
 
     const responses = [];
-
+    return;
     for (const message of messages) {
       const response = await this.client.websocket.emit(
         'message send',
@@ -232,12 +238,12 @@ export default class MessagingHelper extends BaseHelper {
   }
 
   async subscribe (targetIds, targetType) {
-    const normalisedIds = this.normaliseNumbers(targetIds);
+    let normalisedIds = this.normaliseNumbers(targetIds);
 
     // Jank but allows .subscribe('channel/private')
-    if (Object.values(MessageSubscriptionType).includes(targetType)) {
+    if (Object.values(MessageSubscriptionType).includes(targetIds)) {
       targetType = targetIds;
-      targetIds = undefined;
+      normalisedIds = undefined;
     }
 
     const isChannel = targetType === MessageSubscriptionType.CHANNEL;
@@ -271,6 +277,16 @@ export default class MessagingHelper extends BaseHelper {
     const normalisedId = this.normaliseNumber(id);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
 
+    validate(normalisedId, this, this.delete)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTimestamp, this, this.delete)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     const response = await this.client.websocket.emit(
       'message update',
       {
@@ -293,6 +309,16 @@ export default class MessagingHelper extends BaseHelper {
   async restore (id, timestamp, isChannel = true) {
     const normalisedId = this.normaliseNumber(id);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
+
+    validate(normalisedId, this, this.restore)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTimestamp, this, this.restore)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const response = await this.client.websocket.emit(
       'message update',

@@ -43,7 +43,7 @@ export default class WelcomeEvent extends BaseEvent {
 
       // only attach data we actually want on the context
       if (!key.startsWith('_')) {
-        sessionContext[key.slice(1)] = results[i];
+        sessionContext[key] = results[i];
       }
     }
 

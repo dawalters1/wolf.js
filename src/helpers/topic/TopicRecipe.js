@@ -1,13 +1,34 @@
 
 import BaseHelper from '../BaseHelper.js';
 import Command from '../../constants/Command.js';
+import Language from '../../constants/Language.js';
 import { StatusCodes } from 'http-status-codes';
 import TopicRecipe from '../../entities/TopicRecipe.js';
+import { validate } from '../../validation/Validation.js';
 
 class TopicRecipeHelper extends BaseHelper {
-  async get (recipeId, languageId, type, opts) {
+  async fetch (recipeId, languageId, type, opts) {
     const normalisedRecipeId = this.normaliseNumber(recipeId);
     const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(normalisedRecipeId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     if (!opts?.forceNew) {
       const cached = this.store.filter((item) => item.id === normalisedRecipeId && item.languageId === normalisedLanguageId && item.type === type);

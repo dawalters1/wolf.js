@@ -1,4 +1,6 @@
 import BaseUtility from './BaseUtility.js';
+import UserPrivilege from '../constants/UserPrivilege.js';
+import { validate } from '../validation/Validation.js';
 
 export default class UserUtility extends BaseUtility {
   constructor (client) {
@@ -13,7 +15,17 @@ export default class UserUtility extends BaseUtility {
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedPrivileges = this.normaliseArray(privileges);
 
-    // TODO: validation
+    validate(normalisedUserId, this, this.privilege.has)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedPrivileges, this, this.privilege.has)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .in(Object.values(UserPrivilege));
 
     const user = await this.client.user.fetch(userId);
 

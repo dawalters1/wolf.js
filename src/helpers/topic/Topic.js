@@ -1,7 +1,9 @@
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
 import { StatusCodes } from 'http-status-codes';
 import TopicPage from '../../entities/TopicPage.js';
 import TopicRecipeHelper from './TopicRecipe.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class TopicHelper extends BaseHelper {
   #recipe;
@@ -17,6 +19,24 @@ export default class TopicHelper extends BaseHelper {
 
   async fetch (name, languageId, opts) {
     const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(name, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isNotWhitespace();
+
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     if (!opts?.forceNew) {
       const cached = this.store.get((item) => this.client.utility.string.isEqual(item.name, name) && item.languageId === languageId);

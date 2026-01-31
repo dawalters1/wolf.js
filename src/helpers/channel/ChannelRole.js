@@ -2,10 +2,30 @@ import BaseHelper from '../BaseHelper.js';
 import ChannelRole from '../../entities/ChannelRole.js';
 import ChannelRoleFetchType from '../../constants/ChannelRoleFetchType.js';
 import ChannelRoleUser from '../../entities/ChannelRoleUser.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class ChannelRoleHelper extends BaseHelper {
   async fetch (channelId, type, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(type, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(ChannelRoleFetchType));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const channel = await this.client.channel.fetch(channelId);
 
@@ -65,6 +85,21 @@ export default class ChannelRoleHelper extends BaseHelper {
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedRoleId = this.normaliseNumber(roleId);
 
+    validate(normalisedChannelId, this, this.assign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedUserId, this, this.assign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedRoleId, this, this.assign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     const channel = await this.client.channel.fetch(normalisedChannelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
@@ -88,6 +123,21 @@ export default class ChannelRoleHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedRoleId = this.normaliseNumber(roleId);
+
+    validate(normalisedChannelId, this, this.unassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedUserId, this, this.unassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedRoleId, this, this.unassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 
@@ -113,6 +163,26 @@ export default class ChannelRoleHelper extends BaseHelper {
     const normalisedOldUserId = this.normaliseNumber(oldUserId);
     const normalisedNewUserId = this.normaliseNumber(newUserId);
     const normalisedRoleId = this.normaliseNumber(roleId);
+
+    validate(normalisedChannelId, this, this.reassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedOldUserId, this, this.reassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedNewUserId, this, this.reassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedRoleId, this, this.reassign)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 

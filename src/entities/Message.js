@@ -29,4 +29,47 @@ export default class Message extends BaseEntity {
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
     this.bodyParts = this.body?.split(this.client.SPLIT_REGEX)?.filter(Boolean) ?? [];
   }
+
+  async user () {
+    return this.client.user.fetch(this.sourceUserId);
+  }
+
+  async channel () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.channel.fetch(this.targetChannelId);
+  }
+
+  async tip (tipCharms) {
+    if (!this.isChannel) { throw new Error(''); }
+
+    return this.client.tip.tip(
+      this.targetChannelId,
+      this.sourceUserId,
+      {
+        type: ContextType.MESSAGE,
+        timestamp: this.timestamp
+      },
+      tipCharms
+    );
+  }
+
+  async sendReply (content, opts) {
+    if (this.isChannel) {
+      return this.client.messaging.sendChannelMessage(this.targetChannelId, content, opts);
+    }
+    return this.client.messaging.sendPrivateMessage(this.sourceUserId, content, opts);
+  }
+
+  async delete () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.messaging.delete(this.targetChannelId, this.timestamp);
+  }
+
+  async restore () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.messaging.restore(this.targetChannelId, this.timestamp);
+  }
 }

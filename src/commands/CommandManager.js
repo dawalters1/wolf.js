@@ -11,7 +11,7 @@ class CommandManager {
   constructor (client) {
     this.#client = client;
     this.#commands = [];
-    this.#usePhrases = client.config.framework.commands.phrases;
+    this.#usePhrases = client.config.framework?.commands?.phrases ?? true;
 
     client.on('message', async (message) => {
       const ignoreSettings = client.config.framework.commands.ignore;
@@ -22,7 +22,7 @@ class CommandManager {
 
       if (ignoreSettings.self && message.userId === client.me.id) { return; }
 
-      const context = this._getCommand(
+      const context = this.#getCommand(
         this.#commands,
         {
           isChannel: message.isChannel,
@@ -39,11 +39,11 @@ class CommandManager {
 
       if (!context.callback) { return; }
 
-      if (ignoreSettings.official && (await client.user.getById(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
+      if (ignoreSettings.official && (await client.user.fetch(context.sourceUserId)).privilegeList.includes(UserPrivilege.BOT)) { return; }
 
       if (ignoreSettings.unofficial) {
-        const unofficialCharmIds = client.config.charm.unofficial;
-        const charmSummary = await client.charm.getUserSummary(context.userId);
+        const unofficialCharmIds = client.config.framework.charms.unofficial;
+        const charmSummary = await client.charm.summary(context.sourceUserId);
 
         if (charmSummary.some((charm) => unofficialCharmIds.includes(charm.charmId))) { return; }
       }
@@ -57,7 +57,7 @@ class CommandManager {
     client.commandManager = this;
   }
 
-  _getCommand (commands, context) {
+  #getCommand (commands, context) {
     const argument = context.body.split(this.#client.SPLIT_REGEX)[0];
 
     for (const command of commands) {
@@ -94,7 +94,7 @@ class CommandManager {
 
       return (!command.children.length)
         ? context
-        : this._getCommand(command.children, context);
+        : this.#getCommand(command.children, context);
     }
 
     return context;

@@ -1,11 +1,32 @@
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
 import { StatusCodes } from 'http-status-codes';
 import StoreProductProfile from '../../entities/StoreProductProfile.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class StoreProductProfileHelper extends BaseHelper {
   async fetch (productId, languageId, opts) {
     const normalisedProductId = this.normaliseNumber(productId);
     const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(normalisedProductId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     if (!opts?.forceNew) {
       const cached = this.store.find((item) => item.id === productId && item.languageId === normalisedLanguageId);

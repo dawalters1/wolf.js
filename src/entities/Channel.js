@@ -1,7 +1,11 @@
 import AvatarType from '../constants/AvatarType.js';
 import BaseEntity from './BaseEntity.js';
 import Cache from '../cache/Cache.js';
+import ChannelAudioConfig from './ChannelAudioConfig.js';
+import ChannelAudioCount from './ChannelAudioCount.js';
+import ChannelExtended from './ChannelExtended.js';
 import ChannelMemberCache from '../cache/ChannelMemberCache.js';
+import ChannelMessageConfig from './ChannelMessageConfig.js';
 import ChannelOwner from './ChannelOwner.js';
 import ChannelRoleStore from '../cache/ChannelRoleCache.js';
 import IconInfo from './IconInfo.js';
@@ -36,7 +40,18 @@ export default class Channel extends BaseEntity {
     this.owner = new ChannelOwner(client, entity.base.owner);
     this.verificationTier = entity.base.verificationTier;
 
-    // TODO: expand this for remaining properties
+    this.extended = entity.extended
+      ? new ChannelExtended(client, entity.extended)
+      : null;
+    this.audioConfig = entity.audioConfig
+      ? new ChannelAudioConfig(client, entity.audioConfig)
+      : null;
+    this.audioCount = entity.audioCount
+      ? new ChannelAudioCount(client, entity.audioCount)
+      : null;
+    this.messageConfig = entity.messageConfig
+      ? new ChannelMessageConfig(client, entity.messageConfig)
+      : null;
   }
 
   get achievementStore () {

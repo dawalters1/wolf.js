@@ -4,69 +4,15 @@ import ChannelMemberCapability from '../../constants/ChannelMemberCapability.js'
 import ChannelMemberListType from '../../constants/ChannelMemberListType.js';
 import { StatusCodes } from 'http-status-codes';
 import UserPrivilege from '../../constants/UserPrivilege.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class ChannelMemberHelper extends BaseHelper {
-  async #canPerformAction (channel, targetMember, newCapability) {
-    if (newCapability === ChannelMemberCapability.OWNER) { return false; }
-    if (channel.isOwner) { return true; }
-
-    const sourceMemberHasGap =
-      this.client.me?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
-
-    const hasHigherCapability = (() => {
-      switch (channel.capabilities) {
-        case ChannelMemberCapability.CO_OWNER:
-          return [
-            ChannelMemberCapability.ADMIN,
-            ChannelMemberCapability.MOD,
-            ChannelMemberCapability.REGULAR,
-            ChannelMemberCapability.NONE,
-            ChannelMemberCapability.BANNED
-          ].includes(targetMember.capabilities);
-        case ChannelMemberCapability.ADMIN:
-          return channel.extended?.advancedAdmin
-            ? [
-                ChannelMemberCapability.ADMIN,
-                ChannelMemberCapability.MOD,
-                ChannelMemberCapability.REGULAR,
-                ChannelMemberCapability.SILENCED,
-                ChannelMemberCapability.BANNED,
-                ChannelMemberCapability.NONE
-              ].includes(targetMember.capabilities)
-            : [
-                ChannelMemberCapability.MOD,
-                ChannelMemberCapability.REGULAR,
-                ChannelMemberCapability.SILENCED,
-                ChannelMemberCapability.BANNED,
-                ChannelMemberCapability.NONE
-              ].includes(targetMember.capabilities);
-        case ChannelMemberCapability.MOD:
-          return [
-            ChannelMemberCapability.REGULAR,
-            ChannelMemberCapability.SILENCED,
-            ChannelMemberCapability.BANNED,
-            ChannelMemberCapability.NONE
-          ].includes(targetMember.capabilities);
-        default:
-          return false;
-      }
-    })();
-
-    const targetUser = await this.client.user.fetch(targetMember.id);
-    const targetMemberHasGap =
-      targetUser?.privilegeList.includes(UserPrivilege.GROUP_ADMIN) ?? false;
-
-    if (newCapability && [ChannelMemberCapability.SILENCED, ChannelMemberCapability.BANNED].includes(newCapability) && targetMemberHasGap) { return false; }
-
-    return sourceMemberHasGap || hasHigherCapability;
-  }
-
   async #fetchList (channel, list) {
     if (channel.memberStore.metadata[list]) {
       return channel.memberStore.filter((item) => item.lists.has(list));
     }
 
-    const listConfig = this.client.config.get(`framework.helper.channel.member.list.${list}`);
+    const listConfig = this.client.config.framework.helper.channel.member.list[`${list}`];
     const v3Command = (() => {
       switch (list) {
         case ChannelMemberListType.PRIVILEGED: return 'group member privileged list';
@@ -150,6 +96,16 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async #fetchMember (channel, memberId, opts) {
+    validate(opts, this, this.#fetchMember)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     if (!opts?.forceNew) {
       const cached = this.channel.memberStore.get(memberId);
       if (cached) { return cached; }
@@ -172,7 +128,7 @@ export default class ChannelMemberHelper extends BaseHelper {
           {
             ...response.body,
             groupId: channel.id,
-            hash: (await this.client.user.getById(memberId)).hash
+            hash: (await this.client.user.fetch(memberId)).hash
           }
         )
       );
@@ -183,14 +139,14 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async #updateCapability (channelId, userId, newCapabilities, allowedFrom) {
-    const channel = await this.client.channel.getById(channelId);
+    const channel = await this.client.channel.fetch(channelId);
     if (channel === null) { throw new Error(`Channel with ID ${channelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }
 
     const member = await this.getMember(channelId, userId);
     if (member === null) { throw new Error(`Member with ID ${userId} NOT FOUND in Channel with ID ${channel.id}`); }
 
-    if (!await this.#canPerformAction(channel, member, newCapabilities)) { throw new Error(`Insufficient capabilities to change capability to ${ChannelMemberCapability[newCapabilities]}`); }
+    if (!await this.client.utility.channel.member.canPerformActionAgaints(channel, member, newCapabilities)) { throw new Error(`Insufficient capabilities to change capability to ${ChannelMemberCapability[newCapabilities]}`); }
 
     if (!allowedFrom.includes(member.capabilities)) { throw new Error(`Invalid transition from ${ChannelMemberCapability[member.capabilities]} to ${ChannelMemberCapability[newCapabilities]}`); }
 
@@ -210,24 +166,55 @@ export default class ChannelMemberHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberIdOrListType = this.normaliseNumber(memberIdOrListType);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     const channel = await this.client.channel.fetch(normalisedChannelId);
 
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }
 
-    if (!isNaN(normalisedMemberIdOrListType)) {
-    // TODO: Validate list type
+    if (isNaN(normalisedMemberIdOrListType)) {
+      validate(normalisedMemberIdOrListType, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(ChannelMemberListType));
+
       return this.#fetchList(channel, normalisedMemberIdOrListType);
     }
 
-    // TODO: Validate number
+    validate(normalisedMemberIdOrListType, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     return this.#fetchMember(channel, normalisedMemberIdOrListType, opts);
   }
 
   async coowner (channelId, memberId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
+
+    validate(normalisedChannelId, this, this.coowner)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.coowner)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return this.#updateCapability(
       normalisedChannelId,
@@ -245,6 +232,16 @@ export default class ChannelMemberHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
+    validate(normalisedChannelId, this, this.admin)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.admin)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     return this.#updateCapability(
       normalisedChannelId,
       normalisedMemberId,
@@ -261,6 +258,16 @@ export default class ChannelMemberHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
+    validate(normalisedChannelId, this, this.mod)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.mod)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     return this.#updateCapability(
       normalisedChannelId,
       normalisedMemberId,
@@ -276,6 +283,16 @@ export default class ChannelMemberHelper extends BaseHelper {
   async regular (channelId, memberId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
+
+    validate(normalisedChannelId, this, this.regular)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.regular)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return this.#updateCapability(
       normalisedChannelId,
@@ -294,6 +311,16 @@ export default class ChannelMemberHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
+    validate(normalisedChannelId, this, this.silence)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.silence)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     return this.#updateCapability(
       normalisedChannelId,
       normalisedMemberId,
@@ -307,6 +334,16 @@ export default class ChannelMemberHelper extends BaseHelper {
   async kick (channelId, memberId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
+
+    validate(normalisedChannelId, this, this.kick)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.kick)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return this.#updateCapability(
       normalisedChannelId,
@@ -323,6 +360,16 @@ export default class ChannelMemberHelper extends BaseHelper {
   async ban (channelId, memberId) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
+
+    validate(normalisedChannelId, this, this.ban)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedMemberId, this, this.ban)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return this.#updateCapability(
       normalisedChannelId,

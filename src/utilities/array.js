@@ -1,12 +1,19 @@
 import _ from 'lodash';
 import BaseUtility from './BaseUtility.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class ArrayUtility extends BaseUtility {
   chunk (array, size) {
     const normalisedArray = this.normaliseArray(array);
     const normalisedSize = this.normaliseNumber(size);
 
-    // TODO: validation
+    validate(array, this, this.choose)
+      .isArray();
+
+    validate(normalisedSize, this, this.choose)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return _.chunk(normalisedArray, normalisedSize);
   }
@@ -14,7 +21,8 @@ export default class ArrayUtility extends BaseUtility {
   shuffle (array) {
     const normalisedArray = this.normaliseArray(array);
 
-    // TODO: validation
+    validate(array, this, this.choose)
+      .isArray();
 
     return _.shuffle(normalisedArray);
   }
@@ -23,7 +31,13 @@ export default class ArrayUtility extends BaseUtility {
     const normalisedArray = this.normaliseArray(array);
     const normalisedCount = this.normaliseNumber(count);
 
-    // TODO: validation
+    validate(array, this, this.choose)
+      .isArray();
+
+    validate(normalisedCount, this, this.choose)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     return _.sampleSize(normalisedArray, normalisedCount);
   }

@@ -1,5 +1,6 @@
 import BaseHelper from '../BaseHelper.js';
 import StoreProduct from './StoreProduct.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class StoreHelper extends BaseHelper {
   #balance = null;
@@ -26,6 +27,16 @@ export default class StoreHelper extends BaseHelper {
   }
 
   async balance (opts) {
+    validate(opts, this, this.balance)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     if (!opts?.forceNew && this.#balance !== null) { return this.#balance; }
 
     const response = await this.client.websocket.emit(

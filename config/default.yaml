@@ -70,55 +70,32 @@ framework:
           - type: image/gif
             size: 2621440
         square: true
-      channel:
-        list: true
-      notification:
-        global: true
-        user: true
-      messaging:
-        channel: true
-        private: true
-      tipping:
-        channel: true
-        private: false
 
-    commands:
-      phrases: true
-      language: en
-      ignore:
-        self: true
-        official: false
-        unofficial: false
-
-    helper:
-      channel:
-        member:
-          list:
-            privileged:
-              key: 'id'
-              version: 3
-              subscribe: true 
-            regular:
-              key: 'id'
-              version: 1
-              batchType: after
-              subscribe: true 
-            bots:
-              key: 'groupId'
-              version: 1
-              batchType: offset
-            silenced:
-              key: 'groupId'
-              version: 1
-              batchType: offset
-            banned:
-              key: 'id'
-              version: 1
-              batchType: after
-
-    messages:
-      ignore:
-        self: true
+  helper:
+    channel:
+      member:
+        list:
+          privileged:
+            key: 'id'
+            version: 3
+            subscribe: true 
+          regular:
+            key: 'id'
+            version: 1
+            batchType: after
+            subscribe: true 
+          bots:
+            key: 'groupId'
+            version: 1
+            batchType: offset
+          silenced:
+            key: 'groupId'
+            version: 1
+            batchType: offset
+          banned:
+            key: 'id'
+            version: 1
+            batchType: after
 
     mmsEndpoints:
       message: 
@@ -179,5 +156,19 @@ framework:
       user: false
       global: false
     messaging:
-      user: true
+      private: true
       channel: true
+
+  commands:
+    phrases: true
+    language: en
+    ignore:
+      self: true
+      official: false
+      unofficial: false
+
+  messages:
+    ignore:
+      self: true
+      official: false
+      unofficial: true

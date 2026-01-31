@@ -1,6 +1,8 @@
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
 import StoreProduct from '../../entities/StoreProduct.js';
 import StoreProductProfile from './StoreProductProfile.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class StoreProductHelper extends BaseHelper {
   #profile;
@@ -17,6 +19,27 @@ export default class StoreProductHelper extends BaseHelper {
     const isArrayResponse = Array.isArray(productIds);
     const normalisedProductIds = this.normaliseNumbers(productIds);
     const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(normalisedProductIds, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(languageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const idsToFetch = opts?.forceNew
       ? normalisedProductIds
@@ -36,7 +59,7 @@ export default class StoreProductHelper extends BaseHelper {
         }
       );
 
-      const maxAge = response.headers.maxAge;
+      const maxAge = response.headers?.maxAge;
 
       for (const [index, childResponse] of response.body.entries()) {
         const id = idsToFetch[index];

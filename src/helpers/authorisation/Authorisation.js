@@ -1,4 +1,5 @@
 import BaseHelper from '../BaseHelper.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class AuthorisationHelper extends BaseHelper {
   list () {
@@ -9,7 +10,11 @@ export default class AuthorisationHelper extends BaseHelper {
     const isArrayResponse = Array.isArray(userIds);
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.isAuthorised)
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const hasResults = normalisedUserIds.map((userId) => this.store.has(userId));
 
@@ -22,7 +27,11 @@ export default class AuthorisationHelper extends BaseHelper {
     const isArrayResponse = Array.isArray(userIds);
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.authorise)
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const setResults = normalisedUserIds.map((userId) => this.store.set(userId));
 
@@ -35,7 +44,11 @@ export default class AuthorisationHelper extends BaseHelper {
     const isArrayResponse = Array.isArray(userIds);
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
-    // TODO: validation
+    validate(normalisedUserIds, this, this.deauthorise)
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
 
     const deletionResults = normalisedUserIds.map((userId) => this.store.delete(userId));
 

@@ -1,10 +1,32 @@
 import AchievementChannel from '../../entities/AchievementChannel.js';
 import BaseHelper from '../BaseHelper.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class AchievementChannelHelper extends BaseHelper {
   async fetch (channelId, parentId, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedParentId = this.normaliseNumber(parentId);
+
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedParentId, this, this.fetch)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const channel = await this.client.channel.fetch(channelId);
 

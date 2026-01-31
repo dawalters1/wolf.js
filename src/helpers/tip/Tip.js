@@ -6,6 +6,7 @@ import TipLeaderboard from '../../entities/TipLeaderboard.js';
 import TipLeaderboardSummary from '../../entities/TipLeaderboardSummary.js';
 import TipSubscriptionTargetType from '../../constants/TipSubscriptionTargetType.js';
 import TipSummary from '../../entities/TipSummary.js';
+import { validate } from '../../validation/Validation.js';
 
 export default class TipHelper extends BaseHelper {
   async subscribe (tipSubscriptionTargetType) {
@@ -20,7 +21,47 @@ export default class TipHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(userId);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.tip)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedUserId, this, this.tip)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(context, this, this.tip)
+      .isNotNullOrUndefined()
+      .forEachProperty(
+        {
+          type: validator => validator
+            .isNotNullOrUndefined()
+            .in(Object.values(ContextType)),
+
+          id: validator => validator
+            .notRequiredIfProperty('type', ContextType.STAGE)
+            .requiredIfProperty('type', ContextType.MESSAGE)
+            .isValidNumber()
+        }
+      );
+
+    validate(charms)
+      .isNotNullOrUndefined()
+      .isArray()
+      .each()
+      .forEachProperty(
+        {
+          id: validator => validator
+            .isNotNullOrUndefined()
+            .isValidNumber()
+            .isNumberGreaterThanZero(),
+          quantity: validator => validator.isNotNullOrUndefined()
+            .isValidNumber()
+            .isNumberGreaterThanZero()
+            .isValidNumber()
+        }
+      );
 
     return this.client.websocket.emit(
       'tip add',
@@ -28,7 +69,7 @@ export default class TipHelper extends BaseHelper {
         body: {
           groupId: normalisedChannelId,
           subscriberId: normalisedUserId,
-          chamrList: charms,
+          charmList: charms,
           context
         }
       }
@@ -39,7 +80,16 @@ export default class TipHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.details)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTimestamp, this, this.details)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     try {
       const batch = async (results = []) => {
         const response = await this.client.websocket.emit(
@@ -74,7 +124,17 @@ export default class TipHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedTimestamps = this.normaliseNumbers(timestamps);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.summary)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTimestamps, this, this.summary)
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
     const response = await this.client.websocket.emit(
       'tip summary',
       {
