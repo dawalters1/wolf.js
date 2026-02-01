@@ -8,4 +8,9 @@ export default class ChannelAudioSlotRequest extends BaseEntity {
     this.channelId = entity.groupId;
     this.reservedExpiresAt = new Date(entity.expiresAt ?? entity.reservedExpiresAt);
   }
+
+  // TODO:
+  async delete () {
+    return this.client.audio.slots.request.delete(this.channelId);
+  }
 }

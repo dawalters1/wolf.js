@@ -2,10 +2,13 @@ import BaseHelper from '../BaseHelper.js';
 import ContextType from '../../constants/ContextType.js';
 import { StatusCodes } from 'http-status-codes';
 import TipDetail from '../../entities/TipDetail.js';
+import TipDirection from '../../constants/TipDirection.js';
 import TipLeaderboard from '../../entities/TipLeaderboard.js';
 import TipLeaderboardSummary from '../../entities/TipLeaderboardSummary.js';
+import TipPeriod from '../../constants/TipPeriod.js';
 import TipSubscriptionTargetType from '../../constants/TipSubscriptionTargetType.js';
 import TipSummary from '../../entities/TipSummary.js';
+import TipType from '../../constants/TipType.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class TipHelper extends BaseHelper {
@@ -185,7 +188,15 @@ export default class TipHelper extends BaseHelper {
   async channelLeaderboardSummary (channelId, tipPeriod) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.summary)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(tipPeriod, this, this.channelLeaderboardSummary)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipPeriod));
+
     const response = await this.client.websocket.emit(
       'tip leaderboard global summary',
       {
@@ -200,7 +211,18 @@ export default class TipHelper extends BaseHelper {
   }
 
   async globalLeaderboard (tipPeriod, tipType, tipDirection) {
-    // TODO: validation
+    validate(tipPeriod, this, this.channelLeaderboardSummary)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipPeriod));
+
+    validate(tipPeriod, this, this.channelLeaderboardSummary)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipType));
+
+    validate(tipPeriod, this, this.channelLeaderboardSummary)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipDirection));
+
     const response = await this.client.websocket.emit(
       'tip leaderboard global',
       {
@@ -216,7 +238,9 @@ export default class TipHelper extends BaseHelper {
   }
 
   async globalLeaderboardSummary (tipPeriod) {
-    // TODO: validation
+    validate(tipPeriod, this, this.channelLeaderboardSummary)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipPeriod));
 
     const response = await this.client.websocket.emit(
       'tip leaderboard global summary',

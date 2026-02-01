@@ -14,8 +14,8 @@ export default class Multimedia {
   #axios;
   #client;
   constructor (client) {
-    this.#client = client;
     this.#axios = axios.create();
+    this.#client = client;
 
     this.#axios.interceptors.request.use(
       aws4Interceptor({

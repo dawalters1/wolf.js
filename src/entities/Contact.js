@@ -11,4 +11,16 @@ export default class Contact extends BaseEntity {
       : entity;
     this.additionalInfo = new ContactAdditionalInfo(client, additionalInfo);
   }
+
+  async delete () {
+    return await this.client.contact.remove(this.id);
+  }
+
+  async block () {
+    return await this.client.contact.blocked.add(this.id);
+  }
+
+  async unblock () {
+    return await this.client.contact.blocked.remove(this.id);
+  }
 }

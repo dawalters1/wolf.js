@@ -7,4 +7,10 @@ export default class IdHash extends BaseEntity {
     this.hash = entity.hash;
     this.isChannel = isChannel;
   }
+
+  async fetch () {
+    return this.client[this.isChannel
+      ? 'channel'
+      : 'user'].fetch(this.id);
+  }
 }

@@ -1,4 +1,5 @@
 import autoSortImports from './eslint/autoSortImports.js';
+import autoSortPrivatePropertiesAndGetters from './eslint/autoSortPrivatePropertiesAndGetters.js';
 import emitFormatter from './eslint/emitFormatter.js';
 import enumSpacingRule from './eslint/enumFormatter.js';
 import globals from 'globals';
@@ -35,6 +36,7 @@ export default [
       custom: {
         rules: {
           'enum-spacing': enumSpacingRule,
+          'auto-sort-private-properties-and-getters': autoSortPrivatePropertiesAndGetters,
           'auto-sort-imports': autoSortImports,
           'emit-formatting': emitFormatter,
           'ternary-formatting': ternaryFormatter
@@ -66,6 +68,7 @@ export default [
       ],
       curly: 'error',
       'custom/ternary-formatting': 'error',
+      'custom/auto-sort-private-properties-and-getters': 'error',
       'custom/emit-formatting': 'error',
       'custom/auto-sort-imports': 'error',
       'space-before-blocks': ['error', 'always'],

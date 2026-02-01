@@ -1,9 +1,9 @@
 import ExpiringPropertyCacheManager from './ExpiringPropertyCacheManager.js';
 
 export default class PropertyCache {
+  #expiresAt = 0;
   #fetched = false;
   #value = null;
-  #expiresAt = 0;
 
   constructor (options = {}) {
     const { ttl = 3600, autoRefresh = false } = options;
@@ -67,12 +67,12 @@ export default class PropertyCache {
     }
   }
 
+  get expiresAt () {
+    return this.#expiresAt;
+  }
+
   get remainingTime () {
     if (this.isExpired() || this.#value === null) { return 0; }
     return Math.max(0, this.#expiresAt - Date.now());
-  }
-
-  get expiresAt () {
-    return this.#expiresAt;
   }
 }

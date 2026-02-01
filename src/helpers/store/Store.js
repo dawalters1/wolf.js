@@ -12,13 +12,13 @@ export default class StoreHelper extends BaseHelper {
     this.#product = new StoreProduct(client);
   }
 
-  get product () {
-    return this.#product;
-  }
-
   /** @internal */
   get _balance () {
     return this.#balance;
+  }
+
+  get product () {
+    return this.#product;
   }
 
   /** @internal */

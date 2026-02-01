@@ -2,11 +2,11 @@
 const getKeyProperty = (obj) => Object.getOwnPropertyNames(obj)[0];
 
 export default class Cache {
-  #store = new Set();
   #fetched = false;
-  #ttl = null;
   #maxSize = Infinity;
+  #store = new Set();
   #sweepHandle = null;
+  #ttl = null;
 
   constructor (options = {}) {
     if (options.ttl) { this.#ttl = options.ttl * 1000; }
@@ -17,12 +17,12 @@ export default class Cache {
     }
   }
 
-  get store () {
-    return this.#store;
-  }
-
   get fetched () {
     return this.#fetched;
+  }
+
+  get store () {
+    return this.#store;
   }
 
   set fetched (val) {

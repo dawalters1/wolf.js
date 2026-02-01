@@ -8,4 +8,12 @@ export default class ChannelEvent extends BaseEntity {
     this.id = entity.id;
     this.additionalInfo = new ChannelEventAdditionalInfo(client, entity.additionalInfo);
   }
+
+  async subscribe () {
+    return this.client.event.subscription.add(this.id);
+  }
+
+  async unsubscribe () {
+    return this.client.event.subscription.remove(this.id);
+  }
 }

@@ -47,10 +47,13 @@ export default class ChannelRoleHelper extends BaseHelper {
       channel.roleStore.roles.fetched = true;
 
       return response.body.map(
-        (serverGroupRole) =>
-          channel.roleStore.roles.set(
+        (serverGroupRole) => {
+          serverGroupRole.groupId = channelId;
+
+          return channel.roleStore.roles.set(
             new ChannelRole(this.client, serverGroupRole)
-          )
+          );
+        }
       );
     }
 

@@ -4,7 +4,6 @@ import ChannelMemberCapability from '../../constants/ChannelMemberCapability.js'
 import { StatusCodes } from 'http-status-codes';
 import { validate } from '../../validation/Validation.js';
 
-// TODO: check capabilities, check if stage is enabled
 export default class AudioSlotRequestHelper extends BaseHelper {
   async fetch (channelId, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);

@@ -7,9 +7,9 @@ import Language from '../../constants/Language.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class AchievementHelper extends BaseHelper {
-  #category = null;
-  #channel = null;
-  #user = null;
+  #category;
+  #channel;
+  #user;
 
   constructor (client) {
     super(client);

@@ -9,4 +9,8 @@ export default class ChannelAudioConfig extends BaseEntity {
     this.stageId = entity.stageId ?? 1;
     this.minRepLevel = entity.minRepLevel ?? 0;
   }
+
+  async update (config) {
+    return this.client.channel.update();
+  }
 }

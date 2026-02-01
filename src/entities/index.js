@@ -1,7 +1,7 @@
-import Achievement from './achievement.js';
-import AchievementCategory from './achievementCategory.js';
-import AchievementChannel from './achievementChannel.js';
-import AchievementUser from './achievementUser.js';
+import Achievement from './Achievement.js';
+import AchievementCategory from './AchievementCategory.js';
+import AchievementChannel from './AchievementChannel.js';
+import AchievementUser from './AchievementUser.js';
 
 const exports = {
   Achievement,

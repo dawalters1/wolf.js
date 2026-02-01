@@ -33,6 +33,11 @@ export class ChannelMember extends BaseEntity {
 
     this.#lists = new Set([entity.source, this.#getList(this.capabilities)].filter(Boolean));
   }
+
+  /** @internal */
+  get lists () {
+    return this.#lists;
+  }
 }
 
 export default ChannelMember;

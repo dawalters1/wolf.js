@@ -17,8 +17,8 @@ const createInFlightKey = (command, body) =>
 export default class Websocket {
   #client;
   #handlers = new Map();
-  #socket = null;
   #inFlight = new Map();
+  #socket = null;
 
   constructor (client) {
     this.#client = client;

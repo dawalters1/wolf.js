@@ -2,6 +2,10 @@ import _ from 'lodash';
 
 export default class BaseEntity {
   #client;
+  /**
+   *
+   * @param {import('../client/WOLF.js').default} client
+   */
   constructor (client) {
     this.#client = client;
   }

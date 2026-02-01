@@ -14,12 +14,12 @@ export default class AudioSlotHelper extends BaseHelper {
     this.#request = new AudioSlotRequestHelper(client);
   }
 
-  get request () {
-    return this.#request;
-  }
-
   get clients () {
     return this.#clients;
+  }
+
+  get request () {
+    return this.#request;
   }
 
   async fetch (channelId, slotId, opts) {

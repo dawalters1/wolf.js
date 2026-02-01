@@ -9,4 +9,8 @@ export default class EventSubscription extends BaseEntity {
     this.groupId = entity.groupId;
     this.additionalInfo = new EventSubscriptionAdditionalInfo(client, entity.additionalInfo);
   }
+
+  async remove () {
+    return this.client.event.subscription.remove(this.id);
+  }
 }

@@ -14,4 +14,12 @@ export default class Tip extends BaseEntity {
     this.context = new TipContext(client, entity?.context);
     this.version = entity.version;
   }
+
+  async user () {
+    return this.client.user.fetch(this.sourceUserId);
+  }
+
+  async channel () {
+    return this.client.channel.fetch(this.channelId);
+  }
 }

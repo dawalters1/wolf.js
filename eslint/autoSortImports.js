@@ -46,22 +46,43 @@ export default {
           return '';
         };
 
-        const areNodesContiguous = (nodes) => {
-          for (let i = 1; i < nodes.length; i++) {
-            const prev = nodes[i - 1];
+        const sortAndCompare = (nodes, type, getSortKey) => {
+          if (nodes.length < 2) { return; }
+
+          // Split into contiguous blocks
+          const blocks = [];
+          let current = [];
+
+          for (let i = 0; i < nodes.length; i++) {
+            const prev = current[current.length - 1];
             const curr = nodes[i];
-            const textBetween = sourceCode.text.slice(prev.range[1], curr.range[0]);
-            if (textBetween.trim() !== '') {
-              return false;
+
+            if (
+              !prev ||
+      sourceCode.text.slice(prev.range[1], curr.range[0]).trim() === ''
+            ) {
+              current.push(curr);
+            } else {
+              blocks.push(current);
+              current = [curr];
             }
           }
-          return true;
-        };
 
-        const sortAndCompare = (nodes, type, getSortKey) => {
+          if (current.length) {
+            blocks.push(current);
+          }
+
+          // Largest block is considered sortable, others unsortable
+          const sortableBlock =
+    blocks.reduce((a, b) => (b.length > a.length
+      ? b
+      : a), []);
+
+          const unsortableBlocks = blocks.filter(b => b !== sortableBlock);
+
           const toSort = type === 'Export'
-            ? nodes.filter(n => !isServerTypeExport(n))
-            : nodes;
+            ? sortableBlock.filter(n => !isServerTypeExport(n))
+            : sortableBlock;
 
           if (toSort.length < 2) { return; }
 
@@ -69,29 +90,27 @@ export default {
             getSortKey(a).localeCompare(getSortKey(b))
           );
 
-          // Check if sorting is needed
           const isSorted = toSort.every((n, i) => n === sorted[i]);
-          if (isSorted) { return; }
-
-          // Ensure all nodes are adjacent to avoid overwriting unrelated code
-          if (!areNodesContiguous(toSort)) {
-            context.report({
-              node: toSort[0],
-        ***REMOVED***`${type} statements are not sorted and cannot be safely auto-fixed (non-contiguous statements)`
-            });
+          if (isSorted && unsortableBlocks.length === 0) {
             return;
           }
 
+          const buildText = (group) =>
+            group.map(n => sourceCode.getText(n)).join('\n');
+
+          const finalText = [
+            buildText(sorted),
+            ...unsortableBlocks.map(buildText)
+          ].join('\n\n');
+
           context.report({
-            node: toSort[0],
-      ***REMOVED***`${type} statements should be sorted alphabetically by name (A → Z)`,
-            fix: fixer => {
-              const text = sorted.map(n => sourceCode.getText(n)).join('\n');
-              return fixer.replaceTextRange(
-                [toSort[0].range[0], toSort[toSort.length - 1].range[1]],
-                text
-              );
-            }
+            node: nodes[0],
+      ***REMOVED***`${type} statements should be sorted alphabetically (unsortable ${type.toLowerCase()}s moved to bottom)`,
+            fix: fixer =>
+              fixer.replaceTextRange(
+                [nodes[0].range[0], nodes[nodes.length - 1].range[1]],
+                finalText
+              )
           });
         };
 
