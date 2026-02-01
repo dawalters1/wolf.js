@@ -317,7 +317,7 @@ export class WOLF extends EventEmitter {
     if (!profile && !avatar) { throw new Error('You must provide a profile and/or avatar you want to update'); }
 
     if (avatar) {
-      validateConfig(avatar, avatarConfig, this.me, this, this.update);
+      await validateConfig(avatar, avatarConfig, this.me, this, this.update);
     }
 
     const uploadAvatar = async () => {
