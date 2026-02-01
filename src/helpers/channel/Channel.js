@@ -395,7 +395,7 @@ export default class ChannelHelper extends BaseHelper {
     const channelPrior = await this.fetch(channelId);
 
     if (avatar) {
-      validateConfig(avatar, avatarConfig, channelPrior, this, this.update);
+      await validateConfig(avatar, avatarConfig, channelPrior, this, this.update);
     }
 
     const uploadAvatar = async () => {

@@ -6,7 +6,7 @@ import MessageSubscriptionType from '../../constants/MessageSubscriptionType.js'
 import MessageType from '../../constants/MessageType.js';
 import { nanoid } from 'nanoid';
 import { StatusCodes } from 'http-status-codes';
-import { validate } from '../../validation/Validation.js';
+import { validate, validateConfig } from '../../validation/Validation.js';
 import WOLFResponse from '../../entities/WOLFResponse.js';
 
 const ZERO_WIDTH_LINK_REGEX = /\[([\p{Cf}\s]+)\]\(([^)]+)\)/gu;
@@ -193,7 +193,8 @@ export default class MessagingHelper extends BaseHelper {
       const multimedia = this.client.config.framework.multimedia.messaging;
 
       if (!multimedia) { throw new Error('Message multimeda not found'); }
-      // TODO: some form of validation
+
+      await validateConfig(content, multimedia, null, this, this.#sendMessage);
 
       const isAudio = ['audio/x-m4a', 'audio/x-mp4'].includes(mimeType);
 
