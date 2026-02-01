@@ -196,6 +196,18 @@ class Validation {
     );
   }
 
+  isDateAfter (otherDate, message) {
+    const current = new Date(this.#value);
+    const compare = new Date(otherDate);
+
+    return this.#throwIf(
+      Number.isNaN(current.getTime()) ||
+      Number.isNaN(compare.getTime()) ||
+      current <= compare,
+      message ?? `${this.#name}${this.#value} is not before ${otherDate}`
+    );
+  }
+
   in (list, message) {
     return this.#throwIf(!list.includes(this.#value), message ?? `${this.#name}${this.#value} is not in list ${JSON.stringify(list)}`);
   }

@@ -1,5 +1,6 @@
 import BaseHelper from '../BaseHelper.js';
 import Frame from '../../entities/Frame.js';
+import FrameStatistic from '../../entities/FrameStatistic.js';
 import FrameSummary from '../../entities/FrameSummary.js';
 import Language from '../../constants/Language.js';
 import { validate } from '../../validation/Validation.js';
@@ -160,5 +161,51 @@ export default class FrameHelper extends BaseHelper {
           maxAge
         )
     );
+  }
+
+  async statistics (userId, opts) {
+    const normalisedUserId = this.normaliseNumber(userId);
+
+    validate(normalisedUserId, this, this.statistics)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(opts, this, this.statistics)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          extended: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
+    const user = await this.client.user.fetch(normalisedUserId);
+
+    if (!user) {
+      throw new Error(`User with ID ${normalisedUserId} NOT FOUND`);
+    }
+
+    if (!opts?.forceNew && user.frameStatisticsStore.fetched) {
+      return user.frameStatisticsStore.value;
+    }
+
+    const response = await this.client.websocket.emit(
+      'frame subscriber statistics',
+      {
+        body: {
+          id: normalisedUserId,
+          extended: opts?.extended ?? true
+        }
+      }
+    );
+
+    user.frameStatisticsStore.value = user.frameStatisticsStore.value?.patch(response.body) ?? new FrameStatistic(this.client, response.body);
+
+    return user.frameStatisticsStore.value;
   }
 }

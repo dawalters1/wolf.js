@@ -16,6 +16,7 @@ export default class User extends BaseEntity {
   #charmStatisticsStore = new PropertyCache({ ttl: 15 });
   #charmSummaryStore = new Cache({ ttl: 15 });
   #followStore = new UserFollowCache();
+  #frameStatisticsStore = new PropertyCache({ ttl: 15 });
   #frameSummaryStore = new Cache({ ttl: 15 });
   #presenceStore = new PropertyCache();
   #roleStore = new Cache({ ttl: 15 });
@@ -68,6 +69,11 @@ export default class User extends BaseEntity {
   /** @internal */
   get frameSummaryStore () {
     return this.#frameSummaryStore;
+  };
+
+  /** @internal */
+  get frameStatisticsStore () {
+    return this.#frameStatisticsStore;
   };
 
   /** @internal */

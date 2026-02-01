@@ -93,6 +93,16 @@ export default class CharmHelper extends BaseHelper {
       .isValidNumber()
       .isNumberGreaterThanZero();
 
+    validate(opts, this, this.summary)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
     const user = await this.client.user.fetch(normalisedUserId);
 
     if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
@@ -127,6 +137,19 @@ export default class CharmHelper extends BaseHelper {
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
+
+    validate(opts, this, this.statistics)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          extended: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
 
     const user = await this.client.user.fetch(normalisedUserId);
 

@@ -13,14 +13,16 @@ import { fileTypeFromBuffer } from 'file-type';
 import { fileURLToPath } from 'node:url';
 import FrameHelper from '../helpers/frame/Frame.js';
 import fs from 'node:fs';
-import { Gender, LookingFor, OnlineState, Relationship } from '../constants/index.js';
+import { Gender, LookingFor, MessageFilterTierLevel, OnlineState, Relationship } from '../constants/index.js';
 import imageSize from 'image-size';
+import MessageSetting from '../entities/MessageSetting.js';
 import MessagingHelper from '../helpers/messaging/Messaging.js';
 import Multimedia from './multimedia/Multimedia.js';
 import { nanoid } from 'nanoid';
 import NotificationHelper from '../helpers/notification/Notification.js';
 import path, { dirname } from 'node:path';
 import PhraseHelper from '../helpers/phrase/Phrase.js';
+import PropertyCache from '../cache/PropertyCache.js';
 import RoleHelper from '../helpers/role/Role.js';
 import SecurityHelper from '../helpers/security/Security.js';
 import StoreHelper from '../helpers/store/Store.js';
@@ -59,6 +61,7 @@ export class WOLF extends EventEmitter {
   #frame;
   #loggedIn = false;
   #me = undefined;
+  #messageSettings = new PropertyCache({ ttl: 60 });
   #messaging;
   #metadata;
   #multimedia;
@@ -358,6 +361,44 @@ export class WOLF extends EventEmitter {
     }
 
     return response;
+  }
+
+  async messageSettings (opts) {
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
+    if (!opts?.forceNew && this.#messageSettings.fetched) {
+      return this.#messageSettings.value;
+    }
+
+    const response = await this.client.websocket.emit('message setting');
+
+    this.#messageSettings.value = new MessageSetting(this.client, response.body);
+
+    return this.#messageSettings.value;
+  }
+
+  async updateMessageSettings (messageFilterTier) {
+    validate(messageFilterTier, this, this.updateMessageSettings)
+      .isNotNullOrUndefined()
+      .in(Object.values(MessageFilterTierLevel));
+
+    return await this.client.websocket.emit(
+      'message setting update',
+      {
+        spamFilter: {
+          enabled: messageFilterTier !== MessageFilterTierLevel.OFF,
+          tier: messageFilterTier
+        }
+      }
+    );
   }
 }
 
