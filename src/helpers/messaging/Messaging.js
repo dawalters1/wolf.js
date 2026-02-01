@@ -1,4 +1,5 @@
 import BaseHelper from '../BaseHelper.js';
+import BlackListLink from '../../entities/BlacklistLink.js';
 import EmbedType from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
 import Message from '../../entities/Message.js';
@@ -12,6 +13,8 @@ import WOLFResponse from '../../entities/WOLFResponse.js';
 const ZERO_WIDTH_LINK_REGEX = /\[([\p{Cf}\s]+)\]\(([^)]+)\)/gu;
 
 export default class MessagingHelper extends BaseHelper {
+  #blacklist = new Cache({ ttl: 300 });
+
   async #getFormattingData (ads, links) {
     const data = {
       formatting: {
@@ -264,6 +267,29 @@ export default class MessagingHelper extends BaseHelper {
         : 'message private subscribe',
       request
     );
+  }
+
+  async blacklistedLinks (opts) {
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
+    if (!opts?.forceNew && this.#blacklist.fetched) {
+      return this.#blacklist.values();
+    }
+
+    const response = await this.client.websocket.emit('metadata url blacklist');
+
+    this.#blacklist.clear();
+    response.body?.map((item) => this.#blacklist.set(new BlackListLink(this.client, item)));
+
+    return this.#blacklist.values();
   }
 
   async sendChannelMessage (id, content, opts) {

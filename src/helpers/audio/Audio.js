@@ -52,9 +52,10 @@ export default class AudioHelper extends BaseHelper {
       );
 
       channel.stageStore.clear();
-      response.body.map((serverStage) =>
-        channel.stageStore.set(new ChannelStage(this.client, serverStage))
-      );
+      response.body.map((serverStage) => {
+        serverStage.groupId = channelId;
+        return channel.stageStore.set(new ChannelStage(this.client, serverStage));
+      });
     } catch (error) {
       if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
       channel.stageStore.clear();
