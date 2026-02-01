@@ -343,11 +343,11 @@ export class WOLF extends EventEmitter {
         extended: {
           dateOfBirth: pick(profile.extend.dateOfBirth, this.me.extended.dateOfBirth),
           about: pick(profile.extend.about, this.me.extended.about),
-          gender: pick(profile.extend.gender, this.me.extended.gender),
+          gender: pickNumber(profile.extend.gender, this.me.extended.gender),
           language: pickNumber(profile.extend.language, this.me.extended.language),
-          lookingFor: pick(profile.extend.lookingFor, this.me.extended.lookingFor),
+          lookingFor: pickNumber(profile.extend.lookingFor, this.me.extended.lookingFor),
           name: pick(profile.extend.name, this.me.extended.name),
-          relationship: pick(profile.extend.relationship, this.me.extended.relationship),
+          relationship: pickNumber(profile.extend.relationship, this.me.extended.relationship),
           urls: pick(profile.extend.urls, this.me.extended.urls)
         }
       }
