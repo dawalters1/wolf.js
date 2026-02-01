@@ -7,4 +7,8 @@ export default class MessageEdited extends BaseEntity {
     this.userId = entity.subscriberId;
     this.timestamp = entity.timestamp;
   }
+
+  async user () {
+    return this.client.user.fetch(this.userId);
+  }
 }

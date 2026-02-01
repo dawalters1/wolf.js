@@ -10,4 +10,8 @@ export default class WOLFStar extends BaseEntity {
     this.totalListeners = entity.totalListeners;
     this.talentList = entity.talentList;
   }
+
+  async user () {
+    return this.client.user.fetch(this.userId);
+  }
 }

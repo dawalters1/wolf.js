@@ -6,4 +6,8 @@ export default class UserFrame extends BaseEntity {
 
     this.frameId = entity.frameId;
   }
+
+  async fetch () {
+    return this.client.frame.fetch(this.frameId);
+  }
 }

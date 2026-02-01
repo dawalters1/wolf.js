@@ -18,4 +18,24 @@ export default class ChannelAudioSlot extends BaseEntity {
     this.uuid = entity.uuid;
     this.isOccupied = entity.occupierId !== null || this.reservation !== undefined;
   }
+
+  async join () {
+    return this.client.audio.slots.join(this.channelId, this.id);
+  }
+
+  async leave () {
+    return this.client.audio.slots.leave(this.channelId, this.id);
+  }
+
+  async kick () {
+    return this.client.audio.slots.kick(this.channelId, this.id);
+  }
+
+  async mute () {
+    return this.client.audio.slots.mute(this.channelId, this.id);
+  }
+
+  async unmute () {
+    return this.client.audio.slots.unmute(this.channelId, this.id);
+  }
 }

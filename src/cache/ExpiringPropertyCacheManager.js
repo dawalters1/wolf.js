@@ -1,7 +1,7 @@
 class ExpiringPropertyManager {
-  static #properties = new Set();
   static #interval = null;
   static #intervalMs = 1000;
+  static #properties = new Set();
 
   static #startInterval () {
     if (this.#interval) { return; }

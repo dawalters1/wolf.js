@@ -2,8 +2,10 @@ import AvatarType from '../constants/AvatarType.js';
 import BaseEntity from './BaseEntity.js';
 import Cache from '../cache/Cache.js';
 import IconInfo from './IconInfo.js';
+import Language from '../constants/Language.js';
 import PropertyCache from '../cache/PropertyCache.js';
 import UserExtended from './UserExtended.js';
+import UserFollowCache from '../cache/UserFollowCache.js';
 import UserFrame from './UserFrame.js';
 import UserPresence from './UserPresence.js';
 import UserPrivilege from '../constants/UserPrivilege.js';
@@ -11,8 +13,9 @@ import UserSelectedCharmList from './UserSelectedCharmList.js';
 
 export default class User extends BaseEntity {
   #achievementStore = new Cache({ ttl: 15 });
-  #charmSummaryStore = new Cache({ ttl: 15 });
   #charmStatisticsStore = new PropertyCache({ ttl: 15 });
+  #charmSummaryStore = new Cache({ ttl: 15 });
+  #followStore = new UserFollowCache();
   #frameSummaryStore = new Cache({ ttl: 15 });
   #presenceStore = new PropertyCache();
   #roleStore = new Cache({ ttl: 15 });
@@ -47,32 +50,64 @@ export default class User extends BaseEntity {
     this.#presenceStore.value = new UserPresence(this.client, this);
   }
 
+  /** @internal */
   get achievementStore () {
     return this.#achievementStore;
   }
 
+  /** @internal */
   get charmStatisticsStore () {
     return this.#charmStatisticsStore;
   };
 
+  /** @internal */
   get charmSummaryStore () {
     return this.#charmSummaryStore;
   };
 
+  /** @internal */
   get frameSummaryStore () {
     return this.#frameSummaryStore;
   };
 
+  /** @internal */
+  get followStore () {
+    return this.#followStore;
+  }
+
+  get language () {
+    return this.client.utility.toLanguageKey(this.extended?.language ?? Language.ENGLISH);
+  }
+
+  /** @internal */
   get presenceStore () {
     return this.#presenceStore;
   }
 
+  /** @internal */
   get roleStore () {
     return this.#roleStore;
   }
 
+  /** @internal */
   get wolfStarStore () {
     return this.#wolfStarStore;
+  }
+
+  async add () {
+    return this.client.contact.add(this.id);
+  }
+
+  async delete () {
+    return this.client.contact.remove(this.id);
+  }
+
+  async block () {
+    return this.client.contact.blocked.add(this.id);
+  }
+
+  async unblock () {
+    return this.client.contact.blocked.remove(this.id);
   }
 
   async getAchievements (parentId, opts) {

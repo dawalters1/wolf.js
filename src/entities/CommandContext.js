@@ -12,6 +12,7 @@ export default class CommandContext extends BaseEntity {
     this.timestamp = entity?.timestamp;
     this.type = entity?.type;
     this.route = entity?.route;
+    this.message = entity.message;
 
     this.bodyParts = this.body?.split(this.client.SPLIT_REGEX)?.filter(Boolean) ?? [];
   }
@@ -48,5 +49,13 @@ export default class CommandContext extends BaseEntity {
 
   async hasPrivilege (privilege, requireAll = true) {
     return await this.client.utility.user.privilege.has(this.sourceUserId, privilege, requireAll);
+  }
+
+  async delete () {
+    return this.client.messaging.delete(this.targetChannelId, this.timestamp, true);
+  }
+
+  async restore () {
+    return this.client.messaging.restore(this.targetChannelId, this.timestamp, true);
   }
 }

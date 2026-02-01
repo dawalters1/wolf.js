@@ -4,10 +4,22 @@ import ChannelCategorHelper from './ChannelCategory.js';
 import ChannelEntities from '../../constants/ChannelEntities.js';
 import ChannelMemberHelper from './ChannelMember.js';
 import ChannelRoleHelper from './ChannelRole.js';
+import { fileTypeFromBuffer } from 'file-type';
+import Language from '../../constants/Language.js';
 import Message from '../../entities/Message.js';
 import Search from '../../entities/Search.js';
 import { StatusCodes } from 'http-status-codes';
-import { validate } from '../../validation/Validation.js';
+import { validate, validateConfig } from '../../validation/Validation.js';
+
+const pick = (value, fallback = null) =>
+  value !== undefined
+    ? value
+    : fallback;
+
+const pickNumber = (value, fallback) =>
+  value !== undefined
+    ? Number(value)
+    : fallback;
 
 export default class ChannelHelper extends BaseHelper {
   #category;
@@ -283,5 +295,161 @@ export default class ChannelHelper extends BaseHelper {
       if (error.code === StatusCodes.NOT_FOUND) { return []; }
       throw error;
     }
+  }
+
+  async update (channelId, channel, avatar) {
+    const avatarConfig = this.client.config.framework.multimedia.avatar.channel;
+
+    const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(channel, this, this.update)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          description: validator => validator
+            .isNotRequired()
+            .isString()
+            .isNotWhitespace(),
+          peekable: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          giftAnimationDisabled: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          audioConfig: validator => validator
+            .isNotRequired()
+            .forEachProperty(
+              {
+                enabled: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                stageId: validator => validator
+                  .isNotRequired()
+                  .isNumberGreaterThanZero(),
+                minRepLevel: validator => validator
+                  .isNotRequired()
+                  .isNumberGreaterThan(-1)
+              }
+            ),
+
+          extended: validator => validator
+            .isNotRequired()
+            .forEachProperty(
+              {
+                longDescription: validator => validator
+                  .isNotRequired()
+                  .isString()
+                  .isNotWhitespace(),
+                discoverable: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                language: validator => validator
+                  .isNotRequired()
+                  .in(Object.values(Language)),
+                /* category: validator => validator
+                  .isNotRequired()
+                  .in(Object.values(ChannelCategory)) */
+                advancedAdmin: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                entryLevel: validator => validator
+                  .isNotRequired()
+                  .isNumberGreaterThan(-1)
+              }
+            ),
+          messageConfig: validator => validator
+            .isNotRequired()
+            .forEachProperty(
+              {
+                disableHyperlink: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                disableImage: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                disableImageFilter: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                disableVoice: validator => validator
+                  .isNotRequired()
+                  .isBoolean(),
+                slowModeRateInSeconds: validator => validator
+                  .isNotRequired()
+                  .isNumberIn([0, 30], 'Slowmode can only be set to 0 or 30')
+              }
+            )
+        }
+      );
+
+    validate(avatar, this, this.update)
+      .isNotRequired()
+      .isBuffer();
+
+    if (!channel && !avatar) { throw new Error('You must provide a channel and/or avatar you want to update'); }
+
+    const channelPrior = await this.fetch(channelId);
+
+    if (avatar) {
+      validateConfig(avatar, avatarConfig, channelPrior, this, this.update);
+    }
+
+    const uploadAvatar = async () => {
+      return this.client.multimedia.request(avatarConfig, {
+        data: avatar.toString('base64'),
+        mimeType: (await fileTypeFromBuffer(avatar)).mime,
+        id: normalisedChannelId,
+        source: this.client.me.id
+      });
+    };
+
+    if (!channel) {
+      return uploadAvatar();
+    }
+
+    if (channelPrior === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
+
+    const response = await this.client.websocket.emit(
+      'group profile update',
+      {
+        id: normalisedChannelId,
+        description: pick(channel.description, channelPrior.description),
+        peekable: pick(channel.peekable, channelPrior.peekable),
+        giftAnimationDisabled: pick(channel.giftAnimationDisabled, channelPrior.giftAnimationDisabled),
+
+        audioConfig: {
+          stageId: pickNumber(channel.audioConfig.stageId, channelPrior.audioConfig.stageId),
+          enabled: pick(channel.audioConfig.enabled, channelPrior.audioConfig.enabled),
+          minRepLevel: pickNumber(channel.audioConfig.minRepLevel, channelPrior.audioConfig.minRepLevel)
+        },
+
+        messageConfig: {
+          disableHyperlink: pick(channel.messageConfig.disableHyperlink, channelPrior.messageConfig.disableHyperlink),
+          disableImage: pick(channel.messageConfig.disableImage, channelPrior.messageConfig.disableImage),
+          disableImageFilter: pick(channel.messageConfig.disableImageFilter, channelPrior.messageConfig.disableImageFilter),
+          disableVoice: pick(channel.messageConfig.disableVoice, channelPrior.messageConfig.disableVoice),
+          slowModeRateInSeconds: pickNumber(channel.messageConfig.slowModeRateInSeconds, channelPrior.messageConfig.slowModeRateInSeconds)
+        },
+
+        extended: {
+          longDescription: pick(channel.extended.longDescription, channelPrior.extended.longDescription),
+          discoverable: pick(channel.extended.discoverable, channelPrior.extended.discoverable),
+          language: pickNumber(channel.extended.language, channelPrior.extended.language),
+          category: pickNumber(channel.extended.category, channelPrior.extended.category),
+          advancedAdmin: pick(channel.extended.advancedAdmin, channelPrior.extended.advancedAdmin),
+          entryLevel: pickNumber(channel.extended.entryLevel, channelPrior.extended.entryLevel)
+        }
+      }
+    );
+
+    if (response.success && avatar) {
+      response.body.avatarResponse = await uploadAvatar();
+    }
+
+    return response;
   }
 }

@@ -1,18 +1,18 @@
 import Cache from './Cache.js';
 
 export default class ChannelRoleStore {
-  #users;
   #roles;
+  #users;
   constructor () {
-    this.#users = new Cache();
     this.#roles = new Cache();
-  }
-
-  get users () {
-    return this.#users;
+    this.#users = new Cache();
   }
 
   get roles () {
     return this.#roles;
+  }
+
+  get users () {
+    return this.#users;
   }
 }

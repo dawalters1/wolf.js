@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Command from './Command.js';
-import CommandContext from '../entities/commandContext.js';
+import CommandContext from '../entities/CommandContext.js';
 import UserPrivilege from '../constants/UserPrivilege.js';
 
 class CommandManager {
@@ -33,6 +33,7 @@ class CommandManager {
           sourceUserId: message.sourceUserId,
           timestamp: message.timestamp,
           type: message.mimeType,
+          message,
           route: []
         }
       );

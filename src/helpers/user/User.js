@@ -3,12 +3,14 @@ import CurrentUser from '../../entities/CurrentUser.js';
 import Search from '../../entities/Search.js';
 import { StatusCodes } from 'http-status-codes';
 import User from '../../entities/User.js';
+import UserFollowHelper from './UserFollow.js';
 import UserPresenceHelper from './UserPresence.js';
 import UserRoleHelper from './UserRole.js';
 import { validate } from '../../validation/Validation.js';
 import WOLFStarHelper from './WOLFStar.js';
 
 export default class UserHelper extends BaseHelper {
+  #follow;
   #presence;
   #role;
   #wolfstar;
@@ -16,9 +18,14 @@ export default class UserHelper extends BaseHelper {
   constructor (client) {
     super(client);
 
+    this.#follow = new UserFollowHelper(client);
     this.#presence = new UserPresenceHelper(client);
     this.#role = new UserRoleHelper(client);
     this.#wolfstar = new WOLFStarHelper(client);
+  }
+
+  get follow () {
+    return this.#follow;
   }
 
   get presence () {

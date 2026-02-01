@@ -60,7 +60,7 @@ framework:
           size: 1048576
       square: false
     avatar:
-      subscriber:
+      user:
         method: post
         route: subscriber-avatar-update
         version: 1
@@ -69,6 +69,18 @@ framework:
             size: 1048576
           - type: image/gif
             size: 2621440
+            minLevel: 20
+        square: true
+      channel:
+        method: post
+        route: group-avatar-update
+        version: 1
+        mimes:
+          - type: image/jpeg
+            size: 1048576 
+          - type: image/gif
+            size: 2621440
+            minLevel: 20
         square: true
 
   helper:

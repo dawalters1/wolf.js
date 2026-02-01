@@ -196,7 +196,7 @@ export default class MessagingHelper extends BaseHelper {
       // TODO: some form of validation
 
       const isAudio = ['audio/x-m4a', 'audio/x-mp4'].includes(mimeType);
-      return;
+
       return this.client.multimedia.post(
         multimedia,
         {
@@ -216,7 +216,7 @@ export default class MessagingHelper extends BaseHelper {
     const messages = await this.#buildMessages(id, content, isChannel, opts);
 
     const responses = [];
-    return;
+
     for (const message of messages) {
       const response = await this.client.websocket.emit(
         'message send',

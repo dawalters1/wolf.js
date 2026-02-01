@@ -1,16 +1,18 @@
+import { fileTypeFromBuffer } from 'file-type';
+import imageSize from 'image-size';
 import { Readable } from 'node:stream';
 
 class Validation {
-  #value;
-  #skipValidation = false;
   #name;
+  #skipValidation = false;
+  #value;
   constructor (value, _class, _method) {
-    this.#value = value;
     this.#name = _class instanceof String
       ? _class
       : _class && _method
         ? `${_class.constructor.name}.${_method.name}() `
-        : ''; ;
+        : '';
+    this.#value = value; ;
   }
 
   #shouldSkip () {
@@ -85,6 +87,13 @@ class Validation {
     return this.#throwIf(
       typeof this.#value !== 'number' || Number.isNaN(this.#value),
       message ?? `${this.#name}${JSON.stringify(this.#value)} is not a valid number`
+    );
+  }
+
+  isNumberIn (allowed, message) {
+    return this.#throwIf(
+      typeof this.#value !== 'number' || !allowed.includes(this.#value),
+      message ?? `${this.#name}${JSON.stringify(this.#value)} is not in ${JSON.stringify(allowed)}`
     );
   }
 
@@ -232,29 +241,30 @@ class Validation {
           if (val === undefined) { skip = true; }
           return propValidator;
         },
-        isInstanceOf: (cls, message) => runValidation(v => validateWithName(v, this.#name).isInstanceOf(cls, message)),
-        isTypeOf: (type, message) => runValidation(v => validateWithName(v, this.#name).isTypeOf(type, message)),
-        isNotNull: (message) => runValidation(v => validateWithName(v, this.#name).isNotNull(message)),
-        isNotUndefined: (message) => runValidation(v => validateWithName(v, this.#name).isNotUndefined(message)),
-        isNotNullOrUndefined: (message) => runValidation(v => validateWithName(v, this.#name).isNotNullOrUndefined(message)),
-        isNotWhitespace: (message) => runValidation(v => validateWithName(v, this.#name).isNotWhitespace(message)),
-        isValidNumber: (message) => runValidation(v => validateWithName(v, this.#name).isValidNumber(message)),
-        isNumberLessThan: (min, message) => runValidation(v => validateWithName(v, this.#name).isNumberLessThan(min, message)),
-        isNumberLessThanZero: (message) => runValidation(v => validateWithName(v, this.#name).isNumberLessThanZero(message)),
-        isNumberGreaterThan: (max, message) => runValidation(v => validateWithName(v, this.#name).isNumberGreaterThan(max, message)),
-        isNumberGreaterThanZero: (message) => runValidation(v => validateWithName(v, this.#name).isNumberGreaterThanZero(message)),
-        isString: (message) => runValidation(v => validateWithName(v, this.#name).isString(message)),
-        isBoolean: (message) => runValidation(v => validateWithName(v, this.#name).isBoolean(message)),
-        isStream: (message) => runValidation(v => validateWithName(v, this.#name).isStream(message)),
-        isBuffer: (message) => runValidation(v => validateWithName(v, this.#name).isBuffer(message)),
-        isArray: (message) => runValidation(v => validateWithName(v, this.#name).isArray(message)),
-        isDate: (message) => runValidation(v => validateWithName(v, this.#name).isDate(message)),
-        isDateInFuture: (message) => runValidation(v => validateWithName(v, this.#name).isDateInFuture(message)),
-        isDateInPast: (message) => runValidation(v => validateWithName(v, this.#name).isDateInPast(message)),
-        isDateBefore: (other, message) => runValidation(v => validateWithName(v, this.#name).isDateBefore(other, message)),
-        in: (list, message) => runValidation(v => validateWithName(v, this.#name).in(list, message)),
-        duplicates: (message) => runValidation(v => validateWithName(v, this.#name).duplicates(message)),
-        each: () => runValidation(v => validateWithName(v, this.#name).each())
+        isInstanceOf: (cls, message) => runValidation((item) => validateWithName(item, this.#name).isInstanceOf(cls, message)),
+        isTypeOf: (type, message) => runValidation((item) => validateWithName(item, this.#name).isTypeOf(type, message)),
+        isNotNull: (message) => runValidation((item) => validateWithName(item, this.#name).isNotNull(message)),
+        isNotUndefined: (message) => runValidation((item) => validateWithName(item, this.#name).isNotUndefined(message)),
+        isNotNullOrUndefined: (message) => runValidation((item) => validateWithName(item, this.#name).isNotNullOrUndefined(message)),
+        isNotWhitespace: (message) => runValidation((item) => validateWithName(item, this.#name).isNotWhitespace(message)),
+        isValidNumber: (message) => runValidation((item) => validateWithName(item, this.#name).isValidNumber(message)),
+        isNumberIn: (allowed, message) => runValidation((item) => validateWithName(item, this.#name).isNumberIn(allowed, message)),
+        isNumberLessThan: (min, message) => runValidation((item) => validateWithName(item, this.#name).isNumberLessThan(min, message)),
+        isNumberLessThanZero: (message) => runValidation((item) => validateWithName(item, this.#name).isNumberLessThanZero(message)),
+        isNumberGreaterThan: (max, message) => runValidation((item) => validateWithName(item, this.#name).isNumberGreaterThan(max, message)),
+        isNumberGreaterThanZero: (message) => runValidation((item) => validateWithName(item, this.#name).isNumberGreaterThanZero(message)),
+        isString: (message) => runValidation((item) => validateWithName(item, this.#name).isString(message)),
+        isBoolean: (message) => runValidation((item) => validateWithName(item, this.#name).isBoolean(message)),
+        isStream: (message) => runValidation((item) => validateWithName(item, this.#name).isStream(message)),
+        isBuffer: (message) => runValidation((item) => validateWithName(item, this.#name).isBuffer(message)),
+        isArray: (message) => runValidation((item) => validateWithName(item, this.#name).isArray(message)),
+        isDate: (message) => runValidation((item) => validateWithName(item, this.#name).isDate(message)),
+        isDateInFuture: (message) => runValidation((item) => validateWithName(item, this.#name).isDateInFuture(message)),
+        isDateInPast: (message) => runValidation((item) => validateWithName(item, this.#name).isDateInPast(message)),
+        isDateBefore: (other, message) => runValidation((item) => validateWithName(item, this.#name).isDateBefore(other, message)),
+        in: (list, message) => runValidation((item) => validateWithName(item, this.#name).in(list, message)),
+        duplicates: (message) => runValidation((item) => validateWithName(item, this.#name).duplicates(message)),
+        each: () => runValidation((item) => validateWithName(item, this.#name).each())
       };
 
       return propValidator;
@@ -285,6 +295,8 @@ class Validation {
       isNotNullOrUndefined: (message) => runValidation((item) => validate(item).isNotNullOrUndefined(message)),
       isNotWhitespace: (message) => runValidation((item) => validate(item).isNotWhitespace(message)),
       isValidNumber: (message) => runValidation((item) => validate(item).isValidNumber(message)),
+
+      isNumberIn: (allowed, message) => runValidation(item => validateWithName(item, this.#name).isNumberIn(allowed, message)),
       isNumberLessThan: (min, message) => runValidation((item) => validate(item).isNumberLessThan(min, message)),
       isNumberLessThanZero: (message) => runValidation((item) => validate(item).isNumberLessThanZero(message)),
       isNumberGreaterThan: (max, message) => runValidation((item) => validate(item).isNumberGreaterThan(max, message)),
@@ -321,4 +333,45 @@ function validateWithName (value, name) {
 }
 export function validate (value, _class, _method) {
   return new Validation(value, _class, _method);
+}
+export async function validateConfig (value, config, profile, _class, _method) {
+  const name = _class instanceof String
+    ? _class
+    : _class && _method
+      ? `${_class.constructor.name}.${_method.name}() `
+      : '';
+
+  const { mime } = await fileTypeFromBuffer(value);
+
+  if (!config.mimes.some((supportedMime) => supportedMime.type === mime)) {
+    throw new Error(`${name}${mime} is an unsupported mimeType`);
+  }
+
+  if (mime.startsWith('image/')) {
+    const mimeConfig = config.mimes.find((supportedMime) => supportedMime.type === mime);
+
+    if ('minLevel' in mimeConfig && Math.floor(profile.reputation) < mimeConfig.minLevel) {
+      throw new Error(`${config.route.includes('subscriber')
+        ? 'Bot'
+        : `Channel with ID ${profile.id}`} must be level ${mimeConfig.minLevel} or higher to upload a gif avatar`);
+    }
+
+    if (config.square) {
+      const size = imageSize(value);
+
+      if (size.width !== size.height) {
+        throw new Error(`${name}Image must be square`);
+      }
+    }
+  }
+
+  const mimeConfig = config.mimes.find((supportedMime) => supportedMime.type === mime);
+
+  const bufferSize = Buffer.byteLength(value);
+
+  if (bufferSize > mimeConfig.size) {
+    throw new Error(`${name}Image must be smaller than ${bufferSize} bytes`);
+  }
+
+  return true;
 }

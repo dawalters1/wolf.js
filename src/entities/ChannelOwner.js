@@ -7,4 +7,8 @@ export default class ChannelOwner extends BaseEntity {
     this.id = entity.id;
     this.hash = entity.hash;
   }
+
+  async sendPrivateMessage (content, opts) {
+    return await this.client.messaging.sendPrivateMessage(this.id, content, opts);
+  }
 }

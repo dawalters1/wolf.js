@@ -18,4 +18,12 @@ export default class Event extends BaseEntity {
     this.startsAt = new Date(entity.startsAt);
     this.title = entity.title;
   }
+
+  async subscribe () {
+    return this.client.event.subscription.add(this.id);
+  }
+
+  async unsubscribe () {
+    return this.client.event.subscription.remove(this.id);
+  }
 }

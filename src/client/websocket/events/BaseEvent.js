@@ -11,7 +11,7 @@ export default class BaseEvent {
     return this.#client;
   }
 
-  async process (data) {
+  async process () {
     throw new Error(`Event '${this.eventName}' Processor NOT IMPLEMENTED`);
   }
 }

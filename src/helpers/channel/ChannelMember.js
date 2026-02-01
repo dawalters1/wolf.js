@@ -69,11 +69,13 @@ export default class ChannelMemberHelper extends BaseHelper {
           }
         );
 
+        const maxAge = response.headers?.maxAge;
+
         result.push(...response.body.map(
           (serverMember) =>
             channel.memberStore.set(
               new ChannelMember(this.client, serverMember, channel.id, list),
-              response.headers?.maxAge
+              maxAge
             )
         ));
 

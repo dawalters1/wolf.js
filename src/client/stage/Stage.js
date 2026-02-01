@@ -49,40 +49,38 @@ class AudioClientError extends Error {
 
 export default class Stage {
   // ---------------- PRIVATE FIELDS ----------------
-  #client;
-  #channelId;
-  #slotId;
-  #broadcastState;
-  #state;
-  #settings;
-  #peerConnection;
   #audioSource;
-  #track;
-  #mediaStream;
-  #worker;
-  #ffmpeg;
-  #paused = false;
-  #destroyed = false;
-  #leftoverSamples;
-  #numLeftoverSamples = 0;
-  #underrunCount = 0;
+  #broadcastState;
+  #channelId;
   #cleanupTasks = new Set();
+  #client;
+  #destroyed = false;
+  #ffmpeg;
+  #leftoverSamples;
+  #mediaStream;
+  #numLeftoverSamples = 0;
+  #paused = false;
+  #peerConnection;
+  #settings;
+  #slotId;
+  #state;
+  #track;
+  #underrunCount = 0;
+  #worker;
 
   // ---------------- CONSTRUCTOR ----------------
   constructor (client, channelId, settings = { volume: 1, muted: false }) {
     if (!client) { throw new AudioClientError('Client is required', 'INVALID_CLIENT'); }
     if (!channelId) { throw new AudioClientError('Channel ID is required', 'INVALID_CHANNEL_ID'); }
 
-    this.#client = client;
-    this.#channelId = channelId;
-    this.#slotId = undefined;
-
-    this.#settings = this.#validateSettings(settings);
     this.#broadcastState = BROADCAST_STATES.IDLE;
+    this.#channelId = channelId;
+    this.#client = client;
+    this.#settings = this.#validateSettings(settings);
+    this.#slotId = undefined;
     this.connectionState = ChannelAudioSlotConnectionState.DISCONNECTED;
-    this.#state = CLIENT_STATES.DISABLED;
-
     this.#leftoverSamples = new Int16Array(AUDIO_CONFIG.FRAMES * AUDIO_CONFIG.CHANNEL_COUNT);
+    this.#state = CLIENT_STATES.DISABLED;
 
     this.#initializeWebRTC();
     this.#initializeWorker();
@@ -90,13 +88,67 @@ export default class Stage {
   }
 
   // ---------------- PRIVATE METHODS ----------------
-  #validateSettings = (settings) => {
-    const validated = { ...settings };
-    if (typeof validated.volume !== 'number' ||
-        validated.volume < AUDIO_CONFIG.MIN_VOLUME ||
-        validated.volume > AUDIO_CONFIG.MAX_VOLUME) { validated.volume = 1; }
-    if (typeof validated.muted !== 'boolean') { validated.muted = false; }
-    return validated;
+  #handleConnectionStateChange = () => {
+    if (this.#destroyed) { return; }
+
+    const state = this.#peerConnection.connectionState;
+
+    switch (state) {
+      case 'connecting':
+        this.connectionState = ChannelAudioSlotConnectionState.PENDING;
+        this.#client.emit('channelAudioClientConnecting', this);
+        break;
+
+      case 'connected':
+        if (this.connectionState === ChannelAudioSlotConnectionState.CONNECTED) {
+          this.#client.emit('channelAudioClientReady', this);
+        } else {
+          this.connectionState = ChannelAudioSlotConnectionState.CONNECTED;
+          this.#client.emit('channelAudioClientConnected', this);
+        }
+        break;
+
+      case 'disconnected':
+        this.connectionState = ChannelAudioSlotConnectionState.DISCONNECTED;
+        this.#client.emit('channelAudioClientDisconnected', this);
+        break;
+
+      case 'failed':
+        this.connectionState = ChannelAudioSlotConnectionState.DISCONNECTED;
+        this.#client.emit('channelAudioClientError', new AudioClientError(
+          'WebRTC connection failed', 'CONNECTION_FAILED'
+        ));
+        break;
+    }
+  };
+
+  #handleWorkerError = (error) => {
+    this.#client.emit('channelAudioClientError', new AudioClientError(
+      'Worker thread error', 'WORKER_THREAD_ERROR', error
+    ));
+  };
+
+  #handleWorkerExit = (code) => {
+    if (!this.#destroyed && code !== 0) {
+      this.#client.emit('channelAudioClientError', new AudioClientError(
+        `Worker exited unexpectedly with code ${code}`, 'WORKER_EXIT_ERROR'
+      ));
+    }
+  };
+
+  #handleWorkerMessage = (message) => {
+    if (this.#destroyed) { return; }
+    switch (message.type) {
+      case 'underrun': this.#underrunCount = message.count; break;
+      case 'audioFrame':
+        if (message.data && this.#audioSource) { this.#audioSource.onData(message.data); }
+        break;
+      case 'error':
+        this.#client.emit('channelAudioClientError', new AudioClientError(
+          'Worker processing error', 'WORKER_ERROR', message.error
+        ));
+        break;
+    }
   };
 
   #initializeWebRTC = () => {
@@ -150,72 +202,18 @@ export default class Stage {
     });
   };
 
-  #handleConnectionStateChange = () => {
-    if (this.#destroyed) { return; }
-
-    const state = this.#peerConnection.connectionState;
-
-    switch (state) {
-      case 'connecting':
-        this.connectionState = ChannelAudioSlotConnectionState.PENDING;
-        this.#client.emit('channelAudioClientConnecting', this);
-        break;
-
-      case 'connected':
-        if (this.connectionState === ChannelAudioSlotConnectionState.CONNECTED) {
-          this.#client.emit('channelAudioClientReady', this);
-        } else {
-          this.connectionState = ChannelAudioSlotConnectionState.CONNECTED;
-          this.#client.emit('channelAudioClientConnected', this);
-        }
-        break;
-
-      case 'disconnected':
-        this.connectionState = ChannelAudioSlotConnectionState.DISCONNECTED;
-        this.#client.emit('channelAudioClientDisconnected', this);
-        break;
-
-      case 'failed':
-        this.connectionState = ChannelAudioSlotConnectionState.DISCONNECTED;
-        this.#client.emit('channelAudioClientError', new AudioClientError(
-          'WebRTC connection failed', 'CONNECTION_FAILED'
-        ));
-        break;
-    }
-  };
-
-  #handleWorkerMessage = (message) => {
-    if (this.#destroyed) { return; }
-    switch (message.type) {
-      case 'underrun': this.#underrunCount = message.count; break;
-      case 'audioFrame':
-        if (message.data && this.#audioSource) { this.#audioSource.onData(message.data); }
-        break;
-      case 'error':
-        this.#client.emit('channelAudioClientError', new AudioClientError(
-          'Worker processing error', 'WORKER_ERROR', message.error
-        ));
-        break;
-    }
-  };
-
-  #handleWorkerError = (error) => {
-    this.#client.emit('channelAudioClientError', new AudioClientError(
-      'Worker thread error', 'WORKER_THREAD_ERROR', error
-    ));
-  };
-
-  #handleWorkerExit = (code) => {
-    if (!this.#destroyed && code !== 0) {
-      this.#client.emit('channelAudioClientError', new AudioClientError(
-        `Worker exited unexpectedly with code ${code}`, 'WORKER_EXIT_ERROR'
-      ));
-    }
-  };
-
   #stopFFmpeg = async () => {
     if (!this.#ffmpeg) { return; }
     this.#ffmpeg.kill('SIGKILL');
+  };
+
+  #validateSettings = (settings) => {
+    const validated = { ...settings };
+    if (typeof validated.volume !== 'number' ||
+        validated.volume < AUDIO_CONFIG.MIN_VOLUME ||
+        validated.volume > AUDIO_CONFIG.MAX_VOLUME) { validated.volume = 1; }
+    if (typeof validated.muted !== 'boolean') { validated.muted = false; }
+    return validated;
   };
 
   // ---------------- PUBLIC API ----------------

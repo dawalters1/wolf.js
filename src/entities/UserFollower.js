@@ -7,4 +7,8 @@ export default class UserFollower extends BaseEntity {
     this.followerId = entity.followerId;
     this.hash = entity.hash;
   }
+
+  async user () {
+    return this.client.user.fetch(this.followerId);
+  }
 }

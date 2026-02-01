@@ -21,4 +21,14 @@ export default class MessageUpdate {
 
     this.isCommand = client.commandManager?.isCommand(this) ?? false;
   }
+
+  async user () {
+    return this.client.user.fetch(this.sourceUserId);
+  }
+
+  async channel () {
+    if (!this.isChannel) { throw new Error(); }
+
+    return this.client.channel.fetch(this.targetChannelId);
+  }
 }

@@ -8,4 +8,8 @@ export default class ChannelRoleUser extends BaseEntity {
     this.channelId = entity?.id ?? entity.groupId;
     this.roleId = entity.additionalInfo?.roleId ?? entity.roleId;
   }
+
+  async unassign (userId) {
+    return this.client.channel.roles.unassign(this.channelId, userId, this.id);
+  }
 }
