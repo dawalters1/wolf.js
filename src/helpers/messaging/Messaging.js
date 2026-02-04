@@ -6,6 +6,8 @@ import { fileTypeFromBuffer } from 'file-type';
 import Message from '../../entities/Message.js';
 import MessageSubscriptionType from '../../constants/MessageSubscriptionType.js';
 import MessageType from '../../constants/MessageType.js';
+import MessageUpdate from '../../entities/MessageUpdate.js';
+import MessageUpdateHistory from '../../entities/MessageUpdateHistory.js';
 import { nanoid } from 'nanoid';
 import { StatusCodes } from 'http-status-codes';
 import { validate, validateConfig } from '../../validation/Validation.js';
@@ -305,7 +307,7 @@ export default class MessagingHelper extends BaseHelper {
     const normalisedId = this.normaliseNumber(id);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
 
-    validate(normalisedId, this, this.delete)
+    validate(normalisedId, this, this.edit)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
@@ -342,7 +344,49 @@ export default class MessagingHelper extends BaseHelper {
     return response;
   }
 
-  async editHistory (timestamp, timestampBegin, timestampEnd, limit, chronological) {
+  async editHistory (id, timestamp, isChannel = true) {
+    const normalisedId = this.normaliseNumber(id);
+    const normalisedTimestamp = this.normaliseNumber(timestamp);
 
+    validate(normalisedId, this, this.editHistory)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTimestamp, this, this.editHistory)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(isChannel, this, this.edieditHistoryt)
+      .isNotNullOrUndefined()
+      .isBoolean();
+
+    const batch = async (results = []) => {
+      const response = await this.client.websocket.emit(
+        'message update list',
+        {
+          body: {
+            recipientId: normalisedId,
+            timestamp,
+            isGroup: isChannel,
+            offsetTimestamp: results.at(-1)?.timestamp ?? 0,
+            limit: 25
+          }
+        }
+      );
+
+      results.push(
+        ...response.body.map((serverMessageUpdate) =>
+          new MessageUpdateHistory(this.client, serverMessageUpdate)
+        )
+      );
+
+      return response.body.length < 25
+        ? results
+        : await batch(results);
+    };
+
+    return await batch();
   }
 }

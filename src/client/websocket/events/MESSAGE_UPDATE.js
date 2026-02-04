@@ -8,7 +8,7 @@ export default class MessageUpdateEvent extends BaseEvent {
 
   async process (data) {
     return this.client.emit(
-      'messageUpdate',
+      'messageUpdated',
       new MessageUpdate(this.client, data)
     );
   }
