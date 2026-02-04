@@ -52,10 +52,14 @@ export default class CommandContext extends BaseEntity {
   }
 
   async delete () {
-    return this.client.messaging.delete(this.targetChannelId, this.timestamp, true);
+    if (!this.isChannel) { throw new Error('Private Messages cannot be deleted'); }
+
+    return this.client.messaging.edit(this.targetChannelId, this.timestamp, true, this.isChannel);
   }
 
   async restore () {
-    return this.client.messaging.restore(this.targetChannelId, this.timestamp, true);
+    if (!this.isChannel) { throw new Error('Private Messages cannot be deleted'); }
+
+    return this.client.messaging.restore(this.targetChannelId, this.timestamp, false, this.isChannel);
   }
 }

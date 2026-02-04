@@ -301,7 +301,7 @@ export default class MessagingHelper extends BaseHelper {
     return this.#sendMessage(id, content, false, opts);
   }
 
-  async delete (id, timestamp, isChannel = true) {
+  async edit (id, timestamp, isDeleted, isChannel = true) {
     const normalisedId = this.normaliseNumber(id);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
 
@@ -310,10 +310,18 @@ export default class MessagingHelper extends BaseHelper {
       .isValidNumber()
       .isNumberGreaterThanZero();
 
-    validate(normalisedTimestamp, this, this.delete)
+    validate(normalisedTimestamp, this, this.edit)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
+
+    validate(isDeleted, this, this.edit)
+      .isNotNullOrUndefined()
+      .isBoolean();
+
+    validate(isChannel, this, this.edit)
+      .isNotNullOrUndefined()
+      .isBoolean();
 
     const response = await this.client.websocket.emit(
       'message update',
@@ -321,7 +329,7 @@ export default class MessagingHelper extends BaseHelper {
         body: {
           isGroup: isChannel,
           metadata: {
-            isDeleted: true
+            isDeleted
           },
           recipientId: normalisedId,
           timestamp: normalisedTimestamp
@@ -334,36 +342,7 @@ export default class MessagingHelper extends BaseHelper {
     return response;
   }
 
-  async restore (id, timestamp, isChannel = true) {
-    const normalisedId = this.normaliseNumber(id);
-    const normalisedTimestamp = this.normaliseNumber(timestamp);
+  async editHistory (timestamp, timestampBegin, timestampEnd, limit, chronological) {
 
-    validate(normalisedId, this, this.restore)
-      .isNotNullOrUndefined()
-      .isValidNumber()
-      .isNumberGreaterThanZero();
-
-    validate(normalisedTimestamp, this, this.restore)
-      .isNotNullOrUndefined()
-      .isValidNumber()
-      .isNumberGreaterThanZero();
-
-    const response = await this.client.websocket.emit(
-      'message update',
-      {
-        body: {
-          isGroup: isChannel,
-          metadata: {
-            isDeleted: false
-          },
-          recipientId: normalisedId,
-          timestamp: normalisedTimestamp
-        }
-      }
-    );
-
-    response.body = new Message(this.client, response.body);
-
-    return response;
   }
 }

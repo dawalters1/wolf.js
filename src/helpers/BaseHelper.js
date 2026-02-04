@@ -29,6 +29,8 @@ export default class BaseHelper {
   }
 
   normaliseNumbers (ids) {
+    if (this.isObject(ids)) { return ids; }
+
     return (Array.isArray(ids)
       ? ids
       : [ids]).map(

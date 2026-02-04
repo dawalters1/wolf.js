@@ -9,6 +9,7 @@ import config from 'config';
 import ContactHelper from '../helpers/contact/Contact.js';
 import { EventEmitter } from 'node:events';
 import EventHelper from '../helpers/event/Event.js';
+import ExperienceHelper from '../helpers/experience/Experience.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { fileURLToPath } from 'node:url';
 import FrameHelper from '../helpers/frame/Frame.js';
@@ -58,6 +59,7 @@ export class WOLF extends EventEmitter {
   #config;
   #contact;
   #event;
+  #experience;
   #frame;
   #loggedIn = false;
   #me = undefined;
@@ -99,6 +101,7 @@ export class WOLF extends EventEmitter {
     this.#config = _.merge({ get: config.get }, baseConfig, frameworkConfig, botConfig);
     this.#contact = new ContactHelper(this);
     this.#event = new EventHelper(this);
+    this.#experience = new ExperienceHelper(this);
     this.#frame = new FrameHelper(this);
     this.#messaging = new MessagingHelper(this);
     this.#multimedia = new Multimedia(this);
@@ -176,6 +179,10 @@ export class WOLF extends EventEmitter {
 
   get event () {
     return this.#event;
+  }
+
+  get experience () {
+    return this.#experience;
   }
 
   get frame () {

@@ -12,6 +12,8 @@ export * from './Command.js';
 export * from './ContextType.js';
 export * from './DeviceType.js';
 export * from './EmbedType.js';
+export * from './ExperienceBuildType.js';
+export * from './ExperienceContextType.js';
 export * from './Gender.js';
 export * from './IconSize.js';
 export * from './index.js';

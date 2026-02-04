@@ -62,14 +62,14 @@ export default class Message extends BaseEntity {
   }
 
   async delete () {
-    if (!this.isChannel) { throw new Error(); }
+    if (!this.isChannel) { throw new Error('Private Messages cannot be deleted'); }
 
-    return this.client.messaging.delete(this.targetChannelId, this.timestamp);
+    return this.client.messaging.edit(this.targetChannelId, this.timestamp, true, this.isChannel);
   }
 
   async restore () {
-    if (!this.isChannel) { throw new Error(); }
+    if (!this.isChannel) { throw new Error('Private Messages cannot be deleted'); }
 
-    return this.client.messaging.restore(this.targetChannelId, this.timestamp);
+    return this.client.messaging.edit(this.targetChannelId, this.timestamp, false, this.isChannel);
   }
 }
