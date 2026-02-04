@@ -283,7 +283,7 @@ class Messaging extends Base {
       throw new models.WOLFAPIError('content cannot be null or undefined', { content });
     }
 
-    const mimeType = Buffer.isBuffer(content) ? (await fileTypeFromBuffer(content)).mime : MessageType.TEXT_PLAIN;
+    const mimeType = Buffer.isBuffer(content) ? (await fileTypeFromBuffer(content))?.mime ?? MessageType.TEXT_PLAIN : MessageType.TEXT_PLAIN;
 
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const messageConfig = this.client._frameworkConfig.get('multimedia.messaging');
