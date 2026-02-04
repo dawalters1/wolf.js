@@ -5,60 +5,7 @@ import NotificationUser from '../../entities/NotificationUser.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class NotificationUserHelper extends BaseHelper {
-  async fetch (notificationIds, opts) {
-    const isArrayResponse = Array.isArray(notificationIds);
-    const normalisedNotificationIds = this.normaliseNumbers(notificationIds);
-
-    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
-
-    if (!normalisedNotificationIds || this.isObject(normalisedNotificationIds)) {
-      opts = notificationIds;
-
-      validate(opts, this, this.fetch)
-        .isNotRequired()
-        .forEachProperty(
-          {
-            forceNew: validator => validator
-              .isNotRequired()
-              .isBoolean(),
-
-            subscribe: validator => validator
-              .isNotRequired()
-              .isBoolean()
-          }
-        );
-      if (!opts?.forceNew && this.client.me.notificationStore.user.fetched) { return this.client.me.notificationStore.user.values(); }
-
-      const batch = async (results = []) => {
-        const response = await this.client.websocket.emit(
-          'notification user list',
-          {
-            body: {
-              subscribe: opts?.subscribe ?? true,
-              offset: results.length,
-              limit: 50
-            }
-          }
-        );
-
-        results.push(...response.body);
-
-        return response.body.length < 50
-          ? results
-          : await batch(results);
-      };
-
-      this.client.me.notificationStore.user.clear();
-      this.client.me.notificationStore.user.fetched = true;
-
-      return (await batch())
-        .map((serverNotification) =>
-          this.client.me.notificationStore.user.set(
-            new Notification(this.client, serverNotification)
-          )
-        );
-    }
-
+  async #fetchList (opts) {
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(
@@ -73,10 +20,46 @@ export default class NotificationUserHelper extends BaseHelper {
         }
       );
 
+    if (!opts?.forceNew && this.client.me.notificationStore.user.fetched) { return this.client.me.notificationStore.user.values(); }
+
+    const batch = async (results = []) => {
+      const response = await this.client.websocket.emit(
+        'notification global list',
+        {
+          body: {
+            subscribe: opts?.subscribe ?? true,
+            offset: results.length,
+            limit: 50
+          }
+        }
+      );
+
+      results.push(...response.body);
+
+      return response.body.length < 50
+        ? results
+        : await batch(results);
+    };
+
+    this.client.me.notificationStore.user.clear();
+    this.client.me.notificationStore.user.fetched = true;
+
+    return (await batch())
+      .map((serverNotification) =>
+        this.client.me.notificationStore.user.set(
+          new Notification(this.client, serverNotification)
+        )
+      );
+  }
+
+  async #fetchByIds (ids, opts) {
+    const isArrayResponse = Array.isArray(ids);
+    const normalisedNotificationIds = this.normaliseNumbers(ids);
+
     const idsToFetch = opts?.forceNew
       ? normalisedNotificationIds
-      : normalisedNotificationIds.filter((eventId) =>
-        !this.store.has((item) => item.id === eventId)
+      : normalisedNotificationIds.filter((notificationId) =>
+        !this.store.has((item) => item.id === notificationId)
       );
 
     if (idsToFetch.length > 0) {
@@ -116,5 +99,18 @@ export default class NotificationUserHelper extends BaseHelper {
     return isArrayResponse
       ? notifications
       : notifications[0];
+  }
+
+  async fetch (notificationIds, opts) {
+    const normalised = this.normaliseNumbers(notificationIds);
+    const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
+
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
+    if (!normalised || this.isObject(normalised)) {
+      return this.#fetchList(normalisedOpts);
+    }
+
+    return this.#fetchByIds(notificationIds, opts);
   }
 }

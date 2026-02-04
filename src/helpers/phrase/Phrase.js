@@ -4,21 +4,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export default class PhraseHelper extends BaseHelper {
-  constructor (client) {
+  #opts;
+  constructor (client, opts) {
     super(client);
-
+    this.#opts = opts;
     this.reload();
   }
 
   reload () {
-    if (!fs.existsSync(path.join(process.cwd(), '/phrases'))) { return false; }
+    const phrasePath = path.join(process.cwd(), this.#opts?.paths?.phrases ?? '/phrases');
 
-    const files = fs.readdirSync(path.join(process.cwd(), '/phrases')).filter((file) => file.endsWith('.json'));
+    if (!fs.existsSync(phrasePath)) { return false; }
+
+    const files = fs.readdirSync(phrasePath).filter((file) => file.endsWith('.json'));
 
     for (const file of files) {
       const language = path.parse(file).name;
 
-      const phrases = JSON.parse(fs.readFileSync(path.join(process.cwd(), `/phrases/${file}`), 'utf8'))
+      const phrases = JSON.parse(fs.readFileSync(path.join(process.cwd(), `${phrasePath}/${file}`), 'utf8'))
         .map((phrase) =>
           (
             {

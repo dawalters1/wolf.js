@@ -1,15 +1,12 @@
 
 export const ChannelEntities = {
-  /**
-   * Client is pending connection
-   */
   BASE: 'base',
 
   EXTENDED: 'extended',
 
   AUDIO_CONFIG: 'audioConfig',
 
-  AUDIO_COUNT: 'audioCount',
+  AUDIO_COUNTS: 'audioCounts',
 
   MESSAGE_CONFIG: 'messageConfig'
 };

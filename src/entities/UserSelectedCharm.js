@@ -7,4 +7,8 @@ export default class UserSelectedCharm extends BaseEntity {
     this.charmId = entity.charmId;
     this.position = entity.position;
   }
+
+  async fetch (languageId) {
+    return await this.client.charm.fetch(this.charmId, languageId);
+  }
 }

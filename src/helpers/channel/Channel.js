@@ -46,62 +46,7 @@ export default class ChannelHelper extends BaseHelper {
     return this.#roles;
   }
 
-  async fetch (idsOrName, opts) {
-    const normalisedChannelIdOrName = this.normaliseNumber(idsOrName);
-
-    if (!normalisedChannelIdOrName || this.isObject(normalisedChannelIdOrName)) {
-      opts = normalisedChannelIdOrName;
-
-      validate(opts, this, this.fetch)
-        .isNotRequired()
-        .forEachProperty(
-          {
-            forceNew: validator => validator
-              .isNotRequired()
-              .isBoolean(),
-            subscribe: validator => validator
-              .isNotRequired()
-              .isBoolean(),
-            entities: validator => validator
-              .isNotRequired()
-              .isArray()
-              .each()
-              .in(Object.values(ChannelEntities))
-          }
-        );
-
-      if (!opts?.forceNew && this.store.fetched) {
-        return this.store.filter((item) => item.isMember);
-      }
-
-      const response = await this.client.websocket.emit(
-        'subscriber group list',
-        {
-          body: {
-            subscribe: opts?.subscribe ?? true
-          }
-        }
-      );
-
-      this.store.clear();
-      this.store.fetched = true;
-
-      if (response.body.length > 0) {
-        const channelIdList = response.body.map((serverChannelListGroup) => serverChannelListGroup.id);
-
-        const channels = await this.fetch(channelIdList, opts);
-
-        channels
-          .filter(Boolean)
-          .forEach((channel, index) => {
-            channel.isMember = true;
-            channel.capabilities = response.body[index].capabilities;
-          });
-      }
-
-      return this.store.filter((item) => item.isMember);
-    }
-
+  async #fetchChannelList (opts) {
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(
@@ -112,6 +57,9 @@ export default class ChannelHelper extends BaseHelper {
           subscribe: validator => validator
             .isNotRequired()
             .isBoolean(),
+          memberOnly: validator => validator
+            .isNotRequired()
+            .isBoolean(),
           entities: validator => validator
             .isNotRequired()
             .isArray()
@@ -120,42 +68,80 @@ export default class ChannelHelper extends BaseHelper {
         }
       );
 
-    // Developer provided a name
-    if (!Array.isArray(normalisedChannelIdOrName) && isNaN(normalisedChannelIdOrName)) {
-      if (!opts?.forceNew) {
-        const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName) && opts?.entities
-          ? opts.entities.some((entity) => !(entity in item))
-          : true);
+    const memberOnly = opts?.memberOnly ?? true;
 
-        if (cached) { return cached; }
-      }
-      try {
-        const response = await this.client.websocket.emit(
-          'group profile',
-          {
-            headers: {
-              version: 4
-            },
-            body: {
-              name: normalisedChannelIdOrName.toLowerCase(),
-              subscribe: opts?.subscribe ?? true,
-              entities: opts?.entities ?? ['base']
-            }
-          }
-        );
-
-        return this.store.set(new Channel(this.client, response.body), response.headers?.maxAge);
-      } catch (error) {
-        if (error.code === StatusCodes.NOT_FOUND) {
-          this.store.delete((item) => this.client.utility.string.isEqual(item.name, normalisedChannelIdOrName));
-          return null;
-        }
-        throw error;
-      }
+    if (!opts?.forceNew && this.store.fetched) {
+      return this.store.filter(item => !memberOnly || item.isMember);
     }
 
-    const isArrayResponse = Array.isArray(normalisedChannelIdOrName);
-    const normalisedChannelIds = this.normaliseNumbers(normalisedChannelIdOrName);
+    const response = await this.client.websocket.emit(
+      'subscriber group list',
+      {
+        body: {
+          subscribe: opts?.subscribe ?? true
+        }
+      }
+    );
+
+    if (response.body.length > 0) {
+      const channelIdList = response.body.map((serverChannelListGroup) => serverChannelListGroup.id);
+
+      this.store.delete((item) => !channelIdList.includes(item.id)); // Leave existing channel objects to be patched
+
+      const channels = await this.#fetchChannelByIds(channelIdList, opts);
+
+      channels
+        .filter(Boolean)
+        .forEach((channel, index) => {
+          channel.isMember = true;
+          channel.capabilities = response.body[index].capabilities;
+        });
+    } else {
+      this.store.clear();
+    }
+
+    this.store.fetched = true;
+
+    return this.store.filter(item => !memberOnly || item.isMember);
+  }
+
+  async #fetchChannelByName (name, opts) {
+    if (!opts?.forceNew) {
+      const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, name) && opts?.entities
+        ? opts.entities.some((entity) => !(entity in item))
+        : true);
+
+      if (cached) { return cached; }
+    }
+
+    try {
+      const response = await this.client.websocket.emit(
+        'group profile',
+        {
+          headers: {
+            version: 4
+          },
+          body: {
+            name: name.toLowerCase(),
+            subscribe: opts?.subscribe ?? true,
+            entities: opts?.entities ?? ['base']
+          }
+        }
+      );
+
+      return this.store.set(new Channel(this.client, response.body), response.headers?.maxAge);
+    } catch (error) {
+      if (error.code === StatusCodes.NOT_FOUND) {
+        this.store.delete((item) => this.client.utility.string.isEqual(item.name, name));
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async #fetchChannelByIds (ids, opts) {
+    const isArrayResponse = Array.isArray(ids);
+    const normalisedChannelIds = this.normaliseNumbers(ids);
 
     const idsToFetch = opts?.forceNew
       ? normalisedChannelIds
@@ -174,7 +160,7 @@ export default class ChannelHelper extends BaseHelper {
           body: {
             idList: idsToFetch,
             subscribe: opts?.subscribe ?? true,
-            entities: opts?.entities ?? ['base']
+            entities: opts?.entities ?? Object.values(ChannelEntities)
           }
         }
       );
@@ -199,6 +185,21 @@ export default class ChannelHelper extends BaseHelper {
     return isArrayResponse
       ? channels
       : channels[0];
+  }
+
+  async fetch (idsOrName, opts) {
+    const normalised = this.normaliseNumbers(idsOrName);
+    const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
+
+    if (!normalised || this.isObject(normalised)) {
+      return this.#fetchChannelList(normalisedOpts);
+    }
+
+    if (!Array.isArray(normalised) && isNaN(normalised)) {
+      return this.#fetchChannelByName(normalised, normalisedOpts);
+    }
+
+    return this.#fetchChannelByIds(normalised, normalisedOpts);
   }
 
   async history (channelId, chronological, timestamp, limit) {
@@ -259,7 +260,7 @@ export default class ChannelHelper extends BaseHelper {
 
     if (!channel) {
       // eslint-disable-next-line custom/ternary-formatting
-      throw new Error(`Channel with ${isById ? 'ID' : 'Name'} ${normalisedChannelIdOrName} Not Found`);
+      throw new Error(`Channel with ${isById ? 'ID' : 'Name'} ${normalisedChannelIdOrName} NOT FOUND`);
     }
 
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }

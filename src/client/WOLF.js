@@ -76,7 +76,7 @@ export class WOLF extends EventEmitter {
   #utility;
   #websocket;
 
-  constructor () {
+  constructor (opts) {
     super();
 
     const baseConfig = config.util.toObject();
@@ -85,8 +85,9 @@ export class WOLF extends EventEmitter {
       fs.readFileSync(path.join(__dirname, '../../config/default.yaml'), 'utf-8')
     );
 
-    const botConfig = fs.existsSync(path.join(process.cwd(), '/config/default.yaml'))
-      ? yaml.load(fs.readFileSync(path.join(process.cwd(), '/config/default.yaml'), 'utf-8'))
+    const botConfigPath = path.join(process.cwd(), `${opts?.paths?.configDir ?? '/config'}/default.yaml`);
+    const botConfig = fs.existsSync(botConfigPath)
+      ? yaml.load(fs.readFileSync(botConfigPath, 'utf-8'))
       : {};
 
     this.#achievement = new AchievementHelper(this);
@@ -102,7 +103,7 @@ export class WOLF extends EventEmitter {
     this.#messaging = new MessagingHelper(this);
     this.#multimedia = new Multimedia(this);
     this.#notification = new NotificationHelper(this);
-    this.#phrase = new PhraseHelper(this);
+    this.#phrase = new PhraseHelper(this, opts?.phrasesDir);
     this.#role = new RoleHelper(this);
     this.#security = new SecurityHelper(this);
     this.#store = new StoreHelper(this);

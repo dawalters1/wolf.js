@@ -44,7 +44,7 @@ export default class UserFollowHelper extends BaseHelper {
 
     const user = await this.client.user.fetch(normalisedUserId);
 
-    if (user === null) { throw new Error(`User with ID ${normalisedUserId} Not Found`); }
+    if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
     if (followDirection === UserFollowerType.FOLLOWER && !user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) {
       throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`);
@@ -138,7 +138,7 @@ export default class UserFollowHelper extends BaseHelper {
 
     const user = await this.client.user.getById(normalisedUserId);
 
-    if (user === null) { throw new Error(`User with ID ${normalisedUserId} Not Found`); }
+    if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
     if (!user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) { throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`); }
 
@@ -162,7 +162,7 @@ export default class UserFollowHelper extends BaseHelper {
 
     const user = await this.client.user.getById(normalisedUserId);
 
-    if (user === null) { throw new Error(`User with ID ${normalisedUserId} Not Found`); }
+    if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
     if (!user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) { throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`); }
 
@@ -195,7 +195,7 @@ export default class UserFollowHelper extends BaseHelper {
 
     const user = await this.client.user.getById(normalisedUserId);
 
-    if (user === null) { throw new Error(`User with ID ${normalisedUserId} Not Found`); }
+    if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
     if (!user.privilegeList.some((userPrivilege) => userPrivilege === UserPrivilege.CONTENT_CREATOR || userPrivilege === UserPrivilege.WOLFSTAR_PRO)) { throw new Error(`User with ID ${userId} is not WOLFStar PRO or a Content Creator`); }
 

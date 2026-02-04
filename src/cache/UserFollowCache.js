@@ -1,4 +1,5 @@
 
+import Cache from './Cache.js';
 import PropertyCache from './PropertyCache.js';
 
 export default class FollowStore {
