@@ -1,8 +1,11 @@
 import BaseEvent from './BaseEvent.js';
+import BaseHelper from '../../../helpers/BaseHelper.js';
 import MessageSubscriptionType from '../../../constants/MessageSubscriptionType.js';
 import { STATUS_CODES } from 'http';
 import TipSubscriptionTargetType from '../../../constants/TipSubscriptionTargetType.js';
 import Welcome from '../../../entities/Welcome.js';
+
+const excludeOnCleanup = ['ChannelHelper', 'BannedHelper', 'AuthorisationHelper'];
 
 export default class WelcomeEvent extends BaseEvent {
   constructor (client) {
@@ -10,6 +13,32 @@ export default class WelcomeEvent extends BaseEvent {
   }
 
   async #synchronise () {
+    const cleanupHelpers = async (instance, seen = new Set()) => {
+      if (!instance || seen.has(instance)) { return; }
+      seen.add(instance);
+
+      const proto = Object.getPrototypeOf(instance);
+      const getterKeys = Object.getOwnPropertyNames(proto)
+        .filter(key => {
+          const desc = Object.getOwnPropertyDescriptor(proto, key);
+          return desc?.get;
+        });
+
+      for (const key of getterKeys) {
+        const value = instance[key];
+
+        if (!value || !(value instanceof BaseHelper)) { continue; }
+
+        if (excludeOnCleanup.includes(value.constructor.name)) { continue; }
+
+        value.resetStore();
+
+        await cleanupHelpers(value, seen);
+      }
+    };
+
+    await cleanupHelpers(this.client);
+
     const { channel, notification, messaging, tipping } =
     this.client.config.framework.subscriptions;
 
@@ -106,7 +135,7 @@ export default class WelcomeEvent extends BaseEvent {
 
       if (!successfulLogin) { return; }
     } else {
-      this.client.emit('resume', await this.synchronise());
+      this.client.emit('resume', await this.#synchronise());
     }
 
     this.client.loggedIn = true;

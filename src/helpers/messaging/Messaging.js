@@ -1,5 +1,6 @@
 import BaseHelper from '../BaseHelper.js';
 import BlackListLink from '../../entities/BlacklistLink.js';
+import Cache from '../../cache/Cache.js';
 import EmbedType from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
 import Message from '../../entities/Message.js';
@@ -195,7 +196,7 @@ export default class MessagingHelper extends BaseHelper {
     if (mimeType !== MessageType.TEXT_PLAIN) {
       const multimedia = this.client.config.framework.multimedia.messaging;
 
-      if (!multimedia) { throw new Error('Message multimeda not found'); }
+      if (!multimedia) { throw new Error('Message multimeda NOT FOUND'); }
 
       await validateConfig(content, multimedia, null, this, this.#sendMessage);
 

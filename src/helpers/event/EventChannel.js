@@ -224,7 +224,7 @@ export default class EventChannelHelper extends BaseHelper {
         shortDescription: pick(event.shortDescription, eventPrior.shortDescription),
         startsAt: pick(new Date(event.startsAt), eventPrior.startsAt),
         endsAt: pick(new Date(event.endsAt), eventPrior.endsAt),
-        hostedBy: pick(event.hostedBy, eventPrior.hostedBy)
+        hostedBy: pickNumber(event.hostedBy, eventPrior.hostedBy)
       }
     );
 

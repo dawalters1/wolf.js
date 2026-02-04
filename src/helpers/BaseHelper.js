@@ -35,4 +35,14 @@ export default class BaseHelper {
       (id) => this.normaliseNumber(id)
     );
   }
+
+  normaliseFetchOpts (normalised, opts) {
+    return this.isObject(normalised)
+      ? normalised
+      : opts;
+  }
+
+  resetStore () {
+    this.store.clear();
+  }
 }

@@ -32,7 +32,7 @@ export default class WOLFStarHelper extends BaseHelper {
     );
 
     if (missingUserIds.length > 0) {
-      throw new Error(`Users with IDs ${missingUserIds.join(', ')} Not Found`);
+      throw new Error(`Users with IDs ${missingUserIds.join(', ')} NOT FOUND`);
     }
 
     const idsToFetch = opts?.forceNew

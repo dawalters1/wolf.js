@@ -5,12 +5,7 @@ import OnlineState from '../../constants/OnlineState.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class SecurityHelper extends BaseHelper {
-  #cognito;
-  constructor (client) {
-    super(client);
-
-    this.#cognito = null;
-  }
+  #cognito = null;
 
   // eslint-disable-next-line accessor-pairs
   set cognito (value) {
