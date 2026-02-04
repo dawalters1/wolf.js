@@ -90,7 +90,7 @@ class Welcome extends Base {
     const welcome = new models.Welcome(this.client, body);
 
     if (welcome.subscriber?.id !== this.client.currentSubscriber?.id) {
-      this.this.client.cognito = undefined;
+      this.client.cognito = undefined;
     }
 
     this.client.config.endpointConfig = welcome.endpointConfig;
