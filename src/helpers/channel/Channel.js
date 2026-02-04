@@ -334,7 +334,7 @@ export default class ChannelHelper extends BaseHelper {
                   .isNumberGreaterThanZero(),
                 minRepLevel: validator => validator
                   .isNotRequired()
-                  .isNumberGreaterThan(-1)
+                  .isNumberGreaterThanOrEqualToZero()
               }
             ),
 
@@ -360,7 +360,7 @@ export default class ChannelHelper extends BaseHelper {
                   .isBoolean(),
                 entryLevel: validator => validator
                   .isNotRequired()
-                  .isNumberGreaterThan(-1)
+                  .isNumberGreaterThanOrEqualToZero()
               }
             ),
           messageConfig: validator => validator
