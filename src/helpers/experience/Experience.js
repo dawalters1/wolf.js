@@ -1,7 +1,11 @@
 import BaseHelper from '../BaseHelper.js';
 import ExperienceBuild from '../../entities/ExperienceBuild.js';
+import ExperienceBuildType from '../../constants/ExperienceBuildType.js';
+import ExperienceContextType from '../../constants/ExperienceContextType.js';
 import ExperienceSession from '../../entities/ExperienceSession.js';
+import Language from '../../constants/Language.js';
 import { StatusCodes } from 'http-status-codes';
+import { validate } from '../../validation/Validation.js';
 
 export default class ExperienceHelper extends BaseHelper {
   constructor (client) {
@@ -81,12 +85,46 @@ export default class ExperienceHelper extends BaseHelper {
         languageId,
         contextType,
         contextId,
-        opts = {}
+        opts
       ] = args;
 
       const normalisedExperienceId = this.normaliseNumber(experienceId);
       const normalisedLanguageId = this.normaliseNumber(languageId);
       const normalisedContextId = this.normaliseNumber(contextId);
+
+      validate(normalisedExperienceId, this, this.fetch)
+        .isNotNullOrUndefined()
+        .isValidNumber()
+        .isNumberGreaterThanZero();
+
+      validate(experienceBuildType, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(ExperienceBuildType));
+
+      validate(normalisedLanguageId, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(Language));
+
+      validate(contextType, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(ExperienceContextType));
+
+      if ([ExperienceContextType.CHANNEL, ExperienceContextType.PRIVATE].includes(contextType)) {
+        validate(normalisedContextId, this, this.fetch)
+          .isNotNullOrUndefined()
+          .isValidNumber()
+          .isNumberGreaterThanZero();
+      }
+
+      validate(opts, this, this.fetch)
+        .isNotRequired()
+        .forEachProperty(
+          {
+            forceNew: validator => validator
+              .isNotRequired()
+              .isBoolean()
+          }
+        );
 
       return await this.#fetchExperience(normalisedExperienceId, experienceBuildType, normalisedLanguageId, contextType, normalisedContextId, opts);
     } // eslint-disable-line brace-style
@@ -97,11 +135,36 @@ export default class ExperienceHelper extends BaseHelper {
         languageId,
         contextType,
         contextId,
-        opts = {}
+        opts
       ] = args;
 
       const normalisedLanguageId = this.normaliseNumber(languageId);
       const normalisedContextId = this.normaliseNumber(contextId);
+
+      validate(normalisedLanguageId, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(Language));
+
+      validate(contextType, this, this.fetch)
+        .isNotNullOrUndefined()
+        .in(Object.values(ExperienceContextType));
+
+      if ([ExperienceContextType.CHANNEL, ExperienceContextType.PRIVATE].includes(contextType)) {
+        validate(normalisedContextId, this, this.fetch)
+          .isNotNullOrUndefined()
+          .isValidNumber()
+          .isNumberGreaterThanZero();
+      }
+
+      validate(opts, this, this.fetch)
+        .isNotRequired()
+        .forEachProperty(
+          {
+            forceNew: validator => validator
+              .isNotRequired()
+              .isBoolean()
+          }
+        );
 
       return await this.#fetchExperienceList(normalisedLanguageId, contextType, normalisedContextId, opts);
     }
