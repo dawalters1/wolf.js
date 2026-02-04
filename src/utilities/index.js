@@ -1,12 +1,12 @@
 import BaseUtility from './BaseUtility.js';
-import ChannelUtility from './Channel.js';
+import ChannelUtility from './channel.js';
 import imageSize from 'image-size';
 import Language from '../constants/Language.js';
 import moment from 'moment';
-import NumberUtility from './Number.js';
-import StringUtility from './String.js';
-import TimerUtility from './Timer.js';
-import UserUtility from './User.js';
+import NumberUtility from './number.js';
+import StringUtility from './string.js';
+import TimerUtility from './timer.js';
+import UserUtility from './user.js';
 
 export default class Utilities extends BaseUtility {
   constructor (client) {

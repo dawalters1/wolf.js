@@ -1,5 +1,5 @@
 import BaseEvent from './BaseEvent.js';
-import Contact from '../../../entities/contact.js';
+import Contact from '../../../entities/Contact.js';
 
 export default class SubscriberContactAddEvent extends BaseEvent {
   constructor (client) {
