@@ -6,8 +6,8 @@
   "typings": "typings/index.d.js",
   "type": "module",
   "scripts": {
-  "test": "npx mocha --exit --reporter spec \"./test/integration/testcases/**/*.js\"",
-    "lint": "eslint --fix --ext .js,.jsx .js"
+    "test": "npx mocha --exit --reporter spec \"./test/integration/testcases/**/*.js\"",
+    "lint": "eslint --fix --ext .js,.jsx src/"
   },
   "files": [
     "typings",
