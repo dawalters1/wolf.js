@@ -6,8 +6,8 @@ export default class TopicRecipe extends BaseEntity {
   constructor (client, entity) {
     super(client);
 
-    this.recipeId = entity.recipeId;
     this.id = entity.id;
+    this.recipeId = entity.recipeId;
     this.languageId = entity.languageId;
     this.additionalInfo = new TopicRecipeAdditionalInfo(this.client, entity.additionalInfo);
     this.type = entity.type;

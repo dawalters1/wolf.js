@@ -3,6 +3,7 @@ import BaseHelper from '../BaseHelper.js';
 import Command from '../../constants/Command.js';
 import Language from '../../constants/Language.js';
 import { StatusCodes } from 'http-status-codes';
+import TopicPageRecipeType from '../../constants/TopicPageRecipeType.js';
 import TopicRecipe from '../../entities/TopicRecipe.js';
 import { validate } from '../../validation/Validation.js';
 
@@ -53,7 +54,7 @@ class TopicRecipeHelper extends BaseHelper {
 
         results.push(...response.body);
 
-        return response.body.length < 50
+        return results.length >= opts?.maxResults || response.body.length < 50
           ? results
           : await batch(results);
       };
@@ -62,14 +63,13 @@ class TopicRecipeHelper extends BaseHelper {
         .map((serverTopicRecipe) => {
           serverTopicRecipe.type = type;
           serverTopicRecipe.recipeId = recipeId;
-
           return this.store.set(new TopicRecipe(this.client, serverTopicRecipe));
         });
     } catch (error) {
       if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
     }
 
-    return this.store.filter((topicRecipe) => topicRecipe.id === normalisedRecipeId && topicRecipe.languageId === normalisedLanguageId && topicRecipe.type === type);
+    return this.store.filter((topicRecipe) => topicRecipe.recipeId === normalisedRecipeId && topicRecipe.languageId === normalisedLanguageId && topicRecipe.type === type);
   }
 }
 

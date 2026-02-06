@@ -10,6 +10,7 @@ export default class WOLFStarHelper extends BaseHelper {
 
     validate(normalisedUserIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

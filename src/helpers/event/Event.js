@@ -29,6 +29,7 @@ export default class EventHelper extends BaseHelper {
 
     validate(normalisedEventIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

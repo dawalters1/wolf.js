@@ -16,6 +16,7 @@ export default class CharmHelper extends BaseHelper {
 
     validate(normalisedCharmIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

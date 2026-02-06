@@ -47,6 +47,7 @@ export default class UserHelper extends BaseHelper {
 
     validate(normalisedUserIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

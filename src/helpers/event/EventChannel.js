@@ -71,6 +71,8 @@ export default class EventChannelHelper extends BaseHelper {
   }
 
   async create (channelId, event, thumbnail) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
 
     validate(normalisedChannelId, this, this.fetch)
@@ -143,6 +145,8 @@ export default class EventChannelHelper extends BaseHelper {
   }
 
   async update (channelId, eventId, event, thumbnail) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedEventId = this.normaliseNumber(eventId);
 
@@ -236,6 +240,8 @@ export default class EventChannelHelper extends BaseHelper {
   }
 
   async delete (channelId, eventId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedEventId = this.normaliseNumber(eventId);
 

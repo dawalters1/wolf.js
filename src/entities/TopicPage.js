@@ -10,6 +10,9 @@ export default class TopicPage extends BaseEntity {
     this.id = entity.id;
     this.title = entity.title;
     this.showBalance = entity.showBalance;
-    this.sectionList = new Map([[entity.languageId, new Set(entity.sectionList.map((serverSection) => new TopicPageSection(this.client, serverSection, entity.languageId)))]]);
+    this.sectionList = new Set(entity.sectionList.map((serverSection) => {
+      serverSection.languageId = entity.languageId;
+      return new TopicPageSection(this.client, serverSection);
+    }));
   }
 }

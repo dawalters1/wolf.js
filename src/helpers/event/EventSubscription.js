@@ -4,6 +4,8 @@ import { validate } from '../../validation/Validation.js';
 
 export default class EventSubscriptionHelper extends BaseHelper {
   async fetch (opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(
@@ -43,6 +45,8 @@ export default class EventSubscriptionHelper extends BaseHelper {
   }
 
   async add (eventId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedEventId = this.normaliseNumber(eventId);
 
     validate(normalisedEventId, this, this.add)
@@ -65,6 +69,8 @@ export default class EventSubscriptionHelper extends BaseHelper {
   }
 
   async remove (eventId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedEventId = this.normaliseNumber(eventId);
 
     validate(normalisedEventId, this, this.remove)

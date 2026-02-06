@@ -38,6 +38,12 @@ export default class BaseHelper {
     );
   }
 
+  normaliseArray (array) {
+    return Array.isArray(array)
+      ? array
+      : [array];
+  }
+
   normaliseFetchOpts (normalised, opts) {
     return this.isObject(normalised)
       ? normalised

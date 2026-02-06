@@ -16,6 +16,8 @@ export default class ContactHelper extends BaseHelper {
   }
 
   async fetch (opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     if (!opts?.forceNew && this.store.fetched) { return this.store.values(); }
 
     const response = await this.client.websocket.emit(
@@ -42,6 +44,8 @@ export default class ContactHelper extends BaseHelper {
   }
 
   async add (userId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedUserId = this.normaliseNumber(userId);
 
     return this.client.websocket.emit(
@@ -55,6 +59,8 @@ export default class ContactHelper extends BaseHelper {
   }
 
   async remove (userId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedUserId = this.normaliseNumber(userId);
 
     return this.client.websocket.emit(

@@ -9,9 +9,20 @@ export default class WOLFResponse {
     }
 
     if (entity.headers) {
-      this.headers = entity.headers instanceof Map
-        ? entity.headers
-        : new Map(Object.entries(entity.headers ?? {}));
+      const headers = entity.headers instanceof Map
+        ? new Map(entity.headers)
+        : new Map(Object.entries(entity.headers));
+
+      const cacheControl = headers.get('cache-control');
+
+      if (cacheControl) {
+        const match = cacheControl.match(/max-age=(\d+)/);
+
+        headers.set('maxAge', Number(match[1]));
+        headers.delete('cache-control');
+      }
+
+      this.headers = headers;
     }
   }
 

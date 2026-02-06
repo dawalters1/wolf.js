@@ -19,6 +19,8 @@ export default class SecurityHelper extends BaseHelper {
   }
 
   async securityToken (opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     validate(opts, this, this.securityToken)
       .isNotRequired()
       .forEachProperty(

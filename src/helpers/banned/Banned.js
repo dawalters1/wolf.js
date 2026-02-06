@@ -11,6 +11,8 @@ export default class BannedHelper extends BaseHelper {
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
     validate(normalisedUserIds, this, this.isBanned)
+      .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

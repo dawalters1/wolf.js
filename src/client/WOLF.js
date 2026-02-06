@@ -7,6 +7,7 @@ import ChannelHelper from '../helpers/channel/Channel.js';
 import CharmHelper from '../helpers/charm/Charm.js';
 import config from 'config';
 import ContactHelper from '../helpers/contact/Contact.js';
+import DiscoveryHelper from '../helpers/discovery/Discovery.js';
 import { EventEmitter } from 'node:events';
 import EventHelper from '../helpers/event/Event.js';
 import ExperienceHelper from '../helpers/experience/Experience.js';
@@ -15,7 +16,6 @@ import { fileURLToPath } from 'node:url';
 import FrameHelper from '../helpers/frame/Frame.js';
 import fs from 'node:fs';
 import { Gender, LookingFor, MessageFilterTierLevel, OnlineState, Relationship } from '../constants/index.js';
-import imageSize from 'image-size';
 import MessageSetting from '../entities/MessageSetting.js';
 import MessagingHelper from '../helpers/messaging/Messaging.js';
 import Multimedia from './multimedia/Multimedia.js';
@@ -58,6 +58,7 @@ export class WOLF extends EventEmitter {
   #commandManager = undefined;
   #config;
   #contact;
+  #discovery;
   #event;
   #experience;
   #frame;
@@ -100,6 +101,7 @@ export class WOLF extends EventEmitter {
     this.#charm = new CharmHelper(this);
     this.#config = _.merge({ get: config.get }, baseConfig, frameworkConfig, botConfig);
     this.#contact = new ContactHelper(this);
+    this.#discovery = new DiscoveryHelper(this);
     this.#event = new EventHelper(this);
     this.#experience = new ExperienceHelper(this);
     this.#frame = new FrameHelper(this);
@@ -115,7 +117,6 @@ export class WOLF extends EventEmitter {
     this.#user = new UserHelper(this);
     this.#utility = new Utility(this);
     this.#websocket = new Websocket(this);
-    // this.#metadata = new MetadataHelper(this);
   }
 
   get loggedIn () {
@@ -175,6 +176,10 @@ export class WOLF extends EventEmitter {
 
   get contact () {
     return this.#contact;
+  }
+
+  get discovery () {
+    return this.#discovery;
   }
 
   get event () {

@@ -1,4 +1,5 @@
 import BaseHelper from '../BaseHelper.js';
+import Language from '../../constants/Language.js';
 import StoreProduct from './StoreProduct.js';
 import { validate } from '../../validation/Validation.js';
 
@@ -26,7 +27,29 @@ export default class StoreHelper extends BaseHelper {
     this.#balance = value;
   }
 
+  async fetch (languageId, opts) {
+    const normalisedLanguageId = this.normaliseNumber(languageId);
+
+    validate(normalisedLanguageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
+    validate(opts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean()
+        }
+      );
+
+    return await this.client.topic.fetch('store', languageId, opts);
+  }
+
   async balance (opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     validate(opts, this, this.balance)
       .isNotRequired()
       .forEachProperty(
@@ -40,7 +63,12 @@ export default class StoreHelper extends BaseHelper {
     if (!opts?.forceNew && this.#balance !== null) { return this.#balance; }
 
     const response = await this.client.websocket.emit(
-      'store credit balance'
+      'store credit balance',
+      {
+        body: {
+          subscribe: opts?.subscribe ?? true
+        }
+      }
     );
 
     this.#balance = response.body.balance;

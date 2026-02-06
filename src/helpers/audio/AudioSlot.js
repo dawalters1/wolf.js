@@ -89,6 +89,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async lock (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -128,6 +130,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async unlock (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -167,6 +171,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async mute (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -205,6 +211,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async unmute (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -243,6 +251,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async kick (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -280,6 +290,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async join (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -336,6 +348,8 @@ export default class AudioSlotHelper extends BaseHelper {
   }
 
   async leave (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 

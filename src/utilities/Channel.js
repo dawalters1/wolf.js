@@ -14,6 +14,8 @@ export default class ChannelUtility extends BaseUtility {
   }
 
   async #canPerformAction (channelId, targetMemberId, newCapability = null) {
+    if (!this.client.loggedIn) { return false; }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(targetMemberId);
     const normalisedCapability = this.normaliseNumber(newCapability);

@@ -237,6 +237,8 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async join (channelIdOrName, password) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
     const isById = normalisedChannelIdOrName instanceof Number;
 
@@ -253,6 +255,8 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async leave (channelIdOrName) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
     const isById = normalisedChannelIdOrName instanceof Number;
 
@@ -299,6 +303,8 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async update (channelId, channel, avatar) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const avatarConfig = this.client.config.framework.multimedia.avatar.channel;
 
     const normalisedChannelId = this.normaliseNumber(channelId);

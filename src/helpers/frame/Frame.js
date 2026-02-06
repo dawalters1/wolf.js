@@ -13,6 +13,7 @@ export default class FrameHelper extends BaseHelper {
 
     validate(normalisedFrameIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()
@@ -75,10 +76,13 @@ export default class FrameHelper extends BaseHelper {
   }
 
   async delete (frameIds) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedFrameIds = this.normaliseNumbers(frameIds);
 
     validate(normalisedFrameIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()
@@ -95,6 +99,8 @@ export default class FrameHelper extends BaseHelper {
   }
 
   async set (frameId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedFrameId = this.normaliseNumber(frameId);
 
     validate(normalisedFrameId, this, this.set)
@@ -113,6 +119,8 @@ export default class FrameHelper extends BaseHelper {
   }
 
   async clear () {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     return this.client.websocket.emit(
       'frame subscriber delete selected'
     );

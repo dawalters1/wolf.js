@@ -296,14 +296,20 @@ export default class MessagingHelper extends BaseHelper {
   }
 
   async sendChannelMessage (id, content, opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     return this.#sendMessage(id, content, true, opts);
   }
 
   async sendPrivateMessage (id, content, opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     return this.#sendMessage(id, content, false, opts);
   }
 
   async edit (id, timestamp, isDeleted, isChannel = true) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedId = this.normaliseNumber(id);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
 

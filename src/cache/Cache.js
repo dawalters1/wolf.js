@@ -67,10 +67,11 @@ export default class Cache {
 
     let existing;
     if (value instanceof Object) {
-      existing =
-        'languageId' in value
-          ? this.#findEntryBy(e => e[key] === value[key] && e.languageId === value.languageId)
-          : this.#findEntryBy(e => e[key] === value[key]);
+      existing = this.#findEntryBy(e =>
+        e[key] === value[key] &&
+          (!('recipeId' in value) || e.recipeId === value.recipeId) &&
+          (!('languageId' in value) || e.languageId === value.languageId)
+      );
     } else {
       existing = this.#findEntryBy(e => e === value);
     }

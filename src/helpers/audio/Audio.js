@@ -18,6 +18,8 @@ export default class AudioHelper extends BaseHelper {
   }
 
   async available (channelId, opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
 
     validate(normalisedChannelId, this, this.available)

@@ -205,6 +205,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async coowner (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -231,6 +233,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async admin (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -257,6 +261,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async mod (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -283,6 +289,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async regular (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -310,6 +318,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async silence (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -334,6 +344,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async kick (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 
@@ -360,6 +372,8 @@ export default class ChannelMemberHelper extends BaseHelper {
   }
 
   async ban (channelId, memberId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedMemberId = this.normaliseNumber(memberId);
 

@@ -21,6 +21,8 @@ export default class TipHelper extends BaseHelper {
   }
 
   async tip (channelId, userId, context, charms) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(userId);
 
@@ -52,6 +54,7 @@ export default class TipHelper extends BaseHelper {
     validate(charms)
       .isNotNullOrUndefined()
       .isArray()
+      .noDuplicates()
       .each()
       .forEachProperty(
         {
@@ -162,7 +165,28 @@ export default class TipHelper extends BaseHelper {
   async channelLeaderboard (channelId, tipPeriod, tipType, tipDirection) {
     const normalisedChannelId = this.normaliseNumber(channelId);
 
-    // TODO: validation
+    validate(normalisedChannelId, this, this.channelLeaderboard)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(tipPeriod, this, this.channelLeaderboard)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipPeriod));
+
+    validate(tipType, this, this.channelLeaderboard)
+      .isNotNullOrUndefined()
+      .in(Object.values(TipType));
+
+    validate(tipDirection, this, this.channelLeaderboard)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .in(Object.values(TipDirection));
+
+    if (tipType === TipType.CHARM && tipDirection) {
+      console.warn('TipType is not required when requesting charm');
+    }
+
     try {
       const response = await this.client.websocket.emit(
         'tip leaderboard group',
@@ -171,7 +195,9 @@ export default class TipHelper extends BaseHelper {
             groupId: normalisedChannelId,
             period: tipPeriod,
             type: tipType,
-            tipDirection
+            tipDirection: tipType === TipType.CHARM
+              ? null
+              : tipDirection
           }
         }
       );

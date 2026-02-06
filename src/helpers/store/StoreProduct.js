@@ -2,6 +2,7 @@ import BaseHelper from '../BaseHelper.js';
 import Language from '../../constants/Language.js';
 import StoreProduct from '../../entities/StoreProduct.js';
 import StoreProductProfile from './StoreProductProfile.js';
+import StorePurchaseResponse from '../../entities/StorePurchaseResponse.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class StoreProductHelper extends BaseHelper {
@@ -22,6 +23,7 @@ export default class StoreProductHelper extends BaseHelper {
 
     validate(normalisedProductIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()
@@ -81,5 +83,50 @@ export default class StoreProductHelper extends BaseHelper {
     return isArrayResponse
       ? products
       : products[0];
+  }
+
+  async purchase (userIds, products) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
+    const normalisedUserIds = this.normaliseNumbers(userIds);
+    const normalisedProducts = this.normaliseArray(products);
+
+    validate(normalisedUserIds, this, this.purchase)
+      .isArray()
+      .noDuplicates()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedProducts, this, this.purchase)
+      .isArray()
+      .noDuplicates()
+      .each()
+      .isNotNullOrUndefined()
+      .forEachProperty(
+        {
+          id: validator => validator
+            .isNotNullOrUndefined()
+            .isValidNumber()
+            .isNumberGreaterThanZero(),
+          quantity: validator => validator
+            .isNotNullOrUndefined()
+            .isValidNumber()
+            .isNumberGreaterThanZero()
+        }
+      );
+
+    const response = await this.client.websocket.emit(
+      'store credit spend',
+      {
+        body: {
+          idList: normalisedUserIds,
+          productList: normalisedProducts
+        }
+      }
+    );
+
+    return new StorePurchaseResponse(this.client, response.body);
   }
 }

@@ -84,6 +84,8 @@ export default class ChannelRoleHelper extends BaseHelper {
   }
 
   async assign (channelId, userId, roleId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedRoleId = this.normaliseNumber(roleId);
@@ -123,6 +125,8 @@ export default class ChannelRoleHelper extends BaseHelper {
   }
 
   async unassign (channelId, userId, roleId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedUserId = this.normaliseNumber(userId);
     const normalisedRoleId = this.normaliseNumber(roleId);
@@ -162,6 +166,8 @@ export default class ChannelRoleHelper extends BaseHelper {
   }
 
   async reassign (channelId, oldUserId, newUserId, roleId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedOldUserId = this.normaliseNumber(oldUserId);
     const normalisedNewUserId = this.normaliseNumber(newUserId);

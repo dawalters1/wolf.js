@@ -37,6 +37,18 @@ export default class AchievementHelper extends BaseHelper {
     const normalisedAchievementIds = this.normaliseNumbers(achievementIds);
     const normalisedLanguageId = this.normaliseNumber(languageId);
 
+    validate(normalisedAchievementIds, this, this.fetch)
+      .isArray()
+      .noDuplicates()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedLanguageId, this, this.fetch)
+      .isNotNullOrUndefined()
+      .in(Object.values(Language));
+
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(
@@ -46,17 +58,6 @@ export default class AchievementHelper extends BaseHelper {
             .isBoolean()
         }
       );
-
-    validate(normalisedAchievementIds, this, this.fetch)
-      .isArray()
-      .each()
-      .isNotNullOrUndefined()
-      .isValidNumber()
-      .isNumberGreaterThanZero();
-
-    validate(normalisedLanguageId, this, this.fetch)
-      .isNotNullOrUndefined()
-      .in(Object.values(Language));
 
     const idsToFetch = opts?.forceNew
       ? normalisedAchievementIds

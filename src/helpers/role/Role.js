@@ -11,6 +11,7 @@ export default class RoleHelper extends BaseHelper {
 
     validate(normalisedRoleIds, this, this.fetch)
       .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

@@ -60,6 +60,8 @@ export default class AudioSlotRequestHelper extends BaseHelper {
   }
 
   async add (channelId, slotId, userId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
     const normalisedUserId = this.normaliseNumber(userId);
@@ -140,6 +142,8 @@ export default class AudioSlotRequestHelper extends BaseHelper {
   }
 
   async delete (channelId, slotId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedSlotId = this.normaliseNumber(slotId);
 
@@ -200,6 +204,8 @@ export default class AudioSlotRequestHelper extends BaseHelper {
   }
 
   async clear (channelId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedChannelId = this.normaliseNumber(channelId);
 
     validate(normalisedChannelId, this, this.clear)

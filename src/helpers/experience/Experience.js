@@ -77,6 +77,8 @@ export default class ExperienceHelper extends BaseHelper {
   }
 
   async fetch (...args) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     // fetch(experienceId, experienceBuildType, languageId, contextType, contextId, opts?)
     if (args.length >= 5) {
       const [
@@ -173,6 +175,8 @@ export default class ExperienceHelper extends BaseHelper {
   }
 
   async session (languageId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     try {
       const response = await this.client.websocket.emit(
         'experience session',

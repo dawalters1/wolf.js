@@ -11,6 +11,8 @@ export default class AuthorisationHelper extends BaseHelper {
     const normalisedUserIds = this.normaliseNumbers(userIds);
 
     validate(normalisedUserIds, this, this.isAuthorised)
+      .isArray()
+      .noDuplicates()
       .each()
       .isNotNullOrUndefined()
       .isValidNumber()

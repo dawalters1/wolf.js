@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { fileTypeFromBuffer } from 'file-type';
 import imageSize from 'image-size';
 import { Readable } from 'node:stream';
@@ -262,15 +263,15 @@ class Validation {
     );
   }
 
-  duplicates (message) {
+  noDuplicates (message) {
     if (!Array.isArray(this.#value)) {
       throw new Error(`${this.#value} is not an array`);
     }
 
     return this.#throwIf(
-      new Set(this.#value).size !== this.#value.length,
+      _.uniqWith(this.#value, _.isEqual).length !== this.#value.length,
       message ??
-      `${this.#name}${JSON.stringify(this.#value)} contains duplicates`
+      `${this.#name}${JSON.stringify(this.#value)} contains noDuplicates`
     );
   }
 
@@ -384,8 +385,8 @@ class Validation {
         in: (list, message) =>
           runValidation(item => validateWithName(item, self.#name).in(list, message)),
 
-        duplicates: (message) =>
-          runValidation(item => validateWithName(item, self.#name).duplicates(message)),
+        noDuplicates: (message) =>
+          runValidation(item => validateWithName(item, self.#name).noDuplicates(message)),
 
         each: () =>
           runValidation(item => validateWithName(item, self.#name).each())
@@ -487,8 +488,8 @@ class Validation {
       in: (list, message) =>
         runValidation(item => validate(item).in(list, message)),
 
-      duplicates: (message) =>
-        runValidation(item => validate(item).duplicates(message)),
+      noDuplicates: (message) =>
+        runValidation(item => validate(item).noDuplicates(message)),
 
       forEachProperty: (propValidators) => {
         this.#value.forEach(item => {

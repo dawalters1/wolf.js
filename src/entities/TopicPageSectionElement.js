@@ -2,10 +2,10 @@ import BaseEntity from './BaseEntity.js';
 import TopicPageSectionElementProperties from './TopicPageSectionElementProperties.js';
 
 export default class TopicPageSectionElement extends BaseEntity {
-  constructor (client, entity, languageId) {
+  constructor (client, entity) {
     super(client);
 
-    this.languageId = languageId;
+    this.languageId = entity.languageId;
     this.onInvalid = entity?.onInvalid ?? null;
     this.properties = entity.properties
       ? new TopicPageSectionElementProperties(this.client, entity.properties, this.languageId)

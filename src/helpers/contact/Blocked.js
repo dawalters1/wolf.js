@@ -4,6 +4,8 @@ import { validate } from '../../validation/Validation.js';
 
 export default class BlockedHelper extends BaseHelper {
   async fetch (opts) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     if (!opts?.forceNew && this.store.fetched) { return this.store.values(); }
 
     const response = await this.client.websocket.emit(
@@ -30,6 +32,8 @@ export default class BlockedHelper extends BaseHelper {
   }
 
   async add (userId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedUserId = this.normaliseNumber(userId);
 
     validate(normalisedUserId, this, this.add)
@@ -48,6 +52,8 @@ export default class BlockedHelper extends BaseHelper {
   }
 
   async remove (userId) {
+    if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
     const normalisedUserId = this.normaliseNumber(userId);
 
     validate(normalisedUserId, this, this.remove)
