@@ -6,5 +6,6 @@ export default class AchievementCategory extends BaseEntity {
 
     this.id = entity.id;
     this.name = entity.name;
+    this.languageId = entity.languageId;
   }
 }

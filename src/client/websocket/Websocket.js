@@ -24,6 +24,10 @@ export default class Websocket {
     this.#client = client;
   }
 
+  get socket () {
+    return this.#socket;
+  }
+
   #parseBody (body, languageId) {
     if (body == null || typeof body !== 'object') {
       return body;
@@ -176,7 +180,9 @@ export default class Websocket {
 
   async disconnect () {
     if (!this.#socket?.connected) { return; }
-    return this.#socket?.disconnect();
+    this.#socket?.disconnect();
+    this.#socket.destroy();
+    return true;
   }
 
   async #emit (command, body) {

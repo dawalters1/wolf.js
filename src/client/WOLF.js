@@ -276,6 +276,10 @@ export class WOLF extends EventEmitter {
     return this.#websocket.connect();
   }
 
+  logout () {
+    return this.#security.logout();
+  }
+
   async update (profile, avatar) {
     const avatarConfig = this.client.config.framework.multimedia.avatar.user;
 

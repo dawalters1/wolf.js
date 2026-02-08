@@ -15,6 +15,7 @@ export default [
       globals: {
         ...globals.node,
         ...globals.browser,
+        ...globals.mocha,
         document: 'readonly',
         navigator: 'readonly',
         window: 'readonly'

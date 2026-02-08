@@ -1,6 +1,7 @@
 import AchievementCategory from '../../entities/AchievementCategory.js';
 import BaseHelper from '../BaseHelper.js';
 import Language from '../../constants/Language.js';
+import { StatusCodes } from 'http-status-codes';
 import { validate } from '../../validation/Validation.js';
 
 export default class AchievementCategoryHelper extends BaseHelper {
@@ -28,21 +29,26 @@ export default class AchievementCategoryHelper extends BaseHelper {
     }
 
     this.store.delete((item) => item.languageId === normalisedLanguageId);
-
-    const response = await this.client.websocket.emit(
-      'achievement category list',
-      {
-        body: {
-          languageId: normalisedLanguageId
+    try {
+      const response = await this.client.websocket.emit(
+        'achievement category list',
+        {
+          body: {
+            languageId: normalisedLanguageId
+          }
         }
-      }
-    );
+      );
 
-    return response.body.map((serverAchievementCategory) =>
-      this.store.set(
-        new AchievementCategory(this.client, serverAchievementCategory),
-        response.headers?.maxAge
-      )
-    );
+      return response.body.map((serverAchievementCategory) =>
+        this.store.set(
+          new AchievementCategory(this.client, serverAchievementCategory),
+          response.headers?.maxAge
+        )
+      );
+    } catch (error) {
+      if (error.code !== StatusCodes.NOT_FOUND) { throw error; }
+
+      return [];
+    }
   }
 }
