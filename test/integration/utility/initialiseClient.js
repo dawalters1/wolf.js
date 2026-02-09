@@ -1,6 +1,10 @@
 // test/setupClient.js
-import WOLF from '../../../../src/client/WOLF.js';
+import WOLF from '../../../../frameworks/wolf.js/src/client/WOLF.js';
 
+/**
+ *
+ * @returns {WOLF}
+ */
 export default async function initialiseClient () {
   if (global.client) { return global.client; } // already initialized
 
