@@ -43,7 +43,7 @@ export default class WelcomeEvent extends BaseEvent {
     this.client.config.framework.subscriptions;
 
     const sessionContext = {
-***REMOVED*** await this.client.user.fetch(
+      user: await this.client.user.fetch(
         this.client.config.framework.login.userId
       )
     };

@@ -24,7 +24,7 @@ export default {
         if (leadingText !== '  ') {
           context.report({
             node: enumMemberToken,
-      ***REMOVED***'Enum member should be preceded by exactly two spaces',
+            message: 'Enum member should be preceded by exactly two spaces',
             fix (fixer) {
               return fixer.replaceTextRange(
                 [lineStartIndex, enumMemberToken.range[0]],
@@ -48,7 +48,7 @@ export default {
             if (!hasSpaceBefore || !hasSpaceAfter) {
               context.report({
                 node: equalToken,
-          ***REMOVED***'Equals sign in enum member should have a space before and after',
+                message: 'Equals sign in enum member should have a space before and after',
                 fix (fixer) {
                   return fixer.replaceText(equalToken, ' = ');
                 }

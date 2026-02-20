@@ -218,7 +218,7 @@ export default class ChannelHelper extends BaseHelper {
         'message group history list',
         {
           headers: {
-***REMOVED***
+            version: 4
           },
           body: {
             id: normalisedChannelId,

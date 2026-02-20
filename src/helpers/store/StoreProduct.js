@@ -52,7 +52,7 @@ export default class StoreProductHelper extends BaseHelper {
         'store product',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             idList: idsToFetch,

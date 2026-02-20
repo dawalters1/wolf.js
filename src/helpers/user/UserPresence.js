@@ -54,7 +54,7 @@ export default class WOLFStarHelper extends BaseHelper {
         'subscriber presence',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             idList: idsToFetch,

@@ -1,5 +1,5 @@
 
-import Common from '../../../../../integration/resources/Common.js';
+import Common from '../../../resources/Common.js';
 import initialiseClient from '../../../utility/initialiseClient.js';
 import sinon from 'sinon';
 import { StatusCodes } from 'http-status-codes';
@@ -13,35 +13,48 @@ describe('Achievement Helper', function () {
   });
 
   afterEach(() => {
+    Common.restoreSocket();
     sinon.restore();
   });
 
   describe('fetch', () => {
     it("should return null if an achievement doesn't exist", async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement',
+        {
+          body: {
+            idList: [2],
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.MULTI_STATUS,
           body: { 0: new WOLFResponse({ code: StatusCodes.NOT_FOUND }) }
         })
       );
 
-      const achievement = await client.achievement.fetch(354000, 1);
+      const achievement = await client.achievement.fetch(2, 1);
       Common.isNull(achievement);
       Common.callCount(spy, 1);
-      Common.calledWith('achievement', { body: { idList: [354000], languageId: 1 } });
+      Common.calledWith('achievement', { body: { idList: [2], languageId: 1 } });
     });
 
     it('should return Achivement if an achievement exists - From the server', async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement',
+        {
+          body: {
+            idList: [2],
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.MULTI_STATUS,
           body: {
             0: new WOLFResponse({
               code: StatusCodes.OK,
               body: {
-                id: 354000,
+                id: 2,
                 name: 'Test Name',
                 acquisitionPercentage: 1,
                 category: 1,
@@ -58,7 +71,7 @@ describe('Achievement Helper', function () {
         })
       );
 
-      const achievement = await client.achievement.fetch(354000, 1);
+      const achievement = await client.achievement.fetch(2, 1);
       Common.isNotNullOrUndefined(achievement);
       Common.isMatch(
         achievement,
@@ -77,19 +90,25 @@ describe('Achievement Helper', function () {
         }
       );
       Common.callCount(spy, 1);
-      Common.calledWith('achievement', { body: { idList: [354000], languageId: 1 } });
+      Common.calledWith('achievement', { body: { idList: [2], languageId: 1 } });
     });
 
     it('should return Achivement if an achievement exists - From cache', async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement',
+        {
+          body: {
+            idList: [2],
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.MULTI_STATUS,
           body: {
             0: new WOLFResponse({
               code: StatusCodes.OK,
               body: {
-                id: 354000,
+                id: 2,
                 name: 'Test Name',
                 acquisitionPercentage: 1,
                 category: 1,
@@ -106,7 +125,7 @@ describe('Achievement Helper', function () {
         })
       );
 
-      const achievementPrior = await client.achievement.fetch(354000, 1, { forceNew: true });
+      const achievementPrior = await client.achievement.fetch(2, 1, { forceNew: true });
       Common.isNotNullOrUndefined(achievementPrior);
       Common.isMatch(
         achievementPrior,
@@ -125,7 +144,7 @@ describe('Achievement Helper', function () {
         }
       );
 
-      const achievementAfter = await client.achievement.fetch(354000, 1);
+      const achievementAfter = await client.achievement.fetch(2, 1);
       Common.isNotNullOrUndefined(achievementAfter);
       Common.isMatch(
         achievementAfter,
@@ -145,7 +164,7 @@ describe('Achievement Helper', function () {
       );
 
       Common.callCount(spy, 1);
-      Common.calledWith('achievement', { body: { idList: [354000], languageId: 1 } });
+      Common.calledWith('achievement', { body: { idList: [2], languageId: 1 } });
     });
   });
 });

@@ -105,7 +105,7 @@ export default {
 
           context.report({
             node: nodes[0],
-      ***REMOVED***`${type} statements should be sorted alphabetically (unsortable ${type.toLowerCase()}s moved to bottom)`,
+            message: `${type} statements should be sorted alphabetically (unsortable ${type.toLowerCase()}s moved to bottom)`,
             fix: fixer =>
               fixer.replaceTextRange(
                 [nodes[0].range[0], nodes[nodes.length - 1].range[1]],

@@ -30,7 +30,7 @@ export default {
           if (emitLine !== openParenLine) {
             context.report({
               node: openParen,
-        ***REMOVED***'The opening parenthesis must be on the same line as `.emit`.',
+              message: 'The opening parenthesis must be on the same line as `.emit`.',
               fix: (fixer) => {
                 const beforeParen = sourceCode.getText().slice(
                   sourceCode.getIndexFromLoc(emitToken.loc.end),
@@ -51,7 +51,7 @@ export default {
           if (commandArg.loc.start.line === openParen.loc.start.line) {
             context.report({
               node: commandArg,
-        ***REMOVED***'The command argument must be on a new line.',
+              message: 'The command argument must be on a new line.',
               fix: (fixer) => fixer.insertTextBefore(commandArg, '\n')
             });
           }
@@ -60,7 +60,7 @@ export default {
           if (dataArg.loc.start.line === commandArg.loc.end.line) {
             context.report({
               node: dataArg,
-        ***REMOVED***'The data object must be on a new line.',
+              message: 'The data object must be on a new line.',
               fix: (fixer) => fixer.insertTextBefore(dataArg, '\n')
             });
           }
@@ -70,7 +70,7 @@ export default {
           if (closeParen.loc.start.line === lastArg.loc.end.line) {
             context.report({
               node: closeParen,
-        ***REMOVED***'The closing parenthesis must be on its own line.',
+              message: 'The closing parenthesis must be on its own line.',
               fix: (fixer) => fixer.insertTextBefore(closeParen, '\n')
             });
           }
@@ -88,7 +88,7 @@ export default {
               if (isSingleLine) {
                 context.report({
                   node: prop.value,
-            ***REMOVED***`The "${prop.key.name}" object must be multiline formatted.`,
+                  message: `The "${prop.key.name}" object must be multiline formatted.`,
                   fix: (fixer) => {
                     const inner = prop.value.properties.map(p =>
                       `  ${sourceCode.getText(p)},\n`

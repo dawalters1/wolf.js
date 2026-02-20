@@ -42,7 +42,7 @@ export default class FrameHelper extends BaseHelper {
         'frame list',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             idList: idsToFetch,

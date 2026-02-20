@@ -204,7 +204,7 @@ export default class UserFollowHelper extends BaseHelper {
       {
         body: {
           subscriberId: normalisedUserId,
-      ***REMOVED*** config.notificationState
+          notification: config.notificationState
         }
       }
     );

@@ -38,7 +38,7 @@ export default class StoreProductProfileHelper extends BaseHelper {
         'store product profile',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             id: normalisedProductId,

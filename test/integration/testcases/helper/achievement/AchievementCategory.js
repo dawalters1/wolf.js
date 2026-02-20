@@ -14,13 +14,19 @@ describe('AchievementCategory Helper', function () {
   });
 
   afterEach(() => {
+    Common.restoreSocket();
     sinon.restore();
   });
 
   describe('fetch', () => {
     it('should return AchievementCategory[] if no achievement categories exist', async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement category list',
+        {
+          body: {
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.NOT_FOUND
         })
@@ -34,8 +40,13 @@ describe('AchievementCategory Helper', function () {
     });
 
     it('should return AchievementCategory[] if achievement categories exist - From the server', async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement category list',
+        {
+          body: {
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.OK,
           body: [
@@ -67,8 +78,13 @@ describe('AchievementCategory Helper', function () {
     });
 
     it('should return AchievementCategory[] if achievement categories exist - From cache', async function () {
-      const spy = Common.createMockRequest(
+      const spy = Common.createMockSocketRequest(
         'achievement category list',
+        {
+          body: {
+            languageId: 1
+          }
+        },
         new WOLFResponse({
           code: StatusCodes.OK,
           body: [

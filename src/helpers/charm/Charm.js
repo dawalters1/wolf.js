@@ -58,9 +58,7 @@ export default class CharmHelper extends BaseHelper {
 
       const maxAge = response.headers?.maxAge;
 
-      for (const [index, childResponse] of response.body.entries()) {
-        const id = idsToFetch[index];
-
+      for (const [id, childResponse] of response.body.entries()) {
         if (!childResponse.success) {
           this.store.delete(
             (item) => item.id === id && item.languageId === languageId

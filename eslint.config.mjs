@@ -55,7 +55,7 @@ export default [
         'error',
         {
           selector: 'TSTypeReference[typeName.name="Readonly"]',
-    ***REMOVED***'Use `readonly` properties instead of `Readonly<T>`.'
+    message: 'Use `readonly` properties instead of `Readonly<T>`.'
         }
       ],
       'unused-imports/no-unused-vars': [

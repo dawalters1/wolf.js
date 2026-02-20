@@ -120,8 +120,10 @@ export default class Cache {
 
   get (keyOrFn) {
     const entry =
-      typeof keyOrFn === 'function'
-        ? this.#findEntryBy(keyOrFn)
+    typeof keyOrFn === 'function'
+      ? this.#findEntryBy(keyOrFn)
+      : typeof keyOrFn === 'number'
+        ? this.#findEntryBy(v => typeof v === 'number' && v === keyOrFn)
         : this.#findEntryBy(v => v[getKeyProperty(v)] === keyOrFn);
 
     if (!entry) { return null; }
@@ -138,8 +140,10 @@ export default class Cache {
 
   has (keyOrFn) {
     const entry =
-      typeof keyOrFn === 'function'
-        ? this.#findEntryBy(keyOrFn)
+    typeof keyOrFn === 'function'
+      ? this.#findEntryBy(keyOrFn)
+      : typeof keyOrFn === 'number'
+        ? this.#findEntryBy(v => typeof v === 'number' && v === keyOrFn)
         : this.#findEntryBy(v => v[getKeyProperty(v)] === keyOrFn);
 
     if (!entry) { return false; }
@@ -156,16 +160,23 @@ export default class Cache {
   delete (keyOrFn) {
     let removed = 0;
 
-    if (typeof keyOrFn === 'function') {
-      for (const entry of Array.from(this.#store)) {
-        if (keyOrFn(entry.value)) {
+    for (const entry of Array.from(this.#store)) {
+      const value = entry.value;
+
+      if (typeof keyOrFn === 'function') {
+        if (keyOrFn(value)) {
           this.#store.delete(entry);
           removed++;
         }
-      }
-    } else {
-      for (const entry of Array.from(this.#store)) {
-        if (entry.value[getKeyProperty(entry.value)] === keyOrFn) {
+      } else if (typeof keyOrFn === 'number' && typeof value === 'number') {
+      // direct number match
+        if (value === keyOrFn) {
+          this.#store.delete(entry);
+          removed++;
+        }
+      } else {
+      // assume object, use getKeyProperty
+        if (value[getKeyProperty(value)] === keyOrFn) {
           this.#store.delete(entry);
           removed++;
         }
@@ -198,7 +209,15 @@ export default class Cache {
   }
 
   isExpired (value) {
-    const entry = this.#findEntryBy(v => v === value || v[getKeyProperty(v)] === getKeyProperty(value));
+    const entry = this.#findEntryBy(v =>
+      v === value ||
+    (
+      typeof v !== 'number' &&
+      typeof value !== 'number' &&
+      v[getKeyProperty(v)] === value[getKeyProperty(value)]
+    )
+    );
+
     return !!(entry && entry.expiresAt && entry.expiresAt <= Date.now());
   }
 

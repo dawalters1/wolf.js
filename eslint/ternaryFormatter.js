@@ -31,7 +31,7 @@ export default {
         ) {
           context.report({
             node,
-      ***REMOVED***'Ternary expressions must be split into multiple lines',
+            message: 'Ternary expressions must be split into multiple lines',
             fix (fixer) {
               const questionToken = sourceCode.getTokenAfter(node.test, token => token.value === '?');
 

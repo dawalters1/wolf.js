@@ -1,69 +1,135 @@
-
+import _ from 'lodash';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-const activeCallCheck = { spyOrStub: null, numberOfCalls: null, timesCalledWithUsed: null };
+let emitStub = null;
+let axioxStub = null;
+const emitHandlers = new Map();
+const axiosHandlers = new Map();
 
-export const createMockRequest = (eventName, response) => {
-  const originalEmit = global.client.websocket.socket.emit;
-
-  const spy = sinon.stub(global.client.websocket.socket, 'emit')
-    .callsFake((event, payload, callback) => {
-      if (event === eventName) {
-        if (typeof callback === 'function') { callback(response); }
-        return; // prevent real network call
-      }
-
-      return originalEmit.call(global.client.websocket.socket, event, payload, callback);
-    }
-    );
-
-  return spy;
+const activeCallCheck = {
+  spyOrStub: null,
+  numberOfCalls: null,
+  timesCalledWithUsed: null,
+  callArguments: [],
+  callArgumentsChecked: []
 };
 
+/**
+ * ============================================================
+ * Socket Emit Mocking
+ * ============================================================
+ */
+
+const mockSocket = () => {
+  const socket = global.client.websocket.socket;
+
+  if (emitStub) {
+    return emitStub;
+  }
+
+  const originalEmit = socket.emit;
+
+  emitStub = sinon.stub(socket, 'emit').callsFake((event, payload, callback) => {
+    const eventHandlers = emitHandlers.get(event) ?? [];
+
+    for (const { match, response } of eventHandlers) {
+      if (_.isMatch(payload, match)) {
+        if (typeof callback === 'function') {
+          callback(response);
+        }
+        return; // swallow real network call
+      }
+    }
+
+    return originalEmit.call(socket, event, payload, callback);
+  });
+
+  return emitStub;
+};
+
+const mockRest = () => {
+
+};
+
+const restoreSocket = () => {
+  emitStub?.restore();
+  emitStub = null;
+  emitHandlers.clear();
+};
+
+const restoreRest = () => {
+  axioxStub?.restore();
+  axioxStub = null;
+  emitHandlers.clear();
+};
+/**
+ * Registers a mocked socket request/response.
+ */
+export const createMockRestRequest = (config, match, response) => {
+  mockRest();
+  // TODO:
+  return;
+  const list = emitHandlers.get(eventName) ?? [];
+  list.push({ match, response });
+  emitHandlers.set(eventName, list);
+
+  return emitStub;
+};
+export const createMockSocketRequest = (eventName, match, response) => {
+  mockSocket();
+
+  const list = emitHandlers.get(eventName) ?? [];
+  list.push({ match, response });
+  emitHandlers.set(eventName, list);
+
+  return emitStub;
+};
+
+/**
+ * ============================================================
+ * Spy / Stub Assertions (ACTIVE CHECK MODEL)
+ * ============================================================
+ */
+
 const callCount = (spyOrStub, numberOfCalls) => {
-  // Assess callCount
   expect(spyOrStub).to.not.equal(undefined);
   expect(spyOrStub).to.not.equal(null);
-  expect(spyOrStub.callCount).to.equal(
-    numberOfCalls,
-    `Spy/Stub Check - Expected ${
-      JSON.stringify(spyOrStub.callCount)} to equal ${JSON.stringify(numberOfCalls)
-    }\n\n          Calls that occurred\n\n${
-      (spyOrStub.getCalls().length > 0)
-        ? spyOrStub.getCalls().map((spyCall) => `             ${spyCall.args.map((arg) => JSON.stringify(arg)).join(', ')}`).join('\n')
-        : '             None'
-    }\n\n      `
-  );
 
-  // Establish new details for assessing the spy
+  expect(
+    spyOrStub.callCount,
+    `Spy/Stub Check - Expected ${numberOfCalls} call(s) but got ${spyOrStub.callCount}\n\nCalls:\n${
+      spyOrStub.getCalls().length
+        ? spyOrStub.getCalls().map(c => `  ${JSON.stringify(c.args)}`).join('\n')
+        : '  None'
+    }`
+  ).to.equal(numberOfCalls);
+
   activeCallCheck.spyOrStub = spyOrStub;
   activeCallCheck.numberOfCalls = numberOfCalls;
   activeCallCheck.timesCalledWithUsed = 0;
-  activeCallCheck.callArguments = spyOrStub.getCalls().map((spyCall) => spyCall.args);
+  activeCallCheck.callArguments = spyOrStub.getCalls().map(c => c.args);
   activeCallCheck.callArgumentsChecked = [];
 };
 
 const calledWith = (...expectedArgs) => {
-  expect(activeCallCheck.numberOfCalls).to.not.equal(undefined, 'Spy/Stub Check - Unexpected Error');
-  expect(activeCallCheck.numberOfCalls).to.not.equal(null, 'Spy/Stub Check - Missing active spy check object, call .callCount() before .calledWith()');
-  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(undefined, 'Spy/Stub Check - Unexpected Error');
-  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(null, 'Spy/Stub Check - Missing active spy check object, call .callCount() before .calledWith()');
+  expect(activeCallCheck.numberOfCalls).to.not.equal(undefined);
+  expect(activeCallCheck.numberOfCalls).to.not.equal(null);
+  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(undefined);
+  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(null);
 
-  // Compare only the first N arguments
-  const argIndex = activeCallCheck.callArguments.findIndex((args) => {
-    const sliceArgs = args.slice(0, expectedArgs.length); // ignore extra callback
-    return JSON.stringify(sliceArgs) === JSON.stringify(expectedArgs);
-  });
-
-  expect(argIndex).to.not.equal(
-    -1,
-    `Expected Spy/Stub to still have [ ${expectedArgs.map((arg) => JSON.stringify(arg)).join(', ')} ] to test against\n\n          Calls not yet tested against\n${
-      activeCallCheck.callArguments.length > 0
-        ? activeCallCheck.callArguments.map((args) => `[ ${args.map((arg) => JSON.stringify(arg)).join(', ')} ]`).join('\n')
-        : 'None'
-    }`
+  const argIndex = activeCallCheck.callArguments.findIndex(args =>
+    _.isEqual(args.slice(0, expectedArgs.length), expectedArgs)
   );
+
+  expect(
+    argIndex,
+    `Expected Spy/Stub to have call with:\n  [ ${expectedArgs.map(a => JSON.stringify(a)).join(', ')} ]\n\nRemaining calls:\n${
+      activeCallCheck.callArguments.length
+        ? activeCallCheck.callArguments.map(a => `  [ ${a.map(v => JSON.stringify(v)).join(', ')} ]`).join('\n')
+        : '  None'
+    }`
+  ).to.not.equal(-1);
 
   activeCallCheck.callArgumentsChecked.push(activeCallCheck.callArguments[argIndex]);
   activeCallCheck.callArguments.splice(argIndex, 1);
@@ -71,23 +137,39 @@ const calledWith = (...expectedArgs) => {
 };
 
 const callsChecked = () => {
-  // Assess active spy check exists
-  expect(activeCallCheck.numberOfCalls).to.not.equal(undefined, 'Spy/Stub Check - Unexpected Error');
-  expect(activeCallCheck.numberOfCalls).to.not.equal(null, 'Spy/Stub Check - Missing active spy check object, call .callCount() before .callsChecked()');
-  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(undefined, 'Spy/Stub Check - Unexpected Error');
-  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(null, 'Spy/Stub Check - Missing active spy check object, call .callCount() before .callsChecked()');
+  expect(activeCallCheck.numberOfCalls).to.not.equal(undefined);
+  expect(activeCallCheck.numberOfCalls).to.not.equal(null);
+  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(undefined);
+  expect(activeCallCheck.timesCalledWithUsed).to.not.equal(null);
 
-  // Assess whether spy was checked correctly
-  expect(activeCallCheck.timesCalledWithUsed).to.equal(activeCallCheck.numberOfCalls, `Expected .calledWith() to be called ${activeCallCheck.numberOfCalls} time${(activeCallCheck.numberOfCalls === 1)
-    ? ''
-    : 's'} but it was called ${activeCallCheck.timesCalledWithUsed} time${(activeCallCheck.timesCalledWithUsed === 1)
-    ? ''
-    : 's'} instead\n          Calls that occurred\n${activeCallCheck.spyOrStub.getCalls().map((spyCall) => `             ${spyCall.args.map((arg) => JSON.stringify(arg)).join(', ')}`).join('\n')}\n`);
+  expect(
+    activeCallCheck.timesCalledWithUsed,
+    `Expected .calledWith() to be called ${activeCallCheck.numberOfCalls} time${
+      activeCallCheck.numberOfCalls === 1
+        ? ''
+        : 's'
+    } but it was called ${activeCallCheck.timesCalledWithUsed} time${
+      activeCallCheck.timesCalledWithUsed === 1
+        ? ''
+        : 's'
+    }\n\nCalls:\n${
+      activeCallCheck.spyOrStub.getCalls().map(c => `  ${JSON.stringify(c.args)}`).join('\n')
+    }`
+  ).to.equal(activeCallCheck.numberOfCalls);
 
-  // End active check data
+  // Reset active state
+  activeCallCheck.spyOrStub = null;
   activeCallCheck.numberOfCalls = null;
   activeCallCheck.timesCalledWithUsed = null;
+  activeCallCheck.callArguments = [];
+  activeCallCheck.callArgumentsChecked = [];
 };
+
+/**
+ * ============================================================
+ * Value / Shape Assertions
+ * ============================================================
+ */
 
 const length = (objectArray, requiredLength) => {
   expect(objectArray).to.not.equal(undefined);
@@ -95,91 +177,96 @@ const length = (objectArray, requiredLength) => {
   expect(objectArray.length).to.equal(requiredLength);
 };
 
-const isTrue = (object) => {
-  expect(object).to.not.equal(undefined);
-  expect(object).to.not.equal(null);
-  expect(object).to.equal(true);
+const isTrue = (value) => {
+  expect(value).to.not.equal(undefined);
+  expect(value).to.not.equal(null);
+  expect(value).to.equal(true);
 };
 
-const isFalse = (object) => {
-  expect(object).to.not.equal(undefined);
-  expect(object).to.not.equal(null);
-  expect(object).to.equal(false);
+const isFalse = (value) => {
+  expect(value).to.not.equal(undefined);
+  expect(value).to.not.equal(null);
+  expect(value).to.equal(false);
 };
 
-const isNull = (object) => {
-  expect(object).to.not.equal(undefined);
-  expect(object).to.equal(null);
+const isNull = (value) => {
+  expect(value).to.not.equal(undefined);
+  expect(value).to.equal(null);
 };
 
-const isNotNullOrUndefined = (object) => {
-  expect(object).to.not.equal(undefined);
-  expect(object).to.not.equal(null);
+const isNotNullOrUndefined = (value) => {
+  expect(value).to.not.equal(undefined);
+  expect(value).to.not.equal(null);
 };
+
+/**
+ * ============================================================
+ * Deep Match with Type Support
+ * ============================================================
+ */
 
 const isMatch = (obj, shape) => {
-  for (const key in shape) {
-    const expected = shape[key];
+  for (const [key, expected] of Object.entries(shape)) {
     const actual = obj[key];
 
-    const checkTypeOrValue = (exp, val) => {
-      if (exp === Number) {
-        if (typeof val !== 'number') {
-          throw new Error(`Property "${key}" expected type Number but got ${typeof val}: ${JSON.stringify(val)}`);
-        }
-        return;
+    const assertMatch = (exp) => {
+      if (exp === Number && typeof actual !== 'number') {
+        throw new Error(`Property "${key}" expected Number, got ${typeof actual}`);
       }
-      if (exp === String) {
-        if (typeof val !== 'string') {
-          throw new Error(`Property "${key}" expected type String but got ${typeof val}: ${JSON.stringify(val)}`);
-        }
-        return;
+      if (exp === String && typeof actual !== 'string') {
+        throw new Error(`Property "${key}" expected String, got ${typeof actual}`);
       }
-      if (exp === Boolean) {
-        if (typeof val !== 'boolean') {
-          throw new Error(`Property "${key}" expected type Boolean but got ${typeof val}: ${JSON.stringify(val)}`);
-        }
-        return;
+      if (exp === Boolean && typeof actual !== 'boolean') {
+        throw new Error(`Property "${key}" expected Boolean, got ${typeof actual}`);
       }
-      if (exp === null) {
-        if (val !== null) {
-          throw new Error(`Property "${key}" expected null but got ${JSON.stringify(val)}`);
-        }
-        return;
+      if (exp === null && actual !== null) {
+        throw new Error(`Property "${key}" expected null, got ${JSON.stringify(actual)}`);
       }
-      if (val !== exp) {
-        throw new Error(`Property "${key}" expected value ${JSON.stringify(exp)} but got ${JSON.stringify(val)}`);
+      if (![Number, String, Boolean, null].includes(exp) && !_.isEqual(actual, exp)) {
+        throw new Error(`Property "${key}" expected ${JSON.stringify(exp)}, got ${JSON.stringify(actual)}`);
       }
     };
 
     if (Array.isArray(expected)) {
-      const pass = expected.some(exp => {
+      const matched = expected.some(e => {
         try {
-          checkTypeOrValue(exp, actual);
+          assertMatch(e);
           return true;
         } catch {
           return false;
         }
       });
-      if (!pass) {
-        const expectedTypes = expected.map(e => e?.name || JSON.stringify(e)).join(' | ');
-        throw new Error(`Property "${key}" did not match any allowed type/value: ${expectedTypes}, actual value: ${JSON.stringify(actual)}`);
+
+      if (!matched) {
+        throw new Error(
+          `Property "${key}" did not match any allowed values/types: ${
+            expected.map(e => e?.name ?? JSON.stringify(e)).join(' | ')
+          }`
+        );
       }
     } else {
-      checkTypeOrValue(expected, actual);
+      assertMatch(expected);
     }
   }
 };
 
 export default {
-  createMockRequest,
+  // socket mocking
+  createMockSocketRequest,
+  restoreSocket,
+
+  // spy assertions
+  callCount,
+  calledWith,
+  callsChecked,
+
+  // value assertions
   length,
   isTrue,
   isFalse,
   isNull,
-  calledWith,
-  callCount,
-  callsChecked,
-  isMatch,
-  isNotNullOrUndefined
+  isNotNullOrUndefined,
+
+  // matching
+  isMatch
 };

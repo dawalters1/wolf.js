@@ -37,29 +37,29 @@ WOLF.js is a community maintained javascript library used to create Unofficial B
 
 ```YML
 keyword: keyword # keyword #single word only
-***REMOVED***
+framework:
   developer: #your id here
   language: en #default response language here
   login:
-***REMOVED***# bot email here
-***REMOVED***# bot password here
+    email: # bot email here
+    password: # bot password here
     onlineState: 1 # online state here
   command:
-***REMOVED***
+    ignore:
       official: true # whether or not an official bot will trigger a command (internal)
-  ***REMOVED*** true # whether or not an unofficial bot will trigger a command (internal)
-***REMOVED***  # whether or not the bot will process its own messages and trigger its own commands (internal)
+      unofficial: true # whether or not an unofficial bot will trigger a command (internal)
+      self: true  # whether or not the bot will process its own messages and trigger its own commands (internal)
   message:
-***REMOVED***
-***REMOVED*** # whether or not the bot will process its own messages (internal)
-***REMOVED***
-  ***REMOVED***
-***REMOVED***
+    ignore:
+      self: true # whether or not the bot will process its own messages (internal)
+  subscriptions:
+    messages:
+      channel:
         enabled: true #subscribe to channel messages  (server)
-    ***REMOVED*** true # subscribe to channel message tip events  (server)
+        tipping: true # subscribe to channel message tip events  (server)
       private:
         enabled: true # subscribe to private messages (server)
-    ***REMOVED*** false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
+        tipping: false  # subscribe to private message tip events  (server) - NOT IMPLEMENTED
 
 
 ```
@@ -106,11 +106,9 @@ const keyword = client.config.keyword;
 
 client.commandHandler.register(
     [
-        new Command(`${keyword}_command_${keyword}`, { both: async (command) =>  command.reply(
-Command.getPhrase(`${keyword}_help_message`)) },
+        new Command(`${keyword}_command_${keyword}`, { both: async (command) =>  command.reply(command.getPhrase(`${keyword}_help_message`)) },
             [
-                new Command(`${keyword}_command_help`, { both: (command) => command.reply(
-Command.getPhrase(`${keyword}_help_message`)) }),
+                new Command(`${keyword}_command_help`, { both: (command) => command.reply(command.getPhrase(`${keyword}_help_message`)) }),
                 new Command(`${keyword}_command_me`, { both: (command) => me(client, command) })
             ]
         )
@@ -151,8 +149,7 @@ client.login();
  */
 export default async (client, command) => {
 
-    const subscriber = await client.subscriber.getById(
-Command.sourceSubscriberId);
+    const subscriber = await client.subscriber.getById(command.sourceSubscriberId);
 
     return await command.reply(
         client.utility.string.replace(
@@ -189,3 +186,4 @@ Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/
 ## Contact
 
 - You can receive help in [wolf.js](https://wolf.live/wolf.js)
+

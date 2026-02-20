@@ -54,7 +54,7 @@ export default class EventHelper extends BaseHelper {
         'group event',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             idList: idsToFetch,

@@ -48,7 +48,7 @@ export default class WOLFStarHelper extends BaseHelper {
         'wolfstar profile',
         {
           headers: {
-      ***REMOVED***
+            version: 1
           },
           body: {
             idList: idsToFetch

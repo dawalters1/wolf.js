@@ -13,5 +13,5 @@ updates:
       time: "09:00"
       day: "saturday"
       timezone: "America/New_York"
-***REMOVED***
+    ignore:
       update-types: ["version-update:semver-patch"]
