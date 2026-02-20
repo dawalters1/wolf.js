@@ -1,6 +1,6 @@
 import BaseUtility from './BaseUtility.js';
 import BullQueue from 'bull';
-import TimerJob from '../entities/timerJob.js';
+import TimerJob from '../entities/TimerJob.js';
 import { validate } from '../validation/Validation.js';
 
 export default class TimerUtility extends BaseUtility {
