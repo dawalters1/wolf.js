@@ -13,6 +13,7 @@
     "noUnusedParameters": true,
     "strict": true,
     "useUnknownInCatchVariables": true,
+    "forceConsistentCasingInFileNames": true,
     // Modules
     "module": "ES6",
     "moduleResolution": "node",
@@ -29,7 +30,6 @@
     "removeComments": false,
     "sourceMap": false,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     // Language and Environment
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

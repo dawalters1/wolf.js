@@ -93,8 +93,9 @@ export class WOLF extends EventEmitter {
       ? yaml.load(fs.readFileSync(botConfigPath, 'utf-8'))
       : {};
 
+    // eslint-disable-next-line custom/auto-sort-private-properties-and-getters
     this.#utility = new Utility(this);
-    
+
     this.#achievement = new AchievementHelper(this);
     this.#audio = new AudioHelper(this);
     this.#authorisation = new AuthorisationHelper(this);

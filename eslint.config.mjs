@@ -3,12 +3,15 @@ import autoSortPrivatePropertiesAndGetters from './eslint/autoSortPrivatePropert
 import emitFormatter from './eslint/emitFormatter.js';
 import enumSpacingRule from './eslint/enumFormatter.js';
 import globals from 'globals';
+import importCaseSensitive from './eslint/importCaseSensitive.js';
 import importPlugin from 'eslint-plugin-import';
 import prettier from 'eslint-config-prettier';
 import stylistic from '@stylistic/eslint-plugin';
 import ternaryFormatter from './eslint/ternaryFormatter.js';
 import unusedImports from 'eslint-plugin-unused-imports';
+
 export default [
+  prettier,
   {
     ignores: ['dist/**', 'node_modules/**'],
     languageOptions: {
@@ -40,13 +43,14 @@ export default [
           'auto-sort-private-properties-and-getters': autoSortPrivatePropertiesAndGetters,
           'auto-sort-imports': autoSortImports,
           'emit-formatting': emitFormatter,
-          'ternary-formatting': ternaryFormatter
+          'ternary-formatting': ternaryFormatter,
+          'import-case-sensitive': importCaseSensitive
         }
       }
     },
     rules: {
     //  ...stylistic.configs.all,
-      ...prettier.rules,
+      'custom/import-case-sensitive': 'error',
       'import/extensions': [
         'error',
         'always'
@@ -55,7 +59,7 @@ export default [
         'error',
         {
           selector: 'TSTypeReference[typeName.name="Readonly"]',
-    message: 'Use `readonly` properties instead of `Readonly<T>`.'
+          message: 'Use `readonly` properties instead of `Readonly<T>`.'
         }
       ],
       'unused-imports/no-unused-vars': [
