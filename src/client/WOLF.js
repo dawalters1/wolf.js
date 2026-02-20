@@ -93,6 +93,8 @@ export class WOLF extends EventEmitter {
       ? yaml.load(fs.readFileSync(botConfigPath, 'utf-8'))
       : {};
 
+    this.#utility = new Utility(this);
+    
     this.#achievement = new AchievementHelper(this);
     this.#audio = new AudioHelper(this);
     this.#authorisation = new AuthorisationHelper(this);
@@ -115,7 +117,6 @@ export class WOLF extends EventEmitter {
     this.#tip = new TipHelper(this);
     this.#topic = new TopicHelper(this);
     this.#user = new UserHelper(this);
-    this.#utility = new Utility(this);
     this.#websocket = new Websocket(this);
   }
 

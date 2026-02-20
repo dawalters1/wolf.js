@@ -5,7 +5,7 @@ import { STATUS_CODES } from 'http';
 import TipSubscriptionTargetType from '../../../constants/TipSubscriptionTargetType.js';
 import Welcome from '../../../entities/Welcome.js';
 
-const excludeOnCleanup = ['ChannelHelper', 'BannedHelper', 'AuthorisationHelper'];
+const excludeOnCleanup = ['ChannelHelper', 'BannedHelper', 'AuthorisationHelper', 'PhraseHelper'];
 
 export default class WelcomeEvent extends BaseEvent {
   constructor (client) {

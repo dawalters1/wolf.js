@@ -237,24 +237,47 @@ export default class Cache {
   }
 
   find (fn) {
+    const now = Date.now();
+
     for (const entry of this.#store) {
-      if (fn(entry.value, entry.value)) { return entry.value; }
+      if (entry.expiresAt && entry.expiresAt <= now) {
+        this.#store.delete(entry);
+        continue;
+      }
+
+      if (fn(entry.value)) {
+        this.#touch(entry);
+        return entry.value;
+      }
     }
+
+    if (this.size === 0) { this.#fetched = false; }
     return null;
   }
 
   filter (fn) {
+    const now = Date.now();
     const result = [];
+
     for (const entry of this.#store) {
-      if (fn(entry.value, entry.value)) { result.push(entry.value); }
+      if (entry.expiresAt && entry.expiresAt <= now) {
+        this.#store.delete(entry);
+        continue;
+      }
+
+      if (fn(entry.value)) {
+        result.push(entry.value);
+      }
     }
+
+    if (this.size === 0) { this.#fetched = false; }
     return result;
   }
 
   map (fn) {
     const result = [];
     for (const entry of this.#store) {
-      result.push(fn(entry.value, entry.value));
+      result.push(fn(entry.value));
     }
     return result;
   }

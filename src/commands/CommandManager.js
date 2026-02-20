@@ -14,11 +14,11 @@ class CommandManager {
     this.#usePhrases = client.config.framework?.commands?.phrases ?? true;
 
     client.on('message', async (message) => {
-      const ignoreSettings = client.config.framework.commands.ignore;
-
       if (!message.body) { return; }
 
       if (this.#client.banned.isBanned(message.sourceUserId)) { return; }
+
+      const ignoreSettings = client.config.framework.commands.ignore;
 
       if (ignoreSettings.self && message.userId === client.me.id) { return; }
 
