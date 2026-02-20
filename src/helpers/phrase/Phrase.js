@@ -21,7 +21,7 @@ export default class PhraseHelper extends BaseHelper {
     for (const file of files) {
       const language = path.parse(file).name;
 
-      const phrases = JSON.parse(fs.readFileSync(path.join(process.cwd(), `${phrasePath}/${file}`), 'utf8'))
+      const phrases = JSON.parse(fs.readFileSync(`${phrasePath}/${file}`, 'utf8'))
         .map((phrase) =>
           (
             {
