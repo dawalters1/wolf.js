@@ -29,6 +29,7 @@ export default class BaseHelper {
   }
 
   normaliseNumbers (ids) {
+    if (ids === undefined) { return undefined; }
     if (this.isObject(ids)) { return ids; }
 
     return (Array.isArray(ids)
@@ -39,6 +40,7 @@ export default class BaseHelper {
   }
 
   normaliseArray (array) {
+    if (array === undefined) { return undefined; }
     return Array.isArray(array)
       ? array
       : [array];
