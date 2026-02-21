@@ -195,8 +195,12 @@ export default class ChannelHelper extends BaseHelper {
       return this.#fetchChannelList(normalisedOpts);
     }
 
-    if (!Array.isArray(normalised) && isNaN(normalised)) {
-      return this.#fetchChannelByName(normalised, normalisedOpts);
+    if (Array.isArray(normalised) && normalised.every((item) => isNaN(item))) {
+      const channels = normalised.map((channelName) => this.#fetchChannelByName(channelName, normalisedOpts));
+
+      return Array.isArray(idsOrName)
+        ? channels
+        : channels[0];
     }
 
     return this.#fetchChannelByIds(normalised, normalisedOpts);
