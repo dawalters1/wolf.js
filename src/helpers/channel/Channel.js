@@ -191,8 +191,6 @@ export default class ChannelHelper extends BaseHelper {
     const normalised = this.normaliseNumbers(idsOrName);
     const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
 
-    console.log(idsOrName);
-
     if (!normalised || this.isObject(normalised)) {
       return this.#fetchChannelList(normalisedOpts);
     }
@@ -205,7 +203,11 @@ export default class ChannelHelper extends BaseHelper {
         : channels[0];
     }
 
-    return this.#fetchChannelByIds(normalised, normalisedOpts);
+    const channels = await this.#fetchChannelByIds(normalised, normalisedOpts);
+
+    return Array.isArray(idsOrName)
+      ? channels
+      : channels[0];
   }
 
   async history (channelId, chronological, timestamp, limit) {
