@@ -3,6 +3,7 @@ import BlackListLink from '../../entities/BlacklistLink.js';
 import Cache from '../../cache/Cache.js';
 import EmbedType from '../../constants/EmbedType.js';
 import { fileTypeFromBuffer } from 'file-type';
+import getLinkPreviewData from '../../util/getLinkPreviewData.js';
 import Message from '../../entities/Message.js';
 import MessageSubscriptionType from '../../constants/MessageSubscriptionType.js';
 import MessageType from '../../constants/MessageType.js';
@@ -63,7 +64,7 @@ export default class MessagingHelper extends BaseHelper {
       }
 
       if ('url' in item) {
-        const linkPreviewData = item.preview();
+        const linkPreviewData = await getLinkPreviewData(item.url);
 
         if (linkPreviewData === null) { continue; }
 

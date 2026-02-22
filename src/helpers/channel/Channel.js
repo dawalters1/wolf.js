@@ -106,10 +106,17 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async #fetchChannelByName (name, opts) {
+    console.log(name, opts);
+
     if (!opts?.forceNew) {
-      const cached = this.store.find((item) => this.client.utility.string.isEqual(item.name, name) && opts?.entities
-        ? opts.entities.some((entity) => !(entity in item))
-        : true);
+      const cached = this.store.find((item) =>
+        this.client.utility.string.isEqual(item.name, name) &&
+        (
+          opts?.entities
+            ? opts.entities.some((entity) => !(entity in item))
+            : true
+        )
+      );
 
       if (cached) { return cached; }
     }

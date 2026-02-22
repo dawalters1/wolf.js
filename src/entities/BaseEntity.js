@@ -19,6 +19,11 @@ export default class BaseEntity {
     oldData = oldData || this;
 
     const allowedKeys = Object.keys(oldData);
+
+    if (newData === undefined || newData === null) {
+      throw new Error('Failed to patch', JSON.stringify(oldData), JSON.stringify(newData));
+    }
+
     const newKeys = Object.keys(newData).filter((key) => allowedKeys.includes(key));
 
     for (const key of newKeys) {
