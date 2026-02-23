@@ -98,7 +98,6 @@ export default class WelcomeEvent extends BaseEvent {
         }
       );
 
-      this.client.loggedIn = true;
       this.client.config.framework.login.userId = response.body.subscriber?.id;
       this.client.config.cognito = response.body.cognito;
 

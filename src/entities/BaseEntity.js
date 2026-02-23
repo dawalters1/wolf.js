@@ -16,29 +16,44 @@ export default class BaseEntity {
 
   /** @internal */
   patch (newData, oldData = null) {
-    oldData = oldData || this;
+    oldData = oldData ?? this;
+
+    if (newData === undefined) {
+      throw new Error('Failed to patch: newData is undefined');
+    }
 
     const allowedKeys = Object.keys(oldData);
 
-    if (newData === undefined || newData === null) {
-      throw new Error('Failed to patch current:', JSON.stringify(this), 'old', JSON.stringify(oldData), 'new', JSON.stringify(newData));
-    }
+    for (const key of Object.keys(newData)) {
+      if (!allowedKeys.includes(key)) { continue; }
 
-    const newKeys = Object.keys(newData).filter((key) => allowedKeys.includes(key));
-
-    for (const key of newKeys) {
       const newValue = newData[key];
       const oldValue = oldData[key];
 
       if (newValue === undefined) {
-        Reflect.deleteProperty(this, key);
-      } else if (oldValue === null || Array.isArray(newValue) || newValue instanceof Set) {
-        oldData[key] = newValue;
-      } else if (typeof newValue === 'object') {
-        this.patch(newValue, oldValue);
-      } else {
-        oldData[key] = newValue;
+        Reflect.deleteProperty(oldData, key);
+        continue;
       }
+
+      if (
+        newValue === null ||
+      Array.isArray(newValue) ||
+      newValue instanceof Set
+      ) {
+        oldData[key] = newValue;
+        continue;
+      }
+
+      if (
+        typeof newValue === 'object' &&
+      typeof oldValue === 'object' &&
+      oldValue !== null
+      ) {
+        this.patch(newValue, oldValue);
+        continue;
+      }
+
+      oldData[key] = newValue;
     }
   }
 

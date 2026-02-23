@@ -131,7 +131,7 @@ export default class ChannelHelper extends BaseHelper {
           body: {
             name: name.toLowerCase(),
             subscribe: opts?.subscribe ?? true,
-            entities: opts?.entities ?? ['base']
+            entities: opts?.entities ?? Object.values(ChannelEntities)
           }
         }
       );
