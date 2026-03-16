@@ -50,8 +50,8 @@ export default class Channel extends BaseEntity {
     this.audioConfig = entity.audioConfig
       ? new ChannelAudioConfig(client, entity.audioConfig)
       : null;
-    this.audioCount = entity.audioCount
-      ? new ChannelAudioCount(client, entity.audioCount)
+    this.audioCounts = entity.audioCounts
+      ? new ChannelAudioCount(client, entity.audioCounts)
       : null;
     this.messageConfig = entity.messageConfig
       ? new ChannelMessageConfig(client, entity.messageConfig)

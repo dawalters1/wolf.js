@@ -106,8 +106,6 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async #fetchChannelByName (name, opts) {
-    console.log(name, opts);
-
     if (!opts?.forceNew) {
       const cached = this.store.find((item) =>
         this.client.utility.string.isEqual(item.name, name) &&
@@ -198,17 +196,46 @@ export default class ChannelHelper extends BaseHelper {
     const normalised = this.normaliseNumbers(idsOrName);
     const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
 
+    validate(normalisedOpts, this, this.fetch)
+      .isNotRequired()
+      .forEachProperty(
+        {
+          forceNew: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          subscribe: validator => validator
+            .isNotRequired()
+            .isBoolean(),
+          entities: validator => validator
+            .isNotRequired()
+            .isArray()
+            .each()
+            .in(Object.values(ChannelEntities))
+        }
+      );
+
     if (!normalised || this.isObject(normalised)) {
-      return this.#fetchChannelList(normalisedOpts);
+      return await this.#fetchChannelList(normalisedOpts);
     }
 
     if (Array.isArray(normalised) && normalised.every((item) => isNaN(item))) {
+      validate(normalised, this, this.fetch)
+        .isArray()
+        .each()
+        .isNotNullOrUndefined();
+
       const channels = normalised.map((channelName) => this.#fetchChannelByName(channelName, normalisedOpts));
 
       return Array.isArray(idsOrName)
         ? channels
         : channels[0];
     }
+
+    validate(normalised, this, this.fetch)
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isNumberGreaterThanZero();
 
     const channels = await this.#fetchChannelByIds(normalised, normalisedOpts);
 
@@ -221,6 +248,23 @@ export default class ChannelHelper extends BaseHelper {
     const normalisedChannelId = this.normaliseNumber(channelId);
     const normalisedTimestamp = this.normaliseNumber(timestamp);
     const normalisedLimit = this.normaliseNumber(limit);
+
+    validate(normalisedChannelId, this, this.history)
+      .isNotNullOrUndefined()
+      .isNumberGreaterThanZero();
+
+    validate(chronological, this, this.history)
+      .isNotNullOrUndefined()
+      .isBoolean();
+
+    validate(normalisedTimestamp, this, this.history)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedLimit, this, this.history)
+      .isNotNullOrUndefined()
+      .isNumberGreaterThanZero();
 
     const channel = await this.fetch(normalisedChannelId);
 
@@ -257,6 +301,17 @@ export default class ChannelHelper extends BaseHelper {
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
     const isById = normalisedChannelIdOrName instanceof Number;
 
+    validate(normalisedChannelIdOrName, this, this.join)
+      .isNotNullOrUndefined()[isById
+        ? 'isNumberGreaterThanZero'
+        : 'isNotWhiteSpace']();
+
+    validate(password, this, this.join)
+      .isNotRequired()
+      .isNotNullOrUndefined()
+      .isNotWhitespace()
+      .isString();
+
     return this.client.websocket.emit(
       'group member add',
       {
@@ -274,6 +329,11 @@ export default class ChannelHelper extends BaseHelper {
 
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
     const isById = normalisedChannelIdOrName instanceof Number;
+
+    validate(normalisedChannelIdOrName, this, this.join)
+      .isNotNullOrUndefined()[isById
+        ? 'isNumberGreaterThanZero'
+        : 'isNotWhiteSpace']();
 
     const channel = await this.fetch(normalisedChannelIdOrName);
 

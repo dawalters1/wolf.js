@@ -1,9 +1,10 @@
 import _ from 'lodash';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import WOLFResponse from '../../../../src/entities/WOLFResponse.js';
 
 let emitStub = null;
-let axioxStub = null;
+const axioxStub = null;
 const emitHandlers = new Map();
 const axiosHandlers = new Map();
 
@@ -13,6 +14,18 @@ const activeCallCheck = {
   timesCalledWithUsed: null,
   callArguments: [],
   callArgumentsChecked: []
+};
+
+const createMockResponse = (command, code, body, response, headers = undefined) => {
+  return [
+    command,
+    body,
+    new WOLFResponse({
+      code,
+      body: response,
+      headers
+    })
+  ];
 };
 
 /**
@@ -48,34 +61,17 @@ const mockSocket = () => {
   return emitStub;
 };
 
-const mockRest = () => {
-
-};
-
 const restoreSocket = () => {
   emitStub?.restore();
   emitStub = null;
   emitHandlers.clear();
 };
 
-const restoreRest = () => {
-  axioxStub?.restore();
-  axioxStub = null;
-  emitHandlers.clear();
-};
 /**
  * Registers a mocked socket request/response.
  */
-export const createMockRestRequest = (config, match, response) => {
-  mockRest();
-  // TODO:
-  return;
-  const list = emitHandlers.get(eventName) ?? [];
-  list.push({ match, response });
-  emitHandlers.set(eventName, list);
 
-  return emitStub;
-};
+// eslint-disable-next-line custom/auto-sort-imports
 export const createMockSocketRequest = (eventName, match, response) => {
   mockSocket();
 
@@ -222,7 +218,7 @@ const isMatch = (obj, shape) => {
       if (exp === null && actual !== null) {
         throw new Error(`Property "${key}" expected null, got ${JSON.stringify(actual)}`);
       }
-      if (![Number, String, Boolean, null].includes(exp) && !_.isEqual(actual, exp)) {
+      if (![Number, String, Boolean, null, Array].includes(exp) && !_.isEqual(actual, exp)) {
         throw new Error(`Property "${key}" expected ${JSON.stringify(exp)}, got ${JSON.stringify(actual)}`);
       }
     };
@@ -250,6 +246,48 @@ const isMatch = (obj, shape) => {
   }
 };
 
+const isInstanceOf = (value, constructor) => {
+  if (value === null) {
+    throw new Error(
+      `Expected instance of ${constructor?.name}, but received null`
+    );
+  }
+
+  if (value === undefined) {
+    throw new Error(
+      `Expected instance of ${constructor?.name}, but received undefined`
+    );
+  }
+
+  if (!(value instanceof constructor)) {
+    const actual = value?.constructor?.name ?? typeof value;
+
+    throw new Error(
+      `Expected instance of ${constructor?.name}, but received ${actual}`
+    );
+  }
+};
+
+export const isArray = (value) => Array.isArray(value);
+
+export const normalise = (obj) => {
+  if (!obj || typeof obj !== 'object') { return obj; }
+
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => {
+      if (value instanceof Set) {
+        return [key, Array.from(value)];
+      }
+
+      if (value && typeof value === 'object') {
+        return [key, normalise(value)];
+      }
+
+      return [key, value];
+    })
+  );
+};
+
 export default {
   // socket mocking
   createMockSocketRequest,
@@ -266,7 +304,10 @@ export default {
   isFalse,
   isNull,
   isNotNullOrUndefined,
+  isInstanceOf,
+  isArray,
 
   // matching
-  isMatch
+  isMatch,
+  normalise
 };

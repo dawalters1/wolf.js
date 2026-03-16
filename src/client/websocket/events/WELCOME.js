@@ -101,7 +101,7 @@ export default class WelcomeEvent extends BaseEvent {
       this.client.config.framework.login.userId = response.body.subscriber?.id;
       this.client.config.cognito = response.body.cognito;
 
-      this.client.emit('loginSuccess', await this.#synchronise());
+      this.client.emit('loginSuccess', response.body);
 
       return true;
     } catch (error) {
@@ -112,7 +112,7 @@ export default class WelcomeEvent extends BaseEvent {
       const subCode = error.headers?.get('subCode') ?? -1;
       if (subCode > 1) { return false; }
 
-      await this.client.utility.delay(this.client.utility.number.random(100, 5000));
+      await this.client.utility.delay(this.client.utility.number.random(100, 1000));
 
       return await this.#login();
     }
@@ -120,24 +120,34 @@ export default class WelcomeEvent extends BaseEvent {
 
   async process (data) {
     const welcome = new Welcome(this.client, data);
-    const loggedInUserChanged = this.client.me && welcome.loggedInUser && welcome.loggedInUser.id !== this.client.me.id;
 
-    this.client.config.framework.login.userId = welcome.loggedInUser?.id ?? undefined;
+    this.client.emit('welcome', welcome);
 
-    this.client.config.endpointConfig = welcome.endpointConfig;
-    this.client.config.cognito = loggedInUserChanged
-      ? this.client.config.cognito
-      : undefined;
+    const { loggedInUser, endpointConfig } = welcome;
+    const currentUser = this.client.me;
 
-    if (welcome.loggedInUser === null) {
-      const successfulLogin = await this.#login();
+    this.client.config.framework.login.userId = loggedInUser?.id;
+    this.client.config.endpointConfig = endpointConfig;
 
-      if (!successfulLogin) { return; }
-    } else {
-      this.client.emit('resume', await this.#synchronise());
+    const userChanged =
+      currentUser &&
+      loggedInUser &&
+      loggedInUser.id !== currentUser.id;
+
+    if (!userChanged) {
+      this.client.config.cognito = undefined;
     }
 
+    if (loggedInUser === null && !(await this.#login())) {
+      return;
+    }
+
+    if (loggedInUser !== null) {
+      this.client.emit('resume', loggedInUser);
+    }
+
+    await this.#synchronise();
     this.client.loggedIn = true;
-    return this.client.emit('ready');
+    this.client.emit('ready');
   }
 }

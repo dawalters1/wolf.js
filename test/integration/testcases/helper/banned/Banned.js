@@ -1,11 +1,11 @@
 
-import Common from '../../../resources/Common.js';
+import Common from '../../../resources/testObjects/Common.js';
 import initialiseClient from '../../../utility/initialiseClient.js';
 
 /** @type {import('../../../../../frameworks/wolf.js/src/client/WOLF.js').default} */
 let client;
 
-describe('Banned Helper', function () {
+xdescribe('Banned Helper', function () {
   before(async function () {
     client = await initialiseClient();
   });

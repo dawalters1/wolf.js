@@ -246,24 +246,40 @@ export default class MessagingHelper extends BaseHelper {
   }
 
   async subscribe (targetIds, targetType) {
-    let normalisedIds = this.normaliseNumbers(targetIds);
+    const isSubscriptionType = Object.values(MessageSubscriptionType).includes(targetIds);
 
-    // Jank but allows .subscribe('channel/private')
-    if (Object.values(MessageSubscriptionType).includes(targetIds)) {
-      targetType = targetIds;
-      normalisedIds = undefined;
-    }
+    const normalisedTargetIds = isSubscriptionType
+      ? undefined
+      : this.normaliseNumbers(targetIds);
+    const normalisedTargetType = isSubscriptionType
+      ? targetIds
+      : targetType;
 
-    const isChannel = targetType === MessageSubscriptionType.CHANNEL;
+    validate(normalisedTargetIds, this, this.subscribe)
+      .isNotRequired()
+      .isArray()
+      .each()
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    validate(normalisedTargetType, this, this.subscribe)
+      .isNotNullOrUndefined()
+      .in(Object.values(MessageSubscriptionType));
+
+    const isChannel = normalisedTargetType === MessageSubscriptionType.CHANNEL;
 
     const request = {
       headers: {
         version: isChannel
           ? 4
           : 2
-      },
-      ...(isChannel && normalisedIds?.length && { body: { idList: normalisedIds } })
+      }
     };
+
+    if (isChannel && normalisedTargetIds?.length > 0) {
+      request.body = { idList: normalisedTargetIds };
+    }
 
     return await this.client.websocket.emit(
       isChannel
@@ -296,16 +312,34 @@ export default class MessagingHelper extends BaseHelper {
     return this.#blacklist.values();
   }
 
-  async sendChannelMessage (id, content, opts) {
+  async sendChannelMessage (channelId, content, opts) {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    return this.#sendMessage(id, content, true, opts);
+    const normalisedChannelId = this.normaliseNumber(channelId);
+
+    validate(normalisedChannelId, this, this.sendChannelMessage)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    // TODO: validate content and opts
+
+    return this.#sendMessage(normalisedChannelId, content, true, opts);
   }
 
-  async sendPrivateMessage (id, content, opts) {
+  async sendPrivateMessage (userId, content, opts) {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    return this.#sendMessage(id, content, false, opts);
+    const normalisedUserId = this.normaliseNumber(userId);
+
+    validate(normalisedUserId, this, this.sendChannelMessage)
+      .isNotNullOrUndefined()
+      .isValidNumber()
+      .isNumberGreaterThanZero();
+
+    // TODO: validate content and opts
+
+    return this.#sendMessage(normalisedUserId, content, false, opts);
   }
 
   async edit (id, timestamp, isDeleted, isChannel = true) {
