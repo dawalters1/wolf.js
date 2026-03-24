@@ -28,8 +28,6 @@ export default class TimerUtility extends BaseUtility {
 
       this.#handlers[job.name].call(this, job.data);
     });
-
-    console.log('Registered');
   }
 
   async get (jobId) {

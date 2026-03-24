@@ -31,12 +31,25 @@ export class ChannelMember extends BaseEntity {
     this.hash = entity.hash;
     this.capabilities = entity.capabilities;
 
-    this.#lists = new Set([entity.source, this.#getList(this.capabilities)].filter(Boolean));
+    this.#lists = new Set(this.capabilities === ChannelMemberCapability.NONE
+      ? []
+      : [entity.source, this.#getList(this.capabilities)].filter(Boolean));
   }
 
   /** @internal */
   get lists () {
     return this.#lists;
+  }
+
+  _onCapabilityUpdate (capabilities) {
+    const list = this.#getList(capabilities);
+
+    if (!this.#lists.has(list)) {
+      this.lists.delete(this.#getList(this.capabilities));
+      this.lists.add(list);
+    }
+
+    this.capabilities = capabilities;
   }
 }
 
