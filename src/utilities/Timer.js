@@ -4,11 +4,11 @@ import TimerJob from '../entities/TimerJob.js';
 import { validate } from '../validation/Validation.js';
 
 export default class TimerUtility extends BaseUtility {
-  #handlers = new Map();
+  #handlers;
   #queue;
 
   async register (handlers) {
-    if (this.#handlers.size !== 0) { return; }
+    if (this.#handlers) { return; }
     if (!this.client.config.redis) { throw new Error('Configuration lacks redis config'); }
 
     this.#handlers = handlers;
@@ -28,10 +28,12 @@ export default class TimerUtility extends BaseUtility {
 
       this.#handlers[job.name].call(this, job.data);
     });
+
+    console.log('Registered');
   }
 
   async get (jobId) {
-    if (!this.#handlers.size) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
     validate(jobId, this, this.get)
       .isNotNullOrUndefined()
@@ -45,7 +47,7 @@ export default class TimerUtility extends BaseUtility {
   }
 
   async add (jobId, handler, data, delay) {
-    if (!this.#handlers.size) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
     const normalisedDelay = this.normaliseNumber(delay);
 
@@ -81,7 +83,7 @@ export default class TimerUtility extends BaseUtility {
   }
 
   async cancel (jobId) {
-    if (!this.#handlers.size) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
     validate(jobId, this, this.cancel)
       .isNotNullOrUndefined()
@@ -96,7 +98,7 @@ export default class TimerUtility extends BaseUtility {
   }
 
   async extend (jobId, delay) {
-    if (!this.#handlers.size) { throw new Error('TimerUtility has not been initalised'); }
+    if (!this.#handlers) { throw new Error('TimerUtility has not been initalised'); }
 
     const normalisedDelay = this.normaliseNumber(delay);
 
