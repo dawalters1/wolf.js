@@ -93,6 +93,24 @@ export class WOLF extends EventEmitter {
       ? yaml.load(fs.readFileSync(botConfigPath, 'utf-8'))
       : {};
 
+    this.#config = _.merge(baseConfig, frameworkConfig, botConfig);
+
+    const getOrHas = (path, isHas = false) => {
+      const result = path
+        .split('.')
+        .reduce((obj, key) => obj?.[key], this.#config);
+
+      if (isHas) { return result !== undefined; }
+
+      if (result === undefined) {
+        throw new Error(`Path "${path}" does not exist in config`);
+      }
+
+      return result;
+    };
+    this.#config.get = getOrHas;
+    this.#config.has = (property) => getOrHas(property, true);
+
     // eslint-disable-next-line custom/auto-sort-private-properties-and-getters
     this.#utility = new Utility(this);
 
@@ -102,7 +120,6 @@ export class WOLF extends EventEmitter {
     this.#banned = new BannedHelper(this);
     this.#channel = new ChannelHelper(this);
     this.#charm = new CharmHelper(this);
-    this.#config = _.merge({ get: config.get }, baseConfig, frameworkConfig, botConfig);
     this.#contact = new ContactHelper(this);
     this.#discovery = new DiscoveryHelper(this);
     this.#event = new EventHelper(this);
