@@ -61,7 +61,7 @@ export default class TimerUtility extends BaseUtility {
     validate(normalisedDelay, this, this.add)
       .isNotNullOrUndefined()
       .isValidNumber()
-      .isNumberLessThanZero();
+      .isNumberGreaterThanZero();
 
     await this.cancel(jobId);
 
@@ -107,7 +107,7 @@ export default class TimerUtility extends BaseUtility {
     validate(normalisedDelay, this, this.add)
       .isNotNullOrUndefined()
       .isValidNumber()
-      .isNumberLessThanZero();
+      .isNumberGreaterThanZero();
 
     const job = await this.#queue.getJob(jobId);
 
