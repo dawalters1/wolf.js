@@ -136,7 +136,7 @@ export default class UserFollowHelper extends BaseHelper {
       .isValidNumber()
       .isNumberGreaterThanZero();
 
-    const user = await this.client.user.getById(normalisedUserId);
+    const user = await this.client.user.fetch(normalisedUserId);
 
     if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
@@ -160,7 +160,7 @@ export default class UserFollowHelper extends BaseHelper {
       .isValidNumber()
       .isNumberGreaterThanZero();
 
-    const user = await this.client.user.getById(normalisedUserId);
+    const user = await this.client.user.fetch(normalisedUserId);
 
     if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 
@@ -193,7 +193,7 @@ export default class UserFollowHelper extends BaseHelper {
         }
       );
 
-    const user = await this.client.user.getById(normalisedUserId);
+    const user = await this.client.user.fetch(normalisedUserId);
 
     if (user === null) { throw new Error(`User with ID ${normalisedUserId} NOT FOUND`); }
 

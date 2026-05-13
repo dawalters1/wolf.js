@@ -10,7 +10,7 @@ export default class StoreProduct extends BaseEntity {
     this.name = entity.name;
     this.targetType = entity.targetType;
     this.imageUrl = entity.imageUrl;
-    this.credits = entity.credits;
+    this.gold = entity.credits;
     this.reputationLevel = entity.reputationLevel;
     this.promotionText = entity.promotionText;
     this.isLimited = entity.isLimited;

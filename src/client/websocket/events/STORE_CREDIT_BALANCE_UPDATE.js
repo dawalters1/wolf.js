@@ -6,11 +6,11 @@ export default class StoreCreditBalanceUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const oldBalance = this.client.store._balance;
-    this.client.store._balance = data.balance;
+    const oldBalance = this.client.store._gold;
+    this.client.store._gold = data.balance;
 
     return this.client.emit(
-      'storeCreditBalanceUpdate',
+      'storeGoldBalanceUpdate',
       oldBalance,
       data.balance
     );

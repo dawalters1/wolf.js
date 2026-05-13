@@ -184,7 +184,7 @@ export default class TipHelper extends BaseHelper {
       .in(Object.values(TipDirection));
 
     if (tipType === TipType.CHARM && tipDirection) {
-      console.warn('TipType is not required when requesting charm');
+      this.client.log.error('TipType is not required when requesting charm');
     }
 
     try {

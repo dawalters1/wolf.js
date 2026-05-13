@@ -8,7 +8,7 @@ export default class TipLeaderboardItem extends BaseEntity {
     this.rank = entity.rank;
     this.charmId = entity.charmId;
     this.quantity = entity.quantity;
-    this.credits = entity.credits;
+    this.gold = entity.credits;
     this.channel = entity.group
       ? new IdHash(this.client, entity.group, true)
       : null;

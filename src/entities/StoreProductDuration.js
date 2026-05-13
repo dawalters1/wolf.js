@@ -5,7 +5,7 @@ export default class StoreProductDuration extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.credits = entity.credits;
+    this.gold = entity.credits;
     this.days = entity.days;
   }
 }

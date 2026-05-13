@@ -5,6 +5,8 @@ import AuthorisationHelper from '../helpers/authorisation/Authorisation.js';
 import BannedHelper from '../helpers/banned/Banned.js';
 import ChannelHelper from '../helpers/channel/Channel.js';
 import CharmHelper from '../helpers/charm/Charm.js';
+import Command from '../commands/Command.js';
+import CommandManager from '../commands/CommandManager.js';
 import config from 'config';
 import ContactHelper from '../helpers/contact/Contact.js';
 import DiscoveryHelper from '../helpers/discovery/Discovery.js';
@@ -16,6 +18,7 @@ import { fileURLToPath } from 'node:url';
 import FrameHelper from '../helpers/frame/Frame.js';
 import fs from 'node:fs';
 import { Gender, LookingFor, MessageFilterTierLevel, OnlineState, Relationship } from '../constants/index.js';
+import Log from '../helpers/log/Log.js';
 import MessageSetting from '../entities/MessageSetting.js';
 import MessagingHelper from '../helpers/messaging/Messaging.js';
 import Multimedia from './multimedia/Multimedia.js';
@@ -48,6 +51,20 @@ const pickNumber = (value, fallback) =>
     ? Number(value)
     : fallback;
 
+const getOrHas = (config, path, isHas = false) => {
+  const result = path
+    .split('.')
+    .reduce((obj, key) => obj?.[key], config);
+
+  if (isHas) { return result !== undefined; }
+
+  if (result === undefined) {
+    throw new Error(`Path "${path}" does not exist in config`);
+  }
+
+  return result;
+};
+
 export class WOLF extends EventEmitter {
   #achievement;
   #audio;
@@ -62,6 +79,7 @@ export class WOLF extends EventEmitter {
   #event;
   #experience;
   #frame;
+  #log;
   #loggedIn = false;
   #me = undefined;
   #messageSettings = new PropertyCache({ ttl: 60 });
@@ -94,24 +112,11 @@ export class WOLF extends EventEmitter {
       : {};
 
     this.#config = _.merge(baseConfig, frameworkConfig, botConfig);
+    this.#config.get = (path) => getOrHas(this.config, path, false);
+    this.#config.has = (property) => getOrHas(this.config, property, true);
 
-    const getOrHas = (path, isHas = false) => {
-      const result = path
-        .split('.')
-        .reduce((obj, key) => obj?.[key], this.#config);
+    this.#log = new Log(this, opts?.winston);// eslint-disable-line custom/auto-sort-private-properties-and-getters
 
-      if (isHas) { return result !== undefined; }
-
-      if (result === undefined) {
-        throw new Error(`Path "${path}" does not exist in config`);
-      }
-
-      return result;
-    };
-    this.#config.get = getOrHas;
-    this.#config.has = (property) => getOrHas(property, true);
-
-    // eslint-disable-next-line custom/auto-sort-private-properties-and-getters
     this.#utility = new Utility(this);
 
     this.#achievement = new AchievementHelper(this);
@@ -211,6 +216,10 @@ export class WOLF extends EventEmitter {
 
   get frame () {
     return this.#frame;
+  }
+
+  get log () {
+    return this.#log;
   }
 
   get messaging () {

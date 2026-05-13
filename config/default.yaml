@@ -135,3 +135,5 @@ framework:
       self: true
       official: false
       unofficial: true
+
+log_level: 'debug'

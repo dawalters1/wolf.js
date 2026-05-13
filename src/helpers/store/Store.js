@@ -1,10 +1,12 @@
 import BaseHelper from '../BaseHelper.js';
 import Language from '../../constants/Language.js';
+import StoreBalanceType from '../../constants/StoreBalanceType.js';
 import StoreProduct from './StoreProduct.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class StoreHelper extends BaseHelper {
-  #balance = null;
+  #gold = null;
+  #jawaher = null;
   #product;
 
   constructor (client) {
@@ -14,8 +16,12 @@ export default class StoreHelper extends BaseHelper {
   }
 
   /** @internal */
-  get _balance () {
-    return this.#balance;
+  get _gold () {
+    return this.#gold;
+  }
+
+  get _jawaher () {
+    return this.#jawaher;
   }
 
   get product () {
@@ -23,8 +29,13 @@ export default class StoreHelper extends BaseHelper {
   }
 
   /** @internal */
-  set _balance (value) {
-    this.#balance = value;
+  set _gold (value) {
+    this.#gold = value;
+  }
+
+  /** @internal */
+  set _jawaher (value) {
+    this.#jawaher = value;
   }
 
   async fetch (languageId, opts) {
@@ -47,8 +58,12 @@ export default class StoreHelper extends BaseHelper {
     return await this.client.topic.fetch('store', languageId, opts);
   }
 
-  async balance (opts) {
+  async balance (balanceType, opts) {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
+
+    validate(balanceType, this, this.balance)
+      .isNotNullOrUndefined()
+      .in(Object.values(StoreBalanceType));
 
     validate(opts, this, this.balance)
       .isNotRequired()
@@ -60,10 +75,20 @@ export default class StoreHelper extends BaseHelper {
         }
       );
 
-    if (!opts?.forceNew && this.#balance !== null) { return this.#balance; }
+    if (!opts?.forceNew) {
+      if (balanceType === StoreBalanceType.GOLD && this.#gold !== null) {
+        return this.#gold;
+      }
+
+      if (balanceType === StoreBalanceType.JAWAHER && this.#jawaher !== null) {
+        return this.#jawaher;
+      }
+    }
 
     const response = await this.client.websocket.emit(
-      'store credit balance',
+      balanceType === StoreBalanceType.GOLD
+        ? 'store credit balance'
+        : 'store jawaher balance',
       {
         body: {
           subscribe: opts?.subscribe ?? true
@@ -71,8 +96,14 @@ export default class StoreHelper extends BaseHelper {
       }
     );
 
-    this.#balance = response.body.balance;
+    if (balanceType === StoreBalanceType.GOLD) {
+      this.#gold = response.body.balance;
+      return this.#gold;
+    }
 
-    return this.#balance;
+    if (balanceType === StoreBalanceType.JAWAHER) {
+      this.#jawaher = response.body.balance;
+      return this.#jawaher;
+    }
   }
 }

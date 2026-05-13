@@ -10,7 +10,7 @@ export default class ChannelGiftSummary extends BaseEntity {
     this.avatarUrl = new AvatarUrl(client, entity.avatarUrl);
     this.createdAt = new Date(entity.createdAt);
     this.creditPurchaseId = entity.creditPurchaseId;
-    this.credits = entity.credits;
+    this.gold = entity.credits;
     this.gifts = entity.gifts;
     this.hash = entity.hash;
     this.name = entity.name;

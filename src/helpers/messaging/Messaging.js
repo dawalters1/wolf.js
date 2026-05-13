@@ -152,7 +152,7 @@ export default class MessagingHelper extends BaseHelper {
         isGroup: isChannel,
         mimeType: 'text/plain',
         data: Buffer.from(chunk, 'utf8'),
-        flightId: nanoid(32),
+        flightId: `-${nanoid(32)}`,
         metadata: formattingData,
         embeds
       });

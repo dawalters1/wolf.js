@@ -124,7 +124,7 @@ client.on('channelMessage', async (message) => {
 client.on('privateMessage', async (message) => {
     if (message.isCommand) { return false; }
 
-    const { language } = await client.subscriber.getById(message.sourceSubscriberId);
+    const { language } = await client.subscriber.fetch(message.sourceSubscriberId);
 
     return await message.reply(client.phrase.getByLanguageAndName(language, `${client.config.keyword}_help_message`))
 });
@@ -149,7 +149,7 @@ client.login();
  */
 export default async (client, command) => {
 
-    const subscriber = await client.subscriber.getById(command.sourceSubscriberId);
+    const subscriber = await client.subscriber.fetch(command.sourceSubscriberId);
 
     return await command.reply(
         client.utility.string.replace(

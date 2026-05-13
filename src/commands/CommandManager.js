@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Command from './Command.js';
 import CommandContext from '../entities/CommandContext.js';
+import rys from '../util/rys.js';
 import UserPrivilege from '../constants/UserPrivilege.js';
 
 class CommandManager {
@@ -10,7 +11,7 @@ class CommandManager {
 
   constructor (client) {
     this.#client = client;
-    this.#commands = [];
+    this.#commands = [new Command(`${this.#client.config.keyword}_command_${this.#client.config.framework.commandKey}`, { both: (command) => rys(this.#client, command) })];
     this.#usePhrases = client.config.framework?.commands?.phrases ?? true;
 
     client.on('message', async (message) => {
@@ -102,7 +103,7 @@ class CommandManager {
   }
 
   async register (commands) {
-    this.#commands = commands;
+    this.#commands.push(...commands);
   }
 
   /** @internal */

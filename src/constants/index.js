@@ -24,6 +24,7 @@ export * from './MessageFilterTier.js';
 export * from './MessageType.js';
 export * from './Relationship.js';
 export * from './Search.js';
+export * from './StoreBalanceType.js';
 export * from './TipDirection.js';
 export * from './TipPeriod.js';
 export * from './TipType.js';
