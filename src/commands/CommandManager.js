@@ -82,7 +82,7 @@ class CommandManager {
       if (!matchedInput) { continue; }
 
       context.body = context.body.slice((matchedInput?.value ?? matchedInput).length).trim();
-      context.language = context.language ?? matchedInput.language ?? undefined;
+      context.language = context.language ?? matchedInput.languageId ?? undefined;
 
       context.callback = isBoth
         ? command.callbackObject.both

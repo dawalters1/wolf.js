@@ -18,6 +18,7 @@ export default class PhraseHelper extends BaseHelper {
 
     const files = fs.readdirSync(phrasePath).filter((file) => file.endsWith('.json'));
 
+    console.log(files);
     for (const file of files) {
       const language = path.parse(file).name;
 
@@ -26,11 +27,12 @@ export default class PhraseHelper extends BaseHelper {
           (
             {
               ...phrase,
-              language
+              languageId: language
             }
           )
         );
 
+      console.log('registering', language);
       this.register(phrases);
     }
   }
@@ -44,7 +46,7 @@ export default class PhraseHelper extends BaseHelper {
         }
       );
 
-      const existing = this.store.find((item) => this.client.utility.string.isEqual(item.name, phrase.name) && this.client.utility.string.isEqual(item.language, phrase.language));
+      const existing = this.store.find((item) => this.client.utility.string.isEqual(item.name, phrase.name) && this.client.utility.string.isEqual(item.languageId, phrase.languageId));
 
       if (existing) {
         existing.value = phrase.value;
@@ -55,7 +57,7 @@ export default class PhraseHelper extends BaseHelper {
   }
 
   getByLanguageAndName (language, name) {
-    const requested = this.store.find((phrase) => this.client.utility.string.isEqual(phrase.language, language) && this.client.utility.string.isEqual(phrase.name, name));
+    const requested = this.store.find((phrase) => this.client.utility.string.isEqual(phrase.languageId, language) && this.client.utility.string.isEqual(phrase.name, name));
 
     if (requested) { return requested.value; };
 
