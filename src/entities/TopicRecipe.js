@@ -1,4 +1,6 @@
 import BaseEntity from './BaseEntity.js';
+import ContextType from '../constants/ContextType.js';
+import ExperienceContextType from '../constants/ExperienceContextType.js';
 import TopicPageRecipeType from '../constants/TopicPageRecipeType.js';
 import TopicRecipeAdditionalInfo from './TopicRecipeAdditionalInfo.js';
 
@@ -24,6 +26,8 @@ export default class TopicRecipe extends BaseEntity {
         return await this.client.channel.fetch(this.id);
       case TopicPageRecipeType.PRODUCT:
         return await this.client.store.product.fetch(this.id, this.languageId);
+      case TopicPageRecipeType.EXPERIENCE:
+        return await this.client.experience.fetch(this.languageId, ExperienceContextType.GLOBAL, undefined, this.id);
       default:
         throw new Error(`TopicPageRecipeType ${this.type} is not supported`);
     }

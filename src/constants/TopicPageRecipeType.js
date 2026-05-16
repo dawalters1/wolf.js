@@ -3,7 +3,8 @@ export const TopicPageRecipeType = {
   EVENT: 'groupEvent',
   LIVE_EVENT: 'liveGroupEvent',
   PRODUCT: 'product',
-  USER: 'user'
+  USER: 'user',
+  EXPERIENCE: 'experience'
 };
 
 export default TopicPageRecipeType;

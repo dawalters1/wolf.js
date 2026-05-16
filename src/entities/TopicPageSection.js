@@ -1,4 +1,5 @@
 import BaseEntity from './BaseEntity.js';
+import ExperienceContextType from '../constants/ExperienceContextType.js';
 import TopicPageRecipeType from '../constants/TopicPageRecipeType.js';
 import TopicPageSectionColour from './TopicPageSectionColour.js';
 import TopicPageSectionElement from './TopicPageSectionElement.js';
@@ -59,6 +60,8 @@ export default class TopicPageSection extends BaseEntity {
             return await this.client.channel.fetch(ids, opts);
           case TopicPageRecipeType.PRODUCT:
             return await this.client.store.product.fetch(ids, this.languageId, opts);
+          case TopicPageRecipeType.EXPERIENCE:
+            return await this.client.experience.fetch(this.languageId, ExperienceContextType.GLOBAL, undefined, ids, opts);
           default:
             throw new Error(`Type '${properties.type}' is not yet supported, please create a github issue`);
         }

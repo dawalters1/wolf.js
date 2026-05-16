@@ -44,6 +44,8 @@ framework:
     email: # bot email here
     password: # bot password here
     onlineState: 1 # online state here
+    apiKey: null # App Check Token
+    token: null # V3 Login Token
   command:
     ignore:
       official: true # whether or not an official bot will trigger a command (internal)
@@ -89,7 +91,7 @@ framework:
         "value":"me"
     },
     {
-        "name": "{keyword}_subscriber_message",
+        "name": "{keyword}_user_message",
         "value":"Nickname: {nickname} (ID: {id})\nStatus Message: {status}\nLevel: {level} ({percentage}% completed)"
     }
 ]
@@ -124,7 +126,7 @@ client.on('channelMessage', async (message) => {
 client.on('privateMessage', async (message) => {
     if (message.isCommand) { return false; }
 
-    const { language } = await client.subscriber.fetch(message.sourceSubscriberId);
+    const { language } = await client.user.fetch(message.sourceUserId);
 
     return await message.reply(client.phrase.getByLanguageAndName(language, `${client.config.keyword}_help_message`))
 });
@@ -149,17 +151,17 @@ client.login();
  */
 export default async (client, command) => {
 
-    const subscriber = await client.subscriber.fetch(command.sourceSubscriberId);
+    const user = await client.user.fetch(command.sourceUserId);
 
     return await command.reply(
         client.utility.string.replace(
-            command.getPhrase(`${client.config.keyword}_subscriber_message`),
+            command.getPhrase(`${client.config.keyword}_user_message`),
             {
-                nickname: subscriber.nickname,
-                id: subscriber.id,
-                status: subscriber.status,
-                level: subscriber.reputation.split('.')[0],
-                percentage: subscriber.percentage,
+                nickname: user.nickname,
+                id: user.id,
+                status: user.status,
+                level: user.reputation.split('.')[0],
+                percentage: user.percentage,
             }
         )
     );
@@ -170,20 +172,34 @@ export default async (client, command) => {
 
 Bots _**MUST**_ be approved by WOLF staff in [bot approval](http://wolflive.com/bot+approval?r=80280172) or [bot approval.ar](http://wolflive.com/bot+approval.ar?r=80280172)
 
-## Known Issues - Will be addressed in V3.0
+## Whats New in 3.0?
 
-- Stage Client is trash
-- Members list handling can lead to abuse bars
-- Incorrect handling of server responses leading to abuse bars
+- Added rate limiting support
+- Improved caching performance and consistency
+  - Respect MaxAge
+  - Cache short lived data to prevent unwanted requests
+- V3 Request Deduping
+- Migrated internal systems from subscribers → users & groups → channels
+- Consolidated multiple retrieval methods into unified fetch-based APIs
+- Example: getById / getByIds → fetch
+- Added support for Frames
+- Added support for Jawaher
+- Rebranded credits to gold
+- **BREAKING**: Removed all developer-facing references to "group" and "subscriber"
+- Logging now uses Winston and is configurable 
+- Stage client improvements
+- In-Channel gifting
+- Support experiences (not playable)
+- Discovery now supports experience type
+
+## Known Issues
+
+- 
 
 ## Lacking Features - Mostly will be addressed in V3.0
 
-- WOLFStar Pro/Content Creator following
-- APIKey Support (Upcoming 1.8.1 and 2.6.5 should support)
-- HardCoded command strings
-- TBD
+- 
 
 ## Contact
 
 - You can receive help in [wolf.js](https://wolf.live/wolf.js)
-
