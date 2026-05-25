@@ -302,7 +302,7 @@ class Member extends Base {
       {
         body: {
           groupId: channelId,
-          id: userId,
+          subscriberId: userId,
           capabilities: target
         }
       }
@@ -361,11 +361,12 @@ class Member extends Base {
     }
 
     return this.client.websocket.emit(
-      Command.GROUP_MEMBER_DELETE,
+      Command.GROUP_MEMBER_UPDATE,
       {
         body: {
           groupId: channelId,
-          id: userId
+          subscriberId: userId,
+          capabilities: Capability.KICK
         }
       }
     );

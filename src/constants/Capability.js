@@ -4,6 +4,7 @@ export const ADMIN = 1;
 export const MOD = 2;
 export const BANNED = 4;
 export const SILENCED = 8;
+export const KICK = 16;
 export const OWNER = 32;
 export const CO_OWNER = 64;
 
@@ -14,6 +15,7 @@ export default {
   MOD,
   BANNED,
   SILENCED,
+  KICK,
   OWNER,
   CO_OWNER
 };
