@@ -7,11 +7,9 @@ export default class SubscriberFollowUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
-    const userFollower = this.client.followStore.following.list.get((item) => item.userId === data.id);
+    const userFollower = this.client.me.followStore.following.list.get((item) => item.userId === data.id);
 
     if (userFollower === null) { return; }
-
-    this.client.followStore.following.list.delete((item) => item.userId === data.id);
 
     const oldUserFollower = userFollower.clone();
 
