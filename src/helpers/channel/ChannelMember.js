@@ -362,7 +362,7 @@ export default class ChannelMemberHelper extends BaseHelper {
     return this.#updateCapability(
       normalisedChannelId,
       normalisedMemberId,
-      ChannelMemberCapability.SILENCED,
+      ChannelMemberCapability.KICK,
       [
         ChannelMemberCapability.REGULAR,
         ChannelMemberCapability.SILENCED,
