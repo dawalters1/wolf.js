@@ -120,7 +120,7 @@ export default class TipHelper extends BaseHelper {
 
       return await batch();
     } catch (error) {
-      if (error.code !== StatusCodes.NOT_FOUND && error.code !== StatusCodes.BAD_REQUEST) { throw error; }
+      if (![StatusCodes.NOT_FOUND, StatusCodes.BAD_REQUEST, StatusCodes.INTERNAL_SERVER_ERROR].includes(error.code)) { throw error; }
       return [];
     }
   }
