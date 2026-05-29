@@ -40,7 +40,7 @@ export default class EventChannelHelper extends BaseHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
 
-    if (!opts?.forceNew && channel.eventStore.fetched) { return this.channel.eventStore.values(); }
+    if (!opts?.forceNew && channel.eventStore.fetched) { return channel.eventStore.values(); }
 
     const batch = async (results = []) => {
       const response = await this.client.websocket.emit(
