@@ -156,7 +156,7 @@ export default class ChannelRoleHelper extends BaseHelper {
     if (member === null) { throw new Error(`Member with ID ${normalisedUserId} NOT FOUND in Channel with ID ${channel.id}`); }
 
     return await this.client.websocket.emit(
-      'group role subscriber assign',
+      'group role subscriber unassign',
       {
         groupId: normalisedChannelId,
         roleId: normalisedRoleId,
@@ -202,7 +202,7 @@ export default class ChannelRoleHelper extends BaseHelper {
 
     if (previousMember === null) { throw new Error(`Member with ID ${normalisedOldUserId} NOT FOUND in Channel with ID ${channel.id}`); }
 
-    const newMember = await this.client.channel.member.fetch(channel.id, normalisedOldUserId);
+    const newMember = await this.client.channel.member.fetch(channel.id, normalisedNewUserId);
 
     if (newMember === null) { throw new Error(`Member with ID ${normalisedNewUserId} NOT FOUND in Channel with ID ${channel.id}`); }
 
