@@ -18,8 +18,8 @@ export default class UserFollowHelper extends BaseHelper {
         update: async (...args) => this.#update(args[0], args[1])
       },
       follower: {
-        count: async (...args) => this.#count(args[0], UserFollowerType.FOLLOWING, args[1]),
-        fetch: async (...args) => this.#fetch(UserFollowerType.FOLLOWING, args[0])
+        count: async (...args) => this.#count(args[0], UserFollowerType.FOLLOWER, args[1]),
+        fetch: async (...args) => this.#fetch(UserFollowerType.FOLLOWER, args[0])
       }
     };
   }
