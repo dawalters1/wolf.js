@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import BaseUtility from './BaseUtility.js';
-import { validate } from '../../validation/Validation.js';
+import { validate } from '../validation/Validation.js';
 
 export default class ArrayUtility extends BaseUtility {
   chunk (array, size) {
