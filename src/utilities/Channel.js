@@ -139,13 +139,13 @@ export default class ChannelUtility extends BaseUtility {
     const hasCapability = (() => {
       switch (normalisedCapability) {
         case ChannelMemberCapability.OWNER:
-          return [ChannelMemberCapability.OWNER].includes(channelMember.capability);
+          return [ChannelMemberCapability.OWNER].includes(channelMember.capabilities);
         case ChannelMemberCapability.CO_OWNER:
-          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.CO_OWNER].includes(channelMember.capability);
+          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.CO_OWNER].includes(channelMember.capabilities);
         case ChannelMemberCapability.ADMIN:
-          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.ADMIN].includes(channelMember.capability);
+          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.ADMIN].includes(channelMember.capabilities);
         case ChannelMemberCapability.MOD:
-          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD].includes(channelMember.capability);
+          return [ChannelMemberCapability.OWNER, ChannelMemberCapability.ADMIN, ChannelMemberCapability.MOD].includes(channelMember.capabilities);
         default:
           return true;
       }
