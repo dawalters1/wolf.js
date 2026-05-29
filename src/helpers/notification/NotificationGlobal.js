@@ -103,7 +103,6 @@ export default class NotificationGlobalHelper extends BaseHelper {
   async fetch (notificationIds, opts) {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    const normalised = this.normaliseNumbers(notificationIds);
     const normalisedOpts = this.normaliseFetchOpts(notificationIds, opts);
 
     if (!notificationIds || this.isObject(notificationIds)) {

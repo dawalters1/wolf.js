@@ -6,6 +6,8 @@ export default class Notification extends BaseEntity {
     super(client);
 
     this.id = entity.id;
-    this.additionalInfo = entity.additionalInfo ? new NotificationAdditionalInfo(client, entity.additionalInfo) : null;
+    this.additionalInfo = entity.additionalInfo
+      ? new NotificationAdditionalInfo(client, entity.additionalInfo)
+      : null;
   }
 }
