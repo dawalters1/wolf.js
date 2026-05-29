@@ -24,7 +24,7 @@ export default class NotificationUserHelper extends BaseHelper {
 
     const batch = async (results = []) => {
       const response = await this.client.websocket.emit(
-        'notification global list',
+        'notification subscriber list',
         {
           body: {
             subscribe: opts?.subscribe ?? true,
