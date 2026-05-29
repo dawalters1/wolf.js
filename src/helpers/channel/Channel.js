@@ -480,7 +480,7 @@ export default class ChannelHelper extends BaseHelper {
     }
 
     const uploadAvatar = async () => {
-      return this.client.multimedia.request(avatarConfig, {
+      return this.client.multimedia.post(avatarConfig, {
         data: avatar.toString('base64'),
         mimeType: (await fileTypeFromBuffer(avatar)).mime,
         id: normalisedChannelId,

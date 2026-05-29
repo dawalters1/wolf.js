@@ -369,7 +369,7 @@ export class WOLF extends EventEmitter {
     }
 
     const uploadAvatar = async () => {
-      return this.multimedia.request(avatarConfig, {
+      return this.multimedia.post(avatarConfig, {
         data: avatar.toString('base64'),
         mimeType: (await fileTypeFromBuffer(avatar)).mime,
         id: this.me.id,

@@ -133,7 +133,7 @@ export default class EventChannelHelper extends BaseHelper {
     );
 
     if (response.success && thumbnail) {
-      response.body.thumbnailUpload = this.client.multimedia.request(thumbnailConfig, {
+      response.body.thumbnailUpload = this.client.multimedia.post(thumbnailConfig, {
         data: thumbnail.toString('base64'),
         mimeType: (await fileTypeFromBuffer(thumbnail)).mime,
         id: response.body.id,
@@ -205,7 +205,7 @@ export default class EventChannelHelper extends BaseHelper {
     }
 
     const uploadThumbnail = async () => {
-      return this.client.multimedia.request(thumbnailConfig, {
+      return this.client.multimedia.post(thumbnailConfig, {
         data: thumbnail.toString('base64'),
         mimeType: (await fileTypeFromBuffer(thumbnail)).mime,
         id: normalisedEventId,
