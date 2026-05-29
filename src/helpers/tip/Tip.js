@@ -111,7 +111,7 @@ export default class TipHelper extends BaseHelper {
           }
         );
 
-        results.push(response.body.map((serverTipDetail) => new TipDetail(this.client, serverTipDetail)));
+        results.push(...response.body.map((serverTipDetail) => new TipDetail(this.client, serverTipDetail)));
 
         return response.body.length < 50
           ? results
@@ -237,15 +237,15 @@ export default class TipHelper extends BaseHelper {
   }
 
   async globalLeaderboard (tipPeriod, tipType, tipDirection) {
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipPeriod, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipPeriod));
 
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipType, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipType));
 
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipDirection, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipDirection));
 
