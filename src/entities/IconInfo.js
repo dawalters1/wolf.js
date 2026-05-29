@@ -1,6 +1,9 @@
 import BaseEntity from './BaseEntity.js';
 
 export class IconInfo extends BaseEntity {
+  // TODO: get() references this.targetId for the placeholder fallback URL,
+  // but the constructor never assigns it. Add a 4th `targetId` arg and
+  // update the call sites at Channel.js:39 and User.js:42 to pass entity.id.
   constructor (client, entity, targetType) {
     super(client);
 

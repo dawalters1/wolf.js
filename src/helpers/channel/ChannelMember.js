@@ -74,6 +74,10 @@ export default class ChannelMemberHelper extends BaseHelper {
         result.push(...response.body.map(
           (serverMember) =>
             channel.memberStore.set(
+              // TODO: ChannelMember constructor takes (client, entity); channel.id
+              // and list are silently dropped. Likely fix:
+              //   new ChannelMember(this.client, { ...serverMember, groupId: channel.id, source: list })
+              // Verify serverMember.groupId/source are not already provided first.
               new ChannelMember(this.client, serverMember, channel.id, list),
               maxAge
             )
