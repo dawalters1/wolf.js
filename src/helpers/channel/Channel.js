@@ -193,7 +193,6 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async fetch (idsOrName, opts) {
-    const normalised = this.normaliseNumbers(idsOrName);
     const normalisedOpts = this.normaliseFetchOpts(idsOrName, opts);
 
     validate(normalisedOpts, this, this.fetch)
@@ -337,7 +336,7 @@ export default class ChannelHelper extends BaseHelper {
 
     const channel = await this.fetch(normalisedChannelIdOrName);
 
-    if (!channel) {
+    if (!channel?.id) {
       // eslint-disable-next-line custom/ternary-formatting
       throw new Error(`Channel with ${isById ? 'ID' : 'Name'} ${normalisedChannelIdOrName} NOT FOUND`);
     }
