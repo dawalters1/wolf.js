@@ -317,7 +317,7 @@ export default class ChannelHelper extends BaseHelper {
       {
         body: {
           // eslint-disable-next-line custom/ternary-formatting
-          [isById ? 'name' : 'id']: isById ? normalisedChannelIdOrName : normalisedChannelIdOrName.toLowerCase(),
+          [isById ? 'id' : 'name']: isById ? normalisedChannelIdOrName : normalisedChannelIdOrName.toLowerCase(),
           password
         }
       }
