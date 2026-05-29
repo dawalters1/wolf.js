@@ -299,7 +299,7 @@ export default class ChannelHelper extends BaseHelper {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
-    const isById = normalisedChannelIdOrName instanceof Number;
+    const isById = typeof normalisedChannelIdOrName === 'number';
 
     validate(normalisedChannelIdOrName, this, this.join)
       .isNotNullOrUndefined()[isById
@@ -328,7 +328,7 @@ export default class ChannelHelper extends BaseHelper {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
-    const isById = normalisedChannelIdOrName instanceof Number;
+    const isById = typeof normalisedChannelIdOrName === 'number';
 
     validate(normalisedChannelIdOrName, this, this.join)
       .isNotNullOrUndefined()[isById
