@@ -38,7 +38,7 @@ export default class ChannelUtility extends BaseUtility {
     const [channel, targetMember] = await Promise.all(
       [
         this.client.channel.fetch(normalisedChannelId),
-        this.client.channel.member.fetch(normalisedChannelId, normalisedChannelId)
+        this.client.channel.member.fetch(normalisedChannelId, normalisedUserId)
       ]
     );
 
