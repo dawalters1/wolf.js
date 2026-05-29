@@ -194,7 +194,7 @@ export default class ChannelHelper extends BaseHelper {
 
   async fetch (idsOrName, opts) {
     const normalised = this.normaliseNumbers(idsOrName);
-    const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
+    const normalisedOpts = this.normaliseFetchOpts(idsOrName, opts);
 
     validate(normalisedOpts, this, this.fetch)
       .isNotRequired()
@@ -214,7 +214,7 @@ export default class ChannelHelper extends BaseHelper {
         }
       );
 
-    if (!normalised || this.isObject(normalised)) {
+    if (!idsOrName || this.isObject(idsOrName)) {
       return await this.#fetchChannelList(normalisedOpts);
     }
 
