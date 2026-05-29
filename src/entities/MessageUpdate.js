@@ -1,8 +1,11 @@
+import BaseEntity from './BaseEntity.js';
 import MessageEdited from './MessageEdited.js';
 import MessageMetadata from './MessageMetadata.js';
 
-export default class MessageUpdate {
+export default class MessageUpdate extends BaseEntity {
   constructor (client, entity) {
+    super(client);
+
     this.sourceUserId = entity.originator
       ? entity.originator.id
       : null;
