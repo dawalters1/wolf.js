@@ -193,6 +193,7 @@ export default class ChannelHelper extends BaseHelper {
   }
 
   async fetch (idsOrName, opts) {
+    const normalised = this.normaliseNumbers(idsOrName);
     const normalisedOpts = this.normaliseFetchOpts(idsOrName, opts);
 
     validate(normalisedOpts, this, this.fetch)
