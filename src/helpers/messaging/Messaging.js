@@ -290,6 +290,9 @@ export default class MessagingHelper extends BaseHelper {
   }
 
   async blacklistedLinks (opts) {
+    // TODO: 3rd arg should be this.blacklistedLinks, not this.fetch (which
+    // does not exist on MessagingHelper). Error messages currently lose
+    // the Class.method() prefix.
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(

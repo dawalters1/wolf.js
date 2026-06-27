@@ -24,7 +24,7 @@ export default class NotificationUserHelper extends BaseHelper {
 
     const batch = async (results = []) => {
       const response = await this.client.websocket.emit(
-        'notification global list',
+        'notification subscriber list',
         {
           body: {
             subscribe: opts?.subscribe ?? true,
@@ -104,10 +104,9 @@ export default class NotificationUserHelper extends BaseHelper {
   async fetch (notificationIds, opts) {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
-    const normalised = this.normaliseNumbers(notificationIds);
-    const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
+    const normalisedOpts = this.normaliseFetchOpts(notificationIds, opts);
 
-    if (!normalised || this.isObject(normalised)) {
+    if (!notificationIds || this.isObject(notificationIds)) {
       return this.#fetchList(normalisedOpts);
     }
 

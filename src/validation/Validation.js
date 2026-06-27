@@ -90,7 +90,7 @@ class Validation {
 
   isNotNullOrUndefined (message) {
     return this.#throwIf(
-      this.#value === null && this.#value === undefined,
+      this.#value === null || this.#value === undefined,
       message ?? `${this.#name}${JSON.stringify(this.#value)} is null or undefined`
     );
   }
@@ -550,7 +550,7 @@ export async function validateConfig (value, config, profile, _class, _method) {
   }
 
   if (bufferSize > mimeConfig.size) {
-    throw new Error(`${name}Image must be smaller than ${bufferSize} bytes`);
+    throw new Error(`${name}Image must be smaller than ${mimeConfig.size} bytes`);
   }
 
   return true;

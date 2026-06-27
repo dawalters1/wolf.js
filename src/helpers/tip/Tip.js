@@ -111,7 +111,7 @@ export default class TipHelper extends BaseHelper {
           }
         );
 
-        results.push(response.body.map((serverTipDetail) => new TipDetail(this.client, serverTipDetail)));
+        results.push(...response.body.map((serverTipDetail) => new TipDetail(this.client, serverTipDetail)));
 
         return response.body.length < 50
           ? results
@@ -120,7 +120,7 @@ export default class TipHelper extends BaseHelper {
 
       return await batch();
     } catch (error) {
-      if (error.code !== StatusCodes.NOT_FOUND) { throw error; };
+      if (![StatusCodes.NOT_FOUND, StatusCodes.BAD_REQUEST, StatusCodes.INTERNAL_SERVER_ERROR].includes(error.code)) { throw error; }
       return [];
     }
   }
@@ -237,15 +237,15 @@ export default class TipHelper extends BaseHelper {
   }
 
   async globalLeaderboard (tipPeriod, tipType, tipDirection) {
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipPeriod, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipPeriod));
 
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipType, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipType));
 
-    validate(tipPeriod, this, this.channelLeaderboardSummary)
+    validate(tipDirection, this, this.globalLeaderboard)
       .isNotNullOrUndefined()
       .in(Object.values(TipDirection));
 

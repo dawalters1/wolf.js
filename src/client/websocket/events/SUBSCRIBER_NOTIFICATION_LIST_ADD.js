@@ -7,7 +7,7 @@ export default class UserNotificationListAddEvent extends BaseEvent {
   }
 
   async process (data) {
-    const notification = this.client.me.notificationStore.user.add(
+    const notification = this.client.me.notificationStore.user.set(
       new Notification(this.client, data)
     );
 

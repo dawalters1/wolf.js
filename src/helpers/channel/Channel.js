@@ -194,7 +194,7 @@ export default class ChannelHelper extends BaseHelper {
 
   async fetch (idsOrName, opts) {
     const normalised = this.normaliseNumbers(idsOrName);
-    const normalisedOpts = this.normaliseFetchOpts(normalised, opts);
+    const normalisedOpts = this.normaliseFetchOpts(idsOrName, opts);
 
     validate(normalisedOpts, this, this.fetch)
       .isNotRequired()
@@ -214,7 +214,7 @@ export default class ChannelHelper extends BaseHelper {
         }
       );
 
-    if (!normalised || this.isObject(normalised)) {
+    if (!idsOrName || this.isObject(idsOrName)) {
       return await this.#fetchChannelList(normalisedOpts);
     }
 
@@ -299,7 +299,7 @@ export default class ChannelHelper extends BaseHelper {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
-    const isById = normalisedChannelIdOrName instanceof Number;
+    const isById = typeof normalisedChannelIdOrName === 'number';
 
     validate(normalisedChannelIdOrName, this, this.join)
       .isNotNullOrUndefined()[isById
@@ -317,7 +317,7 @@ export default class ChannelHelper extends BaseHelper {
       {
         body: {
           // eslint-disable-next-line custom/ternary-formatting
-          [isById ? 'name' : 'id']: isById ? normalisedChannelIdOrName : normalisedChannelIdOrName.toLowerCase(),
+          [isById ? 'id' : 'name']: isById ? normalisedChannelIdOrName : normalisedChannelIdOrName.toLowerCase(),
           password
         }
       }
@@ -328,7 +328,7 @@ export default class ChannelHelper extends BaseHelper {
     if (!this.client.loggedIn) { throw new Error('Bot is not logged in'); }
 
     const normalisedChannelIdOrName = this.normaliseNumber(channelIdOrName);
-    const isById = normalisedChannelIdOrName instanceof Number;
+    const isById = typeof normalisedChannelIdOrName === 'number';
 
     validate(normalisedChannelIdOrName, this, this.join)
       .isNotNullOrUndefined()[isById
@@ -337,7 +337,7 @@ export default class ChannelHelper extends BaseHelper {
 
     const channel = await this.fetch(normalisedChannelIdOrName);
 
-    if (!channel) {
+    if (!channel?.id) {
       // eslint-disable-next-line custom/ternary-formatting
       throw new Error(`Channel with ${isById ? 'ID' : 'Name'} ${normalisedChannelIdOrName} NOT FOUND`);
     }
@@ -481,7 +481,7 @@ export default class ChannelHelper extends BaseHelper {
     }
 
     const uploadAvatar = async () => {
-      return this.client.multimedia.request(avatarConfig, {
+      return this.client.multimedia.post(avatarConfig, {
         data: avatar.toString('base64'),
         mimeType: (await fileTypeFromBuffer(avatar)).mime,
         id: normalisedChannelId,

@@ -309,7 +309,7 @@ export class WOLF extends EventEmitter {
   }
 
   async update (profile, avatar) {
-    const avatarConfig = this.client.config.framework.multimedia.avatar.user;
+    const avatarConfig = this.config.framework.multimedia.avatar.user;
 
     validate(profile, this, this.update)
       .isNotRequired()
@@ -369,11 +369,11 @@ export class WOLF extends EventEmitter {
     }
 
     const uploadAvatar = async () => {
-      return this.client.multimedia.request(avatarConfig, {
+      return this.multimedia.post(avatarConfig, {
         data: avatar.toString('base64'),
         mimeType: (await fileTypeFromBuffer(avatar)).mime,
         id: this.me.id,
-        source: this.client.me.id
+        source: this.me.id
       });
     };
 
@@ -381,7 +381,7 @@ export class WOLF extends EventEmitter {
       return uploadAvatar();
     }
 
-    const response = await this.client.websocket.emit(
+    const response = await this.websocket.emit(
       'subscriber profile update',
       {
         id: this.me.id,
@@ -409,6 +409,9 @@ export class WOLF extends EventEmitter {
   }
 
   async messageSettings (opts) {
+    // TODO: 3rd arg should be this.messageSettings (the surrounding method),
+    // not this.fetch which is undefined on WOLF. validate() falls back to
+    // no prefix when _method is undefined, so error messages lose context.
     validate(opts, this, this.fetch)
       .isNotRequired()
       .forEachProperty(
@@ -423,9 +426,9 @@ export class WOLF extends EventEmitter {
       return this.#messageSettings.value;
     }
 
-    const response = await this.client.websocket.emit('message setting');
+    const response = await this.websocket.emit('message setting');
 
-    this.#messageSettings.value = new MessageSetting(this.client, response.body);
+    this.#messageSettings.value = new MessageSetting(this, response.body);
 
     return this.#messageSettings.value;
   }
@@ -435,7 +438,7 @@ export class WOLF extends EventEmitter {
       .isNotNullOrUndefined()
       .in(Object.values(MessageFilterTierLevel));
 
-    return await this.client.websocket.emit(
+    return await this.websocket.emit(
       'message setting update',
       {
         spamFilter: {

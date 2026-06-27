@@ -74,6 +74,10 @@ export default class ChannelMemberHelper extends BaseHelper {
         result.push(...response.body.map(
           (serverMember) =>
             channel.memberStore.set(
+              // TODO: ChannelMember constructor takes (client, entity); channel.id
+              // and list are silently dropped. Likely fix:
+              //   new ChannelMember(this.client, { ...serverMember, groupId: channel.id, source: list })
+              // Verify serverMember.groupId/source are not already provided first.
               new ChannelMember(this.client, serverMember, channel.id, list),
               maxAge
             )
@@ -109,7 +113,7 @@ export default class ChannelMemberHelper extends BaseHelper {
       );
 
     if (!opts?.forceNew) {
-      const cached = this.channel.memberStore.get(memberId);
+      const cached = channel.memberStore.get(memberId);
       if (cached) { return cached; }
     }
 
@@ -145,10 +149,10 @@ export default class ChannelMemberHelper extends BaseHelper {
     if (channel === null) { throw new Error(`Channel with ID ${channelId} NOT FOUND`); }
     if (!channel.isMember) { throw new Error(`Not member of Channel with ID ${channel.id}`); }
 
-    const member = await this.getMember(channelId, userId);
+    const member = await this.fetch(channelId, userId);
     if (member === null) { throw new Error(`Member with ID ${userId} NOT FOUND in Channel with ID ${channel.id}`); }
 
-    if (!await this.client.utility.channel.member.canPerformActionAgaints(channel, member, newCapabilities)) { throw new Error(`Insufficient capabilities to change capability to ${ChannelMemberCapability[newCapabilities]}`); }
+    if (!await this.client.utility.channel.member.canPerformActionAgainst(channelId, userId, newCapabilities)) { throw new Error(`Insufficient capabilities to change capability to ${ChannelMemberCapability[newCapabilities]}`); }
 
     if (!allowedFrom.includes(member.capabilities)) { throw new Error(`Invalid transition from ${ChannelMemberCapability[member.capabilities]} to ${ChannelMemberCapability[newCapabilities]}`); }
 
@@ -157,7 +161,7 @@ export default class ChannelMemberHelper extends BaseHelper {
       {
         body: {
           groupId: channelId,
-          id: userId,
+          subscriberId: userId,
           capabilities: newCapabilities
         }
       }
@@ -362,7 +366,7 @@ export default class ChannelMemberHelper extends BaseHelper {
     return this.#updateCapability(
       normalisedChannelId,
       normalisedMemberId,
-      ChannelMemberCapability.SILENCED,
+      ChannelMemberCapability.KICK,
       [
         ChannelMemberCapability.REGULAR,
         ChannelMemberCapability.SILENCED,

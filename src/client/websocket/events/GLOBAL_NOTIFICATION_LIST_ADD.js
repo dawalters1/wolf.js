@@ -7,7 +7,7 @@ export default class GlobalNotificationListAddEvent extends BaseEvent {
   }
 
   async process (data) {
-    const notification = this.client.me.notificationStore.global.add(
+    const notification = this.client.me.notificationStore.global.set(
       new Notification(this.client, data)
     );
 

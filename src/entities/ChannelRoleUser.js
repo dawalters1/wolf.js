@@ -10,6 +10,6 @@ export default class ChannelRoleUser extends BaseEntity {
   }
 
   async unassign (userId) {
-    return this.client.channel.roles.unassign(this.channelId, userId, this.id);
+    return this.client.channel.roles.unassign(this.channelId, userId, this.roleId);
   }
 }

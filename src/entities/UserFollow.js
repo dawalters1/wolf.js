@@ -14,10 +14,10 @@ export default class UserFollow extends BaseEntity {
   }
 
   async unfollow () {
-    return await this.client.user.followers.unfollow(this.userId);
+    return await this.client.user.follow.following.unfollow(this.userId);
   }
 
   async update (config) {
-    return await this.client.user.followers.update(this.userId, config);
+    return await this.client.user.follow.following.update(this.userId, config);
   }
 }

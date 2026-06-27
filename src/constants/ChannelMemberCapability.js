@@ -25,6 +25,10 @@ export const ChannelMemberCapability = {
    */
   SILENCED: 8,
   /**
+   * User is kicked
+   */
+  KICK: 16,
+  /**
    * User is owner
    */
   OWNER: 32,

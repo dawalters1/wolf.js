@@ -11,14 +11,14 @@ export default class ChannelRole extends BaseEntity {
   }
 
   async assign (userId) {
-    return this.client.channel.roles.assign(this.channelId, userId, this.id);
+    return this.client.channel.roles.assign(this.channelId, userId, this.roleId);
   }
 
   async unassign (userId) {
-    return this.client.channel.roles.unassign(this.channelId, userId, this.id);
+    return this.client.channel.roles.unassign(this.channelId, userId, this.roleId);
   }
 
   async reassign (oldUserId, newUserId) {
-    return this.client.channel.roles.reassign(this.channelId, oldUserId, newUserId, this.id);
+    return this.client.channel.roles.reassign(this.channelId, oldUserId, newUserId, this.roleId);
   }
 }
