@@ -6,11 +6,6 @@ import UserPrivilege from '../../constants/UserPrivilege.js';
 import { validate } from '../../validation/Validation.js';
 
 export default class UserFollowHelper extends BaseHelper {
-  // TODO: every validate() call in this class passes this.fetch as the 3rd
-  // arg, but the methods are private (#count, #fetch, #follow, #unfollow,
-  // #update). validate() falls back to no prefix on undefined, so error
-  // messages lose their Class.method() context. Replace each site with
-  // a reference to the surrounding private method.
   constructor (client) {
     super(client);
 
@@ -32,7 +27,7 @@ export default class UserFollowHelper extends BaseHelper {
   async #count (userId, followDirection, opts) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    validate(normalisedUserId, this, this.fetch)
+    validate(normalisedUserId, this, this.#count)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
@@ -136,7 +131,7 @@ export default class UserFollowHelper extends BaseHelper {
   async #follow (userId) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    validate(normalisedUserId, this, this.fetch)
+    validate(normalisedUserId, this, this.#follow)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
@@ -160,7 +155,7 @@ export default class UserFollowHelper extends BaseHelper {
   async #unfollow (userId) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    validate(normalisedUserId, this, this.fetch)
+    validate(normalisedUserId, this, this.#unfollow)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();
@@ -184,7 +179,7 @@ export default class UserFollowHelper extends BaseHelper {
   async #update (userId, config) {
     const normalisedUserId = this.normaliseNumber(userId);
 
-    validate(normalisedUserId, this, this.fetch)
+    validate(normalisedUserId, this, this.#update)
       .isNotNullOrUndefined()
       .isValidNumber()
       .isNumberGreaterThanZero();

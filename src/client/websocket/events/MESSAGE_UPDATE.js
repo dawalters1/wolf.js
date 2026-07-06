@@ -7,6 +7,8 @@ export default class MessageUpdateEvent extends BaseEvent {
   }
 
   async process (data) {
+    this.client.log.debug(`[MessageUpdate]: Message was updated [messageUpdate:${JSON.stringify(data)}]`);
+
     return this.client.emit(
       'messageUpdated',
       new MessageUpdate(this.client, data)

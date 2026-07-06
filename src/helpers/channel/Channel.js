@@ -11,16 +11,6 @@ import Search from '../../entities/Search.js';
 import { StatusCodes } from 'http-status-codes';
 import { validate, validateConfig } from '../../validation/Validation.js';
 
-const pick = (value, fallback = null) =>
-  value !== undefined
-    ? value
-    : fallback;
-
-const pickNumber = (value, fallback) =>
-  value !== undefined
-    ? Number(value)
-    : fallback;
-
 export default class ChannelHelper extends BaseHelper {
   #category;
   #member;
@@ -499,31 +489,31 @@ export default class ChannelHelper extends BaseHelper {
       'group profile update',
       {
         id: normalisedChannelId,
-        description: pick(channel.description, channelPrior.description),
-        peekable: pick(channel.peekable, channelPrior.peekable),
-        giftAnimationDisabled: pick(channel.giftAnimationDisabled, channelPrior.giftAnimationDisabled),
+        description: this.pick(channel.description, channelPrior.description),
+        peekable: this.pick(channel.peekable, channelPrior.peekable),
+        giftAnimationDisabled: this.pick(channel.giftAnimationDisabled, channelPrior.giftAnimationDisabled),
 
         audioConfig: {
-          stageId: pickNumber(channel.audioConfig.stageId, channelPrior.audioConfig.stageId),
-          enabled: pick(channel.audioConfig.enabled, channelPrior.audioConfig.enabled),
-          minRepLevel: pickNumber(channel.audioConfig.minRepLevel, channelPrior.audioConfig.minRepLevel)
+          stageId: this.pickNumber(channel.audioConfig.stageId, channelPrior.audioConfig.stageId),
+          enabled: this.pick(channel.audioConfig.enabled, channelPrior.audioConfig.enabled),
+          minRepLevel: this.pickNumber(channel.audioConfig.minRepLevel, channelPrior.audioConfig.minRepLevel)
         },
 
         messageConfig: {
-          disableHyperlink: pick(channel.messageConfig.disableHyperlink, channelPrior.messageConfig.disableHyperlink),
-          disableImage: pick(channel.messageConfig.disableImage, channelPrior.messageConfig.disableImage),
-          disableImageFilter: pick(channel.messageConfig.disableImageFilter, channelPrior.messageConfig.disableImageFilter),
-          disableVoice: pick(channel.messageConfig.disableVoice, channelPrior.messageConfig.disableVoice),
-          slowModeRateInSeconds: pickNumber(channel.messageConfig.slowModeRateInSeconds, channelPrior.messageConfig.slowModeRateInSeconds)
+          disableHyperlink: this.pick(channel.messageConfig.disableHyperlink, channelPrior.messageConfig.disableHyperlink),
+          disableImage: this.pick(channel.messageConfig.disableImage, channelPrior.messageConfig.disableImage),
+          disableImageFilter: this.pick(channel.messageConfig.disableImageFilter, channelPrior.messageConfig.disableImageFilter),
+          disableVoice: this.pick(channel.messageConfig.disableVoice, channelPrior.messageConfig.disableVoice),
+          slowModeRateInSeconds: this.pickNumber(channel.messageConfig.slowModeRateInSeconds, channelPrior.messageConfig.slowModeRateInSeconds)
         },
 
         extended: {
-          longDescription: pick(channel.extended.longDescription, channelPrior.extended.longDescription),
-          discoverable: pick(channel.extended.discoverable, channelPrior.extended.discoverable),
-          language: pickNumber(channel.extended.language, channelPrior.extended.language),
-          category: pickNumber(channel.extended.category, channelPrior.extended.category),
-          advancedAdmin: pick(channel.extended.advancedAdmin, channelPrior.extended.advancedAdmin),
-          entryLevel: pickNumber(channel.extended.entryLevel, channelPrior.extended.entryLevel)
+          longDescription: this.pick(channel.extended.longDescription, channelPrior.extended.longDescription),
+          discoverable: this.pick(channel.extended.discoverable, channelPrior.extended.discoverable),
+          language: this.pickNumber(channel.extended.language, channelPrior.extended.language),
+          category: this.pickNumber(channel.extended.category, channelPrior.extended.category),
+          advancedAdmin: this.pick(channel.extended.advancedAdmin, channelPrior.extended.advancedAdmin),
+          entryLevel: this.pickNumber(channel.extended.entryLevel, channelPrior.extended.entryLevel)
         }
       }
     );

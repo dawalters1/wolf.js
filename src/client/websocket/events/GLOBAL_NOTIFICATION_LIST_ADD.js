@@ -11,6 +11,8 @@ export default class GlobalNotificationListAddEvent extends BaseEvent {
       new Notification(this.client, data)
     );
 
+    this.client.log.debug(`[GlobalNotification]: Global notification added [notificationId:${data.id}]`);
+
     return this.client.emit(
       'globalNotificationAdded',
       notification

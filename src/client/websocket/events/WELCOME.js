@@ -29,9 +29,11 @@ export default class WelcomeEvent extends BaseEvent {
 
         if (!value || !(value instanceof BaseHelper)) { continue; }
 
-        if (excludeOnCleanup.includes(value.constructor.name)) { continue; }
+        if (excludeOnCleanup.includes(value.constructor.name)) { this.client.log.debug(`[CleanUp]: Store Reset Skipped [store:${key}]`); continue; }
 
         value.resetStore();
+
+        this.client.log.debug(`[CleanUp]: Store Reset [store:${key}]`);
 
         await cleanupHelpers(value, seen);
       }
@@ -55,25 +57,33 @@ export default class WelcomeEvent extends BaseEvent {
 
       globalNotifications: notification.global && this.client.notification.global.fetch({ forceNew: true }),
 
-      _channelMessageSubscription: messaging.channel && this.client.messaging.subscribe(MessageSubscriptionType.CHANNEL),
+      channelMessageSubscription: messaging.channel && this.client.messaging.subscribe(MessageSubscriptionType.CHANNEL),
 
-      _privateMessageSubscription: messaging.private && this.client.messaging.subscribe(MessageSubscriptionType.PRIVATE),
+      privateMessageSubscription: messaging.private && this.client.messaging.subscribe(MessageSubscriptionType.PRIVATE),
 
-      _tipChannelSubscription: tipping.channel && this.client.tip.subscribe(TipSubscriptionTargetType.CHANNEL)
+      tipChannelSubscription: tipping.channel && this.client.tip.subscribe(TipSubscriptionTargetType.CHANNEL)
     };
 
     const entries = Object.entries(tasks)
       .filter(([, task]) => task !== false && task !== undefined);
 
-    const results = await Promise.all(entries.map(([, task]) => task));
+    const results = await Promise.allSettled(entries.map(([, task]) => task));
 
     for (let i = 0; i < entries.length; i++) {
       const [key] = entries[i];
+      const result = results[i];
 
-      // only attach data we actually want on the context
-      if (!key.startsWith('_')) {
-        sessionContext[key] = results[i];
+      if (result.status === 'rejected') {
+        this.client.log.debug(`[Synchronise]: Failure [key:${key}][reason:${result.reason}]`);
+        this.client.emit(
+          'synchroniseFailure',
+          { key, error: result.reason }
+        );
+        continue;
       }
+
+      this.client.log.debug(`[Synchronise]: Completed [key:${key}]`);
+      sessionContext[key] = result.value;
     }
 
     return sessionContext;
@@ -103,9 +113,12 @@ export default class WelcomeEvent extends BaseEvent {
 
       this.client.emit('loggedIn', response.body);
 
+      this.client.log.debug(`[Login]: Logged in [profile:${JSON.stringify(response.body)}]`);
       return true;
     } catch (error) {
       if (this.client.loggedIn) { throw error; } // Error occurred during sync
+
+      this.client.log.debug(`[Login]: Logged failed [reason:${error}]`);
 
       this.client.emit('loginFailed', error);
 
@@ -134,7 +147,8 @@ export default class WelcomeEvent extends BaseEvent {
       loggedInUser &&
       loggedInUser.id !== currentUser.id;
 
-    if (!userChanged) {
+    if (userChanged) {
+      this.client.log.debug('[Login]: User changed clearing cognito');
       this.client.config.cognito = undefined;
     }
 
@@ -143,6 +157,7 @@ export default class WelcomeEvent extends BaseEvent {
     }
 
     if (loggedInUser !== null) {
+      this.client.log.debug('[Welcome]: Resume');
       this.client.emit('resume', loggedInUser);
     }
 

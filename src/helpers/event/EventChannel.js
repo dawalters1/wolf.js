@@ -3,16 +3,6 @@ import ChannelEvent from '../../entities/ChannelEvent.js';
 import { fileTypeFromBuffer } from 'file-type';
 import { validate, validateConfig } from '../../validation/Validation.js';
 
-const pick = (value, fallback = null) =>
-  value !== undefined
-    ? value
-    : fallback;
-
-const pickNumber = (value, fallback) =>
-  value !== undefined
-    ? Number(value)
-    : fallback;
-
 export default class EventChannelHelper extends BaseHelper {
   async fetch (channelId, opts) {
     const normalisedChannelId = this.normaliseNumber(channelId);
@@ -223,12 +213,12 @@ export default class EventChannelHelper extends BaseHelper {
       'group event update',
       {
         groupId: normalisedChannelId,
-        title: pick(event.title, eventPrior.title),
-        longDescription: pick(event.longDescription, eventPrior.longDescription),
-        shortDescription: pick(event.shortDescription, eventPrior.shortDescription),
-        startsAt: pick(new Date(event.startsAt), eventPrior.startsAt),
-        endsAt: pick(new Date(event.endsAt), eventPrior.endsAt),
-        hostedBy: pickNumber(event.hostedBy, eventPrior.hostedBy)
+        title: this.pick(event.title, eventPrior.title),
+        longDescription: this.pick(event.longDescription, eventPrior.longDescription),
+        shortDescription: this.pick(event.shortDescription, eventPrior.shortDescription),
+        startsAt: this.pick(new Date(event.startsAt), eventPrior.startsAt),
+        endsAt: this.pick(new Date(event.endsAt), eventPrior.endsAt),
+        hostedBy: this.pickNumber(event.hostedBy, eventPrior.hostedBy)
       }
     );
 

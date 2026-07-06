@@ -409,10 +409,7 @@ export class WOLF extends EventEmitter {
   }
 
   async messageSettings (opts) {
-    // TODO: 3rd arg should be this.messageSettings (the surrounding method),
-    // not this.fetch which is undefined on WOLF. validate() falls back to
-    // no prefix when _method is undefined, so error messages lose context.
-    validate(opts, this, this.fetch)
+    validate(opts, this, this.messageSettings)
       .isNotRequired()
       .forEachProperty(
         {

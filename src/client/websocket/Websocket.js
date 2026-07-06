@@ -21,6 +21,8 @@ const RATE_LIMITER_CONFIG = {
   GROUP_MEMBER_SEARCH: { bucketSize: 10, tokensPerInterval: 10 / 60, maxQueue: 8 }
 };
 
+// --- Pure utility functions ---
+
 const createInFlightKey = (command, body) =>
   body == null
     ? command
@@ -32,16 +34,22 @@ const mergeResponses = (responses) =>
     const resultBody = result.body;
 
     if (Array.isArray(resBody)) {
-      result.body = (Array.isArray(resultBody)
-        ? resultBody
-        : []).concat(resBody);
+      result.body = Array.isArray(resultBody)
+        ? [...resultBody, ...resBody]
+        : [...resBody];
     } else if (resBody instanceof Map) {
-      if (!(resultBody instanceof Map)) { result.body = new Map(); }
-      for (const [key, value] of resBody) { result.body.set(key, value); }
+      if (!(resultBody instanceof Map)) {
+        result.body = new Map();
+      }
+      for (const [key, value] of resBody) {
+        result.body.set(key, value);
+      }
     }
 
     return result;
   }, new WOLFResponse({ code: 207, body: [] }));
+
+// --- Websocket class ---
 
 export default class Websocket {
   #client;
@@ -63,11 +71,13 @@ export default class Websocket {
     return this.#socket;
   }
 
+  // --- Body / ack parsing ---
+
   #applyLanguageId (obj, languageId) {
     if (!languageId || typeof obj !== 'object' || obj == null) { return; }
 
     if (Array.isArray(obj)) {
-      obj.forEach(item => { item.languageId ??= languageId; });
+      for (const item of obj) { item.languageId ??= languageId; }
     } else {
       obj.languageId ??= languageId;
     }
@@ -110,6 +120,8 @@ export default class Websocket {
     return ack;
   }
 
+  // --- Initialization ---
+
   async #loadEventHandlers () {
     const eventsDir = path.join(__dirname, './events/');
     const entries = await fs.readdir(eventsDir, { withFileTypes: true });
@@ -140,9 +152,9 @@ export default class Websocket {
       this.client.log.warn('[Websocket] apiKey will be required to log in in a future release.');
     }
 
-    const packageVersion = JSON.parse(
+    const { version: packageVersion } = JSON.parse(
       await fs.readFile(path.join(__dirname, '../../../package.json'), 'utf-8')
-    ).version;
+    );
 
     const params = new URLSearchParams({
       token,
@@ -155,6 +167,12 @@ export default class Websocket {
     return `${host}:${port}/?${params}`;
   }
 
+  // --- Socket lifecycle ---
+
+  /**
+   * Patches the socket.io backoff so callers can set `socket.reconnectionDelayOverride`
+   * to control reconnect delay. A value of -1 disconnects immediately.
+   */
   #patchBackoff () {
     const backoff = this.#socket.io.backoff;
     const originalDuration = backoff.duration.bind(backoff);
@@ -166,7 +184,11 @@ export default class Websocket {
         : originalDuration();
       Reflect.deleteProperty(this.#socket, 'reconnectionDelayOverride');
 
-      if (delay === -1) { return this.#socket.disconnect(); }
+      if (delay === -1) {
+        this.#socket.disconnect();
+        return 0; // return a number to satisfy the backoff contract
+      }
+
       return delay;
     };
   }
@@ -189,6 +211,7 @@ export default class Websocket {
     socket.on('disconnect', reason => {
       client.loggedIn = false;
       client.emit('disconnected', reason);
+      // Reconnect only for server-initiated disconnects; client disconnects are intentional.
       if (reason === 'io server disconnect') { socket.connect(); }
     });
 
@@ -226,12 +249,18 @@ export default class Websocket {
   }
 
   async disconnect () {
-    if (!this.#socket?.connected) { return; }
+    if (!this.#socket?.connected) { return false; }
     this.#socket.disconnect();
     this.#socket.destroy();
     return true;
   }
 
+  // --- Emit / rate limiting / deduplication ---
+
+  /**
+   * Emits a command with automatic retry on transient errors.
+   * Rejects immediately for non-retryable error codes.
+   */
   async #emitOnce (command, body, attempt = 0) {
     return new Promise((resolve, reject) => {
       this.#socket.emit(command, body, async (ack) => {
@@ -244,6 +273,9 @@ export default class Websocket {
               this.client.log.warn('[Websocket] Request failed:', command, body, '\nResponse:', response);
               return reject(response);
             }
+
+            // Exponential back-off between retries
+            await new Promise(r => setTimeout(r, 200 * 2 ** attempt));
             return resolve(await this.#emitOnce(command, body, attempt + 1));
           }
 
@@ -266,6 +298,10 @@ export default class Websocket {
       : { body };
   }
 
+  /**
+   * Returns a shared promise for in-flight duplicate requests.
+   * Once the promise settles the key is removed so subsequent calls go through fresh.
+   */
   #deduped (key, factory) {
     if (this.#inFlight.has(key)) { return this.#inFlight.get(key); }
     const promise = factory().finally(() => this.#inFlight.delete(key));
@@ -273,6 +309,9 @@ export default class Websocket {
     return promise;
   }
 
+  /**
+   * Public emit. Automatically chunks large idList arrays and merges responses.
+   */
   async emit (command, body) {
     const requestBody = this.#normalizeBody(body);
 

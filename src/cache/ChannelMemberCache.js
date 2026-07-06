@@ -1,28 +1,23 @@
 import Cache from './Cache.js';
 
+const DEFAULT_METADATA = Object.freeze({
+  privileged: false,
+  regular: false,
+  bots: false,
+  banned: false,
+  silenced: false
+});
+
 export default class ChannelMemberCache extends Cache {
   constructor () {
     super();
 
-    this.metadata = {
-      privileged: false,
-      regular: false,
-      bots: false,
-      banned: false,
-      silenced: false
-    };
+    this.metadata = { ...DEFAULT_METADATA };
   }
 
   clear () {
-    this.metadata = {
-      privileged: false,
-      regular: false,
-      bots: false,
-      banned: false,
-      silenced: false
-    };
-
-    this.store.clear();
+    super.clear();
     this.fetched = false;
+    this.metadata = { ...DEFAULT_METADATA };
   }
 }

@@ -9,6 +9,8 @@ export default class StoreCreditBalanceUpdateEvent extends BaseEvent {
     const oldBalance = this.client.store._gold;
     this.client.store._gold = data.balance;
 
+    this.client.log.debug(`[StoreCreditBalanceUpdate]: Gold balance updated [oldBalance:${JSON.stringify(oldBalance)}][newBalance:${JSON.stringify(data.balance)}]`);
+
     return this.client.emit(
       'storeGoldBalanceUpdate',
       oldBalance,

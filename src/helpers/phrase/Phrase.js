@@ -18,7 +18,6 @@ export default class PhraseHelper extends BaseHelper {
 
     const files = fs.readdirSync(phrasePath).filter((file) => file.endsWith('.json'));
 
-    console.log(files);
     for (const file of files) {
       const language = path.parse(file).name;
 
@@ -32,7 +31,6 @@ export default class PhraseHelper extends BaseHelper {
           )
         );
 
-      console.log('registering', language);
       this.register(phrases);
     }
   }

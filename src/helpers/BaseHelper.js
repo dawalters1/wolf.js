@@ -55,4 +55,16 @@ export default class BaseHelper {
   resetStore () {
     this.store.clear();
   }
+
+  pick (value, fallback = null) {
+    return value !== undefined
+      ? value
+      : fallback;
+  }
+
+  pickNumber (value, fallback) {
+    return value !== undefined
+      ? Number(value)
+      : fallback;
+  }
 }

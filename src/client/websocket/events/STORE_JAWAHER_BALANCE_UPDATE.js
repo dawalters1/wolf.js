@@ -9,6 +9,8 @@ export default class StoreJawaherBalanceUpdateEvent extends BaseEvent {
     const oldBalance = this.client.store._jawaher;
     this.client.store._jawaher = data.balance;
 
+    this.client.log.debug(`[StoreGemBalanceUpdate]: Gem balance updated [oldBalance:${JSON.stringify(oldBalance)}][newBalance:${JSON.stringify(data.balance)}]`);
+
     return this.client.emit(
       'storeJawaherBalanceUpdate',
       oldBalance,

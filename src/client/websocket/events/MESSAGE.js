@@ -165,7 +165,7 @@ export default class MessageEvent extends BaseEvent {
         break;
     }
 
-    if (message.sourceUserId === this.client.me?.id && this.client.config.framework.messages.ignore.self) { return; }
+    if (message.sourceUserId === this.client.me?.id && this.client.config.framework.messages.ignore.self) { return this.client.log.debug('[Message]: Message from self ignoring'); }
 
     const events = [message.isChannel
       ? 'channelMessage'

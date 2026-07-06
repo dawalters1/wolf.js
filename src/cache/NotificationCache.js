@@ -1,12 +1,8 @@
 import Cache from './Cache.js';
 
 export default class NotificationCache {
-  #global;
-  #user;
-  constructor () {
-    this.#global = new Cache();
-    this.#user = new Cache();
-  }
+  #global = new Cache();
+  #user = new Cache();
 
   get global () {
     return this.#global;

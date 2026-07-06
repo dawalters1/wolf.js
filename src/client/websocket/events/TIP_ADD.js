@@ -9,7 +9,9 @@ export default class TipAddEvent extends BaseEvent {
   async process (data) {
     const channel = this.client.channel.store.get((item) => item.id === data.groupId);
 
-    if (channel === null) { return; }
+    if (channel === null) { return this.client.log.debug(`[TipAdd]: Tip added in channel we are no longer in [channelId:${data.groupId}]`); }
+
+    this.client.log.debug(`[TipAdd]: Tip added [tip:${JSON.stringify(data)}]`);
 
     return this.client.emit(
       'tipAdd',

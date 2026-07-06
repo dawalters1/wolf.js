@@ -9,6 +9,8 @@ export default class GlobalNotificationListClearEvent extends BaseEvent {
     this.client.me.notificationStore.global.clear(); // Clear currently fetched notification list
     this.client.notification.global.store.clear(); // Clear any fetched notification data
 
+    this.client.log.debug('[GlobalNotification]: Global notification list cleared');
+
     return this.client.emit('globalNotificationsCleared');
   }
 }
