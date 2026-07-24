@@ -59,7 +59,7 @@ export default class AudioSlotHelper extends BaseHelper {
 
     if (channel === null) { throw new Error(`Channel with ID ${normalisedChannelId} NOT FOUND`); }
 
-    if (normalisedSlotId === null) {
+    if (!normalisedSlotId) {
       if (!opts?.forceNew && channel.audioSlotStore.fetched) { return channel.audioSlotStore.values(); }
 
       const response = await this.client.websocket.emit(
@@ -305,7 +305,7 @@ export default class AudioSlotHelper extends BaseHelper {
       .isValidNumber()
       .isNumberGreaterThanZero();
 
-    if (this.#clients.has(normalisedChannelId)) { return; }
+    if (this.#clients.has(normalisedChannelId)) { return false; }
 
     const channel = await this.client.channel.fetch(normalisedChannelId);
 

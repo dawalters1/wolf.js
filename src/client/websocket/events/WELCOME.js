@@ -118,12 +118,13 @@ export default class WelcomeEvent extends BaseEvent {
     } catch (error) {
       if (this.client.loggedIn) { throw error; } // Error occurred during sync
 
-      this.client.log.debug(`[Login]: Logged failed [reason:${error}]`);
+      this.client.log.debug(`[Login]: Logged failed [reason:${JSON.stringify(error, null, 4)}]`);
 
       this.client.emit('loginFailed', error);
 
-      const subCode = error.headers?.get('subCode') ?? -1;
-      if (subCode > 1) { return false; }
+      const subCode = error.headers?.get('subCode') ?? null;
+
+      if (subCode !== 2) { return false; }
 
       await this.client.utility.delay(this.client.utility.number.random(100, 1000));
 

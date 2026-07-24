@@ -25,7 +25,9 @@ export default class BaseHelper {
   }
 
   normaliseNumber (num) {
-    return Number(num) || num || null;
+    if (num === undefined) { return undefined; }
+
+    return Number(num) || num;
   }
 
   normaliseNumbers (ids) {
